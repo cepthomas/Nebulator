@@ -1,0 +1,146 @@
+// Algorithmic Nebulator file with simple animation.
+
+///// Include other lib files. /////
+include(utils.neb);
+
+///// Config definitions /////
+//config(16);
+
+
+///// Constants /////
+// When to play.
+const(PART1, 0);
+const(PART2, 64);
+const(PART3, 128);
+const(PART4, 192);
+
+// Total length.
+const(TLEN, 256);
+
+// Volumes.
+const(KEYS_DEF_VOL, 100);
+const(DRUM_DEF_VOL, 100);
+const(SNARE_DEF_VOL, 80);
+
+
+///// Variables /////
+var(NOTE, 60); // to play
+var(MODN, 0); // modulate notes
+var(PITCH, 8192); // center is 8192
+
+
+///// Realtime Controllers /////
+midiin(1, 2, MODN);
+midiout(1, Pitch, PITCH);
+
+
+////// Levers //////
+lever(0, 255, NOTE);
+lever(0, 16383, PITCH); // max range
+lever(-10, 10, MODN);
+
+
+///// Tracks /////
+track(KEYS, 1, 5);
+track(BASS, 2, 2);
+
+
+///// Functions /////
+
+// Simple variables for functions.
+float posX = 50;
+float posY = 50;
+int velX = 3;
+int velY = 3;
+int ballSize = 40;
+int note = 60;
+
+////// Nebulator midi stuff //////
+public override void step()
+{
+    // The simple algorithm.
+    if(tock % 4 == 0)
+    {
+        note = tick % 2 == 0 ? 50 : 60;
+        note += tock;
+        sendMidiNote(KEYS, note, KEYS_DEF_VOL, 1.09);
+    }
+}
+
+public void On_MODN()
+{
+    println("MODN changed to", MODN);
+    modulate(KEYS, MODN);
+}
+
+////// Nebulator graphics stuff //////
+public override void setup()
+{
+    println("setup()");
+
+    // Patches (optional). Really only needed if using the Windows GM.
+    sendPatch(KEYS, AcousticGrandPiano);
+    sendPatch(BASS, AcousticBass);
+}
+
+public override void draw()
+{
+    if(playing && moveBall())
+    {
+        boing(note - 12);
+    }
+
+    // Draw the ball.
+    noStroke();
+    ellipse(posX, posY, ballSize, ballSize);
+    PColor c = color(200, 50, 100);
+    fill(c);
+}
+
+public override void mouseClicked()
+{
+    // Note selected based on mouse position.
+    int x = (int)map(mouseX, 0, width, 40, 100);
+    sendMidiNote(KEYS, x, KEYS_DEF_VOL, 1.50);
+}
+
+public override void keyPressed()
+{
+    int v = key == 'c' ? 60 : 70;
+    sendMidiNote(KEYS, v, KEYS_DEF_VOL, 1.50);
+}
+
+bool moveBall()
+{
+    bool edge = false;
+
+    ///// Move the ball. /////
+    posX += velX;
+    if (posX <= ballSize / 2)
+    {
+        posX = ballSize / 2;
+        velX = -velX;
+        edge = true;
+    }
+    else if (posX >= width - ballSize / 2)
+    {
+        posX = width - ballSize / 2;
+        velX = -velX;
+        edge = true;
+    }
+
+    posY += velY;
+    if (posY <= ballSize / 2)
+    {
+        posY = ballSize / 2;
+        velY = -velY;
+        edge = true;
+    }
+    else if (posY >= height - ballSize / 2)
+    {
+        posY = height - ballSize / 2;
+        velY = -velY;
+        edge = true;
+    }
+    return edge;
+}

@@ -1,0 +1,46 @@
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Windows.Forms;
+
+namespace Nebulator.Controls
+{
+    /// <summary>
+    /// Pan slider control
+    /// </summary>
+    public partial class Pan
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose( bool disposing )
+        {
+            if( disposing )
+            {
+                if( components != null )
+                    components.Dispose();
+            }
+            base.Dispose( disposing );
+        }
+
+        /// <summary>
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            // 
+            // PanSlider
+            // 
+            this.Name = "PanSlider";
+            this.Size = new System.Drawing.Size(104, 16);
+        }
+    }
+}

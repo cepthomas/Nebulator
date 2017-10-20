@@ -1,0 +1,177 @@
+// Example Nebulator declarative composition file with some UI demo. Warning: this is not actual music!
+
+///// Include other lib files. /////
+include(utils.neb);
+
+///// Config definitions /////
+//config(16);
+
+
+///// Constants /////
+// When to play.
+const(PART1, 0);
+const(PART2, 64);
+const(PART3, 128);
+const(PART4, 192);
+// Total length.
+const(TLEN, 256);
+// Volumes.
+const(KEYS_DEF_VOL, 100);
+const(DRUM_DEF_VOL, 100);
+
+///// Variables /////
+var(BACKC, 200); // change background
+var(MODN, 0); // modulate notes
+var(PITCH, 8192); // center is 8192
+
+///// Realtime Controllers /////
+midiin(1, 2, MODN);
+midiout(1, Pitch, PITCH);
+
+////// Levers //////
+lever(0, 255, BACKC);
+lever(0, 16383, PITCH); // max range
+lever(-10, 10, MODN);
+
+
+///// Tracks and Loops /////
+track(KEYS, 1, 5);
+loop(PART1, PART2, KEYS_VERSE1);
+loop(PART2, PART3, KEYS_VERSE2);
+loop(PART3, PART4, KEYS_CHORUS);
+loop(PART4, TLEN, KEYS_VERSE1);
+
+track(BASS, 2, 2);
+loop(PART1, TLEN, BASS1);
+
+track(DRUMS, 10, 4);
+loop(PART1, TLEN, DRUM1);
+
+///// Sequences and Notes /////
+seq(KEYS_VERSE1, 8);
+// numbered notes
+note(1.00, 60, KEYS_DEF_VOL, 2.00);
+note(2.25, 56, 90, 2.00);
+note(3.50, 80, KEYS_DEF_VOL, 2.00);
+// named notes
+note(4.75, E.4.7#11, 90, 2.00);
+note(7.75, D.4.m, 90, 2.00);
+
+seq(KEYS_VERSE2, 8);
+note(0.00, F.4, 90, 0.50);
+note(0.50, D#.4, KEYS_DEF_VOL, 0.50);
+note(1.00, C.4, 90, 0.50);
+note(1.50, B.4.m7, 90, 0.50);
+note(2.00, F.5, 90, 0.50);
+note(2.50, D#.5, KEYS_DEF_VOL, 0.50);
+note(3.00, C.5, 90, 0.50);
+note(3.50, B.5.m7, 90, 0.50);
+note(4.00, F.3, 90, 0.50);
+note(4.50, D#.3, KEYS_DEF_VOL, 0.50);
+note(5.00, C.3, 90, 0.50);
+note(5.50, B.3.m7, 90, 0.50);
+note(6.00, F.2, 90, 0.50);
+note(6.50, D#.2, KEYS_DEF_VOL, 0.50);
+note(7.00, C.2, 90, 0.50);
+note(7.50, B.2.m7, 90, 0.50);
+
+seq(KEYS_CHORUS, 8);
+note(1.00, A.5.M, 90, 1.50);
+note(3.00, E.5.M, 90, 1.50);
+note(5.00, A.5.M, 90, 1.50);
+note(7.00, E.5.M, 90, 1.50);
+
+seq(BASS1, 8);
+note(0.00, C.2, 70, 0.25);
+note(0.75, C.2, 70, 0.125); // TODO support the 5 part?
+note(3.50, E.2, 70, 0.25);
+note(4.00, C.2, 70, 1.00);
+note(7.75, A#.2, 70, 0.10);
+
+seq(DRUM1, 4);
+note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(0.50, RideCymbal1, DRUM_DEF_VOL);
+note(0.10, HiMidTom, DRUM_DEF_VOL);
+note(1.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(1.50, RideCymbal1, DRUM_DEF_VOL);
+note(2.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(2.50, RideCymbal1, DRUM_DEF_VOL);
+note(2.10, HiMidTom, DRUM_DEF_VOL);
+note(3.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(3.50, CrashCymbal2, DRUM_DEF_VOL);
+
+
+
+///// Functions /////
+
+// Simple variables for functions.
+int dragX = 100;
+int dragY = 100;
+int dragLen = 50;
+
+
+
+////// Nebulator UI stuff //////
+public override void setup()
+{
+    println("setup()");
+
+    // Patches (optional). Really only needed if using the Windows GM.
+    sendPatch(KEYS, AcousticGrandPiano);
+    sendPatch(BASS, AcousticBass);
+}
+
+public override void draw()
+{
+    if(playing && tock == 0)
+    {
+        //println("MODN", MODN);
+    }
+
+    background(BACKC, (int)map(dragX, 0, width, 0, 256), (int)map(dragY, 0, height, 0, 256));
+
+    textSize(24);
+    fill(255); // white
+    text("Clicka mousa", 10, 10);
+
+    int dragLen = 50;
+
+    ///// Drag thing /////
+    // Sets the width of the stroke used for lines, points, and the border around shapes.
+    strokeWeight(10);
+    // Sets the color used to draw lines and borders around shapes.
+    stroke(255, 100);
+
+    int dx = mouseX - dragX;
+    int dy = mouseY - dragY;
+    float angle1 = atan2(dy, dx);
+    dragX = mouseX - (int)(cos(angle1) * dragLen);
+    dragY = mouseY - (int)(sin(angle1) * dragLen);
+
+    PColor c = color(0, 200, 40);
+    fill(c);
+    ellipse(dragX, dragY, 20, 20);
+
+    // segment()
+    pushMatrix();
+    translate(dragX, dragY);
+    rotate(angle1);
+    line(0, 0, dragLen, 0);
+    popMatrix();
+
+    if (mousePressed)
+    {
+        //println("mouse is pressed");
+        fill((int)random(255), (int)random(255), (int)random(255));
+        strokeWeight(2);
+        stroke(0, 100);
+        ellipse(mouseX, mouseY, 80, 80);
+    }
+}
+
+public override void keyPressed()
+{
+    if (key == 'h')
+    {
+    }
+}

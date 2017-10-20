@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3212E8CF-DB99-4C4A-99CC-1020A11BDC1D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Nebulator</RootNamespace>
+    <AssemblyName>Nebulator</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>IDE1006, CS1591</NoWarn>
+    <DocumentationFile>bin\Nebulator.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Markdig, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Markdig.0.13.0\lib\net40\Markdig.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq, Version=2.6.20831.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.2.6.0\lib\net40\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\AssemblyInfo.cs" />
+    <Compile Include="Common\LazyCollection.cs" />
+    <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\Logging.cs" />
+    <Compile Include="Common\MultiFileWatcher.cs" />
+    <Compile Include="Common\StateMachine.cs" />
+    <Compile Include="Common\Time.cs" />
+    <Compile Include="Common\UserSettings.cs" />
+    <Compile Include="Common\Utils.cs" />
+    <Compile Include="Common\WaitCursor.cs" />
+    <Compile Include="Common\Wobbler.cs" />
+    <Compile Include="Controls\TimeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TimeControl.Designer.cs">
+      <DependentUpon>TimeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Engine\CommonTypes.cs" />
+    <Compile Include="Engine\Midi.cs" />
+    <Compile Include="Engine\MidiUtils.cs" />
+    <Compile Include="Engine\Persisted.cs" />
+    <Compile Include="Engine\Script.cs" />
+    <Compile Include="Engine\ScriptNeb.cs" />
+    <Compile Include="Engine\ScriptUi.cs" />
+    <Compile Include="Engine\ScriptSurface.cs" />
+    <Compile Include="Engine\Step.cs" />
+    <Compile Include="Engine\StepCollection.cs" />
+    <Compile Include="Engine\Compiler.cs" />
+    <None Include="..\..\Nebulator.wiki\ScriptDefinitions.md">
+      <Link>Resources\ScriptDefinitions.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\README.md">
+      <Link>Resources\README.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\glyphicons-360-file-export.png" />
+    <None Include="Resources\glyphicons-114-justify.png" />
+    <Compile Include="FastTimer\NebTimer.cs" />
+    <Compile Include="Globals.cs" />
+    <Compile Include="Model\ControlPoint.cs" />
+    <Compile Include="Model\Loop.cs" />
+    <Compile Include="Model\Note.cs" />
+    <Compile Include="Model\Sequence.cs" />
+    <Compile Include="Model\Track.cs" />
+    <Compile Include="Model\Variable.cs" />
+    <Compile Include="Controls\Fader.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Fader.Designer.cs">
+      <DependentUpon>Fader.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Pan.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Pan.Designer.cs">
+      <DependentUpon>Pan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Pot.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Pot.Designer.cs">
+      <DependentUpon>Pot.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PropertyGridEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\Meter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Meter.Designer.cs">
+      <DependentUpon>Meter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Slider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Slider.Designer.cs">
+      <DependentUpon>Slider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <None Include="Resources\medusa.png" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FastTimer\IFastTimer.cs" />
+    <Compile Include="FastTimer\MultimediaTimer.cs" />
+    <Compile Include="FastTimer\TimingAnalyzer.cs" />
+    <Compile Include="UI\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\InfoDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\InfoDisplay.Designer.cs">
+      <DependentUpon>InfoDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Levers.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Levers.Designer.cs">
+      <DependentUpon>Levers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MidiPortEditor.cs" />
+    <Compile Include="UI\StringListEditor.cs" />
+    <Compile Include="UI\TextViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\TextViewer.Designer.cs">
+      <DependentUpon>TextViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MidiMonitor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\MidiMonitor.Designer.cs">
+      <DependentUpon>MidiMonitor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Piano.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Piano.Designer.cs">
+      <DependentUpon>Piano.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\PropertyEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\TrackControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TrackControl.Designer.cs">
+      <DependentUpon>TrackControl.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Controls\Fader.resx">
+      <DependentUpon>Fader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Pan.resx">
+      <DependentUpon>Pan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Pot.resx">
+      <DependentUpon>Pot.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Meter.resx">
+      <DependentUpon>Meter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Slider.resx">
+      <DependentUpon>Slider.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TimeControl.resx">
+      <DependentUpon>TimeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UI\About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\InfoDisplay.resx">
+      <DependentUpon>InfoDisplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Levers.resx">
+      <DependentUpon>Levers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PropertyEditor.resx">
+      <DependentUpon>PropertyEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TextViewer.resx">
+      <DependentUpon>TextViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MidiMonitor.resx">
+      <DependentUpon>MidiMonitor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Piano.resx">
+      <DependentUpon>Piano.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TrackControl.resx">
+      <DependentUpon>TrackControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-37-file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-82-refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-86-repeat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-137-cogwheel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-170-record.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-171-step-backward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-172-fast-backward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-173-rewind.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-174-play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-175-pause.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-176-stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-177-forward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-178-fast-forward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-179-step-forward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-206-electricity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-213-arrow-down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-214-arrow-up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-242-flash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-290-bomb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-291-skull.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-327-piano.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-331-blog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-366-restart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-440-wrench.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-701-ear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\medusa.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-195-question-sign.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-359-file-import.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

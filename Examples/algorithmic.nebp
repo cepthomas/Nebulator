@@ -1,0 +1,9 @@
+{
+  "Speed": 1.000,
+  "Volume": 100,
+  "Values": {
+    "KEYS.volume": 80,
+    "BASS.volume": 103,
+    "DRUMS.volume": 94
+  }
+}
