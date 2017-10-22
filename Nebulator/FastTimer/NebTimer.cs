@@ -226,14 +226,15 @@ namespace Nebulator.FastTimer
                     bool uiExp = false;
                     _nebCurrent += msec;
                     _uiCurrent += msec;
+                    double allowance = 0.5; // msec
 
-                    if ((NebPeriod - _nebCurrent) < 0.5) //TODO correct?
+                    if ((NebPeriod - _nebCurrent) < allowance)
                     {
                         nebExp = true;
                         _nebCurrent = 0.0;
                     }
 
-                    if ((UiPeriod - _uiCurrent) < 0.5)
+                    if ((UiPeriod - _uiCurrent) < allowance)
                     {
                         uiExp = true;
                         _uiCurrent = 0.0;

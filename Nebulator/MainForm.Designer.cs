@@ -86,14 +86,14 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // toolsToolStripMenuItem
@@ -139,8 +139,8 @@
             this.importMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_359_file_import;
             this.importMidiToolStripMenuItem.Name = "importMidiToolStripMenuItem";
             this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.importMidiToolStripMenuItem.Text = "Import Midi";
-            this.importMidiToolStripMenuItem.Click += new System.EventHandler(this.ImportMidi_Click);
+            this.importMidiToolStripMenuItem.Text = "Import Style";
+            this.importMidiToolStripMenuItem.Click += new System.EventHandler(this.ImportStyle_Click);
             // 
             // exportMidiToolStripMenuItem
             // 

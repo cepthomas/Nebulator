@@ -6,6 +6,7 @@ using System.Windows.Forms.Design;
 using System.Drawing.Design;
 using Nebulator.Common;
 using Nebulator.Engine;
+using Nebulator.Midi;
 
 namespace Nebulator.UI
 {
@@ -33,7 +34,7 @@ namespace Nebulator.UI
             switch (context.PropertyDescriptor.Name)
             {
                 case "MidiIn":
-                    foreach (string s in Midi.MidiInputs)
+                    foreach (string s in Globals.MidiInterface.MidiInputs)
                     {
                         int i = lb.Items.Add(s);
                         if(s == Globals.UserSettings.MidiIn)
@@ -44,7 +45,7 @@ namespace Nebulator.UI
                     break;
 
                 case "MidiOut":
-                    foreach (string s in Midi.MidiOutputs)
+                    foreach (string s in Globals.MidiInterface.MidiOutputs)
                     {
                         int i = lb.Items.Add(s);
                         if (s == Globals.UserSettings.MidiOut)
@@ -81,9 +82,9 @@ namespace Nebulator.UI
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override System.Drawing.Design.UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {
-            return System.Drawing.Design.UITypeEditorEditStyle.DropDown;
+            return UITypeEditorEditStyle.DropDown;
         }
     }
 }

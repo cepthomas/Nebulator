@@ -16,7 +16,7 @@ namespace Nebulator.Common
         public int Tock { get; set; } = 0;
 
         /// <summary>Total Tocks for the unit of time.</summary>
-        public int TotalTocks { get { return Tick * Globals.TocksPerTick + Tock; } }
+        public int TotalTocks { get { return Tick * Globals.TOCKS_PER_TICK + Tock; } }
 
         #region Constructors
         /// <summary>
@@ -43,8 +43,8 @@ namespace Nebulator.Common
         /// <param name="tocks"></param>
         public Time(int tocks)
         {
-            Tick = tocks / Globals.TocksPerTick;
-            Tock = tocks % Globals.TocksPerTick;
+            Tick = tocks / Globals.TOCKS_PER_TICK;
+            Tock = tocks % Globals.TOCKS_PER_TICK;
         }
 
         /// <summary>
@@ -54,36 +54,36 @@ namespace Nebulator.Common
         public Time(double tts)
         {
             // Split into two parts from 0.01 or 1.01 or 1.10.
-            Tick = (int)Math.Truncate(tts);
-            Tock = (int)((tts - Tick) * 100);
+            Tick = Utils.Split(tts).integral;
+            Tock = Utils.Split(tts).fractional * 1000 / Globals.TOCKS_PER_TICK;
         }
         #endregion
 
-        //#region Good practice for custom classess TODO
-        //public override bool Equals(object obj)
-        //{
-        //    return Equals(obj as Time);
-        //}
+        #region Good practice for custom classess
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Time);
+        }
 
-        //public bool Equals(Time obj)
-        //{
-        //    return obj != null && obj.Tick == Tick && obj.Tock == Tock;
-        //}
+        public bool Equals(Time obj)
+        {
+            return obj != null && obj.Tick == Tick && obj.Tock == Tock;
+        }
 
-        //public override int GetHashCode()
-        //{
-        //    return TotalTocks;
-        //}
+        public override int GetHashCode()
+        {
+            return TotalTocks;
+        }
 
-        //public static bool operator ==(Time t1, Time t2)
-        //{
-        //    return t1 != null && t2 != null && (t1.Tick == t2.Tick) && (t1.Tock == t2.Tock);
-        //}
-        //public static bool operator !=(Time t1, Time t2)
-        //{
-        //    return t1 == null || t2 == null || (t1.Tick != t2.Tick) || (t1.Tock != t2.Tock);
-        //}
-        //#endregion
+        public static bool operator ==(Time t1, Time t2)
+        {
+            return (object)t1 != null && (object)t2 != null && (t1.Tick == t2.Tick) && (t1.Tock == t2.Tock);
+        }
+        public static bool operator !=(Time t1, Time t2)
+        {
+            return (object)t1 == null || (object)t2 == null || (t1.Tick != t2.Tick) || (t1.Tock != t2.Tock);
+        }
+        #endregion
 
         /// <summary>
         /// Do some math.
@@ -93,8 +93,8 @@ namespace Nebulator.Common
         /// <returns></returns>
         public static Time operator +(Time t1, Time t2)
         {
-            int tick = t1.Tick + t2.Tick + (t1.Tock + t2.Tock) / Globals.TocksPerTick;
-            int tock = (t1.Tock + t2.Tock) % Globals.TocksPerTick;
+            int tick = t1.Tick + t2.Tick + (t1.Tock + t2.Tock) / Globals.TOCKS_PER_TICK;
+            int tock = (t1.Tock + t2.Tock) % Globals.TOCKS_PER_TICK;
             return new Time(tick, tock);
         }
 
@@ -102,12 +102,12 @@ namespace Nebulator.Common
         /// Move to the next tock and update clock.
         /// </summary>
         /// <returns>True if it's a new Tick.</returns>
-        public bool Advance() // TODO
+        public bool Advance()
         {
             bool newTick = false;
             Tock++;
 
-            if(Tock >= Globals.TocksPerTick)
+            if(Tock >= Globals.TOCKS_PER_TICK)
             {
                 Tick++;
                 Tock = 0;
@@ -133,7 +133,7 @@ namespace Nebulator.Common
         /// <returns></returns>
         public int ToMsec(int speed)
         {
-            double msecpertock = speed / Globals.TocksPerTick;
+            double msecpertock = speed / Globals.TOCKS_PER_TICK;
             return (int)(msecpertock * TotalTocks);
         }
 
@@ -142,7 +142,7 @@ namespace Nebulator.Common
         /// </summary>
         public override string ToString()
         {
-            return $"{Tick:00}.{Tock:000}";
+            return $"{Tick:00}.{Tock:00}";
         }
     }
 }

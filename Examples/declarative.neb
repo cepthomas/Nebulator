@@ -3,9 +3,6 @@
 ///// Include other lib files. /////
 include(utils.neb);
 
-///// Config definitions /////
-//config(16);
-
 
 ///// Constants /////
 // When to play.
@@ -51,8 +48,8 @@ loop(PART1, TLEN, DRUM1);
 seq(KEYS_VERSE1, 8);
 // numbered notes
 note(1.00, 60, KEYS_DEF_VOL, 2.00);
-note(2.25, 56, 90, 2.00);
-note(3.50, 80, KEYS_DEF_VOL, 2.00);
+note(2.1/4, 56, 90, 2.00);
+note(3.1/2, 80, KEYS_DEF_VOL, 2.00);
 // named notes
 note(4.75, E.4.7#11, 90, 2.00);
 note(7.75, D.4.m, 90, 2.00);
@@ -83,7 +80,7 @@ note(7.00, E.5.M, 90, 1.50);
 
 seq(BASS1, 8);
 note(0.00, C.2, 70, 0.25);
-note(0.75, C.2, 70, 0.125); // TODO support the 5 part?
+note(0.75, C.2, 70, 0.1/8); // 0.125?
 note(3.50, E.2, 70, 0.25);
 note(4.00, C.2, 70, 1.00);
 note(7.75, A#.2, 70, 0.10);

@@ -10,8 +10,11 @@ namespace Nebulator.Controls
     /// </summary>
     public partial class Pan : UserControl
     {
+        #region Fields
         private double _value;
+        #endregion
 
+        #region Properties
         /// <summary>
         /// The current Pan setting.
         /// </summary>
@@ -33,6 +36,7 @@ namespace Nebulator.Controls
         /// For styling.
         /// </summary>
         public Color ControlColor { get; set; } = Color.Orange;
+        #endregion
 
         /// <summary>
         /// True when pan value changed.
@@ -108,7 +112,7 @@ namespace Nebulator.Controls
         /// Calculate position.
         /// </summary>
         /// <param name="x"></param>
-        private void SetValuePanFromMouse(int x)
+        void SetValuePanFromMouse(int x)
         {
             Value = (((double)x / Width) * 2.0f) - 1.0f;
         }

@@ -10,18 +10,16 @@ namespace Nebulator.Controls
     /// </summary>
     public partial class Pot : UserControl
     {
+        #region Fields
         double _minimum = 0.0;
         double _maximum = 1.0;
         double _value = 0.5;
         int _beginDragY = 0;
         double _beginDragValue = 0.0;
         bool _dragging = false;
+        #endregion
 
-        /// <summary>
-        /// Value changed event.
-        /// </summary>
-        public event EventHandler ValueChanged;
-
+        #region Properties
         /// <summary>
         /// For styling.
         /// </summary>
@@ -53,6 +51,12 @@ namespace Nebulator.Controls
             get { return _value; }
             set { SetValue(value, false); }
         }
+        #endregion
+
+        /// <summary>
+        /// Value changed event.
+        /// </summary>
+        public event EventHandler ValueChanged;
 
         /// <summary>
         /// Creates a new pot control.

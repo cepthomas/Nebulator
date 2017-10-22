@@ -11,7 +11,7 @@ namespace Nebulator.UI
     /// <summary>
     /// Plug in to property grid.
     /// </summary>
-    public class StringListEditor : UITypeEditor
+    public class StringListEditor : UITypeEditor // TODO useful?
     {
         TextBox _tbox = null;
 

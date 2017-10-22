@@ -5,12 +5,12 @@ using NLog;
 using Nebulator.Common;
 
 
-namespace Nebulator.Engine
+namespace Nebulator.Midi
 {
     /// <summary>
     /// Abstraction layer between NAudio midi and Nebulator steps.
     /// </summary>
-    public class Midi : IDisposable
+    public class MidiInterface : IDisposable
     {
         #region Definitions
         // We borrow a few unused midi controller numbers for internal use.
@@ -66,17 +66,17 @@ namespace Nebulator.Engine
 
         #region Properties
         /// <summary>All available midi inputs for UI selection.</summary>
-        public static List<string> MidiInputs { get; set; } = new List<string>();
+        public List<string> MidiInputs { get; set; } = new List<string>();
 
         /// <summary>All available midi outputs for UI selection.</summary>
-        public static List<string> MidiOutputs { get; set; } = new List<string>();
+        public List<string> MidiOutputs { get; set; } = new List<string>();
         #endregion
 
         #region Lifecycle
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Midi()
+        public MidiInterface()
         {
         }
 
@@ -269,9 +269,6 @@ namespace Nebulator.Engine
                             VelocityToPlay = evt.Velocity,
                             Duration = 0
                         };
-
-                        // Pass through. FUTURE or do something fun with it.
-                        Send(step);
                     }
                     break;
 
@@ -283,9 +280,6 @@ namespace Nebulator.Engine
                             Channel = evt.Channel,
                             NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MAX_MIDI_NOTE)
                         };
-
-                        // Pass through.
-                        Send(step);
                     }
                     break;
 
@@ -298,9 +292,6 @@ namespace Nebulator.Engine
                             MidiController = (int)evt.Controller,
                             ControllerValue = (byte)evt.ControllerValue
                         };
-
-                        // Pass it up for handling.
-                        NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
                     }
                     break;
 
@@ -313,15 +304,23 @@ namespace Nebulator.Engine
                             MidiController = CTRL_PITCH,
                             ControllerValue = evt.Pitch
                         };
-
-                        // Pass it up for handling.
-                        NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
                     }
                     break;
             }
 
             if (step != null)
             {
+                if(step is StepNoteOn || step is StepNoteOff)
+                {
+                    // Pass through. FUTURE or do something fun with it.
+                    Send(step);
+                }
+                else
+                {
+                    // Pass it up for handling.
+                    NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
+                }
+
                 if (Globals.UserSettings.MidiMonitorIn)
                 {
                     NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"RCV: {step}" });
@@ -354,6 +353,7 @@ namespace Nebulator.Engine
                     _midiIn = null;
                 }
 
+                MidiInputs.Clear();
                 for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                 {
                     MidiInputs.Add(MidiIn.DeviceInfo(device).ProductName);
@@ -390,6 +390,7 @@ namespace Nebulator.Engine
                     _midiOut = null;
                 }
 
+                MidiOutputs.Clear();
                 for (int device = 0; device < MidiOut.NumberOfDevices; device++)
                 {
                     MidiOutputs.Add(MidiOut.DeviceInfo(device).ProductName);

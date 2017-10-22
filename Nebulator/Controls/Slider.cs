@@ -11,9 +11,12 @@ namespace Nebulator.Controls
     /// </summary>
     public partial class Slider : UserControl
     {
+        #region Fields
         int _value = 50;
         int _resetVal = 0;
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Optional label.
         /// </summary>
@@ -65,6 +68,7 @@ namespace Nebulator.Controls
                 Invalidate();
             }
         }
+        #endregion
 
         /// <summary>
         /// Slider value changed event.

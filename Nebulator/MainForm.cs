@@ -12,6 +12,9 @@ using Nebulator.Model;
 using Nebulator.Engine;
 using Nebulator.UI;
 using Nebulator.FastTimer;
+using Nebulator.Midi;
+
+// TODO space bar to start stop.
 
 
 namespace Nebulator
@@ -59,19 +62,12 @@ namespace Nebulator
         /// </summary>
         public MainForm()
         {
-            try
-            {
-                // Need to load settings before creating controls.
-                string appDir = Utils.GetAppDir();
-                DirectoryInfo di = new DirectoryInfo(appDir);
-                di.Create();
-                Globals.UserSettings = UserSettings.Load(appDir);
-
-                InitializeComponent();
-            }
-            catch (Exception)
-            {
-            }
+            // Need to load settings before creating controls in MainForm_Load().
+            string appDir = Utils.GetAppDir();
+            DirectoryInfo di = new DirectoryInfo(appDir);
+            di.Create();
+            Globals.UserSettings = UserSettings.Load(appDir);
+            InitializeComponent();
         }
 
         /// <summary>
@@ -88,10 +84,10 @@ namespace Nebulator
 
             #region Set up midi
             // Input midi events.
-            Globals.Midi.NebMidiInputEvent += Midi_NebMidiInputEvent;
-            Globals.Midi.NebMidiLogEvent += Midi_NebMidiLogEvent;
+            Globals.MidiInterface.NebMidiInputEvent += Midi_NebMidiInputEvent;
+            Globals.MidiInterface.NebMidiLogEvent += Midi_NebMidiLogEvent;
 
-            Globals.Midi.Init();
+            Globals.MidiInterface.Init();
 
             // Midi output timer.
             _timer = new NebTimer()
@@ -126,20 +122,12 @@ namespace Nebulator
             UpdateMenu();
 
 
-            ///////////////////// TODO debug stuff ////////////////////
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\uitest.neb");
-            //OpenFile(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\projects\patterns.neb");
-            //OpenFile(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\projects\t1.neb");
+#if DEBUG
             OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
             //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\algorithmic.neb");
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\uitest.neb");
-
-
-            importMidiToolStripMenuItem.Visible = false;
-
-            //MidiUtils.ImportMidi(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\kilr_joe.mid", true);
+            //MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
             //MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
-
+#endif
         }
 
         /// <summary>
@@ -150,7 +138,7 @@ namespace Nebulator
             try
             {
                 // Just in case.
-                Globals.Midi.KillAll();
+                Globals.MidiInterface.KillAll();
 
                 // Save the project.
                 Globals.CurrentPersisted.Values.Clear();
@@ -178,9 +166,9 @@ namespace Nebulator
                 _timer?.Dispose();
                 _timer = null;
 
-                Globals.Midi?.Stop();
-                Globals.Midi?.Dispose();
-                Globals.Midi = null;
+                Globals.MidiInterface?.Stop();
+                Globals.MidiInterface?.Dispose();
+                Globals.MidiInterface = null;
 
                 components?.Dispose();
             }
@@ -334,7 +322,7 @@ namespace Nebulator
                                     ControllerValue = c.RefVar.Value
                                 };
 
-                                Globals.Midi.Send(step);
+                                Globals.MidiInterface.Send(step);
                             });
                         }
                     }
@@ -345,14 +333,14 @@ namespace Nebulator
                     // Do the steps.
                     foreach (Step step in _steps.GetSteps(Globals.CurrentStepTime))
                     {
-                        Track track = step.ParentTrack;
+                        Track track = step.Tag as Track;
                         bool _anySolo = Globals.Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
                         bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
                         if (play)
                         {
                             // Maybe tweak values.
-                            step.Adjust();
-                            Globals.Midi.Send(step);
+                            step.Adjust(track.Volume, track.Modulate);
+                            Globals.MidiInterface.Send(step);
                         }
                     }
 
@@ -371,7 +359,7 @@ namespace Nebulator
                             keepGoing = chkLoop.Checked;
                             if (!keepGoing)
                             {
-                                Globals.Midi.KillAll(); // just in case
+                                Globals.MidiInterface.KillAll(); // just in case
                             }
                         }
                     }
@@ -383,7 +371,7 @@ namespace Nebulator
                     UpdateTime(false);
 
                     // In case there are noteoff that need to be processed.
-                    Globals.Midi.Housekeep();
+                    Globals.MidiInterface.Housekeep();
                 }
 
                 ///// UI updates /////
@@ -443,7 +431,7 @@ namespace Nebulator
         /// Is it a midi controller? Look it up in the inputs.
         /// If not a ctlr or not found, send to the midi output, otherwise trigger listeners.
         /// </summary>
-        void Midi_NebMidiInputEvent(object sender, Midi.NebMidiInputEventArgs e)
+        void Midi_NebMidiInputEvent(object sender, MidiInterface.NebMidiInputEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -468,7 +456,7 @@ namespace Nebulator
                     else
                     {
                         // Not one we are interested in so pass through.
-                        Globals.Midi.Send(e.Step);
+                        Globals.MidiInterface.Send(e.Step);
                     }
                 }
             });
@@ -477,7 +465,7 @@ namespace Nebulator
         /// <summary>
         /// Process midi log event.
         /// </summary>
-        private void Midi_NebMidiLogEvent(object sender, Midi.NebMidiLogEventArgs e)
+        private void Midi_NebMidiLogEvent(object sender, MidiInterface.NebMidiLogEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -503,7 +491,7 @@ namespace Nebulator
                 // Kill any not solo.
                 if (_anySolo)
                 {
-                    ctls.ForEach(c => { if (c.TrackInfo.State != TrackState.Solo) Globals.Midi.Kill(c.TrackInfo.Channel); });
+                    ctls.ForEach(c => { if (c.TrackInfo.State != TrackState.Solo) Globals.MidiInterface.Kill(c.TrackInfo.Channel); });
                 }
             }
         }
@@ -656,7 +644,7 @@ namespace Nebulator
             {
                 SetPlayStatus(false);
                 // Send midi stop all notes, stop sequencer.
-                Globals.Midi.KillAll();
+                Globals.MidiInterface.KillAll();
             }
         }
 
@@ -674,7 +662,7 @@ namespace Nebulator
         /// </summary>
         void SetTimerPeriod()
         {
-            _timer.NebPeriod = (int)(1000 * Globals.CurrentPersisted.Speed / Globals.TocksPerTick);
+            _timer.NebPeriod = (int)(1000 * Globals.CurrentPersisted.Speed / Globals.TOCKS_PER_TICK);
         }
 
         /// <summary>
@@ -834,7 +822,7 @@ namespace Nebulator
 
                 if (dr == DialogResult.OK)
                 {
-                    Globals.Midi.Init();
+                    Globals.MidiInterface.Init();
                     SaveSettings();
                     if(f.Dirty)
                     {
@@ -854,11 +842,11 @@ namespace Nebulator
             StepNoteOn step = new StepNoteOn()
             {
                 Channel = 2,
-                NoteNumberToPlay = Utils.Constrain(e.NoteID, 0, Midi.MAX_MIDI_NOTE),
+                NoteNumberToPlay = Utils.Constrain(e.NoteID, 0, MidiInterface.MAX_MIDI_NOTE),
                 VelocityToPlay = 90,
                 Duration = 0
             };
-            Globals.Midi.Send(step);
+            Globals.MidiInterface.Send(step);
         }
 
         /// <summary>
@@ -869,11 +857,11 @@ namespace Nebulator
             StepNoteOff step = new StepNoteOff()
             {
                 Channel = 2,
-                NoteNumber = Utils.Constrain(e.NoteID, 0, Midi.MAX_MIDI_NOTE),
-                NoteNumberToPlay = Utils.Constrain(e.NoteID, 0, Midi.MAX_MIDI_NOTE),
+                NoteNumber = Utils.Constrain(e.NoteID, 0, MidiInterface.MAX_MIDI_NOTE),
+                NoteNumberToPlay = Utils.Constrain(e.NoteID, 0, MidiInterface.MAX_MIDI_NOTE),
                 Velocity = 64
             };
-            Globals.Midi.Send(step);
+            Globals.MidiInterface.Send(step);
         }
 
         /// <summary>
@@ -996,26 +984,28 @@ namespace Nebulator
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
             {
-                MidiUtils.ExportMidi(_steps, saveDlg.FileName, 1, 96, Globals.CurrentPersisted.Speed, "Converted from " + _fn);
+                Dictionary<int, string> tracks = new Dictionary<int, string>();
+                Globals.Dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+                MidiUtils.ExportMidi(_steps, saveDlg.FileName, tracks, Globals.CurrentPersisted.Speed, "Converted from " + _fn);
             }
         }
 
         /// <summary>
-        /// Import a midi file as neb file lines.
+        /// Import a style file as neb file lines.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ImportMidi_Click(object sender, EventArgs e)
+        private void ImportStyle_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
-                Filter = "Midi files (*.mid)|*.mid",
-                Title = "Import from midi file"
+                Filter = "Style files (*.sty)|*.sty",
+                Title = "Import from style file"
             };
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
- //TODO               MidiUtils.ImportMidi(openDlg.FileName);
+                MidiUtils.ImportStyle(openDlg.FileName);
             }
         }
         #endregion

@@ -10,8 +10,11 @@ namespace Nebulator.Controls
     /// </summary>
     public partial class Meter : UserControl
     {
+        #region Fields
         private double _value = 0;
+        #endregion
 
+        #region Properties
         /// <summary>
         /// For styling.
         /// </summary>
@@ -40,6 +43,7 @@ namespace Nebulator.Controls
         /// Meter orientation.
         /// </summary>
         public Orientation Orientation { get; set; } = Orientation.Vertical;
+        #endregion
 
         /// <summary>
         /// Basic volume meter.
@@ -73,20 +77,6 @@ namespace Nebulator.Controls
                 height = (int)(height * percent);
                 pe.Graphics.FillRectangle(brush, 1, Height - 1 - height, width, height);
             }
-
-            /*
-            StringFormat format = new StringFormat();
-            format.LineAlignment = StringAlignment.Center;
-            format.Alignment = StringAlignment.Center;
-            string dbValue = $"{db:F2} dB"};
-            if(Double.IsNegativeInfinity(db))
-            {
-                dbValue = "-\x221e db"; // -8 dB
-            }
-
-            pe.Graphics.DrawString(dbValue, Font,
-                Brushes.Black, ClientRectangle, format);*/
-
             //base.OnPaint(pe);
         }
     }

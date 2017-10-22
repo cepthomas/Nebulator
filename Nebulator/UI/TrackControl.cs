@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Nebulator.Model;
 using Nebulator.Common;
 using Nebulator.Engine;
+using Nebulator.Midi;
 
 
 namespace Nebulator.UI
@@ -56,7 +57,7 @@ namespace Nebulator.UI
             sldVolume.ControlColor = Globals.UserSettings.ControlColor;
             sldVolume.Font = Globals.UserSettings.ControlFont;
             sldVolume.Label = TrackInfo.Name;
-            sldVolume.Maximum = Midi.MAX_MIDI_VOLUME;
+            sldVolume.Maximum = MidiInterface.MAX_MIDI_VOLUME;
             sldVolume.Value = TrackInfo.Volume;
 
             sldVolume.ValueChanged += VolTrack_ValueChanged;

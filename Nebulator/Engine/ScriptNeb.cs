@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using NLog;
 using Nebulator.Common;
 using Nebulator.Model;
+using Nebulator.Midi;
 
 
 namespace Nebulator.Engine
@@ -26,13 +27,13 @@ namespace Nebulator.Engine
 
         #region User script properties
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return Globals.CurrentStepTime.Tick; } set { Globals.CurrentStepTime.Tick = value; } }
+        public int tick { get { return Globals.CurrentStepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return Globals.CurrentStepTime.Tock; } set { Globals.CurrentStepTime.Tock = value; } }
+        public int tock { get { return Globals.CurrentStepTime.Tock; } }
 
         /// <summary>Neb step clock is running.</summary>
-        public bool playing { get { return Globals.Playing; } set { Globals.Playing = value; } }
+        public bool playing { get { return Globals.Playing; } }
 
         /// <summary>Current Nebulator Speed in seconds per tick. Can be used to calculate real times.</summary>
         public float speed { get { return (float)Globals.CurrentPersisted.Speed; } }
@@ -68,17 +69,17 @@ namespace Nebulator.Engine
             {
                 StepNoteOn step = new StepNoteOn()
                 {
-                    ParentTrack = track,
+                    Tag = track,
                     Channel = track.Channel,
-                    NoteNumber = Utils.Constrain(inote, 0, Midi.MAX_MIDI_NOTE),
-                    NoteNumberToPlay = Utils.Constrain(inote, 0, Midi.MAX_MIDI_NOTE),
+                    NoteNumber = Utils.Constrain(inote, 0, MidiInterface.MAX_MIDI_NOTE),
+                    NoteNumberToPlay = Utils.Constrain(inote, 0, MidiInterface.MAX_MIDI_NOTE),
                     Velocity = vol,
                     VelocityToPlay = vol,
                     Duration = new Time(dur).TotalTocks
                 };
 
-                step.Adjust();
-                Globals.Midi.Send(step, true);
+                step.Adjust(track.Volume, track.Modulate);
+                Globals.MidiInterface.Send(step, true);
             }
         }
 
@@ -92,13 +93,13 @@ namespace Nebulator.Engine
         {
             StepControllerChange step = new StepControllerChange()
             {
-                ParentTrack = track,
+                Tag = track,
                 Channel = track.Channel,
                 MidiController = ctlnum,
                 ControllerValue = val
             };
 
-            Globals.Midi.Send(step);
+            Globals.MidiInterface.Send(step);
         }
 
         /// <summary>
@@ -110,12 +111,12 @@ namespace Nebulator.Engine
         {
             StepPatch step = new StepPatch()
             {
-                ParentTrack = track,
+                Tag = track,
                 Channel = track.Channel,
                 PatchNumber = patch
             };
 
-            Globals.Midi.Send(step);
+            Globals.MidiInterface.Send(step);
         }
 
         /// <summary>

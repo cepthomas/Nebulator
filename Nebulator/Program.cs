@@ -42,7 +42,7 @@ namespace Nebulator
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled exception:{e.Exception.Message}{Environment.NewLine}{e.Exception.StackTrace}{Environment.NewLine}";
             LogManager.GetCurrentClassLogger().Error("Unhandled exception: " + s);
-            MessageBox.Show($"Unhandled exception:{Environment.NewLine}{s}{Environment.NewLine}Sorry, you are screwed - goodbye.");
+            MessageBox.Show($"Unhandled exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
 
         /// <summary>

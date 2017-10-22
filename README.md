@@ -25,6 +25,18 @@ Also, the new functions that support music are modelled after that API style.
 And a static declarative model is also supported if you want to write note sequence descriptions instead. Or you can
 combine declarative and procedural in the same piece. Wow!
 
+# Bonus Stuff
+This project contains a bunch of components that are either recycled or created for this. Most could be stripped
+out for subsequent reuse.
+- Partial emulation of the Processing language for .NET.
+- A theoretically improved multimedia timer with improved accuracy for sub 10 msec period.
+- My midi class may be useful elsewhere.
+- A state machine class that was used in several products. Not currently used for this project but could reappear.
+- Partial import of Yamaha style (.sty) files.
+- Multiple file change watcher.
+- General purpose embedded C# in memory compiler.
+- Various utilities and extensions.
+
 # Third Party
 This application uses these excellent FOSS components:
 - NAudio DLL and modified controls, midi file: [NAudio](https://github.com/naudio/NAudio)

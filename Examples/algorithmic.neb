@@ -3,9 +3,6 @@
 ///// Include other lib files. /////
 include(utils.neb);
 
-///// Config definitions /////
-//config(16);
-
 
 ///// Constants /////
 // When to play.

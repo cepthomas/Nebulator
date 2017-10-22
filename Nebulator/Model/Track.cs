@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Nebulator.Common;
 
-// WobbleTime; How to do with mmtimer as it is? If it was 1 msec again, this would be easy.
-// Drums: Gaussian distribution with a mean value 157 ms and a standard deviation of 8.7 ms.
 
 namespace Nebulator.Model
 {

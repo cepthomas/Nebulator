@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
 using Newtonsoft.Json;
-using Nebulator.UI;
+using Nebulator.UI; // TODO cross-ref to MidiPortEditor
 
 
 namespace Nebulator.Common

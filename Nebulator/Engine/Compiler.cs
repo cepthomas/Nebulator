@@ -8,6 +8,7 @@ using NLog;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Model;
+using Nebulator.Midi;
 
 
 namespace Nebulator.Engine
@@ -248,24 +249,14 @@ namespace Nebulator.Engine
                     // Remove any comments.
                     int pos = s.IndexOf("//");
                     string line = pos >= 0 ? s.Left(pos) : s;
-
-
-                    // was:
-                    //List<string> parts = line.SplitByTokens("(),; ");
-
-                    //note(1.00, 60, KEYS_DEF_VOL, 2.00);
-                    //note += tock % 4;
-
                     List<string> allparts = line.SplitByTokens("(),; ");
                     List<string> minparts = line.SplitByTokens("(");
-
 
                     if (minparts.Count > 0)
                     {
                         switch (minparts[0])
                         {
                             case "include": ParseInclude(pcont, allparts); break;
-                //            case "config": ParseConfig(pcont, allparts); break;
                             case "const": ParseConst(pcont, allparts); break;
                             case "var": ParseVar(pcont, allparts); break;
                             case "midiin": ParseMidiController(pcont, allparts, true); break;
@@ -539,12 +530,12 @@ namespace Nebulator.Engine
             // Process the composition values.
             foreach (Track nt in _dynamic.Tracks.Values)
             {
-                //Wobbler timeWobbler = new Wobbler();
+                //Wobbler timeWobbler = new Wobbler(); TODO
 
                 Wobbler volWobbler = new Wobbler()
                 {
                     Min = 0,
-                    Max = Midi.MAX_MIDI_VOLUME,
+                    Max = MidiInterface.MAX_MIDI_VOLUME,
                     RangeLow = -nt.WobbleVolume,
                     RangeHigh = nt.WobbleVolume
                 };
@@ -568,7 +559,7 @@ namespace Nebulator.Engine
                             ///// Note on.
                             StepNoteOn step = new StepNoteOn()
                             {
-                                ParentTrack = nt,
+                                Tag = nt,
                                 Channel = nt.Channel,
                                 NoteNumber = note.NoteNumber,
                                 NoteNumberToPlay = note.NoteNumber,
@@ -591,7 +582,7 @@ namespace Nebulator.Engine
                                 ///// Note on.
                                 step = new StepNoteOn()
                                 {
-                                    ParentTrack = nt,
+                                    Tag = nt,
                                     Channel = nt.Channel,
                                     NoteNumber = cnote.NoteNumber,
                                     NoteNumberToPlay = cnote.NoteNumber,
@@ -645,18 +636,6 @@ namespace Nebulator.Engine
                 AddParseError(pcont, "Invalid include: " + ex.Message);
             }
         }
-
-        //private void ParseConfig(FileParseContext pcont, List<string> parms)
-        //{
-        //    try
-        //    {
-        //        Globals.TocksPerTick = int.Parse(parms[1]);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        AddParseError(pcont, "Invalid config: " + ex.Message);
-        //    }
-        //}
 
         private void ParseConst(FileParseContext pcont, List<string> parms)
         {
@@ -713,7 +692,7 @@ namespace Nebulator.Engine
 
                 if (parms[2].IsInteger())
                 {
-                    // Note number.
+                    // Simple note number.
                     n = new Note(int.Parse(parms[2]));
                 }
                 else if (_midiDrumDefs.ContainsKey(parms[2]))
@@ -806,11 +785,11 @@ namespace Nebulator.Engine
                         break;
 
                     case "Pitch":
-                        mctlr = Midi.CTRL_PITCH;
+                        mctlr = MidiInterface.CTRL_PITCH;
                         break;
 
                     default:
-                        mctlr = Midi.TranslateController(parms[2]);
+                        mctlr = MidiInterface.TranslateController(parms[2]);
                         break;
                 }
 
@@ -964,11 +943,50 @@ namespace Nebulator.Engine
             try
             {
                 var parts = s.SplitByToken(".");
-                t = new Time()
+
+                // Check for valid fractional part.
+                if(int.TryParse(parts[1], out int result))
                 {
-                    Tick = int.Parse(parts[0]),
-                    Tock = int.Parse(parts[1])
-                };
+                    if(result >= Globals.TOCKS_PER_TICK)
+                    {
+                        throw (null); // too big
+                    }
+
+                    t = new Time()
+                    {
+                        Tick = int.Parse(parts[0]),
+                        Tock = int.Parse(parts[1])
+                    };
+                }
+                else
+                {
+                    // Try parsing fractions: 1/2, 3/4, 5/8 3/16 9/32 etc.
+                    var frac = parts[1].SplitByToken("/");
+
+                    if(frac.Count != 2)
+                    {
+                        throw (null); // incorrect number
+                    }
+
+                    double d = double.Parse(frac[0]) / double.Parse(frac[1]);
+
+                    if(d >= 1.0)
+                    {
+                        throw (null); // invalid fraction
+                    }
+
+                    // Scale.
+                    d *= Globals.TOCKS_PER_TICK;
+
+                    // Truncate.
+                    d = Math.Floor(d);
+
+                    t = new Time()
+                    {
+                        Tick = int.Parse(parts[0]),
+                        Tock = (int)d
+                    };
+                }
             }
             catch (Exception)
             {

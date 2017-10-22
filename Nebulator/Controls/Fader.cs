@@ -9,13 +9,16 @@ namespace Nebulator.Controls
     /// </summary>
     public partial class Fader : UserControl
     {
+        #region Fields
         double _value = 0;
         bool _dragging;
         int _dragy;
         const int SLIDER_HEIGHT = 30;
         const int SLIDER_WIDTH = 15;
         Rectangle _rect;
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Minimum value of this fader
         /// </summary>
@@ -39,6 +42,7 @@ namespace Nebulator.Controls
         /// Fader orientation
         /// </summary>
         public Orientation Orientation { get; set; }
+        #endregion
 
         /// <summary>
         /// Creates a new Fader control.
@@ -51,7 +55,7 @@ namespace Nebulator.Controls
 
         /// <summary>
         /// </summary>
-        private void DrawSlider(Graphics g)
+        void DrawSlider(Graphics g)
         {
             Brush block = new SolidBrush(Color.White);
             Pen centreLine = new Pen(Color.Black);

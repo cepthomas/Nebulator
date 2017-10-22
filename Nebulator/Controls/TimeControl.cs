@@ -10,17 +10,18 @@ namespace Nebulator.Controls
 {
     public partial class TimeControl : UserControl
     {
+        #region Fields
         int _major = 0;
         int _maxMajor = 100;
         int _minor = 0;
         int _lastPos = 0;
-
         // Main font.
         Font _font1 = new Font("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
-
         // Secondary font.
         Font _font2 = new Font("Consolas", 18, FontStyle.Regular, GraphicsUnit.Point, 0);
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Current major value. Limited to three digits.
         /// </summary>
@@ -59,6 +60,7 @@ namespace Nebulator.Controls
         [ReadOnly(true)]
         [Browsable(false)]
         public Dictionary<int, string> TimeDefs { get; set; } = new Dictionary<int, string>();
+        #endregion
 
         /// <summary>
         /// Value changed event.

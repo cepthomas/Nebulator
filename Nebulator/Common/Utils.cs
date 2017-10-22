@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
@@ -155,7 +154,7 @@ namespace Nebulator.Common
         /// Split a double into two parts: each side of the dp.
         /// </summary>
         /// <param name="val"></param>
-        /// <returns>tuple of integral, fractional</returns>
+        /// <returns>tuple of integral and 3 dp of fractional</returns>
         public static (int integral, int fractional) Split(double val)
         {
             // Split into two parts from 0.01 or 1.01 or 1.10.
