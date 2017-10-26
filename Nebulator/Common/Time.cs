@@ -30,11 +30,20 @@ namespace Nebulator.Common
         /// Constructor from discrete components.
         /// </summary>
         /// <param name="tick"></param>
-        /// <param name="tock"></param>
+        /// <param name="tock">Tock to set - can be negative.</param>
         public Time(int tick, int tock)
         {
-            Tick = tick;
-            Tock = tock;
+            if(tock >= 0)
+            {
+                Tick = tick + tock / Globals.TOCKS_PER_TICK;
+                Tock = tock % Globals.TOCKS_PER_TICK;
+            }
+            else
+            {
+                int atock = Math.Abs(tock);
+                Tick = tick - (atock / Globals.TOCKS_PER_TICK) - 1;
+                Tock = Globals.TOCKS_PER_TICK - (atock % Globals.TOCKS_PER_TICK);
+            }
         }
 
         /// <summary>
@@ -48,14 +57,24 @@ namespace Nebulator.Common
         }
 
         /// <summary>
+        /// Constructor from tocks.
+        /// </summary>
+        /// <param name="tocks"></param>
+        public Time(long tocks)
+        {
+            Tick = (int)(tocks / Globals.TOCKS_PER_TICK);
+            Tock = (int)(tocks % Globals.TOCKS_PER_TICK);
+        }
+
+        /// <summary>
         /// Constructor from Tick.Tock representation.
         /// </summary>
         /// <param name="tts"></param>
         public Time(double tts)
         {
             // Split into two parts from 0.01 or 1.01 or 1.10.
-            Tick = Utils.Split(tts).integral;
-            Tock = Utils.Split(tts).fractional * 1000 / Globals.TOCKS_PER_TICK;
+            Tick = Utils.SplitDouble(tts).integral;
+            Tock = Utils.SplitDouble(tts).fractional * 1000 / Globals.TOCKS_PER_TICK;
         }
         #endregion
 
@@ -85,6 +104,7 @@ namespace Nebulator.Common
         }
         #endregion
 
+        #region Public functions
         /// <summary>
         /// Do some math.
         /// </summary>
@@ -127,6 +147,18 @@ namespace Nebulator.Common
         }
 
         /// <summary>
+        /// Round up to next Tick.
+        /// </summary>
+        public void RoundUp()
+        {
+            if(Tock != 0)
+            {
+                Tick++;
+                Tock = 0;
+            }
+        }
+
+        /// <summary>
         /// Convert to real time total msec.
         /// </summary>
         /// <param name="speed">Speed in msec per tick.</param>
@@ -144,5 +176,6 @@ namespace Nebulator.Common
         {
             return $"{Tick:00}.{Tock:00}";
         }
+        #endregion
     }
 }

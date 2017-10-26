@@ -32,16 +32,16 @@ lever(-10, 10, MODN);
 
 
 ///// Tracks and Loops /////
-track(KEYS, 1, 5);
+track(KEYS, 1, 5, 0, 0);
 loop(PART1, PART2, KEYS_VERSE1);
 loop(PART2, PART3, KEYS_VERSE2);
 loop(PART3, PART4, KEYS_CHORUS);
 loop(PART4, TLEN, KEYS_VERSE1);
 
-track(BASS, 2, 2);
+track(BASS, 2, 2, 0, 0);
 loop(PART1, TLEN, BASS1);
 
-track(DRUMS, 10, 4);
+track(DRUMS, 10, 4, 0, 0);
 loop(PART1, TLEN, DRUM1);
 
 ///// Sequences and Notes /////

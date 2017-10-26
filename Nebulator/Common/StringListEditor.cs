@@ -4,14 +4,14 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
-using Nebulator.Common;
 
-namespace Nebulator.UI
+
+namespace Nebulator.Common
 {
     /// <summary>
     /// Plug in to property grid.
     /// </summary>
-    public class StringListEditor : UITypeEditor // TODO useful?
+    public class StringListEditor : UITypeEditor
     {
         TextBox _tbox = null;
 

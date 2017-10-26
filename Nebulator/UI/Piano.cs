@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Nebulator.Common;
 using Nebulator.Model;
 
 
@@ -45,7 +46,7 @@ namespace Nebulator.UI
 
                 Note note = new Note(noteId);
 
-                if(note.Natural)
+                if(NoteUtils.IsNatural(note.Root))
                 {
                     _whiteKeyCount++;
                     _keys[i] = new PianoKey(this, KeyType.White, noteId);
@@ -73,7 +74,7 @@ namespace Nebulator.UI
             {
                 Note note = new Note(_keys[n].NoteID);
 
-                if (note.Natural)
+                if (NoteUtils.IsNatural(note.Root))
                 {
                     _keys[n].Height = Height;
                     _keys[n].Width = whiteKeyWidth;

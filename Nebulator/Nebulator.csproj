@@ -70,12 +70,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\AssemblyInfo.cs" />
+    <Compile Include="Common\AssemblyInfoTool.cs" />
     <Compile Include="Common\LazyCollection.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Logging.cs" />
+    <Compile Include="Common\MidiPortEditor.cs" />
     <Compile Include="Common\MultiFileWatcher.cs" />
+    <Compile Include="Common\NoteUtils.cs" />
     <Compile Include="Common\StateMachine.cs" />
+    <Compile Include="Common\StringListEditor.cs" />
     <Compile Include="Common\Time.cs" />
     <Compile Include="Common\UserSettings.cs" />
     <Compile Include="Common\Utils.cs" />
@@ -179,8 +182,6 @@
     <Compile Include="UI\Levers.Designer.cs">
       <DependentUpon>Levers.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\MidiPortEditor.cs" />
-    <Compile Include="UI\StringListEditor.cs" />
     <Compile Include="UI\TextViewer.cs">
       <SubType>Form</SubType>
     </Compile>

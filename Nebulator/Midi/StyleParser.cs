@@ -13,12 +13,12 @@ namespace Nebulator.Midi
     /// <summary>Reads in and processes standard yahama style files.</summary>
     public class StyleParser
     {
-        #region Properties
+        #region Properties gleaned from the style file
         /// <summary>All the part names.</summary>
-        public List<string> Parts { get { return _parts.ToList(); } }
+        public List<string> Parts { get { return _events.Keys.Select(e => e.part).Distinct().ToList(); } }
 
         /// <summary>All the channel numbers.</summary>
-        public List<int> Channels { get { return _channels.ToList(); } }
+        public List<int> Channels { get { return _events.Keys.Select(e => e.channel).Distinct().ToList(); } }
 
         /// <summary>Resolution for all events.</summary>
         public int DeltaTicksPerQuarterNote { get; private set; } = 0;
@@ -31,26 +31,14 @@ namespace Nebulator.Midi
 
         /// <summary>Key signature, if supplied by file.</summary>
         public string KeySig { get; private set; } = "";
-
-        /// <summary>Fixed value.</summary>
-        public int MidiFileType { get; } = 0;
-
-        /// <summary>Fixed value.</summary>
-        public int Tracks { get; } = 1;
         #endregion
 
         #region Fields
-        /// <summary>All the events - key is part/channel.</summary>
+        /// <summary>All the midi events by part/channel groups. This is the verbatim content of the file with no processing.</summary>
         Dictionary<(string part, int channel), List<MidiEvent>> _events = new Dictionary<(string, int), List<MidiEvent>>();
 
         /// <summary>Name of current part being processed.</summary>
-        string _currentPart = "";
-
-        /// <summary>Backing value.</summary>
-        HashSet<string> _parts = new HashSet<string>();
-
-        /// <summary>Backing value.</summary>
-        HashSet<int> _channels = new HashSet<int>();
+        string _currentPart = Globals.UNKNOWN_STRING;
         #endregion
 
         #region Public functions
@@ -63,8 +51,6 @@ namespace Nebulator.Midi
         {
             // Init everything.
             _events.Clear();
-            _parts.Clear();
-            _channels.Clear();
             DeltaTicksPerQuarterNote = 0;
             Tempo = 0.0;
             TimeSig = "";
@@ -73,62 +59,39 @@ namespace Nebulator.Midi
             using (var br = new BinaryReader(File.OpenRead(fileName)))
             {
                 bool done = false;
-                uint chunkSize = 0;
 
                 while (!done)
                 {
-                    string chunkHeader = Encoding.UTF8.GetString(br.ReadBytes(4));
-
-                    switch (chunkHeader)
+                    switch (Encoding.UTF8.GetString(br.ReadBytes(4)))
                     {
                         case "MThd":
-                            // Midi section.
                             ReadMidiSection(br);
+
+                            // Put all in abs time order.
+                            foreach(var evts in _events.Values)
+                            {
+                                evts.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
+                            }
                             break;
 
                         case "CASM":
-                            // The information in the CASM section is necessary if the midi section does not follow the rules
-                            // for “simple” style files, which do not necessarily need a CASM section (see chapter 5.2.1 for
-                            // the rules). The CASM section gives instructions to the instrument on how to deal with the midi data.
-                            // This includes:
-                            // - Assigning the sixteen possible midi channels to 8 accompaniment channels which are
-                            //   available to a style in the instrument (9 = sub rhythm, 10 = rhythm, 11 = bass, 12 = chord 1,
-                            //   13 = chord 2, 14 = pad, 15 = phrase 1, 16 = phrase 2). More than one midi channel
-                            //   may be assigned to an accompaniment channel.
-                            // - Allowing the PSR to edit the source channel in StyleCreator. This setting is overridden by
-                            //   the instrument if the style has > 1 midi source channel assigned to an accompaniment
-                            //   channel. In this case the source channels are not editable.
-                            // - Muting/enabling specific notes or chords to trigger the accompaniment. In practice, only
-                            //   chord choices are used.
-                            // - The key that is used in the midi channel. Styles often use different keys for the midi data.
-                            //   Styles without a CASM must be in the key of CMaj7.
-                            // - How the chords and notes are transposed as chords are changed and how notes held
-                            //   through chord changes are reproduced.
-                            // - The range of notes generated by the style.
-                            chunkSize = Utils.SwapUInt32(br.ReadUInt32());
+                            ReadCASMSection(br);
                             break;
 
                         case "CSEG":
-                            chunkSize = Utils.SwapUInt32(br.ReadUInt32());
+                            ReadCSEGSection(br);
                             break;
 
                         case "Sdec":
-                            chunkSize = Utils.SwapUInt32(br.ReadUInt32());
-                            // swallow for now
-                            br.ReadBytes((int)chunkSize);
+                            ReadSdecSection(br);
                             break;
 
                         case "Ctab":
-                            // Has some key and chord info.
-                            chunkSize = Utils.SwapUInt32(br.ReadUInt32());
-                            // swallow for now
-                            br.ReadBytes((int)chunkSize);
+                            ReadCtabSection(br);
                             break;
 
                         case "Cntt":
-                            chunkSize = Utils.SwapUInt32(br.ReadUInt32());
-                            // swallow for now
-                            br.ReadBytes((int)chunkSize);
+                            ReadCnttSection(br);
                             break;
 
                         default:
@@ -153,15 +116,13 @@ namespace Nebulator.Midi
         }
         #endregion
 
-        #region Private functions
+        #region Section parsers
         /// <summary>
         /// Read the midi section of a style file.
         /// </summary>
         /// <param name="br"></param>
         void ReadMidiSection(BinaryReader br)
         {
-            // Current note on events, looking for corresponding note offs.
-            NoteOnEvent[,] ons = new NoteOnEvent[MidiInterface.NUM_MIDI_CHANNELS, MidiInterface.MAX_MIDI_NOTE];
             List<string> leftovers = new List<string>();
             int absoluteTime = 0;
 
@@ -193,31 +154,6 @@ namespace Nebulator.Midi
 
             // Read all midi events.
             MidiEvent me = null; // current
-
-            HashSet<int> channels = new HashSet<int>();
-            HashSet<int> whens = new HashSet<int>();
-
-            List<string> parts = new List<string>();
-
-            // MidiEvent:
-            // protected MidiEvent();
-            // public int DeltaTime { get; }
-            // public long AbsoluteTime { get; set; }
-            // public MidiCommandCode CommandCode { get; }
-            // public MidiEvent(long absoluteTime, int channel, MidiCommandCode commandCode);
-            // public override string ToString();
-            // public static bool IsEndTrack(MidiEvent midiEvent);
-            // public static bool IsNoteOff(MidiEvent midiEvent);
-            // public static bool IsNoteOn(MidiEvent midiEvent);
-            // public static int ReadVarInt(BinaryReader br);
-            // public static MidiEvent FromRawMessage(int rawMessage);
-            // public static MidiEvent ReadNextEvent(BinaryReader br, MidiEvent previous);
-            // public static void WriteVarInt(BinaryWriter writer, int value);
-            // public virtual int Channel { get; set; }
-            // public virtual int GetAsShortMessage();
-            // public virtual MidiEvent Clone();
-            // public virtual void Export(ref long absoluteTime, BinaryWriter writer);
-
             while (br.BaseStream.Position < startPos + chunkSize)
             {
                 me = MidiEvent.ReadNextEvent(br, me);
@@ -231,63 +167,35 @@ namespace Nebulator.Midi
                             // Indicates start of a new midi part. Bin per channel.
                             _currentPart = (me as TextEvent).Text;
                             absoluteTime = 0;
-
-                            // Clean up the note tracking. TODO leftovers?
-                            ons = new NoteOnEvent[MidiInterface.NUM_MIDI_CHANNELS, MidiInterface.MAX_MIDI_NOTE];
+                            Console.WriteLine($">>>> part:{_currentPart}");
                         }
                         break;
 
                     case MidiCommandCode.NoteOn:
                         {
-                            // Save it while waiting for note off.
                             NoteOnEvent evt = me as NoteOnEvent;
-
-                            // Check for dupes. TODO.
-                            NoteOnEvent on = ons[evt.Channel, evt.NoteNumber];
-                            if (on != null)
-                            {
-
-                            }
-
-
-                            if (evt.Velocity > 0)
-                            {
-                                ons[evt.Channel, evt.NoteNumber] = evt;
-                                //currentEvents?[0].Add(evt);
-                            }
-                            else
-                            {
-                                // It's actually an off - handle as such.
-                                ons[evt.Channel, evt.NoteNumber] = null;
-                            }
+                            AddMidiEvent(evt);
                         }
                         break;
 
                     case MidiCommandCode.NoteOff:
                         {
                             NoteEvent evt = me as NoteEvent;
-                            NoteOnEvent on = ons[evt.Channel, evt.NoteNumber];
-                            if (on != null)
-                            {
-                                AddEvent(evt);
-
-                                // Reset it.
-                                ons[evt.Channel, evt.NoteNumber] = null;
-                            }
+                            AddMidiEvent(evt);
                         }
                         break;
 
                     case MidiCommandCode.ControlChange:
                         {
                             ControlChangeEvent evt = me as ControlChangeEvent;
-                            AddEvent(evt);
+                            AddMidiEvent(evt);
                         }
                         break;
 
                     case MidiCommandCode.PitchWheelChange:
                         {
                             PitchWheelChangeEvent evt = me as PitchWheelChangeEvent;
-                            AddEvent(evt);
+                            AddMidiEvent(evt);
                         }
                         break;
 
@@ -341,21 +249,101 @@ namespace Nebulator.Midi
 
             if (br.BaseStream.Position != startPos + chunkSize)
             {
-                throw new Exception($"Read overrub error: {chunkSize}+{startPos}!={br.BaseStream.Position}");
+                throw new Exception($"Read count error: {chunkSize}+{startPos}!={br.BaseStream.Position}");
             }
         }
 
         /// <summary>
+        /// Read the CASM section of a style file.
+        /// </summary>
+        /// <param name="br"></param>
+        void ReadCASMSection(BinaryReader br)
+        {
+            // The information in the CASM section is necessary if the midi section does not follow the rules
+            // for “simple” style files, which do not necessarily need a CASM section (see chapter 5.2.1 for
+            // the rules). The CASM section gives instructions to the instrument on how to deal with the midi data.
+            // This includes:
+            // - Assigning the sixteen possible midi channels to 8 accompaniment channels which are
+            //   available to a style in the instrument (9 = sub rhythm, 10 = rhythm, 11 = bass, 12 = chord 1,
+            //   13 = chord 2, 14 = pad, 15 = phrase 1, 16 = phrase 2). More than one midi channel
+            //   may be assigned to an accompaniment channel.
+            // - Allowing the PSR to edit the source channel in StyleCreator. This setting is overridden by
+            //   the instrument if the style has > 1 midi source channel assigned to an accompaniment
+            //   channel. In this case the source channels are not editable.
+            // - Muting/enabling specific notes or chords to trigger the accompaniment. In practice, only
+            //   chord choices are used.
+            // - The key that is used in the midi channel. Styles often use different keys for the midi data.
+            //   Styles without a CASM must be in the key of CMaj7.
+            // - How the chords and notes are transposed as chords are changed and how notes held
+            //   through chord changes are reproduced.
+            // - The range of notes generated by the style.
+            uint chunkSize = Utils.SwapUInt32(br.ReadUInt32());
+        }
+
+        /// <summary>
+        /// Read the CSEG section of a style file.
+        /// </summary>
+        /// <param name="br"></param>
+        void ReadCSEGSection(BinaryReader br)
+        {
+            uint chunkSize = Utils.SwapUInt32(br.ReadUInt32());
+        }
+
+        /// <summary>
+        /// Read the Sdec section of a style file.
+        /// </summary>
+        /// <param name="br"></param>
+        void ReadSdecSection(BinaryReader br)
+        {
+            uint chunkSize = Utils.SwapUInt32(br.ReadUInt32());
+            // swallow for now
+            br.ReadBytes((int)chunkSize);
+        }
+
+        /// <summary>
+        /// Read the Ctab section of a style file.
+        /// </summary>
+        /// <param name="br"></param>
+        void ReadCtabSection(BinaryReader br)
+        {
+            // Has some key and chord info.
+            uint chunkSize = Utils.SwapUInt32(br.ReadUInt32());
+            // swallow for now
+            br.ReadBytes((int)chunkSize);
+        }
+
+        /// <summary>
+        /// Read the Cntt section of a style file.
+        /// </summary>
+        /// <param name="br"></param>
+        void ReadCnttSection(BinaryReader br)
+        {
+            uint chunkSize = Utils.SwapUInt32(br.ReadUInt32());
+            // swallow for now
+            br.ReadBytes((int)chunkSize);
+        }
+        #endregion
+
+        #region Private functions
+        /// <summary>
         /// Helper function.
         /// </summary>
         /// <param name="evt"></param>
-        void AddEvent(MidiEvent evt)
+        void AddMidiEvent(MidiEvent evt)
         {
+            if (evt is NoteEvent)
+            {
+                NoteEvent nevt = evt as NoteEvent;
+
+                //if(nevt.Channel == 3) // && nevt.NoteNumber == 72)
+                //{
+                //    Console.WriteLine(evt.ToString());
+                //}
+            }
+
             if (!_events.ContainsKey((_currentPart, evt.Channel)))
             {
                 _events.Add((_currentPart, evt.Channel), new List<MidiEvent>());
-                Parts.Add(_currentPart);
-
             }
 
             _events[(_currentPart, evt.Channel)].Add(evt);

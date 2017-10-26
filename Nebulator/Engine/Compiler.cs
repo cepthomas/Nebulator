@@ -118,7 +118,6 @@ namespace Nebulator.Engine
                 _midiInstrumentDefs.Clear();
                 _midiDrumDefs.Clear();
                 _midiControllerDefs.Clear();
-                Note.ChordDefs.Clear();
 
                 // Read the file.
                 Dictionary<string, string> section = new Dictionary<string, string>();
@@ -131,10 +130,6 @@ namespace Nebulator.Engine
                     {
                         switch (parts[0])
                         {
-                            case "Chord":
-                                section = Note.ChordDefs;
-                                break;
-
                             case "Instrument":
                                 section = _midiInstrumentDefs;
                                 break;
@@ -151,16 +146,6 @@ namespace Nebulator.Engine
                                 section[parts[0]] = parts[1];
                                 break;
                         }
-                    }
-                }
-
-                // Add user chords.
-                foreach (string s in Globals.UserSettings.Chords)
-                {
-                    List<string> parts = s.SplitByToken(":");
-                    if (parts.Count >= 2)
-                    {
-                        Note.ChordDefs[parts[0]] = parts[1];
                     }
                 }
             }
@@ -528,22 +513,24 @@ namespace Nebulator.Engine
             Dictionary<string, Sequence> sequences = _dynamic.Sequences.Values.Distinct().ToDictionary(i => i.Name, i => i);
 
             // Process the composition values.
-            foreach (Track nt in _dynamic.Tracks.Values)
+            foreach (Track track in _dynamic.Tracks.Values)
             {
-                //Wobbler timeWobbler = new Wobbler(); TODO
+                Wobbler timeWobbler = new Wobbler()
+                {
+                    RangeLow = -track.WobbleTimeBefore,
+                    RangeHigh = track.WobbleTimeAfter
+                };
 
                 Wobbler volWobbler = new Wobbler()
                 {
-                    Min = 0,
-                    Max = MidiInterface.MAX_MIDI_VOLUME,
-                    RangeLow = -nt.WobbleVolume,
-                    RangeHigh = nt.WobbleVolume
+                    RangeLow = -track.WobbleVolume,
+                    RangeHigh = track.WobbleVolume
                 };
 
                 // Put the loops in time order.
-                nt.Loops.Sort((a, b) => a.StartTick.CompareTo(b.StartTick));
+                track.Loops.Sort((a, b) => a.StartTick.CompareTo(b.StartTick));
 
-                foreach (Loop loop in nt.Loops)
+                foreach (Loop loop in track.Loops)
                 {
                     // Get the loop sequence info.
                     Sequence nseq = sequences[loop.SequenceName];
@@ -553,39 +540,20 @@ namespace Nebulator.Engine
                         foreach (Note note in nseq.Notes)
                         {
                             // Create the note start and stop times.
-                            Time startNoteTime = new Time(loopTick, 0) + note.When;
-                            Time stopNoteTime = startNoteTime + new Time(note.Duration);
+                            int toffset = timeWobbler.Next(loopTick);
+                            Time startNoteTime = new Time(loopTick, toffset) + note.When;
+                            Time stopNoteTime = startNoteTime + note.Duration;
 
-                            ///// Note on.
-                            StepNoteOn step = new StepNoteOn()
-                            {
-                                Tag = nt,
-                                Channel = nt.Channel,
-                                NoteNumber = note.NoteNumber,
-                                NoteNumberToPlay = note.NoteNumber,
-                                Velocity = volWobbler.Next(note.Volume),
-                                VelocityToPlay = volWobbler.Next(note.Volume),
-                                Duration = note.Duration
-                            };
-                            steps.AddStep(startNoteTime, step);
-
-                            // Maybe add a deferred stop note.
-                            if (stopNoteTime != startNoteTime)
-                            {
-                                steps.AddStep(stopNoteTime, new StepNoteOff(step));
-                            }
-                            // else client is taking care of it.
-
-                            // Process any chord notes.
-                            foreach (Note cnote in note.ChordNotes)
+                            // Process all note numbers.
+                            foreach (int noteNum in note.NoteNumbers)
                             {
                                 ///// Note on.
-                                step = new StepNoteOn()
+                                StepNoteOn step = new StepNoteOn()
                                 {
-                                    Tag = nt,
-                                    Channel = nt.Channel,
-                                    NoteNumber = cnote.NoteNumber,
-                                    NoteNumberToPlay = cnote.NoteNumber,
+                                    Tag = track,
+                                    Channel = track.Channel,
+                                    NoteNumber = noteNum,
+                                    NoteNumberToPlay = noteNum,
                                     Velocity = volWobbler.Next(note.Volume),
                                     VelocityToPlay = volWobbler.Next(note.Volume),
                                     Duration = note.Duration
@@ -700,7 +668,7 @@ namespace Nebulator.Engine
                     // It's a drum.
                     n = new Note(int.Parse(_midiDrumDefs[parms[2]]))
                     {
-                        Duration = 1 // nominal duration
+                        Duration = new Time(1) // nominal duration
                     };
                 }
                 else
@@ -715,7 +683,7 @@ namespace Nebulator.Engine
                     Time t = ParseTime(pcont, parms[4]);
                     if (t != null)
                     {
-                        n.Duration = t.TotalTocks;
+                        n.Duration = t;
                     }
                 }
 

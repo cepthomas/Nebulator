@@ -49,7 +49,8 @@ namespace Nebulator.UI
         /// Initialize the script specific stuff.
         /// </summary>
         /// <param name="surface">Where to create controls.</param>
-        public void Init(UserControl surface)
+        /// <param name="levers">Specs for levers from script.</param>
+        public void Init(UserControl surface, IEnumerable<LeverControlPoint> levers)
         {
             ////// Draw the levers and hook them up.
             splitContainer1.Panel1.Controls.Clear();
@@ -59,7 +60,7 @@ namespace Nebulator.UI
             int x = SPACING;
             int y = SPACING;
 
-            Globals.Dynamic.Levers.Values.ForEach(l =>
+            levers.ForEach(l =>
             {
                 Slider sl = new Slider()
                 {

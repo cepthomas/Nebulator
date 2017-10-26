@@ -21,9 +21,6 @@ namespace Nebulator
         /// <summary>Persisted values for current neb file.</summary>
         public static Persisted CurrentPersisted { get; set; } = new Persisted();
 
-        /// <summary>Variables, controls, etc defined in the script.</summary>
-        public static ScriptDynamic Dynamic { get; set; } = new ScriptDynamic();
-
         /// <summary>Playing the composition.</summary>
         public static bool Playing { get; set; } = false;
 

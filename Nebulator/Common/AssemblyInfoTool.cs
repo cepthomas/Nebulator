@@ -10,7 +10,7 @@ namespace Nebulator.Common
     /// <summary>
     /// Info about one assembly.
     /// </summary>
-    public class AssemblyInfo
+    public class AssemblyInfoTool
     {
         /// <summary>
         /// The filename if pertinent.
@@ -35,7 +35,7 @@ namespace Nebulator.Common
         /// <summary>
         /// List of assemblies referenced by this one.
         /// </summary>
-        public List<AssemblyInfo> ReferencedAssemblies { get; private set; } = new List<AssemblyInfo>();
+        public List<AssemblyInfoTool> ReferencedAssemblies { get; private set; } = new List<AssemblyInfoTool>();
 
         /// <summary>
         /// The types defined in this assembly.
@@ -108,7 +108,7 @@ namespace Nebulator.Common
                         {
                             _refAssemblies.Add(srefassy);
 
-                            AssemblyInfo refai = new AssemblyInfo()
+                            AssemblyInfoTool refai = new AssemblyInfoTool()
                             {
                                 AssemblyName = refassy.Name,
                                 FileName = "",
@@ -156,7 +156,7 @@ namespace Nebulator.Common
             sb.AppendLine("  Version " + Version);
             sb.AppendLine("  Target " + Target);
 
-            foreach (AssemblyInfo refassy in ReferencedAssemblies)
+            foreach (AssemblyInfoTool refassy in ReferencedAssemblies)
             {
                 sb.AppendLine("  RefAssembly " + refassy.AssemblyName + " " + refassy.Version.ToString());
             }

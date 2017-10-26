@@ -50,7 +50,7 @@ namespace Nebulator.Engine
         public void sendMidiNote(Track track, string snote, int vol, double dur)
         {
             Note note = new Note(snote);
-            sendMidiNote(track, note.NoteNumber, vol, dur);
+            note.NoteNumbers.ForEach(n => sendMidiNote(track, n, vol, dur));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Nebulator.Engine
                     NoteNumberToPlay = Utils.Constrain(inote, 0, MidiInterface.MAX_MIDI_NOTE),
                     Velocity = vol,
                     VelocityToPlay = vol,
-                    Duration = new Time(dur).TotalTocks
+                    Duration = new Time(dur)
                 };
 
                 step.Adjust(track.Volume, track.Modulate);

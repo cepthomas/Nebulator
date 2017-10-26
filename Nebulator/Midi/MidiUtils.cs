@@ -8,8 +8,8 @@ using NAudio.Midi;
 using NLog;
 using Nebulator.Common;
 
-
 // FUTURE record midi directly to neb format?
+
 
 namespace Nebulator.Midi
 {
@@ -123,106 +123,202 @@ namespace Nebulator.Midi
             MidiFile.Export(midiFileName, events);
         }
 
-
         /// <summary>
-        /// Read a style file into text that can be placed in a neb file. TODO
+        /// Read a style file into text that can be placed in a neb file.
+        /// It attempts to clean up any issues in the midi event data e.g. note on/off mismatches.
         /// </summary>
         /// <param name="fileName"></param>
-        public static void ImportStyle(string fileName)
+        /// <returns>Collection of strings for pasting into a file.</returns>
+        public static List<string> ImportStyle(string fileName)
         {
-            StyleParser sty = new StyleParser();
+            List<string> constants = new List<string>();
+            List<string> tracks = new List<string>();
+            List<string> sequences = new List<string>();
 
+            StyleParser sty = new StyleParser();
             sty.ProcessFile(fileName);
 
+            // Process collected events into strings digestible by neb.
+            List<string> parts = sty.Parts;
+            List<int> channels = sty.Channels;
 
-            // Process collected events into strings. 
-
-            //Output should be strings like this:
-            ///// Constants /////
-            // When to play.
-            //const(START, 0);
-            //const(PART1, 99);
-            // Total length.
-            //const(TLEN, 333);
-
-            ///// Tracks and Loops /////
-            //track(TRACK1, 1, 0);
-            //loop(START, PART1, SEQ1);
-            //loop(PART1, TLEN, SEQ2);
-
-            //track(TRACK2, 2, 0);
-            //loop(START, TLEN, SEQ2);
-
-            //track(DRUMS, 10, 0);
-            //loop(START, TLEN, SEQ3);
-
-            ///// Sequences and Notes /////
-            //seq(SEQ1, 8);
-            //note(0.00, F.4, 90, 0.08);
-            //note(0.1/2, D#.4, 111, 0.08);
-            //note(1.21, C.4, 90, 0.08);
-            // ....
-
-            //seq(SEQ2, TLEN);
-            // ....
-
-
-            List<string> ls1 = new List<string>
+            // Collect sequence info.
+            foreach(var part in parts)
             {
-                "///// Constants /////",
-                "const (START, 0);"
-            };
+                foreach (int channel in channels)
+                {
+                    var events = sty.GetEvents(part, channel);
 
-            List<string> ls2 = new List<string>
+                    if(events != null)
+                    {
+                        // Current note on events that are waiting for corresponding note offs.
+                        NoteOnEvent[] ons = new NoteOnEvent[MidiInterface.MAX_MIDI_NOTE];
+
+                        // Collected and processed events.
+                        List<NoteOnEvent> validEvents = new List<NoteOnEvent>();
+
+                        foreach(var evt in events)
+                        {
+                            switch(evt)
+                            {
+                                case NoteOnEvent onevt:
+                                    {
+                                        if(onevt.OffEvent != null)
+                                        {
+                                            // Self contained - just save it.
+                                            validEvents.Add(onevt);
+                                            // Reset it.
+                                            ons[onevt.NoteNumber] = null;
+                                        }
+                                        else if(onevt.Velocity == 0)
+                                        {
+                                            // It's actually a note off - handle as such.
+                                            // Locate the initiating note on.
+                                            NoteOnEvent on = ons[onevt.NoteNumber];
+                                            if (on != null)
+                                            {
+                                                on.OffEvent = new NoteEvent(onevt.AbsoluteTime, onevt.Channel, MidiCommandCode.NoteOff, onevt.NoteNumber, 0);
+                                                validEvents.Add(on);
+                                            }
+                                            else
+                                            {
+                                                // hmmm... see below
+                                                //Console.WriteLine($"++++ on with vel=0 in part {part}:{onevt}");
+                                            }
+
+                                            // Reset it.
+                                            ons[onevt.NoteNumber] = null;
+                                        }
+                                        else
+                                        {
+                                            // True note on - save it until note off shows up.
+                                            NoteOnEvent on = ons[onevt.NoteNumber];
+                                            if (on != null)
+                                            {
+                                                // Check for dupes?
+                                                // FUTURE Sometimes there is a note off followed with a note on at the same time which
+                                                // causes this issue. Need to process the off first.
+                                                //Console.WriteLine($"++++ dupe on in part {part}:{onevt}");
+                                            }
+
+                                            ons[onevt.NoteNumber] = onevt;
+                                        }
+                                    }
+                                    break;
+
+                                case NoteEvent nevt:
+                                    {
+                                        if(nevt.CommandCode == MidiCommandCode.NoteOff || nevt.Velocity == 0)
+                                        {
+                                            // It's actually a note off - handle as such.
+                                            // Locate the initiating note on.
+                                            NoteOnEvent on = ons[nevt.NoteNumber];
+                                            if (on != null)
+                                            {
+                                                on.OffEvent = new NoteEvent(nevt.AbsoluteTime, nevt.Channel, MidiCommandCode.NoteOff, nevt.NoteNumber, 0);
+                                                validEvents.Add(on);
+                                            }
+                                            else
+                                            {
+                                                // hmmm...
+                                                //Console.WriteLine($"++++ off with vel=0 in part {part}:{nevt}");
+                                            }
+
+                                            // Reset it.
+                                            ons[nevt.NoteNumber] = null;
+                                        }
+                                        // else ignore.
+                                    }
+                                    break;
+                            }
+                        }
+
+                        // Clean up the note tracking. FUTURE check for leftovers?
+
+                        Time MidiTimeToInternal(long mtime, int tpqn)
+                        {
+                            //return new Time(mtime / tpqn);
+                            return new Time(mtime * Globals.TOCKS_PER_TICK / tpqn);
+                        }
+
+                        // Process the collected valid events.
+                        if (validEvents.Count > 0)
+                        {
+                            ///// Sequences and Notes /////
+                            //seq(SEQ1, 8);
+                            //note(0.00, F.4.m7, 90, 0.08);
+                            //note(1.21, C.4, 90, 0.08);
+                            // ....
+
+                            validEvents.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
+                            long duration = validEvents.Last().AbsoluteTime - validEvents.First().AbsoluteTime;
+                            Time tdur = MidiTimeToInternal(duration, sty.DeltaTicksPerQuarterNote);
+                            tdur.RoundUp();
+                            sequences.Add($"seq({part.Replace(" ", "_")}_{channel}, {tdur.Tick});");
+
+                            // Process each set of notes at each discrete play time.
+                            foreach (IEnumerable<NoteOnEvent> nevts in validEvents.GroupBy(e => e.AbsoluteTime))
+                            {
+                                List<int> notes = new List<int>(nevts.Select(n => n.NoteNumber));
+                                //notes.Sort();
+
+                                NoteOnEvent noevt = nevts.ElementAt(0);
+                                Time when = MidiTimeToInternal(noevt.AbsoluteTime, sty.DeltaTicksPerQuarterNote);
+                                Time dur = MidiTimeToInternal(noevt.NoteLength, sty.DeltaTicksPerQuarterNote);
+
+                                if (channel == 10)
+                                {
+                                    // Drums - one line per hit.
+                                    foreach(int d in notes)
+                                    {
+                                        string sdrum = NoteUtils.FormatDrum(d);
+                                        sequences.Add($"note({when}, {sdrum}, {noevt.Velocity}, {dur});");
+                                    }
+                                }
+                                else
+                                {
+                                    // Instrument - note(s) or chord.
+                                    foreach(string sn in NoteUtils.FormatNotes(notes))
+                                    {
+                                        sequences.Add($"note({when}, {sn}, {noevt.Velocity}, {dur});");
+                                    }
+                                }
+                            }
+                            sequences.Add(""); // some space
+                        }
+                    }
+                    // else not a valid combination - ignore
+                }
+            }
+
+            // Process track info.
+            foreach (int channel in channels)
             {
-                "///// Tracks and Loops /////"
-            };
+                ///// Tracks and Loops /////
+                //track(TRACK_CHANNEL, CHANNEL, 0);
+                //loop(START, PART1, SEQ1);
+                //loop(PART1, TLEN, SEQ2);
 
-            List<string> ls3 = new List<string>
-            {
-                "///// Sequences and Notes /////"
-            };
+                tracks.Add($"track(TRACK_{channel}, {channel}, 0, 0, 0);");
+            }
 
-            // Process each defined part in the midi data. TODO
-            HashSet<int> channels = new HashSet<int>();
-            HashSet<int> whens = new HashSet<int>();
+            // Global stuff.
+            constants.Add($"const(TLEN, XXX);");
 
-            //List<string> parts = events.Keys.ToList();
-            //foreach (string part in parts)
-            //{
-            //    //ls2.Add($"track(TRACK1, 1, 0);");
+            List<string> all = new List<string>();
+            all.Add("///// Constants /////");
+            all.AddRange(constants);
+            all.Add(""); // space
+            all.Add("///// Tracks and Loops /////");
+            all.AddRange(tracks);
+            all.Add(""); // space
+            all.Add("///// Sequences and Notes /////");
+            all.AddRange(sequences);
 
-            //    // part <> 
-            //    MidiEventCollection ec = events[part];
-
-            //    int tpqn = ec.DeltaTicksPerQuarterNote;
-
-            //    foreach (MidiEvent me in ec[0])
-            //    {
-            //        channels.Add(me.Channel);
-            //    }
-
-            //    // We have a match. Diff the absolute time and convert to Time type. TODO
-            //    // note(4.00, F.3, 90, 0.08);
-            //}
-
-
-            // a delta time of 960 when the resolution is 1920 ticks per quarter note is after a 1/8 note rest
-
-
-            // Time is measured in “delta time” which is defined as the number of ticks (the resolution of which is
-            // defined in the header) before the midi event is to be executed. I.e., a delta time of 0 =
-            // immediately; a delta time of 960 when the resolution is 1920 ticks per quarter note is after a
-            // 1/8 note rest. Delta time is a variable length format using 7 of the 8 available bits; the
-            // maximum time value of any time byte is 127 (7FH). The first or 8th bit is used to identify the
-            // last of the delta time bytes; the least significant byte is indicated by a leading bit=0, all other
-            // bytes have a leading bit=1.
-
-            // Track chunks(identifier = MTrk) contain a sequence of time - ordered events(MIDI and / or sequencer - specific data), 
-            // each of which has a delta time value associated with it - ie the amount of time(specified in tickdiv units) since the 
-            // previous event.
-
-
+            //all.ForEach(s => Console.WriteLine(s));
+            //System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, all));
+            
+            return all;
         }
     }
 }

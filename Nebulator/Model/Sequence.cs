@@ -28,7 +28,7 @@ namespace Nebulator.Model
             {
                 $"Name:{Name} Length:{Length}"
             };
-            Notes.ForEach(x => ls.Add("  Note " + x.ToString()));
+            //Notes.ForEach(x => ls.Add("  Note " + x.ToString()));
             return string.Join(Environment.NewLine, ls);
         }
     }

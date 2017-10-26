@@ -247,7 +247,7 @@ namespace Nebulator.Midi
         }
 
         /// <summary>
-        /// Process input midi event.
+        /// Process input midi event. Note that NoteOn with 0 velocity are converted to NoteOff.
         /// </summary>
         void MidiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
         {
@@ -260,15 +260,29 @@ namespace Nebulator.Midi
                 case MidiCommandCode.NoteOn:
                     {
                         NoteOnEvent evt = me as NoteOnEvent;
-                        step = new StepNoteOn()
+
+                        if(evt.Velocity == 0)
                         {
-                            Channel = evt.Channel,
-                            NoteNumber = evt.NoteNumber,
-                            NoteNumberToPlay = evt.NoteNumber,
-                            Velocity = evt.Velocity,
-                            VelocityToPlay = evt.Velocity,
-                            Duration = 0
-                        };
+                            step = new StepNoteOff()
+                            {
+                                Channel = evt.Channel,
+                                NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MAX_MIDI_NOTE),
+                                Velocity = 0
+                            };
+
+                        }
+                        else
+                        {
+                            step = new StepNoteOn()
+                            {
+                                Channel = evt.Channel,
+                                NoteNumber = evt.NoteNumber,
+                                NoteNumberToPlay = evt.NoteNumber,
+                                Velocity = evt.Velocity,
+                                VelocityToPlay = evt.Velocity,
+                                Duration = new Time(0)
+                            };
+                        }
                     }
                     break;
 
@@ -278,7 +292,8 @@ namespace Nebulator.Midi
                         step = new StepNoteOff()
                         {
                             Channel = evt.Channel,
-                            NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MAX_MIDI_NOTE)
+                            NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MAX_MIDI_NOTE),
+                            Velocity = evt.Velocity
                         };
                     }
                     break;

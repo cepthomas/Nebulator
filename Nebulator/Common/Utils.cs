@@ -155,7 +155,7 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="val"></param>
         /// <returns>tuple of integral and 3 dp of fractional</returns>
-        public static (int integral, int fractional) Split(double val)
+        public static (int integral, int fractional) SplitDouble(double val)
         {
             // Split into two parts from 0.01 or 1.01 or 1.10.
             int integral = (int)Math.Truncate(val);

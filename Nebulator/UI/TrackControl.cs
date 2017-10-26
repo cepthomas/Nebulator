@@ -18,12 +18,7 @@ namespace Nebulator.UI
         /// <summary>
         /// Corresponding track object.
         /// </summary>
-        public Track TrackInfo { get; set; }
-
-        /// <summary>
-        /// Track state.
-        /// </summary>
-        public TrackState State { get; set; } = TrackState.Normal;
+        public Track BoundTrack { get; set; }
         #endregion
 
         #region Events
@@ -44,7 +39,6 @@ namespace Nebulator.UI
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
-            State = TrackState.Normal;
         }
 
         /// <summary>
@@ -56,9 +50,9 @@ namespace Nebulator.UI
             chkMute.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
             sldVolume.ControlColor = Globals.UserSettings.ControlColor;
             sldVolume.Font = Globals.UserSettings.ControlFont;
-            sldVolume.Label = TrackInfo.Name;
+            sldVolume.Label = BoundTrack.Name;
             sldVolume.Maximum = MidiInterface.MAX_MIDI_VOLUME;
-            sldVolume.Value = TrackInfo.Volume;
+            sldVolume.Value = BoundTrack.Volume;
 
             sldVolume.ValueChanged += VolTrack_ValueChanged;
         }
@@ -81,15 +75,15 @@ namespace Nebulator.UI
 
             if (chkMute.Checked)
             {
-                State = TrackState.Mute;
+                BoundTrack.State = TrackState.Mute;
             }
             else if (chkSolo.Checked)
             {
-                State = TrackState.Solo;
+                BoundTrack.State = TrackState.Solo;
             }
             else
             {
-                State = TrackState.Normal;
+                BoundTrack.State = TrackState.Normal;
             }
 
             TrackChangeEvent?.Invoke(this, new TrackChangeEventArgs() { What = "TrackState" });
@@ -100,7 +94,7 @@ namespace Nebulator.UI
         /// </summary>
         private void VolTrack_ValueChanged(object sender, EventArgs e)
         {
-            TrackInfo.Volume = sldVolume.Value;
+            BoundTrack.Volume = sldVolume.Value;
         }
     }
 }

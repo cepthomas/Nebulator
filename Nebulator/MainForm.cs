@@ -14,7 +14,8 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
-// TODO space bar to start stop.
+// FUTURE space bar to start stop.
+// FUTURE cut into assemblies, add unit tester.
 
 
 namespace Nebulator
@@ -54,6 +55,9 @@ namespace Nebulator
 
         /// <summary>Indicates needs compilation.</summary>
         Color _needCompile = Color.Red;
+
+        /// <summary>Variables, controls, etc defined in the script.</summary>
+        ScriptDynamic _dynamic = new ScriptDynamic();
         #endregion
 
         #region Lifecycle
@@ -106,20 +110,26 @@ namespace Nebulator
             _piano.PianoKeyUp += Piano_KeyUp;
             #endregion
 
+            #region Misc setups
             InitControls();
 
             _watcher.FileChangeEvent += Watcher_Changed;
 
             levers.LeverChangeEvent += Levers_Changed;
 
+            UpdateMenu();
+
+            NoteUtils.Init();
+            #endregion
+
+            #region Command line
             // Look for filename passed in.
             string[] args = Environment.GetCommandLineArgs();
             if (args.Count() > 1)
             {
                 OpenFile(args[1]);
             }
-
-            UpdateMenu();
+            #endregion
 
 
 #if DEBUG
@@ -142,7 +152,7 @@ namespace Nebulator
 
                 // Save the project.
                 Globals.CurrentPersisted.Values.Clear();
-                GetTrackControls().ForEach(c => Globals.CurrentPersisted.SetValue(c.TrackInfo.Name, "volume", c.TrackInfo.Volume));
+                _dynamic.Tracks.Values.ForEach(c => Globals.CurrentPersisted.SetValue(c.Name, "volume", c.Volume));
                 Globals.CurrentPersisted.Save();
 
                 // Save user settings.
@@ -207,10 +217,10 @@ namespace Nebulator
 
                 _steps = compiler.ConvertToSteps();
 
-                Globals.Dynamic = _script.Dynamic;
+                _dynamic = _script.Dynamic;
                 _script.ScriptEvent += Script_ScriptEvent;
                 InitMainUi();
-                levers.Init(_script.Surface);
+                levers.Init(_script.Surface, _dynamic.Levers.Values);
                 // Init the script.
                 _script.setup();
             }
@@ -234,14 +244,20 @@ namespace Nebulator
         void InitMainUi()
         {
             ///// Clean up current.
-            GetTrackControls().ForEach(c => splitContainerMain.Panel1.Controls.Remove(c));
+            foreach (Control ctl in splitContainerMain.Panel1.Controls)
+            {
+                if (ctl is TrackControl)
+                {
+                    splitContainerMain.Panel1.Controls.Remove(ctl as TrackControl);
+                }
+            }
 
             ///// Set up UI.
             const int CONTROL_SPACING = 10;
             int x = timeMaster.Right + CONTROL_SPACING;
 
             ///// The track controls.
-            foreach (Track t in Globals.Dynamic.Tracks.Values)
+            foreach (Track t in _dynamic.Tracks.Values)
             {
                 // Init from persistence.
                 t.Volume = Globals.CurrentPersisted.GetValue(t.Name, "volume");
@@ -249,7 +265,7 @@ namespace Nebulator
                 TrackControl trk = new TrackControl()
                 {
                     Location = new Point(x, 0), // txtTime.Top),
-                    TrackInfo = t
+                    BoundTrack = t
                 };
                 trk.TrackChangeEvent += TrackChange_Event;
                 splitContainerMain.Panel1.Controls.Add(trk);
@@ -309,7 +325,7 @@ namespace Nebulator
                         _script.ExecScriptFunction(var.Name);
 
                         // Output any midiout controllers.
-                        IEnumerable<MidiControlPoint> ctlpts = Globals.Dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+                        IEnumerable<MidiControlPoint> ctlpts = _dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
 
                         if (ctlpts != null && ctlpts.Count() > 0)
                         {
@@ -334,8 +350,11 @@ namespace Nebulator
                     foreach (Step step in _steps.GetSteps(Globals.CurrentStepTime))
                     {
                         Track track = step.Tag as Track;
-                        bool _anySolo = Globals.Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+
+                        // Is it ok to play now?
+                        bool _anySolo = _dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
                         bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
+
                         if (play)
                         {
                             // Maybe tweak values.
@@ -440,7 +459,7 @@ namespace Nebulator
                     /////// Control change
                     StepControllerChange scc = e.Step as StepControllerChange;
                     // Process through our list.
-                    IEnumerable<MidiControlPoint> ctlpts = Globals.Dynamic.InputMidis.Values.Where((c, m) => (
+                    IEnumerable<MidiControlPoint> ctlpts = _dynamic.InputMidis.Values.Where((c, m) => (
                         c.MidiController == scc.MidiController &&
                         c.Channel == scc.Channel));
 
@@ -485,13 +504,12 @@ namespace Nebulator
             if (sender is TrackControl)
             {
                 // Check for solos.
-                IEnumerable<TrackControl> ctls = GetTrackControls();
-                bool _anySolo = ctls.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = _dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
-                // Kill any not solo.
                 if (_anySolo)
                 {
-                    ctls.ForEach(c => { if (c.TrackInfo.State != TrackState.Solo) Globals.MidiInterface.Kill(c.TrackInfo.Channel); });
+                    // Kill any not solo.
+                    _dynamic.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) Globals.MidiInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -844,7 +862,7 @@ namespace Nebulator
                 Channel = 2,
                 NoteNumberToPlay = Utils.Constrain(e.NoteID, 0, MidiInterface.MAX_MIDI_NOTE),
                 VelocityToPlay = 90,
-                Duration = 0
+                Duration = new Time(0)
             };
             Globals.MidiInterface.Send(step);
         }
@@ -948,23 +966,6 @@ namespace Nebulator
             timeMaster.ControlColor = Globals.UserSettings.ControlColor;
             timeMaster.Invalidate();
         }
-
-        /// <summary>
-        /// Helper.
-        /// </summary>
-        /// <returns></returns>
-        IEnumerable<TrackControl> GetTrackControls()
-        {
-            List<TrackControl> ctls = new List<TrackControl>();
-            foreach (Control ctl in splitContainerMain.Panel1.Controls)
-            {
-                if (ctl is TrackControl)
-                {
-                    ctls.Add(ctl as TrackControl);
-                }
-            }
-            return ctls;
-        }
         #endregion
 
         #region Midi utilities
@@ -985,7 +986,7 @@ namespace Nebulator
             if (saveDlg.ShowDialog() == DialogResult.OK)
             {
                 Dictionary<int, string> tracks = new Dictionary<int, string>();
-                Globals.Dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+                _dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
                 MidiUtils.ExportMidi(_steps, saveDlg.FileName, tracks, Globals.CurrentPersisted.Speed, "Converted from " + _fn);
             }
         }

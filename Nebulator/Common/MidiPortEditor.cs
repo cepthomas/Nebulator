@@ -4,11 +4,9 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
-using Nebulator.Common;
-using Nebulator.Engine;
-using Nebulator.Midi;
 
-namespace Nebulator.UI
+
+namespace Nebulator.Common
 {
     /// <summary>Plugin to property grid.</summary>
     public class MidiPortEditor : UITypeEditor

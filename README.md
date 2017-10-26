@@ -30,9 +30,9 @@ This project contains a bunch of components that are either recycled or created 
 out for subsequent reuse.
 - Partial emulation of the Processing language for .NET.
 - A theoretically improved multimedia timer with improved accuracy for sub 10 msec period.
-- My midi class may be useful elsewhere.
+- Midi classes may be useful elsewhere.
 - A state machine class that was used in several products. Not currently used for this project but could reappear.
-- Partial import of Yamaha style (.sty) files.
+- Partial import of Yahama style (.sty) files.
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
 - Various utilities and extensions.

@@ -26,7 +26,7 @@ namespace Nebulator.Model
         public int WobbleVolume { get; set; } = 0;
 
         /// <summary>Humanize factor for time - before the tock.</summary>
-        public int WobbleTimeBefore { get; set; } = 0; // TODO, also WobbleTimeAfter. Also how to do triplets?
+        public int WobbleTimeBefore { get; set; } = 0;
 
         /// <summary>Humanize factor for time - after the tock.</summary>
         public int WobbleTimeAfter { get; set; } = 0;
@@ -35,7 +35,7 @@ namespace Nebulator.Model
         public int Modulate { get; set; } = 0;
 
         /// <summary>Current state for this track.</summary>
-        public TrackState State { get; set; }
+        public TrackState State { get; set; } = TrackState.Normal;
 
         /// <summary>All the loops for this track.</summary>
         public List<Loop> Loops { get; set; } = new List<Loop>();
@@ -47,9 +47,9 @@ namespace Nebulator.Model
         {
             List<string> ls = new List<string>
             {
-                $"Name:{Name} Channel:{Channel}"
+                $"Name:{Name} Channel:{Channel} Loops:{Loops.Count}"
             };
-            Loops.ForEach(l => ls.Add($"  Loop:{l}"));
+            //Loops.ForEach(l => ls.Add($"  Loop:{l}"));
             return string.Join(Environment.NewLine, ls);
         }
     }
