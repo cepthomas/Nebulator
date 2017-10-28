@@ -26,13 +26,7 @@ namespace Nebulator.Midi
         public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> tracks, double secPerTick, string info)
         {
             Dictionary<int, IList<MidiEvent>> trackEvents = new Dictionary<int, IList<MidiEvent>>();
-
-            ///// Calc some times.
             int deltaTicksPerQuarterNote = 96; // fixed output value
-            //double tocksPerQuarterNote = Globals.TOCKS_PER_TICK / 4;
-            //double deltaTicksPerTock = deltaTicksPerQuarterNote / tocksPerQuarterNote;
-            // double ticksPerClick = deltaTicksPerQuarterNote * 4 * speed;
-            //long usecPerQuarterNote = (long)(1000000.0 * secPerQuarterNote);
 
             ///// Meta file stuff.
             MidiEventCollection events = new MidiEventCollection(1, deltaTicksPerQuarterNote);
@@ -126,6 +120,7 @@ namespace Nebulator.Midi
         /// <summary>
         /// Read a style file into text that can be placed in a neb file.
         /// It attempts to clean up any issues in the midi event data e.g. note on/off mismatches.
+        /// Returns the list of strings and also places them in the clipboard.
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns>Collection of strings for pasting into a file.</returns>
@@ -134,6 +129,7 @@ namespace Nebulator.Midi
             List<string> constants = new List<string>();
             List<string> tracks = new List<string>();
             List<string> sequences = new List<string>();
+            List<string> leftovers = new List<string> { "Leftovers" };
 
             StyleParser sty = new StyleParser();
             sty.ProcessFile(fileName);
@@ -152,80 +148,69 @@ namespace Nebulator.Midi
                     if(events != null)
                     {
                         // Current note on events that are waiting for corresponding note offs.
-                        NoteOnEvent[] ons = new NoteOnEvent[MidiInterface.MAX_MIDI_NOTE];
+                        LinkedList<NoteOnEvent> ons = new LinkedList<NoteOnEvent>();
 
                         // Collected and processed events.
                         List<NoteOnEvent> validEvents = new List<NoteOnEvent>();
 
-                        foreach(var evt in events)
+                        // Run through each group of events
+                        foreach (var evt in events)
                         {
-                            switch(evt)
+                            switch (evt)
                             {
                                 case NoteOnEvent onevt:
                                     {
-                                        if(onevt.OffEvent != null)
+                                        if (onevt.OffEvent != null)
                                         {
                                             // Self contained - just save it.
                                             validEvents.Add(onevt);
                                             // Reset it.
-                                            ons[onevt.NoteNumber] = null;
+                                            ons.AddLast(onevt);
                                         }
-                                        else if(onevt.Velocity == 0)
+                                        else if (onevt.Velocity == 0)
                                         {
-                                            // It's actually a note off - handle as such.
-                                            // Locate the initiating note on.
-                                            NoteOnEvent on = ons[onevt.NoteNumber];
+                                            // It's actually a note off - handle as such. Locate the initiating note on.
+
+                                            var on = ons.First(o => o.NoteNumber == onevt.NoteNumber);
                                             if (on != null)
                                             {
+                                                // Found it.
                                                 on.OffEvent = new NoteEvent(onevt.AbsoluteTime, onevt.Channel, MidiCommandCode.NoteOff, onevt.NoteNumber, 0);
                                                 validEvents.Add(on);
+                                                ons.Remove(on); // reset
                                             }
                                             else
                                             {
-                                                // hmmm... see below
-                                                //Console.WriteLine($"++++ on with vel=0 in part {part}:{onevt}");
+                                                // hmmm...
+                                                leftovers.Add($"NoteOff: NoteOnEvent with vel=0 in part {part}:{onevt}");
                                             }
-
-                                            // Reset it.
-                                            ons[onevt.NoteNumber] = null;
                                         }
                                         else
                                         {
                                             // True note on - save it until note off shows up.
-                                            NoteOnEvent on = ons[onevt.NoteNumber];
-                                            if (on != null)
-                                            {
-                                                // Check for dupes?
-                                                // FUTURE Sometimes there is a note off followed with a note on at the same time which
-                                                // causes this issue. Need to process the off first.
-                                                //Console.WriteLine($"++++ dupe on in part {part}:{onevt}");
-                                            }
-
-                                            ons[onevt.NoteNumber] = onevt;
+                                            ons.AddLast(onevt);
                                         }
                                     }
                                     break;
 
                                 case NoteEvent nevt:
                                     {
-                                        if(nevt.CommandCode == MidiCommandCode.NoteOff || nevt.Velocity == 0)
+                                        if (nevt.CommandCode == MidiCommandCode.NoteOff || nevt.Velocity == 0)
                                         {
-                                            // It's actually a note off - handle as such.
-                                            // Locate the initiating note on.
-                                            NoteOnEvent on = ons[nevt.NoteNumber];
+                                            // It's actually a note off - handle as such. Locate the initiating note on.
+                                            var on = ons.First(o => o.NoteNumber == nevt.NoteNumber);
                                             if (on != null)
                                             {
+                                                // Found it.
                                                 on.OffEvent = new NoteEvent(nevt.AbsoluteTime, nevt.Channel, MidiCommandCode.NoteOff, nevt.NoteNumber, 0);
                                                 validEvents.Add(on);
+                                                ons.Remove(on); // reset
                                             }
                                             else
                                             {
-                                                // hmmm...
-                                                //Console.WriteLine($"++++ off with vel=0 in part {part}:{nevt}");
+                                                // hmmm... see below
+                                                leftovers.Add($"NoteOff: NoteEvent in part {part}:{nevt}");
                                             }
-
-                                            // Reset it.
-                                            ons[nevt.NoteNumber] = null;
                                         }
                                         // else ignore.
                                     }
@@ -233,7 +218,14 @@ namespace Nebulator.Midi
                             }
                         }
 
-                        // Clean up the note tracking. FUTURE check for leftovers?
+                        // Check for note tracking leftovers. Error?
+                        foreach (NoteOnEvent on in ons)
+                        {
+                            if(on != null)
+                            {
+                                leftovers.Add($"Leftover NoteOnEvent in part {part}:{on}");
+                            }
+                        }
 
                         Time MidiTimeToInternal(long mtime, int tpqn)
                         {
@@ -303,7 +295,7 @@ namespace Nebulator.Midi
             }
 
             // Global stuff.
-            constants.Add($"const(TLEN, XXX);");
+            constants.Add($"const(TLEN, 888);");
 
             List<string> all = new List<string>();
             all.Add("///// Constants /////");
@@ -316,8 +308,9 @@ namespace Nebulator.Midi
             all.AddRange(sequences);
 
             //all.ForEach(s => Console.WriteLine(s));
-            //System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, all));
-            
+            //System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, leftovers));
+            System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, all));
+
             return all;
         }
     }

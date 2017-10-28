@@ -10,7 +10,8 @@ namespace Nebulator.Common
 {
     public class NoteUtils
     {
-        public const int NOTES_PER_OCTAVE = 12;
+        const int NOTES_PER_OCTAVE = 12;
+        const string UNKNOWN_CHORD = "???";
 
         /// <summary>Note numbers that are white keys.</summary>
         static int[] _naturals = { 0, 2, 4, 5, 7, 9, 11 };
@@ -30,10 +31,10 @@ namespace Nebulator.Common
         /// <summary>The chord definitions from ScriptDefinitions.md and user settings. Key is string of constituent notes, Value is chord name.</summary>
         static Dictionary<string, string> _chordDefsByNotes = new Dictionary<string, string>();
 
-        /// <summary>The chord definitions from ScriptDefinitions.md and user settings. Key is string of constituent notes, Value is chord name.</summary>
+        /// <summary>The chord definitions from ScriptDefinitions.md and user settings. Key is chord name, Value is string of constituent notes.</summary>
         static Dictionary<string, string> _chordDefsByName = new Dictionary<string, string>();
 
-        /// <summary>The midi drum definitions from ScriptDefinitions.md. Key is note num, value is midi drum name. FUTURE a bit ungainly...</summary>
+        /// <summary>The midi drum definitions from ScriptDefinitions.md. Key is note num, value is midi drum name.</summary>
         static Dictionary<string, string> _drumDefsByNote = new Dictionary<string, string>();
 
         /// <summary>
@@ -84,6 +85,9 @@ namespace Nebulator.Common
                     _chordDefsByNotes.Add(string.Join(":", parts[1].SplitByTokens(" ")), parts[0]);
                 }
             }
+
+            // Add marker for parsed values.
+            _chordDefsByNotes.Add("", UNKNOWN_CHORD);
 
             // Create the flip-flop of chords.
             foreach (KeyValuePair<string, string> kv in _chordDefsByNotes)
@@ -227,17 +231,14 @@ namespace Nebulator.Common
                     }
                     else
                     {
-                        // Unknown - place marker in file for user to edit.
-                        string schord = "UNKNOWN_CHORD";
+                        // Unknown - add components individually.
                         foreach (int n in notes)
                         {
                             int octave = SplitNoteNumber(n).octave;
                             int root = SplitNoteNumber(n).root;
-                            schord += $"_{_noteNames[root]}.{octave}";
+                            snotes.Add($"{_noteNames[root]}.{octave}.{UNKNOWN_CHORD}");
                         }
-                        snotes.Add(schord);
 
-                        // Or do this?
                         //// Unknown - add components individually.
                         //foreach (int n in notes)
                         //{
@@ -245,6 +246,16 @@ namespace Nebulator.Common
                         //    int root = SplitNoteNumber(n).root;
                         //    snotes.Add($"{_noteNames[root]}.{octave}");
                         //}
+
+                        //// Unknown - place marker in file for user to edit.
+                        //string schord = "UNKNOWN_CHORD";
+                        //foreach (int n in notes)
+                        //{
+                        //    int octave = SplitNoteNumber(n).octave;
+                        //    int root = SplitNoteNumber(n).root;
+                        //    schord += $"_{_noteNames[root]}.{octave}";
+                        //}
+                        //snotes.Add(schord);
                     }
                 }
                 else

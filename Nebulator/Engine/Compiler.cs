@@ -515,7 +515,7 @@ namespace Nebulator.Engine
             // Process the composition values.
             foreach (Track track in _dynamic.Tracks.Values)
             {
-                Wobbler timeWobbler = new Wobbler()
+                Wobbler timeWobbler = new Wobbler() // FUTURE still needs some work. Or maybe just handle with new resolution?
                 {
                     RangeLow = -track.WobbleTimeBefore,
                     RangeHigh = track.WobbleTimeAfter
@@ -540,7 +540,8 @@ namespace Nebulator.Engine
                         foreach (Note note in nseq.Notes)
                         {
                             // Create the note start and stop times.
-                            int toffset = timeWobbler.Next(loopTick);
+                            int toffset = timeWobbler.Next(0);
+
                             Time startNoteTime = new Time(loopTick, toffset) + note.When;
                             Time stopNoteTime = startNoteTime + note.Duration;
 
@@ -548,14 +549,15 @@ namespace Nebulator.Engine
                             foreach (int noteNum in note.NoteNumbers)
                             {
                                 ///// Note on.
+                                int vel = volWobbler.Next(note.Volume);
                                 StepNoteOn step = new StepNoteOn()
                                 {
                                     Tag = track,
                                     Channel = track.Channel,
                                     NoteNumber = noteNum,
                                     NoteNumberToPlay = noteNum,
-                                    Velocity = volWobbler.Next(note.Volume),
-                                    VelocityToPlay = volWobbler.Next(note.Volume),
+                                    Velocity = vel,
+                                    VelocityToPlay = vel,
                                     Duration = note.Duration
                                 };
                                 steps.AddStep(startNoteTime, step);

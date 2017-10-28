@@ -6,34 +6,41 @@ using System.Linq;
 namespace Nebulator.Common
 {
     /// <summary>
-    /// Statistical randomizer for time and volume
+    /// Statistical randomizer for time and volume.
     /// </summary>
     public class Wobbler
     {
         Random _rand = new Random();
 
-        /// <summary>Minimum for randomizing (3 sigma).</summary>
+        ///// <summary>Minimum allowed value.</summary>
+        //public int Min { get; set; } = 0;
+
+        ///// <summary>Maximum allowed value.</summary>
+        //public int Max { get; set; } = 100;
+
+        /// <summary>Minimum range for randomizing - 3 sigma.</summary>
         public int RangeLow { get; set; } = 0;
 
-        /// <summary>Maximum for randomizing (3 sigma).</summary>
+        /// <summary>Maximum range for randomizing - 3 sigma.</summary>
         public int RangeHigh { get; set; } = 0;
 
         /// <summary>
         /// Return next from standard distribution.
         /// </summary>
         /// <param name="val">Center distribution around this.</param>
-        /// <returns>Randomized value or val if Min/Max are 0.</returns>
+        /// <returns>Randomized value or val if ranges are 0 (default).</returns>
         public int Next(int val)
         {
             int newVal = val; // default
 
-            if(RangeLow != 0 || RangeHigh != 0)
+            if (RangeLow != 0 || RangeHigh != 0)
             {
                 int max = val + RangeHigh;
                 int min = val + RangeLow;
                 int mean = min + (max - min) / 2;
                 int sigma = (max - min) / 3; // 3 sd
                 newVal = (int)Utils.NextGaussian(_rand, mean, sigma);
+                //newVal = Utils.Constrain(newVal, Min, Max);
             }
             return newVal;
         }

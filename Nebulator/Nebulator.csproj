@@ -112,6 +112,7 @@
     <Compile Include="Midi\MidiInterface.cs" />
     <Compile Include="Midi\MidiUtils.cs" />
     <Compile Include="Midi\Step.cs" />
+    <Compile Include="Midi\StepCollection.cs" />
     <Compile Include="Midi\StyleParser.cs" />
     <Compile Include="Model\ControlPoint.cs" />
     <Compile Include="Model\Loop.cs" />

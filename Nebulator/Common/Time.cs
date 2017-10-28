@@ -33,7 +33,13 @@ namespace Nebulator.Common
         /// <param name="tock">Tock to set - can be negative.</param>
         public Time(int tick, int tock)
         {
-            if(tock >= 0)
+            if (tick < 0)
+            {
+                //throw new Exception("Negative value is invalid");
+                tick = 0;
+            }
+
+            if (tock >= 0)
             {
                 Tick = tick + tock / Globals.TOCKS_PER_TICK;
                 Tock = tock % Globals.TOCKS_PER_TICK;
@@ -52,6 +58,11 @@ namespace Nebulator.Common
         /// <param name="tocks"></param>
         public Time(int tocks)
         {
+            if (tocks < 0)
+            {
+                throw new Exception("Negative value is invalid");
+            }
+
             Tick = tocks / Globals.TOCKS_PER_TICK;
             Tock = tocks % Globals.TOCKS_PER_TICK;
         }
@@ -62,16 +73,26 @@ namespace Nebulator.Common
         /// <param name="tocks"></param>
         public Time(long tocks)
         {
+            if(tocks < 0)
+            {
+                throw new Exception("Negative value is invalid");
+            }
+
             Tick = (int)(tocks / Globals.TOCKS_PER_TICK);
             Tock = (int)(tocks % Globals.TOCKS_PER_TICK);
         }
 
         /// <summary>
-        /// Constructor from Tick.Tock representation.
+        /// Constructor from Tick.Tock representation as a double.
         /// </summary>
         /// <param name="tts"></param>
         public Time(double tts)
         {
+            if (tts < 0)
+            {
+                throw new Exception("Negative value is invalid");
+            }
+
             // Split into two parts from 0.01 or 1.01 or 1.10.
             Tick = Utils.SplitDouble(tts).integral;
             Tock = Utils.SplitDouble(tts).fractional * 1000 / Globals.TOCKS_PER_TICK;
@@ -106,7 +127,7 @@ namespace Nebulator.Common
 
         #region Public functions
         /// <summary>
-        /// Do some math.
+        /// Do some math on two Time objects.
         /// </summary>
         /// <param name="t1"></param>
         /// <param name="t2"></param>

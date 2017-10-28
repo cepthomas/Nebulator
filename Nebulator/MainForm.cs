@@ -14,7 +14,7 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
-// FUTURE space bar to start stop.
+// FUTURE space bar to start/stop.
 // FUTURE cut into assemblies, add unit tester.
 
 
@@ -133,10 +133,12 @@ namespace Nebulator
 
 
 #if DEBUG
-            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\algorithmic.neb");
+            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
+            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
+            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\import.neb");
             //MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-            //MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+            //Clipboard.SetText(string.Join(Environment.NewLine, v));
 #endif
         }
 
