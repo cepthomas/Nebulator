@@ -51,6 +51,11 @@ namespace Nebulator.Controls
             get { return _value; }
             set { SetValue(value, false); }
         }
+
+        /// <summary>
+        /// Number of decimal places for the value.
+        /// </summary>
+        public int DecPlaces { get; set; } = 1;
         #endregion
 
         /// <summary>
@@ -110,7 +115,8 @@ namespace Nebulator.Controls
                 LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Center
             };
-            string sValue = $"{_value:F2}";
+            string sValue = _value.ToString("#." + new string('0', DecPlaces));
+
             Rectangle srect = new Rectangle(0, 10, 0, 0);
             e.Graphics.DrawString(sValue, Font, Brushes.Black, srect, format);
 

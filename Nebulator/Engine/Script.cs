@@ -19,7 +19,7 @@ namespace Nebulator.Engine
     {
         #region Properties
         /// <summary>Variables, controls, etc.</summary>
-        public ScriptDynamic Dynamic { get; set; } = new ScriptDynamic();
+        public Dynamic Dynamic { get; set; } = new Dynamic();
 
         /// <summary>
         /// The client hosts this control in their UI.

@@ -297,7 +297,7 @@ namespace Nebulator.Midi
             // Global stuff.
             constants.Add($"const(TLEN, 888);");
 
-            List<string> all = new List<string>();
+            List<string> all = new List<string>() { "///// Imported Style /////" };
             all.Add("///// Constants /////");
             all.AddRange(constants);
             all.Add(""); // space

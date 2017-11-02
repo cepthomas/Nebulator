@@ -52,7 +52,7 @@ namespace Nebulator.Engine
         string _scriptName = Globals.UNKNOWN_STRING;
 
         /// <summary>Collected runtime variables, controls, etc.</summary>
-        ScriptDynamic _dynamic = new ScriptDynamic();
+        Dynamic _dynamic = new Dynamic();
 
         /// <summary>Declared constants. Key is name.</summary>
         Dictionary<string, int> _consts = new Dictionary<string, int>();
@@ -86,7 +86,7 @@ namespace Nebulator.Engine
             _filesToCompile.Clear();
             _consts.Clear();
             _initLines.Clear();
-            _dynamic = new ScriptDynamic();
+            _dynamic = new Dynamic();
             TimeDefs.Clear();
             Errors.Clear();
 
@@ -552,7 +552,7 @@ namespace Nebulator.Engine
                                 int vel = volWobbler.Next(note.Volume);
                                 StepNoteOn step = new StepNoteOn()
                                 {
-                                    Tag = track,
+                                    TrackName = track.Name,
                                     Channel = track.Channel,
                                     NoteNumber = noteNum,
                                     NoteNumberToPlay = noteNum,

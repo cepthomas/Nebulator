@@ -95,7 +95,7 @@ namespace Nebulator.Common
 
             // Split into two parts from 0.01 or 1.01 or 1.10.
             Tick = Utils.SplitDouble(tts).integral;
-            Tock = Utils.SplitDouble(tts).fractional * 1000 / Globals.TOCKS_PER_TICK;
+            Tock = Utils.SplitDouble(tts).fractional;
         }
         #endregion
 
@@ -177,17 +177,6 @@ namespace Nebulator.Common
                 Tick++;
                 Tock = 0;
             }
-        }
-
-        /// <summary>
-        /// Convert to real time total msec.
-        /// </summary>
-        /// <param name="speed">Speed in msec per tick.</param>
-        /// <returns></returns>
-        public int ToMsec(int speed)
-        {
-            double msecpertock = speed / Globals.TOCKS_PER_TICK;
-            return (int)(msecpertock * TotalTocks);
         }
 
         /// <summary>

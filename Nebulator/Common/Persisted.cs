@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using Nebulator.Common;
 
-namespace Nebulator.Engine
+
+namespace Nebulator.Common
 {
     /// <summary>
     /// General purpose storage for things that change at runtime which we want to save and restore.
@@ -16,8 +16,8 @@ namespace Nebulator.Engine
         /// <summary>The project file name.</summary> 
         string _fn = Globals.UNKNOWN_STRING;
 
-        /// <summary>Master speed in sec per Tick.</summary>
-        public double Speed { get; set; } = 1.0;
+        /// <summary>Master speed in Ticks per minute - roughly equivalent to BPM.</summary>
+        public double Speed { get; set; } = 80.0;
 
         /// <summary>Master volume.</summary>
         public int Volume { get; set; } = 100;

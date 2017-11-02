@@ -39,10 +39,10 @@ loop(PART3, PART4, KEYS_CHORUS);
 loop(PART4, TLEN, KEYS_VERSE1);
 
 track(BASS, 2, 2, 0, 0);
-loop(PART1, TLEN, BASS1);
+loop(PART1, TLEN, BASS_VERSE);
 
 track(DRUMS, 10, 4, 0, 0);
-loop(PART1, TLEN, DRUM1);
+loop(PART1, TLEN, DRUMS_VERSE);
 
 ///// Sequences and Notes /////
 seq(KEYS_VERSE1, 8);
@@ -78,14 +78,14 @@ note(3.00, E.5.M, 90, 1.50);
 note(5.00, A.5.M, 90, 1.50);
 note(7.00, E.5.M, 90, 1.50);
 
-seq(BASS1, 8);
+seq(BASS_VERSE, 8);
 note(0.00, C.2, 70, 0.25);
 note(0.75, C.2, 70, 0.1/8); // 0.125?
 note(3.50, E.2, 70, 0.25);
 note(4.00, C.2, 70, 1.00);
 note(7.75, A#.2, 70, 0.10);
 
-seq(DRUM1, 4);
+seq(DRUMS_VERSE, 4);
 note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(0.50, RideCymbal1, DRUM_DEF_VOL);
 note(0.10, HiMidTom, DRUM_DEF_VOL);

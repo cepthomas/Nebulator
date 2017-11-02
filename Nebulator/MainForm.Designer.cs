@@ -113,7 +113,7 @@
             // 
             this.settingsToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
             // 
@@ -122,7 +122,7 @@
             this.pianoToolStripMenuItem.CheckOnClick = true;
             this.pianoToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_327_piano;
             this.pianoToolStripMenuItem.Name = "pianoToolStripMenuItem";
-            this.pianoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pianoToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.pianoToolStripMenuItem.Text = "Piano";
             this.pianoToolStripMenuItem.Click += new System.EventHandler(this.Piano_Click);
             // 
@@ -130,7 +130,7 @@
             // 
             this.logToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_331_blog;
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.logToolStripMenuItem.Text = "Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.Log_Click);
             // 
@@ -138,7 +138,7 @@
             // 
             this.importMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_359_file_import;
             this.importMidiToolStripMenuItem.Name = "importMidiToolStripMenuItem";
-            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.importMidiToolStripMenuItem.Text = "Import Style";
             this.importMidiToolStripMenuItem.Click += new System.EventHandler(this.ImportStyle_Click);
             // 
@@ -146,7 +146,7 @@
             // 
             this.exportMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_360_file_export;
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
@@ -154,7 +154,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -247,14 +247,15 @@
             // potSpeed
             // 
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
+            this.potSpeed.DecPlaces = 0;
             this.potSpeed.Location = new System.Drawing.Point(156, 7);
-            this.potSpeed.Maximum = 2D;
-            this.potSpeed.Minimum = 0.3D;
+            this.potSpeed.Maximum = 200D;
+            this.potSpeed.Minimum = 50D;
             this.potSpeed.Name = "potSpeed";
             this.potSpeed.Size = new System.Drawing.Size(32, 32);
             this.potSpeed.TabIndex = 33;
-            this.toolTip.SetToolTip(this.potSpeed, "Speed in seconds per tick");
-            this.potSpeed.Value = 1D;
+            this.toolTip.SetToolTip(this.potSpeed, "Speed in Ticks per minute (sorta BPM)");
+            this.potSpeed.Value = 100D;
             this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
             // 
             // chkLoop

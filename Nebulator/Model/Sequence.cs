@@ -8,7 +8,7 @@ namespace Nebulator.Model
     /// <summary>
     /// One sequence definition in the composition.
     /// </summary>
-    public class Sequence // FUTURE Trigger one play from controller input, sync to next tick or immediate.
+    public class Sequence // TODO Trigger one play from controller input or from script function, sync to next tick or immediate.
     {
         /// <summary>Name used for instantiation in a loop.</summary>
         public string Name { get; set; } = Globals.UNKNOWN_STRING;

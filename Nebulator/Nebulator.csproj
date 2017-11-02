@@ -77,6 +77,7 @@
     <Compile Include="Common\MidiPortEditor.cs" />
     <Compile Include="Common\MultiFileWatcher.cs" />
     <Compile Include="Common\NoteUtils.cs" />
+    <Compile Include="Common\Persisted.cs" />
     <Compile Include="Common\StateMachine.cs" />
     <Compile Include="Common\StringListEditor.cs" />
     <Compile Include="Common\Time.cs" />
@@ -90,9 +91,9 @@
     <Compile Include="Controls\TimeControl.Designer.cs">
       <DependentUpon>TimeControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Engine\CommonTypes.cs" />
-    <Compile Include="Engine\Persisted.cs" />
+    <Compile Include="Engine\Dynamic.cs" />
     <Compile Include="Engine\Script.cs" />
+    <Compile Include="Engine\ScriptError.cs" />
     <Compile Include="Engine\ScriptNeb.cs" />
     <Compile Include="Engine\ScriptUi.cs" />
     <Compile Include="Engine\ScriptSurface.cs" />

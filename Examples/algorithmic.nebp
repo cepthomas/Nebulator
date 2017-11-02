@@ -1,5 +1,5 @@
 {
-  "Speed": 1.000,
+  "Speed": 80.0,
   "Volume": 100,
   "Values": {
     "KEYS.volume": 80,

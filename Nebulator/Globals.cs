@@ -16,7 +16,7 @@ namespace Nebulator
         public const string UNKNOWN_STRING = "???";
 
         /// <summary>Subdivision setting.</summary>
-        public const int TOCKS_PER_TICK = 100;
+        public const int TOCKS_PER_TICK = 96;
 
         /// <summary>Persisted values for current neb file.</summary>
         public static Persisted CurrentPersisted { get; set; } = new Persisted();

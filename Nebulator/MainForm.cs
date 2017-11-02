@@ -57,7 +57,7 @@ namespace Nebulator
         Color _needCompile = Color.Red;
 
         /// <summary>Variables, controls, etc defined in the script.</summary>
-        ScriptDynamic _dynamic = new ScriptDynamic();
+        Dynamic _dynamic = new Dynamic();
         #endregion
 
         #region Lifecycle
@@ -133,9 +133,10 @@ namespace Nebulator
 
 
 #if DEBUG
+            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test1.neb");
             //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
-            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\import.neb");
+            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\alorithmic.neb");
+            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\import.neb");
             //MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
             //Clipboard.SetText(string.Join(Environment.NewLine, v));
@@ -351,7 +352,7 @@ namespace Nebulator
                     // Do the steps.
                     foreach (Step step in _steps.GetSteps(Globals.CurrentStepTime))
                     {
-                        Track track = step.Tag as Track;
+                        Track track = _dynamic.Tracks[step.TrackName];
 
                         // Is it ok to play now?
                         bool _anySolo = _dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
@@ -673,7 +674,7 @@ namespace Nebulator
         /// </summary>
         void Speed_ValueChanged(object sender, EventArgs e)
         {
-            Globals.CurrentPersisted.Speed = (int)(potSpeed.Value);
+            Globals.CurrentPersisted.Speed = (int)potSpeed.Value;
             SetTimerPeriod();
         }
 
@@ -682,7 +683,15 @@ namespace Nebulator
         /// </summary>
         void SetTimerPeriod()
         {
-            _timer.NebPeriod = (int)(1000 * Globals.CurrentPersisted.Speed / Globals.TOCKS_PER_TICK);
+            // Convert speed/bpm to msec per tock.
+            double ticksPerMinute = Globals.CurrentPersisted.Speed; // bpm
+            double tocksPerMinute = ticksPerMinute * Globals.TOCKS_PER_TICK;
+            double tocksPerSec = tocksPerMinute / 60;
+            double tocksPerMsec = tocksPerSec / 1000;
+            double msecPerTock = 1 / tocksPerMsec;
+
+            _timer.NebPeriod = (int)msecPerTock;
+            //was: _timer.NebPeriod = (int)(1000 * Globals.CurrentPersisted.Speed / Globals.TOCKS_PER_TICK);
         }
 
         /// <summary>
@@ -989,7 +998,13 @@ namespace Nebulator
             {
                 Dictionary<int, string> tracks = new Dictionary<int, string>();
                 _dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
-                MidiUtils.ExportMidi(_steps, saveDlg.FileName, tracks, Globals.CurrentPersisted.Speed, "Converted from " + _fn);
+
+                // Convert speed/bpm to sec per tick.
+                double ticksPerMinute = Globals.CurrentPersisted.Speed; // bpm
+                double ticksPerSec = ticksPerMinute / 60;
+                double secPerTick = 1 / ticksPerSec;
+
+                MidiUtils.ExportMidi(_steps, saveDlg.FileName, tracks, secPerTick, "Converted from " + _fn);
             }
         }
 

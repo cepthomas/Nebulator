@@ -35,8 +35,11 @@ namespace Nebulator.Engine
         /// <summary>Neb step clock is running.</summary>
         public bool playing { get { return Globals.Playing; } }
 
-        /// <summary>Current Nebulator Speed in seconds per tick. Can be used to calculate real times.</summary>
+        /// <summary>Current Nebulator Speed in Ticks per minute (bpm). Can be used to calculate real times.</summary>
         public float speed { get { return (float)Globals.CurrentPersisted.Speed; } }
+
+        /// <summary>Tock subdivision.</summary>
+        public int tocksPerTick { get { return Globals.TOCKS_PER_TICK; } }
         #endregion
 
         #region Script functions
@@ -69,7 +72,7 @@ namespace Nebulator.Engine
             {
                 StepNoteOn step = new StepNoteOn()
                 {
-                    Tag = track,
+                    TrackName = track.Name,
                     Channel = track.Channel,
                     NoteNumber = Utils.Constrain(inote, 0, MidiInterface.MAX_MIDI_NOTE),
                     NoteNumberToPlay = Utils.Constrain(inote, 0, MidiInterface.MAX_MIDI_NOTE),
@@ -93,7 +96,7 @@ namespace Nebulator.Engine
         {
             StepControllerChange step = new StepControllerChange()
             {
-                Tag = track,
+                TrackName = track.Name,
                 Channel = track.Channel,
                 MidiController = ctlnum,
                 ControllerValue = val
@@ -111,7 +114,7 @@ namespace Nebulator.Engine
         {
             StepPatch step = new StepPatch()
             {
-                Tag = track,
+                TrackName = track.Name,
                 Channel = track.Channel,
                 PatchNumber = patch
             };

@@ -327,7 +327,7 @@ namespace Nebulator.Midi
             {
                 if(step is StepNoteOn || step is StepNoteOff)
                 {
-                    // Pass through. FUTURE or do something fun with it.
+                    // Pass through. TODO or do something fun with it.
                     Send(step);
                 }
                 else
