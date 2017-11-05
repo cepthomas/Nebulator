@@ -1,9 +1,9 @@
 {
-  "Speed": 80.0,
+  "Speed": 62.0,
   "Volume": 122,
   "Values": {
     "KEYS.volume": 90,
-    "BASS.volume": 90,
-    "DRUMS.volume": 90
+    "BASS.volume": 113,
+    "DRUMS.volume": 96
   }
 }

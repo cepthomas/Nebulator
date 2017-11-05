@@ -8,6 +8,7 @@ using System.Diagnostics;
 using NLog;
 using MoreLinq;
 using Nebulator.Common;
+using Nebulator.Controls;
 using Nebulator.Model;
 using Nebulator.Engine;
 using Nebulator.UI;
@@ -15,7 +16,7 @@ using Nebulator.FastTimer;
 using Nebulator.Midi;
 
 // FUTURE space bar to start/stop.
-// FUTURE cut into assemblies, add unit tester.
+// FUTURE cut into assemblies, add NUnit.
 
 
 namespace Nebulator
@@ -133,7 +134,9 @@ namespace Nebulator
 
 
 #if DEBUG
-            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test1.neb");
+            testHost.Go();
+
+            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test1.neb");
             //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
             //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\alorithmic.neb");
             //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\import.neb");
@@ -408,32 +411,23 @@ namespace Nebulator
                 string srcFile = Globals.UNKNOWN_STRING;
                 int srcLine = -1;
 
-                // FUTURE Could use StackTrace(ex) instead, maybe.
-                foreach (string s in ex.StackTrace.SplitByTokens(Environment.NewLine))
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame sf = st.GetFrame(0);
+
+                // Dig out generated file parts.
+                string genFile = sf.GetFileName();
+                int genLine = sf.GetFileLineNumber() - 1;
+
+                // Open the generated file and dig out the source file and line.
+                string[] genLines = File.ReadAllLines(genFile);
+
+                srcFile = genLines[0].Trim().Replace("//", "");
+
+                int ind = genLines[genLine].LastIndexOf("//");
+                if (ind != -1)
                 {
-                    if (s.Contains("Nebulator.UserScript"))
-                    {
-                        // The line we are interested in.
-                        List<string> parts = s.SplitByToken(" in ");
-                        parts = parts.Last().SplitByToken(":line ");
-                        // Dig out generated file parts.
-                        string genFile = parts.First();
-                        int genLine = int.Parse(parts.Last()) - 1;
-
-                        // Open the generated file and dig out the source file and line.
-                        string[] genLines = File.ReadAllLines(genFile);
-
-                        srcFile = genLines[0].Trim().Replace("//", "");
-
-                        int ind = genLines[genLine].LastIndexOf("//");
-                        if (ind != -1)
-                        {
-                            string sl = genLines[genLine].Substring(ind + 2);
-                            int.TryParse(sl, out srcLine);
-                        }
-
-                        break;
-                    }
+                    string sl = genLines[genLine].Substring(ind + 2);
+                    int.TryParse(sl, out srcLine);
                 }
 
                 ScriptError err = new ScriptError()
@@ -562,7 +556,7 @@ namespace Nebulator
         /// Common neb file opener.
         /// </summary>
         /// <param name="fn">The neb file to open.</param>
-        private void OpenFile(string fn)
+        public void OpenFile(string fn)
         {
             using (new WaitCursor())
             {
@@ -755,7 +749,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                infoDisplay.AddMessage(msg + Environment.NewLine);
+                infoDisplay.AddLine(msg);
             });
         }
 
@@ -768,7 +762,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                infoDisplay.AddMessage(e.Message);
+                infoDisplay.Add(e.Message);
             });
         }
 
@@ -779,11 +773,32 @@ namespace Nebulator
         /// <param name="e"></param>
         private void Log_Click(object sender, EventArgs e)
         {
-            string appDir = Utils.GetAppDir();
-            string logFilename = Path.Combine(appDir, "log.txt");
-            List<string> lines = File.ReadAllLines(logFilename).ToList();
-            TextViewer lv = new TextViewer() { Lines = lines, Text = "Log Viewer" };
-            lv.ShowDialog();
+            using (Form f = new Form()
+            {
+                Text = "Log Viewer",
+                Size = new Size(900, 600),
+                StartPosition = FormStartPosition.Manual,
+                Location = new Point(20, 20),
+                FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                ShowIcon = false,
+                ShowInTaskbar = false
+            })
+            {
+                TextViewer tv = new TextViewer() { Dock = DockStyle.Fill };
+                f.Controls.Add(tv);
+                tv.Colors.Add("|ERROR|", Color.Pink);
+                tv.Colors.Add("|_WARN|", Color.Plum);
+                tv.Colors.Add("|_INFO|", Color.LightGreen);
+
+                string appDir = Utils.GetAppDir();
+                string logFilename = Path.Combine(appDir, "log.txt");
+                using (new WaitCursor())
+                {
+                    File.ReadAllLines(logFilename).ForEach(l => tv.AddLine(l, false));
+                }
+
+                f.ShowDialog();
+            }
         }
         #endregion
 
@@ -843,20 +858,32 @@ namespace Nebulator
         /// </summary>
         private void Settings_Click(object sender, EventArgs e)
         {
-            using (PropertyEditor f = new PropertyEditor() { EditObject = Globals.UserSettings })
+            using (Form f = new Form()
             {
-                f.StartPosition = FormStartPosition.Manual;
-                f.Location = new Point(MousePosition.X + 20, MousePosition.Y + 20);
-                DialogResult dr = f.ShowDialog();
+                Text = "User Settings",
+                Size = new Size(350, 400),
+                StartPosition = FormStartPosition.Manual,
+                Location = new Point(200, 200),
+                FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                ShowIcon = false,
+                ShowInTaskbar = false
+            })
+            {
+                PropertyGridEx pg = new PropertyGridEx()
+                {
+                    Dock = DockStyle.Fill,
+                    PropertySort = PropertySort.NoSort,
+                    SelectedObject = Globals.UserSettings
+                };
 
-                if (dr == DialogResult.OK)
+                f.Controls.Add(pg);
+                f.ShowDialog();
+
+                if (pg.Dirty)
                 {
                     Globals.MidiInterface.Init();
                     SaveSettings();
-                    if(f.Dirty)
-                    {
-                        MessageBox.Show("Changes require a restart to take effect."); // FUTURE Update without restarting.
-                    }
+                    MessageBox.Show("Changes require a restart to take effect."); // FUTURE Update without restarting.
                 }
             }
         }

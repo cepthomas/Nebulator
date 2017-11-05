@@ -56,6 +56,10 @@ namespace Nebulator.Controls
             get { return ((Control)_docComment).BackgroundImage; }
             set { ((Control)_docComment).BackgroundImage = value; }
         }
+
+        /// <summary>Edited flag.</summary>
+        [Browsable(false)]
+        public bool Dirty { get; set; } = false;
         #endregion
 
         #region Private fields
@@ -92,6 +96,16 @@ namespace Nebulator.Controls
             {
                 _propertyGridEntries = _propertyGridView.GetType().GetField("allGridEntries", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             }
+
+            PropertyValueChanged += Edit_PropertyValueChanged;
+
+            Dirty = false;
+        }
+
+        /// <summary>User edited something.</summary>
+        private void Edit_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            Dirty = true;
         }
 
         /// <summary>Add a custom button to the property grid.</summary>

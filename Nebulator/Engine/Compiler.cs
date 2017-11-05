@@ -37,7 +37,7 @@ namespace Nebulator.Engine
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
 
-        /// <summary>All the important time points and their names.</summary>
+        /// <summary>All the important time points and their names. TODO use Time?</summary>
         public Dictionary<int, string> TimeDefs { get; } = new Dictionary<int, string>();
         #endregion
 
@@ -194,19 +194,23 @@ namespace Nebulator.Engine
         /// <returns>True if a valid file.</returns>
         bool ParseOneFile(FileParseContext pcont)
         {
-            bool valid = true;
+            bool valid = false;
 
-            if (File.Exists(pcont.SourceFile)) // Try fully qualified
+            // Try fully qualified
+            if (File.Exists(pcont.SourceFile))
             {
                 // OK - leave as is.
+                valid = true;
             }
-            else if (File.Exists(Path.Combine(_baseDir, pcont.SourceFile))) // Try relative
-            {
-                pcont.SourceFile = Path.Combine(_baseDir, pcont.SourceFile); // Save the fully qualified path
-            }
+            // Try relative
             else
             {
-                valid = false;
+                string fn = Path.Combine(_baseDir, pcont.SourceFile);
+                if (File.Exists(fn))
+                {
+                    pcont.SourceFile = fn;
+                    valid = true;
+                }
             }
 
             if (valid)
@@ -234,26 +238,40 @@ namespace Nebulator.Engine
                     // Remove any comments.
                     int pos = s.IndexOf("//");
                     string line = pos >= 0 ? s.Left(pos) : s;
-                    List<string> allparts = line.SplitByTokens("(),; ");
-                    List<string> minparts = line.SplitByTokens("(");
 
-                    if (minparts.Count > 0)
+                    List<string> allparts = line.SplitByTokens("(),;= ");
+
+                    // What is it?
+                    bool handled = false;
+
+                    if (allparts.Count >= 2)
                     {
-                        switch (minparts[0])
+                        handled = true;
+                        switch (allparts[0])
                         {
                             case "include": ParseInclude(pcont, allparts); break;
-                            case "const": ParseConst(pcont, allparts); break;
-                            case "var": ParseVar(pcont, allparts); break;
-                            case "midiin": ParseMidiController(pcont, allparts, true); break;
-                            case "midiout": ParseMidiController(pcont, allparts, false); break;
-                            case "lever": ParseLever(pcont, allparts); break;
-                            case "track": ParseTrack(pcont, allparts); break;
-                            case "seq": ParseSeq(pcont, allparts); break;
                             case "loop": ParseLoop(pcont, allparts); break;
                             case "note": ParseNote(pcont, allparts); break;
-                            // Assume anything else is script.
-                            default: ParseScriptLine(pcont, allparts, line); break;
+                            default:
+                                switch (allparts[1])
+                                {
+                                    case "const": ParseConst(pcont, allparts); break;
+                                    case "var": ParseVar(pcont, allparts); break;
+                                    case "lever": ParseLever(pcont, allparts); break;
+                                    case "track": ParseTrack(pcont, allparts); break;
+                                    case "seq": ParseSeq(pcont, allparts); break;
+                                    case "midiin": ParseMidiController(pcont, allparts); break;
+                                    case "midiout": ParseMidiController(pcont, allparts); break;
+                                    default: handled = false; break;
+                                }
+                                break;
                         }
+                    }
+
+                    if(!handled)
+                    {
+                        // Assume anything else is script.
+                        ParseScriptLine(pcont, allparts, line);
                     }
                 }
 
@@ -284,7 +302,7 @@ namespace Nebulator.Engine
                 CompilerParameters cp = new CompilerParameters()
                 {
                     GenerateExecutable = false,
-                    //OutputAssembly = _scriptName,
+                    //OutputAssembly = _scriptName, -- don't do this!
                     GenerateInMemory = true,
                     TreatWarningsAsErrors = false,
                     IncludeDebugInformation = true
@@ -581,10 +599,15 @@ namespace Nebulator.Engine
         #region Specific line parsers
         private void ParseInclude(FileParseContext pcont, List<string> parms)
         {
+            // include path\name.neb
+            // 0       1
+            // include path\split file name.neb
+            // 0       1          2    3
+
             try
             {
                 // Handle spaces in path.
-                string fn = string.Join("", parms.GetRange(1, parms.Count - 1));
+                string fn = string.Join(" ", parms.GetRange(1, parms.Count - 1));
 
                 if (!SourceFiles.Contains(fn)) // Check for already done.
                 {
@@ -609,9 +632,12 @@ namespace Nebulator.Engine
 
         private void ParseConst(FileParseContext pcont, List<string> parms)
         {
+            // PART1 const 0
+            // 0     1     2
+
             try
             {
-                _consts[parms[1]] = int.Parse(parms[2]);
+                _consts[parms[0]] = int.Parse(parms[2]);
             }
             catch (Exception ex)
             {
@@ -621,11 +647,14 @@ namespace Nebulator.Engine
 
         private void ParseVar(FileParseContext pcont, List<string> parms)
         {
+            // COL1 var 200
+            // 0    1   2
+
             try
             {
                 Variable v = new Variable()
                 {
-                    Name = parms[1],
+                    Name = parms[0],
                     Value = int.Parse(parms[2])
                 };
                 _dynamic.Vars.Add(v.Name, v);
@@ -638,11 +667,14 @@ namespace Nebulator.Engine
 
         private void ParseSeq(FileParseContext pcont, List<string> parms)
         {
+            // KEYS_VERSE1 seq 16
+            // 0           1   2
+
             try
             {
                 Sequence ns = new Sequence()
                 {
-                    Name = parms[1],
+                    Name = parms[0],
                     Length = ParseConstRef(pcont, parms[2]),
                 };
                 _dynamic.Sequences.Add(ns.Name, ns);
@@ -655,10 +687,18 @@ namespace Nebulator.Engine
 
         private void ParseNote(FileParseContext pcont, List<string> parms)
         {
+            // note 0.00 G.4.m7 90 1.50
+            // 0    1    2      3  4
+
             try
             {
                 // Support note string, number, drum.  03.10 C4 90 00.8
                 Note n = null;
+
+                //TODO note patterns:
+                // note(1, HiMidTom, 80,                   0001000100010001);
+                // note(1, G.4.m7, 90,                     0001000100010001);
+                // note(subdiv, which, vol, pattern);
 
                 if (parms[2].IsInteger())
                 {
@@ -702,7 +742,9 @@ namespace Nebulator.Engine
 
         private void ParseLoop(FileParseContext pcont, List<string> parms)
         {
-            // loop(start-tick#, end-tick#, seq-name);
+            // loop PART1 PART2 KEYS_VERSE1
+            // 0    1     2     3
+
             try
             {
                 Loop nl = new Loop()
@@ -726,9 +768,12 @@ namespace Nebulator.Engine
         {
             try
             {
+                // KEYS track 1 5 0 0
+                // 0    1     2 3 4 5
+
                 Track nt = new Track()
                 {
-                    Name = parms[1],
+                    Name = parms[0],
                     Channel = int.Parse(parms[2]),
                     WobbleVolume = parms.Count > 3 ? ParseConstRef(pcont, parms[3]) : 0,
                     WobbleTimeBefore = parms.Count > 4 ? ParseConstRef(pcont, parms[4]) : 0,
@@ -742,16 +787,20 @@ namespace Nebulator.Engine
             }
         }
 
-        private void ParseMidiController(FileParseContext pcont, List<string> parms, bool min)
+        private void ParseMidiController(FileParseContext pcont, List<string> parms)
         {
+            // MI midiin  1 2     MODN
+            // MO midiout 1 Pitch PITCH
+            // 0  1       2 3     4
+
             try
             {
                 int mctlr = 0;
 
-                switch (parms[2])
+                switch (parms[3])
                 {
                     case string s when s.IsInteger():
-                        mctlr = int.Parse(parms[2]);
+                        mctlr = int.Parse(parms[3]);
                         break;
 
                     case "Pitch":
@@ -759,43 +808,51 @@ namespace Nebulator.Engine
                         break;
 
                     default:
-                        mctlr = MidiInterface.TranslateController(parms[2]);
+                        mctlr = MidiInterface.TranslateController(parms[3]);
                         break;
                 }
 
                 MidiControlPoint ctl = new MidiControlPoint()
                 {
-                    Channel = int.Parse(parms[1]),
+                    Channel = int.Parse(parms[2]),
                     MidiController = mctlr,
-                    RefVar = ParseVarRef(pcont, parms[3])
+                    RefVar = ParseVarRef(pcont, parms[4])
                 };
 
-                if (min)
+                switch(parms[1])
                 {
-                    _dynamic.InputMidis.Add(parms[3], ctl);
-                }
-                else
-                {
-                    _dynamic.OutputMidis.Add(parms[3], ctl);
+                    case "midiin":
+                        _dynamic.InputMidis.Add(parms[0], ctl);
+                        break;
+
+                    case "midiout":
+                        _dynamic.OutputMidis.Add(parms[0], ctl);
+                        break;
+
+                    default:
+                        throw new Exception("");
                 }
             }
             catch (Exception ex)
             {
-                AddParseError(pcont, "Invalid midi in controller: " + ex.Message);
+                AddParseError(pcont, "Invalid midi controller: " + ex.Message);
             }
         }
 
         private void ParseLever(FileParseContext pcont, List<string> parms)
         {
+            // LEVER1 lever 0 255 COL1
+            // 0      1     2 3   4
+
             try
             {
                 LeverControlPoint ctl = new LeverControlPoint()
                 {
-                    Min = int.Parse(parms[1]),
-                    Max = int.Parse(parms[2]),
-                    RefVar = ParseVarRef(pcont, parms[3])
+                    Min = int.Parse(parms[2]),
+                    Max = int.Parse(parms[3]),
+                    RefVar = ParseVarRef(pcont, parms[4])
                 };
-                _dynamic.Levers.Add(parms[3], ctl);
+                _dynamic.Levers.Add(parms[0], ctl);
             }
             catch (Exception ex)
             {
@@ -805,6 +862,8 @@ namespace Nebulator.Engine
 
         private void ParseScriptLine(FileParseContext pcont, List<string> parms, string original)
         {
+            // public void On_MODN()
+
             try
             {
                 // Store the whole line with line tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.

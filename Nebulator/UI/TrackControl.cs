@@ -51,7 +51,7 @@ namespace Nebulator.UI
             sldVolume.ControlColor = Globals.UserSettings.ControlColor;
             sldVolume.Font = Globals.UserSettings.ControlFont;
             sldVolume.Label = BoundTrack.Name;
-            sldVolume.Maximum = MidiInterface.MAX_MIDI_VOLUME;
+            sldVolume.Maximum = 200;
             sldVolume.Value = BoundTrack.Volume;
 
             sldVolume.ValueChanged += VolTrack_ValueChanged;

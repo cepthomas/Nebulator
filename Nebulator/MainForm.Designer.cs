@@ -40,10 +40,12 @@
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPageLevers = new System.Windows.Forms.TabPage();
             this.levers = new Nebulator.UI.Levers();
+            this.tabPageTest = new System.Windows.Forms.TabPage();
+            this.testHost = new Nebulator.Test.TestHost();
             this.tabPageOther = new System.Windows.Forms.TabPage();
             this.tabAux = new System.Windows.Forms.TabControl();
             this.tabPageInfoX = new System.Windows.Forms.TabPage();
-            this.infoDisplay = new Nebulator.UI.InfoDisplay();
+            this.infoDisplay = new Nebulator.Controls.TextViewer();
             this.tabPageMonitorX = new System.Windows.Forms.TabPage();
             this.midiMonitor = new Nebulator.UI.MidiMonitor();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -58,6 +60,7 @@
             this.splitContainerControl.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabPageLevers.SuspendLayout();
+            this.tabPageTest.SuspendLayout();
             this.tabAux.SuspendLayout();
             this.tabPageInfoX.SuspendLayout();
             this.tabPageMonitorX.SuspendLayout();
@@ -216,7 +219,7 @@
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "VOL";
             this.sldVolume.Location = new System.Drawing.Point(195, 8);
-            this.sldVolume.Maximum = 150;
+            this.sldVolume.Maximum = 200;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.ResetValue = 0;
@@ -250,7 +253,7 @@
             this.potSpeed.DecPlaces = 0;
             this.potSpeed.Location = new System.Drawing.Point(156, 7);
             this.potSpeed.Maximum = 200D;
-            this.potSpeed.Minimum = 50D;
+            this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
             this.potSpeed.Size = new System.Drawing.Size(32, 32);
             this.potSpeed.TabIndex = 33;
@@ -306,6 +309,7 @@
             // tabMain
             // 
             this.tabMain.Controls.Add(this.tabPageLevers);
+            this.tabMain.Controls.Add(this.tabPageTest);
             this.tabMain.Controls.Add(this.tabPageOther);
             this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabMain.Location = new System.Drawing.Point(0, 0);
@@ -332,6 +336,24 @@
             this.levers.Name = "levers";
             this.levers.Size = new System.Drawing.Size(439, 476);
             this.levers.TabIndex = 0;
+            // 
+            // tabPageTest
+            // 
+            this.tabPageTest.Controls.Add(this.testHost);
+            this.tabPageTest.Location = new System.Drawing.Point(4, 22);
+            this.tabPageTest.Name = "tabPageTest";
+            this.tabPageTest.Size = new System.Drawing.Size(439, 476);
+            this.tabPageTest.TabIndex = 7;
+            this.tabPageTest.Text = "Test";
+            this.tabPageTest.UseVisualStyleBackColor = true;
+            // 
+            // testHost
+            // 
+            this.testHost.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.testHost.Location = new System.Drawing.Point(0, 0);
+            this.testHost.Name = "testHost";
+            this.testHost.Size = new System.Drawing.Size(439, 476);
+            this.testHost.TabIndex = 0;
             // 
             // tabPageOther
             // 
@@ -367,6 +389,7 @@
             // 
             // infoDisplay
             // 
+            this.infoDisplay.Colors = ((System.Collections.Generic.Dictionary<string, System.Drawing.Color>)(resources.GetObject("infoDisplay.Colors")));
             this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
             this.infoDisplay.Location = new System.Drawing.Point(3, 3);
             this.infoDisplay.Name = "infoDisplay";
@@ -419,6 +442,7 @@
             this.splitContainerControl.ResumeLayout(false);
             this.tabMain.ResumeLayout(false);
             this.tabPageLevers.ResumeLayout(false);
+            this.tabPageTest.ResumeLayout(false);
             this.tabAux.ResumeLayout(false);
             this.tabPageInfoX.ResumeLayout(false);
             this.tabPageMonitorX.ResumeLayout(false);
@@ -456,11 +480,13 @@
         private System.Windows.Forms.TabPage tabPageInfoX;
         private System.Windows.Forms.TabPage tabPageMonitorX;
         private UI.MidiMonitor midiMonitor;
-        private UI.InfoDisplay infoDisplay;
+        private Controls.TextViewer infoDisplay;
         private Controls.TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabPageTest;
+        private Test.TestHost testHost;
     }
 }
 

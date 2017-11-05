@@ -48,7 +48,7 @@ namespace Nebulator.Controls
         /// </summary>
         public Pan()
         {
-            // This call is required by the Windows.Forms Form Designer.
+            SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
             InitializeComponent();
         }
 

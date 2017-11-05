@@ -1,13 +1,13 @@
 
-const(VEL, 95);
-var(MAX, 60);
+VEL = const(95);
+MAX = var(60);
 
-void boing(int note = 0)
+void boing(int notenum = 0)
 {
     //println("boing");
-    if(note == 0)
+    if(notenum == 0)
     {
-        note = (int)random(30, MAX);
+        notenum = (int)random(30, MAX);
     }
-    sendMidiNote(BASS, note, VEL, 1.09);
+    sendMidiNote(BASS, notenum, VEL, 1.09);
 }

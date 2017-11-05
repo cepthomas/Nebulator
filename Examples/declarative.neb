@@ -6,46 +6,46 @@ include(utils.neb);
 
 ///// Constants /////
 // When to play.
-const(PART1, 0);
-const(PART2, 64);
-const(PART3, 128);
-const(PART4, 192);
+PART1 = const(0);
+PART2 = const(64);
+PART3 = const(128);
+PART4 = const(192);
 // Total length.
-const(TLEN, 256);
+TLEN = const(256);
 // Volumes.
-const(KEYS_DEF_VOL, 100);
-const(DRUM_DEF_VOL, 100);
+KEYS_DEF_VOL = const(100);
+DRUM_DEF_VOL = const(100);
 
 ///// Variables /////
-var(BACKC, 200); // change background
-var(MODN, 0); // modulate notes
-var(PITCH, 8192); // center is 8192
+BACKC = var(200); // change background
+MODN = var(0); // modulate notes
+PITCH = var(8192); // center is 8192
 
 ///// Realtime Controllers /////
-midiin(1, 2, MODN);
-midiout(1, Pitch, PITCH);
+MI = midiin(1, 2, MODN);
+MO = midiout(1, Pitch, PITCH);
 
 ////// Levers //////
-lever(0, 255, BACKC);
-lever(0, 16383, PITCH); // max range
-lever(-10, 10, MODN);
+L1 = lever(0, 255, BACKC);
+L2 = lever(0, 16383, PITCH); // max range
+L3 = lever(-10, 10, MODN);
 
 
 ///// Tracks and Loops /////
-track(KEYS, 1, 5, 0, 0);
+KEYS = track(1, 5, 0, 0);
 loop(PART1, PART2, KEYS_VERSE1);
 loop(PART2, PART3, KEYS_VERSE2);
 loop(PART3, PART4, KEYS_CHORUS);
 loop(PART4, TLEN, KEYS_VERSE1);
 
-track(BASS, 2, 2, 0, 0);
+BASS = track(2, 2, 0, 0);
 loop(PART1, TLEN, BASS_VERSE);
 
-track(DRUMS, 10, 4, 0, 0);
+DRUMS = track(10, 4, 0, 0);
 loop(PART1, TLEN, DRUMS_VERSE);
 
 ///// Sequences and Notes /////
-seq(KEYS_VERSE1, 8);
+KEYS_VERSE1 = seq(8);
 // numbered notes
 note(1.00, 60, KEYS_DEF_VOL, 2.00);
 note(2.1/4, 56, 90, 2.00);
@@ -54,7 +54,7 @@ note(3.1/2, 80, KEYS_DEF_VOL, 2.00);
 note(4.75, E.4.7#11, 90, 2.00);
 note(7.75, D.4.m, 90, 2.00);
 
-seq(KEYS_VERSE2, 8);
+KEYS_VERSE2 = seq(8);
 note(0.00, F.4.???, 90, 0.50);
 note(0.50, D#.4, KEYS_DEF_VOL, 0.50);
 note(1.00, C.4, 90, 0.50);
@@ -72,20 +72,20 @@ note(6.50, D#.2, KEYS_DEF_VOL, 0.50);
 note(7.00, C.2, 90, 0.50);
 note(7.50, B.2.m7, 90, 0.50);
 
-seq(KEYS_CHORUS, 8);
+KEYS_CHORUS = seq(8);
 note(1.00, A.5.M, 90, 1.50);
 note(3.00, E.5.M, 90, 1.50);
 note(5.00, A.5.M, 90, 1.50);
 note(7.00, E.5.M, 90, 1.50);
 
-seq(BASS_VERSE, 8);
+BASS_VERSE = seq(8);
 note(0.00, C.2, 70, 0.25);
 note(0.75, C.2, 70, 0.1/8); // 0.125?
 note(3.50, E.2, 70, 0.25);
 note(4.00, C.2, 70, 1.00);
 note(7.75, A#.2, 70, 0.10);
 
-seq(DRUMS_VERSE, 4);
+DRUMS_VERSE = seq(4);
 note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(0.50, RideCymbal1, DRUM_DEF_VOL);
 note(0.10, HiMidTom, DRUM_DEF_VOL);
@@ -105,8 +105,6 @@ note(3.50, CrashCymbal2, DRUM_DEF_VOL);
 int dragX = 100;
 int dragY = 100;
 int dragLen = 50;
-
-
 
 ////// Nebulator UI stuff //////
 public override void setup()

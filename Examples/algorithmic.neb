@@ -6,41 +6,35 @@ include(utils.neb);
 
 ///// Constants /////
 // When to play.
-const(PART1, 0);
-const(PART2, 64);
-const(PART3, 128);
-const(PART4, 192);
-
+PART1 = const(0);
+PART2 = const(64);
+PART3 = const(128);
+PART4 = const(192);
 // Total length.
-const(TLEN, 256);
-
+TLEN = const(256);
 // Volumes.
-const(KEYS_DEF_VOL, 100);
-const(DRUM_DEF_VOL, 100);
-const(SNARE_DEF_VOL, 80);
-
+KEYS_DEF_VOL = const(100);
+DRUM_DEF_VOL = const(100);
 
 ///// Variables /////
-var(NOTE, 60); // to play
-var(MODN, 0); // modulate notes
-var(PITCH, 8192); // center is 8192
-
+NOTE = var(60); // to play
+MODN = var(0); // modulate notes
+PITCH = var(8192); // center is 8192
+BACKC = var(200); // change background
 
 ///// Realtime Controllers /////
-midiin(1, 2, MODN);
-midiout(1, Pitch, PITCH);
-
+MI = midiin(1, 2, MODN);
+MO = midiout(1, Pitch, PITCH);
 
 ////// Levers //////
-lever(0, 255, NOTE);
-lever(0, 16383, PITCH); // max range
-lever(-10, 10, MODN);
-
+L1 = lever(0, 255, NOTE);
+L2 = lever(0, 16383, PITCH); // max range
+L3 = lever(-10, 10, MODN);
+L4 = lever(0, 255, BACKC);
 
 ///// Tracks /////
-track(KEYS, 1, 5);
-track(BASS, 2, 2);
-
+KEYS = track(1, 5);
+BASS = track(2, 2);
 
 ///// Functions /////
 
@@ -50,17 +44,17 @@ float posY = 50;
 int velX = 3;
 int velY = 3;
 int ballSize = 40;
-int note = 60;
+int notenum = 60;
 
 ////// Nebulator midi stuff //////
 public override void step()
 {
     // The simple algorithm.
-    if(tock % 4 == 0)
+    if(tock % 25 == 0)
     {
-        note = tick % 2 == 0 ? 50 : 60;
-        note += tock;
-        sendMidiNote(KEYS, note, KEYS_DEF_VOL, 1.09);
+        int notenum = tick % 2 == 0 ? 50 : 60;
+        notenum += tock / 20;
+        sendMidiNote(KEYS, notenum, KEYS_DEF_VOL, 1.09);
     }
 }
 
@@ -82,15 +76,18 @@ public override void setup()
 
 public override void draw()
 {
+    background(BACKC, 100, 200);
+
     if(playing && moveBall())
     {
-        boing(note - 12);
+        boing(notenum - 12);
     }
 
     // Draw the ball.
     noStroke();
     ellipse(posX, posY, ballSize, ballSize);
-    PColor c = color(200, 50, 100);
+    int x = (int)map(posX, 0, width, 0, 255);
+    PColor c = color(x, (x + 100) % 256, (x + 200) % 256);
     fill(c);
 }
 

@@ -80,6 +80,7 @@ namespace Nebulator.Controls
         /// </summary>
         public Slider()
         {
+            SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
             InitializeComponent();
         }
 

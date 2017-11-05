@@ -85,6 +85,12 @@
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\WaitCursor.cs" />
     <Compile Include="Common\Wobbler.cs" />
+    <Compile Include="Controls\TextViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TextViewer.Designer.cs">
+      <DependentUpon>TextViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TimeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -110,6 +116,13 @@
     <None Include="Resources\glyphicons-114-justify.png" />
     <Compile Include="FastTimer\NebTimer.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="Grid\Cursor.cs" />
+    <Compile Include="Grid\Grid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Grid\Grid.Designer.cs">
+      <DependentUpon>Grid.cs</DependentUpon>
+    </Compile>
     <Compile Include="Midi\MidiInterface.cs" />
     <Compile Include="Midi\MidiUtils.cs" />
     <Compile Include="Midi\Step.cs" />
@@ -166,29 +179,26 @@
     <Compile Include="FastTimer\IFastTimer.cs" />
     <Compile Include="FastTimer\MultimediaTimer.cs" />
     <Compile Include="FastTimer\TimingAnalyzer.cs" />
+    <Compile Include="Test\Attributes.cs" />
+    <Compile Include="Test\SimpleUT.cs" />
+    <Compile Include="Test\TestCases_SUT.cs" />
+    <Compile Include="Test\TestHost.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Test\TestHost.Designer.cs">
+      <DependentUpon>TestHost.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\About.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\InfoDisplay.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\InfoDisplay.Designer.cs">
-      <DependentUpon>InfoDisplay.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Levers.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\Levers.Designer.cs">
       <DependentUpon>Levers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\TextViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\TextViewer.Designer.cs">
-      <DependentUpon>TextViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\MidiMonitor.cs">
       <SubType>UserControl</SubType>
@@ -201,9 +211,6 @@
     </Compile>
     <Compile Include="UI\Piano.Designer.cs">
       <DependentUpon>Piano.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\PropertyEditor.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\TrackControl.cs">
       <SubType>UserControl</SubType>
@@ -226,8 +233,14 @@
     <EmbeddedResource Include="Controls\Slider.resx">
       <DependentUpon>Slider.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TextViewer.resx">
+      <DependentUpon>TextViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\TimeControl.resx">
       <DependentUpon>TimeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Grid\Grid.resx">
+      <DependentUpon>Grid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -242,20 +255,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Test\TestHost.resx">
+      <DependentUpon>TestHost.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\InfoDisplay.resx">
-      <DependentUpon>InfoDisplay.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\Levers.resx">
       <DependentUpon>Levers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\PropertyEditor.resx">
-      <DependentUpon>PropertyEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\TextViewer.resx">
-      <DependentUpon>TextViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MidiMonitor.resx">
       <DependentUpon>MidiMonitor.cs</DependentUpon>
@@ -366,5 +373,6 @@
   <ItemGroup>
     <None Include="Resources\glyphicons-359-file-import.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
