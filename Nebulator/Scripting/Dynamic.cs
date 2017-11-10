@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Nebulator.Common;
-using Nebulator.Model;
 
-namespace Nebulator.Engine
+
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// All the compiled script stuff we might need at runtime.

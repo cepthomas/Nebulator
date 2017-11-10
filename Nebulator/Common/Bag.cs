@@ -7,23 +7,16 @@ using Newtonsoft.Json;
 namespace Nebulator.Common
 {
     /// <summary>
-    /// General purpose storage for things that change at runtime which we want to save and restore.
-    /// I don't much like the idea of using a shadow file but it seems expedient for now.
+    /// General purpose storage for things using a two part key.
     /// </summary>
     [Serializable]
-    public class Persisted
+    public class Bag
     {
-        /// <summary>The project file name.</summary> 
+        /// <summary>The file name.</summary> 
         string _fn = Globals.UNKNOWN_STRING;
 
-        /// <summary>Master speed in Ticks per minute - roughly equivalent to BPM.</summary>
-        public double Speed { get; set; } = 80.0;
-
-        /// <summary>Master volume.</summary>
-        public int Volume { get; set; } = 100;
-
-        /// <summary>Misc dynamic values that we want to persist. Things like volumes that are not defined in a .neb file.</summary>
-        public Dictionary<string, int> Values { get; set; } = new Dictionary<string, int>();
+        /// <summary>Misc dynamic values that we want to persist.</summary>
+        public Dictionary<string, object> Values { get; set; } = new Dictionary<string, object>();
 
         /// <summary>
         /// Lazy helper.
@@ -31,18 +24,12 @@ namespace Nebulator.Common
         /// <param name="owner"></param>
         /// <param name="valname"></param>
         /// <returns>value</returns>
-        public int GetValue(string owner, string valname)
+        public object GetValue(string owner, string valname)
         {
             string key = MakeKey(owner, valname);
             if (!Values.ContainsKey(key))
             {
-                int defval = 0; // def value for new - a bit crude...
-                switch (valname)
-                {
-                    case "speed": defval = 1000; break;
-                    case "volume": defval = 90; break;
-                }
-                Values.Add(key, defval);
+                Values.Add(key, null);
             }
             return Values[key];
         }
@@ -53,7 +40,7 @@ namespace Nebulator.Common
         /// <param name="owner"></param>
         /// <param name="valname"></param>
         /// <param name="value"></param>
-        public void SetValue(string owner, string valname, int value)
+        public void SetValue(string owner, string valname, object value)
         {
             string key = MakeKey(owner, valname);
             // Add if missing.
@@ -96,23 +83,23 @@ namespace Nebulator.Common
         /// <summary>
         /// Create from json file.
         /// </summary>
-        public static Persisted Load(string fn)
+        public static Bag Load(string fn)
         {
-            Persisted pers;
+            Bag bag;
 
             try
             {
                 string json = File.ReadAllText(fn);
-                pers = JsonConvert.DeserializeObject<Persisted>(json);
+                bag = JsonConvert.DeserializeObject<Bag>(json);
             }
             catch (Exception)
             {
                 // Doesn't exist, create a new one.
-                pers = new Persisted();
+                bag = new Bag();
             }
 
-            pers._fn = fn;
-            return pers;
+            bag._fn = fn;
+            return bag;
         }
         #endregion
     }

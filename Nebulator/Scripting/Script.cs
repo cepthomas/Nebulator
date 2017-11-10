@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Model;
 
-namespace Nebulator.Engine
+
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// Core functions of script.
@@ -30,13 +30,17 @@ namespace Nebulator.Engine
         #endregion
 
         #region Events
-        /// <summary>Reporting something to the host.</summary>
+        /// <summary>Interaction with the host.</summary>
         public event EventHandler<ScriptEventArgs> ScriptEvent;
 
         public class ScriptEventArgs : EventArgs
         {
-            /// <summary>Something to print or null.</summary>
+            /// <summary>Something to print if not null.</summary>
             public string Message { get; set; } = null;
+            /// <summary>Get master speed.</summary>
+            public double Speed { get; set; } = 80.0;
+            /// <summary>Get master volume.</summary>
+            public int Volume { get; set; } = 100;
         }
         #endregion
 

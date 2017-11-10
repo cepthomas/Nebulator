@@ -4,7 +4,7 @@ using System.Linq;
 using Nebulator.Common;
 
 
-namespace Nebulator.Model
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// One note or chord in the loop.

@@ -44,7 +44,7 @@
             this.tabPageTest = new System.Windows.Forms.TabPage();
             this.testHost = new Nebulator.Test.TestHost();
             this.tabPageOther = new System.Windows.Forms.TabPage();
-            this.grid1 = new Nebulator.Grid.Grid();
+            this.grid1 = new Nebulator.Controls.Grid();
             this.tabAux = new System.Windows.Forms.TabControl();
             this.tabPageInfo = new System.Windows.Forms.TabPage();
             this.infoDisplay = new Nebulator.Controls.TextViewer();
@@ -523,7 +523,7 @@
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPageTest;
         private Test.TestHost testHost;
-        public Grid.Grid grid1;
+        public Controls.Grid grid1;
     }
 }
 

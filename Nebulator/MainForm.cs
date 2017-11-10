@@ -9,15 +9,15 @@ using NLog;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Controls;
-using Nebulator.Model;
-using Nebulator.Engine;
+using Nebulator.Scripting;
 using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
 // FUTURE Use space bar to start/stop.
 // FUTURE Maybe cut into assemblies, add NUnit.
-// FUTURE VU meter for midi outputs? Visible tick indicator?
+
+// TODO VU meter for midi outputs? Visible tick indicator?
 
 
 
@@ -53,11 +53,11 @@ namespace Nebulator
         /// <summary>Detect changed composition files.</summary>
         MultiFileWatcher _watcher = new MultiFileWatcher();
 
-        /// <summary>Files that have been changed externally, will require a reload.</summary>
+        /// <summary>Files that have been changed externally, will require a recompile.</summary>
         bool _dirtyFiles = false;
 
-        /// <summary>Variables, controls, etc defined in the script.</summary>
-        Dynamic _dynamic = new Dynamic();
+        /// <summary>Persisted internal values for current neb file.</summary>
+        Bag _internalVals = new Bag();
         #endregion
 
         #region Lifecycle
@@ -146,9 +146,11 @@ namespace Nebulator
                 Globals.MidiInterface.KillAll();
 
                 // Save the project.
-                Globals.CurrentPersisted.Values.Clear();
-                _dynamic.Tracks.Values.ForEach(c => Globals.CurrentPersisted.SetValue(c.Name, "volume", c.Volume));
-                Globals.CurrentPersisted.Save();
+                _internalVals.Values.Clear();
+                _internalVals.SetValue("sys", "volume", sldVolume.Value);
+                _internalVals.SetValue("sys", "speed", potSpeed.Value);
+                _script.Dynamic.Tracks.Values.ForEach(c => _internalVals.SetValue(c.Name, "volume", c.Volume));
+                _internalVals.Save();
 
                 // Save user settings.
                 SaveSettings();
@@ -212,10 +214,9 @@ namespace Nebulator
 
                 _steps = compiler.ConvertToSteps();
 
-                _dynamic = _script.Dynamic;
                 _script.ScriptEvent += Script_ScriptEvent;
                 InitMainUi();
-                levers.Init(_script.Surface, _dynamic.Levers.Values);
+                levers.Init(_script.Surface, _script.Dynamic.Levers.Values);
                 // Init the script.
                 _script.setup();
             }
@@ -251,10 +252,10 @@ namespace Nebulator
             int x = timeMaster.Right + CONTROL_SPACING;
 
             ///// The track controls.
-            foreach (Track t in _dynamic.Tracks.Values)
+            foreach (Track t in _script.Dynamic.Tracks.Values)
             {
                 // Init from persistence.
-                t.Volume = Globals.CurrentPersisted.GetValue(t.Name, "volume");
+                t.Volume = (int)_internalVals.GetValue(t.Name, "volume");
 
                 TrackControl trk = new TrackControl()
                 {
@@ -267,8 +268,8 @@ namespace Nebulator
             }
 
             ///// Misc controls.
-            potSpeed.Value = Globals.CurrentPersisted.Speed; // TODO speed and volume like any other var.
-            sldVolume.Value = Globals.CurrentPersisted.Volume;
+            potSpeed.Value = (int)_internalVals.GetValue("sys", "speed");
+            sldVolume.Value = (int)_internalVals.GetValue("sys", "volume");
             timeMaster.MaxMajor = _steps.MaxTick;
 
             UpdateTime(true);
@@ -319,7 +320,7 @@ namespace Nebulator
                         _script.ExecScriptFunction(var.Name);
 
                         // Output any midiout controllers.
-                        IEnumerable<MidiControlPoint> ctlpts = _dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+                        IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
 
                         if (ctlpts != null && ctlpts.Count() > 0)
                         {
@@ -343,16 +344,16 @@ namespace Nebulator
                     // Do the steps. FUTURE Support Running Status?
                     foreach (Step step in _steps.GetSteps(Globals.CurrentStepTime))
                     {
-                        Track track = _dynamic.Tracks[step.TrackName];
+                        Track track = _script.Dynamic.Tracks[step.TrackName];
 
                         // Is it ok to play now?
-                        bool _anySolo = _dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                        bool _anySolo = _script.Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
                         bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
 
                         if (play)
                         {
                             // Maybe tweak values.
-                            step.Adjust(track.Volume, track.Modulate);
+                            step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
                             Globals.MidiInterface.Send(step);
                         }
                     }
@@ -444,7 +445,7 @@ namespace Nebulator
                     /////// Control change
                     StepControllerChange scc = e.Step as StepControllerChange;
                     // Process through our list.
-                    IEnumerable<MidiControlPoint> ctlpts = _dynamic.InputMidis.Values.Where((c, m) => (
+                    IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.InputMidis.Values.Where((c, m) => (
                         c.MidiController == scc.MidiController &&
                         c.Channel == scc.Channel));
 
@@ -489,12 +490,12 @@ namespace Nebulator
             if (sender is TrackControl)
             {
                 // Check for solos.
-                bool _anySolo = _dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = _script.Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    _dynamic.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) Globals.MidiInterface.Kill(t.Channel); });
+                    _script.Dynamic.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) Globals.MidiInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -551,7 +552,7 @@ namespace Nebulator
                 try
                 {
                     _logger.Info($"Reading neb file: {fn}");
-                    Globals.CurrentPersisted = Persisted.Load(fn.Replace(".neb", ".nebp"));
+                    _internalVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     _fn = fn;
                     _dirtyFiles = true;
                     btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
@@ -656,7 +657,7 @@ namespace Nebulator
         /// </summary>
         void Speed_ValueChanged(object sender, EventArgs e)
         {
-            Globals.CurrentPersisted.Speed = (int)potSpeed.Value;
+//            internalVals.Speed = (int)potSpeed.Value;
             SetTimerPeriod();
         }
 
@@ -666,7 +667,7 @@ namespace Nebulator
         void SetTimerPeriod()
         {
             // Convert speed/bpm to msec per tock.
-            double ticksPerMinute = Globals.CurrentPersisted.Speed; // bpm
+            double ticksPerMinute = potSpeed.Value; // bpm
             double tocksPerMinute = ticksPerMinute * Globals.TOCKS_PER_TICK;
             double tocksPerSec = tocksPerMinute / 60;
             double tocksPerMsec = tocksPerSec / 1000;
@@ -682,7 +683,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Volume_ValueChanged(object sender, EventArgs e)
         {
-            Globals.CurrentPersisted.Volume = sldVolume.Value;
+//            internalVals.Volume = sldVolume.Value;
         }
 
         /// <summary>
@@ -742,15 +743,22 @@ namespace Nebulator
 
         /// <summary>
         /// A message from the script to display to the user.
+        /// Request for information.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void Script_ScriptEvent(object sender, Script.ScriptEventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            if(e.Message != null)
             {
-                infoDisplay.Add(e.Message);
-            });
+                BeginInvoke((MethodInvoker)delegate ()
+                {
+                    infoDisplay.Add(e.Message);
+                });
+            }
+
+            e.Volume = sldVolume.Value;
+            e.Speed = potSpeed.Value;
         }
 
         /// <summary>
@@ -1012,10 +1020,10 @@ namespace Nebulator
             if (saveDlg.ShowDialog() == DialogResult.OK)
             {
                 Dictionary<int, string> tracks = new Dictionary<int, string>();
-                _dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+                _script.Dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
 
                 // Convert speed/bpm to sec per tick.
-                double ticksPerMinute = Globals.CurrentPersisted.Speed; // bpm
+                double ticksPerMinute = potSpeed.Value; // bpm
                 double ticksPerSec = ticksPerMinute / 60;
                 double secPerTick = 1 / ticksPerSec;
 

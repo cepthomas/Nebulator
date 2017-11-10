@@ -21,9 +21,7 @@ namespace Nebulator.Midi
         /// <summary>
         /// Possibly make adjustments to values.
         /// </summary>
-        public virtual void Adjust(int trackVolume, int modulate)
-        {
-        }
+        public virtual void Adjust(int masterVolume, int trackVolume, int modulate) { }
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
@@ -52,10 +50,9 @@ namespace Nebulator.Midi
         /// <summary>
         /// Possibly make adjustments to values.
         /// </summary>
-        public override void Adjust(int trackVolume, int modulate)
+        public override void Adjust(int masterVolume, int trackVolume, int modulate)
         {
             // Maybe alter note velocity.
-            int masterVolume = Globals.CurrentPersisted.Volume;
             int vel = Velocity * trackVolume * masterVolume / MidiInterface.MAX_MIDI_VOLUME / MidiInterface.MAX_MIDI_VOLUME;
             VelocityToPlay = Utils.Constrain(vel, 0, MidiInterface.MAX_MIDI_VOLUME);
 
@@ -103,7 +100,7 @@ namespace Nebulator.Midi
         /// <summary>
         /// Possibly make adjustments to values.
         /// </summary>
-        public override void Adjust(int trackVolume, int modulate)
+        public override void Adjust(int masterVolume, int trackVolume, int modulate)
         {
             // Maybe alter note number.
             NoteNumberToPlay = Utils.Constrain(NoteNumber + modulate, 0, MidiInterface.MAX_MIDI_NOTE);

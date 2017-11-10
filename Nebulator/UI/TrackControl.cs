@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Nebulator.Model;
 using Nebulator.Common;
-using Nebulator.Engine;
-using Nebulator.Midi;
+using Nebulator.Scripting;
 
 
 namespace Nebulator.UI

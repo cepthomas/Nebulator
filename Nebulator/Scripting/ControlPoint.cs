@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace Nebulator.Model
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// Defines an input or output midi control. FUTURE OSC, skini?

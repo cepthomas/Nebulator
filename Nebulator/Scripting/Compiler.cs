@@ -7,11 +7,10 @@ using System.IO;
 using NLog;
 using MoreLinq;
 using Nebulator.Common;
-using Nebulator.Model;
 using Nebulator.Midi;
 
 
-namespace Nebulator.Engine
+namespace Nebulator.Scripting
 {
     class FileParseContext
     {
@@ -224,12 +223,21 @@ namespace Nebulator.Engine
                 pcont.CodeLines.AddRange(new List<string>
                 {
                     $"//{pcont.SourceFile}",
-                    "using  Nebulator.Engine;",
+                    "using  Nebulator.Scripting;",
                     "namespace Nebulator.UserScript",
                     "{",
                     $"partial class {_scriptName}",
                     "{"
                 });
+
+
+                //Variable v = new Variable()
+                //{
+                //    Name = parms[0],
+                //    Value = int.Parse(parms[2])
+                //};
+                //_dynamic.Vars.Add(v.Name, v);
+
 
                 for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
                 {
@@ -451,8 +459,7 @@ namespace Nebulator.Engine
                 "using System.Collections.Generic;",
                 "using System.Text;",
                 "using Nebulator.Common;",
-                "using Nebulator.Model;",
-                "using Nebulator.Engine;",
+                "using Nebulator.Scripting;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : Script",
@@ -498,8 +505,7 @@ namespace Nebulator.Engine
                 "using System.Collections.Generic;",
                 "using System.Text;",
                 "using Nebulator.Common;",
-                "using Nebulator.Model;",
-                "using Nebulator.Engine;",
+                "using Nebulator.Scripting;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : Script",

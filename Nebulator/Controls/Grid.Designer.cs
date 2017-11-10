@@ -1,4 +1,4 @@
-﻿namespace Nebulator.Grid
+﻿namespace Nebulator.Controls
 {
     partial class Grid
     {

@@ -7,10 +7,9 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Model;
 
 
-namespace Nebulator.Engine
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// Processing emulation script stuff. The properties and functions are organized similarly to the API in https://processing.org/reference/.

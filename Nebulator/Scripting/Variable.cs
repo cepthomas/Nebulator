@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace Nebulator.Model
+namespace Nebulator.Scripting
 {
     public class Variable
     {

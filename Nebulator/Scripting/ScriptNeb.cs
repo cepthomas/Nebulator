@@ -5,11 +5,10 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Model;
 using Nebulator.Midi;
 
 
-namespace Nebulator.Engine
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// Nebulator specific script stuff.
@@ -36,10 +35,10 @@ namespace Nebulator.Engine
         public bool playing { get { return Globals.Playing; } }
 
         /// <summary>Current Nebulator Speed in Ticks per minute (bpm). Can be used to calculate real times.</summary>
-        public float speed { get { return (float)Globals.CurrentPersisted.Speed; } }
+        public float speed { get { return (float)GetInfo().Speed; } }
 
-        /// <summary>Current Nebulator Volume.</summary>
-        public int volume { get { return Globals.CurrentPersisted.Volume; } }
+        /// <summary>Current Nebulator master Volume.</summary>
+        public int volume { get { return GetInfo().Volume; } }
 
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Globals.TOCKS_PER_TICK; } }
@@ -84,7 +83,7 @@ namespace Nebulator.Engine
                     Duration = new Time(dur)
                 };
 
-                step.Adjust(track.Volume, track.Modulate);
+                step.Adjust(GetInfo().Volume, track.Volume, track.Modulate);
                 Globals.MidiInterface.Send(step, true);
             }
         }
@@ -133,6 +132,19 @@ namespace Nebulator.Engine
         public void modulate(Track track, int val)
         {
             track.Modulate = val;
+        }
+        #endregion
+
+        #region Private functions
+        /// <summary>
+        /// Common utility to get speed etc from main.
+        /// </summary>
+        /// <returns></returns>
+        ScriptEventArgs GetInfo()
+        {
+            ScriptEventArgs args = new ScriptEventArgs();
+            ScriptEvent?.Invoke(this, args);
+            return args;
         }
         #endregion
     }

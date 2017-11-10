@@ -71,13 +71,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AssemblyInfoTool.cs" />
+    <Compile Include="Common\Bag.cs" />
     <Compile Include="Common\LazyCollection.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Logging.cs" />
     <Compile Include="Common\MidiPortEditor.cs" />
     <Compile Include="Common\MultiFileWatcher.cs" />
     <Compile Include="Common\NoteUtils.cs" />
-    <Compile Include="Common\Persisted.cs" />
     <Compile Include="Common\StateMachine.cs" />
     <Compile Include="Common\StringListEditor.cs" />
     <Compile Include="Common\Time.cs" />
@@ -97,13 +97,13 @@
     <Compile Include="Controls\TimeControl.Designer.cs">
       <DependentUpon>TimeControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Engine\Dynamic.cs" />
-    <Compile Include="Engine\Script.cs" />
-    <Compile Include="Engine\ScriptError.cs" />
-    <Compile Include="Engine\ScriptNeb.cs" />
-    <Compile Include="Engine\ScriptUi.cs" />
-    <Compile Include="Engine\ScriptSurface.cs" />
-    <Compile Include="Engine\Compiler.cs" />
+    <Compile Include="Scripting\Dynamic.cs" />
+    <Compile Include="Scripting\Script.cs" />
+    <Compile Include="Scripting\ScriptError.cs" />
+    <Compile Include="Scripting\ScriptNeb.cs" />
+    <Compile Include="Scripting\ScriptUi.cs" />
+    <Compile Include="Scripting\ScriptSurface.cs" />
+    <Compile Include="Scripting\Compiler.cs" />
     <None Include="..\..\Nebulator.wiki\ScriptDefinitions.md">
       <Link>Resources\ScriptDefinitions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -116,11 +116,10 @@
     <None Include="Resources\glyphicons-114-justify.png" />
     <Compile Include="FastTimer\NebTimer.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Grid\Cursor.cs" />
-    <Compile Include="Grid\Grid.cs">
+    <Compile Include="Controls\Grid.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Grid\Grid.Designer.cs">
+    <Compile Include="Controls\Grid.Designer.cs">
       <DependentUpon>Grid.cs</DependentUpon>
     </Compile>
     <Compile Include="Midi\MidiInterface.cs" />
@@ -128,12 +127,12 @@
     <Compile Include="Midi\Step.cs" />
     <Compile Include="Midi\StepCollection.cs" />
     <Compile Include="Midi\StyleParser.cs" />
-    <Compile Include="Model\ControlPoint.cs" />
-    <Compile Include="Model\Loop.cs" />
-    <Compile Include="Model\Note.cs" />
-    <Compile Include="Model\Sequence.cs" />
-    <Compile Include="Model\Track.cs" />
-    <Compile Include="Model\Variable.cs" />
+    <Compile Include="Scripting\ControlPoint.cs" />
+    <Compile Include="Scripting\Loop.cs" />
+    <Compile Include="Scripting\Note.cs" />
+    <Compile Include="Scripting\Sequence.cs" />
+    <Compile Include="Scripting\Track.cs" />
+    <Compile Include="Scripting\Variable.cs" />
     <Compile Include="Controls\Fader.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -239,7 +238,7 @@
     <EmbeddedResource Include="Controls\TimeControl.resx">
       <DependentUpon>TimeControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Grid\Grid.resx">
+    <EmbeddedResource Include="Controls\Grid.resx">
       <DependentUpon>Grid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">

@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using Nebulator.Common;
-using Nebulator.Model;
-using Nebulator.Engine;
 using Nebulator.Midi;
 
 
@@ -13,6 +11,7 @@ namespace Nebulator
 {
     public class Globals
     {
+        #region Constants
         /// <summary>General purpose marker.</summary>
         public const string UNKNOWN_STRING = "???";
 
@@ -21,9 +20,7 @@ namespace Nebulator
 
         /// <summary>Indicates needs user involvement.</summary>
         public static Color ATTENTION_COLOR = Color.Red;
-
-        /// <summary>Persisted values for current neb file.</summary>
-        public static Persisted CurrentPersisted { get; set; } = new Persisted();
+        #endregion
 
         /// <summary>Playing the composition.</summary>
         public static bool Playing { get; set; } = false;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Nebulator.Common;
 
 
-namespace Nebulator.Model
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// One sequence definition in the composition.
