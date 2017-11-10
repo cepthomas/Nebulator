@@ -12,8 +12,77 @@ using System.IO;
 
 namespace Nebulator.Test
 {
-    //[TestCase("LWUT_1", "Tester for the utility functions.")]
-    public class LWUT_1 : TestCase
+    public class SUT_1 : TestCase
+    {
+        public override void RunCase()
+        {
+            int int1 = 321;
+            int int2 = 987;
+            string str1 = "round and round";
+            string str2 = "the mulberry bush";
+            double dbl1 = 1.500F;   
+            double dbl2 = 1.600F;
+            double dblTol = 0.001F;
+
+            UT_STEP(1, "Core function tests.");
+
+            UT_INSPECT("Test UT_INSPECT. Visually inspect that this appears in the output.");
+
+            UT_INSPECT("Test UT_INSPECT with parms.", int1, dbl2);
+
+            UT_INSPECT("Should fail on UT_CHECK.");
+            UT_CHECK(int2 < int1, "Boolean test");
+
+            // Should pass on UT_CHECK.
+            UT_CHECK(int2 == 987, "Boolean test");
+
+            UT_INSPECT("Should fail on UT_STR_EQUAL.");
+            UT_STR_EQUAL(str1, str2);
+
+            // Should pass on UT_STR_EQUAL.
+            UT_STR_EQUAL(str2, "the mulberry bush");
+
+            UT_STR_EMPTY("");
+
+            UT_INSPECT("Should fail on UT_NOT_EQUAL.");
+            UT_NOT_EQUAL(int1, 321);
+
+            // Should pass on UT_NOT_EQUAL.
+            UT_NOT_EQUAL(int2, int1);
+
+            UT_INSPECT("Should fail on UT_LESS_OR_EQUAL.");
+            UT_LESS_OR_EQUAL(int2, int1);
+
+            // Should pass on UT_LESS_OR_EQUAL.
+            UT_LESS_OR_EQUAL(int1, 321);
+
+            // Should pass on UT_LESS_OR_EQUAL.
+            UT_LESS_OR_EQUAL(int1, int2);
+
+            UT_INSPECT("Should fail on UT_GREATER.");
+            UT_GREATER(int1, int2);
+
+            // Should pass on UT_GREATER.
+            UT_GREATER(int2, int1);
+
+            UT_INSPECT("Should fail on UT_GREATER_OR_EQUAL.");
+            UT_GREATER_OR_EQUAL(int1, int2);
+
+            // Should pass on UT_GREATER_OR_EQUAL.
+            UT_GREATER_OR_EQUAL(int2, 987);
+
+            // Should pass on UT_GREATER_OR_EQUAL.
+            UT_GREATER_OR_EQUAL(int2, int1);
+
+            // Should pass on UT_CLOSE.
+            UT_CLOSE(dbl1, dbl2, dbl2 - dbl1 + dblTol);
+
+            UT_INSPECT("Should fail on UT_CLOSE.");
+            UT_CLOSE(dbl1, dbl2, dbl2 - dbl1 - dblTol);
+        }
+    }
+
+    public class SUT_2 : TestCase
     {
         public override void RunCase()
         {
@@ -21,112 +90,47 @@ namespace Nebulator.Test
 
             UT_STEP(1, "Tests various string functions, including UTF8 support.");
 
-            string zTest1 = RandStr(100);
-            string zTest2 = zTest1.Clone() as string;
-            UT_CHECK_STR_EQUAL(zTest1, zTest2);
+            string str1 = RandStr(10);
+            string str2 = str1.Clone() as string;
+            UT_STR_EQUAL(str1, str2);
 
-            UT_STEP_END();
+            UT_STR_EQUAL(str1, "Should fail");
+            UT_INSPECT("Previous step should have failed.");
 
-            UT_STEP(2, "Tests various time functions.");
+            UT_STR_NOT_EQUAL(str1, "Should pass");
 
-            UT_STEP_END();
+            UT_STEP(2, "Tests various ...... functions.");
         }
     }
 
-    //[TestCase("LWUT_2", "Tester for other stuff.")]
-    public class LWUT_2 : TestCase
+    public class SUT_3 : TestCase
     {
         public override void RunCase()
         {
-            UT_INFO("Here I am.");
+            UT_INFO("Other stuff.");
 
-            UT_STEP(1, "Tests blabla.");
+            UT_STEP(1, "Tests various string functions, including UTF8 support.");
 
-            string zTest1 = RandStr(100);
-            string zTest2 = zTest1.Clone() as string;
-            UT_CHECK_STR_EQUAL(zTest1, zTest2);
+            string str1 = RandStr(10);
+            string str2 = str1.Clone() as string;
+            UT_STR_EQUAL(str1, str2);
 
-            UT_CHECK_STR_EQUAL(zTest1, "zTest2");
+            UT_STR_EQUAL(str1, "Should fail");
+            UT_INSPECT("Previous step should have failed.");
 
-            UT_STEP_END();
+            UT_STR_NOT_EQUAL(str1, "Should pass");
 
-            UT_STEP(2, "Tests various time functions.");
+            UT_STEP(2, "Tests various ...... functions.");
 
-            UT_STEP_END();
+            // Cause an explosion.
+            //UT_ASSERT(11, 22);
+            //UT_INFO(Sub(0));
+        }
+
+        string Sub(int i)
+        {
+            int v = 100 / i;
+            return v.ToString();
         }
     }
-
 }
-
-
-
-/*
-/////////////////////////////////////////////////////////////////////////////
-UT_CASE(LWUT_3, "Test Other Functions")
-{
-	//RET_STAT RetStat = RET_STAT_NO_ERR;
-	int iTest1 = 321;
-	int iTest2 = 987;
-	const char* zTest1 = "round and round";
-	const char* zTest2 = "the mulberry bush";
-	double dTest1 = 1.500F;
-	double dTest2 = 1.600F;
-	double dTol = 0.001F;
-
-	UT_STEP(1, "The remaining tests for CMN_UnitTester.h are lumped into one test step.");
-
-	UT_INSP("Test UT_INSP. Visually inspect that this appears in the output.");
-
-	UT_INSP_1("Test UT_INSP_1. Visually inspect that this appears in the output with parm 321.", iTest1);
-
-	UT_INSP("Substep should fail on UT_CHECK.")
-	UT_CHECK(iTest2 < iTest1);
-
-	// Substep should pass on UT_CHECK.
-	UT_CHECK(iTest2 == 987);
-
-	UT_INSP("Substep should fail on UT_CHECK_STR_EQUAL.");
-	UT_CHECK_STR_EQUAL(zTest1, zTest2);
-
-	// Substep should pass on UT_CHECK_STR_EQUAL.
-	UT_CHECK_STR_EQUAL(zTest2, "the mulberry bush");
-
-	UT_INSP("Substep should fail on UT_CHECK_NOT_EQUAL.");
-	UT_CHECK_NOT_EQUAL(iTest1, 321);
-
-	// Substep should pass on UT_CHECK_NOT_EQUAL.
-	UT_CHECK_NOT_EQUAL(iTest2, iTest1);
-
-	UT_INSP("Substep should fail on UT_CHECK_LESS_OR_EQUAL.");
-	UT_CHECK_LESS_OR_EQUAL(iTest2, iTest1);
-
-	// Substep should pass on UT_CHECK_LESS_OR_EQUAL.
-	UT_CHECK_LESS_OR_EQUAL(iTest1, 321);
-
-	// Substep should pass on UT_CHECK_LESS_OR_EQUAL.
-	UT_CHECK_LESS_OR_EQUAL(iTest1, iTest2);
-
-	UT_INSP("Substep should fail on UT_CHECK_GREATER.")
-	UT_CHECK_GREATER(iTest1, iTest2);
-
-	// Substep should pass on UT_CHECK_GREATER.
-	UT_CHECK_GREATER(iTest2, iTest1);
-
-	UT_INSP("Substep should fail on UT_CHECK_GREATER_OR_EQUAL.")
-	UT_CHECK_GREATER_OR_EQUAL(iTest1, iTest2);
-
-	// Substep should pass on UT_CHECK_GREATER_OR_EQUAL.
-	UT_CHECK_GREATER_OR_EQUAL(iTest2, 987);
-
-	// Substep should pass on UT_CHECK_GREATER_OR_EQUAL.
-	UT_CHECK_GREATER_OR_EQUAL(iTest2, iTest1);
-
-	// Substep should pass on UT_CHECK_CLOSE.
-	UT_CHECK_CLOSE(dTest1, dTest2, dTest2 - dTest1 + dTol);
-
-	UT_INSP("Substep should fail on UT_CHECK_CLOSE.");
-	UT_CHECK_CLOSE(dTest1, dTest2, dTest2 - dTest1 - dTol);
-
-	UT_STEP_END();
-}
-*/

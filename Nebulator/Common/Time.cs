@@ -27,6 +27,15 @@ namespace Nebulator.Common
         }
 
         /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        public Time(Time note)
+        {
+            Tick = note.Tick;
+            Tock = note.Tock;
+        }
+
+        /// <summary>
         /// Constructor from discrete components.
         /// </summary>
         /// <param name="tick"></param>
@@ -93,9 +102,9 @@ namespace Nebulator.Common
                 throw new Exception("Negative value is invalid");
             }
 
-            // Split into two parts from 0.01 or 1.01 or 1.10.
-            Tick = Utils.SplitDouble(tts).integral;
-            Tock = Utils.SplitDouble(tts).fractional;
+            var v = Utils.SplitDouble(tts);
+            Tick = (int)v.integral;
+            Tock = (int)(v.fractional * 100);
         }
         #endregion
 

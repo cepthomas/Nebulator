@@ -45,6 +45,17 @@ namespace Nebulator.Model
         {
             NoteNumbers.Add(noteNum);
         }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        public Note(Note note)
+        {
+            Volume = note.Volume;
+            When = new Time(note.When);
+            Duration = new Time(note.Duration);
+            note.NoteNumbers.ForEach(n => NoteNumbers.Add(n));
+        }
         #endregion
 
         #region Public functions

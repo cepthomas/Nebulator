@@ -333,6 +333,16 @@ namespace Nebulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap glyphicons_79_warning_sign {
+            get {
+                object obj = ResourceManager.GetObject("glyphicons_79_warning_sign", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap glyphicons_82_refresh {
             get {
                 object obj = ResourceManager.GetObject("glyphicons_82_refresh", resourceCulture);

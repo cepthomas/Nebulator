@@ -37,8 +37,8 @@ namespace Nebulator.Engine
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
 
-        /// <summary>All the important time points and their names. TODO use Time?</summary>
-        public Dictionary<int, string> TimeDefs { get; } = new Dictionary<int, string>();
+        /// <summary>All the important time points and their names.</summary>
+        public Dictionary<Time, string> TimeDefs { get; } = new Dictionary<Time, string>();
         #endregion
 
         #region Fields
@@ -687,18 +687,16 @@ namespace Nebulator.Engine
 
         private void ParseNote(FileParseContext pcont, List<string> parms)
         {
-            // note 0.00 G.4.m7 90 1.50
-            // 0    1    2      3  4
+            // note WHEN WHICH VEL 1.50*
+            // 0    1    2     3  4
+            // WHEN: 1.23, __1___1___1___1_ (or #)
+            // WHICH: 60, C.4, C.4.m7, RideCymbal1
+            // VEL: 90, const
 
             try
             {
-                // Support note string, number, drum.  03.10 C4 90 00.8
+                // Support note string, number, drum.
                 Note n = null;
-
-                //TODO note patterns:
-                // note(1, HiMidTom, 80,                   0001000100010001);
-                // note(1, G.4.m7, 90,                     0001000100010001);
-                // note(subdiv, which, vol, pattern);
 
                 if (parms[2].IsInteger())
                 {
@@ -722,17 +720,19 @@ namespace Nebulator.Engine
                 // Optional duration for musical note.
                 if (parms.Count > 4)
                 {
-                    Time t = ParseTime(pcont, parms[4]);
-                    if (t != null)
-                    {
-                        n.Duration = t;
-                    }
+                    List<Time> t = ParseTime(pcont, parms[4]);
+                    n.Duration = t[0];
                 }
 
                 // The rest is common.
-                n.When = ParseTime(pcont, parms[1]);
                 n.Volume = ParseConstRef(pcont, parms[3]);
-                _dynamic.Sequences.Values.Last().Notes.Add(n);
+
+                List<Time> whens = ParseTime(pcont, parms[1]);
+                foreach(Time t in whens)
+                {
+                    Note ncl = new Note(n) { When = t };
+                    _dynamic.Sequences.Values.Last().Notes.Add(ncl);
+                }
             }
             catch (Exception ex)
             {
@@ -755,8 +755,16 @@ namespace Nebulator.Engine
                 };
                 _dynamic.Tracks.Values.Last().Loops.Add(nl);
 
-                TimeDefs[nl.StartTick] = parms[1];
-                TimeDefs[nl.EndTick] = parms[2];
+                // Save any important times.
+                if (!parms[1].IsInteger())
+                {
+                    TimeDefs[new Time(nl.StartTick, 0)] = parms[1];
+                }
+
+                if (!parms[2].IsInteger())
+                {
+                    TimeDefs[new Time(nl.EndTick, 0)] = parms[2];
+                }
             }
             catch (Exception ex)
             {
@@ -966,62 +974,96 @@ namespace Nebulator.Engine
         /// </summary>
         /// <param name="pcont">The parse context.</param>
         /// <param name="s">The line.</param>
-        Time ParseTime(FileParseContext pcont, string s)
+        /// <returns>A list of the parsed times - will be empty if failed.</returns>
+        List<Time> ParseTime(FileParseContext pcont, string s)
         {
-            Time t = null;
+            List<Time> times = new List<Time>();
+
             try
             {
-                var parts = s.SplitByToken(".");
-
-                // Check for valid fractional part.
-                if(int.TryParse(parts[1], out int result))
+                // Test for pattern or Time.
+                if(s.Contains("."))
                 {
-                    if(result >= Globals.TOCKS_PER_TICK)
-                    {
-                        throw (null); // too big
-                    }
+                    // Single time value.
+                    var parts = s.SplitByToken(".");
 
-                    t = new Time()
+                    // Check for valid fractional part.
+                    if (int.TryParse(parts[1], out int result))
                     {
-                        Tick = int.Parse(parts[0]),
-                        Tock = int.Parse(parts[1])
-                    };
+                        if (result >= Globals.TOCKS_PER_TICK)
+                        {
+                            throw null; // too big
+                        }
+
+                        times.Add(new Time()
+                        {
+                            Tick = int.Parse(parts[0]),
+                            Tock = int.Parse(parts[1])
+                        });
+                    }
+                    else
+                    {
+                        // Try parsing fractions: 1/2, 3/4, 5/8 3/16 9/32 etc.
+                        var frac = parts[1].SplitByToken("/");
+
+                        if (frac.Count != 2)
+                        {
+                            throw (null); // incorrect number
+                        }
+
+                        double d = double.Parse(frac[0]) / double.Parse(frac[1]);
+
+                        if (d >= 1.0)
+                        {
+                            throw (null); // invalid fraction
+                        }
+
+                        // Scale.
+                        d *= Globals.TOCKS_PER_TICK;
+
+                        // Truncate.
+                        d = Math.Floor(d);
+
+                        times.Add(new Time()
+                        {
+                            Tick = int.Parse(parts[0]),
+                            Tock = (int)d
+                        });
+                    }
                 }
                 else
                 {
-                    // Try parsing fractions: 1/2, 3/4, 5/8 3/16 9/32 etc.
-                    var frac = parts[1].SplitByToken("/");
+                    // Try pattern. Each hit is 1/16 note - fixed res for now.
+                    // x---x---x---x---
 
-                    if(frac.Count != 2)
+                    const int PATTERN_SIZE = 4;
+
+                    for (int i = 0; i < s.Length; i++)
                     {
-                        throw (null); // incorrect number
+                        switch(s[i])
+                        {
+                            case 'x':
+                                // Note on.
+                                times.Add(new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Globals.TOCKS_PER_TICK / PATTERN_SIZE));
+                                break;
+
+                            case '-':
+                                // No note, skip.
+                                break;
+
+                            default:
+                                // Invalid
+                                throw null;
+                        }
                     }
-
-                    double d = double.Parse(frac[0]) / double.Parse(frac[1]);
-
-                    if(d >= 1.0)
-                    {
-                        throw (null); // invalid fraction
-                    }
-
-                    // Scale.
-                    d *= Globals.TOCKS_PER_TICK;
-
-                    // Truncate.
-                    d = Math.Floor(d);
-
-                    t = new Time()
-                    {
-                        Tick = int.Parse(parts[0]),
-                        Tock = (int)d
-                    };
                 }
             }
             catch (Exception)
             {
                 AddParseError(pcont, "Invalid time");
+                times.Clear();
             }
-            return t;
+            return times;
         }
         #endregion
     }

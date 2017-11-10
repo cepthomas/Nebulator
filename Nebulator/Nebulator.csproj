@@ -373,6 +373,8 @@
   <ItemGroup>
     <None Include="Resources\glyphicons-359-file-import.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\glyphicons-79-warning-sign.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

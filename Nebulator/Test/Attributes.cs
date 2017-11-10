@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nebulator.Test
 {
-    class Attributes
+    class Attributes // TODO delete if not used.
     {
     }
 

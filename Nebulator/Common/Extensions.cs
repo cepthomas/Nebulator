@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Drawing;
 
 
 namespace Nebulator.Common

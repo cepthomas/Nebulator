@@ -52,34 +52,28 @@ namespace Nebulator.Common
         /// <param name="original"></param>
         /// <param name="newcol"></param>
         /// <returns></returns>
-        public static Bitmap ColorizeBitmap(Bitmap original, Color newcol)
+        public static Bitmap ColorizeBitmap(Image original, Color newcol)
         {
-            Bitmap newbmp = null;
+            Bitmap origbmp = original as Bitmap;
+            Bitmap newbmp = new Bitmap(original.Width, original.Height);
 
-            newbmp = new Bitmap(original.Width, original.Height);
-
-            for (int i = 0; i < newbmp.Width; i++)
+            for (int y = 0; y < newbmp.Height; y++)
             {
-                for (int j = 0; j < newbmp.Height; j++)
+                for (int x = 0; x < newbmp.Width; x++)
                 {
                     // Get the pixel from the image.
-                    Color acol = original.GetPixel(i, j);
-                    Color c = Color.FromArgb(acol.A, acol.R == 0 ? newcol.R : 255, acol.G == 0 ? newcol.G : 255, acol.B == 0 ? newcol.B : 255);
-                    newbmp.SetPixel(i, j, c);
+                    Color acol = origbmp.GetPixel(x, y);
+
+                    // Test for not background.
+                    if(acol.A > 0)
+                    {
+                        Color c = Color.FromArgb(acol.A, newcol.R, newcol.G, newcol.B);
+                        newbmp.SetPixel(x, y, c);
+                    }
                 }
             }
 
             return newbmp;
-        }
-
-        /// <summary>
-        /// Colorize using user defined color.
-        /// </summary>
-        /// <param name="original"></param>
-        /// <returns></returns>
-        public static Bitmap ColorizeBitmap(Image original)
-        {
-            return ColorizeBitmap(original as Bitmap, Globals.UserSettings.IconColor);
         }
         #endregion
 
@@ -154,17 +148,30 @@ namespace Nebulator.Common
         /// Split a double into two parts: each side of the dp.
         /// </summary>
         /// <param name="val"></param>
-        /// <returns>tuple of integral and 3 dp of fractional</returns>
-        public static (int integral, int fractional) SplitDouble(double val)
+        /// <returns>tuple of integral and fractional</returns>
+        public static (double integral, double fractional) SplitDouble(double val)
         {
-            // Split into two parts from 0.01 or 1.01 or 1.10.
-            int integral = (int)Math.Truncate(val);
-            int fractional = (int)((val - integral) * 1000);
+            double integral = Math.Truncate(val);
+            double fractional = val - integral;
             return (integral, fractional);
         }
         #endregion
 
         #region Math helpers
+        /// <summary>
+        /// Remap a value to new coordinates.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="start1"></param>
+        /// <param name="stop1"></param>
+        /// <param name="start2"></param>
+        /// <param name="stop2"></param>
+        /// <returns></returns>
+        public static double Map(double val, double start1, double stop1, double start2, double stop2)
+        {
+            return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1);
+        }
+
         /// <summary>
         /// Calculate a Standard Deviation based on a List of doubles.
         /// </summary>

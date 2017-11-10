@@ -59,7 +59,7 @@ namespace Nebulator.Controls
         /// </summary>
         [ReadOnly(true)]
         [Browsable(false)]
-        public Dictionary<int, string> TimeDefs { get; set; } = new Dictionary<int, string>();
+        public Dictionary<Time, string> TimeDefs { get; set; } = new Dictionary<Time, string>();
         #endregion
 
         /// <summary>
@@ -181,9 +181,9 @@ namespace Nebulator.Controls
         {
             string s = "";
 
-            foreach(KeyValuePair<int, string> kv in TimeDefs)
+            foreach(KeyValuePair<Time, string> kv in TimeDefs)
             {
-                if(kv.Key > val)
+                if(kv.Key.Tick > val)
                 {
                     break;
                 }

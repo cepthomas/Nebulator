@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using Nebulator.Common;
 using Nebulator.Model;
 using Nebulator.Engine;
@@ -17,6 +18,9 @@ namespace Nebulator
 
         /// <summary>Subdivision setting.</summary>
         public const int TOCKS_PER_TICK = 96;
+
+        /// <summary>Indicates needs user involvement.</summary>
+        public static Color ATTENTION_COLOR = Color.Red;
 
         /// <summary>Persisted values for current neb file.</summary>
         public static Persisted CurrentPersisted { get; set; } = new Persisted();

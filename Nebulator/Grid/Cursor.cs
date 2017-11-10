@@ -8,7 +8,7 @@ using System.Drawing.Drawing2D;
 
 namespace Nebulator.Grid
 {
-    /// <summary>Class for storing info about an X axis cursor. Just float right now. TODO</summary>
+    /// <summary>Class for storing info about an X axis cursor. Just float right now.</summary>
     public class GridCursor
     {
         /// <summary>The unique ID number associated with this cursor.</summary>

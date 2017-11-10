@@ -22,8 +22,10 @@ MODN = var(0); // modulate notes
 PITCH = var(8192); // center is 8192
 
 ///// Realtime Controllers /////
-MI = midiin(1, 2, MODN);
-MO = midiout(1, Pitch, PITCH);
+MI1 = midiin(1, 2, SPEED);
+MI2 = midiin(1, 3, VOLUME);
+MI3 = midiin(1, 4, MODN);
+MO1 = midiout(1, Pitch, PITCH);
 
 ////// Levers //////
 L1 = lever(0, 255, BACKC);
@@ -42,7 +44,7 @@ BASS = track(2, 2, 0, 0);
 loop(PART1, TLEN, BASS_VERSE);
 
 DRUMS = track(10, 4, 0, 0);
-loop(PART1, TLEN, DRUMS_VERSE);
+loop(PART1, TLEN, DRUMS_VERSE); // DRUMS_SIMPLE
 
 ///// Sequences and Notes /////
 KEYS_VERSE1 = seq(8);
@@ -97,6 +99,10 @@ note(2.10, HiMidTom, DRUM_DEF_VOL);
 note(3.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(3.50, CrashCymbal2, DRUM_DEF_VOL);
 
+// Quarter notes using patterns.
+DRUMS_SIMPLE = seq(8); // len of sequence in ticks (qtr notes). Should match length of the note spec.
+note(x-------x-------x-------x-------, AcousticBassDrum, 90); // each hit is 1/16 note - fixed res for now.
+note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
 
 
 ///// Functions /////

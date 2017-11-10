@@ -25,22 +25,42 @@ namespace Nebulator.Test
         public void Go()
         {
             MainForm mf = ParentForm as MainForm;
-            TestSUT();
 
-            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test1.neb");
+            //TestGrid();
+
+            //TestSimpleUT();
+
+            mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test1.neb");
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\algorithmic.neb");
-            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\import.neb");
-            //MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
+
+            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
             //Clipboard.SetText(string.Join(Environment.NewLine, v));
         }
 
-        void TestSUT()
+        void TestGrid()
+        {
+            MainForm mf = ParentForm as MainForm;
+            Random rand = new Random(111);
+
+            mf.grid1.ToolTipEvent += ((s, e) => e.Text = "TT_" + rand.Next().ToString());
+
+            List<PointF> data = new List<PointF>();
+            for (int i = 0; i < 10; i++)
+            {
+                data.Add(new PointF(i, rand.Next(20, 80)));
+            }
+
+            mf.grid1.InitData(data);
+
+        }
+
+        void TestSimpleUT()
         {
             TestRunner runner = new TestRunner();
-            string[] cases = new string[] { "LWUT" };
-            //string[] cases = new string[] { "LWUT_1", "LWUT_2" };
+            string[] cases = new string[] { "SUT" };
+            //string[] cases = new string[] { "SUT_1", "SUT_2" };
             runner.RunCases(cases);
 
             // Show results
@@ -51,6 +71,11 @@ namespace Nebulator.Test
             textViewer.Colors.Add("--- ", Color.LightGreen);
 
             runner.Context.Lines.ForEach(l => textViewer.AddLine(l, false));
+        }
+
+        private void btnGo_Click(object sender, EventArgs e)
+        {
+            Go();
         }
     }
 }

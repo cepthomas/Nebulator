@@ -15,8 +15,10 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
-// FUTURE space bar to start/stop.
-// FUTURE cut into assemblies, add NUnit.
+// FUTURE Use space bar to start/stop.
+// FUTURE Maybe cut into assemblies, add NUnit.
+// FUTURE VU meter for midi outputs? Visible tick indicator?
+
 
 
 namespace Nebulator
@@ -53,9 +55,6 @@ namespace Nebulator
 
         /// <summary>Files that have been changed externally, will require a reload.</summary>
         bool _dirtyFiles = false;
-
-        /// <summary>Indicates needs compilation.</summary>
-        Color _needCompile = Color.Red;
 
         /// <summary>Variables, controls, etc defined in the script.</summary>
         Dynamic _dynamic = new Dynamic();
@@ -132,18 +131,8 @@ namespace Nebulator
             }
             #endregion
 
-
-#if DEBUG
+            ////////////////////// test ///////////////////////
             testHost.Go();
-
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test1.neb");
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\alorithmic.neb");
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\import.neb");
-            //MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
-            //Clipboard.SetText(string.Join(Environment.NewLine, v));
-#endif
         }
 
         /// <summary>
@@ -218,7 +207,7 @@ namespace Nebulator
 
             if (compiler.Errors.Count == 0 && _script != null)
             {
-                btnCompile.BackColor = Globals.UserSettings.BackColor;
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
                 _dirtyFiles = false;
 
                 _steps = compiler.ConvertToSteps();
@@ -236,8 +225,7 @@ namespace Nebulator
                 ok = false;
                 SetPlayStatus(false);
                 compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
-
-                btnCompile.BackColor = _needCompile;
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
                 _dirtyFiles = true;
             }
 
@@ -279,7 +267,7 @@ namespace Nebulator
             }
 
             ///// Misc controls.
-            potSpeed.Value = Globals.CurrentPersisted.Speed;
+            potSpeed.Value = Globals.CurrentPersisted.Speed; // TODO speed and volume like any other var.
             sldVolume.Value = Globals.CurrentPersisted.Volume;
             timeMaster.MaxMajor = _steps.MaxTick;
 
@@ -352,7 +340,7 @@ namespace Nebulator
                     // Reset controllers for next go around.
                     _ctrlChanges.Clear();
 
-                    // Do the steps.
+                    // Do the steps. FUTURE Support Running Status?
                     foreach (Step step in _steps.GetSteps(Globals.CurrentStepTime))
                     {
                         Track track = _dynamic.Tracks[step.TrackName];
@@ -394,9 +382,6 @@ namespace Nebulator
 
                     SetPlayStatus(keepGoing);
                     UpdateTime(false);
-
-                    // In case there are noteoff that need to be processed.
-                    Globals.MidiInterface.Housekeep();
                 }
 
                 ///// UI updates /////
@@ -404,6 +389,9 @@ namespace Nebulator
                 {
                     _script?.Render();
                 }
+
+                // In case there are noteoff that need to be processed.
+                Globals.MidiInterface.Housekeep();
             }
             catch (Exception ex)
             {
@@ -566,7 +554,7 @@ namespace Nebulator
                     Globals.CurrentPersisted = Persisted.Load(fn.Replace(".neb", ".nebp"));
                     _fn = fn;
                     _dirtyFiles = true;
-                    btnCompile.BackColor = _needCompile;
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
                     AddToRecentDefs(fn);
                     Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
                 }
@@ -617,7 +605,7 @@ namespace Nebulator
             {
                 //_logger.Info("Watcher_Changed");
                 _dirtyFiles = true;
-                btnCompile.BackColor = _needCompile;
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
                 UpdateMenu();
             });
         }
@@ -685,7 +673,6 @@ namespace Nebulator
             double msecPerTock = 1 / tocksPerMsec;
 
             _timer.NebPeriod = (int)msecPerTock;
-            //was: _timer.NebPeriod = (int)(1000 * Globals.CurrentPersisted.Speed / Globals.TOCKS_PER_TICK);
         }
 
         /// <summary>
@@ -981,15 +968,16 @@ namespace Nebulator
         {
             BackColor = Globals.UserSettings.BackColor;
 
-            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image);
+            // Stash the original image in the tag field.
+            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, Globals.UserSettings.IconColor);
 
-            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image);
+            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
 
-            chkLoop.Image = Utils.ColorizeBitmap(chkLoop.Image);
+            chkLoop.Image = Utils.ColorizeBitmap(chkLoop.Image, Globals.UserSettings.IconColor);
             chkLoop.BackColor = Globals.UserSettings.BackColor;
             chkLoop.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
 
-            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image);
+            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, Globals.UserSettings.IconColor);
             chkPlay.BackColor = Globals.UserSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
 

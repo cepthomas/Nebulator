@@ -38,8 +38,8 @@ namespace Nebulator.Controls
             txtView.BackColor = Globals.UserSettings.BackColor;
             txtView.WordWrap = false;
 
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image);
-            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image);
+            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.UserSettings.IconColor);
+            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, Globals.UserSettings.IconColor);
             btnWrap.Checked = true;
         }
 
@@ -66,13 +66,14 @@ namespace Nebulator.Controls
                 txtView.SelectedText = "";
             }
 
-            txtView.SelectionBackColor = SystemColors.Control;
+            txtView.SelectionBackColor = BackColor;
 
             foreach (string s in Colors.Keys)
             {
                 if (text.Contains(s))
                 {
                     txtView.SelectionBackColor = Colors[s];
+                    break;
                 }
             }
 

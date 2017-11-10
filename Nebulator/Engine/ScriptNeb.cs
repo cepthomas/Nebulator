@@ -38,6 +38,9 @@ namespace Nebulator.Engine
         /// <summary>Current Nebulator Speed in Ticks per minute (bpm). Can be used to calculate real times.</summary>
         public float speed { get { return (float)Globals.CurrentPersisted.Speed; } }
 
+        /// <summary>Current Nebulator Volume.</summary>
+        public int volume { get { return Globals.CurrentPersisted.Volume; } }
+
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Globals.TOCKS_PER_TICK; } }
         #endregion

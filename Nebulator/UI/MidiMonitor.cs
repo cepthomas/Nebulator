@@ -29,9 +29,9 @@ namespace Nebulator.UI
 
             btnMonIn.Checked = Globals.UserSettings.MidiMonitorIn;
             btnMonOut.Checked = Globals.UserSettings.MidiMonitorOut;
-            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image);
-            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image);
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image);
+            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, Globals.UserSettings.IconColor);
+            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, Globals.UserSettings.IconColor);
+            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.UserSettings.IconColor);
         }
 
         /// <summary>

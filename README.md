@@ -25,6 +25,8 @@ Also, the new functions that support music are modelled after that API style.
 And a static declarative model is also supported if you want to write note sequence descriptions instead. Or you can
 combine declarative and procedural in the same piece. Wow!
 
+It's all WinForms. I recognize that WPF/UWP is superior technology but I can bang out most UI I need in WF lickety split.
+
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped
 out for subsequent reuse.
@@ -36,6 +38,8 @@ out for subsequent reuse.
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
 - Various utilities and extensions.
+- Super lightweight unit tester for when NUnit is too much.
+
 
 # Third Party
 This application uses these excellent FOSS components:

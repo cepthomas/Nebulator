@@ -21,7 +21,9 @@ using System.Diagnostics;
 
 namespace Nebulator.Test
 {
-    // Helper for config information.
+    /// <summary>
+    /// Accumulates general test info.
+    /// </summary>
     public class TestContext
     {
         // Properties.
@@ -50,311 +52,36 @@ namespace Nebulator.Test
         }
     }
 
-    // The class that encapsulates an individual test case.
-    public abstract class TestCase
+    /// <summary>
+    /// Specific exception type.
+    /// </summary>
+    class AssertException : Exception
     {
-        public enum StepFlag { None, Error, Comment, Inspect };
+        public string AssertInfo { get; }
 
-        // Properties
-        public int StepCnt { get; set; }
-        public TestContext Context { get; set; }
-
-        // All test case specifications must supply this.
-        public abstract void RunCase();
-
-        public void Record(StepFlag flag, string message)
+        public AssertException(string msg)
         {
-            switch (flag)
-            {
-                case StepFlag.Error:
-                    {
-                        // Update the states and counts.
-                        if (Context.CurrentCasePass)
-                        {
-                            Context.CurrentCasePass = false;
-                            Context.NumCasesFailed++;
-                        }
-
-                        if (Context.CurrentStepPass)
-                        {
-                            Context.CurrentStepPass = false;
-                            Context.NumStepsFailed++;
-                        }
-
-                        // Output the error string with file/line.
-                        int line = -1;
-                        string fn = Globals.UNKNOWN_STRING;
-                        foreach (StackFrame frame in new StackTrace(true).GetFrames())
-                        {
-                            //Console.WriteLine(frame.GetMethod().Name);
-                            if (frame.GetMethod().Name.Contains("RunCase"))
-                            {
-                                line = frame.GetFileLineNumber();
-                                fn = Path.GetFileName(frame.GetFileName());
-                            }
-                        }
-
-                        Context.WriteLine($"*** {fn}:{line} {message}");
-                    }
-                    break;
-
-                case StepFlag.Comment:
-                    {
-                        Context.WriteLine($"--- {message}");
-                    }
-                    break;
-
-                case StepFlag.Inspect:
-                    {
-                        Context.WriteLine($"!!! {message}");
-                    }
-                    break;
-
-                case StepFlag.None:
-                    {
-                        if (message.Length > 0)
-                        {
-                            Context.WriteLine($"    {message}");
-                        }
-                        else
-                        {
-                            Context.WriteLine($"");
-                        }
-                    }
-                    break;
-            }
+            AssertInfo = msg;
         }
-
-        #region Tests
-        protected void UT_INFO(string s)
-        {
-            Record(StepFlag.None, s);
-        }
-
-        protected void UT_STEP(int num, string desc)
-        {
-            Record(StepFlag.Comment, $"Start Step {num} {desc}");
-            StepCnt++;
-        }
-
-        protected void UT_STEP_END()
-        {
-            Record(StepFlag.Comment, $"Step Complete");
-            Record(StepFlag.None, "");
-        }
-
-        protected bool UT_CHECK_STR_EQUAL(string value1, string value2)
-        {
-            bool pass = true;
-            if (value1 != value2)
-            {
-                Record(StepFlag.Error, $"{value1} != {value2}");
-                pass = false;
-            }
-            return pass;
-        }
-
-        protected bool UT_CHECK_STR_NOT_EQUAL(string value1, string value2)
-        {
-            bool pass = true;
-            if (value1 != value2)
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should not equal " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        ////////////// TODO Implement all these:
-
-        // Prints the test step description with step number. Has a parameter to enable or disable the step.
-        protected void UT_STEP_ENB(int num, string desc, bool enb)
-        {
-            // std::ostringstream oss;
-            // oss << "Step " << num << ": " << desc;
-            // if(!enb) oss << " Not executed.";
-            // Record(config, TestCase::None, __LINE__, oss.str());
-            // mStepCnt++;
-            // config.CurrentStepPass = true;
-            // config.CurrentFile = __FILE__;
-            // if(enb) {
-        }
-
-        // Prints the given message.
-        protected void UT_INSP(string message, string parm)
-        {
-            // std::ostringstream oss;
-            // oss << message << " Parm:" << parm;
-            // Record(config, TestCase::Inspect, __LINE__, oss.str());
-        }
-
-        // Prints the condition and info and gens assert.
-        protected void UT_ASSERT_1(int value1, int value2, string info)
-        {
-            if ((value1) != (value2))
-            {
-                // std::ostringstream oss;
-                // oss << "Assert: " << info << " " << #value1 << "<" << value1 << "> should equal " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-                // assert(false);
-            }
-        }
-
-        // Prints the condition and gens assert.
-        protected void UT_ASSERT(int value1, int value2)
-        {
-            if ((value1) != (value2))
-            {
-                // std::ostringstream oss;
-                // oss << "Assert" << " " << #value1 << "<" << value1 << "> should equal " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-                // assert(false);
-            }
-        }
-
-        // Checks whether the given condition is true.
-        protected bool UT_CHECK(bool condition)
-        {
-            bool pass = true;
-            if (!(condition))
-            {
-                // std::ostringstream oss;
-                // oss << "Condition failed:" << #condition;
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the first parameter is equal to the second.
-        protected bool UT_CHECK_EQUAL(int value1, int value2)
-        {
-            bool pass = true;
-            if ((value1) != (value2))
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should equal " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the first parameter is not equal to the second.
-        protected bool UT_CHECK_NOT_EQUAL(int value1, int value2)
-        {
-            bool pass = true;
-            if ((value1) == (value2))
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should not equal " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the first parameter is less than the second.
-        protected bool UT_CHECK_LESS(int value1, int value2)
-        {
-            bool pass = true;
-            if ((value1) >= (value2))
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should be less than " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the first parameter is less than or equal to the second.
-        protected bool UT_CHECK_LESS_OR_EQUAL(int value1, int value2)
-        {
-            bool pass = true;
-            if ((value1) > (value2))
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should be less than or equal to " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the first parameter is greater than the second.
-        protected bool UT_CHECK_GREATER(int value1, int value2)
-        {
-            bool pass = true;
-            if ((value1) <= (value2))
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should be greater than " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the first parameter is greater than or equal to the second.
-        protected bool UT_CHECK_GREATER_OR_EQUAL(int value1, int value2)
-        {
-            bool pass = true;
-            if ((value1) < (value2))
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should be greater than or equal to " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the first parameter is within the given tolerance from
-        // the second parameter.  This is useful for comparing floating point values.
-        protected bool UT_CHECK_CLOSE(float value1, float value2, float tolerance)
-        {
-            bool pass = true;
-            if (Math.Abs((value1) - (value2)) > tolerance)
-            {
-                // std::ostringstream oss;
-                // oss << #value1 << "<" << value1 << "> should be within " << tolerance << " of " << #value2 << "<" << value2 << ">";
-                // Record(config, TestCase::Error, __LINE__, oss.str());
-            }
-            return pass;
-        }
-
-        // Checks whether the string is empty, otherwise prints the contents.
-        protected bool UT_CHECK_STR_EMPTY(string value)
-        {
-            bool pass = true;
-            // if (strlen(value))
-            // {
-            //     std::ostringstream oss;
-            //     oss << #value << "<" << value << "> should be empty";
-            //     Record(config, TestCase::Error, __LINE__, oss.str());
-            // }
-            return pass;
-        }
-
-        // Fails unconditionally and prints the given message.
-        protected void UT_FAIL(string message)
-        {
-            //Record(config, TestCase::Error, __LINE__, (message));
-        }
-        #endregion
-
-        #region Utilities
-        protected string RandStr(int num) // TODO
-        {
-            return "not-real-string";
-        }
-        #endregion
     }
 
-    // The orchestrator of the test execution.
+    /// <summary>
+    /// The orchestrator of the test execution.
+    /// </summary>
     public class TestRunner
     {
+        /// <summary>Format string.</summary>
         public const string DATE_TIME_FORMAT = "yyyy'-'MM'-'dd HH':'mm':'ss";
+
+        /// <summary>Format string.</summary>
         public const string DATE_TIME_FORMAT_MSEC = "yyyy'-'MM'-'dd HH':'mm':'ss.fff";
 
+        /// <summary>The test context.</summary>
         public TestContext Context { get; } = new TestContext();
 
-        // Constructor.
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public TestRunner()
         {
             Context.Reset();
@@ -363,7 +90,7 @@ namespace Nebulator.Test
         /// <summary>
         /// Run selected cases.
         /// </summary>
-        /// <param name="which">List of names of test cases to run.</param>
+        /// <param name="which">List of names of test cases to run. If the test case names begin with these values they will run.</param>
         public void RunCases(string[] which)
         {
             // Locate the test cases.
@@ -410,8 +137,28 @@ namespace Nebulator.Test
                         // Document the start of the case.
                         tc.Record(TestCase.StepFlag.Comment, $"Start Case {sc}");
 
-                        // Run the case.
-                        tc.RunCase();
+                        try
+                        {
+                            // Run the case.
+                            tc.RunCase();
+                        }
+                        catch (AssertException ex)
+                        {
+                            // Deliberate exception.
+                            tc.Record(TestCase.StepFlag.Assert, ex);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Out of scope exception. Top frame contains the cause.
+                            StackTrace st = new StackTrace(ex, true);
+                            StackFrame frame = st.GetFrame(0);
+
+                            int line = frame.GetFileLineNumber();
+                            string fn = Path.GetFileName(frame.GetFileName());
+                            string msg = $"{ex.Message} ({fn}:{line})";
+
+                            tc.Record(TestCase.StepFlag.Error, msg);
+                        }
 
                         // Completed the case, update the counts.
                         Context.NumCasesRun++;
@@ -434,5 +181,334 @@ namespace Nebulator.Test
             Context.WriteLine($"# Test Result: {pass}");
             Context.WriteLine($"#------------------------------------------------------------------");
         }
+    }
+
+    /// <summary>
+    /// The class that encapsulates an individual test case.
+    /// </summary>
+    public abstract class TestCase
+    {
+        public enum StepFlag { None, Error, Comment, Inspect, Assert };
+
+        Random _rand = new Random();
+
+        // Properties
+        public int StepCnt { get; set; }
+        public TestContext Context { get; set; }
+
+        // All test case specifications must supply this.
+        public abstract void RunCase();
+
+        /// <summary>
+        /// Records something of interest.
+        /// </summary>
+        /// <param name="flag">Type of info</param>
+        /// <param name="o">Usually either a string or an exception</param>
+        public void Record(StepFlag flag, object o)
+        {
+            switch (flag)
+            {
+                case StepFlag.Error:
+                case StepFlag.Assert:
+                    {
+                        // Update the states and counts.
+                        if (Context.CurrentCasePass)
+                        {
+                            Context.CurrentCasePass = false;
+                            Context.NumCasesFailed++;
+                        }
+
+                        if (Context.CurrentStepPass)
+                        {
+                            Context.CurrentStepPass = false;
+                            Context.NumStepsFailed++;
+                        }
+
+                        // Output the error string with file/line.
+                        int line = -1;
+                        string fn = Globals.UNKNOWN_STRING;
+                        string msg = Globals.UNKNOWN_STRING;
+                        StackTrace st = null;
+
+                        if (flag == StepFlag.Error)
+                        {
+                            st = new StackTrace(true);
+                            msg = o as string;
+                        }
+                        else // Assert
+                        {
+                            st = new StackTrace(o as AssertException, true);
+                            msg = (o as AssertException).AssertInfo;
+                        }
+
+                        foreach (StackFrame frame in st.GetFrames())
+                        {
+                            Console.WriteLine(frame.GetMethod().Name);
+                            if (frame.GetMethod().Name == "RunCase")
+                            {
+                                line = frame.GetFileLineNumber();
+                                fn = Path.GetFileName(frame.GetFileName());
+                                break;
+                            }
+                        }
+
+                        string sout = $"*** {msg}";
+                        if(line != -1)
+                        {
+                            sout += $" ({fn}:{line})";
+                        }
+                        Context.WriteLine(sout);
+                    }
+                    break;
+
+                case StepFlag.Comment:
+                    {
+                        string s = o as string;
+                        Context.WriteLine($"--- {s}");
+                    }
+                    break;
+
+                case StepFlag.Inspect:
+                    {
+                        string s = o as string;
+                        Context.WriteLine($"!!! {s}");
+                    }
+                    break;
+
+                case StepFlag.None:
+                    {
+                        string s = o as string;
+                        if (s.Length > 0)
+                        {
+                            Context.WriteLine($"    {s}");
+                        }
+                        else
+                        {
+                            Context.WriteLine($"");
+                        }
+                    }
+                    break;
+            }
+        }
+
+        #region Test macros
+
+        #region Boilerplate
+        protected void UT_INFO(string message, params object[] vars)
+        {
+            Record(StepFlag.None, $"{message} {string.Join(", ", vars)}");
+        }
+
+        protected void UT_STEP(int num, string desc)
+        {
+            Record(StepFlag.Comment, $"Start Step {num} {desc}");
+            StepCnt++;
+        }
+
+        // Prints the given message for inspection.
+        protected void UT_INSPECT(string message, params object[] vars)
+        {
+            Record(StepFlag.Inspect, $"{message} {string.Join(", ", vars)}");
+        }
+
+        // Fails unconditionally and prints the given message.
+        protected void UT_FAIL(string message, params object[] vars)
+        {
+            Record(StepFlag.Error, $"{message} {string.Join(", ", vars)}");
+        }
+
+        // Prints the condition and gens assert/exception.
+        protected void UT_ASSERT<T>(T value1, T value2) where T : IComparable
+        {
+            if (value1.CompareTo(value2) != 0)
+            {
+                throw new AssertException($"{value1} != {value2}");
+            }
+        }
+        #endregion
+
+        #region Strings
+        protected bool UT_STR_EQUAL(string value1, string value2)
+        {
+            bool pass = true;
+            if (value1 != value2)
+            {
+                Record(StepFlag.Error, $"{value1} != {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        protected bool UT_STR_NOT_EQUAL(string value1, string value2)
+        {
+            bool pass = true;
+            if (value1 == value2)
+            {
+                Record(StepFlag.Error, $"{value1} != {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        // Checks whether the string is empty, otherwise prints the contents.
+        protected bool UT_STR_EMPTY(string value)
+        {
+            bool pass = true;
+            if (string.IsNullOrEmpty(value))
+            {
+                Record(StepFlag.Error, $"String empty");
+                pass = false;
+            }
+            return pass;
+        }
+        #endregion
+
+
+        #region Comparers
+        //Less than zero - The current instance precedes the object specified by the CompareTo method in the sort order.
+        //Zero - This current instance occurs in the same position in the sort order as the object specified by the CompareTo method.
+        //Greater than zero - This current instance follows the object specified by the CompareTo method in the sort order.
+
+        // Checks whether the first parameter is equal to the second.
+        protected bool UT_EQUAL<T>(T value1, T value2) where T : IComparable
+        {
+            bool pass = true;
+            if (value1.CompareTo(value2) != 0)
+            {
+                Record(StepFlag.Error, $"{value1} != {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        // Checks whether the first parameter is not equal to the second.
+        protected bool UT_NOT_EQUAL<T>(T value1, T value2) where T : IComparable
+        {
+            bool pass = true;
+            if (value1.CompareTo(value2) == 0)
+            {
+                Record(StepFlag.Error, $"{value1} == {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        // Checks whether the first parameter is less than the second.
+        protected bool UT_LESS<T>(T value1, T value2) where T : IComparable
+        {
+            bool pass = true;
+            if (value1.CompareTo(value2) != -1)
+            {
+                Record(StepFlag.Error, $"{value1} not less than {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        // Checks whether the first parameter is less than or equal to the second.
+        protected bool UT_LESS_OR_EQUAL<T>(T value1, T value2) where T : IComparable
+        {
+            bool pass = true;
+            if (value1.CompareTo(value2) == 1)
+            {
+                Record(StepFlag.Error, $"{value1} not less than or equal {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        // Checks whether the first parameter is greater than the second.
+        protected bool UT_GREATER<T>(T value1, T value2) where T : IComparable
+        {
+            bool pass = true;
+            if (value1.CompareTo(value2) != 1)
+            {
+                Record(StepFlag.Error, $"{value1} not greater than {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        // Checks whether the first parameter is greater than or equal to the second.
+        protected bool UT_GREATER_OR_EQUAL<T>(T value1, T value2) where T : IComparable
+        {
+            bool pass = true;
+            if (value1.CompareTo(value2) == -1)
+            {
+                Record(StepFlag.Error, $"{value1} not greater than or equal {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+
+        // Checks whether the first parameter is within the given tolerance from
+        // the second parameter.  This is useful for comparing floating point values.
+        protected bool UT_CLOSE(double value1, double value2, double tolerance)
+        {
+            bool pass = true;
+            if (Math.Abs(value1 - value2) > tolerance)
+            {
+                Record(StepFlag.Error, $"{value1} not close enough to {value2}");
+                pass = false;
+            }
+            return pass;
+        }
+        #endregion
+
+        #region Misc
+        // Checks whether the given condition is true.
+        protected bool UT_CHECK(bool condition, string info)
+        {
+            bool pass = true;
+            if (!condition)
+            {
+                Record(StepFlag.Error, $"condition fail: {info}");
+                pass = false;
+            }
+            return pass;
+        }
+        #endregion
+
+        #region FUTURE tests?
+        // Prints the test step description with step number. Has a parameter to enable or disable the step.
+        // protected void UT_STEP_ENB(int num, string desc, bool enb)
+
+        // Prints the condition and info and gens assert.
+        //protected void UT_ASSERT_1(int value1, int value2, string info)
+
+        //protected void UT_STEP_END()
+        //{
+        //    Record(StepFlag.Comment, $"Step Complete");
+        //    Record(StepFlag.None, "");
+        //}
+        #endregion
+
+
+        #endregion
+
+        #region Utilities
+        protected string RandStr(int num)
+        {
+            char[] chars = new char[num];
+            for (int i = 0; i < num; i++)
+            {
+                chars[i] = (char)_rand.Next(32, 126); // printables
+            }
+
+            return new string(chars);
+        }
+
+        protected int RandRange(int min, int max)
+        {
+            return _rand.Next(min, max);
+        }
+
+        protected double RandRange(double min, double max)
+        {
+            double dr = _rand.NextDouble();
+            double v = min + (max - min) * dr;
+            return v;
+        }
+        #endregion
     }
 }
