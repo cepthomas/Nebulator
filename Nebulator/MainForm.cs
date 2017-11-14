@@ -19,6 +19,8 @@ using Nebulator.Midi;
 
 // TODO VU meter for midi outputs? Visible tick indicator?
 
+// Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
+// http://spheric-lounge-live-ambient-music.blogspot.com/
 
 
 namespace Nebulator
@@ -30,7 +32,7 @@ namespace Nebulator
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Fast timer.</summary>
-        IFastTimer _timer = null;
+        IFastTimer _nebTimer = null;
 
         /// <summary>Piano child form.</summary>
         Piano _piano = new Piano();
@@ -44,8 +46,11 @@ namespace Nebulator
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
         LazyCollection<Variable> _ctrlChanges = new LazyCollection<Variable>() { AllowOverwrite = true };
 
-        /// <summary>Diagnostics for timing measurement.</summary>
-        TimingAnalyzer _tan = new TimingAnalyzer();
+        /// <summary>Diagnostics for midi clock timing measurement.</summary>
+        TimingAnalyzer _tanMidi = new TimingAnalyzer() { SampleSize = 100 };
+
+        /// <summary>Diagnostics for UI execution time.</summary>
+        TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
 
         /// <summary>Current neb file name.</summary>
         string _fn = Globals.UNKNOWN_STRING;
@@ -58,6 +63,9 @@ namespace Nebulator
 
         /// <summary>Persisted internal values for current neb file.</summary>
         Bag _internalVals = new Bag();
+
+        /// <summary>UI update rate.</summary>
+        int _fps = 10;
         #endregion
 
         #region Lifecycle
@@ -94,13 +102,11 @@ namespace Nebulator
             Globals.MidiInterface.Init();
 
             // Midi output timer.
-            _timer = new NebTimer()
-            {
-                NebPeriod = 10,
-                UiPeriod = 30
-            };
-            _timer.TickEvent += FastTimer_TickEvent;
-            _timer.Start();
+            _nebTimer = new NebTimer();
+            SetSpeedTimerPeriod();
+            SetUiTimerPeriod();
+            _nebTimer.TimerElapsedEvent += FastTimer_TimerElapsedEvent;
+            _nebTimer.Start();
             #endregion
 
             #region Piano
@@ -145,12 +151,15 @@ namespace Nebulator
                 // Just in case.
                 Globals.MidiInterface.KillAll();
 
-                // Save the project.
-                _internalVals.Values.Clear();
-                _internalVals.SetValue("sys", "volume", sldVolume.Value);
-                _internalVals.SetValue("sys", "speed", potSpeed.Value);
-                _script.Dynamic.Tracks.Values.ForEach(c => _internalVals.SetValue(c.Name, "volume", c.Volume));
-                _internalVals.Save();
+                if(_script != null)
+                {
+                    // Save the project.
+                    _internalVals.Values.Clear();
+                    _internalVals.SetValue("master", "volume", sldVolume.Value);
+                    _internalVals.SetValue("master", "speed", potSpeed.Value);
+                    _script.Dynamic.Tracks.Values.ForEach(c => _internalVals.SetValue(c.Name, "volume", c.Volume));
+                    _internalVals.Save();
+                }
 
                 // Save user settings.
                 SaveSettings();
@@ -169,9 +178,9 @@ namespace Nebulator
         {
             if (disposing)
             {
-                _timer?.Stop();
-                _timer?.Dispose();
-                _timer = null;
+                _nebTimer?.Stop();
+                _nebTimer?.Dispose();
+                _nebTimer = null;
 
                 Globals.MidiInterface?.Stop();
                 Globals.MidiInterface?.Dispose();
@@ -255,7 +264,7 @@ namespace Nebulator
             foreach (Track t in _script.Dynamic.Tracks.Values)
             {
                 // Init from persistence.
-                t.Volume = (int)_internalVals.GetValue(t.Name, "volume");
+               t.Volume = Convert.ToInt32(_internalVals.GetValue(t.Name, "volume"));
 
                 TrackControl trk = new TrackControl()
                 {
@@ -268,8 +277,8 @@ namespace Nebulator
             }
 
             ///// Misc controls.
-            potSpeed.Value = (int)_internalVals.GetValue("sys", "speed");
-            sldVolume.Value = (int)_internalVals.GetValue("sys", "volume");
+            potSpeed.Value = Convert.ToInt32(_internalVals.GetValue("master", "speed"));
+            sldVolume.Value = Convert.ToInt32(_internalVals.GetValue("master", "volume"));
             timeMaster.MaxMajor = _steps.MaxTick;
 
             UpdateTime(true);
@@ -281,17 +290,15 @@ namespace Nebulator
         /// <summary>
         /// Multimedia timer tick handler.
         /// </summary>
-        void FastTimer_TickEvent(object sender, FastTimerEventArgs e)
+        void FastTimer_TimerElapsedEvent(object sender, FastTimerEventArgs e)
         {
-            if (Globals.UserSettings.TimerStats && e.NebEvent)
+            if (Globals.UserSettings.TimerStats && e.ElapsedTimers.Contains("NEB"))
             {
                 // Do some stats gathering for measuring jitter.
-                _tan.Grab();
-                if (_tan.Count >= 50)
+                TimingAnalyzer.Stats stats = _tanMidi.Grab();
+                if (stats != null)
                 {
-                    _tan.Stop();
-                    _logger.Info($"#### {_tan}");
-                    _tan.Clear();
+                    _logger.Info($"Midi timiing: {stats}");
                 }
             }
 
@@ -311,7 +318,7 @@ namespace Nebulator
             try
             {
                 ////// Neb steps /////
-                if (e.NebEvent && Globals.Playing)
+                if (Globals.Playing && e.ElapsedTimers.Contains("NEB"))
                 {
                     // Go through changed vars list.
                     foreach (Variable var in _ctrlChanges.Values)
@@ -386,12 +393,25 @@ namespace Nebulator
                 }
 
                 ///// UI updates /////
-                if (e.UiEvent)
+                if (_script != null && e.ElapsedTimers.Contains("UI"))
                 {
-                    _script?.Render();
+                    if(Globals.UserSettings.TimerStats)
+                    {
+                        _tanUi.Arm();
+                        _script.Render(); // TODO measure and alert if too slow, or throttle. Use test2.neb. Maybe faster graphics?
+                        TimingAnalyzer.Stats stats = _tanUi.Grab();
+                        if (stats != null)
+                        {
+                            _logger.Info($"UI timing: {stats}");
+                        }
+                    }
+                    else
+                    {
+                        _script.Render();
+                    }
                 }
 
-                // In case there are noteoff that need to be processed.
+                // In case there are lingering noteoffs that need to be processed.
                 Globals.MidiInterface.Housekeep();
             }
             catch (Exception ex)
@@ -640,7 +660,7 @@ namespace Nebulator
 
                 if(ok)
                 {
-                    SetTimerPeriod();
+                    SetSpeedTimerPeriod();
                     SetPlayStatus(true);
                 }
             }
@@ -657,14 +677,13 @@ namespace Nebulator
         /// </summary>
         void Speed_ValueChanged(object sender, EventArgs e)
         {
-//            internalVals.Speed = (int)potSpeed.Value;
-            SetTimerPeriod();
+            SetSpeedTimerPeriod();
         }
 
         /// <summary>
         /// Common func.
         /// </summary>
-        void SetTimerPeriod()
+        void SetSpeedTimerPeriod()
         {
             // Convert speed/bpm to msec per tock.
             double ticksPerMinute = potSpeed.Value; // bpm
@@ -673,7 +692,18 @@ namespace Nebulator
             double tocksPerMsec = tocksPerSec / 1000;
             double msecPerTock = 1 / tocksPerMsec;
 
-            _timer.NebPeriod = (int)msecPerTock;
+            _nebTimer.SetTimer("NEB", (int)msecPerTock);
+        }
+
+        /// <summary>
+        /// Common func.
+        /// </summary>
+        void SetUiTimerPeriod()
+        {
+            // Convert fps to msec per frame.
+            double framesPerMsec = (double)_fps / 1000;
+            double msecPerFrame = 1 / framesPerMsec;
+            _nebTimer.SetTimer("UI", (int)msecPerFrame);
         }
 
         /// <summary>
@@ -683,7 +713,6 @@ namespace Nebulator
         /// <param name="e"></param>
         void Volume_ValueChanged(object sender, EventArgs e)
         {
-//            internalVals.Volume = sldVolume.Value;
         }
 
         /// <summary>
@@ -757,8 +786,27 @@ namespace Nebulator
                 });
             }
 
+            if (e.Volume != null)
+            {
+                sldVolume.Value = (int)e.Volume;
+            }
+
+            if (e.Speed != null)
+            {
+                potSpeed.Value = (int)e.Speed;
+                SetSpeedTimerPeriod();
+            }
+
+            if (e.FrameRate != null)
+            {
+                _fps = (int)e.FrameRate;
+                SetUiTimerPeriod();
+            }
+
+            // Return all current.
             e.Volume = sldVolume.Value;
             e.Speed = potSpeed.Value;
+            e.FrameRate = _fps;
         }
 
         /// <summary>
@@ -999,6 +1047,8 @@ namespace Nebulator
 
             timeMaster.ControlColor = Globals.UserSettings.ControlColor;
             timeMaster.Invalidate();
+
+            infoDisplay.BackColor = Globals.UserSettings.BackColor;
         }
         #endregion
 

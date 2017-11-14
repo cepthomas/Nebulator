@@ -30,18 +30,24 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Events
-        /// <summary>Interaction with the host.</summary>
-        public event EventHandler<ScriptEventArgs> ScriptEvent;
-
+        /// <summary>
+        /// Interaction with the host. TODO Maybe not good design but is a swiss army knife.
+        /// </summary>
         public class ScriptEventArgs : EventArgs
         {
-            /// <summary>Something to print if not null.</summary>
+            /// <summary>If not null, print this.</summary>
             public string Message { get; set; } = null;
-            /// <summary>Get master speed.</summary>
-            public double Speed { get; set; } = 80.0;
-            /// <summary>Get master volume.</summary>
-            public int Volume { get; set; } = 100;
+
+            /// <summary>Master speed in bpm. If null means get otherwise set.</summary>
+            public double? Speed { get; set; } = null;
+
+            /// <summary>Master volume in midi velocity range: 0 - 127. If null means get otherwise set.</summary>
+            public int? Volume { get; set; } = null;
+
+            /// <summary>Script can select UI rate in fps. If null means get otherwise set.</summary>
+            public int? FrameRate { get; set; } = null;
         }
+        public event EventHandler<ScriptEventArgs> ScriptEvent;
         #endregion
 
         #region Fields

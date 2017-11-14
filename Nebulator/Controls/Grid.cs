@@ -388,7 +388,7 @@ namespace Nebulator.Controls
         }
         #endregion
 
-        #region Public functions
+        #region Public methods
         /// <summary>Constructs a new grid and initializes the collection.</summary>
         /// <param name="points">A collection data points</param>
         public void InitData(List<PointF> points)
@@ -1303,7 +1303,7 @@ namespace Nebulator.Controls
         }
         #endregion
 
-        #region Private functions
+        #region Private methods
         /// <summary>Perform grid initialization.</summary>
         void InitGrid()
         {

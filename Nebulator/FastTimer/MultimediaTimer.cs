@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 
 namespace Nebulator.FastTimer
@@ -11,7 +12,7 @@ namespace Nebulator.FastTimer
     enum TimerMode { OneShot, Periodic };
 
     /// <summary>
-    /// Represents information about the multimedia Timer's capabilities.
+    /// Represents information about the multimedia timer capabilities.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     struct TimerCaps
@@ -40,40 +41,16 @@ namespace Nebulator.FastTimer
     /// </summary>
     public class MultimediaTimer : IFastTimer
     {
-        #region Properties
-        /// <summary>
-        /// Gets or sets the time between Neb events.
-        /// </summary>
-        public int NebPeriod
-        {
-            get
-            {
-                return _period;
-            }
-            set
-            {
-                _period = value;
-
-                if (_running)
-                {
-                    Stop();
-                    Start();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the time between UI update events.
-        /// </summary>
-        public int UiPeriod { get; set; }
-
-        #endregion
-
         #region Fields
+        /// <summary>
+        /// The client supplied id.
+        /// </summary>
+        private string _clientId = "";
+
         /// <summary>
         /// Timer identifier.
         /// </summary>
-        private int _timerID = -1;
+        private int _mmTimerID = -1;
 
         /// <summary>
         /// Timer mode.
@@ -122,7 +99,7 @@ namespace Nebulator.FastTimer
         /// <summary>
         /// Occurs when the time period has elapsed.
         /// </summary>
-        public event EventHandler<FastTimerEventArgs> TickEvent;
+        public event EventHandler<FastTimerEventArgs> TimerElapsedEvent;
         #endregion
 
         #region Delegates
@@ -184,12 +161,36 @@ namespace Nebulator.FastTimer
             if (_running)
             {
                 // Stop and destroy timer.
-                timeKillEvent(_timerID);
+                timeKillEvent(_mmTimerID);
             }
         }
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Add a new timer instance. This implementation only supports one of course.
+        /// </summary>
+        /// <param name="id">Arbitrary id as string</param>
+        /// <param name="period"></param>
+        public void SetTimer(string id, int period)
+        {
+            if (_clientId == "")
+            {
+                _clientId = id;
+            }
+
+            if(id == _clientId)
+            {
+                _period = period;
+
+                if (_running)
+                {
+                    Stop();
+                    Start();
+                }
+            }
+        }
+
         /// <summary>
         /// Starts the timer.
         /// </summary>
@@ -199,17 +200,17 @@ namespace Nebulator.FastTimer
             if(_mode == TimerMode.Periodic)
             {
                 // Create and start timer.
-                _timerID = timeSetEvent(NebPeriod, _resolution, _timeProcPeriodic, IntPtr.Zero, (int)_mode);
+                _mmTimerID = timeSetEvent(_period, _resolution, _timeProcPeriodic, IntPtr.Zero, (int)_mode);
             }
             // Else the one shot event callback should be used.
             else
             {
                 // Create and start timer.
-                _timerID = timeSetEvent(NebPeriod, _resolution, _timeProcOneShot, IntPtr.Zero, (int)_mode);
+                _mmTimerID = timeSetEvent(_period, _resolution, _timeProcOneShot, IntPtr.Zero, (int)_mode);
             }
 
             // If the timer was created successfully.
-            if(_timerID != 0)
+            if(_mmTimerID != 0)
             {
                 _running = true;
             }
@@ -225,7 +226,7 @@ namespace Nebulator.FastTimer
         public void Stop()
         {
             // Stop and destroy timer.
-            int result = timeKillEvent(_timerID);
+            int result = timeKillEvent(_mmTimerID);
 
             // CET disabled: Debug.Assert(result == TIMERR_NOERROR);
 
@@ -242,7 +243,7 @@ namespace Nebulator.FastTimer
         /// <param name="param2"></param>
         private void TimerPeriodicCallback(int id, int msg, int user, int param1, int param2)
         {
-            TickEvent?.Invoke(this, new FastTimerEventArgs() { NebEvent = true, UiEvent = true } );
+            TimerElapsedEvent?.Invoke(this, new FastTimerEventArgs() { ElapsedTimers = new List<string>() { _clientId } });
         }
 
         /// <summary>
@@ -255,7 +256,7 @@ namespace Nebulator.FastTimer
         /// <param name="param2"></param>
         private void TimerOneShotCallback(int id, int msg, int user, int param1, int param2)
         {
-            TickEvent?.Invoke(this, new FastTimerEventArgs() { NebEvent = true, UiEvent = true });
+            TimerElapsedEvent?.Invoke(this, new FastTimerEventArgs() { ElapsedTimers = new List<string>() { _clientId } });
             Stop();
         }
         #endregion
@@ -280,7 +281,7 @@ namespace Nebulator.FastTimer
                 if (disposing)
                 {
                     // Stop and destroy timer.
-                    timeKillEvent(_timerID);
+                    timeKillEvent(_mmTimerID);
                 }
 
                 _disposed = true;

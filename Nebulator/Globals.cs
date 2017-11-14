@@ -26,7 +26,7 @@ namespace Nebulator
         public static bool Playing { get; set; } = false;
 
         /// <summary>Current step time clock.</summary>
-        public static Time CurrentStepTime = new Time() { Tick = 0, Tock = 0 };
+        public static Time CurrentStepTime { get; set; } = new Time() { Tick = 0, Tock = 0 };
 
         /// <summary>Midi in/out devices.</summary>
         public static MidiInterface MidiInterface { get; set; } = new MidiInterface();

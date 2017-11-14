@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 
 namespace Nebulator.FastTimer
 {
@@ -8,19 +10,17 @@ namespace Nebulator.FastTimer
     public interface IFastTimer : IDisposable
     {
         /// <summary>
-        /// Gets or sets the time between Neb events in msec. 
+        /// Set a timer value. Creates a new one if first set.
         /// </summary>
-        int NebPeriod { get; set; }
-
-        /// <summary>
-        /// Gets or sets the time between UI update events in msec.
-        /// </summary>
-        int UiPeriod { get; set; }
+        /// <param name="id">Arbitrary id as string</param>
+        /// <param name="period">Timer msec</param>
+        /// <returns>Numerical id for this timer</returns>
+        void SetTimer(string id, int period);
 
         /// <summary>
         /// Occurs when the time period has elapsed.
         /// </summary>
-        event EventHandler<FastTimerEventArgs> TickEvent;
+        event EventHandler<FastTimerEventArgs> TimerElapsedEvent;
 
         /// <summary>
         /// Starts the timer.
@@ -39,13 +39,8 @@ namespace Nebulator.FastTimer
     public class FastTimerEventArgs : EventArgs
     {
         /// <summary>
-        /// Neb update.
+        /// Elapsed timers.
         /// </summary>
-        public bool NebEvent { get; set; } = false;
-
-        /// <summary>
-        /// UI update.
-        /// </summary>
-        public bool UiEvent { get; set; } = false;
+        public List<string> ElapsedTimers { get; set; } = new List<string>();
     }
 }

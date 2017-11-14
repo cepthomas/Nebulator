@@ -17,6 +17,7 @@ namespace Nebulator.Scripting
     {
         #region Fields
 
+
         #endregion
 
         #region Functions that can be overridden in the user script
@@ -34,14 +35,40 @@ namespace Nebulator.Scripting
         /// <summary>Neb step clock is running.</summary>
         public bool playing { get { return Globals.Playing; } }
 
-        /// <summary>Current Nebulator Speed in Ticks per minute (bpm). Can be used to calculate real times.</summary>
-        public float speed { get { return (float)GetInfo().Speed; } }
-
-        /// <summary>Current Nebulator master Volume.</summary>
-        public int volume { get { return GetInfo().Volume; } }
-
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Globals.TOCKS_PER_TICK; } }
+
+        /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
+        public float speed
+        {
+            get
+            {
+                ScriptEventArgs args = new ScriptEventArgs();
+                ScriptEvent?.Invoke(this, args);
+                return (float)args.Speed;
+            }
+            set
+            {
+                ScriptEventArgs args = new ScriptEventArgs() { Speed = value };
+                ScriptEvent?.Invoke(this, args);
+            }
+        }
+
+        /// <summary>Nebulator master Volume.</summary>
+        public int volume
+        {
+            get
+            {
+                ScriptEventArgs args = new ScriptEventArgs();
+                ScriptEvent?.Invoke(this, args);
+                return (int)args.Volume;
+            }
+            set
+            {
+                ScriptEventArgs args = new ScriptEventArgs() { Volume = value };
+                ScriptEvent?.Invoke(this, args);
+            }
+        }
         #endregion
 
         #region Script functions
@@ -83,7 +110,7 @@ namespace Nebulator.Scripting
                     Duration = new Time(dur)
                 };
 
-                step.Adjust(GetInfo().Volume, track.Volume, track.Modulate);
+                step.Adjust(volume, track.Volume, track.Modulate);
                 Globals.MidiInterface.Send(step, true);
             }
         }
@@ -132,19 +159,6 @@ namespace Nebulator.Scripting
         public void modulate(Track track, int val)
         {
             track.Modulate = val;
-        }
-        #endregion
-
-        #region Private functions
-        /// <summary>
-        /// Common utility to get speed etc from main.
-        /// </summary>
-        /// <returns></returns>
-        ScriptEventArgs GetInfo()
-        {
-            ScriptEventArgs args = new ScriptEventArgs();
-            ScriptEvent?.Invoke(this, args);
-            return args;
         }
         #endregion
     }

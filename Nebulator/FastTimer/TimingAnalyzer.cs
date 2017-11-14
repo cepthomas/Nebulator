@@ -9,27 +9,47 @@ namespace Nebulator.FastTimer
     /// <summary>Diagnostics for timing measurement.</summary>
     public class TimingAnalyzer
     {
+        public class Stats
+        {
+            #region Properties
+            /// <summary>Number of data points.</summary>
+            public long Count { get; set; } = 0;
+
+            /// <summary>Mean in msec.</summary>
+            public double Mean { get; set; } = 0;
+
+            /// <summary>Min in msec.</summary>
+            public double Min { get; set; } = 0;
+
+            /// <summary>Max in msec.</summary>
+            public double Max { get; set; } = 0;
+
+            /// <summary>SD in msec.</summary>
+            public double SD { get; set; } = 0;
+            #endregion
+
+            /// <summary>Readable.</summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                return $"Count:{Count} Mean:{Mean:F2} Max:{Max:F2} Min:{Min:F2} SD:{SD:F2}";
+            }
+        }
+
         #region Fields
+        /// <summary>The internal timer.</summary>
         Stopwatch _watch = new Stopwatch();
+
+        /// <summary>Accumulated data points.</summary>
         List<double> _times = new List<double>();
+
+        /// <summary>Last grab time for calculating diff.</summary>
         long _lastTicks = -1;
         #endregion
 
         #region Properties
-        /// <summary>Number of data points.</summary>
-        public long Count { get { return _times.Count; } }
-
-        /// <summary>Mean in msec.</summary>
-        public double Mean { get; private set; } = 0;
-
-        /// <summary>Min in msec.</summary>
-        public double Min { get; private set; } = 0;
-
-        /// <summary>Max in msec.</summary>
-        public double Max { get; private set; } = 0;
-
-        /// <summary>SD in msec.</summary>
-        public double SD { get; private set; } = 0;
+        /// <summary>Number of data points to grab.</summary>
+        public long SampleSize { get; set; } = 50;
         #endregion
 
         /// <summary>
@@ -38,46 +58,58 @@ namespace Nebulator.FastTimer
         public void Stop()
         {
             _watch.Stop();
-            // Process the collected stuff.
-            Mean = _times.Average();
-            Max = _times.Max();
-            Min = _times.Min();
-            SD = Utils.StandardDeviation(_times.ConvertAll(v => v));
-        }
-
-        /// <summary>
-        /// Clear accumulator.
-        /// </summary>
-        public void Clear()
-        {
-            Mean = 0;
-            Max = 0;
-            Min = 0;
-            SD = 0;
-            _lastTicks = -1;
             _times.Clear();
+            _lastTicks = -1;
         }
 
         /// <summary>
-        /// Grab a data point.
+        /// Execute this before measuring the duration of something.
         /// </summary>
-        public void Grab()
+        public void Arm()
         {
-            if(_lastTicks == -1)
+            _lastTicks = _watch.ElapsedTicks;
+        }
+
+        /// <summary>
+        /// Grab a data point. Also auto starts the timer.
+        /// </summary>
+        /// <returns>Accumulated statistics if enough points collected, or null otherwise.</returns>
+        public Stats Grab()
+        {
+            Stats stats = null;
+
+            if(!_watch.IsRunning)
             {
-                // Autostart.
                 _times.Clear();
+                _lastTicks = -1;
                 _watch.Start();
-                _lastTicks = _watch.ElapsedTicks;
             }
-            else
+
+            long t = _watch.ElapsedTicks; // snap!
+
+            if (_lastTicks != -1)
             {
-                // Increment.
-                long t = _watch.ElapsedTicks; // snap!
                 double dt = TicksToMsec(t - _lastTicks);
                 _times.Add(dt);
-                _lastTicks = t;
             }
+            _lastTicks = t;
+
+            if (_times.Count >= SampleSize)
+            {
+                // Process the collected stuff.
+                stats = new Stats()
+                {
+                    Mean = _times.Average(),
+                    Max = _times.Max(),
+                    Min = _times.Min(),
+                    SD = Utils.StandardDeviation(_times.ConvertAll(v => v)),
+                    Count = _times.Count
+                };
+
+                _times.Clear();
+            }
+
+            return stats;
         }
 
         /// <summary>
@@ -88,15 +120,6 @@ namespace Nebulator.FastTimer
         double TicksToMsec(long ticks)
         {
             return 1000.0 * ticks / Stopwatch.Frequency;
-        }
-
-        /// <summary>
-        /// Readable.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"Count:{Count} Mean:{Mean:F2} Max:{Max:F2} Min:{Min:F2} SD:{SD:F2}";
         }
     }
 }

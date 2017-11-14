@@ -31,7 +31,7 @@ namespace Nebulator.Midi
         public int MaxTick { get; private set; } = 0;
         #endregion
 
-        #region Functions
+        #region Methods
         /// <summary>
         /// Add a step at the given time.
         /// </summary>

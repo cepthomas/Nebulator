@@ -134,7 +134,7 @@ namespace Nebulator.Midi
         }
         #endregion
 
-        #region Public functions
+        #region Public methods
         /// <summary>
         /// Process any stop notes.
         /// </summary>

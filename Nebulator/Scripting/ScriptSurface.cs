@@ -98,7 +98,7 @@ namespace Nebulator.Scripting
         {
             ProcessMouse(e);
             _mousePressed = true;
-            mousePressedEvt();
+            mousePressed();
         }
 
         /// <summary>

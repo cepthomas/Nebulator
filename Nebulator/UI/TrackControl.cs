@@ -56,7 +56,7 @@ namespace Nebulator.UI
         }
 
         /// <summary>
-        /// Handles solo and mute functions.
+        /// Handles solo and mute.
         /// </summary>
         private void Check_Click(object sender, EventArgs e)
         {

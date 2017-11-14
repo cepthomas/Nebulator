@@ -72,7 +72,7 @@ namespace Nebulator.Scripting
         Dictionary<string, string> _midiControllerDefs = new Dictionary<string, string>();
         #endregion
 
-        #region Main function
+        #region Main method
         /// <summary>
         /// Run the Compiler.
         /// </summary>
@@ -229,15 +229,6 @@ namespace Nebulator.Scripting
                     $"partial class {_scriptName}",
                     "{"
                 });
-
-
-                //Variable v = new Variable()
-                //{
-                //    Name = parms[0],
-                //    Value = int.Parse(parms[2])
-                //};
-                //_dynamic.Vars.Add(v.Name, v);
-
 
                 for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
                 {

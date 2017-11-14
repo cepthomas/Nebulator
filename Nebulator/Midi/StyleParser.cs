@@ -41,7 +41,7 @@ namespace Nebulator.Midi
         string _currentPart = Globals.UNKNOWN_STRING;
         #endregion
 
-        #region Public functions
+        #region Public methods
         /// <summary>
         /// Read a style file. For style parsing, only a minimal set is included. You can add the rest.
         /// See http://www.wierzba.homepage.t-online.de/StyleFileDescription_v21.pdf.
@@ -324,7 +324,7 @@ namespace Nebulator.Midi
         }
         #endregion
 
-        #region Private functions
+        #region Private methods
         /// <summary>
         /// Helper function.
         /// </summary>

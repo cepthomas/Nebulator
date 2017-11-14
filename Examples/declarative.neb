@@ -22,9 +22,7 @@ MODN = var(0); // modulate notes
 PITCH = var(8192); // center is 8192
 
 ///// Realtime Controllers /////
-MI1 = midiin(1, 2, SPEED);
-MI2 = midiin(1, 3, VOLUME);
-MI3 = midiin(1, 4, MODN);
+MI1 = midiin(1, 4, MODN);
 MO1 = midiout(1, Pitch, PITCH);
 
 ////// Levers //////

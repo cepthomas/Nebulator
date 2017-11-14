@@ -178,7 +178,6 @@
     <Compile Include="FastTimer\IFastTimer.cs" />
     <Compile Include="FastTimer\MultimediaTimer.cs" />
     <Compile Include="FastTimer\TimingAnalyzer.cs" />
-    <Compile Include="Test\Attributes.cs" />
     <Compile Include="Test\SimpleUT.cs" />
     <Compile Include="Test\TestCases_SUT.cs" />
     <Compile Include="Test\TestHost.cs">

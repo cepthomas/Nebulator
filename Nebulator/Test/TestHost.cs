@@ -19,7 +19,6 @@ namespace Nebulator.Test
 
         private void TestHost_Load(object sender, EventArgs e)
         {
-
         }
 
         public void Go()
@@ -53,7 +52,6 @@ namespace Nebulator.Test
             }
 
             mf.grid1.InitData(data);
-
         }
 
         void TestSimpleUT()

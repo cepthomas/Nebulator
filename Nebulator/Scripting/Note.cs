@@ -58,7 +58,7 @@ namespace Nebulator.Scripting
         }
         #endregion
 
-        #region Public functions
+        #region Public methods
         /// <summary>
         /// For viewing pleasure.
         /// </summary>
