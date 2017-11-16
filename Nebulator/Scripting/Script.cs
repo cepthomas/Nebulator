@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using NLog;
 using Nebulator.Common;
+using Nebulator.Midi;
 
 
 namespace Nebulator.Scripting
@@ -13,7 +14,7 @@ namespace Nebulator.Scripting
     /// <summary>
     /// Core functions of script.
     /// Nebulator user script classes must inherit from this class.
-    /// FUTURE Would like multiple inheritance so not everything is part of one giant class. Don't really want to start creating a bunch of interfaces.
+    /// TODO2 Would like multiple inheritance so not everything is part of one giant class. Don't really want to start creating a bunch of interfaces.
     /// </summary>
     public partial class Script
     {
@@ -24,14 +25,17 @@ namespace Nebulator.Scripting
         /// <summary>
         /// The client hosts this control in their UI.
         /// It performs the actual graphics drawing and input.
-        /// FUTURE Graphics alternative? sharpdx2d, wpf, uwp.
+        /// TODO2 Graphics faster alternative? sharpdx2d, wpf, uwp. Use test2.neb.
         /// </summary>
         public UserControl Surface { get; private set; } = null;
+
+        /// <summary>Steps added at runtime.</summary>
+        public StepCollection ScriptSteps { get; private set; } = new StepCollection();
         #endregion
 
         #region Events
         /// <summary>
-        /// Interaction with the host. TODO Maybe not good design but is a swiss army knife.
+        /// Interaction with the host. TODO2 A bit klunky, could be improved.
         /// </summary>
         public class ScriptEventArgs : EventArgs
         {

@@ -78,7 +78,7 @@ namespace Nebulator.Midi
         /// <summary>Velocity.</summary>
         public int Velocity { get; set; } = 64; // seems to be standard default.
 
-        /// <summary>When it's done in tocks - used by stop note tracking.</summary>
+        /// <summary>When it's done in tocks - used by stop note chasing.</summary>
         public int Expiry { get; set; } = -1;
 
         /// <summary>Constructor to make a deferred note off from a note on.</summary>

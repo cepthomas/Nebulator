@@ -6,10 +6,10 @@ include(utils.neb);
 
 ///// Constants /////
 // When to play.
-PART1 = const(0);
-PART2 = const(64);
-PART3 = const(128);
-PART4 = const(192);
+WHEN1 = const(0);
+WHEN2 = const(64);
+WHEN3 = const(128);
+WHEN4 = const(192);
 // Total length.
 TLEN = const(256);
 // Volumes.
@@ -50,7 +50,7 @@ int notenum = 60;
 public override void step()
 {
     // The simple algorithm.
-    if(tock % 25 == 0)
+    if(tock % 24 == 0)
     {
         int notenum = tick % 2 == 0 ? 50 : 60;
         notenum += tock / 20;
@@ -87,7 +87,7 @@ public override void draw()
     noStroke();
     ellipse(posX, posY, ballSize, ballSize);
     int x = (int)map(posX, 0, width, 0, 255);
-    PColor c = color(x, (x + 100) % 256, (x + 200) % 256);
+    color c = color(x, (x + 100) % 256, (x + 200) % 256);
     fill(c);
 }
 

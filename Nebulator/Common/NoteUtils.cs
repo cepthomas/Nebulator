@@ -126,14 +126,14 @@ namespace Nebulator.Common
 
                 for (int i = 0; i < NOTES_PER_OCTAVE; i++)
                 {
-                    if(parts[0] == _noteNames[i] || parts[0] == _noteNamesAlt[i] || parts[0] == _noteNamesNumbered[i])
+                    if (parts[0] == _noteNames[i] || parts[0] == _noteNamesAlt[i] || parts[0] == _noteNamesNumbered[i])
                     {
                         rootNote = i;
                         break;
                     }
                 }
 
-                if(rootNote == -1)
+                if (rootNote == -1)
                 {
                     throw new Exception($"Invalid note:{parts[0]}");
                 }
@@ -152,7 +152,7 @@ namespace Nebulator.Common
                         int noteNum = -1;
                         bool down = false;
 
-                        if(interval.StartsWith("-"))
+                        if (interval.StartsWith("-"))
                         {
                             down = true;
                             interval = interval.Replace("-", "");
@@ -187,6 +187,7 @@ namespace Nebulator.Common
 
             return notes;
         }
+
 
         /// <summary>White key?</summary>
         public static bool IsNatural(int notenum)

@@ -1,0 +1,75 @@
+
+
+///// Tester for wobblers.
+
+
+
+///// Constants /////
+// When to play.
+WHEN1 = const(0);
+WHEN2 = const(32);
+WHEN3 = const(64);
+WHEN4 = const(96);
+// Total length.
+TLEN = const(128);
+// Volumes.
+KEYS_DEF_VOL = const(100);
+DRUM_DEF_VOL = const(100);
+
+///// Variables /////
+COL1 = var(200); // change color
+MODN = var(0); // modulate notes
+PITCH = var(8192); // center is 8192
+
+///// Realtime Controllers /////
+MI1 = midiin(1, 4, MODN);
+MO1 = midiout(1, Pitch, PITCH);
+
+////// Levers //////
+L1 = lever(0, 255, COL1);
+L2 = lever(0, 16383, PITCH); // max range
+L3 = lever(-10, 10, MODN);
+
+
+///// Tracks and Loops /////
+//name = track(channel, wobvol, wobtime1, wobtime2)
+DRUMS = track(10, 4, 10, 10);
+loop(WHEN1, TLEN, DRUMS_SIMPLE);
+
+
+
+///// Sequences and Notes /////
+
+////// Drums //////
+// Quarter notes using patterns.
+DRUMS_SIMPLE = seq(8); // len of sequence in ticks (qtr notes). Should match length of the note spec.
+note(x-------x-------x-------x-------, AcousticSnare, 90); // each hit is 1/16 note - fixed res for now.
+//note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
+
+
+
+/////////////////////////////////////////////
+
+///// Functions /////
+
+// Simple variables for functions.
+float posX = 50;
+float posY = 50;
+int velX = 3;
+int velY = 3;
+int ballSize = 40;
+//int note = 60;
+
+
+
+////// Nebulator midi stuff //////
+public override void step()
+{
+    //go2();
+}
+
+////// Nebulator graphics stuff //////
+public override void setup()
+{
+    println("setup()");
+}

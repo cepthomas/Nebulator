@@ -468,22 +468,6 @@ namespace Nebulator.Test
             return pass;
         }
         #endregion
-
-        #region FUTURE tests?
-        // Prints the test step description with step number. Has a parameter to enable or disable the step.
-        // protected void UT_STEP_ENB(int num, string desc, bool enb)
-
-        // Prints the condition and info and gens assert.
-        //protected void UT_ASSERT_1(int value1, int value2, string info)
-
-        //protected void UT_STEP_END()
-        //{
-        //    Record(StepFlag.Comment, $"Step Complete");
-        //    Record(StepFlag.None, "");
-        //}
-        #endregion
-
-
         #endregion
 
         #region Utilities

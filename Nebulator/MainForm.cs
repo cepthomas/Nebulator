@@ -14,10 +14,10 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
-// FUTURE Use space bar to start/stop.
-// FUTURE Maybe cut into assemblies, add NUnit.
+// TODO2 Use space bar to start/stop.
+// TODO2 Maybe cut into assemblies, add NUnit.
 
-// TODO VU meter for midi outputs? Visible tick indicator?
+// TODO2 VU meter for midi outputs? Visible tick indicator?
 
 // Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
 // http://spheric-lounge-live-ambient-music.blogspot.com/
@@ -41,7 +41,7 @@ namespace Nebulator
         Script _script = null;
 
         /// <summary>The compiled midi event sequence.</summary>
-        StepCollection _steps = new StepCollection();
+        StepCollection _compiledSteps = new StepCollection();
 
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
         LazyCollection<Variable> _ctrlChanges = new LazyCollection<Variable>() { AllowOverwrite = true };
@@ -139,6 +139,7 @@ namespace Nebulator
 
             ////////////////////// test ///////////////////////
             testHost.Go();
+
         }
 
         /// <summary>
@@ -221,7 +222,7 @@ namespace Nebulator
                 btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
                 _dirtyFiles = false;
 
-                _steps = compiler.ConvertToSteps();
+                _compiledSteps = compiler.ConvertToSteps();
 
                 _script.ScriptEvent += Script_ScriptEvent;
                 InitMainUi();
@@ -279,7 +280,7 @@ namespace Nebulator
             ///// Misc controls.
             potSpeed.Value = Convert.ToInt32(_internalVals.GetValue("master", "speed"));
             sldVolume.Value = Convert.ToInt32(_internalVals.GetValue("master", "volume"));
-            timeMaster.MaxMajor = _steps.MaxTick;
+            timeMaster.MaxMajor = _compiledSteps.MaxTick;
 
             UpdateTime(true);
             UpdateMenu();
@@ -348,8 +349,21 @@ namespace Nebulator
                     // Reset controllers for next go around.
                     _ctrlChanges.Clear();
 
-                    // Do the steps. FUTURE Support Running Status?
-                    foreach (Step step in _steps.GetSteps(Globals.CurrentStepTime))
+                    if(_script != null)
+                    {
+                        // Do any script execute stuff. This is done now as the script may manipulate things.
+                        _script.step();
+
+                        // Do runtime steps.
+                        _script.ScriptSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
+                        _script.ScriptSteps.DeleteSteps(Globals.CurrentStepTime);
+                    }
+
+                    // Do the compiled steps.
+                    _compiledSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
+
+                    // Local common function
+                    void PlayStep(Step step)
                     {
                         Track track = _script.Dynamic.Tracks[step.TrackName];
 
@@ -365,16 +379,16 @@ namespace Nebulator
                         }
                     }
 
-                    // Bump.
+                    ///// Bump.
                     Globals.CurrentStepTime.Advance();
 
                     bool keepGoing = true;
 
                     // If no steps, free running mode so always keep going.
-                    if(_steps.Count != 0)
+                    if(_compiledSteps.Count != 0)
                     {
                         // Check for end and loop condition.
-                        if (Globals.CurrentStepTime.Tick >= _steps.MaxTick)
+                        if (Globals.CurrentStepTime.Tick >= _compiledSteps.MaxTick)
                         {
                             UpdateTime(true); // reset to beginning.
                             keepGoing = chkLoop.Checked;
@@ -385,9 +399,6 @@ namespace Nebulator
                         }
                     }
 
-                    // Do any script execute stuff.
-                    _script?.step();
-
                     SetPlayStatus(keepGoing);
                     UpdateTime(false);
                 }
@@ -395,19 +406,22 @@ namespace Nebulator
                 ///// UI updates /////
                 if (_script != null && e.ElapsedTimers.Contains("UI"))
                 {
-                    if(Globals.UserSettings.TimerStats)
+                    // Measure and alert if too slow, or throttle.
+                    _tanUi.Arm();
+                    _script.Render();
+                    TimingAnalyzer.Stats stats = _tanUi.Grab();
+                    if (stats != null)
                     {
-                        _tanUi.Arm();
-                        _script.Render(); // TODO measure and alert if too slow, or throttle. Use test2.neb. Maybe faster graphics?
-                        TimingAnalyzer.Stats stats = _tanUi.Grab();
-                        if (stats != null)
+                        if (Globals.UserSettings.TimerStats)
                         {
                             _logger.Info($"UI timing: {stats}");
                         }
-                    }
-                    else
-                    {
-                        _script.Render();
+
+                        int frameTime = (int)(1000.0 / _fps);
+                        if (stats.Mean > frameTime)
+                        {
+                            _logger.Error($"Rendering your UI code is taking too long, need help! {stats}");
+                        }
                     }
                 }
 
@@ -686,7 +700,7 @@ namespace Nebulator
         void SetSpeedTimerPeriod()
         {
             // Convert speed/bpm to msec per tock.
-            double ticksPerMinute = potSpeed.Value; // bpm
+            double ticksPerMinute = potSpeed.Value; // sec/tick, bpm
             double tocksPerMinute = ticksPerMinute * Globals.TOCKS_PER_TICK;
             double tocksPerSec = tocksPerMinute / 60;
             double tocksPerMsec = tocksPerSec / 1000;
@@ -926,7 +940,7 @@ namespace Nebulator
                 {
                     Globals.MidiInterface.Init();
                     SaveSettings();
-                    MessageBox.Show("Changes require a restart to take effect."); // FUTURE Update without restarting.
+                    MessageBox.Show("Changes require a restart to take effect."); // TODO2 Update without restarting.
                 }
             }
         }
@@ -1077,7 +1091,7 @@ namespace Nebulator
                 double ticksPerSec = ticksPerMinute / 60;
                 double secPerTick = 1 / ticksPerSec;
 
-                MidiUtils.ExportMidi(_steps, saveDlg.FileName, tracks, secPerTick, "Converted from " + _fn);
+                MidiUtils.ExportMidi(_compiledSteps, saveDlg.FileName, tracks, secPerTick, "Converted from " + _fn);
             }
         }
 

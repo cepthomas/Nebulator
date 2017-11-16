@@ -10,7 +10,8 @@ using System.Text;
 using NLog;
 using Nebulator.Common;
 
-// Search NotSupportedException are all TODO. Maybe should just warn user about some of these rather than except
+// Original processing source: https://github.com/processing/processing/blob/master/core/src/processing
+
 
 namespace Nebulator.Scripting
 {
@@ -38,7 +39,6 @@ namespace Nebulator.Scripting
         bool _smooth = false;
         int _xAlign = LEFT;
         int _yAlign = BASELINE;
-        bool _mousePressed = false;
         Stack<object> _matrixStack = new Stack<object>();
         #endregion
 
@@ -49,14 +49,12 @@ namespace Nebulator.Scripting
         public const float PI = (float)(Math.PI);
         public const float TWO_PI = (float)(Math.PI * 2.0);
         public const float TAU = (float)(Math.PI * 2.0);
-
         //---- Mouse buttons, keyboard arrows
         public const int LEFT = 37;
         public const int UP = 38;
         public const int RIGHT = 39;
         public const int DOWN = 40;
         public const int CENTER = 3;
-
         //---- Keys
         public const int BACKSPACE = 8;
         public const int TAB = 9;
@@ -68,17 +66,14 @@ namespace Nebulator.Scripting
         // public const int ALT = 8;
         // public const int CTRL = 2;
         // public const int SHIFT = 1;
-
         //---- Arc styles
         public const int OPEN = 1;
         public const int CHORD = 2;
         public const int PIE = 3;
-
         //---- Alignment
         public const int BASELINE = 0;
         public const int TOP = 101;
         public const int BOTTOM = 102;
-
         //---- Drawing defs
         public const int CORNER = 0;
         public const int CORNERS = 1;
@@ -88,11 +83,9 @@ namespace Nebulator.Scripting
         public const int PROJECT = 4;
         public const int MITER = 8;
         public const int BEVEL = 32;
-
         //---- Color mode
         public const int RGB = 1;
         public const int HSB = 3;
-
         //---- Cursor types
         public const int ARROW = 0;
         public const int CROSS = 1;
@@ -106,14 +99,15 @@ namespace Nebulator.Scripting
         //---- Function overrides
         public virtual void setup() { }
         public virtual void draw() { }
-
+        
+        //---- Script functions
         public void exit() { throw new NotSupportedException(); }
         public void loop() { throw new NotSupportedException(); }
         public void noLoop() { throw new NotSupportedException(); }
 
         public void popStyle()
         {
-            // TODO save all fonts, styles etc into a Bag;
+            // TODO2 save all fonts, styles etc in a Bag;
         }
 
         public void pushStyle()
@@ -151,8 +145,7 @@ namespace Nebulator.Scripting
             }
             set
             {
-                ScriptEventArgs args = new ScriptEventArgs() { FrameRate = value };
-                ScriptEvent?.Invoke(this, args);
+                ScriptEvent?.Invoke(this, new ScriptEventArgs() { FrameRate = value });
             }
         }
 
@@ -386,19 +379,18 @@ namespace Nebulator.Scripting
         #region Input
         #region Input - Mouse
         //---- Script properties
-        public bool mousePressedP { get { return _mousePressed; } }
+        public bool mousePressed { get; private set; } = false;
         public int mouseButton { get; private set; } = LEFT;
         public int mouseWheelValue { get; private set; } = 0;
         public int mouseX { get; private set; } = 0;
         public int mouseY { get; private set; } = 0;
         public int pMouseX { get; private set; } = 0;
         public int pMouseY { get; private set; } = 0;
-
         //---- Function overrides
         public virtual void mouseClicked() { }
         public virtual void mouseDragged() { }
         public virtual void mouseMoved() { }
-        public virtual void mousePressed() { }
+        public virtual void mousePressedEvt() { }
         public virtual void mouseReleased() { }
         public virtual void mouseWheel() { }
         #endregion
@@ -411,7 +403,6 @@ namespace Nebulator.Scripting
         public bool alt { get; private set; } = false;
         public bool ctrl { get; private set; } = false;
         public bool shift { get; private set; } = false;
-
         //---- Function overrides
         public virtual void keyPressed() { }
         public virtual void keyReleased() { }
@@ -553,9 +544,9 @@ namespace Nebulator.Scripting
         public void background(int r, int g, int b) { background(r, g, b, 255); }
         public void background(int gray) { background(gray, gray, gray, 255); }
         public void background(int gray, int a) { background(gray, gray, gray, a); }
-        public void background(PColor pcolor) { background(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, 255); }
-        public void background(string pcolor) { background(new PColor(pcolor)); }
-        public void background(string pcolor, int alpha) { background(new PColor(pcolor)); }
+        public void background(color pcolor) { background(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, 255); }
+        public void background(string pcolor) { background(new color(pcolor)); }
+        public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
         public void clear() { throw new NotSupportedException(); }
         public void colorMode(params object[] ps) { throw new NotSupportedException(); }
@@ -572,10 +563,10 @@ namespace Nebulator.Scripting
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }
         public void fill(int gray, int a) { fill(gray, gray, gray, a); }
-        public void fill(PColor pcolor) { _brush.Color = pcolor.NativeColor; }
-        public void fill(PColor pcolor, int a) { fill(pcolor, a); }
+        public void fill(color pcolor) { _brush.Color = pcolor.NativeColor; }
+        public void fill(color pcolor, int a) { fill(pcolor, a); }
         public void fill(string scolor) { fill(scolor); }
-        public void fill(string scolor, int a) { fill(new PColor(scolor), a); }
+        public void fill(string scolor, int a) { fill(new color(scolor), a); }
         public void noFill() { _brush.Color = Color.Transparent; }
         public void noStroke() { _pen.Width = 0; }
 
@@ -591,33 +582,33 @@ namespace Nebulator.Scripting
         public void stroke(int r, int g, int b) { stroke(r, g, b, 255); }
         public void stroke(int gray) { stroke(gray, gray, gray, 255); }
         public void stroke(int gray, int a) { stroke(gray, gray, gray, a); }
-        public void stroke(PColor pcolor) { _pen.Color = pcolor.NativeColor; } 
-        public void stroke(PColor pcolor, int a) { stroke(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, a); }
-        public void stroke(string scolor) { stroke(new PColor(scolor)); }
-        public void stroke(string scolor, int a) { stroke(new PColor(scolor), a); }
+        public void stroke(color pcolor) { _pen.Color = pcolor.NativeColor; } 
+        public void stroke(color pcolor, int a) { stroke(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, a); }
+        public void stroke(string scolor) { stroke(new color(scolor)); }
+        public void stroke(string scolor, int a) { stroke(new color(scolor), a); }
         #endregion
 
         #region Color - Creating & Reading
-        public PColor color(int r, int g, int b) { return new PColor(r, g, b); }
-        public PColor color(int gray) { return new PColor(gray); }
-        public int alpha(PColor color) { return color.NativeColor.A; }
-        public int blue(PColor color) { return color.NativeColor.B; }
-        public float brightness(PColor color) { return color.NativeColor.GetBrightness(); }
-        public int green(PColor color) { return color.NativeColor.G; }
-        public float hue(PColor color) { return color.NativeColor.GetHue(); }
-        public int red(PColor color) { return color.NativeColor.R; }
-        public float saturation(PColor color) { return color.NativeColor.GetSaturation(); }
+        public color color(int r, int g, int b) { return new color(r, g, b); }
+        public color color(int gray) { return new color(gray); }
+        public int alpha(color color) { return color.NativeColor.A; }
+        public int blue(color color) { return color.NativeColor.B; }
+        public float brightness(color color) { return color.NativeColor.GetBrightness(); }
+        public int green(color color) { return color.NativeColor.G; }
+        public float hue(color color) { return color.NativeColor.GetHue(); }
+        public int red(color color) { return color.NativeColor.R; }
+        public float saturation(color color) { return color.NativeColor.GetSaturation(); }
 
         // Calculates a color between two colors at a specific increment. The amt parameter is the amount to interpolate between the two values where 0.0 is equal to the first point, 0.1 is very near the first point, 0.5 is halfway in between, etc. 
         // An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped at 1. This is different from the behavior of lerp(), but necessary because otherwise numbers outside the range will produce strange and unexpected colors.
-        public PColor lerpColor(PColor c1, PColor c2, float amt)
+        public color lerpColor(color c1, color c2, float amt)
         {
             amt = constrain(amt, 0, 1);
             int r = (int)lerp(c1.NativeColor.R, c2.NativeColor.R, amt);
             int b = (int)lerp(c1.NativeColor.B, c2.NativeColor.B, amt);
             int g = (int)lerp(c1.NativeColor.G, c2.NativeColor.G, amt);
             int a = (int)lerp(c1.NativeColor.A, c2.NativeColor.A, amt);
-            return new PColor(r, g, b, a);
+            return new color(r, g, b, a);
         }
 
         #endregion
@@ -668,14 +659,14 @@ namespace Nebulator.Scripting
             return new PImage(_bmp.Clone(new Rectangle(x, y, width, height), _bmp.PixelFormat));
         }
 
-        public PColor get(int x, int y)
+        public color get(int x, int y)
         {
-            return new PColor(_bmp.GetPixel(x, y));
+            return new color(_bmp.GetPixel(x, y));
         }
 
         public void loadPixels(params object[] ps) { throw new NotSupportedException(); }
 
-        public void set(int x, int y, PColor pcolor)
+        public void set(int x, int y, color pcolor)
         {
             _bmp.SetPixel(x, y, pcolor.NativeColor);
         }
@@ -731,7 +722,7 @@ namespace Nebulator.Scripting
                 case BASELINE: format.LineAlignment = StringAlignment.Far; break;
             }
 
-            // FUTURE support text wrapping.
+            // TODO2 support text wrapping.
             _gr.DrawString(s, _font, _brush, x, y, format);
         }
 
@@ -809,15 +800,15 @@ namespace Nebulator.Scripting
         #endregion
     }
 
-    #region Map Processing objects to native
+    #region Map Processing classes to native
     /// <summary>
-    /// Renamed color to PColor because of collision with color() function.
+    /// Color type.
     /// </summary>
-    public class PColor
+    public class color
     {
         public Color NativeColor { get; } = Color.Black;
 
-        public PColor(int r, int g, int b)
+        public color(int r, int g, int b)
         {
             r = Utils.Constrain(r, 0, 255);
             g = Utils.Constrain(g, 0, 255);
@@ -825,7 +816,7 @@ namespace Nebulator.Scripting
             NativeColor = Color.FromArgb(r, g, b);
         }
 
-        public PColor(int r, int g, int b, int a)
+        public color(int r, int g, int b, int a)
         {
             r = Utils.Constrain(r, 0, 255);
             g = Utils.Constrain(g, 0, 255);
@@ -834,26 +825,26 @@ namespace Nebulator.Scripting
             NativeColor = Color.FromArgb(a, r, g, b);
         }
 
-        public PColor(string hex) // like #RRVVBB or 0xAARRVVBB
+        public color(string hex) // like #RRVVBB or 0xAARRVVBB
         {
             string s = hex.Replace("#", "").Replace("0x", "");
             NativeColor = Color.FromArgb(int.Parse(s));
         }
 
-        public PColor(int gray)
+        public color(int gray)
         {
             gray = Utils.Constrain(gray, 0, 255);
             NativeColor = Color.FromArgb(gray, gray, gray);
         }
 
-        public PColor(int gray, int a)
+        public color(int gray, int a)
         {
             gray = Utils.Constrain(gray, 0, 255);
             a = Utils.Constrain(a, 0, 255);
             NativeColor = Color.FromArgb(a, gray, gray, gray);
         }
 
-        public PColor(Color native)
+        public color(Color native)
         {
             NativeColor = native;
         }
@@ -871,9 +862,9 @@ namespace Nebulator.Scripting
         public PImage(string fname) { _bmp = new Bitmap(fname); }
         public PImage(Bitmap bm) { _bmp = bm; }
         public Bitmap image() { return _bmp; }
-        public PColor getPixel(int x, int y) { return new PColor(_bmp.GetPixel(x, y)); }
+        public color getPixel(int x, int y) { return new color(_bmp.GetPixel(x, y)); }
         public PImage getSubImage(int x, int y, int width, int height) { return new PImage(_bmp.Clone(new Rectangle(x, y, width, height), _bmp.PixelFormat)); }
-        public void setArea(int x, int y, PColor color) { _bmp.SetPixel(x, y, color.NativeColor); }
+        public void setArea(int x, int y, color color) { _bmp.SetPixel(x, y, color.NativeColor); }
         public void setArea(int x, int y, PImage img) { Graphics.FromImage(_bmp).DrawImageUnscaled(img.image(), x, y); }
 
         public void resize(int width, int height)
@@ -899,6 +890,97 @@ namespace Nebulator.Scripting
     {
         public Font NativeFont { get; } = null;
         public PFont(string name, int size) { NativeFont = new Font(name, size, GraphicsUnit.Pixel); }
+    }
+
+    /// <summary>
+    /// Port of java class.
+    /// </summary>
+    public class Event
+    {
+        public int getAction() { return _action; }
+        public int getModifiers() { return _modifiers; }
+        public int getFlavor() { return _flavor; }
+        public object getNativeObject() { return _nativeObject; }
+        public long getMillis() { return _millis; }
+        public bool isShiftDown() { return (_modifiers & SHIFT) != 0; }
+        public bool isControlDown() { return (_modifiers & CTRL) != 0; }
+        public bool isMetaDown() { return (_modifiers & META) != 0; }
+        public bool isAltDown() { return (_modifiers & ALT) != 0; }
+
+        public const int SHIFT = 1 << 0;
+        public const int CTRL = 1 << 1;
+        public const int META = 1 << 2;
+        public const int ALT = 1 << 3;
+        public const int KEY = 1;
+        public const int MOUSE = 2;
+        public const int TOUCH = 3;
+
+        protected object _nativeObject;
+        protected long _millis;
+        protected int _action;
+        protected int _modifiers;
+        protected int _flavor;
+
+        public Event(object nativeObject, long millis, int action, int modifiers)
+        {
+            _nativeObject = nativeObject;
+            _millis = millis;
+            _action = action;
+            _modifiers = modifiers;
+        }
+    }
+
+    /// <summary>
+    /// Port of java class.
+    /// </summary>
+    public class MouseEvent : Event
+    {
+        public int getX() { return _x; }
+        public int getY() { return _y; }
+        public int getButton() { return _button; }
+        public int getCount() { return _count; }
+
+        public const int PRESS = 1;
+        public const int RELEASE = 2;
+        public const int CLICK = 3;
+        public const int DRAG = 4;
+        public const int MOVE = 5;
+        public const int ENTER = 6;
+        public const int EXIT = 7;
+        public const int WHEEL = 8;
+
+        protected int _x;
+        protected int _y;
+        protected int _button;
+        protected int _count;
+
+        public MouseEvent(object nativeObject, long millis, int action, int modifiers, int x, int y, int button, int count) :
+            base(nativeObject, millis, action, modifiers)
+        {
+            _flavor = MOUSE;
+            _x = x;
+            _y = y;
+            _button = button;
+            _count = count;
+        }
+
+        public override string ToString()
+        {
+            string sact = Globals.UNKNOWN_STRING;
+            switch (_action)
+            {
+                case CLICK: sact = "CLICK"; break;
+                case DRAG: sact = "DRAG"; break;
+                case ENTER: sact = "ENTER"; break;
+                case EXIT: sact = "EXIT"; break;
+                case MOVE: sact = "MOVE"; break;
+                case PRESS: sact = "PRESS"; break;
+                case RELEASE: sact = "RELEASE"; break;
+                case WHEEL: sact = "WHEEL"; break;
+            }
+
+            return string.Format("<MouseEvent {0}@{1},{2} count:{3} button:{4}>", sact, _x, _y, _count, _button);
+        }
     }
     #endregion
 }

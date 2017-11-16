@@ -16,7 +16,7 @@ namespace Nebulator.Midi
         // We borrow a few unused midi controller numbers for internal use.
         // Currently undefined: 3, 9, 14, 15, 20-31, 35, 41, 46, 47, 52-63, 85-87, 89, 90 and 102-119.
         public const int CTRL_NONE = 3;
-        public const int CTRL_PITCH = 9; // FUTURE Maybe handle pitch a bit neater instead of this semi-kludge?
+        public const int CTRL_PITCH = 9; // TODO2 Maybe handle pitch a bit neater instead of this semi-kludge?
 
         public const int NUM_MIDI_CHANNELS = 16;
         public const int MAX_MIDI_NOTE = 127;
@@ -327,7 +327,7 @@ namespace Nebulator.Midi
             {
                 if(step is StepNoteOn || step is StepNoteOff)
                 {
-                    // Pass through. TODO or do something fun with it.
+                    // Pass through. TODO2 or do something useful with it, similar to _ctrlChanges.
                     Send(step);
                 }
                 else

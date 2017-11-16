@@ -42,7 +42,7 @@ namespace Nebulator.UI
             UpdateStyles();
 
             BackColor = Globals.UserSettings.BackColor;
-            btnEnableLevers.Image = Utils.ColorizeBitmap(btnEnableLevers.Image, Globals.UserSettings.IconColor); // TODO enable useful?
+            btnSomething.Image = Utils.ColorizeBitmap(btnSomething.Image, Globals.UserSettings.IconColor);
         }
 
         /// <summary>

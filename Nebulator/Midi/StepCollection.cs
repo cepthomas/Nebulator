@@ -54,7 +54,14 @@ namespace Nebulator.Midi
         public IEnumerable<Step> GetSteps(Time time)
         {
             return _steps.ContainsKey(time) ? _steps[time] : new List<Step>();
-            //return GetSteps(time);
+        }
+
+        /// <summary>
+        /// Delete the steps for the given time.
+        /// </summary>
+        public void DeleteSteps(Time time)
+        {
+            _steps.Remove(time);
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ using NAudio.Midi;
 using NLog;
 using Nebulator.Common;
 
-// FUTURE record midi directly to neb format?
+// TODO2 record midi directly to neb format?
 
 
 namespace Nebulator.Midi

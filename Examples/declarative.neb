@@ -6,10 +6,10 @@ include(utils.neb);
 
 ///// Constants /////
 // When to play.
-PART1 = const(0);
-PART2 = const(64);
-PART3 = const(128);
-PART4 = const(192);
+WHEN1 = const(0);
+WHEN2 = const(64);
+WHEN3 = const(128);
+WHEN4 = const(192);
 // Total length.
 TLEN = const(256);
 // Volumes.
@@ -33,16 +33,16 @@ L3 = lever(-10, 10, MODN);
 
 ///// Tracks and Loops /////
 KEYS = track(1, 5, 0, 0);
-loop(PART1, PART2, KEYS_VERSE1);
-loop(PART2, PART3, KEYS_VERSE2);
-loop(PART3, PART4, KEYS_CHORUS);
-loop(PART4, TLEN, KEYS_VERSE1);
+loop(WHEN1, WHEN2, KEYS_VERSE1);
+loop(WHEN2, WHEN3, KEYS_VERSE2);
+loop(WHEN3, WHEN4, KEYS_CHORUS);
+loop(WHEN4, TLEN, KEYS_VERSE1);
 
 BASS = track(2, 2, 0, 0);
-loop(PART1, TLEN, BASS_VERSE);
+loop(WHEN1, TLEN, BASS_VERSE);
 
 DRUMS = track(10, 4, 0, 0);
-loop(PART1, TLEN, DRUMS_VERSE); // DRUMS_SIMPLE
+loop(WHEN1, TLEN, DRUMS_VERSE); // DRUMS_SIMPLE
 
 ///// Sequences and Notes /////
 KEYS_VERSE1 = seq(8);
@@ -80,7 +80,7 @@ note(7.00, E.5.M, 90, 1.50);
 
 BASS_VERSE = seq(8);
 note(0.00, C.2, 70, 0.25);
-note(0.75, C.2, 70, 0.1/8); // 0.125?
+note(0.75, C.2, 70, 0.1/8);
 note(3.50, E.2, 70, 0.25);
 note(4.00, C.2, 70, 1.00);
 note(7.75, A#.2, 70, 0.10);
@@ -147,7 +147,7 @@ public override void draw()
     dragX = mouseX - (int)(cos(angle1) * dragLen);
     dragY = mouseY - (int)(sin(angle1) * dragLen);
 
-    PColor c = color(0, 200, 40);
+    color c = color(0, 200, 40);
     fill(c);
     ellipse(dragX, dragY, 20, 20);
 

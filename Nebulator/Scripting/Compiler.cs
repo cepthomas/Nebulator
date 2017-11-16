@@ -483,7 +483,7 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Create the file containing extra stuff. FUTURE Probably shouldn't do this every time...
+        /// Create the file containing extra stuff. TODO2 Probably shouldn't do this every time...
         /// </summary>
         /// <returns></returns>
         List<string> GenSuppFileContents()
@@ -530,18 +530,6 @@ namespace Nebulator.Scripting
             // Process the composition values.
             foreach (Track track in _dynamic.Tracks.Values)
             {
-                Wobbler timeWobbler = new Wobbler() // FUTURE still needs some work. Or maybe just handle with new resolution?
-                {
-                    RangeLow = -track.WobbleTimeBefore,
-                    RangeHigh = track.WobbleTimeAfter
-                };
-
-                Wobbler volWobbler = new Wobbler()
-                {
-                    RangeLow = -track.WobbleVolume,
-                    RangeHigh = track.WobbleVolume
-                };
-
                 // Put the loops in time order.
                 track.Loops.Sort((a, b) => a.StartTick.CompareTo(b.StartTick));
 
@@ -555,16 +543,16 @@ namespace Nebulator.Scripting
                         foreach (Note note in nseq.Notes)
                         {
                             // Create the note start and stop times.
-                            int toffset = timeWobbler.Next(0);
+                            int toffset = loopTick == 0 ? 0 : track.NextTime();
 
                             Time startNoteTime = new Time(loopTick, toffset) + note.When;
                             Time stopNoteTime = startNoteTime + note.Duration;
 
                             // Process all note numbers.
-                            foreach (int noteNum in note.NoteNumbers)
+                            foreach (int noteNum in note.ChordNotes)
                             {
                                 ///// Note on.
-                                int vel = volWobbler.Next(note.Volume);
+                                int vel = track.NextVol(note.Volume);
                                 StepNoteOn step = new StepNoteOn()
                                 {
                                     TrackName = track.Name,
@@ -685,7 +673,7 @@ namespace Nebulator.Scripting
         private void ParseNote(FileParseContext pcont, List<string> parms)
         {
             // note WHEN WHICH VEL 1.50*
-            // 0    1    2     3  4
+            // 0    1    2     3   4
             // WHEN: 1.23, __1___1___1___1_ (or #)
             // WHICH: 60, C.4, C.4.m7, RideCymbal1
             // VEL: 90, const
@@ -781,7 +769,7 @@ namespace Nebulator.Scripting
                     Name = parms[0],
                     Channel = int.Parse(parms[2]),
                     WobbleVolume = parms.Count > 3 ? ParseConstRef(pcont, parms[3]) : 0,
-                    WobbleTimeBefore = parms.Count > 4 ? ParseConstRef(pcont, parms[4]) : 0,
+                    WobbleTimeBefore = parms.Count > 4 ? -ParseConstRef(pcont, parms[4]) : 0,
                     WobbleTimeAfter = parms.Count > 5 ? ParseConstRef(pcont, parms[5]) : 0
                 };
                 _dynamic.Tracks.Add(nt.Name, nt);

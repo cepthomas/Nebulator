@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Nebulator.Common;
+
 
 namespace Nebulator.Test
 {
@@ -28,6 +30,9 @@ namespace Nebulator.Test
             //TestGrid();
 
             //TestSimpleUT();
+
+            //Utils.ExtractAPI(@"C:\Dev\GitHub\Nebulator\Nebulator\Scripting\ScriptUi.cs");
+
 
             mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test1.neb");
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\declarative.neb");

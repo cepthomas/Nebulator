@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.btnEnableLevers = new System.Windows.Forms.ToolStripButton();
+            this.btnSomething = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -39,23 +39,23 @@
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnEnableLevers});
+            this.btnSomething});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(438, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip1";
             // 
-            // btnEnableLevers
+            // btnSomething
             // 
-            this.btnEnableLevers.CheckOnClick = true;
-            this.btnEnableLevers.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnEnableLevers.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
-            this.btnEnableLevers.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnEnableLevers.Name = "btnEnableLevers";
-            this.btnEnableLevers.Size = new System.Drawing.Size(23, 22);
-            this.btnEnableLevers.Text = "btnLeversRun";
-            this.btnEnableLevers.ToolTipText = "Turn levers on";
+            this.btnSomething.CheckOnClick = true;
+            this.btnSomething.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSomething.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
+            this.btnSomething.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSomething.Name = "btnSomething";
+            this.btnSomething.Size = new System.Drawing.Size(23, 22);
+            this.btnSomething.Text = "ummm....";
+            this.btnSomething.ToolTipText = "Turn levers on";
             // 
             // splitContainer1
             // 
@@ -90,7 +90,7 @@
         #endregion
 
         private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripButton btnEnableLevers;
+        private System.Windows.Forms.ToolStripButton btnSomething;
         private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

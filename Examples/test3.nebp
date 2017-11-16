@@ -1,0 +1,7 @@
+{
+  "Values": {
+    "master.volume": 100,
+    "master.speed": 100.0,
+    "DRUMS.volume": 100
+  }
+}

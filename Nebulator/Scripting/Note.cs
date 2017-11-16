@@ -22,10 +22,10 @@ namespace Nebulator.Scripting
         public Time Duration { get; set; } = new Time(0);
 
         /// <summary>The 0th is the root note and other values comprise chord notes.</summary>
-        public List<int> NoteNumbers { get; private set; } = new List<int>();
+        public List<int> ChordNotes { get; private set; } = new List<int>();
 
         /// <summary>Get the root note. Default to middle C == number 60 (0x3C).</summary>
-        public int Root { get { return NoteNumbers.Count > 0 ? NoteNumbers[0] : 60; } }
+        public int Root { get { return ChordNotes.Count > 0 ? ChordNotes[0] : 60; } }
         #endregion
 
         #region Lifecycle
@@ -35,7 +35,7 @@ namespace Nebulator.Scripting
         /// <param name="s"></param>
         public Note(string s)
         {
-            NoteNumbers = NoteUtils.ParseNoteString(s);
+            ChordNotes = NoteUtils.ParseNoteString(s);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Nebulator.Scripting
         /// </summary>
         public Note(int noteNum)
         {
-            NoteNumbers.Add(noteNum);
+            ChordNotes.Add(noteNum);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Nebulator.Scripting
             Volume = note.Volume;
             When = new Time(note.When);
             Duration = new Time(note.Duration);
-            note.NoteNumbers.ForEach(n => NoteNumbers.Add(n));
+            note.ChordNotes.ForEach(n => ChordNotes.Add(n));
         }
         #endregion
 
@@ -64,7 +64,7 @@ namespace Nebulator.Scripting
         /// </summary>
         public override string ToString()
         {
-            return $"When:{When} NoteNum:{NoteNumbers[0]} Volume:{Volume} Duration:{Duration}";
+            return $"When:{When} NoteNum:{ChordNotes[0]} Volume:{Volume} Duration:{Duration}";
         }
         #endregion
     }

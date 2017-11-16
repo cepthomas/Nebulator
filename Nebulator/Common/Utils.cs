@@ -100,31 +100,6 @@ namespace Nebulator.Common
         }
 
         /// <summary>
-        /// Utility to dump contents of dir structure. Nothing to do with this project really.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="els"></param>
-        public static void DumpDir(string path, List<string> els)
-        {
-            //List<string> els = new List<string>();
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            foreach (FileInfo info in di.GetFiles())
-            {
-                if (info.Length > 10000000)
-                {
-                    //els.Add($"{0}: {1}", info.Length / 1000000, info.FullName));
-                    Console.WriteLine($"{info.Length / 1000000}: {info.FullName}");
-                }
-            }
-
-            foreach (DirectoryInfo info in di.GetDirectories())
-            {
-                DumpDir(info.FullName, els);
-            }
-        }
-
-        /// <summary>
         /// Endian support.
         /// </summary>
         /// <param name="i"></param>
@@ -263,6 +238,114 @@ namespace Nebulator.Common
             return val;
         }
         #endregion
+
+        #region Things that have nothing to do with this project really
+        /// <summary>
+        /// Partial extraction of API for the wiki doc.
+        /// </summary>
+        /// <param name="fn"></param>
+        public static void ExtractAPI(string fn)
+        {
+            List<string> all = new List<string>();
+            List<string> part = new List<string>();
+            bool firstRegion = true;
+
+            foreach (string l in File.ReadAllLines(fn))
+            {
+                string s = l.Trim();
+
+                if (s.StartsWith("#region"))
+                {
+                    s = s.Remove(0, 7).Trim();
+
+                    if(firstRegion)
+                    {
+                        firstRegion = false;
+                    }
+                    else
+                    {
+                        // Sort accumulated by property or function name.
+                        part.Sort((x, y) =>
+                        {
+                            List<string> lsx = x.SplitByTokens(" (");
+                            List<string> lsy = y.SplitByTokens(" (");
+                            lsx.Remove("virtual");
+                            lsy.Remove("virtual");
+                            return lsx[1].CompareTo(lsy[1]);
+                        });
+
+                        if(part.Count > 0)
+                        {
+                            all.AddRange(part);
+                        }
+                        else
+                        {
+                            all.Add("None implemented.");
+                        }
+                        part.Clear();
+                        all.Add("```");
+                        all.Add("");
+                    }
+
+                    all.Add("# " + s);
+                    all.Add("```c#");
+                }
+
+                if (s.StartsWith("public "))
+                {
+                    s = s.Remove(0, 7);
+
+                    int i = s.IndexOf('{');
+                    if(i != -1)
+                    {
+                        s = s.Left(i);
+                    }
+
+                    s.Trim();
+
+                    if(l.Contains("NotSupportedException"))
+                    {
+                        s = s.Insert(0, "//NI ");
+                    }
+                    else
+                    {
+                        part.Add(s);
+                    }
+                }
+            }
+
+            all.Add("```");
+
+            Clipboard.SetText(string.Join(Environment.NewLine, all));
+        }
+
+        /// <summary>
+        /// Utility to dump contents of dir structure.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="els"></param>
+        public static void DumpDir(string path, List<string> els)
+        {
+            //List<string> els = new List<string>();
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            foreach (FileInfo info in di.GetFiles())
+            {
+                if (info.Length > 10000000)
+                {
+                    //els.Add($"{0}: {1}", info.Length / 1000000, info.FullName));
+                    Console.WriteLine($"{info.Length / 1000000}: {info.FullName}");
+                }
+            }
+
+            foreach (DirectoryInfo info in di.GetDirectories())
+            {
+                DumpDir(info.FullName, els);
+            }
+        }
+        #endregion
+
+
     }
 
     /// <summary>

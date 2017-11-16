@@ -97,8 +97,8 @@ namespace Nebulator.Scripting
         void Surface_MouseDown(object sender, MouseEventArgs e)
         {
             ProcessMouse(e);
-            _mousePressed = true;
-            mousePressed();
+            mousePressed = true;
+            mousePressedEvt();
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Nebulator.Scripting
         void Surface_MouseUp(object sender, MouseEventArgs e)
         {
             ProcessMouse(e);
-            _mousePressed = false;
+            mousePressed = false;
             mouseReleased();
         }
 
@@ -121,7 +121,7 @@ namespace Nebulator.Scripting
         void Surface_MouseMove(object sender, MouseEventArgs e)
         {
             ProcessMouse(e);
-            if (_mousePressed)
+            if (mousePressed)
             {
                 mouseDragged();
             }
