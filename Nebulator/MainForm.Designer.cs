@@ -16,6 +16,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            Nebulator.Common.Time time1 = new Nebulator.Common.Time();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -30,13 +31,12 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.btnCompile = new System.Windows.Forms.Button();
-            this.chkPlay = new System.Windows.Forms.CheckBox();
-            this.chkLoop = new System.Windows.Forms.CheckBox();
-            this.btnRewind = new System.Windows.Forms.Button();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.timeMaster = new Nebulator.Controls.TimeControl();
             this.sldVolume = new Nebulator.Controls.Slider();
+            this.chkPlay = new System.Windows.Forms.CheckBox();
             this.potSpeed = new Nebulator.Controls.Pot();
+            this.chkLoop = new System.Windows.Forms.CheckBox();
+            this.btnRewind = new System.Windows.Forms.Button();
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPageLevers = new System.Windows.Forms.TabPage();
@@ -50,6 +50,7 @@
             this.infoDisplay = new Nebulator.Controls.TextViewer();
             this.tabPageMonitor = new System.Windows.Forms.TabPage();
             this.midiMonitor = new Nebulator.UI.MidiMonitor();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -202,6 +203,36 @@
             this.btnCompile.UseVisualStyleBackColor = false;
             this.btnCompile.Click += new System.EventHandler(this.Compile_Click);
             // 
+            // timeMaster
+            // 
+            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
+            time1.Tick = 0;
+            time1.Tock = 0;
+            this.timeMaster.CurrentTime = time1;
+            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeMaster.Location = new System.Drawing.Point(268, 8);
+            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
+            this.timeMaster.MaxTick = 0;
+            this.timeMaster.Name = "timeMaster";
+            this.timeMaster.Size = new System.Drawing.Size(175, 34);
+            this.timeMaster.TabIndex = 37;
+            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
+            // 
+            // sldVolume
+            // 
+            this.sldVolume.ControlColor = System.Drawing.Color.Orange;
+            this.sldVolume.Label = "VOL";
+            this.sldVolume.Location = new System.Drawing.Point(195, 8);
+            this.sldVolume.Maximum = 200;
+            this.sldVolume.Minimum = 0;
+            this.sldVolume.Name = "sldVolume";
+            this.sldVolume.ResetValue = 0;
+            this.sldVolume.Size = new System.Drawing.Size(66, 34);
+            this.sldVolume.TabIndex = 36;
+            this.toolTip.SetToolTip(this.sldVolume, "Master volume");
+            this.sldVolume.Value = 90;
+            this.sldVolume.ValueChanged += new System.EventHandler(this.Volume_ValueChanged);
+            // 
             // chkPlay
             // 
             this.chkPlay.Appearance = System.Windows.Forms.Appearance.Button;
@@ -219,6 +250,20 @@
             this.toolTip.SetToolTip(this.chkPlay, "Play project");
             this.chkPlay.UseVisualStyleBackColor = false;
             this.chkPlay.Click += new System.EventHandler(this.Play_Click);
+            // 
+            // potSpeed
+            // 
+            this.potSpeed.ControlColor = System.Drawing.Color.Black;
+            this.potSpeed.DecPlaces = 0;
+            this.potSpeed.Location = new System.Drawing.Point(156, 7);
+            this.potSpeed.Maximum = 200D;
+            this.potSpeed.Minimum = 30D;
+            this.potSpeed.Name = "potSpeed";
+            this.potSpeed.Size = new System.Drawing.Size(32, 32);
+            this.potSpeed.TabIndex = 33;
+            this.toolTip.SetToolTip(this.potSpeed, "Speed in Ticks per minute (sorta BPM)");
+            this.potSpeed.Value = 100D;
+            this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
             // 
             // chkLoop
             // 
@@ -247,58 +292,6 @@
             this.toolTip.SetToolTip(this.btnRewind, "Reset to start");
             this.btnRewind.UseVisualStyleBackColor = false;
             this.btnRewind.Click += new System.EventHandler(this.Rewind_Click);
-            // 
-            // toolTip
-            // 
-            this.toolTip.AutomaticDelay = 0;
-            this.toolTip.AutoPopDelay = 0;
-            this.toolTip.InitialDelay = 300;
-            this.toolTip.ReshowDelay = 0;
-            this.toolTip.UseAnimation = false;
-            this.toolTip.UseFading = false;
-            // 
-            // timeMaster
-            // 
-            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
-            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(268, 8);
-            this.timeMaster.Major = 0;
-            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
-            this.timeMaster.MaxMajor = 100;
-            this.timeMaster.Minor = 0;
-            this.timeMaster.Name = "timeMaster";
-            this.timeMaster.Size = new System.Drawing.Size(221, 34);
-            this.timeMaster.TabIndex = 37;
-            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
-            // 
-            // sldVolume
-            // 
-            this.sldVolume.ControlColor = System.Drawing.Color.Orange;
-            this.sldVolume.Label = "VOL";
-            this.sldVolume.Location = new System.Drawing.Point(195, 8);
-            this.sldVolume.Maximum = 200;
-            this.sldVolume.Minimum = 0;
-            this.sldVolume.Name = "sldVolume";
-            this.sldVolume.ResetValue = 0;
-            this.sldVolume.Size = new System.Drawing.Size(66, 34);
-            this.sldVolume.TabIndex = 36;
-            this.toolTip.SetToolTip(this.sldVolume, "Master volume");
-            this.sldVolume.Value = 90;
-            this.sldVolume.ValueChanged += new System.EventHandler(this.Volume_ValueChanged);
-            // 
-            // potSpeed
-            // 
-            this.potSpeed.ControlColor = System.Drawing.Color.Black;
-            this.potSpeed.DecPlaces = 0;
-            this.potSpeed.Location = new System.Drawing.Point(156, 7);
-            this.potSpeed.Maximum = 200D;
-            this.potSpeed.Minimum = 30D;
-            this.potSpeed.Name = "potSpeed";
-            this.potSpeed.Size = new System.Drawing.Size(32, 32);
-            this.potSpeed.TabIndex = 33;
-            this.toolTip.SetToolTip(this.potSpeed, "Speed in Ticks per minute (sorta BPM)");
-            this.potSpeed.Value = 100D;
-            this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
             // 
             // splitContainerControl
             // 
@@ -449,6 +442,15 @@
             this.midiMonitor.Size = new System.Drawing.Size(367, 476);
             this.midiMonitor.TabIndex = 1;
             // 
+            // toolTip
+            // 
+            this.toolTip.AutomaticDelay = 0;
+            this.toolTip.AutoPopDelay = 0;
+            this.toolTip.InitialDelay = 300;
+            this.toolTip.ReshowDelay = 0;
+            this.toolTip.UseAnimation = false;
+            this.toolTip.UseFading = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -464,6 +466,7 @@
             this.Text = "Nebulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

@@ -8,7 +8,7 @@ namespace Nebulator.Midi
 {
     /// <summary>
     /// Base class for internal interface representation of a compiled event to be sent as midi.
-    /// It has some extra functionality not supported by the NAudio MidiEvent.
+    /// It has some extra functionality not supported by the NAudio MidiEvent family.
     /// </summary>
     public abstract class Step
     {
@@ -124,7 +124,7 @@ namespace Nebulator.Midi
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepControllerChange: {base.ToString()} Controller:{ControllerValue}";
+            return $"StepControllerChange: {base.ToString()} Controller:{MidiController} Value:{ControllerValue}";
         }
     }
 

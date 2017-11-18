@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Nebulator.Common;
 
+// TODO2 midi indicator/overload?
 
 namespace Nebulator.UI
 {

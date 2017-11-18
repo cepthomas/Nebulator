@@ -9,6 +9,39 @@ using NLog;
 using Nebulator.Common;
 
 
+// TODO1 rethink kbd handling. Processing is complicated:
+// 
+// The keyPressed() function is called once every time a key is pressed. The key that was pressed is stored in the key variable. 
+// 
+// The system variable key always contains the value of the most recent key on the keyboard that was used (either pressed or released). 
+// For non-ASCII keys, use the keyCode variable. The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if the key is coded, and you should simply use the key variable instead of keyCode If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms. 
+// There are issues with how keyCode behaves across different renderers and operating systems. Watch out for unexpected behavior as you switch renderers and operating systems.
+// 
+// The variable keyCode is used to detect special keys such as the arrow keys (UP, DOWN, LEFT, and RIGHT) as well as ALT, CONTROL, and SHIFT. 
+// When checking for these keys, it can be useful to first check if the key is coded. This is done with the conditional if (key == CODED), as shown in the example above. 
+// The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if the key is coded; for those keys, you should simply use the key variable directly (and not keyCode). If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix, while the RETURN key is used on Macs. Make sure your program will work on all platforms by checking for both ENTER and RETURN. 
+// 
+// The keyPressed() function is called once every time a key is pressed. The key that was pressed is stored in the key variable. 
+// 
+// The boolean system variable keyPressed is true if any key is pressed and false if no keys are pressed.
+// 
+// The keyReleased() function is called once every time a key is released. The key that was released will be stored in the key variable. See key and keyCode for more information. 
+// Mouse and keyboard events only work when a program has draw(). Without draw(), the code is only run once and then stops listening for events.
+// 
+// The keyTyped() function is called once every time a key is pressed, but action keys such as Ctrl, Shift, and Alt are ignored. 
+// Because of how operating systems handle key repeats, holding down a key may cause multiple calls to keyTyped(). The rate of repeat is set by the operating system, and may be configured differently on each computer. 
+// Mouse and keyboard events only work when a program has draw(). Without draw(), the code is only run once and then stops listening for events.
+
+
+// How windows handles key presses, i.e Shift+A, you'll get:
+// - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
+// - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
+// - KeyPress: KeyChar='A'
+// - KeyUp: KeyCode=Keys.A
+// - KeyUp: KeyCode=Keys.ShiftKey
+
+
+
 namespace Nebulator.Scripting
 {
     /// <summary>

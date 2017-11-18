@@ -67,9 +67,6 @@ namespace Nebulator.Common
         public bool MidiMonitorOut { get; set; } = false;
 
         [Browsable(false)]
-        public bool LeversOn { get; set; } = false;
-
-        [Browsable(false)]
         public List<string> RecentFiles { get; set; } = new List<string>();
 
         [Browsable(false)]

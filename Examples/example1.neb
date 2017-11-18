@@ -1,0 +1,249 @@
+
+// Example Nebulator composition file with some UI demo.
+// Has declarative and algorithmic components.
+// Warning: this is not actual music!
+
+
+///// Include other lib files. /////
+include(utils.neb);
+
+
+///// Constants /////
+// When to play.
+WHEN1 = const(0);
+WHEN2 = const(32);
+WHEN3 = const(64);
+WHEN4 = const(96);
+// Total length.
+TLEN = const(128);
+// Volumes.
+KEYS_DEF_VOL = const(100);
+DRUM_DEF_VOL = const(100);
+
+///// Variables /////
+COL1 = var(200); // change color
+MODN = var(0); // modulate notes
+PITCH = var(8192); // center is 8192
+
+///// Realtime Controllers /////
+MI1 = midiin(1, 4, MODN);
+MO1 = midiout(1, Pitch, PITCH);
+
+////// Levers //////
+L1 = lever(0, 255, COL1);
+L2 = lever(0, 16383, PITCH); // max range
+L3 = lever(-10, 10, MODN);
+
+
+///// Tracks and Loops /////
+KEYS = track(1, 5, 0, 0);
+loop(WHEN1, WHEN2, KEYS_VERSE1);
+loop(WHEN2, WHEN3, KEYS_VERSE2);
+loop(WHEN3, WHEN4, KEYS_VERSE1);
+loop(WHEN4, TLEN, KEYS_VERSE2);
+
+BASS = track(2, 2, 0, 0);
+loop(WHEN1, TLEN, BASS_VERSE);
+
+DRUMS = track(10, 4, 0, 0);
+loop(WHEN1, TLEN, DRUMS_SIMPLE);
+
+BALL = track(3, 0);
+
+
+///// Sequences and Notes /////
+KEYS_VERSE1 = seq(16);
+note(0.00, G.4.m7, 90, 1.48);
+note(1.70, G.4.m7, 90, 0.10);
+note(2.00, G.4.m7, 90, 0.10);
+note(4.00, G.4.m7, 90, 1.48);
+note(5.70, G.4.m7, 90, 0.10);
+note(6.00, G.4.m7, 90, 0.10);
+note(8.00, G.4.m6, 90, 1.48);
+note(9.70, G.4.m6, 90, 0.10);
+note(10.00, G.4.m6, 90, 0.10);
+note(12.00, G.4.m6, 90, 1.48);
+note(13.70, G.4.m6, 90, 0.10);
+note(14.00, G.4.m6, 90, 0.10);
+
+KEYS_VERSE2 = seq(8);
+note(0.00, F.4.???, 90, 0.48);
+note(0.48, D#.4, KEYS_DEF_VOL, 0.48);
+note(1.00, C.4, 90, 0.48);
+note(1.48, B.4.m7, 90, 0.48);
+note(2.00, F.5, 90, 0.48);
+note(2.48, D#.5, KEYS_DEF_VOL, 0.48);
+note(3.00, C.5, 90, 0.48);
+note(3.48, B.5.m7, 90, 0.48);
+note(4.00, F.3, 90, 0.48);
+note(4.48, D#.3, KEYS_DEF_VOL, 0.48);
+note(5.00, C.3, 90, 0.48);
+note(5.48, B.3.m7, 90, 0.48);
+note(6.00, F.2, 90, 0.48);
+note(6.48, D#.2, KEYS_DEF_VOL, 0.48);
+note(7.00, C.2, 90, 0.48);
+note(7.48, B.2.m7, 90, 0.48);
+
+BASS_VERSE = seq(8);
+note(0.00, C.2, 70, 0.25);
+note(0.75, C.2, 70, 0.1/8);
+note(3.48, E.2, 70, 0.25);
+note(4.00, C.2, 70, 1.00);
+note(7.75, A#.2, 70, 0.10);
+
+// Drums
+DRUMS_VERSE = seq(8);
+note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(1.00, RideCymbal1, DRUM_DEF_VOL);
+note(1.10, RideCymbal1, DRUM_DEF_VOL);
+note(1.90, HiMidTom, DRUM_DEF_VOL);
+note(2.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(3.00, RideCymbal1, DRUM_DEF_VOL);
+note(3.10, RideCymbal1, DRUM_DEF_VOL);
+note(4.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(5.00, RideCymbal1, DRUM_DEF_VOL);
+note(5.10, RideCymbal1, DRUM_DEF_VOL);
+note(5.90, HiMidTom, DRUM_DEF_VOL);
+note(6.00, AcousticBassDrum, DRUM_DEF_VOL);
+note(7.00, CrashCymbal2, DRUM_DEF_VOL);
+
+// Drums using patterns.
+DRUMS_SIMPLE = seq(8);
+note(x-------x-------x-------x-------, AcousticBassDrum, 90);
+note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
+
+// Triggered in script.
+DYNAMIC_SEQ = seq(8);
+note(0.00, G.3, 90, 0.60);
+note(1.00, A.3, 90, 0.60);
+note(2.00, Bb.3, 90, 0.60);
+note(3.00, C.4, 90, 0.60);
+
+
+/////////////////////////////////////////////
+
+///// Functions /////
+
+// Simple variables for functions.
+float posX = 50;
+float posY = 50;
+int velX = 3;
+int velY = 3;
+int ballSize = 40;
+
+////// Nebulator midi stuff //////
+public override void step()
+{
+    if(tock == 0)
+    {
+        // Time to do something.
+        switch(tick)
+        {
+            case 0:
+            case 16:
+                playSequence(BALL, DYNAMIC_SEQ);
+                break;
+
+            case 8:
+                sendMidiNote(BALL, "D.4", 95, 0.00); // named note on, no chase
+                break;
+
+            case 12:
+                sendMidiNote(BALL, 62, 0, 0.00); // numbered note off
+                break;
+
+            case 24:
+            case 25:
+            case 26:
+            case 27:
+                int notenum = (int)random(40, 70);
+                sendMidiNote(BALL, notenum, 95, 1.09);
+                break;
+        }
+    }
+}
+
+public void On_MODN()
+{
+    println("MODN changed to", MODN);
+    modulate(KEYS, MODN);
+}
+
+////// Nebulator graphics stuff //////
+public override void setup()
+{
+    println("setup()");
+
+    // Patches (optional). Only needed if using the Windows GM.
+    sendPatch(KEYS, AcousticGrandPiano);
+    sendPatch(BASS, AcousticBass);
+    sendPatch(BALL, Pad3Polysynth);
+}
+
+public override void draw()
+{
+    background(COL1, 100, 200);
+
+    if(playing && moveBall())
+    {
+        int notenum = (int)random(40, 70);
+        sendMidiNote(BALL, notenum, 95, 1.09);
+    }
+
+    // Draw the ball.
+    noStroke();
+    ellipse(posX, posY, ballSize, ballSize);
+
+    int x = (int)map(posX, 0, width, 0, 255);
+
+    color c = color(x, (x + 100) % 256, (x + 200) % 256);
+    fill(c);
+}
+
+public override void mouseClicked()
+{
+    // Note selected based on mouse position.
+    int x = (int)map(mouseX, 0, width, 40, 100);
+    sendMidiNote(BALL, x, 90, 0.48);
+}
+
+public override void keyPressed()
+{
+    int v = key == 'c' ? 60 : 70;
+    sendMidiNote(KEYS, v, KEYS_DEF_VOL, 1.48);
+}
+
+bool moveBall()
+{
+    bool edge = false;
+
+    ///// Move the ball. /////
+    posX += velX;
+    if (posX <= ballSize / 2)
+    {
+        posX = ballSize / 2;
+        velX = -velX;
+        edge = true;
+    }
+    else if (posX >= width - ballSize / 2)
+    {
+        posX = width - ballSize / 2;
+        velX = -velX;
+        edge = true;
+    }
+
+    posY += velY;
+    if (posY <= ballSize / 2)
+    {
+        posY = ballSize / 2;
+        velY = -velY;
+        edge = true;
+    }
+    else if (posY >= height - ballSize / 2)
+    {
+        posY = height - ballSize / 2;
+        velY = -velY;
+        edge = true;
+    }
+    return edge;
+}

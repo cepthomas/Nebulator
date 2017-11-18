@@ -25,7 +25,7 @@ namespace Nebulator.Scripting
     }
 
     /// <summary>
-    /// Parses/compiles neb file(s).
+    /// Parses/compiles neb file(s). TODO2 could use some speeding up.
     /// </summary>
     public class Compiler
     {
@@ -513,71 +513,6 @@ namespace Nebulator.Scripting
             codeLines.Add("}");
 
             return codeLines;
-        }
-        #endregion
-
-        #region Conversion to step collection
-        /// <summary>
-        /// Turn collected stuff into midi event sequence.
-        /// </summary>
-        public StepCollection ConvertToSteps()
-        {
-            StepCollection steps = new StepCollection();
-
-            // Gather the sequence definitions.
-            Dictionary<string, Sequence> sequences = _dynamic.Sequences.Values.Distinct().ToDictionary(i => i.Name, i => i);
-
-            // Process the composition values.
-            foreach (Track track in _dynamic.Tracks.Values)
-            {
-                // Put the loops in time order.
-                track.Loops.Sort((a, b) => a.StartTick.CompareTo(b.StartTick));
-
-                foreach (Loop loop in track.Loops)
-                {
-                    // Get the loop sequence info.
-                    Sequence nseq = sequences[loop.SequenceName];
-
-                    for (int loopTick = loop.StartTick; loopTick < loop.EndTick; loopTick += nseq.Length)
-                    {
-                        foreach (Note note in nseq.Notes)
-                        {
-                            // Create the note start and stop times.
-                            int toffset = loopTick == 0 ? 0 : track.NextTime();
-
-                            Time startNoteTime = new Time(loopTick, toffset) + note.When;
-                            Time stopNoteTime = startNoteTime + note.Duration;
-
-                            // Process all note numbers.
-                            foreach (int noteNum in note.ChordNotes)
-                            {
-                                ///// Note on.
-                                int vel = track.NextVol(note.Volume);
-                                StepNoteOn step = new StepNoteOn()
-                                {
-                                    TrackName = track.Name,
-                                    Channel = track.Channel,
-                                    NoteNumber = noteNum,
-                                    NoteNumberToPlay = noteNum,
-                                    Velocity = vel,
-                                    VelocityToPlay = vel,
-                                    Duration = note.Duration
-                                };
-                                steps.AddStep(startNoteTime, step);
-
-                                // Maybe add a deferred stop note.
-                                if (stopNoteTime != startNoteTime)
-                                {
-                                    steps.AddStep(stopNoteTime, new StepNoteOff(step));
-                                }
-                                // else client is taking care of it.
-                            }
-                        }
-                    }
-                }
-            }
-
-            return steps;
         }
         #endregion
 

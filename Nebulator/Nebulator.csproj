@@ -131,6 +131,7 @@
     <Compile Include="Scripting\Loop.cs" />
     <Compile Include="Scripting\Note.cs" />
     <Compile Include="Scripting\Sequence.cs" />
+    <Compile Include="Scripting\StepUtils.cs" />
     <Compile Include="Scripting\Track.cs" />
     <Compile Include="Scripting\Variable.cs" />
     <Compile Include="Controls\Fader.cs">

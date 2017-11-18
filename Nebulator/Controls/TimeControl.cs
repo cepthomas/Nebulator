@@ -5,15 +5,16 @@ using System.Drawing;
 using System.Windows.Forms;
 using Nebulator.Common;
 
+// TODO2 visible tick indicator?
+
 
 namespace Nebulator.Controls
 {
     public partial class TimeControl : UserControl
     {
         #region Fields
-        int _major = 0;
-        int _maxMajor = 100;
-        int _minor = 0;
+        Time _current = new Time();
+        int _maxTick = 0;
         int _lastPos = 0;
         // Main font.
         Font _font1 = new Font("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -23,30 +24,31 @@ namespace Nebulator.Controls
 
         #region Properties
         /// <summary>
-        /// Current major value. Limited to three digits.
+        /// Current value. Copy in and out to avoid holding a reference to the global time.
         /// </summary>
-        public int Major
+        public Time CurrentTime
         {
-            get { return _major; }
-            set { _major = value % 999; Invalidate(); }
+            get
+            {
+                return new Time(_current);
+            }
+            set
+            {
+                _current = new Time(value);
+                if (_current.Tock == 0)
+                {
+                    Invalidate();
+                }
+            }
         }
 
         /// <summary>
-        /// Current minor value. Limited to two digits.
+        /// Largest Tick value.
         /// </summary>
-        public int Minor
+        public int MaxTick
         {
-            get { return _minor; }
-            set { _minor = value % 99; Invalidate(); }
-        }
-
-        /// <summary>
-        /// Largest major value.
-        /// </summary>
-        public int MaxMajor
-        {
-            get { return _maxMajor; }
-            set { _maxMajor = value % 999; Invalidate(); }
+            get { return _maxTick; }
+            set { _maxTick = value % 999; Invalidate(); }
         }
 
         /// <summary>
@@ -97,9 +99,9 @@ namespace Nebulator.Controls
 
             // Internal.
             Brush brush = new SolidBrush(ControlColor);
-            if(MaxMajor != 0)
+            if(MaxTick != 0)
             {
-                pe.Graphics.FillRectangle(brush, 1, 1, ((Width - 2) * Major / MaxMajor), Height - 2);
+                pe.Graphics.FillRectangle(brush, 1, 1, ((Width - 2) * _current.Tick / MaxTick), Height - 2);
             }
 
             // Text.
@@ -109,12 +111,21 @@ namespace Nebulator.Controls
                 Alignment = StringAlignment.Near
             };
 
+#if _SHOW_TOCK
+            // Also need to make control 220px wide.
             string sval = $"{Major:000}.{Minor:00}";
             pe.Graphics.DrawString(sval, _font1, Brushes.Black, ClientRectangle, format);
-
             Rectangle r2 = new Rectangle(ClientRectangle.X + 120, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
-            sval = GetTimeDef(_major);
+            sval = GetTimeDef(_current.Tick);
             pe.Graphics.DrawString(sval, _font2, Brushes.Black, r2, format);
+#else
+            string sval = $"{_current.Tick:000}";
+            pe.Graphics.DrawString(sval, _font1, Brushes.Black, ClientRectangle, format);
+
+            Rectangle r2 = new Rectangle(ClientRectangle.X + 60, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
+            sval = GetTimeDef(_current.Tick);
+            pe.Graphics.DrawString(sval, _font2, Brushes.Black, r2, format);
+#endif
 
             //base.OnPaint(pe);
         }
@@ -157,8 +168,8 @@ namespace Nebulator.Controls
         /// <param name="x"></param>
         private void SetValueFromMouse(int x)
         {
-            _minor = 0;
-            Major = GetValueFromMouse(x);
+            _current.Tick = GetValueFromMouse(x);
+            _current.Tock = 0;
             ValueChanged?.Invoke(this, new EventArgs());
         }
 
@@ -168,7 +179,7 @@ namespace Nebulator.Controls
         /// <param name="x"></param>
         private int GetValueFromMouse(int x)
         {
-            int val = Utils.Constrain(x * MaxMajor / Width, 0, MaxMajor);
+            int val = Utils.Constrain(x * MaxTick / Width, 0, MaxTick);
             return val;
         }
 
@@ -207,13 +218,13 @@ namespace Nebulator.Controls
             {
                 case Keys.Add:
                 case Keys.Up:
-                    Major++;
+                    _current.Tick++;
                     e.IsInputKey = true;
                     break;
 
                 case Keys.Subtract:
                 case Keys.Down:
-                    Major--;
+                    _current.Tick--;
                     e.IsInputKey = true;
                     break;
             }

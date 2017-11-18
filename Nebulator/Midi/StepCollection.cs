@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,10 @@ namespace Nebulator.Midi
     /// <summary>A collection of Steps.</summary>
     public class StepCollection
     {
+        #region Fields
         ///<summary>The main collection of Steps. The key is the time to send the list.</summary>
         Dictionary<Time, List<Step>> _steps = new Dictionary<Time, List<Step>>();
+        #endregion
 
         #region Properties
         ///<summary>Gets a collection of the list.</summary>
@@ -49,6 +52,21 @@ namespace Nebulator.Midi
         }
 
         /// <summary>
+        /// Concatenate another collection to this.
+        /// </summary>
+        /// <param name="stepsToAdd"></param>
+        public void Add(StepCollection stepsToAdd)
+        {
+            foreach(KeyValuePair<Time, List<Step>> kv in stepsToAdd._steps)
+            {
+                foreach(Step val in kv.Value)
+                {
+                    AddStep(kv.Key, val);
+                }
+            }
+        }
+
+        /// <summary>
         /// Get the steps for the given time.
         /// </summary>
         public IEnumerable<Step> GetSteps(Time time)
@@ -57,7 +75,7 @@ namespace Nebulator.Midi
         }
 
         /// <summary>
-        /// Delete the steps for the given time.
+        /// Delete the steps at the given time.
         /// </summary>
         public void DeleteSteps(Time time)
         {

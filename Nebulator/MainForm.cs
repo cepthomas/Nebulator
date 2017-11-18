@@ -14,14 +14,6 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
-// TODO2 Use space bar to start/stop.
-// TODO2 Maybe cut into assemblies, add NUnit.
-
-// TODO2 VU meter for midi outputs? Visible tick indicator?
-
-// Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
-// http://spheric-lounge-live-ambient-music.blogspot.com/
-
 
 namespace Nebulator
 {
@@ -126,6 +118,10 @@ namespace Nebulator
             UpdateMenu();
 
             NoteUtils.Init();
+
+            // Intercept all keyboard events.
+            KeyPreview = true;
+            //chkPlay.AutoCheck = false;
             #endregion
 
             #region Command line
@@ -139,7 +135,6 @@ namespace Nebulator
 
             ////////////////////// test ///////////////////////
             testHost.Go();
-
         }
 
         /// <summary>
@@ -222,7 +217,7 @@ namespace Nebulator
                 btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
                 _dirtyFiles = false;
 
-                _compiledSteps = compiler.ConvertToSteps();
+                _compiledSteps = StepUtils.ConvertTracksToSteps(_script.Dynamic.Tracks.Values, _script.Dynamic.Sequences.Values);
 
                 _script.ScriptEvent += Script_ScriptEvent;
                 InitMainUi();
@@ -234,7 +229,7 @@ namespace Nebulator
             {
                 _logger.Warn("Compile failed.");
                 ok = false;
-                SetPlayStatus(false);
+                Globals.Playing = false;
                 compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
                 btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
                 _dirtyFiles = true;
@@ -265,7 +260,8 @@ namespace Nebulator
             foreach (Track t in _script.Dynamic.Tracks.Values)
             {
                 // Init from persistence.
-               t.Volume = Convert.ToInt32(_internalVals.GetValue(t.Name, "volume"));
+                int vt = Utils.Constrain(Convert.ToInt32(_internalVals.GetValue(t.Name, "volume")), 70, 127);
+                t.Volume = vt == 0 ? 90 : vt; // in case it's new
 
                 TrackControl trk = new TrackControl()
                 {
@@ -279,8 +275,11 @@ namespace Nebulator
 
             ///// Misc controls.
             potSpeed.Value = Convert.ToInt32(_internalVals.GetValue("master", "speed"));
-            sldVolume.Value = Convert.ToInt32(_internalVals.GetValue("master", "volume"));
-            timeMaster.MaxMajor = _compiledSteps.MaxTick;
+
+            int mv = Convert.ToInt32(_internalVals.GetValue("master", "volume"));
+            sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
+
+            timeMaster.MaxTick = _compiledSteps.MaxTick;
 
             UpdateTime(true);
             UpdateMenu();
@@ -382,8 +381,6 @@ namespace Nebulator
                     ///// Bump.
                     Globals.CurrentStepTime.Advance();
 
-                    bool keepGoing = true;
-
                     // If no steps, free running mode so always keep going.
                     if(_compiledSteps.Count != 0)
                     {
@@ -391,15 +388,14 @@ namespace Nebulator
                         if (Globals.CurrentStepTime.Tick >= _compiledSteps.MaxTick)
                         {
                             UpdateTime(true); // reset to beginning.
-                            keepGoing = chkLoop.Checked;
-                            if (!keepGoing)
+                            if (!chkLoop.Checked) // stop now
                             {
                                 Globals.MidiInterface.KillAll(); // just in case
+                                Globals.Playing = false;
                             }
                         }
                     }
 
-                    SetPlayStatus(keepGoing);
                     UpdateTime(false);
                 }
 
@@ -478,21 +474,30 @@ namespace Nebulator
                 {
                     /////// Control change
                     StepControllerChange scc = e.Step as StepControllerChange;
-                    // Process through our list.
-                    IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.InputMidis.Values.Where((c, m) => (
-                        c.MidiController == scc.MidiController &&
-                        c.Channel == scc.Channel));
 
-                    if (ctlpts != null && ctlpts.Count() > 0)
+                    bool handled = false;
+
+                    // Process through our list.
+                    if(_script != null)
                     {
-                        ctlpts.ForEach(c =>
+                        IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.InputMidis.Values.Where((c, m) => (
+                            c.MidiController == scc.MidiController &&
+                            c.Channel == scc.Channel));
+
+                        if (ctlpts != null && ctlpts.Count() > 0)
                         {
-                            // Add to our list for processing at the next tock.
-                            c.RefVar.Value = scc.ControllerValue;
-                            _ctrlChanges.Add(c.RefVar.Name, c.RefVar);
-                        });
+                            ctlpts.ForEach(c =>
+                            {
+                                // Add to our list for processing at the next tock.
+                                c.RefVar.Value = scc.ControllerValue;
+                                _ctrlChanges.Add(c.RefVar.Name, c.RefVar);
+                            });
+
+                            handled = true;
+                        }
                     }
-                    else
+
+                    if(!handled)
                     {
                         // Not one we are interested in so pass through.
                         Globals.MidiInterface.Send(e.Step);
@@ -648,42 +653,11 @@ namespace Nebulator
 
         #region Main toolbar controls
         /// <summary>
-        /// Go back.
-        /// </summary>
-        private void Rewind_Click(object sender, EventArgs e)
-        {
-            UpdateTime(true);
-        }
-
-        /// <summary>
-        /// Go or stop.
+        /// Go or stop button.
         /// </summary>
         private void Play_Click(object sender, EventArgs e)
         {
-            if(chkPlay.Checked)
-            {
-                SetPlayStatus(false);
-
-                bool ok = true;
-
-                if(_dirtyFiles)
-                {
-                    ok = Compile();
-                    UpdateTime(true);
-                }
-
-                if(ok)
-                {
-                    SetSpeedTimerPeriod();
-                    SetPlayStatus(true);
-                }
-            }
-            else
-            {
-                SetPlayStatus(false);
-                // Send midi stop all notes, stop sequencer.
-                Globals.MidiInterface.KillAll();
-            }
+            Play();
         }
 
         /// <summary>
@@ -721,6 +695,14 @@ namespace Nebulator
         }
 
         /// <summary>
+        /// Go back jack.
+        /// </summary>
+        void Rewind_Click(object sender, EventArgs e)
+        {
+            UpdateTime(true);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="sender"></param>
@@ -748,8 +730,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Time_ValueChanged(object sender, EventArgs e)
         {
-            Globals.CurrentStepTime.Tick = timeMaster.Major;
-            Globals.CurrentStepTime.Tock = timeMaster.Minor;
+            Globals.CurrentStepTime = timeMaster.CurrentTime;
         }
         #endregion
 
@@ -986,15 +967,65 @@ namespace Nebulator
         }
         #endregion
 
+        #region Play control
+        /// <summary>
+        /// Start or stop depending on current status. TODO2 Useful? option to not play loops when start, just step() and draw().
+        /// </summary>
+        void Play()
+        {
+            if (Globals.Playing)
+            {
+                ///// Stop!
+                Globals.Playing = false;
+                //chkPlay.Checked = false;
+                // Send midi stop all notes, stop sequencer.
+                Globals.MidiInterface.KillAll();
+            }
+            else
+            {
+                ///// Start!
+                bool ok = true;
+
+                if (_dirtyFiles)
+                {
+                    ok = Compile();
+                    UpdateTime(true);
+                }
+
+                if (ok)
+                {
+                    SetSpeedTimerPeriod();
+                }
+
+                Globals.Playing = ok;
+                //chkPlay.Checked = ok;
+            }
+        }
+        #endregion
+
         #region Internal stuff
         /// <summary>
-        /// Common play function.
+        /// Do some global key handling.
         /// </summary>
-        /// <param name="play"></param>
-        void SetPlayStatus(bool play)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
-            chkPlay.Checked = play;
-            Globals.Playing = play;
+            switch (e.KeyChar)
+            {
+                case (char)32:
+                    // Handle start/stop toggle. TODO1 Weird things, fighting with script kbd handlers?
+                    //chkPlay.Checked = !chkPlay.Checked;
+                    //Play_Click(null, null);
+                    //Play();
+                    //e.Handled = true;
+                    break;
+
+                default:
+                    // Pass everything else along.
+                    e.Handled = false;
+                    break;
+            }
         }
 
         /// <summary>
@@ -1027,8 +1058,7 @@ namespace Nebulator
                 Globals.CurrentStepTime.Reset();
             }
 
-            timeMaster.Major = Globals.CurrentStepTime.Tick;
-            timeMaster.Minor = Globals.CurrentStepTime.Tock;
+            timeMaster.CurrentTime = Globals.CurrentStepTime;
         }
 
         /// <summary>
@@ -1114,5 +1144,5 @@ namespace Nebulator
             }
         }
         #endregion
-    }
+}
 }

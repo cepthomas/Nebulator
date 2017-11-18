@@ -186,39 +186,7 @@ namespace Nebulator.Scripting
         /// <param name="tick">Which tick to start at. If -1 use current Tick.</param>
         public void playSequence(Track track, Sequence seq, int tick = -1)
         {
-            foreach (Note note in seq.Notes) // TODO2 this is kinda the same as compiler does.
-            {
-                // Create the note start and stop times.
-                int toffset = track.NextTime();
-
-                Time startNoteTime = new Time(tick == -1 ? Globals.CurrentStepTime.Tick : tick, toffset) + note.When;
-                Time stopNoteTime = startNoteTime + note.Duration;
-
-                // Process all note numbers.
-                foreach (int noteNum in note.ChordNotes)
-                {
-                    ///// Note on.
-                    int vel = track.NextVol(note.Volume);
-                    StepNoteOn step = new StepNoteOn()
-                    {
-                        TrackName = track.Name,
-                        Channel = track.Channel,
-                        NoteNumber = noteNum,
-                        NoteNumberToPlay = noteNum,
-                        Velocity = vel,
-                        VelocityToPlay = vel,
-                        Duration = note.Duration
-                    };
-                    ScriptSteps.AddStep(startNoteTime, step);
-
-                    // Maybe add a deferred stop note.
-                    if (stopNoteTime != startNoteTime)
-                    {
-                        ScriptSteps.AddStep(stopNoteTime, new StepNoteOff(step));
-                    }
-                    // else client is taking care of it.
-                }
-            }
+            ScriptSteps.Add(StepUtils.ConvertTrackToSteps(track, seq, tick));
         }
         #endregion
     }

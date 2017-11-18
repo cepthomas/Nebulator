@@ -50,6 +50,7 @@ namespace Nebulator.Controls
         }
 
         /// <summary>Class representing one data point and associated information.</summary>
+        [Browsable(false)]
         public class DataPoint // needs new descriptor.
         {
             #region Properties
@@ -356,9 +357,9 @@ namespace Nebulator.Controls
         Color _dotColor = Color.Purple;
         List<DataPoint> _data = new List<DataPoint>();
 
-        /// <summary>List of selected DataPoints.</summary>
-        [Browsable(false)]
-        public List<DataPoint> SelectedPoints { get; set; } = new List<DataPoint>();
+        ///// <summary>List of selected DataPoints.</summary>
+        //[Browsable(false)]
+        //public List<DataPoint> SelectedPoints { get; set; } = new List<DataPoint>();
 
         #region Lifecycle
         public Grid()
@@ -765,16 +766,16 @@ namespace Nebulator.Controls
 
                         if (pt != null)
                         {
-                            if (SelectedPoints.Contains(pt))
-                            {
-                                SelectedPoints.Remove(pt);
-                                pt.Selected = false;
-                            }
-                            else
-                            {
-                                SelectedPoints.Add(pt);
-                                pt.Selected = true;
-                            }
+                            //if (SelectedPoints.Contains(pt))
+                            //{
+                            //    SelectedPoints.Remove(pt);
+                            //    pt.Selected = false;
+                            //}
+                            //else
+                            //{
+                            //    SelectedPoints.Add(pt);
+                            //    pt.Selected = true;
+                            //}
 
                             Invalidate();
                             Refresh();
@@ -812,7 +813,7 @@ namespace Nebulator.Controls
 
                         // Unselect previously selected points.
                         UnselectPoints();
-                        SelectedPoints = new List<DataPoint>();
+//                        SelectedPoints = new List<DataPoint>();
 
                         // Force repaint of chart.
                         Invalidate();
@@ -1413,10 +1414,10 @@ namespace Nebulator.Controls
         /// <summary>Unselect multiple points.</summary>
         void UnselectPoints()
         {
-            foreach (DataPoint point in SelectedPoints)
-            {
-                point.Selected = false;
-            }
+            //foreach (DataPoint point in SelectedPoints)
+            //{
+            //    point.Selected = false;
+            //}
         }
 
         /// <summary>Obtain the point on the chart based on a client position.</summary>

@@ -1,0 +1,10 @@
+{
+  "Values": {
+    "master.volume": 154,
+    "master.speed": 81.0,
+    "KEYS.volume": 145,
+    "BASS.volume": 181,
+    "DRUMS.volume": 148,
+    "BALL.volume": 133
+  }
+}
