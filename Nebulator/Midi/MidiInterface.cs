@@ -142,6 +142,7 @@ namespace Nebulator.Midi
         {
             // Send any stops due.
             _stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
+            
             // Reset.
             _stops.RemoveAll(s => s.Expiry < 0);
         }

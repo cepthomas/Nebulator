@@ -59,10 +59,7 @@ namespace Nebulator.Midi
         {
             foreach(KeyValuePair<Time, List<Step>> kv in stepsToAdd._steps)
             {
-                foreach(Step val in kv.Value)
-                {
-                    AddStep(kv.Key, val);
-                }
+                kv.Value.ForEach(s => AddStep(kv.Key, s));
             }
         }
 
@@ -95,25 +92,8 @@ namespace Nebulator.Midi
         /// </summary>
         public override string ToString()
         {
-            int total = 0;
-            foreach (IList<Step> steps in _steps.Values)
-            {
-                total += steps.Count;
-            }
+            int total = _steps.Values.Sum(v => v.Count);
             return $"Count:{Count} Total:{total}";
-
-            //List<string> ls = new List<string>();
-            //Times.ToList().ForEach(t => ls.Add(new Time(t).ToString()));
-            //return string.Join(", ", ls);
-
-            //List<int> ticktocks = Times.ToList();
-            //ticktocks.Sort();
-            //foreach (int i in ticktocks)
-            //{
-            //    Time t = new Time() { Packed = i };
-            //    ls.AppendFormat("Time:{0}{1}", t, Environment.NewLine);
-            //    _steps[i].ForEach(x => ls.AppendFormat("  {0}{1}", x, Environment.NewLine));
-            //}
         }
         #endregion
     }

@@ -27,9 +27,6 @@ namespace Nebulator.Scripting
             // Process the composition values.
             foreach (Track track in tracks)
             {
-                // Put the loops in time order.
-                //track.Loops.Sort((a, b) => a.StartTick.CompareTo(b.StartTick));
-
                 foreach (Loop loop in track.Loops)
                 {
                     // Get the loop sequence info.

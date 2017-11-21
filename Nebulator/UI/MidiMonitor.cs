@@ -47,8 +47,7 @@ namespace Nebulator.UI
                 txtMonitor.SelectedText = "";
             }
 
-            string s = $"{Globals.CurrentStepTime} {msg}{Environment.NewLine}";
-            txtMonitor.AppendText(s);
+            txtMonitor.AppendText($"{Globals.CurrentStepTime} {msg}{Environment.NewLine}");
             txtMonitor.ScrollToCaret();
         }
 

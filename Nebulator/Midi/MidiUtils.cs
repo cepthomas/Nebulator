@@ -126,10 +126,10 @@ namespace Nebulator.Midi
         /// <returns>Collection of strings for pasting into a file.</returns>
         public static List<string> ImportStyle(string fileName)
         {
-            List<string> constants = new List<string>();
-            List<string> tracks = new List<string>();
-            List<string> sequences = new List<string>();
-            List<string> leftovers = new List<string> { "Leftovers" };
+            List<string> constants = new List<string>() { "///// Constants /////" };
+            List<string> tracks = new List<string>() { "///// Tracks and Loops /////" };
+            List<string> sequences = new List<string>() { "///// Sequences and Notes /////" };
+            List<string> leftovers = new List<string> { "///// Leftovers /////" };
 
             StyleParser sty = new StyleParser();
             sty.ProcessFile(fileName);
@@ -284,31 +284,18 @@ namespace Nebulator.Midi
             }
 
             // Process track info.
-            foreach (int channel in channels)
-            {
-                ///// Tracks and Loops /////
-                //track(TRACK_CHANNEL, CHANNEL, 0);
-                //loop(START, PART1, SEQ1);
-                //loop(PART1, TLEN, SEQ2);
-
-                tracks.Add($"track(TRACK_{channel}, {channel}, 0, 0, 0);");
-            }
+            channels.ForEach(c => tracks.Add($"track(TRACK_{c}, {c}, 0, 0, 0);"));
 
             // Global stuff.
             constants.Add($"const(TLEN, 888);");
 
             List<string> all = new List<string>() { "///// Imported Style /////" };
-            all.Add("///// Constants /////");
             all.AddRange(constants);
             all.Add(""); // space
-            all.Add("///// Tracks and Loops /////");
             all.AddRange(tracks);
             all.Add(""); // space
-            all.Add("///// Sequences and Notes /////");
             all.AddRange(sequences);
 
-            //all.ForEach(s => Console.WriteLine(s));
-            //System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, leftovers));
             System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, all));
 
             return all;

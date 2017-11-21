@@ -5,41 +5,9 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 using NLog;
 using Nebulator.Common;
-
-
-// TODO1 rethink kbd handling. Processing is complicated:
-// 
-// The keyPressed() function is called once every time a key is pressed. The key that was pressed is stored in the key variable. 
-// 
-// The system variable key always contains the value of the most recent key on the keyboard that was used (either pressed or released). 
-// For non-ASCII keys, use the keyCode variable. The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if the key is coded, and you should simply use the key variable instead of keyCode If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms. 
-// There are issues with how keyCode behaves across different renderers and operating systems. Watch out for unexpected behavior as you switch renderers and operating systems.
-// 
-// The variable keyCode is used to detect special keys such as the arrow keys (UP, DOWN, LEFT, and RIGHT) as well as ALT, CONTROL, and SHIFT. 
-// When checking for these keys, it can be useful to first check if the key is coded. This is done with the conditional if (key == CODED), as shown in the example above. 
-// The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if the key is coded; for those keys, you should simply use the key variable directly (and not keyCode). If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix, while the RETURN key is used on Macs. Make sure your program will work on all platforms by checking for both ENTER and RETURN. 
-// 
-// The keyPressed() function is called once every time a key is pressed. The key that was pressed is stored in the key variable. 
-// 
-// The boolean system variable keyPressed is true if any key is pressed and false if no keys are pressed.
-// 
-// The keyReleased() function is called once every time a key is released. The key that was released will be stored in the key variable. See key and keyCode for more information. 
-// Mouse and keyboard events only work when a program has draw(). Without draw(), the code is only run once and then stops listening for events.
-// 
-// The keyTyped() function is called once every time a key is pressed, but action keys such as Ctrl, Shift, and Alt are ignored. 
-// Because of how operating systems handle key repeats, holding down a key may cause multiple calls to keyTyped(). The rate of repeat is set by the operating system, and may be configured differently on each computer. 
-// Mouse and keyboard events only work when a program has draw(). Without draw(), the code is only run once and then stops listening for events.
-
-
-// How windows handles key presses, i.e Shift+A, you'll get:
-// - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
-// - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
-// - KeyPress: KeyChar='A'
-// - KeyUp: KeyCode=Keys.A
-// - KeyUp: KeyCode=Keys.ShiftKey
-
 
 
 namespace Nebulator.Scripting
@@ -51,7 +19,7 @@ namespace Nebulator.Scripting
     {
         #region SurfaceControl stuff
         /// <summary>
-        /// Dynamically created shell control that the client can site in a form.
+        /// Dynamically created user control that the client can site in a form.
         /// All event handlers are supported in the Script class for close binding with properties and rendering.
         /// </summary>
         class SurfaceControl : UserControl
@@ -83,6 +51,7 @@ namespace Nebulator.Scripting
             Surface.MouseWheel += Surface_MouseWheel;
             Surface.KeyDown += Surface_KeyDown;
             Surface.KeyUp += Surface_KeyUp;
+            Surface.KeyPress += Surface_KeyPress;
         }
 
         /// <summary>
@@ -129,9 +98,9 @@ namespace Nebulator.Scripting
         /// <param name="e"></param>
         void Surface_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessMouse(e);
-            mousePressed = true;
-            mousePressedEvt();
+            ProcessMouseEvent(e);
+            mousePressedP = true;
+            mousePressed();
         }
 
         /// <summary>
@@ -141,8 +110,8 @@ namespace Nebulator.Scripting
         /// <param name="e"></param>
         void Surface_MouseUp(object sender, MouseEventArgs e)
         {
-            ProcessMouse(e);
-            mousePressed = false;
+            ProcessMouseEvent(e);
+            mousePressedP = false;
             mouseReleased();
         }
 
@@ -153,8 +122,8 @@ namespace Nebulator.Scripting
         /// <param name="e"></param>
         void Surface_MouseMove(object sender, MouseEventArgs e)
         {
-            ProcessMouse(e);
-            if (mousePressed)
+            ProcessMouseEvent(e);
+            if (mousePressedP)
             {
                 mouseDragged();
             }
@@ -181,7 +150,7 @@ namespace Nebulator.Scripting
         /// <param name="e"></param>
         void Surface_MouseClick(object sender, MouseEventArgs e)
         {
-            ProcessMouse(e);
+            ProcessMouseEvent(e);
             mouseClicked();
         }
 
@@ -192,7 +161,7 @@ namespace Nebulator.Scripting
         /// <param name="e"></param>
         void Surface_MouseWheel(object sender, MouseEventArgs e)
         {
-            ProcessMouse(e);
+            ProcessMouseEvent(e);
             mouseWheel();
         }
 
@@ -200,7 +169,7 @@ namespace Nebulator.Scripting
         /// Common routine to update mouse stuff.
         /// </summary>
         /// <param name="e"></param>
-        void ProcessMouse(MouseEventArgs e)
+        void ProcessMouseEvent(MouseEventArgs e)
         {
             mouseX = e.X;
             mouseY = e.Y;
@@ -216,42 +185,26 @@ namespace Nebulator.Scripting
         }
         #endregion
 
-        #region Keyboard handling
+        #region Keyboard handling - see MainForm region "Keyboard handling"
         /// <summary>
         /// Event handler for keys.
-        /// How windows handles key presses, i.e Shift+A, you'll get:
-        /// - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
-        /// - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
-        /// - KeyPress: KeyChar='A'
-        /// - KeyUp: KeyCode=Keys.A
-        /// - KeyUp: KeyCode=Keys.ShiftKey
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void Surface_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
+            keyPressedP = false;
+
+            // Decode character, maybe.
+            var v = Utils.KeyToChar(e.KeyCode, e.Modifiers);
+            ProcessKeys(v);
+
+            if (key != 0)
             {
-                case Keys.Alt:
-                    alt = true;
-                    break;
-
-                case Keys.Control:
-                    ctrl = true;
-                    break;
-
-                case Keys.Shift:
-                    shift = true;
-                    break;
-
-                default:
-                    char? c = Decode(e.KeyCode, (e.Modifiers & Keys.Shift) != 0);
-                    if (c != null)
-                    {
-                        key = (char)c;
-                        keyPressed();
-                    }
-                    break;
+                // Valid character.
+                keyPressedP = true;
+                // Notify client.
+                keyPressed();
             }
         }
 
@@ -262,92 +215,83 @@ namespace Nebulator.Scripting
         /// <param name="e"></param>
         void Surface_KeyUp(object sender, KeyEventArgs e)
         {
-            char? c = Decode(e.KeyCode);
-            if (c != null)
-            {
-                // Notify first.
-                key = (char)c;
-                keyReleased();
-            }
+            keyPressedP = false;
 
-            // Now reset all.
-            key = ' ';
-            alt = false;
-            ctrl = false;
-            shift = false;
+            // Decode character, maybe.
+            var v = Utils.KeyToChar(e.KeyCode, e.Modifiers);
+            ProcessKeys(v);
+
+            if (key != 0)
+            {
+                // Valid character.
+                keyPressedP = false;
+                // Notify client.
+                keyReleased();
+                // Now reset keys.
+                key = (char)0;
+                keyCode = 0;
+            }
         }
 
         /// <summary>
-        /// General purpose decoder for keys.
+        /// Event handler for keys.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="shift"></param>
-        /// <returns></returns>
-        char? Decode(Keys key, bool shift = false)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Surface_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char? c = null; // means not a useful char
-            keyCode = 0; // default
+            key = e.KeyChar;
+            keyTyped();
+        }
 
-            switch (key)
+        /// <summary>
+        /// Convert generic utility output to flavor that Processing understands.
+        /// </summary>
+        /// <param name="keys"></param>
+        void ProcessKeys((char ch, List<Keys> keyCodes) keys)
+        {
+            keyCode = 0;
+            key = keys.ch;
+
+            // Check modifiers.
+            if (keys.keyCodes.Contains(Keys.Control))
             {
-                case Keys.Back:
-                    c = (char)BACKSPACE;
-                    break;
-
-                case Keys.Tab:
-                    c = (char)TAB;
-                    break;
-
-                case Keys.Enter:
-                    c = (char)ENTER;
-                    break;
-
-                case Keys.Escape:
-                    c = (char)ESC;
-                    break;
-
-                case Keys.Delete:
-                    c = (char)DELETE;
-                    break;
-
-                case Keys.Space:
-                    c = ' ';
-                    break;
-
-                case Keys.Up:
-                    c = (char)CODED;
-                    keyCode = UP;
-                    break;
-
-                case Keys.Down:
-                    c = (char)CODED;
-                    keyCode = DOWN;
-                    break;
-
-                case Keys.Left:
-                    c = (char)CODED;
-                    keyCode = LEFT;
-                    break;
-
-                case Keys.Right:
-                    c = (char)CODED;
-                    keyCode = RIGHT;
-                    break;
-
-                default:
-                    if (key >= Keys.A && key <= Keys.Z)
-                    {
-                        c = (char)(shift ? (int)key : (int)key + 32);
-                    }
-                    else
-                    {
-                        c = null;
-                        keyCode = 0;
-                    }
-                    break;
+                keyCode |= CTRL;
             }
 
-            return c;
+            if (keys.keyCodes.Contains(Keys.Alt))
+            {
+                keyCode |= ALT;
+            }
+
+            if (keys.keyCodes.Contains(Keys.Shift))
+            {
+                keyCode |= SHIFT;
+            }
+
+            if (keys.keyCodes.Contains(Keys.Left))
+            {
+                keyCode |= LEFT;
+                key = (char)CODED;
+            }
+
+            if (keys.keyCodes.Contains(Keys.Right))
+            {
+                keyCode |= RIGHT;
+                key = (char)CODED;
+            }
+
+            if (keys.keyCodes.Contains(Keys.Up))
+            {
+                keyCode |= UP;
+                key = (char)CODED;
+            }
+
+            if (keys.keyCodes.Contains(Keys.Down))
+            {
+                keyCode |= DOWN;
+                key = (char)CODED;
+            }
         }
         #endregion
     }

@@ -5,8 +5,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Nebulator.Common;
 
-// TODO2 visible tick indicator?
-
 
 namespace Nebulator.Controls
 {
@@ -122,7 +120,7 @@ namespace Nebulator.Controls
             string sval = $"{_current.Tick:000}";
             pe.Graphics.DrawString(sval, _font1, Brushes.Black, ClientRectangle, format);
 
-            Rectangle r2 = new Rectangle(ClientRectangle.X + 60, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
+            Rectangle r2 = new Rectangle(ClientRectangle.X + 66, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
             sval = GetTimeDef(_current.Tick);
             pe.Graphics.DrawString(sval, _font2, Brushes.Black, r2, format);
 #endif

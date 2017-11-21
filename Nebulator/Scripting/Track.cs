@@ -86,12 +86,7 @@ namespace Nebulator.Scripting
         /// </summary>
         public override string ToString()
         {
-            List<string> ls = new List<string>
-            {
-                $"Name:{Name} Channel:{Channel} Loops:{Loops.Count}"
-            };
-            //Loops.ForEach(l => ls.Add($"  Loop:{l}"));
-            return string.Join(Environment.NewLine, ls);
+            return $"Name:{Name} Channel:{Channel} Loops:{Loops.Count}";
         }
     }
 }

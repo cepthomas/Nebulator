@@ -25,7 +25,7 @@ namespace Nebulator.Scripting
         /// <summary>
         /// The client hosts this control in their UI.
         /// It performs the actual graphics drawing and input.
-        /// TODO2 Graphics faster alternative? sharpdx2d, wpf, uwp. Use test2.neb.
+        /// TODO2 Graphics faster alternative? sharpdx2d, WPF - use test2.neb.
         /// </summary>
         public UserControl Surface { get; private set; } = null;
 

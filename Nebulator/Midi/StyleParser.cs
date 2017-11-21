@@ -334,11 +334,6 @@ namespace Nebulator.Midi
             if (evt is NoteEvent)
             {
                 NoteEvent nevt = evt as NoteEvent;
-
-                //if(nevt.Channel == 3) // && nevt.NoteNumber == 72)
-                //{
-                //    Console.WriteLine(evt.ToString());
-                //}
             }
 
             if (!_events.ContainsKey((_currentPart, evt.Channel)))

@@ -121,7 +121,6 @@ namespace Nebulator
 
             // Intercept all keyboard events.
             KeyPreview = true;
-            //chkPlay.AutoCheck = false;
             #endregion
 
             #region Command line
@@ -339,7 +338,6 @@ namespace Nebulator
                                     MidiController = c.MidiController,
                                     ControllerValue = c.RefVar.Value
                                 };
-
                                 Globals.MidiInterface.Send(step);
                             });
                         }
@@ -597,6 +595,8 @@ namespace Nebulator
                     btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
                     AddToRecentDefs(fn);
                     Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
+
+                    Compile();
                 }
                 catch (Exception ex)
                 {
@@ -703,7 +703,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// 
+        /// User updated volume.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -931,12 +931,12 @@ namespace Nebulator
         /// <summary>
         /// Handle piano key down event.
         /// </summary>
-        private void Piano_KeyDown(object sender, PianoKeyEventArgs e)
+        private void Piano_KeyDown(object sender, Piano.PianoKeyEventArgs e)
         {
             StepNoteOn step = new StepNoteOn()
             {
                 Channel = 2,
-                NoteNumberToPlay = Utils.Constrain(e.NoteID, 0, MidiInterface.MAX_MIDI_NOTE),
+                NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
                 VelocityToPlay = 90,
                 Duration = new Time(0)
             };
@@ -946,13 +946,13 @@ namespace Nebulator
         /// <summary>
         /// Handle piano key up event.
         /// </summary>
-        private void Piano_KeyUp(object sender, PianoKeyEventArgs e)
+        private void Piano_KeyUp(object sender, Piano.PianoKeyEventArgs e)
         {
             StepNoteOff step = new StepNoteOff()
             {
                 Channel = 2,
-                NoteNumber = Utils.Constrain(e.NoteID, 0, MidiInterface.MAX_MIDI_NOTE),
-                NoteNumberToPlay = Utils.Constrain(e.NoteID, 0, MidiInterface.MAX_MIDI_NOTE),
+                NoteNumber = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
+                NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
                 Velocity = 64
             };
             Globals.MidiInterface.Send(step);
@@ -969,7 +969,7 @@ namespace Nebulator
 
         #region Play control
         /// <summary>
-        /// Start or stop depending on current status. TODO2 Useful? option to not play loops when start, just step() and draw().
+        /// Start or stop depending on current status. TODO1 Useful? option to not play loops when start, just step() and draw().
         /// </summary>
         void Play()
         {
@@ -977,7 +977,6 @@ namespace Nebulator
             {
                 ///// Stop!
                 Globals.Playing = false;
-                //chkPlay.Checked = false;
                 // Send midi stop all notes, stop sequencer.
                 Globals.MidiInterface.KillAll();
             }
@@ -998,36 +997,78 @@ namespace Nebulator
                 }
 
                 Globals.Playing = ok;
-                //chkPlay.Checked = ok;
             }
         }
         #endregion
 
-        #region Internal stuff
+        #region Keyboard handling
+        // How windows handles key presses, i.e Shift+A, you'll get:
+        // - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
+        // - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
+        // - KeyPress: KeyChar='A'
+        // - KeyUp: KeyCode=Keys.A
+        // - KeyUp: KeyCode=Keys.ShiftKey
+        // Also note that Windows steals TAB, RETURN, ESC, and arrow keys so they are not currently implemented.
+
+        /// <summary>
+        /// Do some global key handling. Space bar is used for stop/start playing.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Space)
+            {
+                // Handle start/stop toggle.
+                chkPlay.Checked = !chkPlay.Checked;
+                Play();
+                e.Handled = true;
+            }
+            else
+            {
+                // Pass along.
+                e.Handled = false;
+            }
+        }
+
         /// <summary>
         /// Do some global key handling.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
-            switch (e.KeyChar)
+            if (e.KeyCode == Keys.Space)
             {
-                case (char)32:
-                    // Handle start/stop toggle. TODO1 Weird things, fighting with script kbd handlers?
-                    //chkPlay.Checked = !chkPlay.Checked;
-                    //Play_Click(null, null);
-                    //Play();
-                    //e.Handled = true;
-                    break;
-
-                default:
-                    // Pass everything else along.
-                    e.Handled = false;
-                    break;
+                e.Handled = true;
+            }
+            else
+            {
+                // Pass along.
+                e.Handled = false;
             }
         }
 
+        /// <summary>
+        /// Do some global key handling.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == ' ')
+            {
+                e.Handled = true;
+            }
+            else
+            {
+                // Pass along - we don't care.
+                e.Handled = false;
+            }
+        }
+        #endregion
+
+        #region Internal stuff
         /// <summary>
         /// The meaning of life.
         /// </summary>
@@ -1144,5 +1185,5 @@ namespace Nebulator
             }
         }
         #endregion
-}
+    }
 }

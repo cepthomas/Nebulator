@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nebulator.Common;
 
 
-namespace Nebulator.Common
+namespace Nebulator.Scripting
 {
     /// <summary>
     /// Statistical randomizer for time and volume.

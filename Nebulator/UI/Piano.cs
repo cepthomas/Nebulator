@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 using Nebulator.Common;
 using Nebulator.Scripting;
 
@@ -9,102 +10,145 @@ using Nebulator.Scripting;
 namespace Nebulator.UI
 {
     /// <summary>
-    /// Piano control borrowed from Leslie Sanford.
+    /// Piano control borrowed from Leslie Sanford. TODO1 add support for keyboard.
     /// </summary>
     public partial class Piano : Form
     {
-        public enum KeyType { White, Black }
+        #region Fields
+        const int LOW_NOTE = 21;
+        const int HIGH_NOTE = 109;
+        List<PianoKey> _keys = new List<PianoKey>();
+        #endregion
 
-        private int _lowNoteId = 21;
-        private int _highNoteId = 109;
-        private PianoKey[] _keys = null;
-        private int _whiteKeyCount;
-
+        #region Events
+        public class PianoKeyEventArgs : EventArgs
+        {
+            public int NoteId { get; set; }
+        }
         public event EventHandler<PianoKeyEventArgs> PianoKeyDown;
         public event EventHandler<PianoKeyEventArgs> PianoKeyUp;
+        #endregion
 
+        #region Lifecycle
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public Piano()
         {
             CreatePianoKeys();
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Initialize everything.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Piano_Load(object sender, EventArgs e)
         {
-            InitializePianoKeys();
+            DrawPianoKeys();
         }
 
+        /// <summary>
+        /// Create the key controls.
+        /// </summary>
         private void CreatePianoKeys()
         {
-            _keys = new PianoKey[_highNoteId - _lowNoteId];
+            _keys.Clear();
 
-            _whiteKeyCount = 0;
-
-            for (int i = 0; i < _keys.Length; i++)
+            for (int i = 0; i < HIGH_NOTE - LOW_NOTE; i++)
             {
-                int noteId = i + _lowNoteId;
-
+                int noteId = i + LOW_NOTE;
                 Note note = new Note(noteId);
 
-                if(NoteUtils.IsNatural(note.Root))
+                PianoKey pk;
+                if (NoteUtils.IsNatural(note.Root))
                 {
-                    _whiteKeyCount++;
-                    _keys[i] = new PianoKey(this, KeyType.White, noteId);
+                    pk = new PianoKey(this, true, noteId);
                 }
                 else
                 {
-                    _keys[i] = new PianoKey(this, KeyType.Black, noteId);
-                    _keys[i].BringToFront();
+                    pk = new PianoKey(this, false, noteId);
+                    pk.BringToFront();
                 }
-
-                Controls.Add(_keys[i]);
+                _keys.Add(pk);
+                Controls.Add(pk);
             }
         }
+        #endregion
 
-        private void InitializePianoKeys()
+        /// <summary>
+        /// 
+        /// </summary>
+        void DrawPianoKeys()
         {
-            int whiteKeyWidth = Width / _whiteKeyCount;
+            int whiteKeyWidth = Width / _keys.Count(k => k.IsNatural);
             int blackKeyWidth = (int)(whiteKeyWidth * 0.6);
             int blackKeyHeight = (int)(Height * 0.5);
             int offset = whiteKeyWidth - blackKeyWidth / 2;
-            int n = 0;
+
             int w = 0;
 
-            while (n < _keys.Length)
+            for (int i = 0; i < _keys.Count; i++)
             {
-                Note note = new Note(_keys[n].NoteID);
+                PianoKey pk = _keys[i];
 
-                if (NoteUtils.IsNatural(note.Root))
+                if (pk.IsNatural)
                 {
-                    _keys[n].Height = Height;
-                    _keys[n].Width = whiteKeyWidth;
-                    _keys[n].Location = new Point(w * whiteKeyWidth, 0);
+                    pk.Height = Height;
+                    pk.Width = whiteKeyWidth;
+                    pk.Location = new Point(w * whiteKeyWidth, 0);
                     w++;
                 }
                 else
                 {
-                    _keys[n].Height = blackKeyHeight;
-                    _keys[n].Width = blackKeyWidth;
-                    _keys[n].Location = new Point(offset + (w - 1) * whiteKeyWidth);
-                    _keys[n].BringToFront();
+                    pk.Height = blackKeyHeight;
+                    pk.Width = blackKeyWidth;
+                    pk.Location = new Point(offset + (w - 1) * whiteKeyWidth);
+                    pk.BringToFront();
                 }
-                n++;
             }
+
+
+
+            //int n = 0;
+            //int w = 0;
+
+            //while (n < _keys.Count)
+            //{
+            //    Note note = new Note(_keys[n].noteId);
+
+            //    if (NoteUtils.IsNatural(note.Root))
+            //    {
+            //        _keys[n].Height = Height;
+            //        _keys[n].Width = whiteKeyWidth;
+            //        _keys[n].Location = new Point(w * whiteKeyWidth, 0);
+            //        w++;
+            //    }
+            //    else
+            //    {
+            //        _keys[n].Height = blackKeyHeight;
+            //        _keys[n].Width = blackKeyWidth;
+            //        _keys[n].Location = new Point(offset + (w - 1) * whiteKeyWidth);
+            //        _keys[n].BringToFront();
+            //    }
+            //    n++;
+            //}
         }
 
-        public void PressPianoKey(int noteID)
+        public void PressPianoKey(int noteId)
         {
-            _keys[noteID - _lowNoteId].PressPianoKey();
+            _keys[noteId - LOW_NOTE].PressPianoKey();
         }
 
-        public void ReleasePianoKey(int noteID)
+        public void ReleasePianoKey(int noteId)
         {
-            _keys[noteID - _lowNoteId].ReleasePianoKey();
+            _keys[noteId - LOW_NOTE].ReleasePianoKey();
         }
 
         protected override void OnResize(EventArgs e)
         {
-            InitializePianoKeys();
+            DrawPianoKeys();
             base.OnResize(e);
         }
 
@@ -119,40 +163,35 @@ namespace Nebulator.UI
         }
     }
 
-    public class PianoKeyEventArgs : EventArgs
-    {
-        public int NoteID { get; set; }
-    }
-
 
     public class PianoKey : Control
     {
-        Piano _owner;
+        Piano _owner; // ?????????
 
-        public bool IsPressed { get; private set; }
-        public Piano.KeyType KeyType { get; set; }
-        public int NoteID { get; set; } = 60;
+        public bool IsPressed { get; private set; } = false;
+        public bool IsNatural { get; set; } = false;
+        public int NoteId { get; set; } = 60;
 
-        public PianoKey(Piano owner, Piano.KeyType kt, int noteId)
+        public PianoKey(Piano owner, bool isNatural, int noteId)
         {
             _owner = owner;
             TabStop = false;
-            KeyType = kt;
-            NoteID = noteId;
+            IsNatural = isNatural;
+            NoteId = noteId;
         }
 
         public void PressPianoKey()
         {
             IsPressed = true;
             Invalidate();
-            _owner.OnPianoKeyDown(new PianoKeyEventArgs() { NoteID = NoteID } );
+            _owner.OnPianoKeyDown(new Piano.PianoKeyEventArgs() { NoteId = NoteId } );
         }
 
         public void ReleasePianoKey()
         {
             IsPressed = false;
             Invalidate();
-            _owner.OnPianoKeyUp(new PianoKeyEventArgs() { NoteID = NoteID });
+            _owner.OnPianoKeyUp(new Piano.PianoKeyEventArgs() { NoteId = NoteId });
         }
 
         protected override void OnMouseEnter(EventArgs e)
@@ -212,7 +251,7 @@ namespace Nebulator.UI
             }
             else
             {
-                e.Graphics.FillRectangle(KeyType == Piano.KeyType.White ? new SolidBrush(Color.White) : new SolidBrush(Color.Black), 0, 0, Size.Width, Size.Height);
+                e.Graphics.FillRectangle(IsNatural ? new SolidBrush(Color.White) : new SolidBrush(Color.Black), 0, 0, Size.Width, Size.Height);
             }
 
             e.Graphics.DrawRectangle(Pens.Black, 0, 0, Size.Width - 1, Size.Height - 1);

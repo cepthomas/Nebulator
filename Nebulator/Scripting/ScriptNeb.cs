@@ -84,7 +84,7 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Send a midi note immediately. Respects solo/mute. Adds a note off to play aftr dur time.
+        /// Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="inote">Note number.</param>

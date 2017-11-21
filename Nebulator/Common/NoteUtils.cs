@@ -239,24 +239,6 @@ namespace Nebulator.Common
                             int root = SplitNoteNumber(n).root;
                             snotes.Add($"{_noteNames[root]}.{octave}.{UNKNOWN_CHORD}");
                         }
-
-                        //// Unknown - add components individually.
-                        //foreach (int n in notes)
-                        //{
-                        //    int octave = SplitNoteNumber(n).octave;
-                        //    int root = SplitNoteNumber(n).root;
-                        //    snotes.Add($"{_noteNames[root]}.{octave}");
-                        //}
-
-                        //// Unknown - place marker in file for user to edit.
-                        //string schord = "UNKNOWN_CHORD";
-                        //foreach (int n in notes)
-                        //{
-                        //    int octave = SplitNoteNumber(n).octave;
-                        //    int root = SplitNoteNumber(n).root;
-                        //    schord += $"_{_noteNames[root]}.{octave}";
-                        //}
-                        //snotes.Add(schord);
                     }
                 }
                 else

@@ -35,7 +35,7 @@ namespace Nebulator.Common
                 }
 
                 ClientNotification(preamble + logEvent.Message);
-                //ClientNotification(logEvent.TimeStamp.ToString("yyyy'-'MM'-'dd HH':'mm':'ss.fff") + ": " + preamble + logEvent.Message);
+                //ClientNotification(logEvent.TimeStamp.ToString(Globals.TimeStringMsec) + ": " + preamble + logEvent.Message);
             }
         }
     }

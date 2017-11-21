@@ -171,18 +171,16 @@ namespace Nebulator.Scripting
             ParseOneFile(pcont);
 
             ///// Add the generated internal code.
-            List<string> mainLines = GenMainFileContents();
             _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileParseContext()
             {
                 SourceFile = "",
-                CodeLines = mainLines
+                CodeLines = GenMainFileContents()
             });
 
-            List<string> suppLines = GenSuppFileContents();
             _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileParseContext()
             {
                 SourceFile = "",
-                CodeLines = suppLines
+                CodeLines = GenSuppFileContents()
             });
         }
 
@@ -201,8 +199,7 @@ namespace Nebulator.Scripting
                 // OK - leave as is.
                 valid = true;
             }
-            // Try relative
-            else
+            else // Try relative
             {
                 string fn = Path.Combine(_baseDir, pcont.SourceFile);
                 if (File.Exists(fn))
@@ -339,7 +336,7 @@ namespace Nebulator.Scripting
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
 
-                // Would actually like to use roslyn but doesn't work:
+                // TODO2 Would actually like to use roslyn for C#7 stuff but doesn't work:
                 // Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider provider = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider();
                 // // Need to fix hardcoded path to compiler - why isn't this fixed by MS?
                 // var flags = BindingFlags.NonPublic | BindingFlags.Instance;
@@ -375,7 +372,7 @@ namespace Nebulator.Scripting
                 {
                     foreach (CompilerError err in cr.Errors)
                     {
-                        // The line should end with line number: "//1234"
+                        // The line should end with source line number: "//1234"
                         int origLineNum = 0; // defaults
                         string origFileName = Globals.UNKNOWN_STRING;
                         string msg = "";
@@ -521,6 +518,7 @@ namespace Nebulator.Scripting
         {
             // include path\name.neb
             // 0       1
+            // or:
             // include path\split file name.neb
             // 0       1          2    3
 

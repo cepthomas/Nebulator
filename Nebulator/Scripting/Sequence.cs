@@ -28,7 +28,7 @@ namespace Nebulator.Scripting
             {
                 $"Name:{Name} Length:{Length}"
             };
-            //Notes.ForEach(x => ls.Add("  Note " + x.ToString()));
+
             return string.Join(Environment.NewLine, ls);
         }
     }
