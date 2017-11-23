@@ -32,7 +32,7 @@ namespace Nebulator.Scripting
         Bitmap _bmp = null;
         #endregion
 
-        #region Fields - storage for state
+        #region Fields - storage for current state
         Font _font = new Font("Arial", 12f, GraphicsUnit.Pixel);
         Pen _pen = new Pen(Color.Black, 1f) { LineJoin = LineJoin.Round, EndCap = LineCap.Round, StartCap = LineCap.Round };
         SolidBrush _brush = new SolidBrush(Color.Transparent);
@@ -41,6 +41,7 @@ namespace Nebulator.Scripting
         int _xAlign = LEFT;
         int _yAlign = BASELINE;
         Stack<object> _matrixStack = new Stack<object>();
+        Bag _style = new Bag();
         #endregion
 
         #region Definitions - same values as Processing
@@ -106,16 +107,12 @@ namespace Nebulator.Scripting
         public void exit() { throw new NotSupportedException(); }
         public void loop() { throw new NotSupportedException(); }
         public void noLoop() { throw new NotSupportedException(); }
-
-        public void popStyle()
-        {
-            // TODO1 save all fonts, styles etc in a Bag. Restore in pushStyle(). Need unit test for all these.
-        }
-
-        public void pushStyle()
-        {
-
-        }
+        // TODO2 save all fonts, styles etc in a Bag. Restore in popStyle(). These:
+        // fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), 
+        // ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), 
+        // emissive(), specular(), shininess(), ambient()
+        public void popStyle() { throw new NotSupportedException(); }
+        public void pushStyle() { throw new NotSupportedException(); }
 
         // Executes the code within draw() one time. This functions allows the program to update the display window only when necessary, for example when an event registered by mousePressed() or keyPressed() occurs.
         // In structuring a program, it only makes sense to call redraw() within events such as mousePressed(). This is because redraw() does not run draw() immediately(it only sets a flag that indicates an update is needed). 

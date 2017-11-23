@@ -104,8 +104,7 @@ namespace Nebulator
             #region Piano
             pianoToolStripMenuItem.Checked = Globals.UserSettings.PianoFormInfo.Visible;
             _piano.Visible = Globals.UserSettings.PianoFormInfo.Visible;
-            _piano.PianoKeyDown += Piano_KeyDown;
-            _piano.PianoKeyUp += Piano_KeyUp;
+            _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
             #region Misc setups
@@ -149,9 +148,12 @@ namespace Nebulator
                 if(_script != null)
                 {
                     // Save the project.
-                    _internalVals.Values.Clear();
+                    _internalVals.Clear();
                     _internalVals.SetValue("master", "volume", sldVolume.Value);
                     _internalVals.SetValue("master", "speed", potSpeed.Value);
+                    _internalVals.SetValue("master", "loop", chkLoop.Checked);
+                    _internalVals.SetValue("master", "sequence", chkSequence.Checked);
+
                     _script.Dynamic.Tracks.Values.ForEach(c => _internalVals.SetValue(c.Name, "volume", c.Volume));
                     _internalVals.Save();
                 }
@@ -274,8 +276,10 @@ namespace Nebulator
 
             ///// Misc controls.
             potSpeed.Value = Convert.ToInt32(_internalVals.GetValue("master", "speed"));
-
             int mv = Convert.ToInt32(_internalVals.GetValue("master", "volume"));
+            chkLoop.Checked = Convert.ToBoolean(_internalVals.GetValue("master", "loop"));
+            chkSequence.Checked = Convert.ToBoolean(_internalVals.GetValue("master", "sequence"));
+
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
 
             timeMaster.MaxTick = _compiledSteps.MaxTick;
@@ -357,7 +361,10 @@ namespace Nebulator
                     }
 
                     // Do the compiled steps.
-                    _compiledSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
+                    if(chkSequence.Checked)
+                    {
+                        _compiledSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
+                    }
 
                     // Local common function
                     void PlayStep(Step step)
@@ -379,8 +386,9 @@ namespace Nebulator
                     ///// Bump.
                     Globals.CurrentStepTime.Advance();
 
-                    // If no steps, free running mode so always keep going.
-                    if(_compiledSteps.Count != 0)
+                    ////// Check for end of play.
+                    // If no steps or not selected, free running mode so always keep going.
+                    if(_compiledSteps.Count != 0 && chkSequence.Checked)
                     {
                         // Check for end and loop condition.
                         if (Globals.CurrentStepTime.Tick >= _compiledSteps.MaxTick)
@@ -393,6 +401,7 @@ namespace Nebulator
                             }
                         }
                     }
+                    // else keep going
 
                     UpdateTime(false);
                 }
@@ -669,32 +678,6 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Common func.
-        /// </summary>
-        void SetSpeedTimerPeriod()
-        {
-            // Convert speed/bpm to msec per tock.
-            double ticksPerMinute = potSpeed.Value; // sec/tick, bpm
-            double tocksPerMinute = ticksPerMinute * Globals.TOCKS_PER_TICK;
-            double tocksPerSec = tocksPerMinute / 60;
-            double tocksPerMsec = tocksPerSec / 1000;
-            double msecPerTock = 1 / tocksPerMsec;
-
-            _nebTimer.SetTimer("NEB", (int)msecPerTock);
-        }
-
-        /// <summary>
-        /// Common func.
-        /// </summary>
-        void SetUiTimerPeriod()
-        {
-            // Convert fps to msec per frame.
-            double framesPerMsec = (double)_fps / 1000;
-            double msecPerFrame = 1 / framesPerMsec;
-            _nebTimer.SetTimer("UI", (int)msecPerFrame);
-        }
-
-        /// <summary>
         /// Go back jack.
         /// </summary>
         void Rewind_Click(object sender, EventArgs e)
@@ -705,8 +688,6 @@ namespace Nebulator
         /// <summary>
         /// User updated volume.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         void Volume_ValueChanged(object sender, EventArgs e)
         {
         }
@@ -714,8 +695,6 @@ namespace Nebulator
         /// <summary>
         /// Manual recompile.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Compile_Click(object sender, EventArgs e)
         {
             Compile();
@@ -726,8 +705,6 @@ namespace Nebulator
         /// <summary>
         /// User updated the time.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         void Time_ValueChanged(object sender, EventArgs e)
         {
             Globals.CurrentStepTime = timeMaster.CurrentTime;
@@ -929,37 +906,39 @@ namespace Nebulator
 
         #region Piano
         /// <summary>
-        /// Handle piano key down event.
+        /// Handle piano key event.
         /// </summary>
-        private void Piano_KeyDown(object sender, Piano.PianoKeyEventArgs e)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Piano_PianoKeyEvent(object sender, Piano.PianoKeyEventArgs e)
         {
-            StepNoteOn step = new StepNoteOn()
+            if(e.Down)
             {
-                Channel = 2,
-                NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
-                VelocityToPlay = 90,
-                Duration = new Time(0)
-            };
-            Globals.MidiInterface.Send(step);
+                StepNoteOn step = new StepNoteOn()
+                {
+                    Channel = 2,
+                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
+                    Velocity = 90,
+                    VelocityToPlay = 90,
+                    Duration = new Time(0)
+                };
+                Globals.MidiInterface.Send(step);
+            }
+            else
+            {
+                StepNoteOff step = new StepNoteOff()
+                {
+                    Channel = 2,
+                    NoteNumber = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
+                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
+                    Velocity = 64
+                };
+                Globals.MidiInterface.Send(step);
+            }
         }
 
         /// <summary>
-        /// Handle piano key up event.
-        /// </summary>
-        private void Piano_KeyUp(object sender, Piano.PianoKeyEventArgs e)
-        {
-            StepNoteOff step = new StepNoteOff()
-            {
-                Channel = 2,
-                NoteNumber = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
-                NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
-                Velocity = 64
-            };
-            Globals.MidiInterface.Send(step);
-        }
-
-        /// <summary>
-        /// 
+        /// Turn piano on/off.
         /// </summary>
         private void Piano_Click(object sender, EventArgs e)
         {
@@ -969,7 +948,7 @@ namespace Nebulator
 
         #region Play control
         /// <summary>
-        /// Start or stop depending on current status. TODO1 Useful? option to not play loops when start, just step() and draw().
+        /// Start or stop depending on current status.
         /// </summary>
         void Play()
         {
@@ -977,6 +956,7 @@ namespace Nebulator
             {
                 ///// Stop!
                 Globals.Playing = false;
+
                 // Send midi stop all notes, stop sequencer.
                 Globals.MidiInterface.KillAll();
             }
@@ -1072,8 +1052,6 @@ namespace Nebulator
         /// <summary>
         /// The meaning of life.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         void About_Click(object sender, EventArgs e)
         {
             About dlg = new About();
@@ -1085,8 +1063,33 @@ namespace Nebulator
         /// </summary>
         void UpdateMenu()
         {
-            //chkPlay.Enabled = btnCompile.BackColor != _needCompile;
             settingsToolStripMenuItem.Enabled = !Globals.Playing;
+        }
+
+        /// <summary>
+        /// Common func.
+        /// </summary>
+        void SetSpeedTimerPeriod()
+        {
+            // Convert speed/bpm to msec per tock.
+            double ticksPerMinute = potSpeed.Value; // sec/tick, bpm
+            double tocksPerMinute = ticksPerMinute * Globals.TOCKS_PER_TICK;
+            double tocksPerSec = tocksPerMinute / 60;
+            double tocksPerMsec = tocksPerSec / 1000;
+            double msecPerTock = 1 / tocksPerMsec;
+
+            _nebTimer.SetTimer("NEB", (int)msecPerTock);
+        }
+
+        /// <summary>
+        /// Common func.
+        /// </summary>
+        void SetUiTimerPeriod()
+        {
+            // Convert fps to msec per frame.
+            double framesPerMsec = (double)_fps / 1000;
+            double msecPerFrame = 1 / framesPerMsec;
+            _nebTimer.SetTimer("UI", (int)msecPerFrame);
         }
 
         /// <summary>
@@ -1121,6 +1124,10 @@ namespace Nebulator
             chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, Globals.UserSettings.IconColor);
             chkPlay.BackColor = Globals.UserSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
+
+            chkSequence.Image = Utils.ColorizeBitmap(chkSequence.Image, Globals.UserSettings.IconColor);
+            chkSequence.BackColor = Globals.UserSettings.BackColor;
+            chkSequence.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
 
             potSpeed.ControlColor = Globals.UserSettings.IconColor;
             potSpeed.Font = Globals.UserSettings.ControlFont;

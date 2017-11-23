@@ -223,6 +223,16 @@ namespace Nebulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap glyphicons_221_play_button {
+            get {
+                object obj = ResourceManager.GetObject("glyphicons_221_play_button", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap glyphicons_242_flash {
             get {
                 object obj = ResourceManager.GetObject("glyphicons_242_flash", resourceCulture);
@@ -323,6 +333,16 @@ namespace Nebulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap glyphicons_458_transfer {
+            get {
+                object obj = ResourceManager.GetObject("glyphicons_458_transfer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap glyphicons_701_ear {
             get {
                 object obj = ResourceManager.GetObject("glyphicons_701_ear", resourceCulture);
@@ -377,6 +397,31 @@ namespace Nebulator.Properties {
             get {
                 object obj = ResourceManager.GetObject("medusa2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ; Reaper keyboard mapping file: reaper-vkbmap.txt.
+        ///; put this file in the same place your reaper.ini is.
+        ///; oh and edit it for your keyboard, if you want. you can add additional keys/etc
+        ///; First item is the key (ASCII) or can be a number to define the scancode (i.e. 27 is Escape).
+        ///; second item is offset from current center of keyboard
+        ///
+        ///Z -12     ;  C
+        ///S -11     ;  C#
+        ///X -10     ;  D
+        ///D -9     ;  D#
+        ///C -8     ;  E
+        ///V -7     ;  F
+        ///G -6     ;  F#
+        ///B -5     ;  G
+        ///H -4     ;  G#
+        ///N -3     ;  A
+        ///J -2     ;  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string reaper_vkbmap {
+            get {
+                return ResourceManager.GetString("reaper_vkbmap", resourceCulture);
             }
         }
     }

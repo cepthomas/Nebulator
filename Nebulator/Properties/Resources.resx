@@ -166,6 +166,9 @@
   <data name="glyphicons_214_arrow_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\glyphicons-214-arrow-up.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="glyphicons_221_play_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\glyphicons-221-play-button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="glyphicons_242_flash" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\glyphicons-242-flash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -196,6 +199,9 @@
   <data name="glyphicons_440_wrench" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\glyphicons-440-wrench.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="glyphicons_458_transfer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\glyphicons-458-transfer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="glyphicons_701_ear" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\glyphicons-701-ear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -213,5 +219,8 @@
   </data>
   <data name="medusa2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\medusa.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="reaper_vkbmap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reaper-vkbmap.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

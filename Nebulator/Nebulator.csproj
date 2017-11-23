@@ -285,11 +285,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\glyphicons-37-file.png" />
   </ItemGroup>
   <ItemGroup>
@@ -375,6 +370,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\glyphicons-79-warning-sign.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\glyphicons-221-play-button.png" />
+    <None Include="Resources\glyphicons-458-transfer.png" />
+    <Content Include="Resources\reaper-vkbmap.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

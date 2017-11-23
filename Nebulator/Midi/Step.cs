@@ -33,10 +33,10 @@ namespace Nebulator.Midi
     public class StepNoteOn : Step
     {
         /// <summary>The default note.</summary>
-        public int NoteNumber { get; set; } = 60;
+        public int NoteNumber { get; set; } = MidiInterface.MIDDLE_C;
 
         /// <summary>The possibly modified NoteNumber.</summary>
-        public int NoteNumberToPlay { get; set; } = 60;
+        public int NoteNumberToPlay { get; set; } = MidiInterface.MIDDLE_C;
 
         /// <summary>The default volume.</summary>
         public int Velocity { get; set; } = 90;
@@ -70,10 +70,10 @@ namespace Nebulator.Midi
     public class StepNoteOff : Step
     {
         /// <summary>The default note.</summary>
-        public int NoteNumber { get; set; } = 60;
+        public int NoteNumber { get; set; } = MidiInterface.MIDDLE_C;
 
         /// <summary>The possibly modified NoteNumber.</summary>
-        public int NoteNumberToPlay { get; set; } = 60;
+        public int NoteNumberToPlay { get; set; } = MidiInterface.MIDDLE_C;
 
         /// <summary>Velocity.</summary>
         public int Velocity { get; set; } = 64; // seems to be standard default.

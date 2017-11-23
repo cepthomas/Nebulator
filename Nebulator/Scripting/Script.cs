@@ -12,9 +12,7 @@ using Nebulator.Midi;
 namespace Nebulator.Scripting
 {
     /// <summary>
-    /// Core functions of script.
-    /// Nebulator user script classes must inherit from this class.
-    /// TODO2 Would like multiple inheritance so not everything is part of one giant class. Don't really want to start creating a bunch of interfaces.
+    /// Core functions of script. User scripts inherit from this class.
     /// </summary>
     public partial class Script
     {

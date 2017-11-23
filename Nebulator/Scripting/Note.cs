@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nebulator.Common;
+using Nebulator.Midi;
 
 
 namespace Nebulator.Scripting
@@ -25,7 +26,7 @@ namespace Nebulator.Scripting
         public List<int> ChordNotes { get; private set; } = new List<int>();
 
         /// <summary>Get the root note. Default to middle C == number 60 (0x3C).</summary>
-        public int Root { get { return ChordNotes.Count > 0 ? ChordNotes[0] : 60; } }
+        public int Root { get { return ChordNotes.Count > 0 ? ChordNotes[0] : MidiInterface.MIDDLE_C; } }
         #endregion
 
         #region Lifecycle

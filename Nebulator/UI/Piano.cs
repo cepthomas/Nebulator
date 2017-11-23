@@ -3,30 +3,37 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
+using System.IO;
 using Nebulator.Common;
 using Nebulator.Scripting;
+using Nebulator.Midi;
 
 
 namespace Nebulator.UI
 {
     /// <summary>
-    /// Piano control borrowed from Leslie Sanford. TODO1 add support for keyboard.
+    /// Piano control borrowed from Leslie Sanford with extras.
     /// </summary>
     public partial class Piano : Form
     {
         #region Fields
         const int LOW_NOTE = 21;
         const int HIGH_NOTE = 109;
+
+        /// <summary>All the created piano keys.</summary>
         List<PianoKey> _keys = new List<PianoKey>();
+
+        /// <summary>Map from Keys value to the index in to _keys.</summary>
+        Dictionary<Keys, int> _kbdMidi = new Dictionary<Keys, int>();
         #endregion
 
         #region Events
         public class PianoKeyEventArgs : EventArgs
         {
             public int NoteId { get; set; }
+            public bool Down { get; set; }
         }
-        public event EventHandler<PianoKeyEventArgs> PianoKeyDown;
-        public event EventHandler<PianoKeyEventArgs> PianoKeyUp;
+        public event EventHandler<PianoKeyEventArgs> PianoKeyEvent;
         #endregion
 
         #region Lifecycle
@@ -45,6 +52,60 @@ namespace Nebulator.UI
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Piano_Load(object sender, EventArgs e)
+        {
+            DrawPianoKeys();
+
+            // Load the midi kbd mapping.
+            try
+            {
+                int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MidiInterface.MIDDLE_C).First());
+
+                foreach (string l in File.ReadLines(@"Resources\reaper-vkbmap.txt"))
+                {
+                    List<string> parts = l.SplitByToken(" ");
+
+                    if (parts.Count >= 2 && parts[0] != ";")
+                    {
+                        char c = parts[0][0];
+                        int offset = int.Parse(parts[1]);
+                        int note = indexOfMiddleC + offset;
+
+                        switch (c)
+                        {
+                            case ',': _kbdMidi.Add(Keys.Oemcomma, note); break;
+                            case '=': _kbdMidi.Add(Keys.Oemplus, note); break;
+                            case '-': _kbdMidi.Add(Keys.OemMinus, note); break;
+                            case '/': _kbdMidi.Add(Keys.OemQuestion, note); break;
+                            case '.': _kbdMidi.Add(Keys.OemPeriod, note); break;
+                            case '\'': _kbdMidi.Add(Keys.OemQuotes, note); break;
+                            case '\\': _kbdMidi.Add(Keys.OemPipe, note); break;
+                            case ']': _kbdMidi.Add(Keys.OemCloseBrackets, note); break;
+                            case '[': _kbdMidi.Add(Keys.OemOpenBrackets, note); break;
+                            case '`': _kbdMidi.Add(Keys.Oemtilde, note); break;
+                            //case ';': _kbdMidi.Add(Keys.OemSemicolon, note); break; TODO2 support this key?
+
+                            default:
+                                if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+                                {
+                                    _kbdMidi.Add((Keys)c, note);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to process midi keyboard file: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Event handler.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Piano_Resize(object sender, EventArgs e)
         {
             DrawPianoKeys();
         }
@@ -71,6 +132,8 @@ namespace Nebulator.UI
                     pk = new PianoKey(this, false, noteId);
                     pk.BringToFront();
                 }
+
+                pk.PianoKeyEvent += Piano_PianoKeyEvent;
                 _keys.Add(pk);
                 Controls.Add(pk);
             }
@@ -78,7 +141,48 @@ namespace Nebulator.UI
         #endregion
 
         /// <summary>
-        /// 
+        /// Use keyboard to drive piano.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Piano_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(_kbdMidi.ContainsKey(e.KeyCode))
+            {
+                PianoKey pk = _keys[_kbdMidi[e.KeyCode]];
+                if(!pk.IsPressed)
+                {
+                    pk.PressPianoKey();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Use keyboard to drive piano.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Piano_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (_kbdMidi.ContainsKey(e.KeyCode))
+            {
+                PianoKey pk = _keys[_kbdMidi[e.KeyCode]];
+                pk.ReleasePianoKey();
+            }
+        }
+
+        /// <summary>
+        /// Pass along an event from a key.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Piano_PianoKeyEvent(object sender, PianoKeyEventArgs e)
+        {
+            PianoKeyEvent?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Re/draw the keys.
         /// </summary>
         void DrawPianoKeys()
         {
@@ -108,69 +212,22 @@ namespace Nebulator.UI
                     pk.BringToFront();
                 }
             }
-
-
-
-            //int n = 0;
-            //int w = 0;
-
-            //while (n < _keys.Count)
-            //{
-            //    Note note = new Note(_keys[n].noteId);
-
-            //    if (NoteUtils.IsNatural(note.Root))
-            //    {
-            //        _keys[n].Height = Height;
-            //        _keys[n].Width = whiteKeyWidth;
-            //        _keys[n].Location = new Point(w * whiteKeyWidth, 0);
-            //        w++;
-            //    }
-            //    else
-            //    {
-            //        _keys[n].Height = blackKeyHeight;
-            //        _keys[n].Width = blackKeyWidth;
-            //        _keys[n].Location = new Point(offset + (w - 1) * whiteKeyWidth);
-            //        _keys[n].BringToFront();
-            //    }
-            //    n++;
-            //}
-        }
-
-        public void PressPianoKey(int noteId)
-        {
-            _keys[noteId - LOW_NOTE].PressPianoKey();
-        }
-
-        public void ReleasePianoKey(int noteId)
-        {
-            _keys[noteId - LOW_NOTE].ReleasePianoKey();
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            DrawPianoKeys();
-            base.OnResize(e);
-        }
-
-        public virtual void OnPianoKeyDown(PianoKeyEventArgs e)
-        {
-            PianoKeyDown?.Invoke(this, e);
-        }
-
-        public virtual void OnPianoKeyUp(PianoKeyEventArgs e)
-        {
-            PianoKeyUp?.Invoke(this, e);
         }
     }
 
-
     public class PianoKey : Control
     {
-        Piano _owner; // ?????????
+        #region Fields
+        Piano _owner;
+        #endregion
 
+        #region Properties
         public bool IsPressed { get; private set; } = false;
         public bool IsNatural { get; set; } = false;
-        public int NoteId { get; set; } = 60;
+        public int NoteId { get; set; } = MidiInterface.MIDDLE_C;
+        #endregion
+
+        public event EventHandler<Piano.PianoKeyEventArgs> PianoKeyEvent;
 
         public PianoKey(Piano owner, bool isNatural, int noteId)
         {
@@ -184,14 +241,14 @@ namespace Nebulator.UI
         {
             IsPressed = true;
             Invalidate();
-            _owner.OnPianoKeyDown(new Piano.PianoKeyEventArgs() { NoteId = NoteId } );
+            PianoKeyEvent?.Invoke(this, new Piano.PianoKeyEventArgs() { NoteId = NoteId, Down = true } );
         }
-
+        
         public void ReleasePianoKey()
         {
             IsPressed = false;
             Invalidate();
-            _owner.OnPianoKeyUp(new Piano.PianoKeyEventArgs() { NoteId = NoteId });
+            PianoKeyEvent?.Invoke(this, new Piano.PianoKeyEventArgs() { NoteId = NoteId, Down = false });
         }
 
         protected override void OnMouseEnter(EventArgs e)

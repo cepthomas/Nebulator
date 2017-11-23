@@ -41,6 +41,9 @@
             this.Name = "Piano";
             this.Text = "Piano";
             this.Load += new System.EventHandler(this.Piano_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Piano_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Piano_KeyUp);
+            this.Resize += new System.EventHandler(this.Piano_Resize);
             this.ResumeLayout(false);
 
         }

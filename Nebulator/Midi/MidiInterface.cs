@@ -23,7 +23,10 @@ namespace Nebulator.Midi
         public const int MAX_MIDI_VOLUME = 127;
         public const int MAX_MIDI_CTRL_VALUE = 127;
         public const int MAX_MIDI_PITCH_VALUE = 16383;
+
+        public const int MIDDLE_C = 60;
         #endregion
+
 
         #region Fields
         /// <summary>My logger.</summary>

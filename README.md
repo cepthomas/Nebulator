@@ -37,6 +37,7 @@ out for subsequent reuse.
 - Partial import of Yahama style (.sty) files.
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
+- Piano control based on Leslie Sanford's.
 - Various utilities and extensions.
 - Super lightweight unit tester for when NUnit is too much.
 

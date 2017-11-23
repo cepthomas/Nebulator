@@ -30,6 +30,7 @@
             this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+            this.chkSequence = new System.Windows.Forms.CheckBox();
             this.btnCompile = new System.Windows.Forms.Button();
             this.timeMaster = new Nebulator.Controls.TimeControl();
             this.sldVolume = new Nebulator.Controls.Slider();
@@ -176,6 +177,7 @@
             // splitContainerMain.Panel1
             // 
             this.splitContainerMain.Panel1.AutoScroll = true;
+            this.splitContainerMain.Panel1.Controls.Add(this.chkSequence);
             this.splitContainerMain.Panel1.Controls.Add(this.btnCompile);
             this.splitContainerMain.Panel1.Controls.Add(this.timeMaster);
             this.splitContainerMain.Panel1.Controls.Add(this.sldVolume);
@@ -190,12 +192,26 @@
             this.splitContainerMain.Size = new System.Drawing.Size(826, 556);
             this.splitContainerMain.TabIndex = 14;
             // 
+            // chkSequence
+            // 
+            this.chkSequence.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkSequence.AutoSize = true;
+            this.chkSequence.FlatAppearance.BorderSize = 0;
+            this.chkSequence.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkSequence.Image = global::Nebulator.Properties.Resources.glyphicons_458_transfer;
+            this.chkSequence.Location = new System.Drawing.Point(80, 7);
+            this.chkSequence.Name = "chkSequence";
+            this.chkSequence.Size = new System.Drawing.Size(30, 28);
+            this.chkSequence.TabIndex = 39;
+            this.toolTip.SetToolTip(this.chkSequence, "Run sequence steps");
+            this.chkSequence.UseVisualStyleBackColor = true;
+            // 
             // btnCompile
             // 
             this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(77, 7);
+            this.btnCompile.Location = new System.Drawing.Point(116, 7);
             this.btnCompile.Name = "btnCompile";
             this.btnCompile.Size = new System.Drawing.Size(34, 32);
             this.btnCompile.TabIndex = 38;
@@ -210,7 +226,7 @@
             time1.Tock = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(268, 8);
+            this.timeMaster.Location = new System.Drawing.Point(307, 7);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
             this.timeMaster.MaxTick = 0;
             this.timeMaster.Name = "timeMaster";
@@ -222,7 +238,7 @@
             // 
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "VOL";
-            this.sldVolume.Location = new System.Drawing.Point(195, 8);
+            this.sldVolume.Location = new System.Drawing.Point(234, 7);
             this.sldVolume.Maximum = 200;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
@@ -241,7 +257,7 @@
             this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkPlay.Image = global::Nebulator.Properties.Resources.glyphicons_174_play;
-            this.chkPlay.Location = new System.Drawing.Point(49, 8);
+            this.chkPlay.Location = new System.Drawing.Point(49, 7);
             this.chkPlay.MaximumSize = new System.Drawing.Size(32, 32);
             this.chkPlay.MinimumSize = new System.Drawing.Size(32, 32);
             this.chkPlay.Name = "chkPlay";
@@ -255,7 +271,7 @@
             // 
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
-            this.potSpeed.Location = new System.Drawing.Point(156, 7);
+            this.potSpeed.Location = new System.Drawing.Point(195, 7);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
@@ -273,7 +289,7 @@
             this.chkLoop.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkLoop.Image = global::Nebulator.Properties.Resources.glyphicons_82_refresh;
-            this.chkLoop.Location = new System.Drawing.Point(115, 8);
+            this.chkLoop.Location = new System.Drawing.Point(154, 7);
             this.chkLoop.Name = "chkLoop";
             this.chkLoop.Size = new System.Drawing.Size(31, 31);
             this.chkLoop.TabIndex = 32;
@@ -285,7 +301,7 @@
             this.btnRewind.FlatAppearance.BorderSize = 0;
             this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRewind.Image = global::Nebulator.Properties.Resources.glyphicons_172_fast_backward;
-            this.btnRewind.Location = new System.Drawing.Point(10, 8);
+            this.btnRewind.Location = new System.Drawing.Point(10, 7);
             this.btnRewind.Name = "btnRewind";
             this.btnRewind.Size = new System.Drawing.Size(34, 32);
             this.btnRewind.TabIndex = 31;
@@ -473,6 +489,7 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainerMain.Panel1.ResumeLayout(false);
+            this.splitContainerMain.Panel1.PerformLayout();
             this.splitContainerMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
             this.splitContainerMain.ResumeLayout(false);
@@ -529,6 +546,7 @@
         private System.Windows.Forms.TabPage tabPageTest;
         private Test.TestHost testHost;
         public Controls.Grid grid1;
+        private System.Windows.Forms.CheckBox chkSequence;
     }
 }
 
