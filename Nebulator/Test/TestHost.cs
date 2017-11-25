@@ -33,8 +33,8 @@ namespace Nebulator.Test
 
             //Utils.ExtractAPI(@"C:\Dev\GitHub\Nebulator\Nebulator\Scripting\ScriptUi.cs");
 
-            mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\test\test1.neb");
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example1.neb");
+            mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example2.neb");
 
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");

@@ -433,7 +433,6 @@
             // 
             // infoDisplay
             // 
-            this.infoDisplay.Colors = ((System.Collections.Generic.Dictionary<string, System.Drawing.Color>)(resources.GetObject("infoDisplay.Colors")));
             this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
             this.infoDisplay.Location = new System.Drawing.Point(3, 3);
             this.infoDisplay.Name = "infoDisplay";

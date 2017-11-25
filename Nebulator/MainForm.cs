@@ -308,7 +308,7 @@ namespace Nebulator
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker)delegate ()
             {
-                DoNext(e);
+                NextStep(e);
             });
         }
 
@@ -316,7 +316,7 @@ namespace Nebulator
         /// Output next time/step.
         /// </summary>
         /// <param name="e">Information about updates required.</param>
-        void DoNext(FastTimerEventArgs e)
+        void NextStep(FastTimerEventArgs e)
         {
             try
             {

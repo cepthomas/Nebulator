@@ -374,9 +374,6 @@
   <ItemGroup>
     <None Include="Resources\glyphicons-221-play-button.png" />
     <None Include="Resources\glyphicons-458-transfer.png" />
-    <Content Include="Resources\reaper-vkbmap.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

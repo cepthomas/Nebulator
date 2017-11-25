@@ -1,0 +1,12 @@
+{
+  "Values": {
+    "master.volume": 124,
+    "master.speed": 100.0,
+    "master.loop": false,
+    "master.sequence": true,
+    "KEYS.volume": 127,
+    "BASS.volume": 127,
+    "DRUMS.volume": 127,
+    "BALL.volume": 90
+  }
+}

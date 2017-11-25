@@ -1,0 +1,48 @@
+; Reaper keyboard mapping file: reaper-vkbmap.txt.
+; put this file in the same place your reaper.ini is.
+; oh and edit it for your keyboard, if you want. you can add additional keys/etc
+; First item is the key (ASCII) or can be a number to define the scancode (i.e. 27 is Escape).
+; second item is offset from current center of keyboard
+; Variation for nebulator to support ; key: two ;;
+
+; C3 to C4
+Z  -12  ;  C
+S  -11  ;  C#
+X  -10  ;  D
+D  -9   ;  D#
+C  -8   ;  E
+V  -7   ;  F
+G  -6   ;  F#
+B  -5   ;  G
+H  -4   ;  G#
+N  -3   ;  A
+J  -2   ;  A#
+M  -1   ;  B
+,   0   ;  C
+
+; C4 to E4
+L  +1   ;  C#
+.  +2   ;  D
+;; +3   ;  D# (not reaper)
+/  +4   ;  E
+
+; C4 to C5
+Q   0   ;  C
+2  +1   ;  C#
+W  +2   ;  D
+3  +3   ;  D#
+E  +4   ;  E
+R  +5   ;  F
+5  +6   ;  F#
+T  +7   ;  G
+6  +8   ;  G#
+Y  +9   ;  A
+7  +10  ;  A#
+U  +11  ;  B
+I  +12  ;  C
+
+; C5 to E5
+9  +13  ;  C#
+O  +14  ;  D
+0  +15  ;  D#
+P  +16  ;  E

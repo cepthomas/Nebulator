@@ -23,7 +23,7 @@ namespace Nebulator.Scripting
         /// <summary>
         /// The client hosts this control in their UI.
         /// It performs the actual graphics drawing and input.
-        /// TODO2 Graphics faster alternative? sharpdx2d, WPF - use test2.neb.
+        /// TODO2 Graphics faster alternative? sharpdx2d, WPF - try drawRecursive() in script.
         /// </summary>
         public UserControl Surface { get; private set; } = null;
 
@@ -33,7 +33,7 @@ namespace Nebulator.Scripting
 
         #region Events
         /// <summary>
-        /// Interaction with the host. TODO2 A bit klunky, could be improved.
+        /// Interaction with the host. TODO2 A bit klunky, could be improved. Separate events for each?
         /// </summary>
         public class ScriptEventArgs : EventArgs
         {
@@ -57,7 +57,31 @@ namespace Nebulator.Scripting
         protected Dictionary<string, ScriptFunction> _scriptFunctions = new Dictionary<string, ScriptFunction>();
         public delegate void ScriptFunction();
         #endregion
-        
+
+
+
+
+        int[] majorScale = { 0, 2, 4, 5, 7, 9, 11 };
+
+        // TODO1 all this algo stuff:
+        //
+        // Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
+        // http://spheric-lounge-live-ambient-music.blogspot.com/
+        //
+        //The random item stream pattern type uses the optional keyword :weight to alter the probability 
+        //of an event being selected in relation to the other events in the item stream.
+        //need this, for scale note selections.
+        //
+        //scaleMaj = 0, 2, 4, 5, 7, 9, 11
+        //
+        //The graph item stream pattern type creates an item stream of user-specified rules for traversing a series 
+        //of nodes called a graph.
+        // my loops - rules to change/transition.
+        //
+        // Sonification uses data that is typically not musical and involves remapping this to musical parameters 
+        //to create a composition.
+
+
         #region Internal overhead
         /// <summary>
         /// Constructor called by derived scripts.

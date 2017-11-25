@@ -33,6 +33,7 @@ namespace Nebulator.UI
             btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, Globals.UserSettings.IconColor);
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, Globals.UserSettings.IconColor);
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.UserSettings.IconColor);
+            btnKill.Image = Utils.ColorizeBitmap(btnKill.Image, Globals.UserSettings.IconColor);
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Nebulator.UI
         }
 
         /// <summary>
-        /// 
+        /// Monitor midi in messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
         private void BtnMonIn_Click(object sender, EventArgs e)
         {
@@ -68,11 +69,19 @@ namespace Nebulator.UI
         }
 
         /// <summary>
-        /// 
+        /// Monitor midi out messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
         private void BtnMonOut_Click(object sender, EventArgs e)
         {
             Globals.UserSettings.MidiMonitorOut = btnMonOut.Checked;
+        }
+
+        /// <summary>
+        /// Send a mdi kill all message.
+        /// </summary>
+        private void btnKill_Click(object sender, EventArgs e)
+        {
+            Globals.MidiInterface.KillAll();
         }
     }
 }

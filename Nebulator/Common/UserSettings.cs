@@ -45,9 +45,13 @@ namespace Nebulator.Common
         [Editor(typeof(MidiPortEditor), typeof(UITypeEditor)), Browsable(true)]
         public string MidiOut { get; set; } = Globals.UNKNOWN_STRING;
 
-        [DisplayName("Chords"), Description("Your custom chords in the form of name: 1 2 b5 9.")]
+        [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ...")]
         [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
         public List<string> Chords { get; set; } = new List<string>();
+
+        [DisplayName("Scales"), Description("Your custom scales in the form of: NAME 1 2 b5 ...")]
+        [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
+        public List<string> Scales { get; set; } = new List<string>();
 
         [DisplayName("Timer Debug"), Description("Turn on some metrics gathering.")]
         public bool TimerStats { get; set; } = false;
@@ -99,6 +103,10 @@ namespace Nebulator.Common
             {
                 string json = File.ReadAllText(fn);
                 us = JsonConvert.DeserializeObject<UserSettings>(json);
+
+                // Clean up bad file names.
+                us.RecentFiles.RemoveAll(f => !File.Exists(f));
+
                 us._fn = fn;
             }
             catch (Exception)

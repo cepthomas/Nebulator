@@ -336,7 +336,7 @@ namespace Nebulator.Scripting
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
 
-                // TODO2 Would actually like to use roslyn for C#7 stuff but doesn't work:
+                // TODO2 Would actually like to use roslyn for C#7 stuff but can't make it work:
                 // Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider provider = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider();
                 // // Need to fix hardcoded path to compiler - why isn't this fixed by MS?
                 // var flags = BindingFlags.NonPublic | BindingFlags.Instance;
@@ -480,7 +480,7 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Create the file containing extra stuff. TODO2 Probably shouldn't do this every time...
+        /// Create the file containing extra stuff. TODO2 Probably shouldn't do this every time.
         /// </summary>
         /// <returns></returns>
         List<string> GenSuppFileContents()

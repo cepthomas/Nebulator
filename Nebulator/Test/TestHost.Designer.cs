@@ -57,7 +57,6 @@
             // 
             // textViewer
             // 
-            this.textViewer.Colors = ((System.Collections.Generic.Dictionary<string, System.Drawing.Color>)(resources.GetObject("textViewer.Colors")));
             this.textViewer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textViewer.Location = new System.Drawing.Point(0, 25);
             this.textViewer.Name = "textViewer";

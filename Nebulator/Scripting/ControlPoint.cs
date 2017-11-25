@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Nebulator.Scripting
 {
     /// <summary>
-    /// Defines an input or output midi control. TODO2 OSC?
+    /// Defines an input or output midi control. TODO2 Support OSC.
     /// </summary>
     public class MidiControlPoint
     {

@@ -33,6 +33,7 @@
             this.btnMonOut = new System.Windows.Forms.ToolStripButton();
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.txtMonitor = new System.Windows.Forms.RichTextBox();
+            this.btnKill = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -41,7 +42,8 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnMonIn,
             this.btnMonOut,
-            this.btnClear});
+            this.btnClear,
+            this.btnKill});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(405, 25);
@@ -96,6 +98,17 @@
             this.txtMonitor.Text = "";
             this.txtMonitor.WordWrap = false;
             // 
+            // btnKill
+            // 
+            this.btnKill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnKill.Image = global::Nebulator.Properties.Resources.glyphicons_206_electricity;
+            this.btnKill.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnKill.Name = "btnKill";
+            this.btnKill.Size = new System.Drawing.Size(23, 22);
+            this.btnKill.Text = "toolStripButton1";
+            this.btnKill.ToolTipText = "Send a midi kill all message";
+            this.btnKill.Click += new System.EventHandler(this.btnKill_Click);
+            // 
             // MidiMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -119,5 +132,6 @@
         private System.Windows.Forms.RichTextBox txtMonitor;
         private System.Windows.Forms.ToolStripButton btnMonIn;
         private System.Windows.Forms.ToolStripButton btnMonOut;
+        private System.Windows.Forms.ToolStripButton btnKill;
     }
 }

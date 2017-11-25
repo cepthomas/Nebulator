@@ -66,28 +66,29 @@ namespace Nebulator.UI
 
                     if (parts.Count >= 2 && parts[0] != ";")
                     {
-                        char c = parts[0][0];
+                        string key = parts[0];
+                        char ch = key[0];
                         int offset = int.Parse(parts[1]);
                         int note = indexOfMiddleC + offset;
 
-                        switch (c)
+                        switch (key)
                         {
-                            case ',': _kbdMidi.Add(Keys.Oemcomma, note); break;
-                            case '=': _kbdMidi.Add(Keys.Oemplus, note); break;
-                            case '-': _kbdMidi.Add(Keys.OemMinus, note); break;
-                            case '/': _kbdMidi.Add(Keys.OemQuestion, note); break;
-                            case '.': _kbdMidi.Add(Keys.OemPeriod, note); break;
-                            case '\'': _kbdMidi.Add(Keys.OemQuotes, note); break;
-                            case '\\': _kbdMidi.Add(Keys.OemPipe, note); break;
-                            case ']': _kbdMidi.Add(Keys.OemCloseBrackets, note); break;
-                            case '[': _kbdMidi.Add(Keys.OemOpenBrackets, note); break;
-                            case '`': _kbdMidi.Add(Keys.Oemtilde, note); break;
-                            //case ';': _kbdMidi.Add(Keys.OemSemicolon, note); break; TODO2 support this key?
+                            case ",":  _kbdMidi.Add(Keys.Oemcomma, note); break;
+                            case "=":  _kbdMidi.Add(Keys.Oemplus, note); break;
+                            case "-":  _kbdMidi.Add(Keys.OemMinus, note); break;
+                            case "/":  _kbdMidi.Add(Keys.OemQuestion, note); break;
+                            case ".":  _kbdMidi.Add(Keys.OemPeriod, note); break;
+                            case "\'": _kbdMidi.Add(Keys.OemQuotes, note); break;
+                            case "\\": _kbdMidi.Add(Keys.OemPipe, note); break;
+                            case "]":  _kbdMidi.Add(Keys.OemCloseBrackets, note); break;
+                            case "[":  _kbdMidi.Add(Keys.OemOpenBrackets, note); break;
+                            case "`":  _kbdMidi.Add(Keys.Oemtilde, note); break;
+                            case ";;": _kbdMidi.Add(Keys.OemSemicolon, note); break;
 
                             default:
-                                if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+                                if ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9'))
                                 {
-                                    _kbdMidi.Add((Keys)c, note);
+                                    _kbdMidi.Add((Keys)ch, note);
                                 }
                                 break;
                         }

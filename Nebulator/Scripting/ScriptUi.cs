@@ -107,7 +107,7 @@ namespace Nebulator.Scripting
         public void exit() { throw new NotSupportedException(); }
         public void loop() { throw new NotSupportedException(); }
         public void noLoop() { throw new NotSupportedException(); }
-        // TODO2 save all fonts, styles etc in a Bag. Restore in popStyle(). These:
+        // Save all fonts, styles etc in a Bag. Restore in popStyle(). These:
         // fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), 
         // ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), 
         // emissive(), specular(), shininess(), ambient()
@@ -718,7 +718,7 @@ namespace Nebulator.Scripting
                 case BASELINE: format.LineAlignment = StringAlignment.Far; break;
             }
 
-            // TODO2 support text wrapping.
+            // TODO3 support text wrapping.
             _gr.DrawString(s, _font, _brush, x, y, format);
         }
 

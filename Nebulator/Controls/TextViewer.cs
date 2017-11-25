@@ -16,6 +16,7 @@ namespace Nebulator.Controls
         /// <summary>
         /// The colors to display when text is matched.
         /// </summary>
+        [Browsable(false)]
         public Dictionary<string, Color> Colors { get; set; } = new Dictionary<string, Color>();
 
         /// <summary>
