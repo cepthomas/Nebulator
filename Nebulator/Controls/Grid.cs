@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
 
-// A general purpose grid for midi notes etc. WIP.
+// A general purpose grid for midi notes etc. WIP. TODO2 finish it!
 
 
 // ---------------

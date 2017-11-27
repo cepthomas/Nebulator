@@ -39,19 +39,9 @@
             this.chkLoop = new System.Windows.Forms.CheckBox();
             this.btnRewind = new System.Windows.Forms.Button();
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
-            this.tabMain = new System.Windows.Forms.TabControl();
-            this.tabPageLevers = new System.Windows.Forms.TabPage();
             this.levers = new Nebulator.UI.Levers();
-            this.tabPageTest = new System.Windows.Forms.TabPage();
-            this.testHost = new Nebulator.Test.TestHost();
-            this.tabPageOther = new System.Windows.Forms.TabPage();
-            this.grid1 = new Nebulator.Controls.Grid();
-            this.tabAux = new System.Windows.Forms.TabControl();
-            this.tabPageInfo = new System.Windows.Forms.TabPage();
-            this.infoDisplay = new Nebulator.Controls.TextViewer();
-            this.tabPageMonitor = new System.Windows.Forms.TabPage();
-            this.midiMonitor = new Nebulator.UI.MidiMonitor();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.infoDisplay = new Nebulator.UI.InfoDisplay();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -61,13 +51,6 @@
             this.splitContainerControl.Panel1.SuspendLayout();
             this.splitContainerControl.Panel2.SuspendLayout();
             this.splitContainerControl.SuspendLayout();
-            this.tabMain.SuspendLayout();
-            this.tabPageLevers.SuspendLayout();
-            this.tabPageTest.SuspendLayout();
-            this.tabPageOther.SuspendLayout();
-            this.tabAux.SuspendLayout();
-            this.tabPageInfo.SuspendLayout();
-            this.tabPageMonitor.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -138,7 +121,7 @@
             this.logToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_331_blog;
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
             this.logToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.logToolStripMenuItem.Text = "Log";
+            this.logToolStripMenuItem.Text = "View Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.Log_Click);
             // 
             // importMidiToolStripMenuItem
@@ -195,13 +178,12 @@
             // chkSequence
             // 
             this.chkSequence.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkSequence.AutoSize = true;
             this.chkSequence.FlatAppearance.BorderSize = 0;
             this.chkSequence.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkSequence.Image = global::Nebulator.Properties.Resources.glyphicons_458_transfer;
-            this.chkSequence.Location = new System.Drawing.Point(80, 7);
+            this.chkSequence.Location = new System.Drawing.Point(84, 7);
             this.chkSequence.Name = "chkSequence";
-            this.chkSequence.Size = new System.Drawing.Size(30, 28);
+            this.chkSequence.Size = new System.Drawing.Size(32, 32);
             this.chkSequence.TabIndex = 39;
             this.toolTip.SetToolTip(this.chkSequence, "Run sequence steps");
             this.chkSequence.UseVisualStyleBackColor = true;
@@ -211,7 +193,7 @@
             this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(116, 7);
+            this.btnCompile.Location = new System.Drawing.Point(120, 7);
             this.btnCompile.Name = "btnCompile";
             this.btnCompile.Size = new System.Drawing.Size(34, 32);
             this.btnCompile.TabIndex = 38;
@@ -226,7 +208,7 @@
             time1.Tock = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(307, 7);
+            this.timeMaster.Location = new System.Drawing.Point(315, 7);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
             this.timeMaster.MaxTick = 0;
             this.timeMaster.Name = "timeMaster";
@@ -238,7 +220,7 @@
             // 
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "VOL";
-            this.sldVolume.Location = new System.Drawing.Point(234, 7);
+            this.sldVolume.Location = new System.Drawing.Point(242, 7);
             this.sldVolume.Maximum = 200;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
@@ -271,7 +253,7 @@
             // 
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
-            this.potSpeed.Location = new System.Drawing.Point(195, 7);
+            this.potSpeed.Location = new System.Drawing.Point(201, 7);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
@@ -289,7 +271,7 @@
             this.chkLoop.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkLoop.Image = global::Nebulator.Properties.Resources.glyphicons_82_refresh;
-            this.chkLoop.Location = new System.Drawing.Point(154, 7);
+            this.chkLoop.Location = new System.Drawing.Point(160, 7);
             this.chkLoop.Name = "chkLoop";
             this.chkLoop.Size = new System.Drawing.Size(31, 31);
             this.chkLoop.TabIndex = 32;
@@ -317,36 +299,14 @@
             // 
             // splitContainerControl.Panel1
             // 
-            this.splitContainerControl.Panel1.Controls.Add(this.tabMain);
+            this.splitContainerControl.Panel1.Controls.Add(this.levers);
             // 
             // splitContainerControl.Panel2
             // 
-            this.splitContainerControl.Panel2.Controls.Add(this.tabAux);
+            this.splitContainerControl.Panel2.Controls.Add(this.infoDisplay);
             this.splitContainerControl.Size = new System.Drawing.Size(826, 502);
             this.splitContainerControl.SplitterDistance = 447;
             this.splitContainerControl.TabIndex = 2;
-            // 
-            // tabMain
-            // 
-            this.tabMain.Controls.Add(this.tabPageLevers);
-            this.tabMain.Controls.Add(this.tabPageTest);
-            this.tabMain.Controls.Add(this.tabPageOther);
-            this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabMain.Location = new System.Drawing.Point(0, 0);
-            this.tabMain.Name = "tabMain";
-            this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(447, 502);
-            this.tabMain.TabIndex = 2;
-            // 
-            // tabPageLevers
-            // 
-            this.tabPageLevers.Controls.Add(this.levers);
-            this.tabPageLevers.Location = new System.Drawing.Point(4, 22);
-            this.tabPageLevers.Name = "tabPageLevers";
-            this.tabPageLevers.Size = new System.Drawing.Size(439, 476);
-            this.tabPageLevers.TabIndex = 6;
-            this.tabPageLevers.Text = "Levers";
-            this.tabPageLevers.UseVisualStyleBackColor = true;
             // 
             // levers
             // 
@@ -354,108 +314,8 @@
             this.levers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.levers.Location = new System.Drawing.Point(0, 0);
             this.levers.Name = "levers";
-            this.levers.Size = new System.Drawing.Size(439, 476);
+            this.levers.Size = new System.Drawing.Size(447, 502);
             this.levers.TabIndex = 0;
-            // 
-            // tabPageTest
-            // 
-            this.tabPageTest.Controls.Add(this.testHost);
-            this.tabPageTest.Location = new System.Drawing.Point(4, 22);
-            this.tabPageTest.Name = "tabPageTest";
-            this.tabPageTest.Size = new System.Drawing.Size(439, 476);
-            this.tabPageTest.TabIndex = 7;
-            this.tabPageTest.Text = "Test";
-            this.tabPageTest.UseVisualStyleBackColor = true;
-            // 
-            // testHost
-            // 
-            this.testHost.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.testHost.Location = new System.Drawing.Point(0, 0);
-            this.testHost.Name = "testHost";
-            this.testHost.Size = new System.Drawing.Size(439, 476);
-            this.testHost.TabIndex = 0;
-            // 
-            // tabPageOther
-            // 
-            this.tabPageOther.Controls.Add(this.grid1);
-            this.tabPageOther.Location = new System.Drawing.Point(4, 22);
-            this.tabPageOther.Name = "tabPageOther";
-            this.tabPageOther.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOther.Size = new System.Drawing.Size(439, 476);
-            this.tabPageOther.TabIndex = 1;
-            this.tabPageOther.Text = "Other";
-            this.tabPageOther.UseVisualStyleBackColor = true;
-            // 
-            // grid1
-            // 
-            this.grid1.AutoScroll = true;
-            this.grid1.AutoScrollMinSize = new System.Drawing.Size(1, 1);
-            this.grid1.AxesColor = System.Drawing.Color.RosyBrown;
-            this.grid1.AxesWidth = 1F;
-            this.grid1.BackColor = System.Drawing.Color.SandyBrown;
-            this.grid1.ChartBackColor = System.Drawing.Color.White;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.GridLineColor = System.Drawing.Color.LightGray;
-            this.grid1.Location = new System.Drawing.Point(3, 3);
-            this.grid1.Name = "grid1";
-            this.grid1.Size = new System.Drawing.Size(433, 470);
-            this.grid1.TabIndex = 0;
-            this.grid1.TitleAlignment = System.Windows.Forms.HorizontalAlignment.Center;
-            this.grid1.TitleLabel = "Grid Title";
-            this.grid1.XAxisLabel = "X Axis";
-            this.grid1.XLabelsVisible = true;
-            this.grid1.XNumTicks = 10;
-            this.grid1.YAxisLabel = "Y Axis";
-            this.grid1.YLabelsVisible = true;
-            this.grid1.YNumTicks = 10;
-            // 
-            // tabAux
-            // 
-            this.tabAux.Controls.Add(this.tabPageInfo);
-            this.tabAux.Controls.Add(this.tabPageMonitor);
-            this.tabAux.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabAux.Location = new System.Drawing.Point(0, 0);
-            this.tabAux.Name = "tabAux";
-            this.tabAux.SelectedIndex = 0;
-            this.tabAux.Size = new System.Drawing.Size(375, 502);
-            this.tabAux.TabIndex = 0;
-            // 
-            // tabPageInfo
-            // 
-            this.tabPageInfo.Controls.Add(this.infoDisplay);
-            this.tabPageInfo.Location = new System.Drawing.Point(4, 22);
-            this.tabPageInfo.Name = "tabPageInfo";
-            this.tabPageInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageInfo.Size = new System.Drawing.Size(367, 476);
-            this.tabPageInfo.TabIndex = 0;
-            this.tabPageInfo.Text = "Info";
-            this.tabPageInfo.UseVisualStyleBackColor = true;
-            // 
-            // infoDisplay
-            // 
-            this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoDisplay.Location = new System.Drawing.Point(3, 3);
-            this.infoDisplay.Name = "infoDisplay";
-            this.infoDisplay.Size = new System.Drawing.Size(361, 470);
-            this.infoDisplay.TabIndex = 0;
-            // 
-            // tabPageMonitor
-            // 
-            this.tabPageMonitor.Controls.Add(this.midiMonitor);
-            this.tabPageMonitor.Location = new System.Drawing.Point(4, 22);
-            this.tabPageMonitor.Name = "tabPageMonitor";
-            this.tabPageMonitor.Size = new System.Drawing.Size(367, 476);
-            this.tabPageMonitor.TabIndex = 1;
-            this.tabPageMonitor.Text = "Midi";
-            this.tabPageMonitor.UseVisualStyleBackColor = true;
-            // 
-            // midiMonitor
-            // 
-            this.midiMonitor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.midiMonitor.Location = new System.Drawing.Point(0, 0);
-            this.midiMonitor.Name = "midiMonitor";
-            this.midiMonitor.Size = new System.Drawing.Size(367, 476);
-            this.midiMonitor.TabIndex = 1;
             // 
             // toolTip
             // 
@@ -465,6 +325,15 @@
             this.toolTip.ReshowDelay = 0;
             this.toolTip.UseAnimation = false;
             this.toolTip.UseFading = false;
+            // 
+            // infoDisplay
+            // 
+            this.infoDisplay.Colors = ((System.Collections.Generic.Dictionary<string, System.Drawing.Color>)(resources.GetObject("infoDisplay.Colors")));
+            this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.infoDisplay.Location = new System.Drawing.Point(0, 0);
+            this.infoDisplay.Name = "infoDisplay";
+            this.infoDisplay.Size = new System.Drawing.Size(375, 502);
+            this.infoDisplay.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -488,7 +357,6 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainerMain.Panel1.ResumeLayout(false);
-            this.splitContainerMain.Panel1.PerformLayout();
             this.splitContainerMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
             this.splitContainerMain.ResumeLayout(false);
@@ -496,13 +364,6 @@
             this.splitContainerControl.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerControl)).EndInit();
             this.splitContainerControl.ResumeLayout(false);
-            this.tabMain.ResumeLayout(false);
-            this.tabPageLevers.ResumeLayout(false);
-            this.tabPageTest.ResumeLayout(false);
-            this.tabPageOther.ResumeLayout(false);
-            this.tabAux.ResumeLayout(false);
-            this.tabPageInfo.ResumeLayout(false);
-            this.tabPageMonitor.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -529,23 +390,13 @@
         private System.Windows.Forms.SplitContainer splitContainerControl;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.TabControl tabMain;
-        private System.Windows.Forms.TabPage tabPageLevers;
         private UI.Levers levers;
-        private System.Windows.Forms.TabPage tabPageOther;
-        private System.Windows.Forms.TabControl tabAux;
-        private System.Windows.Forms.TabPage tabPageInfo;
-        private System.Windows.Forms.TabPage tabPageMonitor;
-        private UI.MidiMonitor midiMonitor;
-        private Controls.TextViewer infoDisplay;
         private Controls.TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
-        private System.Windows.Forms.TabPage tabPageTest;
-        private Test.TestHost testHost;
-        public Controls.Grid grid1;
         private System.Windows.Forms.CheckBox chkSequence;
+        private UI.InfoDisplay infoDisplay;
     }
 }
 

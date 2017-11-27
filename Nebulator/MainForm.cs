@@ -29,6 +29,9 @@ namespace Nebulator
         /// <summary>Piano child form.</summary>
         Piano _piano = new Piano();
 
+        /// <summary>Test child form.</summary>
+        Test.TestHost _testHost = null;
+
         /// <summary>The current script.</summary>
         Script _script = null;
 
@@ -38,8 +41,8 @@ namespace Nebulator
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
         LazyCollection<Variable> _ctrlChanges = new LazyCollection<Variable>() { AllowOverwrite = true };
 
-        /// <summary>Diagnostics for midi clock timing measurement.</summary>
-        TimingAnalyzer _tanMidi = new TimingAnalyzer() { SampleSize = 100 };
+        /// <summary>Diagnostics for nebulator clock timing measurement.</summary>
+        TimingAnalyzer _tanNeb = new TimingAnalyzer() { SampleSize = 100 };
 
         /// <summary>Diagnostics for UI execution time.</summary>
         TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
@@ -132,7 +135,9 @@ namespace Nebulator
             #endregion
 
             ////////////////////// test ///////////////////////
-            testHost.Go();
+            _testHost = new Test.TestHost(this);
+            _testHost.Show();
+            _testHost.Go();
         }
 
         /// <summary>
@@ -298,7 +303,7 @@ namespace Nebulator
             if (Globals.UserSettings.TimerStats && e.ElapsedTimers.Contains("NEB"))
             {
                 // Do some stats gathering for measuring jitter.
-                TimingAnalyzer.Stats stats = _tanMidi.Grab();
+                TimingAnalyzer.Stats stats = _tanNeb.Grab();
                 if (stats != null)
                 {
                     _logger.Info($"Midi timiing: {stats}");
@@ -411,7 +416,7 @@ namespace Nebulator
                 {
                     // Measure and alert if too slow, or throttle.
                     _tanUi.Arm();
-                    _script.Render();
+                    _script.Surface.Invalidate();
                     TimingAnalyzer.Stats stats = _tanUi.Grab();
                     if (stats != null)
                     {
@@ -520,7 +525,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                midiMonitor.AddMidiMessage(e.Message);
+                infoDisplay.AddMidiMessage(e.Message);
                 if (e.Message.StartsWith("ERR"))
                 {
                     _logger.Error(e.Message);
@@ -738,7 +743,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                infoDisplay.AddLine(msg);
+                infoDisplay.AddInfoLine(msg);
             });
         }
 
@@ -754,7 +759,7 @@ namespace Nebulator
             {
                 BeginInvoke((MethodInvoker)delegate ()
                 {
-                    infoDisplay.Add(e.Message);
+                    infoDisplay.AddInfo(e.Message);
                 });
             }
 
@@ -891,14 +896,42 @@ namespace Nebulator
                     SelectedObject = Globals.UserSettings
                 };
 
+                // Detect changes of interest.
+                List<string> propsChanged = new List<string>();
+                pg.PropertyValueChanged += (sdr, args) => { propsChanged.Add(args.ChangedItem.PropertyDescriptor.Name); };
+
                 f.Controls.Add(pg);
                 f.ShowDialog();
 
-                if (pg.Dirty)
+                if(propsChanged.Count > 0)
                 {
-                    Globals.MidiInterface.Init();
+                    bool midi = false;
+                    bool notes = false;
+                    bool ctrls = false;
+
+                    propsChanged.ForEach(p =>
+                    {
+                        midi |= p.Contains("Midi");
+                        notes |= (p.Contains("Notes") | p.Contains("Scales"));
+                        ctrls |= (p.Contains("Font") | p.Contains("Color"));
+                    });
+
+                    if (midi)
+                    {
+                        Globals.MidiInterface.Init();
+                    }
+
+                    if (notes)
+                    {
+                        NoteUtils.Init();
+                    }
+
+                    if (ctrls)
+                    {
+                        MessageBox.Show("Changes require a restart to take effect."); // TODO2 Update without restarting.
+                    }
+
                     SaveSettings();
-                    MessageBox.Show("Changes require a restart to take effect."); // TODO2 Update without restarting.
                 }
             }
         }

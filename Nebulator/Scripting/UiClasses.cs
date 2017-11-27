@@ -1,13 +1,9 @@
 using System;
 using System.Linq;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Text;
-using NLog;
 using Nebulator.Common;
 
 // Processing java source: https://github.com/processing/processing/blob/master/core/src/processing

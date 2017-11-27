@@ -9,7 +9,7 @@ using Nebulator.Common;
 namespace Nebulator.Scripting
 {
     /// <summary>
-    /// All the compiled script stuff we might need at runtime.
+    /// All the compiled script stuff we might want at runtime.
     /// </summary>
     public class Dynamic
     {

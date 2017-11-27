@@ -32,7 +32,7 @@ namespace Nebulator.FastTimer
             /// <returns></returns>
             public override string ToString()
             {
-                return $"Count:{Count} Mean:{Mean:F2} Max:{Max:F2} Min:{Min:F2} SD:{SD:F2}";
+                return $"Count:{Count} Mean:{Mean:F3} Max:{Max:F3} Min:{Min:F3} SD:{SD:F3}";
             }
         }
 

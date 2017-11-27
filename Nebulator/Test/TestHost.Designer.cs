@@ -41,7 +41,7 @@
             this.btnGo});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(539, 25);
+            this.toolStrip.Size = new System.Drawing.Size(523, 25);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -57,20 +57,23 @@
             // 
             // textViewer
             // 
+            this.textViewer.Colors = ((System.Collections.Generic.Dictionary<string, System.Drawing.Color>)(resources.GetObject("textViewer.Colors")));
             this.textViewer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textViewer.Location = new System.Drawing.Point(0, 25);
             this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(539, 298);
+            this.textViewer.Size = new System.Drawing.Size(523, 260);
             this.textViewer.TabIndex = 1;
             // 
             // TestHost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(523, 285);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "TestHost";
-            this.Size = new System.Drawing.Size(539, 323);
+            this.Text = "Testomatic";
             this.Load += new System.EventHandler(this.TestHost_Load);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();

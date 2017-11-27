@@ -3,12 +3,14 @@ using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using NLog;
 using Nebulator.Common;
 
+//In windows forms these kind of things made me fall back to;
+
+//Set Visible=False for the highest level container (e.g. canvas of the form itself)
+//Draw a lot
+//Set Visible=True
 
 namespace Nebulator.Scripting
 {
@@ -55,12 +57,13 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Update the SurfaceControl contents. Client should catch exceptions to handle user script errors.
+        /// Calls the script code that generates the bmp to draw.
         /// </summary>
-        public void Render()
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Surface_Paint(object sender, PaintEventArgs e)
         {
-            _bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            _gr = Graphics.FromImage(_bmp);
+            _gr = e.Graphics;
             _gr.SmoothingMode = _smooth ? SmoothingMode.AntiAlias : SmoothingMode.None;
             _gr.Clear(_bgColor);
 
@@ -70,23 +73,6 @@ namespace Nebulator.Scripting
 
             // Execute the user code.
             draw();
-
-            // Force a redraw.
-            Surface.Refresh();
-        }
-
-        /// <summary>
-        /// Calls the script code that generates the bmp to draw.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Surface_Paint(object sender, PaintEventArgs e)
-        {
-            // Render to the surface.
-            if(!(_bmp is null))
-            {
-                e.Graphics.DrawImageUnscaled(_bmp, 0, 0);
-            }
         }
         #endregion
 

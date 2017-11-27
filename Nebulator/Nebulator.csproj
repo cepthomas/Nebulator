@@ -111,6 +111,7 @@
       <Link>Resources\README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="app.config" />
     <None Include="Resources\glyphicons-360-file-export.png" />
     <None Include="Resources\glyphicons-114-justify.png" />
     <Compile Include="FastTimer\NebTimer.cs" />
@@ -183,7 +184,7 @@
     <Compile Include="Test\SimpleUT.cs" />
     <Compile Include="Test\TestCases_SUT.cs" />
     <Compile Include="Test\TestHost.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Test\TestHost.Designer.cs">
       <DependentUpon>TestHost.cs</DependentUpon>
@@ -194,17 +195,17 @@
     <Compile Include="UI\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\InfoDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\InfoDisplay.Designer.cs">
+      <DependentUpon>InfoDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Levers.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\Levers.Designer.cs">
       <DependentUpon>Levers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MidiMonitor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\MidiMonitor.Designer.cs">
-      <DependentUpon>MidiMonitor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Piano.cs">
       <SubType>Form</SubType>
@@ -261,11 +262,11 @@
     <EmbeddedResource Include="UI\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\InfoDisplay.resx">
+      <DependentUpon>InfoDisplay.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Levers.resx">
       <DependentUpon>Levers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\MidiMonitor.resx">
-      <DependentUpon>MidiMonitor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Piano.resx">
       <DependentUpon>Piano.cs</DependentUpon>
@@ -375,5 +376,6 @@
     <None Include="Resources\glyphicons-221-play-button.png" />
     <None Include="Resources\glyphicons-458-transfer.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

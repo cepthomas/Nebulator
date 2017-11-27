@@ -140,7 +140,7 @@ int ballSize = 40;
 ////// Nebulator midi stuff //////
 public override void step()
 {
-    go2();
+    //go2();
 }
 
 
@@ -233,7 +233,8 @@ public override void draw()
 {
     background(COL1, 100, 200);
 
-    // drawRecursive(0, 0, width / 2, 1);
+    // drawRecursive(0, 0, width / 2, 1); // This uses about 25% CPU with GDI
+    // return;
 
     if(playing && moveBall())
     {

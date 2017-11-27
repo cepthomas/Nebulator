@@ -1,9 +1,6 @@
 using System;
 using System.Linq;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections.Generic;
-using NLog;
 using Nebulator.Common;
 using Nebulator.Midi;
 
@@ -15,11 +12,6 @@ namespace Nebulator.Scripting
     /// </summary>
     public partial class Script
     {
-        #region Fields
-
-
-        #endregion
-
         #region Functions that can be overridden in the user script
         /// <summary>Called every Nebulator Tock.</summary>
         public virtual void step() { }

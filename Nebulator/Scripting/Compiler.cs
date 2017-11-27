@@ -36,7 +36,7 @@ namespace Nebulator.Scripting
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
 
-        /// <summary>All the important time points and their names.</summary>
+        /// <summary>All the named time points.</summary>
         public Dictionary<Time, string> TimeDefs { get; } = new Dictionary<Time, string>();
         #endregion
 

@@ -3,11 +3,8 @@ using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Text;
-using NLog;
 using Nebulator.Common;
 
 // Processing java source: https://github.com/processing/processing/blob/master/core/src/processing
@@ -22,14 +19,11 @@ namespace Nebulator.Scripting
     public partial class Script
     {
         #region Fields - internal
-        /// <summary>Script randomizer.</summary>
-        Random _rand = new Random();
-
-        /// <summary>Current working Graphics object to draw on. Most ops use this to draw with.</summary>
+        /// <summary>Current working Graphics object to draw on.</summary>
         Graphics _gr = null;
 
-        /// <summary>Current working bitmap. Some ops are happier manipulating the bitmap directly.</summary>
-        Bitmap _bmp = null;
+        ///// <summary>Current working bitmap. Some ops are happier manipulating the bitmap directly.</summary>
+        //Bitmap _bmp = null;
         #endregion
 
         #region Fields - storage for current state
@@ -649,30 +643,11 @@ namespace Nebulator.Scripting
         public void blend(params object[] ps) { throw new NotSupportedException(); }
         public void copy(params object[] ps) { throw new NotSupportedException(); }
         public void filter(params object[] ps) { throw new NotSupportedException(); }
-
-        public PImage get(int x, int y, int width, int height)
-        {
-            return new PImage(_bmp.Clone(new Rectangle(x, y, width, height), _bmp.PixelFormat));
-        }
-
-        public color get(int x, int y)
-        {
-            return new color(_bmp.GetPixel(x, y));
-        }
-
+        public PImage get(int x, int y, int width, int height) { throw new NotSupportedException(); }
+        public color get(int x, int y) { throw new NotSupportedException(); }
         public void loadPixels(params object[] ps) { throw new NotSupportedException(); }
-
-        public void set(int x, int y, color pcolor)
-        {
-            _bmp.SetPixel(x, y, pcolor.NativeColor);
-        }
-
-        public void set(int x, int y, PImage src)
-        {
-            Graphics tgt = Graphics.FromImage(_bmp);
-            tgt.DrawImageUnscaled(src.image(), x, y);
-        }
-
+        public void set(int x, int y, color pcolor) { throw new NotSupportedException(); }
+        public void set(int x, int y, PImage src) { throw new NotSupportedException(); }
         public void updatePixels(params object[] ps) { throw new NotSupportedException(); }
         #endregion
         #endregion
@@ -718,7 +693,7 @@ namespace Nebulator.Scripting
                 case BASELINE: format.LineAlignment = StringAlignment.Far; break;
             }
 
-            // TODO3 support text wrapping.
+            // TODO2 support text wrapping.
             _gr.DrawString(s, _font, _brush, x, y, format);
         }
 
