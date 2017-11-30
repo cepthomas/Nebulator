@@ -18,6 +18,7 @@ namespace Nebulator.UI
         /// The colors to display when text is matched.
         /// </summary>
         [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Dictionary<string, Color> Colors { get; set; } = new Dictionary<string, Color>();
 
         /// <summary>
@@ -50,7 +51,6 @@ namespace Nebulator.UI
             btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, Globals.UserSettings.IconColor);
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, Globals.UserSettings.IconColor);
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.UserSettings.IconColor);
-            btnKill.Image = Utils.ColorizeBitmap(btnKill.Image, Globals.UserSettings.IconColor);
         }
 
         /// <summary>
@@ -122,14 +122,6 @@ namespace Nebulator.UI
         private void BtnMonOut_Click(object sender, EventArgs e)
         {
             Globals.UserSettings.MidiMonitorOut = btnMonOut.Checked;
-        }
-
-        /// <summary>
-        /// Send a mdi kill all message.
-        /// </summary>
-        private void btnKill_Click(object sender, EventArgs e)
-        {
-            Globals.MidiInterface.KillAll();
         }
 
         /// <summary>

@@ -17,7 +17,7 @@ namespace Nebulator.Scripting
         /// <param name="tracks">The Tracks.</param>
         /// <param name="sequences">The Sequences.</param>
         /// <returns></returns>
-        public static StepCollection ConvertTracksToSteps(IEnumerable<Track> tracks, IEnumerable<Sequence> sequences)
+        public static StepCollection ConvertToSteps(IEnumerable<Track> tracks, IEnumerable<Sequence> sequences)
         {
             StepCollection steps = new StepCollection();
 
@@ -34,7 +34,7 @@ namespace Nebulator.Scripting
 
                     for (int loopTick = loop.StartTick; loopTick < loop.EndTick; loopTick += seq.Length)
                     {
-                        StepCollection stepsToAdd = ConvertTrackToSteps(track, seq, loopTick);
+                        StepCollection stepsToAdd = ConvertToSteps(track, seq, loopTick);
                         steps.Add(stepsToAdd);
                     }
                 }
@@ -49,7 +49,7 @@ namespace Nebulator.Scripting
         /// <param name="track">Which track to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         /// <param name="tick">Which tick to start at. If -1 use current Tick.</param>
-        public static StepCollection ConvertTrackToSteps(Track track, Sequence seq, int tick = -1)
+        public static StepCollection ConvertToSteps(Track track, Sequence seq, int tick = -1)
         {
             StepCollection steps = new StepCollection();
 

@@ -44,9 +44,6 @@ namespace Nebulator
         /// <summary>Diagnostics for nebulator clock timing measurement.</summary>
         TimingAnalyzer _tanNeb = new TimingAnalyzer() { SampleSize = 100 };
 
-        /// <summary>Diagnostics for UI execution time.</summary>
-        TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
-
         /// <summary>Current neb file name.</summary>
         string _fn = Globals.UNKNOWN_STRING;
 
@@ -223,7 +220,7 @@ namespace Nebulator
                 btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
                 _dirtyFiles = false;
 
-                _compiledSteps = StepUtils.ConvertTracksToSteps(_script.Dynamic.Tracks.Values, _script.Dynamic.Sequences.Values);
+                _compiledSteps = StepUtils.ConvertToSteps(_script.Dynamic.Tracks.Values, _script.Dynamic.Sequences.Values);
 
                 _script.ScriptEvent += Script_ScriptEvent;
                 InitMainUi();
@@ -325,44 +322,44 @@ namespace Nebulator
         {
             try
             {
+                ////// Process changed vars //////
+                foreach (Variable var in _ctrlChanges.Values)
+                {
+                    // Execute any script handlers.
+                    _script.ExecScriptFunction(var.Name);
+
+                    // Output any midiout controllers.
+                    IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+
+                    if (ctlpts != null && ctlpts.Count() > 0)
+                    {
+                        ctlpts.ForEach(c =>
+                        {
+                            StepControllerChange step = new StepControllerChange()
+                            {
+                                Channel = c.Channel,
+                                MidiController = c.MidiController,
+                                ControllerValue = c.RefVar.Value
+                            };
+                            Globals.MidiInterface.Send(step);
+                        });
+                    }
+                }
+
+                // Reset controllers for next go around.
+                _ctrlChanges.Clear();
+
                 ////// Neb steps /////
                 if (Globals.Playing && e.ElapsedTimers.Contains("NEB"))
                 {
-                    // Go through changed vars list.
-                    foreach (Variable var in _ctrlChanges.Values)
-                    {
-                        // Execute any script handlers.
-                        _script.ExecScriptFunction(var.Name);
-
-                        // Output any midiout controllers.
-                        IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
-
-                        if (ctlpts != null && ctlpts.Count() > 0)
-                        {
-                            ctlpts.ForEach(c =>
-                            {
-                                StepControllerChange step = new StepControllerChange()
-                                {
-                                    Channel = c.Channel,
-                                    MidiController = c.MidiController,
-                                    ControllerValue = c.RefVar.Value
-                                };
-                                Globals.MidiInterface.Send(step);
-                            });
-                        }
-                    }
-
-                    // Reset controllers for next go around.
-                    _ctrlChanges.Clear();
-
                     if(_script != null)
                     {
                         // Do any script execute stuff. This is done now as the script may manipulate things.
                         _script.step();
 
                         // Do runtime steps.
-                        _script.ScriptSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
-                        _script.ScriptSteps.DeleteSteps(Globals.CurrentStepTime);
+                        _script.RuntimeSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
+                        _script.RuntimeSteps.DeleteSteps(Globals.CurrentStepTime);
                     }
 
                     // Do the compiled steps.
@@ -388,7 +385,7 @@ namespace Nebulator
                         }
                     }
 
-                    ///// Bump.
+                    ///// Bump time.
                     Globals.CurrentStepTime.Advance();
 
                     ////// Check for end of play.
@@ -414,23 +411,7 @@ namespace Nebulator
                 ///// UI updates /////
                 if (_script != null && e.ElapsedTimers.Contains("UI"))
                 {
-                    // Measure and alert if too slow, or throttle.
-                    _tanUi.Arm();
-                    _script.Surface.Invalidate();
-                    TimingAnalyzer.Stats stats = _tanUi.Grab();
-                    if (stats != null)
-                    {
-                        if (Globals.UserSettings.TimerStats)
-                        {
-                            _logger.Info($"UI timing: {stats}");
-                        }
-
-                        int frameTime = (int)(1000.0 / _fps);
-                        if (stats.Mean > frameTime)
-                        {
-                            _logger.Error($"Rendering your UI code is taking too long, need help! {stats}");
-                        }
-                    }
+                    _script.UpdateSurface();
                 }
 
                 // In case there are lingering noteoffs that need to be processed.
@@ -1223,6 +1204,16 @@ namespace Nebulator
             {
                 MidiUtils.ImportStyle(openDlg.FileName);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KillMidi_Click(object sender, EventArgs e)
+        {
+            Globals.MidiInterface.KillAll();
         }
         #endregion
     }

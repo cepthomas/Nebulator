@@ -1,6 +1,6 @@
 
-VEL = const(95);
-MAX = var(60);
+VEL = constant(95);
+MAX = variable(60);
 
 void boing(int notenum = 0)
 {

@@ -40,8 +40,9 @@
             this.btnRewind = new System.Windows.Forms.Button();
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.levers = new Nebulator.UI.Levers();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.infoDisplay = new Nebulator.UI.InfoDisplay();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.killMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -89,11 +90,12 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.settingsToolStripMenuItem,
+            this.killMidiToolStripMenuItem,
             this.pianoToolStripMenuItem,
             this.logToolStripMenuItem,
             this.importMidiToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
+            this.settingsToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
@@ -103,7 +105,7 @@
             // 
             this.settingsToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
             // 
@@ -112,7 +114,7 @@
             this.pianoToolStripMenuItem.CheckOnClick = true;
             this.pianoToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_327_piano;
             this.pianoToolStripMenuItem.Name = "pianoToolStripMenuItem";
-            this.pianoToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.pianoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pianoToolStripMenuItem.Text = "Piano";
             this.pianoToolStripMenuItem.Click += new System.EventHandler(this.Piano_Click);
             // 
@@ -120,7 +122,7 @@
             // 
             this.logToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_331_blog;
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.logToolStripMenuItem.Text = "View Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.Log_Click);
             // 
@@ -128,7 +130,7 @@
             // 
             this.importMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_359_file_import;
             this.importMidiToolStripMenuItem.Name = "importMidiToolStripMenuItem";
-            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.importMidiToolStripMenuItem.Text = "Import Style";
             this.importMidiToolStripMenuItem.Click += new System.EventHandler(this.ImportStyle_Click);
             // 
@@ -136,7 +138,7 @@
             // 
             this.exportMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_360_file_export;
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
@@ -144,7 +146,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -193,7 +195,7 @@
             this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(120, 7);
+            this.btnCompile.Location = new System.Drawing.Point(121, 7);
             this.btnCompile.Name = "btnCompile";
             this.btnCompile.Size = new System.Drawing.Size(34, 32);
             this.btnCompile.TabIndex = 38;
@@ -208,7 +210,7 @@
             time1.Tock = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(315, 7);
+            this.timeMaster.Location = new System.Drawing.Point(314, 7);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
             this.timeMaster.MaxTick = 0;
             this.timeMaster.Name = "timeMaster";
@@ -220,7 +222,7 @@
             // 
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "VOL";
-            this.sldVolume.Location = new System.Drawing.Point(242, 7);
+            this.sldVolume.Location = new System.Drawing.Point(241, 7);
             this.sldVolume.Maximum = 200;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
@@ -253,7 +255,7 @@
             // 
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
-            this.potSpeed.Location = new System.Drawing.Point(201, 7);
+            this.potSpeed.Location = new System.Drawing.Point(200, 7);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
@@ -271,9 +273,9 @@
             this.chkLoop.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkLoop.Image = global::Nebulator.Properties.Resources.glyphicons_82_refresh;
-            this.chkLoop.Location = new System.Drawing.Point(160, 7);
+            this.chkLoop.Location = new System.Drawing.Point(159, 7);
             this.chkLoop.Name = "chkLoop";
-            this.chkLoop.Size = new System.Drawing.Size(31, 31);
+            this.chkLoop.Size = new System.Drawing.Size(32, 32);
             this.chkLoop.TabIndex = 32;
             this.toolTip.SetToolTip(this.chkLoop, "Loop forever");
             this.chkLoop.UseVisualStyleBackColor = false;
@@ -317,6 +319,14 @@
             this.levers.Size = new System.Drawing.Size(447, 502);
             this.levers.TabIndex = 0;
             // 
+            // infoDisplay
+            // 
+            this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.infoDisplay.Location = new System.Drawing.Point(0, 0);
+            this.infoDisplay.Name = "infoDisplay";
+            this.infoDisplay.Size = new System.Drawing.Size(375, 502);
+            this.infoDisplay.TabIndex = 0;
+            // 
             // toolTip
             // 
             this.toolTip.AutomaticDelay = 0;
@@ -326,14 +336,14 @@
             this.toolTip.UseAnimation = false;
             this.toolTip.UseFading = false;
             // 
-            // infoDisplay
+            // killMidiToolStripMenuItem
             // 
-            this.infoDisplay.Colors = ((System.Collections.Generic.Dictionary<string, System.Drawing.Color>)(resources.GetObject("infoDisplay.Colors")));
-            this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoDisplay.Location = new System.Drawing.Point(0, 0);
-            this.infoDisplay.Name = "infoDisplay";
-            this.infoDisplay.Size = new System.Drawing.Size(375, 502);
-            this.infoDisplay.TabIndex = 0;
+            this.killMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_206_electricity;
+            this.killMidiToolStripMenuItem.Name = "killMidiToolStripMenuItem";
+            this.killMidiToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.killMidiToolStripMenuItem.Text = "Kill Midi";
+            this.killMidiToolStripMenuItem.ToolTipText = "Instant stop all midi";
+            this.killMidiToolStripMenuItem.Click += new System.EventHandler(this.KillMidi_Click);
             // 
             // MainForm
             // 
@@ -397,6 +407,7 @@
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkSequence;
         private UI.InfoDisplay infoDisplay;
+        private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
     }
 }
 

@@ -10,20 +10,20 @@ include(utils.neb);
 
 ///// Constants /////
 // When to play.
-WHEN1 = const(0);
-WHEN2 = const(32);
-WHEN3 = const(64);
-WHEN4 = const(96);
+WHEN1 = constant(0);
+WHEN2 = constant(32);
+WHEN3 = constant(64);
+WHEN4 = constant(96);
 // Total length.
-TLEN = const(128);
+TLEN = constant(128);
 // Volumes.
-KEYS_DEF_VOL = const(100);
-DRUM_DEF_VOL = const(100);
+KEYS_DEF_VOL = constant(100);
+DRUM_DEF_VOL = constant(100);
 
 ///// Variables /////
-COL1 = var(200); // change color
-MODN = var(0); // modulate notes
-PITCH = var(8192); // center is 8192
+COL1 = variable(200); // change color
+MODN = variable(0); // modulate notes
+PITCH = variable(8192); // center is 8192
 
 ///// Realtime Controllers /////
 MI1 = midiin(1, 4, MODN);
@@ -52,7 +52,7 @@ BALL = track(3, 0);
 
 
 ///// Sequences and Notes /////
-KEYS_VERSE1 = seq(16);
+KEYS_VERSE1 = sequence(16);
 note(0.00, G.4.m7, 90, 1.48);
 note(1.70, G.4.m7, 90, 0.10);
 note(2.00, G.4.m7, 90, 0.10);
@@ -66,7 +66,7 @@ note(12.00, G.4.m6, 90, 1.48);
 note(13.70, G.4.m6, 90, 0.10);
 note(14.00, G.4.m6, 90, 0.10);
 
-KEYS_VERSE2 = seq(8);
+KEYS_VERSE2 = sequence(8);
 note(0.00, F.4.???, 90, 0.48);
 note(0.48, D#.4, KEYS_DEF_VOL, 0.48);
 note(1.00, C.4, 90, 0.48);
@@ -84,7 +84,7 @@ note(6.48, D#.2, KEYS_DEF_VOL, 0.48);
 note(7.00, C.2, 90, 0.48);
 note(7.48, B.2.m7, 90, 0.48);
 
-BASS_VERSE = seq(8);
+BASS_VERSE = sequence(8);
 note(0.00, C.2, 70, 0.25);
 note(0.75, C.2, 70, 0.1/8);
 note(3.48, E.2, 70, 0.25);
@@ -92,7 +92,7 @@ note(4.00, C.2, 70, 1.00);
 note(7.75, A#.2, 70, 0.10);
 
 // Drums
-DRUMS_VERSE = seq(8);
+DRUMS_VERSE = sequence(8);
 note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(1.00, RideCymbal1, DRUM_DEF_VOL);
 note(1.10, RideCymbal1, DRUM_DEF_VOL);
@@ -108,12 +108,12 @@ note(6.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(7.00, CrashCymbal2, DRUM_DEF_VOL);
 
 // Drums using patterns.
-DRUMS_SIMPLE = seq(8);
+DRUMS_SIMPLE = sequence(8);
 note(x-------x-------x-------x-------, AcousticBassDrum, 90);
 note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
 
 // Triggered in script.
-DYNAMIC_SEQ = seq(8);
+DYNAMIC_SEQ = sequence(8);
 note(0.00, G.3, 90, 0.60);
 note(1.00, A.3, 90, 0.60);
 note(2.00, Bb.3, 90, 0.60);

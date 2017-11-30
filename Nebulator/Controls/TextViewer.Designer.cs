@@ -49,7 +49,7 @@
             // btnClear
             // 
             this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnClear.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
+            this.btnClear.Image = global::Nebulator.Properties.Resources.glyphicons_551_erase;
             this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(23, 22);

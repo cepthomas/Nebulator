@@ -6,23 +6,22 @@
 include(utils.neb);
 
 
-
 ///// Constants /////
 // When to play.
-WHEN1 = const(0);
-WHEN2 = const(32);
-WHEN3 = const(64);
-WHEN4 = const(96);
+WHEN1 = constant(0);
+WHEN2 = constant(32);
+WHEN3 = constant(64);
+WHEN4 = constant(96);
 // Total length.
-TLEN = const(128);
+TLEN = constant(128);
 // Volumes.
-KEYS_DEF_VOL = const(100);
-DRUM_DEF_VOL = const(100);
+KEYS_DEF_VOL = constant(100);
+DRUM_DEF_VOL = constant(100);
 
 ///// Variables /////
-COL1 = var(200); // change color
-MODN = var(0); // modulate notes
-PITCH = var(8192); // center is 8192
+COL1 = variable(200); // change color
+MODN = variable(0); // modulate notes
+PITCH = variable(8192); // center is 8192
 
 ///// Realtime Controllers /////
 MI1 = midiin(1, 4, MODN);
@@ -54,7 +53,7 @@ BALL = track(3, 0);
 ///// Sequences and Notes /////
 
 ////// Keys //////
-KEYS_VERSE1 = seq(16);
+KEYS_VERSE1 = sequence(16);
 note(0.00, G.4.m7, 90, 1.48);
 note(1.70, G.4.m7, 90, 0.10);
 note(2.00, G.4.m7, 90, 0.10);
@@ -68,7 +67,7 @@ note(12.00, G.4.m6, 90, 1.48);
 note(13.70, G.4.m6, 90, 0.10);
 note(14.00, G.4.m6, 90, 0.10);
 
-KEYS_VERSE2 = seq(8);
+KEYS_VERSE2 = sequence(8);
 note(0.00, F.4.???, 90, 0.48);
 note(0.48, D#.4, KEYS_DEF_VOL, 0.48);
 note(1.00, C.4, 90, 0.48);
@@ -87,7 +86,7 @@ note(7.00, C.2, 90, 0.48);
 note(7.48, B.2.m7, 90, 0.48);
 
 ////// Bass //////
-BASS_VERSE = seq(8);
+BASS_VERSE = sequence(8);
 note(0.00, C.2, 70, 0.25);
 note(0.75, C.2, 70, 0.1/8);
 note(3.48, E.2, 70, 0.25);
@@ -97,7 +96,7 @@ note(7.75, A#.2, 70, 0.10);
 ////// Drums //////
 
 // "musical"
-DRUMS_VERSE = seq(8);
+DRUMS_VERSE = sequence(8);
 note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(1.00, RideCymbal1, DRUM_DEF_VOL);
 note(1.10, RideCymbal1, DRUM_DEF_VOL);
@@ -112,13 +111,13 @@ note(5.90, HiMidTom, DRUM_DEF_VOL);
 note(6.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(7.00, CrashCymbal2, DRUM_DEF_VOL);
 
-// Using patterns.
-DRUMS_SIMPLE = seq(8); // len of sequence in ticks (qtr notes). Should match length of the note spec.
-note(x-------x-------x-------x-------, AcousticBassDrum, 90); // each hit is 1/16 note - fixed res for now.
+// Using patterns. Each hit is 1/16 note - fixed res for now.
+DRUMS_SIMPLE = sequence(8);
+note(x-------x-------x-------x-------, AcousticBassDrum, 90);
 note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
 
 ////// Triggered in script //////
-DYNAMIC_SEQ = seq(8);
+DYNAMIC_SEQ = sequence(8);
 note(0.00, G.3, 90, 0.60);
 note(1.00, A.3, 90, 0.60);
 note(2.00, Bb.3, 90, 0.60);
@@ -140,41 +139,49 @@ int ballSize = 40;
 ////// Nebulator midi stuff //////
 public override void step()
 {
-    //go2();
+    algoSeq();
+    //simpleSeq();
 }
 
 
 
-///// Fancier stuff
-public void go3()
+// TODO1 all this algo stuff:
+//
+// Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
+// http://spheric-lounge-live-ambient-music.blogspot.com/
+//
+// The random item stream pattern type uses the optional keyword :weight to alter the probability 
+// of an event being selected in relation to the other events in the item stream.
+// need this, for scale note selections.
+// 
+// The graph item stream pattern type creates an item stream of user-specified rules for traversing a series 
+// of nodes called a graph.
+// my loops - rules to change/transition.
+//
+// Sonification uses data that is typically not musical and involves remapping this to musical parameters 
+// to create a composition.
+public void algoSeq()
 {
 
-    // TODO1 all this algo stuff:
-    //
-    // Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
-    // http://spheric-lounge-live-ambient-music.blogspot.com/
-    //
-    //The random item stream pattern type uses the optional keyword :weight to alter the probability 
-    //of an event being selected in relation to the other events in the item stream.
-    //need this, for scale note selections.
-    //
-    //scaleMaj = 0, 2, 4, 5, 7, 9, 11
-    //
-    //The graph item stream pattern type creates an item stream of user-specified rules for traversing a series 
-    //of nodes called a graph.
-    // my loops - rules to change/transition.
-    //
-    // Sonification uses data that is typically not musical and involves remapping this to musical parameters 
-    //to create a composition.
+
+    // scales to play with. assumes [0] is the key.
+    //int MajorScale[];  1 2 3 4 5 6 7 
+    //int NaturalMinorScale[];  1 2 b3 4 5 b6 b7
+    //Chord M: 1 3 5
+
+
+    
+
+
 }
 
 
-///// Play a sequence periodically.
-public void go2()
+// Play a sequence periodically. TODO2 Make this sort of stuff cleaner/easier?
+public void simpleSeq()
 {
     if(tock == 0)
     {
-        // Time to do something.
+        // On the one - time to do something.
         switch(tick)
         {
             case 0:
@@ -201,17 +208,6 @@ public void go2()
     }
 }
 
-///// A very simple algorithm - send a note periodically.
-public void go1()
-{
-    if(tock % 24 == 0)
-    {
-        int notenum = tick % 2 == 0 ? 50 : 60;
-        notenum += tock / 20;
-        sendMidiNote(KEYS, notenum, KEYS_DEF_VOL, 1.09);
-    }
-}
-
 public void On_MODN()
 {
     println("MODN changed to", MODN);
@@ -233,7 +229,9 @@ public override void draw()
 {
     background(COL1, 100, 200);
 
-    // drawRecursive(0, 0, width / 2, 1); // This uses about 25% CPU with GDI
+    // Recursive:
+    // noLoop(); // run once only
+    // drawRecursive(0, 0, width / 2, 1); // This uses a whole core with GDI
     // return;
 
     if(playing && moveBall())

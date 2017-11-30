@@ -217,15 +217,7 @@ namespace Nebulator.Scripting
                 List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
 
                 // Preamble.
-                pcont.CodeLines.AddRange(new List<string>
-                {
-                    $"//{pcont.SourceFile}",
-                    "using  Nebulator.Scripting;",
-                    "namespace Nebulator.UserScript",
-                    "{",
-                    $"partial class {_scriptName}",
-                    "{"
-                });
+                pcont.CodeLines.AddRange(GenCommonFileContents(pcont.SourceFile));
 
                 for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
                 {
@@ -251,11 +243,11 @@ namespace Nebulator.Scripting
                             default:
                                 switch (allparts[1])
                                 {
-                                    case "const": ParseConst(pcont, allparts); break;
-                                    case "var": ParseVar(pcont, allparts); break;
+                                    case "constant": ParseConstant(pcont, allparts); break;
+                                    case "variable": ParseVariable(pcont, allparts); break;
                                     case "lever": ParseLever(pcont, allparts); break;
                                     case "track": ParseTrack(pcont, allparts); break;
-                                    case "seq": ParseSeq(pcont, allparts); break;
+                                    case "sequence": ParseSequence(pcont, allparts); break;
                                     case "midiin": ParseMidiController(pcont, allparts); break;
                                     case "midiout": ParseMidiController(pcont, allparts); break;
                                     default: handled = false; break;
@@ -307,6 +299,9 @@ namespace Nebulator.Scripting
                 // The usual suspects.
                 cp.ReferencedAssemblies.Add("System.dll");
                 cp.ReferencedAssemblies.Add("System.Core.dll");
+                cp.ReferencedAssemblies.Add("System.Drawing.dll");
+                //cp.ReferencedAssemblies.Add("System.Drawing.Drawing2D.dll");
+                cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.exe");
 
@@ -440,19 +435,7 @@ namespace Nebulator.Scripting
         List<string> GenMainFileContents()
         {
             // Create the main/generated file. Indicated by empty source file name.
-            List<string> codeLines = new List<string>
-            {
-                "//",
-                "using System;",
-                "using System.Collections.Generic;",
-                "using System.Text;",
-                "using Nebulator.Common;",
-                "using Nebulator.Scripting;",
-                "namespace Nebulator.UserScript",
-                "{",
-                $"public partial class {_scriptName} : Script",
-                "{"
-            };
+            List<string> codeLines = GenCommonFileContents("");
 
             // The constants.
             _consts.Keys.ForEach(v => codeLines.Add($"const int {v} = {_consts[v]};"));
@@ -486,19 +469,7 @@ namespace Nebulator.Scripting
         List<string> GenSuppFileContents()
         {
             // Create the supplementary file. Indicated by empty source file name.
-            List<string> codeLines = new List<string>
-            {
-                "//",
-                "using System;",
-                "using System.Collections.Generic;",
-                "using System.Text;",
-                "using Nebulator.Common;",
-                "using Nebulator.Scripting;",
-                "namespace Nebulator.UserScript",
-                "{",
-                $"public partial class {_scriptName} : Script",
-                "{"
-            };
+            List<string> codeLines = GenCommonFileContents("");
 
             // The various defines.
             _midiInstrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_midiInstrumentDefs[k]};"));
@@ -511,6 +482,35 @@ namespace Nebulator.Scripting
 
             return codeLines;
         }
+
+        /// <summary>
+        /// Create the boilerplate file stuff.
+        /// </summary>
+        /// <param name="fn">Source file name.</param>
+        /// <returns></returns>
+        List<string> GenCommonFileContents(string fn)
+        {
+            // Create the supplementary file. Indicated by empty source file name.
+            List<string> codeLines = new List<string>
+            {
+                $"//{fn}",
+                "using System;",
+                "using System.Collections.Generic;",
+                "using System.Text;",
+                "using System.Drawing;",
+                "using System.Drawing.Drawing2D;",
+                "using System.Windows.Forms;",
+                "using Nebulator.Common;",
+                "using Nebulator.Scripting;",
+                "namespace Nebulator.UserScript",
+                "{",
+                $"public partial class {_scriptName} : Script",
+                "{"
+            };
+
+            return codeLines;
+        }
+
         #endregion
 
         #region Specific line parsers
@@ -548,9 +548,9 @@ namespace Nebulator.Scripting
             }
         }
 
-        private void ParseConst(FileParseContext pcont, List<string> parms)
+        private void ParseConstant(FileParseContext pcont, List<string> parms)
         {
-            // PART1 const 0
+            // PART1 constant 0
             // 0     1     2
 
             try
@@ -563,9 +563,9 @@ namespace Nebulator.Scripting
             }
         }
 
-        private void ParseVar(FileParseContext pcont, List<string> parms)
+        private void ParseVariable(FileParseContext pcont, List<string> parms)
         {
-            // COL1 var 200
+            // COL1 variable 200
             // 0    1   2
 
             try
@@ -583,9 +583,9 @@ namespace Nebulator.Scripting
             }
         }
 
-        private void ParseSeq(FileParseContext pcont, List<string> parms)
+        private void ParseSequence(FileParseContext pcont, List<string> parms)
         {
-            // KEYS_VERSE1 seq 16
+            // KEYS_VERSE1 sequence 16
             // 0           1   2
 
             try
@@ -800,6 +800,7 @@ namespace Nebulator.Scripting
                 {
                     if (p.StartsWith("On_"))
                     {
+                        // Get the variable name this handler is attached to.
                         List<string> fs = p.SplitByTokens("(");
                         string n = fs[0].Replace("On_", "");
                         _initLines.Add($"_scriptFunctions.Add(\"{n}\", {fs[0]});");

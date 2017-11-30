@@ -21,9 +21,6 @@ namespace Nebulator.Scripting
         #region Fields - internal
         /// <summary>Current working Graphics object to draw on.</summary>
         Graphics _gr = null;
-
-        ///// <summary>Current working bitmap. Some ops are happier manipulating the bitmap directly.</summary>
-        //Bitmap _bmp = null;
         #endregion
 
         #region Fields - storage for current state
@@ -36,6 +33,8 @@ namespace Nebulator.Scripting
         int _yAlign = BASELINE;
         Stack<object> _matrixStack = new Stack<object>();
         Bag _style = new Bag();
+        bool _loop = true;
+        bool _redraw = false;
         #endregion
 
         #region Definitions - same values as Processing
@@ -99,8 +98,20 @@ namespace Nebulator.Scripting
         
         //---- Script functions
         public void exit() { throw new NotSupportedException(); }
-        public void loop() { throw new NotSupportedException(); }
-        public void noLoop() { throw new NotSupportedException(); }
+
+        // Stops Processing from continuously executing the code within draw(). If loop() is called, the code
+        // in draw() begins to run continuously again. If using noLoop() in setup(), it should be the last line
+        // inside the block.
+        // When noLoop() is used, it's not possible to manipulate or access the screen inside event handling functions
+        // such as mousePressed() or keyPressed(). Instead, use those functions to call redraw() or loop(), which will
+        // run draw(), which can update the screen properly. This means that when noLoop() has been called, no drawing
+        // can happen, and functions like saveFrame() or loadPixels() may not be used.
+        // Note that if the sketch is resized, redraw() will be called to update the sketch, even after noLoop() has
+        // been specified. Otherwise, the sketch would enter an odd state until loop() was called.
+        public void loop() { _loop = true; }
+        public void noLoop() { _loop = false; }
+
+
         // Save all fonts, styles etc in a Bag. Restore in popStyle(). These:
         // fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), 
         // ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), 
@@ -108,12 +119,15 @@ namespace Nebulator.Scripting
         public void popStyle() { throw new NotSupportedException(); }
         public void pushStyle() { throw new NotSupportedException(); }
 
-        // Executes the code within draw() one time. This functions allows the program to update the display window only when necessary, for example when an event registered by mousePressed() or keyPressed() occurs.
-        // In structuring a program, it only makes sense to call redraw() within events such as mousePressed(). This is because redraw() does not run draw() immediately(it only sets a flag that indicates an update is needed). 
-        // The redraw() function does not work properly when called inside draw(). To enable/disable animations, use loop() and noLoop().
-        public void redraw() { throw new NotSupportedException(); }
+        // Executes the code within draw() one time. This functions allows the program to update the display window
+        // only when necessary, for example when an event registered by mousePressed() or keyPressed() occurs.
+        // In structuring a program, it only makes sense to call redraw() within events such as mousePressed().
+        // This is because redraw() does not run draw() immediately(it only sets a flag that indicates an update is needed). 
+        // The redraw() function does not work properly when called inside draw(). To enable/disable animations,
+        // use loop() and noLoop().
+        public void redraw() { _redraw = true; }
 
-        public void thread() { throw new NotSupportedException(); }
+        public void thread() { throw new NotSupportedException(); } // BackgroundWorker?
         #endregion
 
         #region Environment 

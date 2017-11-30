@@ -48,7 +48,7 @@ namespace Nebulator.FastTimer
         #endregion
 
         #region Properties
-        /// <summary>Number of data points to grab.</summary>
+        /// <summary>Number of data points to grab for statistics.</summary>
         public long SampleSize { get; set; } = 50;
         #endregion
 
@@ -67,7 +67,31 @@ namespace Nebulator.FastTimer
         /// </summary>
         public void Arm()
         {
+            if (!_watch.IsRunning)
+            {
+                _lastTicks = -1;
+                _watch.Start();
+            }
+
             _lastTicks = _watch.ElapsedTicks;
+        }
+
+        /// <summary>
+        /// Do one read since Arm().
+        /// </summary>
+        /// <returns></returns>
+        public double ReadOne()
+        {
+            double dt = 0.0;
+            long t = _watch.ElapsedTicks; // snap!
+
+            if (_lastTicks != -1)
+            {
+                dt = TicksToMsec(t - _lastTicks);
+                _times.Add(dt);
+            }
+            _lastTicks = t;
+            return dt;
         }
 
         /// <summary>

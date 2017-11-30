@@ -29,40 +29,50 @@
         private void InitializeComponent()
         {
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnWrap = new System.Windows.Forms.ToolStripButton();
+            this.txtView = new System.Windows.Forms.RichTextBox();
+            this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnMonIn = new System.Windows.Forms.ToolStripButton();
             this.btnMonOut = new System.Windows.Forms.ToolStripButton();
-            this.btnClear = new System.Windows.Forms.ToolStripButton();
-            this.btnKill = new System.Windows.Forms.ToolStripButton();
-            this.txtView = new System.Windows.Forms.RichTextBox();
+            this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnWrap,
+            this.btnClear,
             this.btnMonIn,
             this.btnMonOut,
-            this.btnClear,
-            this.btnKill});
+            this.btnWrap});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(516, 25);
             this.toolStrip1.TabIndex = 16;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // btnWrap
+            // txtView
             // 
-            this.btnWrap.CheckOnClick = true;
-            this.btnWrap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnWrap.Image = global::Nebulator.Properties.Resources.glyphicons_114_justify;
-            this.btnWrap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnWrap.Name = "btnWrap";
-            this.btnWrap.Size = new System.Drawing.Size(23, 22);
-            this.btnWrap.Text = "toolStripButton1";
-            this.btnWrap.ToolTipText = "Wrap text";
-            this.btnWrap.Click += new System.EventHandler(this.Wrap_Click);
+            this.txtView.BackColor = System.Drawing.SystemColors.Window;
+            this.txtView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtView.Location = new System.Drawing.Point(0, 25);
+            this.txtView.Name = "txtView";
+            this.txtView.ReadOnly = true;
+            this.txtView.Size = new System.Drawing.Size(516, 367);
+            this.txtView.TabIndex = 17;
+            this.txtView.Text = "";
+            this.txtView.WordWrap = false;
+            // 
+            // btnClear
+            // 
+            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnClear.Image = global::Nebulator.Properties.Resources.glyphicons_551_erase;
+            this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(23, 22);
+            this.btnClear.Text = "Clear";
+            this.btnClear.ToolTipText = "Clear monitor data";
+            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
             // 
             // btnMonIn
             // 
@@ -88,55 +98,32 @@
             this.btnMonOut.ToolTipText = "Monitor midi out";
             this.btnMonOut.Click += new System.EventHandler(this.BtnMonOut_Click);
             // 
-            // btnClear
+            // btnWrap
             // 
-            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnClear.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(23, 22);
-            this.btnClear.Text = "Clear";
-            this.btnClear.ToolTipText = "Clear monitor data";
-            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
+            this.btnWrap.CheckOnClick = true;
+            this.btnWrap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnWrap.Image = global::Nebulator.Properties.Resources.glyphicons_114_justify;
+            this.btnWrap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnWrap.Name = "btnWrap";
+            this.btnWrap.Size = new System.Drawing.Size(23, 22);
+            this.btnWrap.Text = "toolStripButton1";
+            this.btnWrap.ToolTipText = "Wrap text";
+            this.btnWrap.Click += new System.EventHandler(this.Wrap_Click);
             // 
-            // btnKill
-            // 
-            this.btnKill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnKill.Image = global::Nebulator.Properties.Resources.glyphicons_206_electricity;
-            this.btnKill.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnKill.Name = "btnKill";
-            this.btnKill.Size = new System.Drawing.Size(23, 22);
-            this.btnKill.Text = "toolStripButton1";
-            this.btnKill.ToolTipText = "Send a midi kill all message";
-            this.btnKill.Click += new System.EventHandler(this.btnKill_Click);
-            // 
-            // txtView
-            // 
-            this.txtView.BackColor = System.Drawing.SystemColors.Window;
-            this.txtView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtView.Location = new System.Drawing.Point(0, 25);
-            this.txtView.Name = "txtView";
-            this.txtView.ReadOnly = true;
-            this.txtView.Size = new System.Drawing.Size(516, 367);
-            this.txtView.TabIndex = 17;
-            this.txtView.Text = "";
-            this.txtView.WordWrap = false;
-            // 
-            // MidiMonitor
+            // InfoDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(516, 392);
             this.Controls.Add(this.txtView);
             this.Controls.Add(this.toolStrip1);
-            this.Name = "MidiMonitor";
-            this.Text = "Midi Monitor";
+            this.Name = "InfoDisplay";
+            this.Size = new System.Drawing.Size(516, 392);
             this.Load += new System.EventHandler(this.InfoDisplay_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -146,7 +133,6 @@
         private System.Windows.Forms.RichTextBox txtView;
         private System.Windows.Forms.ToolStripButton btnMonIn;
         private System.Windows.Forms.ToolStripButton btnMonOut;
-        private System.Windows.Forms.ToolStripButton btnKill;
         private System.Windows.Forms.ToolStripButton btnWrap;
     }
 }

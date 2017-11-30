@@ -202,6 +202,9 @@
   <data name="glyphicons_458_transfer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\glyphicons-458-transfer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="glyphicons_551_erase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\glyphicons-551-erase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="glyphicons_701_ear" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\glyphicons-701-ear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

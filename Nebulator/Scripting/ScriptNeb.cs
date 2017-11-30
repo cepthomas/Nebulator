@@ -178,7 +178,7 @@ namespace Nebulator.Scripting
         /// <param name="tick">Which tick to start at. If -1 use current Tick.</param>
         public void playSequence(Track track, Sequence seq, int tick = -1)
         {
-            ScriptSteps.Add(StepUtils.ConvertTrackToSteps(track, seq, tick));
+            RuntimeSteps.Add(StepUtils.ConvertToSteps(track, seq, tick));
         }
         #endregion
     }

@@ -5,12 +5,8 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Nebulator.Common;
+using Nebulator.FastTimer;
 
-//In windows forms these kind of things made me fall back to;
-
-//Set Visible=False for the highest level container (e.g. canvas of the form itself)
-//Draw a lot
-//Set Visible=True
 
 namespace Nebulator.Scripting
 {
@@ -31,6 +27,18 @@ namespace Nebulator.Scripting
                 SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
                 UpdateStyles();
                 BackColor = Globals.UserSettings.BackColor;
+            }
+        }
+
+        /// <summary>
+        /// Redraw if time and enabled.
+        /// </summary>
+        public void UpdateSurface()
+        {
+            if(_loop || _redraw)
+            {
+                Surface.Invalidate();
+                _redraw = false;
             }
         }
 
@@ -71,8 +79,13 @@ namespace Nebulator.Scripting
             pMouseX = mouseX;
             pMouseY = mouseY;
 
+            // Measure and alert if too slow, or throttle.
+            _tanUi.Arm();
+
             // Execute the user code.
             draw();
+
+            //println($"draw() took {_tanUi.ReadOne()}");
         }
         #endregion
 

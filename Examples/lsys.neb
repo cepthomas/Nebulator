@@ -1,0 +1,127 @@
+
+// Implementation of https://en.wikipedia.org/wiki/L-system and http://benvan.co.uk/lsys/
+
+// Variables
+COL1 = variable(200); // change color
+INITANG = variable(-3963); // modulate
+
+// Levers
+L1 = lever(0, 255, COL1);
+L2 = lever(-5000, 0, INITANG);
+
+// The lines to draw.
+List<Point> lines = new List<Point>();
+
+public override void setup()
+{
+    //println("setup()");
+    genLSys(-1.359672, -0.138235, -3963.7485, 14.11);
+}
+
+public override void draw()
+{
+    background(COL1, 100, 200);
+
+    for (var i = 0; i < lines.Count; i += 2)
+    {
+        var a = lines[i];
+        var b = lines[i + 1];
+        line(a.X, a.Y, b.X, b.Y);
+    }
+}
+
+public void On_INITANG()
+{
+    //println("On_INITANG", INITANG);
+    genLSys(-1.359672, -0.138235, INITANG, 14.11);
+}
+
+///// L-systems generator.
+
+class State
+{
+    public double size;
+    public double angle;
+    public double x;
+    public double y;
+    public double dir;
+    public State Clone() { return (State)MemberwiseClone(); }
+}
+
+void genLSys(double sizeGrowth, double angleGrowth, double initAngle, double initSize)
+{
+    lines.Clear();
+
+    var states = new Stack<State>();
+    var str = "L";
+
+    var state = new State()
+    {
+        x = width / 2,
+        y = height / 2,
+        dir = 0,
+        size = initSize,
+        angle = initAngle
+    };
+
+    lines.Clear();
+
+    // The rules.
+    var tbl = new Dictionary<char, string>
+    {
+        { 'L', "|-S!L!Y" },
+        { 'S', "[F[FF-YS]F)G]+" },
+        { 'Y', "--[F-)<F-FG]-" },
+        { 'G', "FGF[Y+>F]+Y" }
+    };
+
+    // Rewrite.
+    for (var i = 0; i < 8; i++) // was 12
+    {
+        var sb = new StringBuilder();
+        foreach (var elt in str)
+        {
+            if (tbl.ContainsKey(elt))
+            {
+                sb.Append(tbl[elt]);
+            }
+            else
+            {
+                sb.Append(elt);
+            }
+        }
+        str = sb.ToString();
+    }
+
+    // Make lines.
+    foreach (var elt in str)
+    {
+        switch (elt)
+        {
+            case 'F':
+                var new_x = state.x + state.size * Math.Cos(state.dir * Math.PI / 180.0);
+                var new_y = state.y + state.size * Math.Sin(state.dir * Math.PI / 180.0);
+
+                lines.Add(new Point((int)state.x, (int)state.y));
+                lines.Add(new Point((int)new_x, (int)new_y));
+
+                state.x = new_x;
+                state.y = new_y;
+                break;
+
+            case '+': state.dir += state.angle; break;
+            case '-': state.dir -= state.angle; break;
+            case '>': state.size *= (1.0 - sizeGrowth); break;
+            case '<': state.size *= (1.0 + sizeGrowth); break;
+            case ')': state.angle *= (1 + angleGrowth); break;
+            case '(': state.angle *= (1 - angleGrowth); break;
+            case '[': states.Push(state.Clone()); break;
+            case ']': state = states.Pop(); break;
+            case '!': state.angle *= -1.0; break;
+            case '|': state.dir += 180.0; break;
+
+            default:
+                break;
+        }
+    }
+}

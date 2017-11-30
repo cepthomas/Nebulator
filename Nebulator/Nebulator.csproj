@@ -376,6 +376,8 @@
     <None Include="Resources\glyphicons-221-play-button.png" />
     <None Include="Resources\glyphicons-458-transfer.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\glyphicons-551-erase.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
