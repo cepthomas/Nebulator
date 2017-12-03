@@ -16,7 +16,7 @@ namespace Nebulator.Midi
         // We borrow a few unused midi controller numbers for internal use.
         // Currently undefined: 3, 9, 14, 15, 20-31, 35, 41, 46, 47, 52-63, 85-87, 89, 90 and 102-119.
         public const int CTRL_NONE = 3;
-        public const int CTRL_PITCH = 9; // TODO2 Maybe handle pitch a bit neater instead of this semi-kludge?
+        public const int CTRL_PITCH = 9; // TODO2 Is this semi-kludge the best way to handle pitch?
 
         public const int NUM_MIDI_CHANNELS = 16;
         public const int MAX_MIDI_NOTE = 127;

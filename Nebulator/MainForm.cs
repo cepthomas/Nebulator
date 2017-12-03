@@ -54,7 +54,7 @@ namespace Nebulator
         bool _dirtyFiles = false;
 
         /// <summary>Persisted internal values for current neb file.</summary>
-        Bag _internalVals = new Bag();
+        Bag _nebpVals = new Bag();
 
         /// <summary>UI update rate.</summary>
         int _fps = 10;
@@ -118,6 +118,8 @@ namespace Nebulator
 
             NoteUtils.Init();
 
+            Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
+
             // Intercept all keyboard events.
             KeyPreview = true;
             #endregion
@@ -150,14 +152,14 @@ namespace Nebulator
                 if(_script != null)
                 {
                     // Save the project.
-                    _internalVals.Clear();
-                    _internalVals.SetValue("master", "volume", sldVolume.Value);
-                    _internalVals.SetValue("master", "speed", potSpeed.Value);
-                    _internalVals.SetValue("master", "loop", chkLoop.Checked);
-                    _internalVals.SetValue("master", "sequence", chkSequence.Checked);
+                    _nebpVals.Clear();
+                    _nebpVals.SetValue("master", "volume", sldVolume.Value);
+                    _nebpVals.SetValue("master", "speed", potSpeed.Value);
+                    _nebpVals.SetValue("master", "loop", chkLoop.Checked);
+                    _nebpVals.SetValue("master", "sequence", chkSequence.Checked);
 
-                    _script.Dynamic.Tracks.Values.ForEach(c => _internalVals.SetValue(c.Name, "volume", c.Volume));
-                    _internalVals.Save();
+                    _script.Dynamic.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
+                    _nebpVals.Save();
                 }
 
                 // Save user settings.
@@ -207,6 +209,11 @@ namespace Nebulator
         {
             bool ok = true;
             Compiler compiler = new Compiler();
+
+            // Save internal vals now as they will be reloaded during compile.
+            _nebpVals.Save();
+
+            // Compile now.
             _script = compiler.Execute(_fn);
 
             // Update file watcher just in case.
@@ -225,8 +232,6 @@ namespace Nebulator
                 _script.ScriptEvent += Script_ScriptEvent;
                 InitMainUi();
                 levers.Init(_script.Surface, _script.Dynamic.Levers.Values);
-                // Init the script.
-                _script.setup();
             }
             else
             {
@@ -263,7 +268,8 @@ namespace Nebulator
             foreach (Track t in _script.Dynamic.Tracks.Values)
             {
                 // Init from persistence.
-                int vt = Utils.Constrain(Convert.ToInt32(_internalVals.GetValue(t.Name, "volume")), 70, 127);
+                //int vt = Utils.Constrain(Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume")), 70, MAX_MIDI_VOLUME);
+                int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
                 t.Volume = vt == 0 ? 90 : vt; // in case it's new
 
                 TrackControl trk = new TrackControl()
@@ -277,10 +283,10 @@ namespace Nebulator
             }
 
             ///// Misc controls.
-            potSpeed.Value = Convert.ToInt32(_internalVals.GetValue("master", "speed"));
-            int mv = Convert.ToInt32(_internalVals.GetValue("master", "volume"));
-            chkLoop.Checked = Convert.ToBoolean(_internalVals.GetValue("master", "loop"));
-            chkSequence.Checked = Convert.ToBoolean(_internalVals.GetValue("master", "sequence"));
+            potSpeed.Value = Convert.ToInt32(_nebpVals.GetValue("master", "speed"));
+            int mv = Convert.ToInt32(_nebpVals.GetValue("master", "volume"));
+            chkLoop.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "loop"));
+            chkSequence.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "sequence"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
 
@@ -584,7 +590,7 @@ namespace Nebulator
                 try
                 {
                     _logger.Info($"Reading neb file: {fn}");
-                    _internalVals = Bag.Load(fn.Replace(".neb", ".nebp"));
+                    _nebpVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     _fn = fn;
                     _dirtyFiles = true;
                     btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
@@ -909,7 +915,7 @@ namespace Nebulator
 
                     if (ctrls)
                     {
-                        MessageBox.Show("Changes require a restart to take effect."); // TODO2 Update without restarting.
+                        MessageBox.Show("Changes require a restart to take effect."); // TODO2 Update controls without restarting.
                     }
 
                     SaveSettings();
@@ -988,6 +994,8 @@ namespace Nebulator
                 if (ok)
                 {
                     SetSpeedTimerPeriod();
+                    // Init the script.
+                    _script.setup();
                 }
 
                 Globals.Playing = ok;

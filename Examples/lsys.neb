@@ -1,9 +1,9 @@
 
-// Implementation of https://en.wikipedia.org/wiki/L-system and http://benvan.co.uk/lsys/
+// Partial implementation of https://en.wikipedia.org/wiki/L-system and http://benvan.co.uk/lsys/
 
 // Variables
-COL1 = variable(200); // change color
-INITANG = variable(-3963); // modulate
+COL1 = variable(200);
+INITANG = variable(-3963);
 
 // Levers
 L1 = lever(0, 255, COL1);
@@ -42,9 +42,9 @@ class State
 {
     public double size;
     public double angle;
+    public double direction;
     public double x;
     public double y;
-    public double dir;
     public State Clone() { return (State)MemberwiseClone(); }
 }
 
@@ -59,7 +59,7 @@ void genLSys(double sizeGrowth, double angleGrowth, double initAngle, double ini
     {
         x = width / 2,
         y = height / 2,
-        dir = 0,
+        direction = 0,
         size = initSize,
         angle = initAngle
     };
@@ -99,8 +99,8 @@ void genLSys(double sizeGrowth, double angleGrowth, double initAngle, double ini
         switch (elt)
         {
             case 'F':
-                var new_x = state.x + state.size * Math.Cos(state.dir * Math.PI / 180.0);
-                var new_y = state.y + state.size * Math.Sin(state.dir * Math.PI / 180.0);
+                var new_x = state.x + state.size * Math.Cos(state.direction * Math.PI / 180.0);
+                var new_y = state.y + state.size * Math.Sin(state.direction * Math.PI / 180.0);
 
                 lines.Add(new Point((int)state.x, (int)state.y));
                 lines.Add(new Point((int)new_x, (int)new_y));
@@ -109,8 +109,8 @@ void genLSys(double sizeGrowth, double angleGrowth, double initAngle, double ini
                 state.y = new_y;
                 break;
 
-            case '+': state.dir += state.angle; break;
-            case '-': state.dir -= state.angle; break;
+            case '+': state.direction += state.angle; break;
+            case '-': state.direction -= state.angle; break;
             case '>': state.size *= (1.0 - sizeGrowth); break;
             case '<': state.size *= (1.0 + sizeGrowth); break;
             case ')': state.angle *= (1 + angleGrowth); break;
@@ -118,7 +118,7 @@ void genLSys(double sizeGrowth, double angleGrowth, double initAngle, double ini
             case '[': states.Push(state.Clone()); break;
             case ']': state = states.Pop(); break;
             case '!': state.angle *= -1.0; break;
-            case '|': state.dir += 180.0; break;
+            case '|': state.direction += 180.0; break;
 
             default:
                 break;

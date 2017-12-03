@@ -10,6 +10,7 @@ namespace Nebulator.Common
 {
     public class NoteUtils
     {
+        #region Fields
         const int NOTES_PER_OCTAVE = 12;
         const string UNKNOWN_CHORD = "???";
 
@@ -21,7 +22,9 @@ namespace Nebulator.Common
 
         /// <summary>The midi drum definitions from ScriptDefinitions.md. Key is midi drum name, value is note num.</summary>
         static Dictionary<string, string> _drumDefs = new Dictionary<string, string>();
+        #endregion
 
+        #region Public functions
         /// <summary>
         /// Initialize the note and chord helpers.
         /// </summary>
@@ -97,7 +100,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Parse from input value.
         /// </summary>
-        public static List<int> ParseNoteString(string s)
+        public static List<int> ParseNoteConstituents(string s)
         {
             List<int> notes = new List<int>();
 
@@ -110,24 +113,14 @@ namespace Nebulator.Common
                 // 57 - numbered note
                 // LowTom - named drum
 
+                // Break it up.
                 var parts = s.SplitByToken(".");
+                int? noteNum = ParseNoteString(s);
 
-                // Start with octave.
-                int octave = 4; // default is middle C
-                if (parts.Count > 1)
-                {
-                    octave = int.Parse(parts[1]);
-                }
-
-                // Figure out the root note.
-                int? rootNote = GetNote(parts[0]);
-                if (rootNote == null)
+                if (noteNum == null)
                 {
                     throw new Exception($"Invalid note:{parts[0]}");
                 }
-
-                // Transpose octave.
-                rootNote += (octave + 1) * NOTES_PER_OCTAVE;
 
                 if (parts.Count > 2)
                 {
@@ -145,18 +138,18 @@ namespace Nebulator.Common
                             interval = interval.Replace("-", "");
                         }
 
-                        int? noteNum = GetInterval(interval);
-                        if (noteNum != null)
+                        int? iint = GetInterval(interval);
+                        if (iint != null)
                         {
-                            noteNum = down ? noteNum - NOTES_PER_OCTAVE : noteNum;
-                            notes.Add(rootNote.Value + noteNum.Value);
+                            iint = down ? iint - NOTES_PER_OCTAVE : iint;
+                            notes.Add(noteNum.Value + iint.Value);
                         }
                     }
                 }
                 else
                 {
                     // Just the root.
-                    notes.Add(rootNote.Value);
+                    notes.Add(noteNum.Value);
                 }
             }
             catch (Exception)
@@ -276,6 +269,65 @@ namespace Nebulator.Common
             return (root, octave);
         }
 
+        /// <summary>
+        /// Figure absolute note number from string.
+        /// </summary>
+        /// <param name="sval"></param>
+        /// <returns>Note number or null if invalid.</returns>
+        public static int? ParseNoteString(string sval)
+        {
+            var parts = sval.SplitByToken(".");
+
+            // Start with octave.
+            int octave = 4; // default is middle C
+            if (parts.Count > 1)
+            {
+                octave = int.Parse(parts[1]);
+            }
+
+            // Figure out the root note.
+            int? noteNum = GetNote(parts[0]);
+            if (noteNum != null)
+            {
+                // Transpose octave.
+                noteNum += (octave + 1) * NOTES_PER_OCTAVE;
+            }
+
+            return noteNum;
+        }
+
+        /// <summary>
+        /// Create a list of absolute note numbers.
+        /// </summary>
+        /// <param name="scale">Name of the scale.</param>
+        /// <param name="key">Key.octave</param>
+        /// <returns>List of scale notes or null if invalid.</returns>
+        public static List<int> GetScaleNotes(string scale, string key)
+        {
+            List<int> notes = null;
+            int? keyNote = ParseNoteString(key);
+
+            if(_scaleDefs.ContainsKey(scale) && keyNote != null)
+            {
+                notes = new List<int>();
+
+                // "1 2 b3 #4 5 b6 7"
+
+                _scaleDefs[scale].SplitByToken(" ").ForEach(si =>
+                {
+                    int? intNum = GetInterval(si);
+                    if (intNum != null)
+                    {
+                        //noteNum = down ? noteNum - NOTES_PER_OCTAVE : noteNum;
+                        notes.Add(keyNote.Value + intNum.Value);
+                    }
+                });
+            }
+
+            return notes;
+        }
+        #endregion
+
         #region Conversion functions
         /// <summary>
         /// Get interval offset from name.
@@ -310,7 +362,7 @@ namespace Nebulator.Common
                 "1", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "b7", "7",
                 "", "", "9", "#9", "", "11", "#11", "", "", "13", "", ""
             };
-            return intervals[iint % intervals.Count()];
+            return iint >= intervals.Count() ? null : intervals[iint % intervals.Count()];
         }
 
         /// <summary>

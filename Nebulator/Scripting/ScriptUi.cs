@@ -779,6 +779,8 @@ namespace Nebulator.Scripting
         public void noiseSeed(params object[] ps) { throw new NotSupportedException(); }
         public float random(float max) { return (float)_rand.NextDouble() * max; }
         public float random(float min, float max) { return min + (float)_rand.NextDouble() * (max - min); }
+        public int random(int max) { return _rand.Next(max); }
+        public int random(int min, int max) { return _rand.Next(min, max); }
         public float randomGaussian() { return (float)Utils.NextGaussian(_rand); }
         public void randomSeed(int seed) { _rand = new Random(seed); }
         #endregion

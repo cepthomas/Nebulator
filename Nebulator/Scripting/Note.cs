@@ -8,7 +8,7 @@ using Nebulator.Midi;
 namespace Nebulator.Scripting
 {
     /// <summary>
-    /// One note or chord in the loop.
+    /// One note or chord in the loop. TODO2 microtonal.
     /// </summary>
     public class Note
     {
@@ -22,11 +22,11 @@ namespace Nebulator.Scripting
         /// <summary>Time between note on/off. 0 (default) means not used.</summary>
         public Time Duration { get; set; } = new Time(0);
 
-        /// <summary>The 0th is the root note and other values comprise chord notes.</summary>
-        public List<int> ChordNotes { get; private set; } = new List<int>();
+        /// <summary>The 0th is the root note and other values comprise possible chord notes.</summary>
+        public List<int> NoteConstituents { get; private set; } = new List<int>();
 
         /// <summary>Get the root note. Default to middle C == number 60 (0x3C).</summary>
-        public int Root { get { return ChordNotes.Count > 0 ? ChordNotes[0] : MidiInterface.MIDDLE_C; } }
+        public int Root { get { return NoteConstituents.Count > 0 ? NoteConstituents[0] : MidiInterface.MIDDLE_C; } }
         #endregion
 
         #region Lifecycle
@@ -36,7 +36,7 @@ namespace Nebulator.Scripting
         /// <param name="s"></param>
         public Note(string s)
         {
-            ChordNotes = NoteUtils.ParseNoteString(s);
+            NoteConstituents = NoteUtils.ParseNoteConstituents(s);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Nebulator.Scripting
         /// </summary>
         public Note(int noteNum)
         {
-            ChordNotes.Add(noteNum);
+            NoteConstituents.Add(noteNum);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Nebulator.Scripting
             Volume = note.Volume;
             When = new Time(note.When);
             Duration = new Time(note.Duration);
-            note.ChordNotes.ForEach(n => ChordNotes.Add(n));
+            note.NoteConstituents.ForEach(n => NoteConstituents.Add(n));
         }
         #endregion
 
@@ -65,7 +65,7 @@ namespace Nebulator.Scripting
         /// </summary>
         public override string ToString()
         {
-            return $"When:{When} NoteNum:{ChordNotes[0]} Volume:{Volume} Duration:{Duration}";
+            return $"When:{When} NoteNum:{NoteConstituents[0]} Volume:{Volume} Duration:{Duration}";
         }
         #endregion
     }

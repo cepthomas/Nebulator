@@ -62,7 +62,7 @@ namespace Nebulator.Scripting
                 Time stopNoteTime = startNoteTime + note.Duration;
 
                 // Process all note numbers.
-                foreach (int noteNum in note.ChordNotes)
+                foreach (int noteNum in note.NoteConstituents)
                 {
                     ///// Note on.
                     int vel = track.NextVol(note.Volume);

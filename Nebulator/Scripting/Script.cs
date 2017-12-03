@@ -38,7 +38,7 @@ namespace Nebulator.Scripting
             /// <summary>Master speed in bpm. If null means get otherwise set.</summary>
             public double? Speed { get; set; } = null;
 
-            /// <summary>Master volume in midi velocity range: 0 - 127. If null means get otherwise set.</summary>
+            /// <summary>Master volume. If null means get otherwise set.</summary>
             public int? Volume { get; set; } = null;
 
             /// <summary>Script can select UI rate in fps. If null means get otherwise set.</summary>

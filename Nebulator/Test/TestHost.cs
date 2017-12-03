@@ -37,8 +37,8 @@ namespace Nebulator.Test
 
             //Utils.ExtractAPI(@"C:\Dev\GitHub\Nebulator\Nebulator\Scripting\ScriptUi.cs");
 
-            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example1.neb");
-            mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example2.neb");
+            mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example1.neb");
+            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example2.neb");
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\lsys.neb");
 
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
@@ -48,10 +48,122 @@ namespace Nebulator.Test
 
         // TODO2 graphics faster: - try drawRecursive() in script. SharpDx? Separate thread? https://stackoverflow.com/questions/26220964/sharpdxhow-to-place-sharpdx-window-in-winforms-window
 
-        double TicksToMsec(long ticks)
+
+
+
+
+
+
+        #region new lsys for audio ??
+
+        // scales to play with. assumes [0] is the key.
+        //int[] MajorScale = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        //int[] NaturalMinorScale = new[] { 1, 2, b3, 4, 5, b6, b7 };
+        //Chord D#.4.M:   1 3 5
+
+        // notes to play: which, when, dur.
+
+        //GetScale("Algerian", "C.4");
+
+
+        List<Point> lines = new List<Point>();
+
+        class State
         {
-            return 1000.0 * ticks / Stopwatch.Frequency;
+            public string key = "C";
+
+
+
+            public double size;
+            public double angle;
+            public double direction;
+            public double x;
+            public double y;
+            public State Clone() { return (State)MemberwiseClone(); }
         }
+
+        void genLSysMusic(double sizeGrowth, double angleGrowth, double initAngle, double initSize)
+        {
+            lines.Clear();
+
+            var states = new Stack<State>();
+            var str = "L";
+
+            var state = new State()
+            {
+                x = 200,
+                y = 200,
+                direction = 0,
+                size = initSize,
+                angle = initAngle
+            };
+
+            lines.Clear();
+
+            // The rules.
+            var tbl = new Dictionary<char, string>
+            {
+                { 'L', "|-S!L!Y" },
+                { 'S', "[F[FF-YS]F)G]+" },
+                { 'Y', "--[F-)<F-FG]-" },
+                { 'G', "FGF[Y+>F]+Y" }
+            };
+
+            // Rewrite.
+            for (var i = 0; i < 8; i++) // was 12
+            {
+                var sb = new StringBuilder();
+                foreach (var elt in str)
+                {
+                    if (tbl.ContainsKey(elt))
+                    {
+                        sb.Append(tbl[elt]);
+                    }
+                    else
+                    {
+                        sb.Append(elt);
+                    }
+                }
+                str = sb.ToString();
+            }
+
+            // Make lines.
+            foreach (var elt in str)
+            {
+                switch (elt)
+                {
+                    case 'F':
+                        var new_x = state.x + state.size * Math.Cos(state.direction * Math.PI / 180.0);
+                        var new_y = state.y + state.size * Math.Sin(state.direction * Math.PI / 180.0);
+
+                        lines.Add(new Point((int)state.x, (int)state.y));
+                        lines.Add(new Point((int)new_x, (int)new_y));
+
+                        state.x = new_x;
+                        state.y = new_y;
+                        break;
+
+                    case '+': state.direction += state.angle; break;
+                    case '-': state.direction -= state.angle; break;
+                    case '>': state.size *= (1.0 - sizeGrowth); break;
+                    case '<': state.size *= (1.0 + sizeGrowth); break;
+                    case ')': state.angle *= (1 + angleGrowth); break;
+                    case '(': state.angle *= (1 - angleGrowth); break;
+                    case '[': states.Push(state.Clone()); break;
+                    case ']': state = states.Pop(); break;
+                    case '!': state.angle *= -1.0; break;
+                    case '|': state.direction += 180.0; break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+        #endregion
+
+
+
+
 
 
         /// <summary>
@@ -102,7 +214,7 @@ namespace Nebulator.Test
         }
 
 
-        class MyScript : Script // TODO2 maybe useful later?
+        class MyScript : Script // Just for dev. TODO2 maybe useful later?
         {
             // Typical from compiler output.
             Track BALL { get { return Dynamic.Tracks["BALL"]; } }

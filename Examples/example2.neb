@@ -2,10 +2,6 @@
 ///// Tester for dev features.
 
 
-///// Include other lib files. /////
-include(utils.neb);
-
-
 ///// Constants /////
 // When to play.
 WHEN1 = constant(0);
@@ -34,20 +30,19 @@ L3 = lever(-10, 10, MODN);
 
 
 ///// Tracks and Loops /////
-//name = track(channel, wobvol, wobtime1, wobtime2)
-KEYS = track(1, 5, 5, 5); // wobbles
+KEYS = track(1, 5, 0, 0); // wobbles
 loop(WHEN1, WHEN2, KEYS_VERSE1);
 loop(WHEN2, WHEN3, KEYS_VERSE2);
 loop(WHEN3, WHEN4, KEYS_VERSE1);
 loop(WHEN4, TLEN, KEYS_VERSE2);
 
-BASS = track(2, 2, 5, 5); // wobbles
+BASS = track(2, 2, 0, 0); // wobbles
 loop(WHEN1, TLEN, BASS_VERSE);
 
-DRUMS = track(10, 4, 10, 5); // wobbles
+DRUMS = track(10, 4, 0, 0); // wobbles
 loop(WHEN1, TLEN, DRUMS_SIMPLE);
 
-BALL = track(3, 0);
+SYNTH = track(3, 0);
 
 
 ///// Sequences and Notes /////
@@ -95,33 +90,30 @@ note(7.75, A#.2, 70, 0.10);
 
 ////// Drums //////
 
-// "musical"
-DRUMS_VERSE = sequence(8);
-note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(1.00, RideCymbal1, DRUM_DEF_VOL);
-note(1.10, RideCymbal1, DRUM_DEF_VOL);
-note(1.90, HiMidTom, DRUM_DEF_VOL);
-note(2.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(3.00, RideCymbal1, DRUM_DEF_VOL);
-note(3.10, RideCymbal1, DRUM_DEF_VOL);
-note(4.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(5.00, RideCymbal1, DRUM_DEF_VOL);
-note(5.10, RideCymbal1, DRUM_DEF_VOL);
-note(5.90, HiMidTom, DRUM_DEF_VOL);
-note(6.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(7.00, CrashCymbal2, DRUM_DEF_VOL);
 
 // Using patterns. Each hit is 1/16 note - fixed res for now.
 DRUMS_SIMPLE = sequence(8);
 note(x-------x-------x-------x-------, AcousticBassDrum, 90);
 note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
 
-////// Triggered in script //////
-DYNAMIC_SEQ = sequence(8);
+////// Sequenced triggered in script //////
+DSEQ1 = sequence(8);
 note(0.00, G.3, 90, 0.60);
 note(1.00, A.3, 90, 0.60);
 note(2.00, Bb.3, 90, 0.60);
 note(3.00, C.4, 90, 0.60);
+
+DSEQ2 = sequence(12);
+note(2.00, G.3, 90, 0.60);
+note(5.00, A.3, 90, 0.60);
+note(9.00, Bb.3, 90, 0.60);
+note(11.00, C.4, 90, 0.60);
+
+DSEQ3 = sequence(19);
+note(7.00, G.3, 90, 0.60);
+note(12.00, A.3, 90, 0.60);
+note(14.00, Bb.3, 90, 0.60);
+note(16.00, C.4, 90, 0.60);
 
 
 
@@ -135,75 +127,74 @@ float posY = 50;
 int velX = 3;
 int velY = 3;
 int ballSize = 40;
+int[] scaleNotes;
 
-////// Nebulator midi stuff //////
+int[] notesPlaying;
+
+
+
+public override void setup()
+{
+    println("setup()");
+    scaleNotes = getScaleNotes("Algerian", "G.4");
+    println("scaleNotes", scaleNotes.Length);
+    notesPlaying = new int[scaleNotes.Length];
+
+    // Patches (optional). Only needed if using the Windows GM.
+    sendPatch(KEYS, AcousticGrandPiano);
+    sendPatch(BASS, AcousticBass);
+    sendPatch(SYNTH, Pad3Polysynth);
+}
+
+
 public override void step()
-{
-    algoSeq();
-    //simpleSeq();
-}
-
-
-
-// TODO1 all this algo stuff:
-//
-// Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
-// http://spheric-lounge-live-ambient-music.blogspot.com/
-//
-// The random item stream pattern type uses the optional keyword :weight to alter the probability 
-// of an event being selected in relation to the other events in the item stream.
-// need this, for scale note selections.
-// 
-// The graph item stream pattern type creates an item stream of user-specified rules for traversing a series 
-// of nodes called a graph.
-// my loops - rules to change/transition.
-//
-// Sonification uses data that is typically not musical and involves remapping this to musical parameters 
-// to create a composition.
-public void algoSeq()
-{
-
-
-    // scales to play with. assumes [0] is the key.
-    //int MajorScale[];  1 2 3 4 5 6 7 
-    //int NaturalMinorScale[];  1 2 b3 4 5 b6 b7
-    //Chord M: 1 3 5
-
-
-    
-
-
-}
-
-
-// Play a sequence periodically. TODO2 Make this sort of stuff cleaner/easier?
-public void simpleSeq()
 {
     if(tock == 0)
     {
-        // On the one - time to do something.
-        switch(tick)
+        algoSequences();
+        //algoRandom();
+    }
+}
+
+void algoSequences() // oops can't do loopy stuff like this with midi!
+{
+    if(tick % 9 == 0)
+    {
+        playSequence(KEYS, DSEQ1);
+    }
+
+    if(tick % 13 == 0)
+    {
+        playSequence(KEYS, DSEQ2);
+    }
+
+    if(tick % 20 == 0)
+    {
+        playSequence(KEYS, DSEQ3);
+    }
+}
+
+void algoRandom()
+{
+    if(random(3) == 0)
+    {
+        int which = random(scaleNotes.Length);
+
+        if(notesPlaying[which] == 0)
         {
-            case 0:
-            case 16:
-                playSequence(BALL, DYNAMIC_SEQ);
-                break;
+            int dur = random(4, 20);
+            notesPlaying[which] = tick + dur;
+            sendMidiNote(KEYS, scaleNotes[which], 95, dur);
+        }
+    }
 
-            case 8:
-                sendMidiNote(BALL, "D.4", 95, 0.00); // named note on, no chase
-                break;
-
-            case 12:
-                sendMidiNote(BALL, 62, 0, 0.00); // numbered note off
-                break;
-
-            case 24:
-            case 25:
-            case 26:
-            case 27:
-                int notenum = (int)random(40, 70);
-                sendMidiNote(BALL, notenum, 95, 1.09);
-                break;
+    // Turn off any scheduled to stop now.
+    for(int i = 0;i < notesPlaying.Length;i++)
+    {
+        if(notesPlaying[i] != 0 && notesPlaying[i] == tick)
+        {
+            sendMidiNote(KEYS, scaleNotes[i], 0, 0.00);
+            notesPlaying[i] = 0;
         }
     }
 }
@@ -214,43 +205,19 @@ public void On_MODN()
     modulate(KEYS, MODN);
 }
 
-////// Nebulator graphics stuff //////
-public override void setup()
-{
-    println("setup()");
-
-    // Patches (optional). Only needed if using the Windows GM.
-    sendPatch(KEYS, AcousticGrandPiano);
-    sendPatch(BASS, AcousticBass);
-    sendPatch(BALL, Pad3Polysynth);
-}
-
 public override void draw()
 {
     background(COL1, 100, 200);
 
     // Recursive:
     // noLoop(); // run once only
-    // drawRecursive(0, 0, width / 2, 1); // This uses a whole core with GDI
+    // drawRecursive(0, 0, width / 2, 1); // TODO2 This uses a whole core with GDI
     // return;
-
-    if(playing && moveBall())
-    {
-        int notenum = (int)random(40, 70);
-        sendMidiNote(BALL, notenum, 95, 1.09);
-    }
-
-    // Draw the ball.
-    noStroke();
-    int x = (int)map(posX, 0, width, 0, 255);
-    color c = color(x, (x + 100) % 256, (x + 200) % 256);
-    fill(c);
-    ellipse(posX, posY, ballSize, ballSize);
 
     if (mousePressedP)
     {
         //println("mouse is pressed");
-        fill((int)random(255), (int)random(255), (int)random(255));
+        fill(random(255), random(255), random(255));
         strokeWeight(2);
         stroke(0, 100);
         ellipse(mouseX, mouseY, 80, 80);
@@ -260,51 +227,8 @@ public override void draw()
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
-    int x = (int)map(mouseX, 0, width, 40, 100);
-    sendMidiNote(BALL, x, 90, 0.48);
-}
-
-public override void keyPressed()
-{
-    println("keyPressed:", key);
-
-    int v = key == 'c' ? 60 : 70;
-    sendMidiNote(KEYS, v, KEYS_DEF_VOL, 1.48);
-}
-
-bool moveBall()
-{
-    bool edge = false;
-
-    ///// Move the ball. /////
-    posX += velX;
-    if (posX <= ballSize / 2)
-    {
-        posX = ballSize / 2;
-        velX = -velX;
-        edge = true;
-    }
-    else if (posX >= width - ballSize / 2)
-    {
-        posX = width - ballSize / 2;
-        velX = -velX;
-        edge = true;
-    }
-
-    posY += velY;
-    if (posY <= ballSize / 2)
-    {
-        posY = ballSize / 2;
-        velY = -velY;
-        edge = true;
-    }
-    else if (posY >= height - ballSize / 2)
-    {
-        posY = height - ballSize / 2;
-        velY = -velY;
-        edge = true;
-    }
-    return edge;
+    int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
+    sendMidiNote(SYNTH, sn, 90, 0.48);
 }
 
 

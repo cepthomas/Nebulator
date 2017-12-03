@@ -87,7 +87,7 @@ namespace Nebulator.FastTimer
 
             if (_lastTicks != -1)
             {
-                dt = TicksToMsec(t - _lastTicks);
+                dt = Utils.TicksToMsec(t - _lastTicks);
                 _times.Add(dt);
             }
             _lastTicks = t;
@@ -113,7 +113,7 @@ namespace Nebulator.FastTimer
 
             if (_lastTicks != -1)
             {
-                double dt = TicksToMsec(t - _lastTicks);
+                double dt = Utils.TicksToMsec(t - _lastTicks);
                 _times.Add(dt);
             }
             _lastTicks = t;
@@ -134,16 +134,6 @@ namespace Nebulator.FastTimer
             }
 
             return stats;
-        }
-
-        /// <summary>
-        /// Conversion.
-        /// </summary>
-        /// <param name="ticks"></param>
-        /// <returns></returns>
-        double TicksToMsec(long ticks)
-        {
-            return 1000.0 * ticks / Stopwatch.Frequency;
         }
     }
 }

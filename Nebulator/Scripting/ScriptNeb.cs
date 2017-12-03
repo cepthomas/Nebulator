@@ -72,7 +72,7 @@ namespace Nebulator.Scripting
         public void sendMidiNote(Track track, string snote, int vol, double dur)
         {
             Note note = new Note(snote);
-            note.ChordNotes.ForEach(n => sendMidiNote(track, n, vol, dur));
+            note.NoteConstituents.ForEach(n => sendMidiNote(track, n, vol, dur));
         }
 
         /// <summary>
@@ -179,6 +179,18 @@ namespace Nebulator.Scripting
         public void playSequence(Track track, Sequence seq, int tick = -1)
         {
             RuntimeSteps.Add(StepUtils.ConvertToSteps(track, seq, tick));
+        }
+
+        /// <summary>
+        /// Get an array of scale notes.
+        /// </summary>
+        /// <param name="scale">One of the named scales from ScriptDefinitions.md.</param>
+        /// <param name="key">Note name and octave.</param>
+        /// <returns>Array of notes or empty if invalid.</returns>
+        public int[] getScaleNotes(string scale, string key)
+        {
+            List<int> notes = NoteUtils.GetScaleNotes(scale, key);
+            return notes != null ? notes.ToArray() : new int[0];
         }
         #endregion
     }

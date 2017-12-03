@@ -3,7 +3,6 @@
 // Has declarative and algorithmic components.
 // Warning: this is not actual music!
 
-
 ///// Include other lib files. /////
 include(utils.neb);
 
@@ -52,6 +51,8 @@ BALL = track(3, 0);
 
 
 ///// Sequences and Notes /////
+
+////// Keys //////
 KEYS_VERSE1 = sequence(16);
 note(0.00, G.4.m7, 90, 1.48);
 note(1.70, G.4.m7, 90, 0.10);
@@ -84,6 +85,7 @@ note(6.48, D#.2, KEYS_DEF_VOL, 0.48);
 note(7.00, C.2, 90, 0.48);
 note(7.48, B.2.m7, 90, 0.48);
 
+////// Bass //////
 BASS_VERSE = sequence(8);
 note(0.00, C.2, 70, 0.25);
 note(0.75, C.2, 70, 0.1/8);
@@ -91,7 +93,9 @@ note(3.48, E.2, 70, 0.25);
 note(4.00, C.2, 70, 1.00);
 note(7.75, A#.2, 70, 0.10);
 
-// Drums
+////// Drums //////
+
+// "musical"
 DRUMS_VERSE = sequence(8);
 note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(1.00, RideCymbal1, DRUM_DEF_VOL);
@@ -107,17 +111,18 @@ note(5.90, HiMidTom, DRUM_DEF_VOL);
 note(6.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(7.00, CrashCymbal2, DRUM_DEF_VOL);
 
-// Drums using patterns.
+// Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
 DRUMS_SIMPLE = sequence(8);
 note(x-------x-------x-------x-------, AcousticBassDrum, 90);
 note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
 
-// Triggered in script.
+////// Sequenced triggered in script //////
 DYNAMIC_SEQ = sequence(8);
 note(0.00, G.3, 90, 0.60);
 note(1.00, A.3, 90, 0.60);
 note(2.00, Bb.3, 90, 0.60);
 note(3.00, C.4, 90, 0.60);
+
 
 
 /////////////////////////////////////////////
@@ -130,13 +135,16 @@ float posY = 50;
 int velX = 3;
 int velY = 3;
 int ballSize = 40;
+int[] scaleNotes;
+
 
 ////// Nebulator midi stuff //////
 public override void step()
 {
+    // Play a sequence periodically.
     if(tock == 0)
     {
-        // Time to do something.
+        // On the one - time to do something.
         switch(tick)
         {
             case 0:
@@ -156,7 +164,7 @@ public override void step()
             case 25:
             case 26:
             case 27:
-                int notenum = (int)random(40, 70);
+                int notenum = random(40, 70);
                 sendMidiNote(BALL, notenum, 95, 1.09);
                 break;
         }
@@ -173,6 +181,7 @@ public void On_MODN()
 public override void setup()
 {
     println("setup()");
+    scaleNotes = getScaleNotes("Algerian", "C.4");
 
     // Patches (optional). Only needed if using the Windows GM.
     sendPatch(KEYS, AcousticGrandPiano);
@@ -184,13 +193,9 @@ public override void draw()
 {
     background(COL1, 100, 200);
 
-    textSize(24);
-    fill(255); // white
-    text("Clicka mousa", 10, 10);
-
     if(playing && moveBall())
     {
-        int notenum = (int)random(40, 70);
+        int notenum = random(40, 70);
         sendMidiNote(BALL, notenum, 95, 1.09);
     }
 
@@ -204,7 +209,7 @@ public override void draw()
     if (mousePressedP)
     {
         //println("mouse is pressed");
-        fill((int)random(255), (int)random(255), (int)random(255));
+        fill(random(255), random(255), random(255));
         strokeWeight(2);
         stroke(0, 100);
         ellipse(mouseX, mouseY, 80, 80);
@@ -214,12 +219,14 @@ public override void draw()
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
-    int x = (int)map(mouseX, 0, width, 40, 100);
-    sendMidiNote(BALL, x, 90, 0.48);
+    int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
+    sendMidiNote(BALL, sn, 90, 0.48);
 }
 
 public override void keyPressed()
 {
+    println("keyPressed:", key);
+
     int v = key == 'c' ? 60 : 70;
     sendMidiNote(KEYS, v, KEYS_DEF_VOL, 1.48);
 }

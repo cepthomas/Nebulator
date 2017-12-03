@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Linq;
 using System.Drawing;
+using System.Diagnostics;
 
 
 namespace Nebulator.Common
@@ -129,6 +130,16 @@ namespace Nebulator.Common
             double integral = Math.Truncate(val);
             double fractional = val - integral;
             return (integral, fractional);
+        }
+
+        /// <summary>
+        /// Conversion.
+        /// </summary>
+        /// <param name="ticks"></param>
+        /// <returns></returns>
+        public static double TicksToMsec(long ticks)
+        {
+            return 1000.0 * ticks / Stopwatch.Frequency;
         }
         #endregion
 

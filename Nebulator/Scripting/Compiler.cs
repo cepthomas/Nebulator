@@ -77,32 +77,38 @@ namespace Nebulator.Scripting
         /// Run the Compiler.
         /// </summary>
         /// <param name="nebfn">Fully qualified path to topmost file.</param>
+        /// <returns>The newly minted script object or null if failed.</returns>
         public Script Execute(string nebfn)
         {
-            _logger.Info($"Compiling {nebfn}.");
+            Script script = null;
 
-            // Reset everything.
-            _filesToCompile.Clear();
-            _consts.Clear();
-            _initLines.Clear();
-            _dynamic = new Dynamic();
-            TimeDefs.Clear();
-            Errors.Clear();
+            if(nebfn != Globals.UNKNOWN_STRING && File.Exists(nebfn))
+            {
+                _logger.Info($"Compiling {nebfn}.");
 
-            // Init things.
-            _scriptName = Path.GetFileNameWithoutExtension(nebfn);
-            _baseDir = Path.GetDirectoryName(nebfn);
-            LoadDefinitions();
+                // Reset everything.
+                _filesToCompile.Clear();
+                _consts.Clear();
+                _initLines.Clear();
+                _dynamic = new Dynamic();
+                TimeDefs.Clear();
+                Errors.Clear();
 
-            // Parse.
-            DateTime startTime = DateTime.Now;
-            Parse(nebfn);
-            _logger.Info($"Parse files took {(DateTime.Now - startTime).Milliseconds} msec.");
+                // Init things.
+                _scriptName = Path.GetFileNameWithoutExtension(nebfn);
+                _baseDir = Path.GetDirectoryName(nebfn);
+                LoadDefinitions();
 
-            // Compile.
-            startTime = DateTime.Now;
-            Script script = Compile();
-            _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
+                // Parse.
+                DateTime startTime = DateTime.Now;
+                Parse(nebfn);
+                _logger.Info($"Parse files took {(DateTime.Now - startTime).Milliseconds} msec.");
+
+                // Compile.
+                startTime = DateTime.Now;
+                script = Compile();
+                _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
+            }
 
             return script;
         }
@@ -300,7 +306,6 @@ namespace Nebulator.Scripting
                 cp.ReferencedAssemblies.Add("System.dll");
                 cp.ReferencedAssemblies.Add("System.Core.dll");
                 cp.ReferencedAssemblies.Add("System.Drawing.dll");
-                //cp.ReferencedAssemblies.Add("System.Drawing.Drawing2D.dll");
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.exe");
@@ -310,7 +315,11 @@ namespace Nebulator.Scripting
 
                 // Create output area.
                 string tempdir = Path.Combine(_baseDir, "temp");
-                if (!Directory.Exists(tempdir))
+                if (Directory.Exists(tempdir))
+                {
+                    Directory.GetFiles(tempdir).ForEach(f => File.Delete(f));
+                }
+                else
                 {
                     Directory.CreateDirectory(tempdir);
                 }
@@ -495,6 +504,7 @@ namespace Nebulator.Scripting
             {
                 $"//{fn}",
                 "using System;",
+                "using System.Collections;",
                 "using System.Collections.Generic;",
                 "using System.Text;",
                 "using System.Drawing;",
