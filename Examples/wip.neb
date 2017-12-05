@@ -1,0 +1,146 @@
+
+///// Some real? stuff.
+
+
+///// Constants /////
+// When to play.
+WHEN1 = constant(0);
+WHEN2 = constant(32);
+WHEN3 = constant(64);
+WHEN4 = constant(96);
+// Total length.
+TLEN = constant(128);
+// Volumes.
+KEYS_DEF_VOL = constant(100);
+DRUM_DEF_VOL = constant(100);
+
+///// Variables /////
+COL1 = variable(200); // change color
+MODN = variable(0); // modulate notes
+PITCH = variable(8192); // center is 8192
+
+///// Realtime Controllers /////
+MI1 = midiin(1, 4, MODN);
+MO1 = midiout(1, Pitch, PITCH);
+
+////// Levers //////
+L1 = lever(0, 255, COL1);
+L2 = lever(0, 16383, PITCH); // max range
+L3 = lever(-10, 10, MODN);
+
+
+///// Tracks and Loops /////
+KEYS = track(1, 5, 0, 0);
+loop(WHEN1, WHEN2, KEYS_VERSE1);
+loop(WHEN2, WHEN3, KEYS_VERSE2);
+loop(WHEN3, WHEN4, KEYS_VERSE1);
+loop(WHEN4, TLEN, KEYS_VERSE2);
+
+BASS = track(2, 2, 0, 0);
+loop(WHEN1, TLEN, BASS_VERSE);
+
+DRUMS = track(10, 4, 0, 0);
+loop(WHEN1, TLEN, DRUMS_SIMPLE);
+
+SYNTH = track(3, 0);
+
+
+///// Sequences and Notes /////
+
+////// Keys //////
+KEYS_VERSE1 = sequence(16);
+note(0.00, G.4.m7, 90, 1.48);
+note(1.70, G.4.m7, 90, 0.10);
+note(2.00, G.4.m7, 90, 0.10);
+note(4.00, G.4.m7, 90, 1.48);
+note(5.70, G.4.m7, 90, 0.10);
+note(6.00, G.4.m7, 90, 0.10);
+note(8.00, G.4.m6, 90, 1.48);
+note(9.70, G.4.m6, 90, 0.10);
+note(10.00, G.4.m6, 90, 0.10);
+note(12.00, G.4.m6, 90, 1.48);
+note(13.70, G.4.m6, 90, 0.10);
+note(14.00, G.4.m6, 90, 0.10);
+
+KEYS_VERSE2 = sequence(8);
+note(0.00, F.4.???, 90, 0.48);
+note(0.48, D#.4, KEYS_DEF_VOL, 0.48);
+note(1.00, C.4, 90, 0.48);
+note(1.48, B.4.m7, 90, 0.48);
+note(2.00, F.5, 90, 0.48);
+note(2.48, D#.5, KEYS_DEF_VOL, 0.48);
+note(3.00, C.5, 90, 0.48);
+note(3.48, B.5.m7, 90, 0.48);
+note(4.00, F.3, 90, 0.48);
+note(4.48, D#.3, KEYS_DEF_VOL, 0.48);
+note(5.00, C.3, 90, 0.48);
+note(5.48, B.3.m7, 90, 0.48);
+note(6.00, F.2, 90, 0.48);
+note(6.48, D#.2, KEYS_DEF_VOL, 0.48);
+note(7.00, C.2, 90, 0.48);
+note(7.48, B.2.m7, 90, 0.48);
+
+////// Bass //////
+BASS_VERSE = sequence(8);
+note(0.00, C.2, 70, 0.25);
+note(0.75, C.2, 70, 0.1/8);
+note(3.48, E.2, 70, 0.25);
+note(4.00, C.2, 70, 1.00);
+note(7.75, A#.2, 70, 0.10);
+
+////// Drums //////
+
+
+// Using patterns. Each hit is 1/16 note - fixed res for now.
+DRUMS_SIMPLE = sequence(8);
+note(x-------x-------x-------x-------, AcousticBassDrum, 90);
+note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
+
+
+/////////////////////////////////////////////
+
+///// Functions /////
+
+
+public override void setup()
+{
+    println("setup()");
+
+    // Patches (optional). Only needed if using the Windows GM.
+    sendPatch(KEYS, AcousticGrandPiano);
+    sendPatch(BASS, AcousticBass);
+    sendPatch(SYNTH, Pad3Polysynth);
+}
+
+
+public override void step()
+{
+
+}
+
+public void On_MODN()
+{
+    println("MODN changed to", MODN);
+    modulate(KEYS, MODN);
+}
+
+public override void draw()
+{
+    background(COL1, 100, 200);
+
+    if (mousePressedP)
+    {
+        //println("mouse is pressed");
+        fill(random(255), random(255), random(255));
+        strokeWeight(2);
+        stroke(0, 100);
+        ellipse(mouseX, mouseY, 80, 80);
+    }
+}
+
+public override void mouseClicked()
+{
+    // Note selected based on mouse position.
+    int sn = (int)map(mouseX, 0, width, 50, 70);
+    sendMidiNote(SYNTH, sn, 90, 0.48);
+}

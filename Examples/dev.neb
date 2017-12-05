@@ -121,17 +121,8 @@ note(16.00, C.4, 90, 0.60);
 
 ///// Functions /////
 
-// Simple variables for functions.
-float posX = 50;
-float posY = 50;
-int velX = 3;
-int velY = 3;
-int ballSize = 40;
 int[] scaleNotes;
-
 int[] notesPlaying;
-
-
 
 public override void setup()
 {
@@ -151,8 +142,8 @@ public override void step()
 {
     if(tock == 0)
     {
-        algoSequences();
-        //algoRandom();
+        //algoSequences();
+        algoRandom();
     }
 }
 

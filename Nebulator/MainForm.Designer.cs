@@ -124,7 +124,7 @@
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
             this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.logToolStripMenuItem.Text = "View Log";
-            this.logToolStripMenuItem.Click += new System.EventHandler(this.Log_Click);
+            this.logToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
             // 
             // importMidiToolStripMenuItem
             // 

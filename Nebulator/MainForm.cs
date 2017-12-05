@@ -58,6 +58,8 @@ namespace Nebulator
 
         /// <summary>UI update rate.</summary>
         int _fps = 10;
+
+        enum PlayCommand { Start, Stop, Rewind, StopRewind, UpdateUiTime }
         #endregion
 
         #region Lifecycle
@@ -134,9 +136,9 @@ namespace Nebulator
             #endregion
 
             ////////////////////// test ///////////////////////
-            _testHost = new Test.TestHost(this);
-            _testHost.Show();
-            _testHost.Go();
+            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\wip.neb");
+            // _testHost = new Test.TestHost(this);
+            // _testHost.Show();
         }
 
         /// <summary>
@@ -237,7 +239,7 @@ namespace Nebulator
             {
                 _logger.Warn("Compile failed.");
                 ok = false;
-                Globals.Playing = false;
+                SetPlayStatus(PlayCommand.StopRewind);
                 compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
                 btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
                 _dirtyFiles = true;
@@ -289,10 +291,8 @@ namespace Nebulator
             chkSequence.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "sequence"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
-
             timeMaster.MaxTick = _compiledSteps.MaxTick;
-
-            UpdateTime(true);
+            SetPlayStatus(PlayCommand.StopRewind);
             UpdateMenu();
         }
         #endregion
@@ -401,17 +401,19 @@ namespace Nebulator
                         // Check for end and loop condition.
                         if (Globals.CurrentStepTime.Tick >= _compiledSteps.MaxTick)
                         {
-                            UpdateTime(true); // reset to beginning.
-                            if (!chkLoop.Checked) // stop now
+                            if (chkLoop.Checked) // keep going
                             {
+                                SetPlayStatus(PlayCommand.Rewind);
+                            }
+                            else // stop now
+                            {
+                                SetPlayStatus(PlayCommand.StopRewind);
                                 Globals.MidiInterface.KillAll(); // just in case
-                                Globals.Playing = false;
                             }
                         }
                     }
                     // else keep going
-
-                    UpdateTime(false);
+                    SetPlayStatus(PlayCommand.UpdateUiTime);
                 }
 
                 ///// UI updates /////
@@ -674,7 +676,7 @@ namespace Nebulator
         /// </summary>
         void Rewind_Click(object sender, EventArgs e)
         {
-            UpdateTime(true);
+            SetPlayStatus(PlayCommand.Rewind);
         }
 
         /// <summary>
@@ -690,8 +692,8 @@ namespace Nebulator
         private void Compile_Click(object sender, EventArgs e)
         {
             Compile();
+            SetPlayStatus(PlayCommand.StopRewind);
             UpdateMenu();
-            UpdateTime(true);
         }
 
         /// <summary>
@@ -700,6 +702,7 @@ namespace Nebulator
         void Time_ValueChanged(object sender, EventArgs e)
         {
             Globals.CurrentStepTime = timeMaster.CurrentTime;
+            SetPlayStatus(PlayCommand.UpdateUiTime);
         }
         #endregion
 
@@ -778,7 +781,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Log_Click(object sender, EventArgs e)
+        private void LogShow_Click(object sender, EventArgs e)
         {
             using (Form f = new Form()
             {
@@ -972,24 +975,23 @@ namespace Nebulator
         /// </summary>
         void Play()
         {
-            if (Globals.Playing)
+            if(_script == null)
+            {
+                _logger.Warn("No script file loaded");
+                SetPlayStatus(PlayCommand.Stop);
+            }
+            else if (Globals.Playing)
             {
                 ///// Stop!
-                Globals.Playing = false;
+                SetPlayStatus(PlayCommand.Stop);
 
-                // Send midi stop all notes, stop sequencer.
+                // Send midi stop all notes just in case.
                 Globals.MidiInterface.KillAll();
             }
             else
             {
                 ///// Start!
-                bool ok = true;
-
-                if (_dirtyFiles)
-                {
-                    ok = Compile();
-                    UpdateTime(true);
-                }
+                bool ok = _dirtyFiles ? Compile() : true;
 
                 if (ok)
                 {
@@ -998,8 +1000,43 @@ namespace Nebulator
                     _script.setup();
                 }
 
-                Globals.Playing = ok;
+                SetPlayStatus(ok ? PlayCommand.Start : PlayCommand.Stop);
             }
+        }
+
+        /// <summary>
+        /// Update everything per param.
+        /// </summary>
+        /// <param name="cmd"></param>
+        void SetPlayStatus(PlayCommand cmd)
+        {
+            switch (cmd)
+            {
+                case PlayCommand.Start:
+                    chkPlay.Checked = true;
+                    Globals.Playing = true;
+                    break;
+
+                case PlayCommand.Stop:
+                    chkPlay.Checked = false;
+                    Globals.Playing = false;
+                    break;
+
+                case PlayCommand.Rewind:
+                    Globals.CurrentStepTime.Reset();
+                    break;
+
+                case PlayCommand.StopRewind:
+                    chkPlay.Checked = false;
+                    Globals.Playing = false;
+                    Globals.CurrentStepTime.Reset();
+                    break;
+
+                case PlayCommand.UpdateUiTime:
+                    break;
+            }
+
+            timeMaster.CurrentTime = Globals.CurrentStepTime;
         }
         #endregion
 
@@ -1040,15 +1077,15 @@ namespace Nebulator
         /// <param name="e"></param>
         void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Space)
-            {
-                e.Handled = true;
-            }
-            else
-            {
-                // Pass along.
-                e.Handled = false;
-            }
+            //if (e.KeyCode == Keys.Space)
+            //{
+            //    e.Handled = true;
+            //}
+            //else
+            //{
+            //    // Pass along.
+            //    e.Handled = false;
+            //}
         }
 
         /// <summary>
@@ -1058,15 +1095,16 @@ namespace Nebulator
         /// <param name="e"></param>
         void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if(e.KeyChar == ' ')
-            {
-                e.Handled = true;
-            }
-            else
-            {
-                // Pass along - we don't care.
-                e.Handled = false;
-            }
+            //// Watch for space bar which starts/stops play.
+            //if(e.KeyChar == ' ')
+            //{
+            //    e.Handled = true;
+            //}
+            //else
+            //{
+            //    // Pass along - we don't care.
+            //    e.Handled = false;
+            //}
         }
         #endregion
 
@@ -1099,7 +1137,6 @@ namespace Nebulator
             double tocksPerSec = tocksPerMinute / 60;
             double tocksPerMsec = tocksPerSec / 1000;
             double msecPerTock = 1 / tocksPerMsec;
-
             _nebTimer.SetTimer("NEB", (int)msecPerTock);
         }
 
@@ -1112,19 +1149,6 @@ namespace Nebulator
             double framesPerMsec = (double)_fps / 1000;
             double msecPerFrame = 1 / framesPerMsec;
             _nebTimer.SetTimer("UI", (int)msecPerFrame);
-        }
-
-        /// <summary>
-        /// Update the global time and the UI.
-        /// </summary>
-        void UpdateTime(bool reset)
-        {
-            if (reset)
-            {
-                Globals.CurrentStepTime.Reset();
-            }
-
-            timeMaster.CurrentTime = Globals.CurrentStepTime;
         }
 
         /// <summary>
