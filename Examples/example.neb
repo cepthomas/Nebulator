@@ -54,44 +54,44 @@ BALL = track(3, 0);
 
 ////// Keys //////
 KEYS_VERSE1 = sequence(16);
-note(0.00, G.4.m7, 90, 1.48);
-note(1.70, G.4.m7, 90, 0.10);
+note(0.00, G.4.m7, 90, 1.32);
+note(1.60, G.4.m7, 90, 0.10);
 note(2.00, G.4.m7, 90, 0.10);
-note(4.00, G.4.m7, 90, 1.48);
-note(5.70, G.4.m7, 90, 0.10);
+note(4.00, G.4.m7, 90, 1.32);
+note(5.60, G.4.m7, 90, 0.10);
 note(6.00, G.4.m7, 90, 0.10);
-note(8.00, G.4.m6, 90, 1.48);
-note(9.70, G.4.m6, 90, 0.10);
+note(8.00, G.4.m6, 90, 1.32);
+note(9.60, G.4.m6, 90, 0.10);
 note(10.00, G.4.m6, 90, 0.10);
-note(12.00, G.4.m6, 90, 1.48);
-note(13.70, G.4.m6, 90, 0.10);
+note(12.00, G.4.m6, 90, 1.32);
+note(13.60, G.4.m6, 90, 0.10);
 note(14.00, G.4.m6, 90, 0.10);
 
 KEYS_VERSE2 = sequence(8);
-note(0.00, F.4.???, 90, 0.48);
-note(0.48, D#.4, KEYS_DEF_VOL, 0.48);
-note(1.00, C.4, 90, 0.48);
-note(1.48, B.4.m7, 90, 0.48);
-note(2.00, F.5, 90, 0.48);
-note(2.48, D#.5, KEYS_DEF_VOL, 0.48);
-note(3.00, C.5, 90, 0.48);
-note(3.48, B.5.m7, 90, 0.48);
-note(4.00, F.3, 90, 0.48);
-note(4.48, D#.3, KEYS_DEF_VOL, 0.48);
-note(5.00, C.3, 90, 0.48);
-note(5.48, B.3.m7, 90, 0.48);
-note(6.00, F.2, 90, 0.48);
-note(6.48, D#.2, KEYS_DEF_VOL, 0.48);
-note(7.00, C.2, 90, 0.48);
-note(7.48, B.2.m7, 90, 0.48);
+note(0.00, F.4.???, 90, 0.32);
+note(0.32, D#.4, KEYS_DEF_VOL, 0.32);
+note(1.00, C.4, 90, 0.32);
+note(1.32, B.4.m7, 90, 0.32);
+note(2.00, F.5, 90, 0.32);
+note(2.32, D#.5, KEYS_DEF_VOL, 0.32);
+note(3.00, C.5, 90, 0.32);
+note(3.32, B.5.m7, 90, 0.32);
+note(4.00, F.3, 90, 0.32);
+note(4.32, D#.3, KEYS_DEF_VOL, 0.32);
+note(5.00, C.3, 90, 0.32);
+note(5.32, B.3.m7, 90, 0.32);
+note(6.00, F.2, 90, 0.32);
+note(6.32, D#.2, KEYS_DEF_VOL, 0.32);
+note(7.00, C.2, 90, 0.32);
+note(7.32, B.2.m7, 90, 0.32);
 
 ////// Bass //////
 BASS_VERSE = sequence(8);
 note(0.00, C.2, 70, 0.25);
-note(0.75, C.2, 70, 0.1/8);
-note(3.48, E.2, 70, 0.25);
+note(0.48, C.2, 70, 0.1/8);
+note(3.32, E.2, 70, 0.25);
 note(4.00, C.2, 70, 1.00);
-note(7.75, A#.2, 70, 0.10);
+note(7.48, A#.2, 70, 0.10);
 
 ////// Drums //////
 
@@ -100,14 +100,14 @@ DRUMS_VERSE = sequence(8);
 note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(1.00, RideCymbal1, DRUM_DEF_VOL);
 note(1.10, RideCymbal1, DRUM_DEF_VOL);
-note(1.90, HiMidTom, DRUM_DEF_VOL);
+note(1.60, HiMidTom, DRUM_DEF_VOL);
 note(2.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(3.00, RideCymbal1, DRUM_DEF_VOL);
 note(3.10, RideCymbal1, DRUM_DEF_VOL);
 note(4.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(5.00, RideCymbal1, DRUM_DEF_VOL);
 note(5.10, RideCymbal1, DRUM_DEF_VOL);
-note(5.90, HiMidTom, DRUM_DEF_VOL);
+note(5.60, HiMidTom, DRUM_DEF_VOL);
 note(6.00, AcousticBassDrum, DRUM_DEF_VOL);
 note(7.00, CrashCymbal2, DRUM_DEF_VOL);
 
@@ -220,7 +220,7 @@ public override void mouseClicked()
 {
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    sendMidiNote(BALL, sn, 90, 0.48);
+    sendMidiNote(BALL, sn, 90, 0.32);
 }
 
 public override void keyPressed()
@@ -228,7 +228,7 @@ public override void keyPressed()
     println("keyPressed:", key);
 
     int v = key == 'c' ? 60 : 70;
-    sendMidiNote(KEYS, v, KEYS_DEF_VOL, 1.48);
+    sendMidiNote(KEYS, v, KEYS_DEF_VOL, 1.32);
 }
 
 bool moveBall()

@@ -1,0 +1,23 @@
+{
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				".vs",
+				"bin",
+				"obj",
+				"packages",
+				"Wiki"
+			],
+			"path": "C:\\Dev\\GitHub\\Nebulator"
+		},
+        {
+            "path": "C:\\Dev\\GitHub\\Nebulator.wiki"
+        },
+		{
+			"path": "C:\\Users\\cet\\AppData\\Local\\Nebulator"
+		},
+	],
+    "solution_file": "./Nebulator.sln"        
+}

@@ -16,7 +16,7 @@ namespace Nebulator
         public const string UNKNOWN_STRING = "???";
 
         /// <summary>Subdivision setting.</summary>
-        public const int TOCKS_PER_TICK = 96;
+        public const int TOCKS_PER_TICK = 64; // was 96;
 
         /// <summary>Indicates needs user involvement.</summary>
         public static Color ATTENTION_COLOR = Color.Red;

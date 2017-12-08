@@ -188,6 +188,8 @@ namespace Nebulator.Midi
 
                                 if(chase)
                                 {
+                                    // Remove any lingering note offs.
+                                    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber);
                                     _stops.Add(new StepNoteOff(stt));
                                 }
                             }

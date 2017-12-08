@@ -19,6 +19,9 @@ namespace Nebulator.Scripting
 
         #region User script properties
         /// <summary>Current Nebulator Tick.</summary>
+        public Time stepTime { get { return Globals.CurrentStepTime; } }
+
+        /// <summary>Current Nebulator Tick.</summary>
         public int tick { get { return Globals.CurrentStepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>

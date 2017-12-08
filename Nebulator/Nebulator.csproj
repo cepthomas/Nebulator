@@ -37,6 +37,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.TextEditor, Version=3.2.1.6466, Culture=neutral, PublicKeyToken=4d61825e8dd49f1a, processorArchitecture=MSIL">
+      <HintPath>..\packages\ICSharpCode.TextEditor.3.2.1.6466\lib\Net20\ICSharpCode.TextEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Markdig, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Markdig.0.13.0\lib\net40\Markdig.dll</HintPath>
     </Reference>
@@ -95,6 +98,18 @@
     </Compile>
     <Compile Include="Controls\TimeControl.Designer.cs">
       <DependentUpon>TimeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\Finder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editor\Finder.Designer.cs">
+      <DependentUpon>Finder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\NebEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\NebEditor.Designer.cs">
+      <DependentUpon>NebEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Scripting\Dynamic.cs" />
     <Compile Include="Scripting\Script.cs" />
@@ -181,6 +196,7 @@
     <Compile Include="FastTimer\MultimediaTimer.cs" />
     <Compile Include="FastTimer\TimingAnalyzer.cs" />
     <Compile Include="Scripting\Wobbler.cs" />
+    <Compile Include="Test\AltScript.cs" />
     <Compile Include="Test\SimpleUT.cs" />
     <Compile Include="Test\TestCases_SUT.cs" />
     <Compile Include="Test\TestHost.cs">
@@ -242,6 +258,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Grid.resx">
       <DependentUpon>Grid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\Finder.resx">
+      <DependentUpon>Finder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\NebEditor.resx">
+      <DependentUpon>NebEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

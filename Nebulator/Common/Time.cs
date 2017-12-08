@@ -108,7 +108,7 @@ namespace Nebulator.Common
         }
         #endregion
 
-        #region Good practice for custom classess
+        #region Overrides and operators for custom classess
         public override bool Equals(object obj)
         {
             return Equals(obj as Time);
@@ -128,26 +128,41 @@ namespace Nebulator.Common
         {
             return (object)t1 != null && (object)t2 != null && (t1.Tick == t2.Tick) && (t1.Tock == t2.Tock);
         }
+
         public static bool operator !=(Time t1, Time t2)
         {
             return (object)t1 == null || (object)t2 == null || (t1.Tick != t2.Tick) || (t1.Tock != t2.Tock);
         }
-        #endregion
 
-        #region Public functions
-        /// <summary>
-        /// Do some math on two Time objects.
-        /// </summary>
-        /// <param name="t1"></param>
-        /// <param name="t2"></param>
-        /// <returns></returns>
+        public static bool operator >(Time t1, Time t2)
+        {
+            return (object)t1 == null || (object)t2 == null || t1.TotalTocks > t2.TotalTocks;
+        }
+
+        public static bool operator >=(Time t1, Time t2)
+        {
+            return (object)t1 == null || (object)t2 == null || t1.TotalTocks >= t2.TotalTocks;
+        }
+
+        public static bool operator <(Time t1, Time t2)
+        {
+            return (object)t1 == null || (object)t2 == null || t1.TotalTocks < t2.TotalTocks;
+        }
+
+        public static bool operator <=(Time t1, Time t2)
+        {
+            return (object)t1 == null || (object)t2 == null || t1.TotalTocks <= t2.TotalTocks;
+        }
+
         public static Time operator +(Time t1, Time t2)
         {
             int tick = t1.Tick + t2.Tick + (t1.Tock + t2.Tock) / Globals.TOCKS_PER_TICK;
             int tock = (t1.Tock + t2.Tock) % Globals.TOCKS_PER_TICK;
             return new Time(tick, tock);
         }
+        #endregion
 
+        #region Public functions
         /// <summary>
         /// Move to the next tock and update clock.
         /// </summary>

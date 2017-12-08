@@ -136,7 +136,7 @@ namespace Nebulator
             #endregion
 
             ////////////////////// test ///////////////////////
-            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\wip.neb");
+            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\airport.neb");
             // _testHost = new Test.TestHost(this);
             // _testHost.Show();
         }

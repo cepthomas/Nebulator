@@ -1,0 +1,832 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"dur",
+				"duration"
+			],
+			[
+				"L",
+				"Loop"
+			],
+			[
+				"le",
+				"Length"
+			],
+			[
+				"scale",
+				"scaleNotes"
+			],
+			[
+				"draw",
+				"drawLSys"
+			],
+			[
+				"Do",
+				"DoStep2"
+			],
+			[
+				"move",
+				"moveBall"
+			],
+			[
+				"Com",
+				"Composition"
+			],
+			[
+				"wa",
+				"Warn"
+			],
+			[
+				"Log",
+				"logMsgDbg"
+			],
+			[
+				"rec",
+				"recipeData"
+			],
+			[
+				"wr",
+				"write"
+			],
+			[
+				"$sc",
+				"$scope\tAngularJS"
+			],
+			[
+				"fo",
+				"fori\tfor i,v in ipairs()"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Examples/airport.neb",
+			"settings":
+			{
+				"buffer_size": 5412,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "Package Control: ",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Remove Package"
+			],
+			[
+				"",
+				"Clipboard Manager: Cut"
+			],
+			[
+				"p",
+				"Package Control: Remove Package"
+			],
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"to",
+				"Toggle ScopeAlways"
+			],
+			[
+				"togg",
+				"Toggle ScopeAlways"
+			],
+			[
+				"tog",
+				"Toggle ScopeAlways"
+			],
+			[
+				"scop",
+				"Toggle ScopeAlways"
+			],
+			[
+				"hex",
+				"Preferences: Hex Viewer Settings – Default"
+			],
+			[
+				"pack",
+				"Package Control: List Packages"
+			],
+			[
+				"pac\t",
+				"Package Control: Install Package"
+			],
+			[
+				"Snippet: ",
+				"Snippet: Comment"
+			],
+			[
+				"termin",
+				"Preferences: Terminal Key Bindings – Default"
+			],
+			[
+				"Pac",
+				"Package Control: Install Package"
+			],
+			[
+				"paac",
+				"Package Control: Install Package"
+			],
+			[
+				"Pa",
+				"Package Control: Discover Packages"
+			],
+			[
+				"Pack",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 540.0
+	},
+	"console":
+	{
+		"height": 213.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Dev/GitHub/Nebulator",
+		"/C/Dev/GitHub/Nebulator/Examples",
+		"/C/Dev/GitHub/Nebulator.wiki"
+	],
+	"file_history":
+	[
+		"/C/Dev/GitHub/Nebulator/Examples/example.neb",
+		"/C/Dev/GitHub/Nebulator.wiki/ScriptApiNeb.md",
+		"/C/Dev/GitHub/Nebulator/Examples/airport.neb",
+		"/C/Dev/GitHub/Nebulator.wiki/ScriptSyntax.md",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Globals.cs",
+		"/C/Dev/GitHub/Nebulator/neb.sublime-project",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Midi/MidiInterface.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/MainForm.cs",
+		"/C/Users/cet/AppData/Roaming/Sublime Text 3/Packages/User/OmniSharpSublime.sublime-settings",
+		"/C/Users/cet/AppData/Roaming/Sublime Text 3/Packages/OmniSharp/PrebuiltOmniSharpServer/config.json",
+		"/C/Users/cet/AppData/Roaming/Sublime Text 3/Packages/OmniSharp/OmniSharpSublime.sublime-settings",
+		"/C/Dev/GitHub/compiled.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/dev.neb",
+		"/C/Dev/_web/musicforairports.js-master/src/musicforairports.js",
+		"/C/Dev/GitHub/Nebulator/Examples/airport.nebp",
+		"/C/Dev/GitHub/Nebulator/Examples/wip.neb",
+		"/C/Dev/GitHub/Nebulator/Nebulator/_Editor/NebEditor.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/_Editor/Finder.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/Finder.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/_Editor/Finder.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/Finder.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/_Editor/NebEditor.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/NebEditor.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/NebEditor.cs",
+		"/C/Dev/TypeScriptDemos-master/tsconfig.json",
+		"/C/Dev/TypeScriptDemos-master/.vscode/launch.json",
+		"/C/Dev/web-app.txt",
+		"/C/Dev/discreetmusic.js-master/index.html",
+		"/C/Dev/discreetmusic.js-master/discreetmusic.js",
+		"/C/Dev/musicforairports.js-master/dist/index.html",
+		"/C/Dev/musicforairports.js-master/src/musicforairports.js",
+		"/C/Users/cet/AppData/Local/Temp/Temp1_noUiSlider.10.0.0.zip/nouislider.js",
+		"/C/Users/cet/Desktop/purr-data-2.4.3/pd/extra/pd~/pd~.c",
+		"/C/Users/cet/Desktop/purr-data-2.4.3/pd/extra/bob~/README.txt",
+		"/C/Users/cet/Desktop/purr-data-2.4.3/pd/extra/bob~/bob~.c",
+		"/C/Users/cet/Desktop/purr-data-2.4.3/pd/src/g_editor.c",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/todo.txt",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/crash.txt",
+		"/C/Windows/Minidump/120517-22292-01.dmp",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/cleaners.txt",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/reaper.txt",
+		"/C/Dev/GitHub/Nebulator.wiki/_Sidebar.md",
+		"/C/Dev/GitHub/Nebulator.wiki/Home.md",
+		"/C/Dev/GitHub/Nebulator/README.md",
+		"/C/Users/cet/AppData/Local/Temp/Temp1_grain_delay3.zip/grain_delay3.pd",
+		"/C/Users/cet/Desktop/Biomorphs/more.cs",
+		"/C/Users/cet/Desktop/more.cs",
+		"/C/Users/cet/SkyDrive/Audio/Samples/drumtrack/Yahama_RY30/[www.kb6.de].txt",
+		"/C/Dev/GitHub/Nebulator.wiki/ScriptDefinitions.md",
+		"/C/Dev/GitHub/Nebulator/Examples/example3.neb",
+		"/C/Dev/GitHub/Nebulator/Examples/example2.neb",
+		"/C/Users/cet/Downloads/fb551ed51e5e7aad76688ff3f8f07f2c.svg",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Test/TestHost.cs",
+		"/C/Dev/GitHub/discreetmusic.js-master/discreetmusic.js",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/notes.txt",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Compiler.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/temp/example2_2.cs",
+		"/C/Dev/GitHub/discreetmusic.js-master/index.html",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/nebulator/algorithmic/algorithmic.txt",
+		"/C/Dev/GitHub/Nebulator/Examples/temp/example2_0.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/temp/example2_1.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/example2.nebp",
+		"/C/Dev/GitHub/Nebulator/Examples/example1.neb",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/ScriptUi.cs",
+		"/C/Dev/GitHub/Nebulator.wiki/ScriptApiUi.md",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Note.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Test/SimpleUT.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Controls/Grid.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/lsys.neb",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Script.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/temp/lsys_1.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/ScriptNeb.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/StepUtils.cs",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/IDAS/resp.txt",
+		"/C/Dev/GitHub/Nebulator/Examples/utils.neb",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/ScriptSurface.cs",
+		"/C/Dev/GitHub/Nebulator/todo/dx.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Test/SS.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Test/SS.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/InfoDisplay.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Controls/TextViewer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/MainForm.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Test/TestHost.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Test/TestHost.resx",
+		"/C/Dev/GitHub/Nebulator/Nebulator/MainForm.resx",
+		"/C/Dev/IDAS-mod/DisplayControls/Chart.cs",
+		"/C/Dev/IDAS-mod/DisplayControls/ChartControl.cs",
+		"/C/Dev/IDAS-mod/DisplayControls/DataSeries.cs",
+		"/C/Dev/IDAS-mod/DisplayControls/DataSeriesCollection.cs",
+		"/C/Users/cet/Downloads/MusicFromTheGameOfLife-author.nb",
+		"/C/Dev/GitHub/Nebulator/todo/slimdx.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/InfoDisplay.resx",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/MidiMonitor.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/InfoDisplay.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/MidiMonitor.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Nebulator.csproj",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Common/NoteUtils.cs",
+		"/C/Users/cet/AppData/Local/Nebulator/settings.json",
+		"/C/Dev/SharpDX-master/Source/SharpDX.Desktop/RenderLoop.cs",
+		"/C/Dev/SharpDX-master/Source/SharpDX.Desktop/RenderForm.cs",
+		"/C/Dev/SharpDX-master/Source/SharpDX.Desktop/Win32Native.cs",
+		"/C/Dev/SharpDX-master/Source/SharpDX.Desktop/MessageFilterHook.cs",
+		"/C/Dev/SharpDX-master/Source/SharpDX.Desktop/RenderControl.cs",
+		"/C/Dev/GitHub/Nebulator/todo/ScriptingDx/ScriptSurface.cs",
+		"/C/Dev/GitHub/_old/slimdx.cs",
+		"/C/Dev/GitHub/Nebulator/slimdx.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Dynamic.cs",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/tx.txt",
+		"/C/Dev/GitHub/_old/Nebulator - orig/App.config",
+		"/C/Users/cet/AppData/Local/Nebulator/log.txt",
+		"/C/Dev/GitHub/Nebulator/Nebulator/app.config",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Midi/MidiUtils.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/ScriptingDx/ScriptSurface.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/ScriptingDx/UiClasses.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/ScriptingDx/ScriptUi.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/UiClasses.cs",
+		"/C/Dev/MiscUtil-MarcG/readme.txt",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Common/UserSettings.cs",
+		"/C/Users/cet/Desktop/scales.csv",
+		"/C/Users/cet/Desktop/List of musical scales and modes - Wikipedia.html",
+		"/C/Dev/OARS/Source/Presentation/MainForm.cs",
+		"/C/Dev/OARS/Source/Presentation/UserSettings.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/test/test2.neb",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/reaper-vkbmap.txt",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/App.config",
+		"/C/Dev/GitHub/Nebulator/Examples/test/test1.nebp",
+		"/C/Dev/GitHub/Nebulator/Examples/test/test2.nebp",
+		"/C/Dev/GitHub/Nebulator/Examples/test/test1.neb"
+	],
+	"find":
+	{
+		"height": 40.0
+	},
+	"find_in_files":
+	{
+		"height": 104.0,
+		"where_history":
+		[
+			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html, -leftovers/, -packages/",
+			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html, -_leftovers/, -packages/",
+			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html, -_leftovers/",
+			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html",
+			"<open folders>, -bin/*, -obj/*, -*.resx, -Files/*, -*.txt, -*.html",
+			"<open folders>, -bin/*, -obj/*, -*.resx, -Files/*",
+			"<open folders>, -dox/*, -bin/*, -obj/*, -*.andef, -*.resx, -Log/*, -*.xlsx",
+			"<open folders>, -dox/*, -bin/*, -obj/*, -*.andef, -*.resx, -Log/*",
+			"<open folders>, -dox/*, -bin/*, -obj/*, -*.andef, -*.resx",
+			"<open folders>, -dox/*, -bin/*, -obj/*, -*.andef",
+			"<open folders>, -dox/*, -bin/*, -obj/*",
+			"<open folders>, -dox/*, -bin/*, -obj/*, -OfflineMath/*",
+			"<open folders>, -dox/*, -bin/*, -obj/*",
+			"<open folders>, -dox/*, -bin/*",
+			"<open folders>, -assets/*, -dox/*, -unused/*, -build*/*, -dxflib/*, -_temp/*",
+			"<current file>",
+			"<open folders>, -assets/*, -dox/*, -unused/*, -build*/*, -dxflib/*, -_temp/*",
+			"<current file>",
+			"<open folders>, -assets/*, -dox/*, -unused/*, -build*/*, -dxflib/*, -_temp/*",
+			"<current file>",
+			"<open folders>, -assets/*, -dox/*, -unused/*, -build*/*, -dxflib/*, -_temp/*",
+			"<open folders>, -assets/*, -dox/*, -unused/*, -build*/*, -dxflib/*",
+			"<open folders>, -assets/*, -doc/*, -unused/*, -build*/*, -dxflib/*",
+			"<open folders>, -assets/*, -doc/*, -unused/*, -build*/*",
+			"<open folders>, -assets/*, -doc/*, -unused/*, -build/*",
+			"<open folders>, -assets/*, -doc/*, -unused/*,<current file>",
+			"<open folders>, -assets/*, -doc/*, -unused/*",
+			"<open folders>, -assets/*, -doc/*",
+			"<open folders>, -_*/*, -assets/*, -doc/*",
+			"<open folders>, -_*/*, -assets/*",
+			"<open folders>, -_*/*, -assets/*, *.py",
+			"<open folders>, -_*/*, -assets/*, +/*.py",
+			"<open folders>, -_*/*, -assets/*, +*.py",
+			"<open folders>, -_*/*, -assets/*",
+			"<open folders>, -_*/*, -assets/*,<current file>",
+			"<open folders>, -_*/*, -assets/*",
+			"<open folders>, -_*/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*, -_old/*, -___done/*, -gmock/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*, -_old/*, -___done/*, -gmock/*, +*.h",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*, -_old/*, -___done/*, -gmock/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*, -_old/*, -___done/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*, -_old/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*, -_old/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, -assets/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*",
+			"<open folders>, -_currentLibs/*, -_TODO/*, +*.js",
+			"<open folders>, -_currentLibs/*, -_TODO/*, +*.hs",
+			"<open folders>, -_currentLibs/*, -_TODO/*",
+			"<open folders>, -_currentLibs/*",
+			"<open folders>",
+			"<open folders>, *.h",
+			"<open folders>",
+			"<open folders>, -*.pyc",
+			"<open folders>",
+			"<open folders>,-C:\\Dev\\hires\\regmon\\tools\\web\\app\\lib\\*.*",
+			"<open folders>,-/tools/web/app/lib",
+			"<open folders>",
+			"<open folders>, *.py",
+			"<open folders>",
+			"C:\\Dev\\hires\\regmon",
+			"<open folders>",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"ldelay",
+			"lduration",
+			"lnote",
+			".75",
+			".90",
+			".70",
+			"offset",
+			"Time",
+			"const",
+			"Time",
+			"float",
+			"new Time(",
+			"double",
+			"Time",
+			".48",
+			"96",
+			"_stops",
+			"};",
+			"Pad5",
+			"},",
+			",",
+			"'",
+			"delay: ",
+			"duration: ",
+			"  {instrument: 'Grand Piano', note: ",
+			"notesPlaying",
+			"playingSince",
+			"scaleNotes",
+			"playSample",
+			"OCTAVE",
+			"TODO2",
+			"TODO1",
+			"toolStripButton1",
+			"FindAndReplaceForm",
+			"CompositionEditor",
+			"example1",
+			"TODO1",
+			"TODO2",
+			"TODO1",
+			" // wobbles",
+			"posX",
+			"TODO3",
+			"TODO2",
+			"TODO1",
+			"DYNAMIC_SEQ",
+			" //",
+			"SYNTH",
+			"playing",
+			"[i]",
+			"i",
+			"rand",
+			"float",
+			"  ",
+			"   ",
+			"    ",
+			".png",
+			"  ",
+			"   ",
+			"    ",
+			"  ",
+			"   ",
+			"  ",
+			"    ",
+			"   ",
+			"  ",
+			".png",
+			"TODO2",
+			"scaleNotes",
+			"BALL",
+			" // wobbles",
+			"TODO1",
+			"notes",
+			"snotes",
+			"dir",
+			"TODO1",
+			"genLSys",
+			"TODO1",
+			"ParseSeq",
+			"seq(",
+			"TODO1",
+			"_lines",
+			"TODO1",
+			"genLSys",
+			"var ",
+			"_lines",
+			"var",
+			"LSysState",
+			"vars",
+			"var",
+			"constantant",
+			"const",
+			"TODO1",
+			"const",
+			"var",
+			"TODO1",
+			"InitLSystem",
+			"var",
+			"const",
+			"TODO1",
+			"TextViewer",
+			".Colors",
+			"else if (elt ==",
+			"F",
+			"TODO1",
+			"btnWrap",
+			"txtMonitor",
+			"MidiMonitor",
+			"levers",
+			"infoDisplay",
+			"midiMonitor",
+			"testHost",
+			"Micro",
+			"TextViewer",
+			"Scales",
+			"EditorFont",
+			"TODO1",
+			"TODO2",
+			"TODO1",
+			"TODO3",
+			"TODO2",
+			"TODO1",
+			"The type or namespace name",
+			"TODO2",
+			"TODO1",
+			"switch",
+			"|",
+			" | | ",
+			" | "
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"",
+			"public ",
+			"fn",
+			"mode",
+			"y",
+			"x",
+			"which",
+			"Color",
+			"bits",
+			"value",
+			"\\r\\n",
+			"",
+			"    ",
+			"",
+			"angle",
+			"val",
+			"dy",
+			"dx",
+			"level",
+			"degree",
+			"height",
+			"width",
+			"rad",
+			"max",
+			"min",
+			"val",
+			"pcolor",
+			"gray",
+			"alpha",
+			"b",
+			"g",
+			"r",
+			"",
+			"]",
+			"[",
+			"$",
+			"\\t",
+			"double",
+			"MultiMediaTimer",
+			"",
+			"\\n",
+			" ",
+			"\"10\"",
+			"0",
+			"\"",
+			"\\n",
+			"",
+			"\\n",
+			"    ",
+			"",
+			"\\n",
+			"\\r",
+			"\\n",
+			"\\r\\n",
+			", ",
+			"",
+			" = ",
+			"\\n",
+			"",
+			"\\n",
+			"Calibration",
+			"DataSelect",
+			"pgUserSettings",
+			"IDAS",
+			"IMath",
+			"CalibrationPrediction",
+			"ipaddr",
+			"srvglob.msgProc",
+			"_logName",
+			"_fileName",
+			"spotLimit",
+			"msgProc",
+			"_msgProc",
+			"fullMsg",
+			".regHandlers",
+			"reg",
+			"IMAGE_ACQ_PORT",
+			"WEB_SERVER_PORT",
+			"stationClass",
+			"stationNum",
+			"stations",
+			"station",
+			"currentStation",
+			"stationName",
+			"_stationToSpotName",
+			"stationNum",
+			"frontStations",
+			"_moduleToSpotName",
+			"_simulateErrorsCnt",
+			"_getFailResultsData",
+			"MM_PER_INCH",
+			"_inboundMsgs",
+			"_inLocalMode",
+			"_knownIps",
+			"inLocalMode",
+			"",
+			"passFailCsvFile",
+			"passFailCsvWriter",
+			"printf_not",
+			"cout_not",
+			";",
+			")",
+			"PROPERTY_RW",
+			"PROPERTY_RWI",
+			"",
+			"design-version",
+			"",
+			":",
+			"",
+			"\\n",
+			"\\r\\n",
+			"\\\\n",
+			"\\n",
+			"",
+			"else if(",
+			"iniParams.",
+			"",
+			", iniParams",
+			"",
+			"\\n",
+			"\\r\\n",
+			"",
+			"qCritical",
+			"qFatal",
+			"UNXL_OUTPUT_PATH",
+			"Module",
+			"WRITE_",
+			"7WRITE_"
+		],
+		"reverse": false,
+		"show_context": false,
+		"use_buffer2": true,
+		"whole_word": true,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Examples/airport.neb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5412,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3439,
+								3439
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1260.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.clipboard_manager":
+	{
+		"height": 0.0
+	},
+	"output.exec":
+	{
+		"height": 96.0
+	},
+	"output.find_results":
+	{
+		"height": 198.0
+	},
+	"output.fsharp.errors":
+	{
+		"height": 100.0
+	},
+	"output.hex_viewer_inspector":
+	{
+		"height": 102.0
+	},
+	"output.variable_get":
+	{
+		"height": 96.0
+	},
+	"pinned_build_system": "",
+	"project": "neb.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"spotcalc",
+				"tools\\web\\testSpotCalc.py"
+			],
+			[
+				"",
+				"Packages\\User\\Preferences.sublime-settings"
+			],
+			[
+				"ort",
+				"Short.cs"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"C:\\Dev\\sublime\\IDAS.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"Result"
+			]
+		],
+		"width": 392.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 188.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
