@@ -10,27 +10,32 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Nebulator.Common;
 using Nebulator.Scripting;
+using Nebulator.Controls;
+using Nebulator.UI;
 
 
 namespace Nebulator.Test
 {
     public partial class TestHost : Form
     {
-        MainForm mf = null;
+        MainForm _mf = null;
 
         public TestHost(Form parent)
         {
             InitializeComponent();
-            mf = parent as MainForm;
+            _mf = parent as MainForm;
         }
 
         private void TestHost_Load(object sender, EventArgs e)
         {
-            //TopMost = true;
+            TopMost = true;
+            Go();
         }
 
         public void Go()
         {
+            TestEditor();
+
             //TestGrid();
 
             //TestSimpleUT();
@@ -38,7 +43,7 @@ namespace Nebulator.Test
             //Utils.ExtractAPI(@"C:\Dev\GitHub\Nebulator\Nebulator\Scripting\ScriptUi.cs");
 
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example1.neb");
-           // mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example2.neb");
+            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example2.neb");
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example3.neb");
             //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\lsys.neb");
 
@@ -47,26 +52,33 @@ namespace Nebulator.Test
             //Clipboard.SetText(string.Join(Environment.NewLine, v));
         }
 
-        // TODO2 graphics faster: - try drawRecursive() in script. SharpDx? Separate thread? https://stackoverflow.com/questions/26220964/sharpdxhow-to-place-sharpdx-window-in-winforms-window
-
+        /// <summary>
+        /// Tester for chart/grid.
+        /// </summary>
+        void TestEditor()
+        {
+            NebEditor ned = new NebEditor() { Dock = DockStyle.Fill };
+            splitContainer1.Panel1.Controls.Add(ned);
+            ned.Init(@"C:\Dev\GitHub\Nebulator\Examples\example.neb");
+            ned.Show();
+        }
 
         /// <summary>
         /// Tester for chart/grid.
         /// </summary>
         void TestGrid()
         {
-            MainForm mf = ParentForm as MainForm;
+            Grid grid = new Grid() { Dock = DockStyle.Fill };
+            splitContainer1.Panel1.Controls.Add(grid);
             Random rand = new Random(111);
-
-            //mf.grid1.ToolTipEvent += ((s, e) => e.Text = "TT_" + rand.Next().ToString());
-
+            grid.ToolTipEvent += ((s, e) => e.Text = "TT_" + rand.Next().ToString());
             List<PointF> data = new List<PointF>();
             for (int i = 0; i < 10; i++)
             {
                 data.Add(new PointF(i, rand.Next(20, 80)));
             }
-
-            //mf.grid1.InitData(data);
+            grid.InitData(data);
+            grid.Show();
         }
 
         /// <summary>

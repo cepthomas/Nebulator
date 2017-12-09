@@ -18,14 +18,17 @@ namespace Nebulator.Scripting
         #endregion
 
         #region User script properties
-        /// <summary>Current Nebulator Tick.</summary>
-        public Time stepTime { get { return Globals.CurrentStepTime; } }
+        /// <summary>Current Nebulator step time.</summary>
+        public Time stepTime { get { return Globals.StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return Globals.CurrentStepTime.Tick; } }
+        public int tick { get { return Globals.StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return Globals.CurrentStepTime.Tock; } }
+        public int tock { get { return Globals.StepTime.Tock; } }
+
+        /// <summary>Actual time since start pressed.</summary>
+        public float now { get { return (float)Globals.RealTime; } }
 
         /// <summary>Neb step clock is running.</summary>
         public bool playing { get { return Globals.Playing; } }
@@ -62,30 +65,20 @@ namespace Nebulator.Scripting
                 ScriptEvent?.Invoke(this, new ScriptEventArgs() { Volume = value });
             }
         }
+
+        /// <summary>Indicates using internal synth.</summary>
+        public bool winGm { get { return Globals.UserSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
         #endregion
 
         #region Script functions
-        /// <summary>
-        /// Send a midi note immediately. Respects solo/mute.
-        /// </summary>
-        /// <param name="track">Which track to send it on.</param>
-        /// <param name="snote">Note string using any form allowed in the script. TODO2 Requires double quotes in the script, would be nice to not.</param>
-        /// <param name="vol">Note volume.</param>
-        /// <param name="dur">How long it lasts in Tick.Tock representation.</param>
-        public void sendMidiNote(Track track, string snote, int vol, double dur)
-        {
-            Note note = new Note(snote);
-            note.NoteConstituents.ForEach(n => sendMidiNote(track, n, vol, dur));
-        }
-
         /// <summary>
         /// Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
-        /// <param name="dur">How long it lasts in Tick.Tock representation. If 0.0 doesn't add a subsequent NoteOff so the script can control it directly.</param>
-        public void sendMidiNote(Track track, int inote, int vol, double dur)
+        /// <param name="dur">How long it lasts in Time. 0 means no note off generated.</param>
+        public void sendMidiNote(Track track, int inote, int vol, Time dur)
         {
             bool _anySolo = Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
@@ -96,7 +89,7 @@ namespace Nebulator.Scripting
                 int vel = track.NextVol(vol);
                 int notenum = Utils.Constrain(inote, 0, MidiInterface.MAX_MIDI_NOTE);
 
-                if(vol > 0)
+                if (vol > 0)
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
@@ -106,11 +99,11 @@ namespace Nebulator.Scripting
                         NoteNumberToPlay = notenum,
                         Velocity = vel,
                         VelocityToPlay = vel,
-                        Duration = new Time(dur)
+                        Duration = dur
                     };
 
                     step.Adjust(volume, track.Volume, track.Modulate);
-                    Globals.MidiInterface.Send(step, dur > 0.0);
+                    Globals.MidiInterface.Send(step, dur.TotalTocks > 0);
                 }
                 else
                 {
@@ -125,6 +118,44 @@ namespace Nebulator.Scripting
                     Globals.MidiInterface.Send(step);
                 }
             }
+        }
+
+        /// <summary>
+        /// Send a midi note immediately. Respects solo/mute.
+        /// </summary>
+        /// <param name="track">Which track to send it on.</param>
+        /// <param name="snote">Note string using any form allowed in the script. TODO2 Requires double quotes in the script, would be nice to not.</param>
+        /// <param name="vol">Note volume.</param>
+        /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
+        public void sendMidiNote(Track track, string snote, int vol, Time dur)
+        {
+            Note note = new Note(snote);
+            note.NoteConstituents.ForEach(n => sendMidiNote(track, n, vol, dur));
+        }
+
+        /// <summary>
+        /// Send a midi note immediately. Respects solo/mute.
+        /// </summary>
+        /// <param name="track">Which track to send it on.</param>
+        /// <param name="snote">Note string using any form allowed in the script.</param>
+        /// <param name="vol">Note volume.</param>
+        /// <param name="dur">How long it lasts in Tick.Tock representation. 0 means no note off generated.</param>
+        public void sendMidiNote(Track track, string snote, int vol, double dur)
+        {
+            Note note = new Note(snote);
+            note.NoteConstituents.ForEach(n => sendMidiNote(track, n, vol, new Time(dur)));
+        }
+
+        /// <summary>
+        /// Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.
+        /// </summary>
+        /// <param name="track">Which track to send it on.</param>
+        /// <param name="inote">Note number.</param>
+        /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
+        /// <param name="dur">How long it lasts in Tick.Tock representation. 0 means no note off generated.</param>
+        public void sendMidiNote(Track track, int inote, int vol, double dur)
+        {
+            sendMidiNote(track, inote, vol, new Time(dur));
         }
 
         /// <summary>

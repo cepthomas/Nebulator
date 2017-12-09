@@ -78,9 +78,12 @@ public override void setup()
     notesPlaying = new int[scaleNotes.Length];
 
     // Patches (optional). Only needed if using the Windows GM.
-    sendPatch(KEYS, AcousticGrandPiano);
-    sendPatch(BASS, AcousticBass);
-    sendPatch(SYNTH, Pad3Polysynth);
+    if(winGm)
+    {
+        sendPatch(KEYS, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Pad3Polysynth);
+    }
 }
 
 

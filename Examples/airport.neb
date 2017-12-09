@@ -3,22 +3,7 @@
 
 
 ///// Constants /////
-// When to play.
-WHEN1 = constant(0);
-WHEN2 = constant(32);
-WHEN3 = constant(64);
-WHEN4 = constant(96);
-// Total length.
-TLEN = constant(128);
-// Volumes.
 KEYS_DEF_VOL = constant(100);
-DRUM_DEF_VOL = constant(100);
-
-
-
-
-///////////////////////////////
-
 
 ///// Variables /////
 COL1 = variable(200); // change color
@@ -34,12 +19,8 @@ L1 = lever(0, 255, COL1);
 L2 = lever(0, 16383, PITCH); // max range
 L3 = lever(-10, 10, MODN);
 
-
-///// Tracks and Loops /////
-KEYS = track(1, 5, 0, 0); // wobbles
-BASS = track(2, 2, 0, 0); // wobbles
-DRUMS = track(10, 4, 0, 0); // wobbles
-SYNTH = track(3, 0);
+///// Tracks /////
+KEYS = track(1, 5, 0, 0);
 
 
 
@@ -47,15 +28,16 @@ SYNTH = track(3, 0);
 class Loop
 {
     public string snote;
-    public float duration; // as Tick.Tock
-    public float delay; // as Tick.Tock
+    // Various times as Tick.Tock
+    public Time duration;
+    public Time delay;
     public Time nextStart;
     public Loop(string nt, double dur, double del)
     {
         snote = nt;
-        duration = (float)dur;
-        delay = (float)del;
-        nextStart = new Time(del);
+        duration = new Time(dur);
+        delay =  new Time(del);
+        nextStart =  new Time(del);
     }
 }
 
@@ -65,20 +47,20 @@ public override void setup()
 {
     println("setup()");
 
-    loops.Add(new Loop("F.4",  19.50,  4.00));
-    loops.Add(new Loop("Ab.4", 17.60,  8.10));
+    loops.Clear();
+    loops.Add(new Loop("F.4",  19.70,  4.00));
+    loops.Add(new Loop("Ab.4", 17.80,  8.10));
     loops.Add(new Loop("C.5",  21.30,  5.60));
     loops.Add(new Loop("Db.5", 18.50, 12.60));
     loops.Add(new Loop("Eb.5", 20.00,  9.20));
     loops.Add(new Loop("F.5",  20.00, 14.10));
-    loops.Add(new Loop("Ab.5", 17.50,  3.10));
+    loops.Add(new Loop("Ab.5", 17.70,  3.10));
 
-    // Patches (optional). Only needed if using the Windows GM.
-    sendPatch(KEYS, AcousticGrandPiano);
-    sendPatch(BASS, AcousticBass);
-    sendPatch(SYNTH, Pad3Polysynth);
+    if(winGm)
+    {
+        sendPatch(KEYS, Pad2Warm);
+    }
 }
-
 
 public override void step()
 {
@@ -86,9 +68,9 @@ public override void step()
     {
         if(stepTime >= l.nextStart)
         {
-            sendMidiNote(KEYS, l.snote, 95, l.duration);
+            sendMidiNote(KEYS, l.snote, KEYS_DEF_VOL, l.duration);
             // Calc next time.
-            l.nextStart = l.nextStart + new Time(l.delay) + new Time(l.duration);
+            l.nextStart = stepTime + l.delay + l.duration;
         }
     }
 }
@@ -102,122 +84,47 @@ public void On_MODN()
 public override void draw()
 {
     background(COL1, 100, 200);
-
-    // Start line.
-    stroke(128);
-    strokeWeight(2);
-    line(width/2, height/2, width, height/2);
-
-    // Draw the rings.
-    int radius = 400;
-    strokeWeight(30);
+    int dy = height / (loops.Count + 1);
     strokeCap(ROUND);
-    noFill();
 
     for (int i = 0; i < loops.Count; i++)
     {
         Loop loop = loops[i];
+        int y = (i + 1) * dy;
 
-        float size = PI * 2 / loop.duration;
-        float offset = 11;// audioContext.currentTime - playingSince : 0;
-        float startAt = (loop.delay - offset) * size;
-        float endAt = (loop.delay + 0.01f - offset) * size;
+        // Draw baseline.
+        stroke(128);
+        strokeWeight(2);
+        line(10, y, width - 10, y);
 
-        // Lane.
-        stroke(220, 220, 220, 80);
-        ellipse(width/2, height/2, radius, radius);
+        // Draw ball.
+        int radius = 30;
+        strokeWeight(3);
 
-        // When.
-        stroke(240, 20, 100);
-        ellipse(startAt, endAt, 30, 30);
+        int total = (loop.duration + loop.delay).TotalTocks;
+        int pos = stepTime.TotalTocks % total;
 
-        radius -= 40;
-    }
+        if(pos >= 0)
+        {
+            float x = width * pos / total;
 
-    // context.lineWidth = 30;
-    // context.lineCap = 'round';
-    // let radius = 280;
-    // for (const {duration, delay} of LOOPS)
-    // {
-    //     const size = Math.PI * 2 / duration;
-    //     const offset = playingSince ? audioContext.currentTime - playingSince : 0;
-    //     const startAt = (delay - offset) * size;
-    //     const endAt = (delay + 0.01 - offset) * size;
+            if(pos < loop.delay.TotalTocks)
+            {
+                noFill();
+            }
+            else 
+            {
+                fill(20, 240, 100);
+            }
 
-    //     context.strokeStyle = LANE_COLOR;
-    //     context.beginPath();
-    //     context.arc(325, 325, radius, 0, 2 * Math.PI);
-    //     context.stroke();
-
-    //     context.strokeStyle = SOUND_COLOR;
-    //     context.beginPath();
-    //     context.arc(325, 325, radius, startAt, endAt);
-    //     context.stroke();
-
-    //     radius -= 35;
-    // }
-}
-
-/*
-function render()
-{
-    const LANE_COLOR = 'rgba(220, 220, 220, 0.3)';
-    const SOUND_COLOR = '#ED146F';
-
-
-    context.clearRect(0, 0, 1000, 1000);
-
-    context.strokeStyle = '#888';
-    context.lineWidth = 1;
-    context.moveTo(325, 325);
-    context.lineTo(650, 325);
-    context.stroke();
-
-    context.lineWidth = 30;
-    context.lineCap = 'round';
-    let radius = 280;
-    for (const {duration, delay} of LOOPS)
-    {
-        const size = Math.PI * 2 / duration;
-        const offset = playingSince ? audioContext.currentTime - playingSince : 0;
-        const startAt = (delay - offset) * size;
-        const endAt = (delay + 0.01 - offset) * size;
-
-        context.strokeStyle = LANE_COLOR;
-        context.beginPath();
-        context.arc(325, 325, radius, 0, 2 * Math.PI);
-        context.stroke();
-
-        context.strokeStyle = SOUND_COLOR;
-        context.beginPath();
-        context.arc(325, 325, radius, startAt, endAt);
-        context.stroke();
-
-        radius -= 35;
-    }
-
-    if (playingSince)
-    {
-        requestAnimationFrame(render);
-    }
-    else
-    {
-        context.fillStyle = 'rgba(0, 0, 0, 0.3)';
-        context.strokeStyle = 'rgba(0, 0, 0, 0)';
-        context.beginPath();
-        context.moveTo(235, 170);
-        context.lineTo(485, 325);
-        context.lineTo(235, 455);
-        context.lineTo(235, 170);
-        context.fill();
+            ellipse(x, y, radius, radius);
+        }
     }
 }
-*/
-
 
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
     //int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    //sendMidiNote(SYNTH, sn, 90, 0.48);
+    //sendMidiNote(KEYS, sn, 90, 0.48);
 }

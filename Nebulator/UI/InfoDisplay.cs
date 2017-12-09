@@ -97,7 +97,7 @@ namespace Nebulator.UI
         /// <param name="msg">The message.</param>
         public void AddMidiMessage(string msg)
         {
-            AddInfoLine($"{Globals.CurrentStepTime} {msg}");
+            AddInfoLine($"{Globals.StepTime} {msg}");
         }
 
         /// <summary>

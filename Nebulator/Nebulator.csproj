@@ -99,18 +99,6 @@
     <Compile Include="Controls\TimeControl.Designer.cs">
       <DependentUpon>TimeControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor\Finder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editor\Finder.Designer.cs">
-      <DependentUpon>Finder.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\NebEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\NebEditor.Designer.cs">
-      <DependentUpon>NebEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Scripting\Dynamic.cs" />
     <Compile Include="Scripting\Script.cs" />
     <Compile Include="Scripting\ScriptError.cs" />
@@ -223,6 +211,12 @@
     <Compile Include="UI\Levers.Designer.cs">
       <DependentUpon>Levers.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\NebEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\NebEditor.Designer.cs">
+      <DependentUpon>NebEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Piano.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -259,12 +253,6 @@
     <EmbeddedResource Include="Controls\Grid.resx">
       <DependentUpon>Grid.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Finder.resx">
-      <DependentUpon>Finder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\NebEditor.resx">
-      <DependentUpon>NebEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -289,6 +277,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Levers.resx">
       <DependentUpon>Levers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\NebEditor.resx">
+      <DependentUpon>NebEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Piano.resx">
       <DependentUpon>Piano.cs</DependentUpon>

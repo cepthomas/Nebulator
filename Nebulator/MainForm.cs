@@ -14,6 +14,7 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
+// TODO2 Syntax and autocomplete for .neb files in sublime.in
 
 namespace Nebulator
 {
@@ -136,9 +137,9 @@ namespace Nebulator
             #endregion
 
             ////////////////////// test ///////////////////////
-            OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\airport.neb");
-            // _testHost = new Test.TestHost(this);
-            // _testHost.Show();
+            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
+            //_testHost = new Test.TestHost(this);
+            //_testHost.Show();
         }
 
         /// <summary>
@@ -364,14 +365,14 @@ namespace Nebulator
                         _script.step();
 
                         // Do runtime steps.
-                        _script.RuntimeSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
-                        _script.RuntimeSteps.DeleteSteps(Globals.CurrentStepTime);
+                        _script.RuntimeSteps.GetSteps(Globals.StepTime).ForEach(s => PlayStep(s));
+                        _script.RuntimeSteps.DeleteSteps(Globals.StepTime);
                     }
 
                     // Do the compiled steps.
                     if(chkSequence.Checked)
                     {
-                        _compiledSteps.GetSteps(Globals.CurrentStepTime).ForEach(s => PlayStep(s));
+                        _compiledSteps.GetSteps(Globals.StepTime).ForEach(s => PlayStep(s));
                     }
 
                     // Local common function
@@ -392,14 +393,14 @@ namespace Nebulator
                     }
 
                     ///// Bump time.
-                    Globals.CurrentStepTime.Advance();
+                    Globals.StepTime.Advance();
 
                     ////// Check for end of play.
                     // If no steps or not selected, free running mode so always keep going.
                     if(_compiledSteps.Count != 0 && chkSequence.Checked)
                     {
                         // Check for end and loop condition.
-                        if (Globals.CurrentStepTime.Tick >= _compiledSteps.MaxTick)
+                        if (Globals.StepTime.Tick >= _compiledSteps.MaxTick)
                         {
                             if (chkLoop.Checked) // keep going
                             {
@@ -701,7 +702,7 @@ namespace Nebulator
         /// </summary>
         void Time_ValueChanged(object sender, EventArgs e)
         {
-            Globals.CurrentStepTime = timeMaster.CurrentTime;
+            Globals.StepTime = timeMaster.CurrentTime;
             SetPlayStatus(PlayCommand.UpdateUiTime);
         }
         #endregion
@@ -1023,20 +1024,20 @@ namespace Nebulator
                     break;
 
                 case PlayCommand.Rewind:
-                    Globals.CurrentStepTime.Reset();
+                    Globals.StepTime.Reset();
                     break;
 
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
                     Globals.Playing = false;
-                    Globals.CurrentStepTime.Reset();
+                    Globals.StepTime.Reset();
                     break;
 
                 case PlayCommand.UpdateUiTime:
                     break;
             }
 
-            timeMaster.CurrentTime = Globals.CurrentStepTime;
+            timeMaster.CurrentTime = Globals.StepTime;
         }
         #endregion
 

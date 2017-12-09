@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Nebulator.Common;
 using Nebulator.FastTimer;
 
+// TODO2 graphics faster: - try drawRecursive() in script. SharpDx? Separate thread? https://stackoverflow.com/questions/26220964/sharpdxhow-to-place-sharpdx-window-in-winforms-window
 
 namespace Nebulator.Scripting
 {

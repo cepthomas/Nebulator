@@ -202,7 +202,7 @@ namespace Nebulator.Test
 
         public override void step()
         {
-            if (tock == 0)
+            if (stepTime.Tock == 0)
             {
                 int notenum = random(40, 70);
                 sendMidiNote(SYNTH, notenum, 95, 1.09);

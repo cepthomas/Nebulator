@@ -8,7 +8,7 @@ using Nebulator.Midi;
 namespace Nebulator.Scripting
 {
     /// <summary>
-    /// One note or chord in the loop. TODO2 microtonal.
+    /// One note or chord in the loop. TODO2 microtonal. See cbm11-microtonal.mid
     /// </summary>
     public class Note
     {

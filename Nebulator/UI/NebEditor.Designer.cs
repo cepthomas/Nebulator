@@ -1,4 +1,4 @@
-﻿namespace Nebulator.Editor
+﻿namespace Nebulator.UI
 {
     partial class NebEditor
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NebEditor));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonSplit = new System.Windows.Forms.ToolStripButton();
             this.lblInfo = new System.Windows.Forms.ToolStripLabel();
@@ -50,7 +49,6 @@
             // 
             this.toolStripButtonSplit.CheckOnClick = true;
             this.toolStripButtonSplit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonSplit.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSplit.Image")));
             this.toolStripButtonSplit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSplit.Name = "toolStripButtonSplit";
             this.toolStripButtonSplit.Size = new System.Drawing.Size(34, 22);
@@ -60,8 +58,8 @@
             // lblInfo
             // 
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(16, 22);
-            this.lblInfo.Text = "!!!";
+            this.lblInfo.Size = new System.Drawing.Size(73, 22);
+            this.lblInfo.Text = "This is info!!!";
             // 
             // NebEditor
             // 

@@ -58,7 +58,7 @@ namespace Nebulator.Scripting
                 // Create the note start and stop times.
                 int toffset = tick == 0 ? 0 : track.NextTime();
 
-                Time startNoteTime = new Time(tick == -1 ? Globals.CurrentStepTime.Tick : tick, toffset) + note.When;
+                Time startNoteTime = new Time(tick == -1 ? Globals.StepTime.Tick : tick, toffset) + note.When;
                 Time stopNoteTime = startNoteTime + note.Duration;
 
                 // Process all note numbers.

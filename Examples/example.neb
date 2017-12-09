@@ -184,9 +184,12 @@ public override void setup()
     scaleNotes = getScaleNotes("Algerian", "C.4");
 
     // Patches (optional). Only needed if using the Windows GM.
-    sendPatch(KEYS, AcousticGrandPiano);
-    sendPatch(BASS, AcousticBass);
-    sendPatch(BALL, Pad3Polysynth);
+    if(winGm)
+    {
+        sendPatch(KEYS, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(BALL, Pad3Polysynth);
+    }
 }
 
 public override void draw()

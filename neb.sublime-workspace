@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"ne",
+				"nextStart"
+			],
+			[
 				"dur",
 				"duration"
 			],
@@ -63,15 +67,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "Examples/airport.neb",
-			"settings":
-			{
-				"buffer_size": 5412,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -188,24 +183,43 @@
 	[
 		"/C/Dev/GitHub/Nebulator",
 		"/C/Dev/GitHub/Nebulator/Examples",
-		"/C/Dev/GitHub/Nebulator.wiki"
+		"/C/Dev/GitHub/Nebulator/Nebulator",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI",
+		"/C/Dev/GitHub/Nebulator.wiki",
+		"/C/Users/cet/AppData/Local/Nebulator"
 	],
 	"file_history":
 	[
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/NebEditor.cs",
 		"/C/Dev/GitHub/Nebulator/Examples/example.neb",
-		"/C/Dev/GitHub/Nebulator.wiki/ScriptApiNeb.md",
+		"/C/Dev/_old/Dex/MainForm.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/CSharp-Mode.xshd",
+		"/C/Dev/_old/ICSharpCode.TextEditor.V4-master/Project/SyntaxDefinition/CSharp-Mode.xshd",
+		"/C/Dev/_old/ICSharpCode.TextEditor.V4-master/Test/DocumentTests.cs",
 		"/C/Dev/GitHub/Nebulator/Examples/airport.neb",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/Finder.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/NebEditor.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/UI/NebEditor.Designer.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/NebEditor.cs",
+		"/C/Dev/GitHub/Nebulator/Examples/dev.neb",
+		"/C/Users/cet/AppData/Local/Nebulator/log.txt",
+		"/C/Dev/GitHub/Nebulator.wiki/ScriptApiNeb.md",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/ScriptNeb.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Note.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/Test/AltScript.cs",
+		"/C/Dev/GitHub/Nebulator/README.md",
 		"/C/Dev/GitHub/Nebulator.wiki/ScriptSyntax.md",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Globals.cs",
+		"/C/Dev/GitHub/Nebulator/Nebulator/MainForm.cs",
+		"/C/Dev/_web/musicforairports.js-master/src/musicforairports.js",
+		"/C/Users/cet/Documents/Important/biz/ocd/last-hours.txt",
+		"/C/Users/cet/SkyDrive/OneDrive Documents/crash.txt",
 		"/C/Dev/GitHub/Nebulator/neb.sublime-project",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Midi/MidiInterface.cs",
-		"/C/Dev/GitHub/Nebulator/Nebulator/MainForm.cs",
 		"/C/Users/cet/AppData/Roaming/Sublime Text 3/Packages/User/OmniSharpSublime.sublime-settings",
 		"/C/Users/cet/AppData/Roaming/Sublime Text 3/Packages/OmniSharp/PrebuiltOmniSharpServer/config.json",
 		"/C/Users/cet/AppData/Roaming/Sublime Text 3/Packages/OmniSharp/OmniSharpSublime.sublime-settings",
 		"/C/Dev/GitHub/compiled.cs",
-		"/C/Dev/GitHub/Nebulator/Examples/dev.neb",
-		"/C/Dev/_web/musicforairports.js-master/src/musicforairports.js",
 		"/C/Dev/GitHub/Nebulator/Examples/airport.nebp",
 		"/C/Dev/GitHub/Nebulator/Examples/wip.neb",
 		"/C/Dev/GitHub/Nebulator/Nebulator/_Editor/NebEditor.cs",
@@ -214,8 +228,6 @@
 		"/C/Dev/GitHub/Nebulator/Nebulator/_Editor/Finder.cs",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/Finder.cs",
 		"/C/Dev/GitHub/Nebulator/Nebulator/_Editor/NebEditor.Designer.cs",
-		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/NebEditor.Designer.cs",
-		"/C/Dev/GitHub/Nebulator/Nebulator/Editor/NebEditor.cs",
 		"/C/Dev/TypeScriptDemos-master/tsconfig.json",
 		"/C/Dev/TypeScriptDemos-master/.vscode/launch.json",
 		"/C/Dev/web-app.txt",
@@ -229,13 +241,11 @@
 		"/C/Users/cet/Desktop/purr-data-2.4.3/pd/extra/bob~/bob~.c",
 		"/C/Users/cet/Desktop/purr-data-2.4.3/pd/src/g_editor.c",
 		"/C/Users/cet/SkyDrive/OneDrive Documents/todo.txt",
-		"/C/Users/cet/SkyDrive/OneDrive Documents/crash.txt",
 		"/C/Windows/Minidump/120517-22292-01.dmp",
 		"/C/Users/cet/SkyDrive/OneDrive Documents/cleaners.txt",
 		"/C/Users/cet/SkyDrive/OneDrive Documents/reaper.txt",
 		"/C/Dev/GitHub/Nebulator.wiki/_Sidebar.md",
 		"/C/Dev/GitHub/Nebulator.wiki/Home.md",
-		"/C/Dev/GitHub/Nebulator/README.md",
 		"/C/Users/cet/AppData/Local/Temp/Temp1_grain_delay3.zip/grain_delay3.pd",
 		"/C/Users/cet/Desktop/Biomorphs/more.cs",
 		"/C/Users/cet/Desktop/more.cs",
@@ -257,13 +267,11 @@
 		"/C/Dev/GitHub/Nebulator/Examples/example1.neb",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/ScriptUi.cs",
 		"/C/Dev/GitHub/Nebulator.wiki/ScriptApiUi.md",
-		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Note.cs",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Test/SimpleUT.cs",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Controls/Grid.cs",
 		"/C/Dev/GitHub/Nebulator/Examples/lsys.neb",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Script.cs",
 		"/C/Dev/GitHub/Nebulator/Examples/temp/lsys_1.cs",
-		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/ScriptNeb.cs",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/StepUtils.cs",
 		"/C/Users/cet/SkyDrive/OneDrive Documents/IDAS/resp.txt",
 		"/C/Dev/GitHub/Nebulator/Examples/utils.neb",
@@ -301,7 +309,6 @@
 		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/Dynamic.cs",
 		"/C/Users/cet/SkyDrive/OneDrive Documents/tx.txt",
 		"/C/Dev/GitHub/_old/Nebulator - orig/App.config",
-		"/C/Users/cet/AppData/Local/Nebulator/log.txt",
 		"/C/Dev/GitHub/Nebulator/Nebulator/app.config",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Midi/MidiUtils.cs",
 		"/C/Dev/GitHub/Nebulator/Nebulator/ScriptingDx/ScriptSurface.cs",
@@ -310,16 +317,7 @@
 		"/C/Dev/GitHub/Nebulator/Nebulator/Scripting/UiClasses.cs",
 		"/C/Dev/MiscUtil-MarcG/readme.txt",
 		"/C/Dev/GitHub/Nebulator/Nebulator/Common/UserSettings.cs",
-		"/C/Users/cet/Desktop/scales.csv",
-		"/C/Users/cet/Desktop/List of musical scales and modes - Wikipedia.html",
-		"/C/Dev/OARS/Source/Presentation/MainForm.cs",
-		"/C/Dev/OARS/Source/Presentation/UserSettings.cs",
-		"/C/Dev/GitHub/Nebulator/Examples/test/test2.neb",
-		"/C/Dev/GitHub/Nebulator/Nebulator/UI/reaper-vkbmap.txt",
-		"/C/Dev/GitHub/Nebulator/Nebulator/UI/App.config",
-		"/C/Dev/GitHub/Nebulator/Examples/test/test1.nebp",
-		"/C/Dev/GitHub/Nebulator/Examples/test/test2.nebp",
-		"/C/Dev/GitHub/Nebulator/Examples/test/test1.neb"
+		"/C/Users/cet/Desktop/scales.csv"
 	],
 	"find":
 	{
@@ -330,6 +328,7 @@
 		"height": 104.0,
 		"where_history":
 		[
+			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html, -leftovers/, -packages/, -temp/*",
 			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html, -leftovers/, -packages/",
 			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html, -_leftovers/, -packages/",
 			"<open folders>, -bin/*, -obj/*, -*.resx, -*.txt, -*.html, -_leftovers/",
@@ -400,6 +399,23 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"TODO2",
+			"TODO1",
+			"DexStrategy",
+			"BALLS",
+			"TODO2",
+			"TODO1",
+			"stepTime.T",
+			"tock",
+			"tick",
+			"SYNTH",
+			"KEYS",
+			"SYNTH",
+			"sendMidiNote",
+			"64",
+			"TODO1",
+			"double",
+			"delay",
 			"ldelay",
 			"lduration",
 			"lnote",
@@ -510,24 +526,7 @@
 			"levers",
 			"infoDisplay",
 			"midiMonitor",
-			"testHost",
-			"Micro",
-			"TextViewer",
-			"Scales",
-			"EditorFont",
-			"TODO1",
-			"TODO2",
-			"TODO1",
-			"TODO3",
-			"TODO2",
-			"TODO1",
-			"The type or namespace name",
-			"TODO2",
-			"TODO1",
-			"switch",
-			"|",
-			" | | ",
-			" | "
+			"testHost"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -667,43 +666,14 @@
 		"reverse": false,
 		"show_context": false,
 		"use_buffer2": true,
-		"whole_word": true,
+		"whole_word": false,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "Examples/airport.neb",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5412,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3439,
-								3439
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C#/C#.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1260.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -824,7 +794,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 188.0,
+	"side_bar_width": 235.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
