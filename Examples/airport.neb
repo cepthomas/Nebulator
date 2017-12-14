@@ -1,38 +1,39 @@
 
-// Eno's Music for Airports - ported from github.com/teropa/musicforairports.js
+// Take on Eno's Music for Airports - ported from github.com/teropa/musicforairports.js
 
 
 ///// Constants /////
-KEYS_DEF_VOL = constant(100);
+constant SOUND_DEF_VOL 100
 
 ///// Variables /////
-COL1 = variable(200); // change color
-MODN = variable(0); // modulate notes
-PITCH = variable(8192); // center is 8192
+variable COLOR 240 // change color
+variable MODF 100 // modulate filter - linked in reaper project
+variable PITCH 8192 // center is 8192
 
 ///// Realtime Controllers /////
-MI1 = midiin(1, 4, MODN);
-MO1 = midiout(1, Pitch, PITCH);
+midictlin  MI1 1 4 MODF
+midictlout MO1 1 Pitch PITCH
+midictlout MO2 1 4 MODF
 
 ////// Levers //////
-L1 = lever(0, 255, COL1);
-L2 = lever(0, 16383, PITCH); // max range
-L3 = lever(-10, 10, MODN);
+lever L1 0 255 COLOR
+lever L2 0 16383 PITCH // max range
+lever L3 0 255 MODF
 
 ///// Tracks /////
-KEYS = track(1, 5, 0, 0);
+track SOUND 1 5 0 0
 
 
+///// Functions /////
+functions
 
-/////////////////////////////////////////////
-class Loop
+class TapeLoop
 {
     public string snote;
-    // Various times as Tick.Tock
     public Time duration;
     public Time delay;
     public Time nextStart;
-    public Loop(string nt, double dur, double del)
+    public TapeLoop(string nt, double dur, double del)
     {
         snote = nt;
         duration = new Time(dur);
@@ -41,55 +42,55 @@ class Loop
     }
 }
 
-List<Loop> loops = new List<Loop>();
+List<TapeLoop> loops = new List<TapeLoop>();
 
 public override void setup()
 {
     println("setup()");
 
     loops.Clear();
-    loops.Add(new Loop("F.4",  19.70,  4.00));
-    loops.Add(new Loop("Ab.4", 17.80,  8.10));
-    loops.Add(new Loop("C.5",  21.30,  5.60));
-    loops.Add(new Loop("Db.5", 18.50, 12.60));
-    loops.Add(new Loop("Eb.5", 20.00,  9.20));
-    loops.Add(new Loop("F.5",  20.00, 14.10));
-    loops.Add(new Loop("Ab.5", 17.70,  3.10));
+    loops.Add(new TapeLoop("F.4",  19.70,  4.00));
+    loops.Add(new TapeLoop("Ab.4", 17.80,  8.10));
+    loops.Add(new TapeLoop("C.5",  21.30,  5.60));
+    loops.Add(new TapeLoop("Db.5", 18.50, 12.60));
+    loops.Add(new TapeLoop("Eb.5", 20.00,  9.20));
+    loops.Add(new TapeLoop("F.5",  20.00, 14.10));
+    loops.Add(new TapeLoop("Ab.5", 17.70,  3.10));
 
     if(winGm)
     {
-        sendPatch(KEYS, Pad2Warm);
+        sendPatch(SOUND, Pad2Warm);
     }
 }
 
 public override void step()
 {
-    foreach(Loop l in loops)
+    foreach(TapeLoop l in loops)
     {
         if(stepTime >= l.nextStart)
         {
-            sendMidiNote(KEYS, l.snote, KEYS_DEF_VOL, l.duration);
+            sendMidiNote(SOUND, l.snote, SOUND_DEF_VOL, l.duration);
             // Calc next time.
             l.nextStart = stepTime + l.delay + l.duration;
         }
     }
 }
 
-public void On_MODN()
+public void On_MODF()
 {
-    println("MODN changed to", MODN);
-    modulate(KEYS, MODN);
+    println("MODF changed to", MODF);
+    //modulate(SOUND, MODF);
 }
 
 public override void draw()
 {
-    background(COL1, 100, 200);
+    background(COLOR, 100, 200);
     int dy = height / (loops.Count + 1);
     strokeCap(ROUND);
 
     for (int i = 0; i < loops.Count; i++)
     {
-        Loop loop = loops[i];
+        TapeLoop loop = loops[i];
         int y = (i + 1) * dy;
 
         // Draw baseline.
@@ -124,7 +125,7 @@ public override void draw()
 
 public override void mouseClicked()
 {
-    // Note selected based on mouse position.
+    // Maybe do something?
     //int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    //sendMidiNote(KEYS, sn, 90, 0.48);
+    //sendMidiNote(SOUND, sn, 90, 0.48);
 }

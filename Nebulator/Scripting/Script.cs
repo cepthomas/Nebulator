@@ -69,7 +69,7 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Execute a script function. No error checking, presumably the compiler did that.
+        /// Execute a script function. No error checking, presumably the compiler did that. Caller will have to deal with any runtime exceptions.
         /// </summary>
         /// <param name="which"></param>
         public void ExecScriptFunction(string which)

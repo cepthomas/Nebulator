@@ -8,16 +8,17 @@
 				"bin",
 				"obj",
 				"packages",
-				"Wiki"
+				"Wiki",
+				"_old"
 			],
-			"path": "C:\\Dev\\GitHub\\Nebulator"
+			"path": "C:\\Dev\\Nebulator"
 		},
-        {
-            "path": "C:\\Dev\\GitHub\\Nebulator.wiki"
-        },
+		{
+			"path": "C:\\Dev\\Nebulator.wiki"
+		},
 		{
 			"path": "C:\\Users\\cet\\AppData\\Local\\Nebulator"
-		},
+		}
 	],
-    "solution_file": "./Nebulator.sln"        
+	"solution_file": "./Nebulator.sln"
 }

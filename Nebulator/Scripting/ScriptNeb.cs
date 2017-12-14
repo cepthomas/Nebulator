@@ -129,8 +129,8 @@ namespace Nebulator.Scripting
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void sendMidiNote(Track track, string snote, int vol, Time dur)
         {
-            Note note = new Note(snote);
-            note.NoteConstituents.ForEach(n => sendMidiNote(track, n, vol, dur));
+            SequenceElement note = new SequenceElement(snote);
+            note.Notes.ForEach(n => sendMidiNote(track, n, vol, dur));
         }
 
         /// <summary>
@@ -142,8 +142,8 @@ namespace Nebulator.Scripting
         /// <param name="dur">How long it lasts in Tick.Tock representation. 0 means no note off generated.</param>
         public void sendMidiNote(Track track, string snote, int vol, double dur)
         {
-            Note note = new Note(snote);
-            note.NoteConstituents.ForEach(n => sendMidiNote(track, n, vol, new Time(dur)));
+            SequenceElement note = new SequenceElement(snote);
+            note.Notes.ForEach(n => sendMidiNote(track, n, vol, new Time(dur)));
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Nebulator.Scripting
         /// <param name="val">Number of notes, +-.</param>
         public void modulate(Track track, int val)
         {
-            track.Modulate = val;
+            track.Modulate = val; //TODO2 is this right? Or modulate to a specified key?
         }
 
         /// <summary>
@@ -209,10 +209,10 @@ namespace Nebulator.Scripting
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        /// <param name="tick">Which tick to start at. If -1 use current Tick.</param>
-        public void playSequence(Track track, Sequence seq, int tick = -1)
+        public void playSequence(Track track, Sequence seq)
         {
-            RuntimeSteps.Add(StepUtils.ConvertToSteps(track, seq, tick));
+            StepCollection scoll = StepUtils.ConvertToSteps(track, seq);
+            RuntimeSteps.Add(scoll);
         }
 
         /// <summary>

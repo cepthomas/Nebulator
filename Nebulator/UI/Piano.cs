@@ -121,10 +121,8 @@ namespace Nebulator.UI
             for (int i = 0; i < HIGH_NOTE - LOW_NOTE; i++)
             {
                 int noteId = i + LOW_NOTE;
-                Note note = new Note(noteId);
-
                 PianoKey pk;
-                if (NoteUtils.IsNatural(note.Root))
+                if (NoteUtils.IsNatural(noteId))
                 {
                     pk = new PianoKey(this, true, noteId);
                 }

@@ -25,6 +25,9 @@ namespace Nebulator.Scripting
         /// <summary>Levers.</summary>
         public LazyCollection<LeverControlPoint> Levers { get; set; } = new LazyCollection<LeverControlPoint>();
 
+        /// <summary>All sections.</summary>
+        public LazyCollection<Section> Sections { get; set; } = new LazyCollection<Section>();
+
         /// <summary>All tracks.</summary>
         public LazyCollection<Track> Tracks { get; set; } = new LazyCollection<Track>();
 

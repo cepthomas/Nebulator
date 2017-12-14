@@ -38,14 +38,14 @@ namespace Nebulator.Common
         /// <summary>Reference to any state.</summary>
         State _anyState = null;
 
-        /// <summary>The machine current state.</summary>
-        State _currentState = null;
-
         /// <summary>Queue serializing access.</summary>
         object _locker = new object();
         #endregion
 
         #region Properties
+        /// <summary>The machine current state.</summary>
+        public State CurrentState { get; private set; } = null;
+
         /// <summary>Accumulated list of errors.</summary>
         public List<string> Errors { get; } = new List<string>();
         #endregion
@@ -83,7 +83,7 @@ namespace Nebulator.Common
                             _states.Add(st.StateName, st);
 
                             // Check for the any state handler.
-                            if (st.StateName == "*") // State.ANY_STATE)
+                            if (st.StateName == "*")
                             {
                                 if (_anyState is null)
                                 {
@@ -112,8 +112,8 @@ namespace Nebulator.Common
 
                 if (initialState != null && _states.ContainsKey(initialState))
                 {
-                    _currentState = _states[initialState];
-                    _currentState.Enter(null);
+                    CurrentState = _states[initialState];
+                    CurrentState.Enter(null);
                 }
                 else // invalid initial state
                 {
@@ -167,33 +167,33 @@ namespace Nebulator.Common
                             if (nextStateName is null)
                             {
                                 // Try current state.
-                                nextStateName = _currentState.ProcessEvent(ei);
+                                nextStateName = CurrentState.ProcessEvent(ei);
                             }
 
                             if (nextStateName is null)
                             {
-                                throw new Exception($"State:{_currentState.StateName} InvalidEvent:{ei.Name}");
+                                throw new Exception($"State:{CurrentState.StateName} InvalidEvent:{ei.Name}");
                             }
 
-                            if (nextStateName == "*") // State.ANY_STATE)
+                            if (nextStateName == "*") // ANY_STATE
                             {
-                                nextStateName = _currentState.StateName;
+                                nextStateName = CurrentState.StateName;
                             }
 
                             // is there a state change?
-                            if (nextStateName != _currentState.StateName)
+                            if (nextStateName != CurrentState.StateName)
                             {
                                 // get the next state
                                 State nextState = _states[nextStateName];
 
                                 // Exit current state.
-                                _currentState.Exit(ei.Param);
+                                CurrentState.Exit(ei.Param);
 
                                 // Set new state.
-                                _currentState = nextState;
+                                CurrentState = nextState;
 
                                 // Enter new state.
-                                _currentState.Enter(ei.Param);
+                                CurrentState.Enter(ei.Param);
                             }
                         }
                         catch (Exception e)
@@ -447,7 +447,7 @@ namespace Nebulator.Common
         public string NextState { get; set; } = Globals.UNKNOWN_STRING;
 
         /// <summary>Optional action - executed before state change</summary>
-        StateMachine.SmFunc TransitionFunc { get; set; } = null;
+        public StateMachine.SmFunc TransitionFunc { get; set; } = null;
 
         /// <summary>Main constructor</summary>
         /// <param name="evt">Incoming event name</param>

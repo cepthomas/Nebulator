@@ -1,6 +1,8 @@
 
-VEL = constant(95);
-MAX = variable(60);
+constant VEL 95
+variable MAX 60
+
+functions booga 999
 
 void boing(int notenum = 0)
 {
@@ -9,5 +11,5 @@ void boing(int notenum = 0)
     {
         notenum = (int)random(30, MAX);
     }
-    sendMidiNote(BASS, notenum, VEL, 1.09);
+    sendMidiNote(SYNTH, notenum, VEL, 1.09);
 }

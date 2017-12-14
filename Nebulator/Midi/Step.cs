@@ -139,4 +139,17 @@ namespace Nebulator.Midi
             return $"StepPatchChange: {base.ToString()} PatchNumber:{PatchNumber}";
         }
     }
+
+    /// <summary>Used for things that are not actually midi - internal use.</summary>
+    public class StepSpecial : Step
+    {
+        /// <summary>Function to call.</summary>
+        public string Function { get; set; } = "";
+
+        /// <summary>For viewing pleasure.</summary>
+        public override string ToString()
+        {
+            return $"StepSpecial: {base.ToString()} Function:{Function}";
+        }
+    }
 }

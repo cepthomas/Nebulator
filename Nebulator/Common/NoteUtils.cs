@@ -100,7 +100,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Parse from input value.
         /// </summary>
-        public static List<int> ParseNoteConstituents(string s)
+        public static List<int> ParseNotes(string s)
         {
             List<int> notes = new List<int>();
 
@@ -164,7 +164,7 @@ namespace Nebulator.Common
         public static bool IsNatural(int notenum)
         {
             int[] naturals = { 0, 2, 4, 5, 7, 9, 11 };
-            return naturals.Contains(SplitNoteNumber(notenum).root);
+            return naturals.Contains(SplitNoteNumber(notenum).root % 12);
         }
 
         /// <summary>

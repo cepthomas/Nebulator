@@ -1,78 +1,99 @@
 
 ///// Tester for dev features.
 
-
-///// Constants /////
-// When to play.
-WHEN1 = constant(0);
-WHEN2 = constant(32);
-WHEN3 = constant(64);
-WHEN4 = constant(96);
-// Total length.
-TLEN = constant(128);
-// Volumes.
-KEYS_DEF_VOL = constant(100);
-DRUM_DEF_VOL = constant(100);
-
-///// Variables /////
-COL1 = variable(200); // change color
-MODN = variable(0); // modulate notes
-PITCH = variable(8192); // center is 8192
-
-///// Realtime Controllers /////
-MI1 = midiin(1, 4, MODN);
-MO1 = midiout(1, Pitch, PITCH);
-
-////// Levers //////
-L1 = lever(0, 255, COL1);
-L2 = lever(0, 16383, PITCH); // max range
-L3 = lever(-10, 10, MODN);
+// TODO2 change
+// -------------
+// sendMidiNote(Track track, string/int note, int vol, Time/double dur)
+// >>>
+// sendMidiNote(Track track, int whentick, int whentock, int note, int vol, int durtick = 0, int durtock = 0)
+// add utils:
+// int noteConvert(string snote)
+// string noteConvert(int inote)
 
 
-///// Tracks and Loops /////
-KEYS = track(1, 5, 0, 0); // wobbles
-BASS = track(2, 2, 0, 0); // wobbles
-DRUMS = track(10, 4, 0, 0); // wobbles
-SYNTH = track(3, 0);
+// TODO2 change
+// -----------------
+// Remove stepcollection? Gen all dynamically at runtime?
 
 
-////// Drums //////
+include utils.neb
+
+////////// Constants //////////
+constant WHEN2         32
+constant KEYS_DEF_VOL 100
+constant DRUM_DEF_VOL 100
+
+////////// Variables //////////
+variable COL1   200 // change color
+variable MODN     0 // modulate notes
+variable PITCH 8192 // center is 8192
+
+////////// Realtime Controllers //////////
+midictlin  MI1 1 4     MODN
+midictlout MO1 1 Pitch PITCH
+
+////////// Levers //////////
+lever L1   0  255   COL1
+lever L2   0  16383 PITCH // max range
+lever L3 -10  10    MODN
+
+////////// Tracks //////////
+track KEYS   1 5 0 0
+track BASS   2 2 0 0
+track DRUMS 10 4 0 0
+track SYNTH  3 0
+
+////////// Sections //////////
+section PART1 0 WHEN2 // name, start, length
+KEYS   SEQ1           ALGO1       SEQ1        SEQ2
+DRUMS  DRUMS_SIMPLE   DRUMS_HH 
+
+section PART2 WHEN2 60
+KEYS   SEQ1     SEQ2 
+DRUMS  DRUMS_HH  DRUMS_HH   
+
+
+////////// Sequences //////////
+
 // Using patterns. Each hit is 1/16 note - fixed res for now.
-DRUMS_SIMPLE = sequence(8);
-note(x-------x-------x-------x-------, AcousticBassDrum, 90);
-note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
+sequence DRUMS_SIMPLE 8
+x-------x-------x-------x------- AcousticBassDrum 90
+----x-------x-x-----x-------x-x- AcousticSnare    80
 
-////// Sequenced triggered in script //////
-DSEQ1 = sequence(8);
-note(0.00, G.3, 90, 0.60);
-note(1.00, A.3, 90, 0.60);
-note(2.00, Bb.3, 90, 0.60);
-note(3.00, C.4, 90, 0.60);
-
-DSEQ2 = sequence(12);
-note(2.00, G#.3, 90, 0.60);
-note(5.00, A#.3, 90, 0.60);
-note(9.00, B.3, 90, 0.60);
-note(11.00, C#.4, 90, 0.60);
-
-DSEQ3 = sequence(19);
-note(7.00, F.3, 90, 0.60);
-note(12.00, F#.3, 90, 0.60);
-note(14.00, E.3, 90, 0.60);
-note(16.00, Eb.4, 90, 0.60);
+sequence DRUMS_HH 8
+------xx------xx------xx------xx ClosedHiHat 100
 
 
+sequence SEQ1 8
+00.00  G.3  90  0.60
+01.00  A.3  90  0.60
+02.00  Bb.3 90  0.60
+03.00  C.4  90  0.60
 
-/////////////////////////////////////////////
+sequence SEQ2 12
+00.00  C.4  90  0.60
+01.00  D.4  90  0.60
+02.00  E.4  90  0.60
+03.00  F.4  90  0.60
 
-///// Functions /////
+sequence ALGO1 8
+00.00  algoDynamic()  90
+
+
+////////// Functions //////////
+
+functions booga 999
 
 int[] scaleNotes;
 int[] notesPlaying;
 
+void algoXXX()
+{
+    println("xxxxxxxxxxxxx");
+}
+
 public override void setup()
 {
-    println("setup()");
     scaleNotes = getScaleNotes("Algerian", "G.4");
     println("scaleNotes", scaleNotes.Length);
     notesPlaying = new int[scaleNotes.Length];
@@ -86,7 +107,6 @@ public override void setup()
     }
 }
 
-
 public override void step()
 {
     if(tock == 0)
@@ -96,26 +116,42 @@ public override void step()
     }
 }
 
-void algoSequences() // ???? oops can't do loopy stuff like this with midi!
+void algoDynamic()
+{
+    println("!!!! algoDynamic");
+}
+
+void algoNull()
+{
+    println("!!!! algoNull");
+}
+
+void algoSequences()
 {
     if(tick % 9 == 0)
     {
-        playSequence(KEYS, DSEQ1);
+        playSequence(KEYS, SEQ1);
     }
 
     if(tick % 13 == 0)
     {
-        playSequence(KEYS, DSEQ2);
+        playSequence(KEYS, SEQ2);
     }
 
-    if(tick % 20 == 0)
-    {
-        playSequence(KEYS, DSEQ3);
-    }
+    // if(tick % 20 == 0)
+    // {
+    //     playSequence(KEYS, SEQ3);
+    // }
 }
 
+
+    
 void algoRandom()
 {
+    // TODO2 have scales like:
+    // NaturalMinor | 1 2 b3 4 5 b6 b7 | Aeolian mode or natural minor scale | minor | Phrygian
+    // does each need likelihood of next note? markov?
+
     if(random(3) == 0)
     {
         int which = random(scaleNotes.Length);
@@ -139,6 +175,8 @@ void algoRandom()
     }
 }
 
+
+
 public void On_MODN()
 {
     println("MODN changed to", MODN);
@@ -147,7 +185,7 @@ public void On_MODN()
 
 public override void draw()
 {
-    background(COL1, 100, 200);
+    background(100, COL1, 200);
 
     // Recursive:
     // noLoop(); // run once only
@@ -167,12 +205,14 @@ public override void draw()
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
-    int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    sendMidiNote(SYNTH, sn, 90, 0.48);
+    // int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
+    // sendMidiNote(SYNTH, sn, 90, 0.48);
+
+    boing();
 }
 
 
-///// Tester for recursive rendering - chokes Script.draw()
+// Recursive rendering - chokes Script.draw()
 void drawRecursive(float x, float y, float squareSize, float minSize)
 {
     rect(x, y, squareSize, squareSize);

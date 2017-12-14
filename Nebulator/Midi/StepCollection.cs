@@ -19,16 +19,7 @@ namespace Nebulator.Midi
 
         #region Properties
         ///<summary>Gets a collection of the list.</summary>
-        public IEnumerable<Time> Times
-        {
-            get { return (_steps.Keys); }
-        }
-
-        ///<summary>Gets the count property of the list.</summary>
-        public int Count
-        {
-            get { return _steps.Count; }
-        }
+        public IEnumerable<Time> Times { get { return (_steps.Keys); } }
 
         ///<summary>The duration of the whole thing.</summary>
         public int MaxTick { get; private set; } = 0;
@@ -92,8 +83,14 @@ namespace Nebulator.Midi
         /// </summary>
         public override string ToString()
         {
+            StringBuilder sb = new StringBuilder();
             int total = _steps.Values.Sum(v => v.Count);
-            return $"Count:{Count} Total:{total}";
+            sb.Append($"Times:{_steps.Keys.Count} TotalSteps:{total}");
+            //foreach (KeyValuePair<Time, List<Step>> kv in _steps)
+            //{
+            //    sb.Append($"{Environment.NewLine}Time:{kv.Key} Steps:{kv.Value.Count}");
+            //}
+            return sb.ToString();
         }
         #endregion
     }

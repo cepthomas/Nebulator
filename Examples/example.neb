@@ -4,130 +4,141 @@
 // Warning: this is not actual music!
 
 ///// Include other lib files. /////
-include(utils.neb);
+include utils.neb
 
 
 ///// Constants /////
 // When to play.
-WHEN1 = constant(0);
-WHEN2 = constant(32);
-WHEN3 = constant(64);
-WHEN4 = constant(96);
+constant WHEN1 0
+constant WHEN2 32
+constant WHEN3 48
+constant WHEN4 80
 // Total length.
-TLEN = constant(128);
+constant TLEN 128
 // Volumes.
-KEYS_DEF_VOL = constant(100);
-DRUM_DEF_VOL = constant(100);
+constant KEYS_DEF_VOL 100
+constant DRUM_DEF_VOL 100
 
 ///// Variables /////
-COL1 = variable(200); // change color
-MODN = variable(0); // modulate notes
-PITCH = variable(8192); // center is 8192
+variable COL1 200 // change color
+variable MODN 0 // modulate notes
+variable PITCH 8192 // center is 8192
 
 ///// Realtime Controllers /////
-MI1 = midiin(1, 4, MODN);
-MO1 = midiout(1, Pitch, PITCH);
+midictlin MI1 1 4 MODN
+midictlout MO1 1 Pitch PITCH
 
 ////// Levers //////
-L1 = lever(0, 255, COL1);
-L2 = lever(0, 16383, PITCH); // max range
-L3 = lever(-10, 10, MODN);
+lever L1 0 255 COL1
+lever L2 0 16383 PITCH // max range
+lever L3 -10 10 MODN
 
 
-///// Tracks and Loops /////
-KEYS = track(1, 5, 0, 0);
-loop(WHEN1, WHEN2, KEYS_VERSE1);
-loop(WHEN2, WHEN3, KEYS_VERSE2);
-loop(WHEN3, WHEN4, KEYS_VERSE1);
-loop(WHEN4, TLEN, KEYS_VERSE2);
+///// Tracks /////
+track KEYS 1 5 0 0
+track BASS 2 2 0 0
+track DRUMS 10 4 0 0
+track SYNTH 3 0
 
-BASS = track(2, 2, 0, 0);
-loop(WHEN1, TLEN, BASS_VERSE);
+////////// Sections //////////
+section PART1 WHEN1 WHEN2 // 32
+KEYS   KEYS_VERSE1   KEYS_VERSE1
+DRUMS  DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE 
+BASS   BASS_VERSE    BASS_VERSE    BASS_VERSE    BASS_VERSE
 
-DRUMS = track(10, 4, 0, 0);
-loop(WHEN1, TLEN, DRUMS_SIMPLE);
+section PART2 WHEN2 WHEN3 // 16
+KEYS   KEYS_VERSE2    KEYS_VERSE2
+DRUMS  DRUMS_SIMPLE   DRUMS_SIMPLE 
+BASS   BASS_VERSE     BASS_VERSE
+SYNTH  NULL           ALGO1
 
-BALL = track(3, 0);
+section PART3 WHEN3 WHEN4 // 32
+KEYS   KEYS_VERSE1   KEYS_VERSE1
+DRUMS  DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE 
+BASS   BASS_VERSE    BASS_VERSE    BASS_VERSE    BASS_VERSE
 
+///// Sequences /////
 
-///// Sequences and Notes /////
+sequence KEYS_VERSE1 16
+0.00 G.4.m7 90 1.32
+1.60 G.4.m7 90 0.10
+2.00 G.4.m7 90 0.10
+4.00 G.4.m7 90 1.32
+5.60 G.4.m7 90 0.10
+6.00 G.4.m7 90 0.10
+8.00 G.4.m6 90 1.32
+9.60 G.4.m6 90 0.10
+10.00 G.4.m6 90 0.10
+12.00 G.4.m6 90 1.32
+13.60 G.4.m6 90 0.10
+14.00 G.4.m6 90 0.10
 
-////// Keys //////
-KEYS_VERSE1 = sequence(16);
-note(0.00, G.4.m7, 90, 1.32);
-note(1.60, G.4.m7, 90, 0.10);
-note(2.00, G.4.m7, 90, 0.10);
-note(4.00, G.4.m7, 90, 1.32);
-note(5.60, G.4.m7, 90, 0.10);
-note(6.00, G.4.m7, 90, 0.10);
-note(8.00, G.4.m6, 90, 1.32);
-note(9.60, G.4.m6, 90, 0.10);
-note(10.00, G.4.m6, 90, 0.10);
-note(12.00, G.4.m6, 90, 1.32);
-note(13.60, G.4.m6, 90, 0.10);
-note(14.00, G.4.m6, 90, 0.10);
-
-KEYS_VERSE2 = sequence(8);
-note(0.00, F.4.???, 90, 0.32);
-note(0.32, D#.4, KEYS_DEF_VOL, 0.32);
-note(1.00, C.4, 90, 0.32);
-note(1.32, B.4.m7, 90, 0.32);
-note(2.00, F.5, 90, 0.32);
-note(2.32, D#.5, KEYS_DEF_VOL, 0.32);
-note(3.00, C.5, 90, 0.32);
-note(3.32, B.5.m7, 90, 0.32);
-note(4.00, F.3, 90, 0.32);
-note(4.32, D#.3, KEYS_DEF_VOL, 0.32);
-note(5.00, C.3, 90, 0.32);
-note(5.32, B.3.m7, 90, 0.32);
-note(6.00, F.2, 90, 0.32);
-note(6.32, D#.2, KEYS_DEF_VOL, 0.32);
-note(7.00, C.2, 90, 0.32);
-note(7.32, B.2.m7, 90, 0.32);
+sequence KEYS_VERSE2 8
+0.00 F.4.??? 90 0.32
+0.32 D#.4 KEYS_DEF_VOL 0.32
+1.00 C.4 90 0.32
+1.32 B.4.m7 90 0.32
+2.00 F.5 90 0.32
+2.32 D#.5 KEYS_DEF_VOL 0.32
+3.00 C.5 90 0.32
+3.32 B.5.m7 90 0.32
+4.00 F.3 90 0.32
+4.32 D#.3 KEYS_DEF_VOL 0.32
+5.00 C.3 90 0.32
+5.32 B.3.m7 90 0.32
+6.00 F.2 90 0.32
+6.32 D#.2 KEYS_DEF_VOL 0.32
+7.00 C.2 90 0.32
+7.32 B.2.m7 90 0.32
 
 ////// Bass //////
-BASS_VERSE = sequence(8);
-note(0.00, C.2, 70, 0.25);
-note(0.48, C.2, 70, 0.1/8);
-note(3.32, E.2, 70, 0.25);
-note(4.00, C.2, 70, 1.00);
-note(7.48, A#.2, 70, 0.10);
+sequence BASS_VERSE 8
+0.00 C.2 70 0.25
+0.48 C.2 70 0.1/8
+3.32 E.2 70 0.25
+4.00 C.2 70 1.00
+7.48 A#.2 70 0.10
 
 ////// Drums //////
 
 // "musical"
-DRUMS_VERSE = sequence(8);
-note(0.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(1.00, RideCymbal1, DRUM_DEF_VOL);
-note(1.10, RideCymbal1, DRUM_DEF_VOL);
-note(1.60, HiMidTom, DRUM_DEF_VOL);
-note(2.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(3.00, RideCymbal1, DRUM_DEF_VOL);
-note(3.10, RideCymbal1, DRUM_DEF_VOL);
-note(4.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(5.00, RideCymbal1, DRUM_DEF_VOL);
-note(5.10, RideCymbal1, DRUM_DEF_VOL);
-note(5.60, HiMidTom, DRUM_DEF_VOL);
-note(6.00, AcousticBassDrum, DRUM_DEF_VOL);
-note(7.00, CrashCymbal2, DRUM_DEF_VOL);
+sequence DRUMS_VERSE 8
+0.00 AcousticBassDrum DRUM_DEF_VOL
+1.00 RideCymbal1 DRUM_DEF_VOL
+1.10 RideCymbal1 DRUM_DEF_VOL
+1.60 HiMidTom DRUM_DEF_VOL
+2.00 AcousticBassDrum DRUM_DEF_VOL
+3.00 RideCymbal1 DRUM_DEF_VOL
+3.10 RideCymbal1 DRUM_DEF_VOL
+4.00 AcousticBassDrum DRUM_DEF_VOL
+5.00 RideCymbal1 DRUM_DEF_VOL
+5.10 RideCymbal1 DRUM_DEF_VOL
+5.60 HiMidTom DRUM_DEF_VOL
+6.00 AcousticBassDrum DRUM_DEF_VOL
+7.00 CrashCymbal2 DRUM_DEF_VOL
 
 // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
-DRUMS_SIMPLE = sequence(8);
-note(x-------x-------x-------x-------, AcousticBassDrum, 90);
-note(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
+sequence DRUMS_SIMPLE 8
+x-------x-------x-------x------- AcousticBassDrum 90
+----x-------x-x-----x-------x-x- AcousticSnare 80
 
-////// Sequenced triggered in script //////
-DYNAMIC_SEQ = sequence(8);
-note(0.00, G.3, 90, 0.60);
-note(1.00, A.3, 90, 0.60);
-note(2.00, Bb.3, 90, 0.60);
-note(3.00, C.4, 90, 0.60);
+// Sequenced triggered in script
+sequence DYNAMIC_SEQ 8
+0.00 G.3 90 0.60
+1.00 A.3 90 0.60
+2.00 Bb.3 90 0.60
+3.00 C.4 90 0.60
 
+// Sequence that calls a script function.
+sequence ALGO1 8
+00.00  algoDynamic()  90
 
+sequence NULL 8
+00.00  algoNull()  90
 
-/////////////////////////////////////////////
 
 ///// Functions /////
+functions
 
 // Simple variables for functions.
 float posX = 50;
@@ -149,15 +160,15 @@ public override void step()
         {
             case 0:
             case 16:
-                playSequence(BALL, DYNAMIC_SEQ);
+                playSequence(SYNTH, DYNAMIC_SEQ);
                 break;
 
             case 8:
-                sendMidiNote(BALL, "D.4", 95, 0.00); // named note on, no chase
+                sendMidiNote(SYNTH, "D.4", 95, 0.00); // named note on, no chase
                 break;
 
             case 12:
-                sendMidiNote(BALL, 62, 0, 0.00); // numbered note off
+                sendMidiNote(SYNTH, 62, 0, 0.00); // numbered note (D.4) off
                 break;
 
             case 24:
@@ -165,7 +176,7 @@ public override void step()
             case 26:
             case 27:
                 int notenum = random(40, 70);
-                sendMidiNote(BALL, notenum, 95, 1.09);
+                sendMidiNote(SYNTH, notenum, 95, 1.09);
                 break;
         }
     }
@@ -177,10 +188,23 @@ public void On_MODN()
     modulate(KEYS, MODN);
 }
 
+void algoDynamic()
+{
+    println("!!!! algoDynamic");
+    sendMidiNote(SYNTH, 70, 0, 0.00);
+}
+
+void algoNull()
+{
+    println("!!!! algoNull");
+}
+
 ////// Nebulator graphics stuff //////
 public override void setup()
 {
     println("setup()");
+
+    // Load up a scale.
     scaleNotes = getScaleNotes("Algerian", "C.4");
 
     // Patches (optional). Only needed if using the Windows GM.
@@ -188,7 +212,7 @@ public override void setup()
     {
         sendPatch(KEYS, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
-        sendPatch(BALL, Pad3Polysynth);
+        sendPatch(SYNTH, Pad3Polysynth);
     }
 }
 
@@ -199,7 +223,7 @@ public override void draw()
     if(playing && moveBall())
     {
         int notenum = random(40, 70);
-        sendMidiNote(BALL, notenum, 95, 1.09);
+        sendMidiNote(SYNTH, notenum, 95, 1.09);
     }
 
     // Draw the ball.
@@ -223,7 +247,7 @@ public override void mouseClicked()
 {
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    sendMidiNote(BALL, sn, 90, 0.32);
+    sendMidiNote(SYNTH, sn, 90, 0.32);
 }
 
 public override void keyPressed()

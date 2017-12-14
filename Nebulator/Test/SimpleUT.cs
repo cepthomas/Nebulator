@@ -100,7 +100,14 @@ namespace Nebulator.Test
             {
                 if (t.BaseType != null && t.BaseType.Name == "TestCase")
                 {
-                    cases.Add(t.Name, Activator.CreateInstance(t) as TestCase);
+                    // It's a test case. Is it requested?
+                    foreach (string scase in which)
+                    {
+                        if (t.Name.StartsWith(scase))
+                        {
+                            cases.Add(t.Name, Activator.CreateInstance(t) as TestCase);
+                        }
+                    }
                 }
             }
 
@@ -123,48 +130,40 @@ namespace Nebulator.Test
             // Run through to execute cases.
             foreach (string sc in cases.Keys)
             {
-                // Is this case requested?
-                foreach (string scase in which)
+                TestCase tc = cases[sc];
+                tc.Context = Context;
+                Context.CurrentCasePass = true;
+                Context.CurrentStepPass = true;
+
+                // Document the start of the case.
+                tc.Record(TestCase.StepFlag.Comment, $"Start Case {sc}");
+
+                try
                 {
-                    if (sc.StartsWith(scase))
-                    {
-                        // New case. Reset states.
-                        TestCase tc = cases[sc];
-                        tc.Context = Context;
-                        Context.CurrentCasePass = true;
-                        Context.CurrentStepPass = true;
-
-                        // Document the start of the case.
-                        tc.Record(TestCase.StepFlag.Comment, $"Start Case {sc}");
-
-                        try
-                        {
-                            // Run the case.
-                            tc.RunCase();
-                        }
-                        catch (AssertException ex)
-                        {
-                            // Deliberate exception.
-                            tc.Record(TestCase.StepFlag.Assert, ex);
-                        }
-                        catch (Exception ex)
-                        {
-                            // Out of scope exception. Top frame contains the cause.
-                            StackTrace st = new StackTrace(ex, true);
-                            StackFrame frame = st.GetFrame(0);
-
-                            int line = frame.GetFileLineNumber();
-                            string fn = Path.GetFileName(frame.GetFileName());
-                            string msg = $"{ex.Message} ({fn}:{line})";
-
-                            tc.Record(TestCase.StepFlag.Error, msg);
-                        }
-
-                        // Completed the case, update the counts.
-                        Context.NumCasesRun++;
-                        Context.NumStepsRun += tc.StepCnt;
-                    }
+                    // Run the case.
+                    tc.RunCase();
                 }
+                catch (AssertException ex)
+                {
+                    // Deliberate exception.
+                    tc.Record(TestCase.StepFlag.Assert, ex);
+                }
+                catch (Exception ex)
+                {
+                    // Out of scope exception. Top frame contains the cause.
+                    StackTrace st = new StackTrace(ex, true);
+                    StackFrame frame = st.GetFrame(0);
+
+                    int line = frame.GetFileLineNumber();
+                    string fn = Path.GetFileName(frame.GetFileName());
+                    string msg = $"{ex.Message} ({fn}:{line})";
+
+                    tc.Record(TestCase.StepFlag.Error, msg);
+                }
+
+                // Completed the case, update the counts.
+                Context.NumCasesRun++;
+                Context.NumStepsRun += tc.StepCnt;
             }
 
             // Finished the test run, prepare the summary.
@@ -210,90 +209,78 @@ namespace Nebulator.Test
             {
                 case StepFlag.Error:
                 case StepFlag.Assert:
+                    // Update the states and counts.
+                    if (Context.CurrentCasePass)
                     {
-                        // Update the states and counts.
-                        if (Context.CurrentCasePass)
-                        {
-                            Context.CurrentCasePass = false;
-                            Context.NumCasesFailed++;
-                        }
-
-                        if (Context.CurrentStepPass)
-                        {
-                            Context.CurrentStepPass = false;
-                            Context.NumStepsFailed++;
-                        }
-
-                        // Output the error string with file/line.
-                        int line = -1;
-                        string fn = Globals.UNKNOWN_STRING;
-                        string msg = Globals.UNKNOWN_STRING;
-                        StackTrace st = null;
-
-                        if (flag == StepFlag.Error)
-                        {
-                            st = new StackTrace(true);
-                            msg = o as string;
-                        }
-                        else // Assert
-                        {
-                            st = new StackTrace(o as AssertException, true);
-                            msg = (o as AssertException).AssertInfo;
-                        }
-
-                        foreach (StackFrame frame in st.GetFrames())
-                        {
-                            Console.WriteLine(frame.GetMethod().Name);
-                            if (frame.GetMethod().Name == "RunCase")
-                            {
-                                line = frame.GetFileLineNumber();
-                                fn = Path.GetFileName(frame.GetFileName());
-                                break;
-                            }
-                        }
-
-                        string sout = $"*** {msg}";
-                        if(line != -1)
-                        {
-                            sout += $" ({fn}:{line})";
-                        }
-                        Context.WriteLine(sout);
+                        Context.CurrentCasePass = false;
+                        Context.NumCasesFailed++;
                     }
+
+                    if (Context.CurrentStepPass)
+                    {
+                        Context.CurrentStepPass = false;
+                        Context.NumStepsFailed++;
+                    }
+
+                    // Output the error string with file/line.
+                    int line = -1;
+                    string fn = Globals.UNKNOWN_STRING;
+                    string msg = Globals.UNKNOWN_STRING;
+                    StackTrace st = null;
+
+                    if (flag == StepFlag.Error)
+                    {
+                        st = new StackTrace(true);
+                        msg = o as string;
+                    }
+                    else // Assert
+                    {
+                        st = new StackTrace(o as AssertException, true);
+                        msg = (o as AssertException).AssertInfo;
+                    }
+
+                    foreach (StackFrame frame in st.GetFrames())
+                    {
+                        Console.WriteLine(frame.GetMethod().Name);
+                        if (frame.GetMethod().Name == "RunCase")
+                        {
+                            line = frame.GetFileLineNumber();
+                            fn = Path.GetFileName(frame.GetFileName());
+                            break;
+                        }
+                    }
+
+                    string sout = $"*** {msg}";
+                    if (line != -1)
+                    {
+                        sout += $" ({fn}:{line})";
+                    }
+                    Context.WriteLine(sout);
                     break;
 
                 case StepFlag.Comment:
-                    {
-                        string s = o as string;
-                        Context.WriteLine($"--- {s}");
-                    }
+                    Context.WriteLine($"--- {o}");
                     break;
 
                 case StepFlag.Inspect:
-                    {
-                        string s = o as string;
-                        Context.WriteLine($"!!! {s}");
-                    }
+                    Context.WriteLine($"!!! {o}");
                     break;
 
                 case StepFlag.None:
+                    string s = o as string;
+                    if (s.Length > 0)
                     {
-                        string s = o as string;
-                        if (s.Length > 0)
-                        {
-                            Context.WriteLine($"    {s}");
-                        }
-                        else
-                        {
-                            Context.WriteLine($"");
-                        }
+                        Context.WriteLine($"    {s}");
+                    }
+                    else
+                    {
+                        Context.WriteLine($"");
                     }
                     break;
             }
         }
 
-        #region Test macros
-
-        #region Boilerplate
+        #region Test macros - Boilerplate
         protected void UT_INFO(string message, params object[] vars)
         {
             Record(StepFlag.None, $"{message} {string.Join(", ", vars)}");
@@ -327,7 +314,7 @@ namespace Nebulator.Test
         }
         #endregion
 
-        #region Strings
+        #region Test macros - Strings
         protected bool UT_STR_EQUAL(string value1, string value2)
         {
             bool pass = true;
@@ -363,8 +350,7 @@ namespace Nebulator.Test
         }
         #endregion
 
-
-        #region Comparers
+        #region Test macros - Comparers
         //Less than zero - The current instance precedes the object specified by the CompareTo method in the sort order.
         //Zero - This current instance occurs in the same position in the sort order as the object specified by the CompareTo method.
         //Greater than zero - This current instance follows the object specified by the CompareTo method in the sort order.
@@ -455,7 +441,7 @@ namespace Nebulator.Test
         }
         #endregion
 
-        #region Misc
+        #region Test macros - Misc
         // Checks whether the given condition is true.
         protected bool UT_CHECK(bool condition, string info)
         {
@@ -467,7 +453,6 @@ namespace Nebulator.Test
             }
             return pass;
         }
-        #endregion
         #endregion
 
         #region Utilities

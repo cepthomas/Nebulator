@@ -49,9 +49,6 @@ namespace Nebulator.Scripting
 
         /// <summary>Current state for this track.</summary>
         public TrackState State { get; set; } = TrackState.Normal;
-
-        /// <summary>All the loops for this track.</summary>
-        public List<Loop> Loops { get; set; } = new List<Loop>();
         #endregion
 
         #region Fields
@@ -86,7 +83,7 @@ namespace Nebulator.Scripting
         /// </summary>
         public override string ToString()
         {
-            return $"Name:{Name} Channel:{Channel} Loops:{Loops.Count}";
+            return $"Name:{Name} Channel:{Channel}";
         }
     }
 }

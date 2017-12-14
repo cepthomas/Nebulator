@@ -11,31 +11,35 @@ namespace Nebulator.Scripting
 {
     public class StepUtils
     {
-        /// <summary>
-        /// Turn collected stuff into midi event sequence.
-        /// </summary>
-        /// <param name="tracks">The Tracks.</param>
-        /// <param name="sequences">The Sequences.</param>
-        /// <returns></returns>
-        public static StepCollection ConvertToSteps(IEnumerable<Track> tracks, IEnumerable<Sequence> sequences)
+        ///// <summary>
+        ///// Turn collected stuff into midi event sequence.
+        ///// </summary>
+        ///// <param name="tracks">The Tracks.</param>
+        ///// <param name="sequences">The Sequences.</param>
+        ///// <returns></returns>
+        public static StepCollection ConvertToSteps(Dynamic dynamic)
         {
             StepCollection steps = new StepCollection();
 
-            // Gather the sequence definitions.
-            Dictionary<string, Sequence> seqDefs= sequences.Distinct().ToDictionary(i => i.Name, i => i);
-
-            // Process the composition values.
-            foreach (Track track in tracks)
+            // Iterate through the sections.
+            foreach (Section sect in dynamic.Sections.Values)
             {
-                foreach (Loop loop in track.Loops)
+                // Iterate through the sections tracks.
+                foreach (SectionTrack strack in sect.SectionTracks)
                 {
-                    // Get the loop sequence info.
-                    Sequence seq = seqDefs[loop.SequenceName];
+                    // Get the pertinent Track object.
+                    Track track = dynamic.Tracks[strack.TrackName];
 
-                    for (int loopTick = loop.StartTick; loopTick < loop.EndTick; loopTick += seq.Length)
+                    // For processing current Sequence.
+                    int seqOffset = sect.Start;
+
+                    // Gen steps for each sequence.
+                    foreach (string sseq in strack.SequenceNames)
                     {
-                        StepCollection stepsToAdd = ConvertToSteps(track, seq, loopTick);
+                        Sequence seq = dynamic.Sequences[sseq];
+                        StepCollection stepsToAdd = ConvertToSteps(track, seq, seqOffset);
                         steps.Add(stepsToAdd);
+                        seqOffset += seq.Length;
                     }
                 }
             }
@@ -44,48 +48,62 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Generate a sequence.
+        /// Generate steps from sequence notes.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
-        /// <param name="seq">Which sequence to send.</param>
+        /// <param name="seq">Which notes to send.</param>
         /// <param name="tick">Which tick to start at. If -1 use current Tick.</param>
         public static StepCollection ConvertToSteps(Track track, Sequence seq, int tick = -1)
         {
             StepCollection steps = new StepCollection();
 
-            foreach (Note note in seq.Notes)
+            foreach (SequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
-                int toffset = tick == 0 ? 0 : track.NextTime();
+                int toffset = tick == -1 ? 0 : track.NextTime();
 
-                Time startNoteTime = new Time(tick == -1 ? Globals.StepTime.Tick : tick, toffset) + note.When;
-                Time stopNoteTime = startNoteTime + note.Duration;
+                Time startNoteTime = new Time(tick == -1 ? Globals.StepTime.Tick : tick, toffset) + seqel.When;
+                Time stopNoteTime = startNoteTime + seqel.Duration;
 
-                // Process all note numbers.
-                foreach (int noteNum in note.NoteConstituents)
+                if(seqel.Function != "")
                 {
-                    ///// Note on.
-                    int vel = track.NextVol(note.Volume);
-                    StepNoteOn step = new StepNoteOn()
+                    StepSpecial step = new StepSpecial()
                     {
                         TrackName = track.Name,
                         Channel = track.Channel,
-                        NoteNumber = noteNum,
-                        NoteNumberToPlay = noteNum,
-                        Velocity = vel,
-                        VelocityToPlay = vel,
-                        Duration = note.Duration
+                        Function = seqel.Function
                     };
                     steps.AddStep(startNoteTime, step);
-
-                    // Maybe add a deferred stop note.
-                    if (stopNoteTime != startNoteTime)
+                }
+                else // plain ordinary
+                {
+                    // Process all note numbers.
+                    foreach (int noteNum in seqel.Notes)
                     {
-                        steps.AddStep(stopNoteTime, new StepNoteOff(step));
+                        ///// Note on.
+                        int vel = track.NextVol(seqel.Volume);
+                        StepNoteOn step = new StepNoteOn()
+                        {
+                            TrackName = track.Name,
+                            Channel = track.Channel,
+                            NoteNumber = noteNum,
+                            NoteNumberToPlay = noteNum,
+                            Velocity = vel,
+                            VelocityToPlay = vel,
+                            Duration = seqel.Duration
+                        };
+                        steps.AddStep(startNoteTime, step);
+
+                        // Maybe add a deferred stop note.
+                        if (stopNoteTime != startNoteTime)
+                        {
+                            steps.AddStep(stopNoteTime, new StepNoteOff(step));
+                        }
+                        // else client is taking care of it.
                     }
-                    // else client is taking care of it.
                 }
             }
+
             return steps;
         }
     }

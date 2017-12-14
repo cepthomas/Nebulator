@@ -34,18 +34,16 @@ namespace Nebulator.Test
 
         public void Go()
         {
-            TestEditor();
-
             //TestGrid();
 
-            //TestSimpleUT();
+            TestSimpleUT();
 
-            //Utils.ExtractAPI(@"C:\Dev\GitHub\Nebulator\Nebulator\Scripting\ScriptUi.cs");
+            //Utils.ExtractAPI(@"C:\Dev\Nebulator\Nebulator\Scripting\ScriptUi.cs");
 
-            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example1.neb");
-            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example2.neb");
-            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\example3.neb");
-            //mf.OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\lsys.neb");
+            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\example1.neb");
+            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\example2.neb");
+            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\example3.neb");
+            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
 
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
@@ -53,14 +51,22 @@ namespace Nebulator.Test
         }
 
         /// <summary>
-        /// Tester for chart/grid.
+        /// Tester for simple UT.
         /// </summary>
-        void TestEditor()
+        void TestSimpleUT()
         {
-            NebEditor ned = new NebEditor() { Dock = DockStyle.Fill };
-            splitContainer1.Panel1.Controls.Add(ned);
-            ned.Init(@"C:\Dev\GitHub\Nebulator\Examples\example.neb");
-            ned.Show();
+            TestRunner runner = new TestRunner();
+            string[] cases = new string[] { "SUT", "SM" }; // { "SUT", "SUT_1", "SUT_2" };
+            runner.RunCases(cases);
+
+            // Show results
+            textViewer.Colors.Clear();
+            textViewer.Clear();
+            textViewer.Colors.Add("*** ", Color.Pink);
+            textViewer.Colors.Add("!!! ", Color.Plum);
+            textViewer.Colors.Add("--- ", Color.LightGreen);
+
+            runner.Context.Lines.ForEach(l => textViewer.AddLine(l, false));
         }
 
         /// <summary>
@@ -79,26 +85,6 @@ namespace Nebulator.Test
             }
             grid.InitData(data);
             grid.Show();
-        }
-
-        /// <summary>
-        /// Tester for simple UT.
-        /// </summary>
-        void TestSimpleUT()
-        {
-            TestRunner runner = new TestRunner();
-            string[] cases = new string[] { "SUT" };
-            //string[] cases = new string[] { "SUT_1", "SUT_2" };
-            runner.RunCases(cases);
-
-            // Show results
-            textViewer.Colors.Clear();
-            textViewer.Clear();
-            textViewer.Colors.Add("*** ", Color.Pink);
-            textViewer.Colors.Add("!!! ", Color.Plum);
-            textViewer.Colors.Add("--- ", Color.LightGreen);
-
-            runner.Context.Lines.ForEach(l => textViewer.AddLine(l, false));
         }
 
         /// <summary>

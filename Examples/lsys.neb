@@ -1,13 +1,17 @@
 
 // Partial implementation of https://en.wikipedia.org/wiki/L-system and http://benvan.co.uk/lsys/
+// Graphics only, audio to come.to
 
 // Variables
-COL1 = variable(200);
-INITANG = variable(-3963);
+variable COL1 200
+variable INITANG -3963
 
 // Levers
-L1 = lever(0, 255, COL1);
-L2 = lever(-5000, 0, INITANG);
+lever L1 0 255 COL1
+lever L2 -5000 0 INITANG
+
+
+functions
 
 // The lines to draw.
 List<Point> lines = new List<Point>();
@@ -76,19 +80,12 @@ void genLSys(double sizeGrowth, double angleGrowth, double initAngle, double ini
     };
 
     // Rewrite.
-    for (var i = 0; i < 8; i++) // was 12
+    for (var i = 0; i < 10; i++)
     {
         var sb = new StringBuilder();
-        foreach (var elt in str)
+        foreach(char c in str)
         {
-            if (tbl.ContainsKey(elt))
-            {
-                sb.Append(tbl[elt]);
-            }
-            else
-            {
-                sb.Append(elt);
-            }
+            sb.Append(tbl.ContainsKey(c) ? tbl[c] : c.ToString());
         }
         str = sb.ToString();
     }

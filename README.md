@@ -40,7 +40,6 @@ out for subsequent reuse.
 - Piano control based on Leslie Sanford's.
 - Various utilities and extensions.
 - Super lightweight unit tester for when NUnit is too much.
-- Incomplete built-in text editor - ported from several other useful apps.
 
 
 # Third Party

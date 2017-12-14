@@ -87,6 +87,7 @@
     <Compile Include="Common\UserSettings.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\WaitCursor.cs" />
+    <Compile Include="Common\Wobbler.cs" />
     <Compile Include="Controls\TextViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -131,12 +132,11 @@
     <Compile Include="Midi\StepCollection.cs" />
     <Compile Include="Midi\StyleParser.cs" />
     <Compile Include="Scripting\ControlPoint.cs" />
-    <Compile Include="Scripting\Loop.cs" />
-    <Compile Include="Scripting\Note.cs" />
+    <Compile Include="Scripting\ScriptUiClasses.cs" />
+    <Compile Include="Scripting\Section.cs" />
     <Compile Include="Scripting\Sequence.cs" />
     <Compile Include="Scripting\StepUtils.cs" />
     <Compile Include="Scripting\Track.cs" />
-    <Compile Include="Scripting\UiClasses.cs" />
     <Compile Include="Scripting\Variable.cs" />
     <Compile Include="Controls\Fader.cs">
       <SubType>UserControl</SubType>
@@ -183,9 +183,8 @@
     <Compile Include="FastTimer\IFastTimer.cs" />
     <Compile Include="FastTimer\MultimediaTimer.cs" />
     <Compile Include="FastTimer\TimingAnalyzer.cs" />
-    <Compile Include="Scripting\Wobbler.cs" />
-    <Compile Include="Test\AltScript.cs" />
     <Compile Include="Test\SimpleUT.cs" />
+    <Compile Include="Test\TestCases_SM.cs" />
     <Compile Include="Test\TestCases_SUT.cs" />
     <Compile Include="Test\TestHost.cs">
       <SubType>Form</SubType>
@@ -210,12 +209,6 @@
     </Compile>
     <Compile Include="UI\Levers.Designer.cs">
       <DependentUpon>Levers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\NebEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\NebEditor.Designer.cs">
-      <DependentUpon>NebEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Piano.cs">
       <SubType>Form</SubType>
@@ -277,9 +270,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Levers.resx">
       <DependentUpon>Levers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\NebEditor.resx">
-      <DependentUpon>NebEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Piano.resx">
       <DependentUpon>Piano.cs</DependentUpon>

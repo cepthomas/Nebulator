@@ -4,6 +4,7 @@ using System.Linq;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using System.IO;
+using System.Text;
 using NLog;
 using MoreLinq;
 using Nebulator.Common;
@@ -20,6 +21,9 @@ namespace Nebulator.Scripting
         /// <summary>Current source line.</summary>
         public int LineNumber { get; set; } = 1;
 
+        /// <summary>Current parse state. One of idle, do_section, do_sequence, do_functions.</summary>
+        public string State { get; set; } = "idle";
+
         /// <summary>Accumulated script code lines.</summary>
         public List<string> CodeLines { get; set; } = new List<string>();
     }
@@ -35,9 +39,6 @@ namespace Nebulator.Scripting
 
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
-
-        /// <summary>All the named time points.</summary>
-        public Dictionary<Time, string> TimeDefs { get; } = new Dictionary<Time, string>();
         #endregion
 
         #region Fields
@@ -72,6 +73,82 @@ namespace Nebulator.Scripting
         Dictionary<string, string> _midiControllerDefs = new Dictionary<string, string>();
         #endregion
 
+
+
+        /* state machine? TODO2
+        StateMachine _sm = new StateMachine();
+
+        /// <summary>
+        /// Initialize the state machine.
+        /// </summary>
+        void InitStateMachine()
+        {
+            State[] states = new State[]
+            {
+                 new State("idle", null, null,
+                     new Transition("include", ParseInclude),
+                     new Transition("var", ParseVar),
+                     new Transition("const", ParseConst),
+                     new Transition("ctlin", ParseMidiInputController),
+                     new Transition("ctlout", ParseMidiOutputController),
+                     new Transition("ctlkbd", ParseKbdInputController),
+                     new Transition("lever", ParseLever),
+                     new Transition("patch", ParsePatch),
+                     new Transition("", Error)), // invalid other events
+
+                 new State("do_notes", null, null,
+                     new Transition("indent", ParseNote),
+                     new Transition("", Error)), // invalid other events
+
+                 new State("do_loops", null, null,
+                     new Transition("indent", ParseLoop),
+                     new Transition("", Error)), // invalid other events
+
+                 new State("do_functions", null, null,
+                     new Transition("", ParseFunctionsLine)),
+};
+
+            //State[] states = new State[]
+            //{
+            //     // Any state gets this first
+            //     new State("*", null, null,
+            //         new Transition("seq", "do_notes", ParseSeq),
+            //         new Transition("track", "do_loops", ParseTrack),
+            //         new Transition("functions", "do_functions", ParseFunctions)),
+
+            //     new State("idle", null, null,
+            //         new Transition("composition", ParseComposition),
+            //         new Transition("var", ParseVar),
+            //         new Transition("const", ParseConst),
+            //         new Transition("ctlin", ParseMidiInputController),
+            //         new Transition("ctlout", ParseMidiOutputController),
+            //         new Transition("ctlkbd", ParseKbdInputController),
+            //         new Transition("lever", ParseLever),
+            //         new Transition("patch", ParsePatch),
+            //         new Transition("", Error)), // invalid other events
+
+            //     new State("do_notes", null, null,
+            //         new Transition("indent", ParseNote),
+            //         new Transition("", Error)), // invalid other events
+
+            //     new State("do_loops", null, null,
+            //         new Transition("indent", ParseLoop),
+            //         new Transition("", Error)), // invalid other events
+
+            //     new State("do_functions", null, null,
+            //         new Transition("", ParseFunctionsLine)),
+            //};
+
+            // Initialize the state machine.
+            bool valid = _sm.Init(states, "idle");
+        }
+        */
+
+
+
+
+
+
         #region Main method
         /// <summary>
         /// Run the Compiler.
@@ -91,11 +168,16 @@ namespace Nebulator.Scripting
                 _consts.Clear();
                 _initLines.Clear();
                 _dynamic = new Dynamic();
-                TimeDefs.Clear();
                 Errors.Clear();
 
                 // Init things.
+
+                // Get and sanitize the script name.
                 _scriptName = Path.GetFileNameWithoutExtension(nebfn);
+                StringBuilder sb = new StringBuilder();
+                _scriptName.ForEach(c => sb.Append(char.IsLetterOrDigit(c) ? c : '_'));
+                _scriptName = sb.ToString();
+
                 _baseDir = Path.GetDirectoryName(nebfn);
                 LoadDefinitions();
 
@@ -176,7 +258,29 @@ namespace Nebulator.Scripting
             };
             ParseOneFile(pcont);
 
-            ///// Add the generated internal code.
+            // Check some forward refs. TODO2 A bit clumsy - probably need a two pass compile.
+            foreach(Section sect in _dynamic.Sections.Values)
+            {
+                foreach(SectionTrack st in sect.SectionTracks)
+                {
+                    if(_dynamic.Tracks[st.TrackName] == null)
+                    {
+                        pcont.LineNumber = 0; // Don't know the real line number.
+                        AddParseError(pcont, $"Invalid track name:{st.TrackName}");
+                    }
+
+                    foreach(string sseq in st.SequenceNames)
+                    {
+                        if (_dynamic.Sequences[sseq] == null)
+                        {
+                            pcont.LineNumber = 0; // Don't know the real line number.
+                            AddParseError(pcont, $"Invalid sequence name:{sseq}");
+                        }
+                    }
+                }
+            }
+
+            ///// Add the generated internal code files.
             _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileParseContext()
             {
                 SourceFile = "",
@@ -199,13 +303,13 @@ namespace Nebulator.Scripting
         {
             bool valid = false;
 
-            // Try fully qualified
+            // Try fully qualified.
             if (File.Exists(pcont.SourceFile))
             {
                 // OK - leave as is.
                 valid = true;
             }
-            else // Try relative
+            else // Try relative.
             {
                 string fn = Path.Combine(_baseDir, pcont.SourceFile);
                 if (File.Exists(fn))
@@ -233,39 +337,95 @@ namespace Nebulator.Scripting
                     int pos = s.IndexOf("//");
                     string line = pos >= 0 ? s.Left(pos) : s;
 
-                    List<string> allparts = line.SplitByTokens("(),;= ");
+                    List<string> allparts = line.SplitByTokens(" ;");
 
-                    // What is it?
-                    bool handled = false;
-
-                    if (allparts.Count >= 2)
+                    switch (pcont.State)
                     {
-                        handled = true;
-                        switch (allparts[0])
-                        {
-                            case "include": ParseInclude(pcont, allparts); break;
-                            case "loop": ParseLoop(pcont, allparts); break;
-                            case "note": ParseNote(pcont, allparts); break;
-                            default:
-                                switch (allparts[1])
+                        case "idle":
+                            if (allparts.Count > 0)
+                            {
+                                switch (allparts[0])
                                 {
-                                    case "constant": ParseConstant(pcont, allparts); break;
-                                    case "variable": ParseVariable(pcont, allparts); break;
-                                    case "lever": ParseLever(pcont, allparts); break;
-                                    case "track": ParseTrack(pcont, allparts); break;
-                                    case "sequence": ParseSequence(pcont, allparts); break;
-                                    case "midiin": ParseMidiController(pcont, allparts); break;
-                                    case "midiout": ParseMidiController(pcont, allparts); break;
-                                    default: handled = false; break;
-                                }
-                                break;
-                        }
-                    }
+                                    case "include":
+                                        ParseInclude(pcont, allparts);
+                                        break;
 
-                    if(!handled)
-                    {
-                        // Assume anything else is script.
-                        ParseScriptLine(pcont, allparts, line);
+                                    case "constant":
+                                        ParseConstant(pcont, allparts);
+                                        break;
+
+                                    case "variable":
+                                        ParseVariable(pcont, allparts);
+                                        break;
+
+                                    case "track":
+                                        ParseTrack(pcont, allparts);
+                                        break;
+
+                                    case "lever":
+                                        ParseLever(pcont, allparts);
+                                        break;
+
+                                    case "midictlin":
+                                        ParseMidiController(pcont, allparts);
+                                        break;
+
+                                    case "midictlout":
+                                        ParseMidiController(pcont, allparts);
+                                        break;
+
+                                    case "section":
+                                        ParseSection(pcont, allparts);
+                                        pcont.State = "do_section";
+                                        break;
+
+                                    case "sequence":
+                                        ParseSequence(pcont, allparts);
+                                        pcont.State = "do_sequence";
+                                        break;
+
+                                    case "functions":
+                                        pcont.State = "do_functions";
+                                        break;
+                                }
+                            }
+                            break;
+
+                        case "do_section":
+                            if (allparts.Count == 0)
+                            {
+                                // Empty line. Resets any current collections.
+                                pcont.State = "idle";
+                            }
+                            else
+                            {
+                                ParseSectionTrack(pcont, allparts);
+                            }
+                            break;
+
+                        case "do_sequence":
+                            if (allparts.Count == 0)
+                            {
+                                // Empty line. Resets any current collections.
+                                pcont.State = "idle";
+                            }
+                            else
+                            {
+                                ParseSequenceElement(pcont, allparts);
+                            }
+                            break;
+
+                        case "do_functions":
+                            if (allparts.Count == 0)
+                            {
+                                // Empty line. Skip it.
+                            }
+                            else
+                            {
+                                // Assume anything else is script.
+                                ParseScriptLine(pcont, allparts, line);
+                            }
+                            break;
                     }
                 }
 
@@ -379,41 +539,38 @@ namespace Nebulator.Scripting
                         // The line should end with source line number: "//1234"
                         int origLineNum = 0; // defaults
                         string origFileName = Globals.UNKNOWN_STRING;
-                        string msg = "";
 
-                        // Dig out the offending source code.
+                        // Dig out the offending source code information.
                         string fpath = Path.GetFileName(err.FileName.ToLower());
                         if (_filesToCompile.ContainsKey(fpath))
                         {
                             FileParseContext ci = _filesToCompile[fpath];
                             origFileName = ci.SourceFile;
-                            string serr = ci.CodeLines[err.Line - 1];
+                            string origLine = ci.CodeLines[err.Line - 1];
+                            int ind = origLine.LastIndexOf("//");
 
-                            if (origFileName == "")
+                            if (origFileName == "" || ind == -1)
                             {
-                                // Must be the internal generated file. Do the best we can.
-                                origLineNum = err.Line;
-                                msg = $"Error: {err.ErrorText} in: {serr}";
+                                // Must be an internal error. Do the best we can.
+                                Errors.Add(new ScriptError()
+                                {
+                                    ErrorType = ScriptErrorType.Compile,
+                                    SourceFile = err.FileName,
+                                    LineNumber = err.Line,
+                                    Message = $"Internal Error: {err.ErrorText} in: {origLine}"
+                                });
                             }
                             else
                             {
-                                int ind = serr.LastIndexOf("//");
-
-                                if (ind != -1)
+                                int.TryParse(origLine.Substring(ind + 2), out origLineNum);
+                                Errors.Add(new ScriptError()
                                 {
-                                    serr = serr.Substring(ind + 2);
-                                    int.TryParse(serr, out origLineNum);
-                                    msg = err.ErrorText;
-                                }
+                                    ErrorType = ScriptErrorType.Compile,
+                                    SourceFile = origFileName,
+                                    LineNumber = origLineNum,
+                                    Message = err.ErrorText
+                                });
                             }
-
-                            Errors.Add(new ScriptError()
-                            {
-                                ErrorType = ScriptErrorType.Compile,
-                                SourceFile = origFileName,
-                                LineNumber = origLineNum,
-                                Message = msg
-                            });
                         }
                         else
                         {
@@ -495,11 +652,11 @@ namespace Nebulator.Scripting
         /// <summary>
         /// Create the boilerplate file stuff.
         /// </summary>
-        /// <param name="fn">Source file name.</param>
+        /// <param name="fn">Source file name. Empty means it's an internal file.</param>
         /// <returns></returns>
         List<string> GenCommonFileContents(string fn)
         {
-            // Create the supplementary file. Indicated by empty source file name.
+            // Create the supplementary file.
             List<string> codeLines = new List<string>
             {
                 $"//{fn}",
@@ -507,6 +664,7 @@ namespace Nebulator.Scripting
                 "using System.Collections;",
                 "using System.Collections.Generic;",
                 "using System.Text;",
+                "using System.Linq;",
                 "using System.Drawing;",
                 "using System.Drawing.Drawing2D;",
                 "using System.Windows.Forms;",
@@ -552,182 +710,72 @@ namespace Nebulator.Scripting
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AddParseError(pcont, "Invalid include: " + ex.Message);
+                AddParseError(pcont, $"Invalid include: {parms[1]}");
             }
         }
 
         private void ParseConstant(FileParseContext pcont, List<string> parms)
         {
-            // PART1 constant 0
-            // 0     1     2
+            // constant DRUM_DEF_VOL 100
+            // 0        1            2
 
             try
             {
-                _consts[parms[0]] = int.Parse(parms[2]);
+                _consts[parms[1]] = int.Parse(parms[2]);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AddParseError(pcont, "Invalid const: " + ex.Message);
+                AddParseError(pcont, $"Invalid const: {parms[1]}");
             }
         }
 
         private void ParseVariable(FileParseContext pcont, List<string> parms)
         {
-            // COL1 variable 200
-            // 0    1   2
+            // variable PITCH 8192
+            // 0        1     2
 
             try
             {
                 Variable v = new Variable()
                 {
-                    Name = parms[0],
+                    Name = parms[1],
                     Value = int.Parse(parms[2])
                 };
                 _dynamic.Vars.Add(v.Name, v);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AddParseError(pcont, "Invalid var: " + ex.Message);
+                AddParseError(pcont, $"Invalid variable: {parms[1]}");
             }
         }
 
         private void ParseSequence(FileParseContext pcont, List<string> parms)
         {
-            // KEYS_VERSE1 sequence 16
-            // 0           1   2
+            // sequence DRUMS_SIMPLE 8
+            // 0        1            2
 
             try
             {
                 Sequence ns = new Sequence()
                 {
-                    Name = parms[0],
+                    Name = parms[1],
                     Length = ParseConstRef(pcont, parms[2]),
                 };
                 _dynamic.Sequences.Add(ns.Name, ns);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AddParseError(pcont, "Invalid seq: " + ex.Message);
-            }
-        }
-
-        private void ParseNote(FileParseContext pcont, List<string> parms)
-        {
-            // note WHEN WHICH VEL 1.50*
-            // 0    1    2     3   4
-            // WHEN: 1.23, __1___1___1___1_ (or #)
-            // WHICH: 60, C.4, C.4.m7, RideCymbal1
-            // VEL: 90, const
-
-            try
-            {
-                // Support note string, number, drum.
-                Note n = null;
-
-                if (parms[2].IsInteger())
-                {
-                    // Simple note number.
-                    n = new Note(int.Parse(parms[2]));
-                }
-                else if (_midiDrumDefs.ContainsKey(parms[2]))
-                {
-                    // It's a drum.
-                    n = new Note(int.Parse(_midiDrumDefs[parms[2]]))
-                    {
-                        Duration = new Time(1) // nominal duration
-                    };
-                }
-                else
-                {
-                    // String form.
-                    n = new Note(parms[2]);
-                }
-
-                // Optional duration for musical note.
-                if (parms.Count > 4)
-                {
-                    List<Time> t = ParseTime(pcont, parms[4]);
-                    n.Duration = t[0];
-                }
-
-                // The rest is common.
-                n.Volume = ParseConstRef(pcont, parms[3]);
-
-                List<Time> whens = ParseTime(pcont, parms[1]);
-                foreach(Time t in whens)
-                {
-                    Note ncl = new Note(n) { When = t };
-                    _dynamic.Sequences.Values.Last().Notes.Add(ncl);
-                }
-            }
-            catch (Exception ex)
-            {
-                AddParseError(pcont, "Invalid note: " + ex.Message);
-            }
-        }
-
-        private void ParseLoop(FileParseContext pcont, List<string> parms)
-        {
-            // loop PART1 PART2 KEYS_VERSE1
-            // 0    1     2     3
-
-            try
-            {
-                Loop nl = new Loop()
-                {
-                    StartTick = ParseConstRef(pcont, parms[1]),
-                    EndTick = ParseConstRef(pcont, parms[2]),
-                    SequenceName = parms[3]
-                };
-                _dynamic.Tracks.Values.Last().Loops.Add(nl);
-
-                // Save any important times.
-                if (!parms[1].IsInteger())
-                {
-                    TimeDefs[new Time(nl.StartTick, 0)] = parms[1];
-                }
-
-                if (!parms[2].IsInteger())
-                {
-                    TimeDefs[new Time(nl.EndTick, 0)] = parms[2];
-                }
-            }
-            catch (Exception ex)
-            {
-                AddParseError(pcont, "Invalid loop: " + ex.Message);
-            }
-        }
-
-        private void ParseTrack(FileParseContext pcont, List<string> parms)
-        {
-            try
-            {
-                // KEYS track 1 5 0 0
-                // 0    1     2 3 4 5
-
-                Track nt = new Track()
-                {
-                    Name = parms[0],
-                    Channel = int.Parse(parms[2]),
-                    WobbleVolume = parms.Count > 3 ? ParseConstRef(pcont, parms[3]) : 0,
-                    WobbleTimeBefore = parms.Count > 4 ? -ParseConstRef(pcont, parms[4]) : 0,
-                    WobbleTimeAfter = parms.Count > 5 ? ParseConstRef(pcont, parms[5]) : 0
-                };
-                _dynamic.Tracks.Add(nt.Name, nt);
-            }
-            catch (Exception ex)
-            {
-                AddParseError(pcont, "Invalid track: " + ex.Message);
+                AddParseError(pcont, $"Invalid sequence: {parms[1]}");
             }
         }
 
         private void ParseMidiController(FileParseContext pcont, List<string> parms)
         {
-            // MI midiin  1 2     MODN
-            // MO midiout 1 Pitch PITCH
-            // 0  1       2 3     4
+            // midictlin  MI1 1 4     MODN
+            // midictlout MO1 1 Pitch PITCH
+            // 0          1   2 3     4
 
             try
             {
@@ -755,30 +803,30 @@ namespace Nebulator.Scripting
                     RefVar = ParseVarRef(pcont, parms[4])
                 };
 
-                switch(parms[1])
+                switch (parms[0])
                 {
-                    case "midiin":
-                        _dynamic.InputMidis.Add(parms[0], ctl);
+                    case "midictlin":
+                        _dynamic.InputMidis.Add(parms[1], ctl);
                         break;
 
-                    case "midiout":
-                        _dynamic.OutputMidis.Add(parms[0], ctl);
+                    case "midictlout":
+                        _dynamic.OutputMidis.Add(parms[1], ctl);
                         break;
 
                     default:
                         throw new Exception("");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AddParseError(pcont, "Invalid midi controller: " + ex.Message);
+                AddParseError(pcont, $"Invalid midi controller: {parms[1]}");
             }
         }
 
         private void ParseLever(FileParseContext pcont, List<string> parms)
         {
-            // LEVER1 lever 0 255 COL1
-            // 0      1     2 3   4
+            // lever L3 -10 10 MODN
+            // 0     1  2   3  4
 
             try
             {
@@ -788,11 +836,151 @@ namespace Nebulator.Scripting
                     Max = int.Parse(parms[3]),
                     RefVar = ParseVarRef(pcont, parms[4])
                 };
-                _dynamic.Levers.Add(parms[0], ctl);
+                _dynamic.Levers.Add(parms[1], ctl);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AddParseError(pcont, "Invalid lever controller: " + ex.Message);
+                AddParseError(pcont, $"Invalid lever: {parms[1]}");
+            }
+        }
+
+        private void ParseTrack(FileParseContext pcont, List<string> parms)
+        {
+            try
+            {
+                // track KEYS 1 5 0 0
+                // 0     1    2 3 4 5
+
+                Track nt = new Track()
+                {
+                    Name = parms[1],
+                    Channel = int.Parse(parms[2]),
+                    WobbleVolume = parms.Count > 3 ? ParseConstRef(pcont, parms[3]) : 0,
+                    WobbleTimeBefore = parms.Count > 4 ? -ParseConstRef(pcont, parms[4]) : 0,
+                    WobbleTimeAfter = parms.Count > 5 ? ParseConstRef(pcont, parms[5]) : 0
+                };
+                _dynamic.Tracks.Add(nt.Name, nt);
+            }
+            catch (Exception)
+            {
+                AddParseError(pcont, $"Invalid track: {parms[1]}");
+            }
+        }
+
+        private void ParseSection(FileParseContext pcont, List<string> parms)
+        {
+            // section PART1 0 32
+            // 0       1     2 3
+
+            try
+            {
+                Section s = new Section()
+                {
+                    Name = parms[1],
+                    Start = ParseConstRef(pcont, parms[2]),
+                    Length = ParseConstRef(pcont, parms[3])
+                };
+                _dynamic.Sections.Add(s.Name, s);
+            }
+            catch (Exception)
+            {
+                AddParseError(pcont, $"Invalid section: {parms[1]}");
+            }
+        }
+
+        private void ParseSectionTrack(FileParseContext pcont, List<string> parms)
+        {
+            // KEYS   SEQ1           SEQ2       algoXXX()        SEQ2
+            // DRUMS  DRUMS_SIMPLE   DRUMS_X
+            // 0      1              2          3                4
+
+            try
+            {
+                SectionTrack st = new SectionTrack()
+                {
+                    TrackName = parms[0]
+                };
+
+                for (int i = 1; i < parms.Count; i++)
+                {
+                    st.SequenceNames.Add(parms[i]);
+                }
+                _dynamic.Sections.Values.Last().SectionTracks.Add(st);
+            }
+            catch (Exception )
+            {
+                AddParseError(pcont, $"Invalid section track: {parms[0]}");
+            }
+        }
+
+        private void ParseSequenceElement(FileParseContext pcont, List<string> parms)
+        {
+            // WHEN WHICH VEL 1.50
+            // 0    1     2   3
+            // 0: 1.23, __x___x___x___x_, function
+            // 1: 60, C.4, C.4.m7, RideCymbal1
+            // 2: vel (opt): 90, const
+            // 3: dur (opt): 1.23
+
+            // e.g.
+            // 00.00  G.3  90  0.60
+            // 01.00  58  90  0.60
+            // ----x-------x-x-----x-------x-x- AcousticSnare 80
+            // algoDynamic()  90
+
+            try
+            {
+                // Support note string, number, drum.
+                SequenceElement seqel = null;
+
+                if (parms[1].IsInteger())
+                {
+                    // Simple note number.
+                    seqel = new SequenceElement(int.Parse(parms[1]))
+                    {
+                        Volume = ParseConstRef(pcont, parms[2])
+                    };
+                }
+                else if (_midiDrumDefs.ContainsKey(parms[1]))
+                {
+                    // It's a drum.
+                    seqel = new SequenceElement(int.Parse(_midiDrumDefs[parms[1]]))
+                    {
+                        Volume = ParseConstRef(pcont, parms[2]),
+                        Duration = new Time(1) // nominal duration
+                    };
+                }
+                else
+                {
+                    // Note or function string form.
+                    seqel = new SequenceElement(parms[1])
+                    {
+                        Volume = ParseConstRef(pcont, parms[2])
+                    };
+
+                    if(seqel.Function != "")
+                    {
+                        _initLines.Add($"_scriptFunctions.Add(\"{seqel.Function}\", {seqel.Function});");
+                    }
+                }
+
+                // Optional duration for musical note.
+                if (parms.Count > 3)
+                {
+                    List<Time> t = ParseTime(pcont, parms[3]);
+                    seqel.Duration = t[0];
+                }
+
+                List<Time> whens = ParseTime(pcont, parms[0]);
+                foreach (Time t in whens)
+                {
+                    SequenceElement ncl = new SequenceElement(seqel) { When = t };
+                    _dynamic.Sequences.Values.Last().Elements.Add(ncl);
+                }
+            }
+            catch (Exception)
+            {
+                AddParseError(pcont, $"Invalid note: {parms[1]}");
             }
         }
 
@@ -817,9 +1005,9 @@ namespace Nebulator.Scripting
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                AddParseError(pcont, "Invalid function line: " + ex.Message);
+                AddParseError(pcont, "Invalid function line");
             }
         }
         #endregion
@@ -862,7 +1050,7 @@ namespace Nebulator.Scripting
                 v = _dynamic.Vars[s];
                 if (v is null)
                 {
-                    AddParseError(pcont, "Invalid reference name " + s);
+                    AddParseError(pcont, $"Invalid reference: {s}");
                 }
             }
             return v;
@@ -892,7 +1080,7 @@ namespace Nebulator.Scripting
                 }
                 else
                 {
-                    AddParseError(pcont, "Invalid reference " + s);
+                    AddParseError(pcont, $"Invalid reference: {s}");
                 }
             }
             return c;
@@ -989,7 +1177,7 @@ namespace Nebulator.Scripting
             }
             catch (Exception)
             {
-                AddParseError(pcont, "Invalid time");
+                AddParseError(pcont, $"Invalid time: {s}");
                 times.Clear();
             }
             return times;

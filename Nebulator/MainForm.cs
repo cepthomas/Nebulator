@@ -14,7 +14,7 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
-// TODO2 Syntax and autocomplete for .neb files in sublime.in
+// TODO2 Syntax and autocomplete for .neb files in sublime.
 
 namespace Nebulator
 {
@@ -137,7 +137,7 @@ namespace Nebulator
             #endregion
 
             ////////////////////// test ///////////////////////
-            //OpenFile(@"C:\Dev\GitHub\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
+            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
             //_testHost = new Test.TestHost(this);
             //_testHost.Show();
         }
@@ -223,14 +223,17 @@ namespace Nebulator
             _watcher.Clear();
             compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
 
-            timeMaster.TimeDefs = compiler.TimeDefs;
+            // Time points.
+            timeMaster.TimeDefs.Clear();
 
             if (compiler.Errors.Count == 0 && _script != null)
             {
                 btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
                 _dirtyFiles = false;
 
-                _compiledSteps = StepUtils.ConvertToSteps(_script.Dynamic.Tracks.Values, _script.Dynamic.Sequences.Values);
+                _script.Dynamic.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
+
+                _compiledSteps = StepUtils.ConvertToSteps(_script.Dynamic);
 
                 _script.ScriptEvent += Script_ScriptEvent;
                 InitMainUi();
@@ -271,7 +274,6 @@ namespace Nebulator
             foreach (Track t in _script.Dynamic.Tracks.Values)
             {
                 // Init from persistence.
-                //int vt = Utils.Constrain(Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume")), 70, MAX_MIDI_VOLUME);
                 int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
                 t.Volume = vt == 0 ? 90 : vt; // in case it's new
 
@@ -335,7 +337,7 @@ namespace Nebulator
                     // Execute any script handlers.
                     _script.ExecScriptFunction(var.Name);
 
-                    // Output any midiout controllers.
+                    // Output any midictlout controllers.
                     IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
 
                     if (ctlpts != null && ctlpts.Count() > 0)
@@ -386,9 +388,16 @@ namespace Nebulator
 
                         if (play)
                         {
-                            // Maybe tweak values.
-                            step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
-                            Globals.MidiInterface.Send(step);
+                            if(step is StepSpecial)
+                            {
+                                _script.ExecScriptFunction((step as StepSpecial).Function);
+                            }
+                            else
+                            {
+                                // Maybe tweak values.
+                                step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
+                                Globals.MidiInterface.Send(step);
+                            }
                         }
                     }
 
@@ -397,7 +406,7 @@ namespace Nebulator
 
                     ////// Check for end of play.
                     // If no steps or not selected, free running mode so always keep going.
-                    if(_compiledSteps.Count != 0 && chkSequence.Checked)
+                    if(_compiledSteps.Times.Count() != 0 && chkSequence.Checked)
                     {
                         // Check for end and loop condition.
                         if (Globals.StepTime.Tick >= _compiledSteps.MaxTick)
@@ -919,7 +928,7 @@ namespace Nebulator
 
                     if (ctrls)
                     {
-                        MessageBox.Show("Changes require a restart to take effect."); // TODO2 Update controls without restarting.
+                        MessageBox.Show("UI changes require a restart to take effect."); // TODO2 Update controls without restarting.
                     }
 
                     SaveSettings();

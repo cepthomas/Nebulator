@@ -4,6 +4,6 @@
     "master.speed": 44.0,
     "master.loop": false,
     "master.sequence": false,
-    "KEYS.volume": 109
+    "SOUND.volume": 90
   }
 }
