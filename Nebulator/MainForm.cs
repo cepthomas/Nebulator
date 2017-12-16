@@ -137,7 +137,7 @@ namespace Nebulator
             #endregion
 
             ////////////////////// test ///////////////////////
-            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
+            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
             //_testHost = new Test.TestHost(this);
             //_testHost.Show();
         }
