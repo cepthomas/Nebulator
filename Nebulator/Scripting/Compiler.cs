@@ -13,26 +13,28 @@ using Nebulator.Midi;
 
 namespace Nebulator.Scripting
 {
-    class FileParseContext
-    {
-        /// <summary>Current source file.</summary>
-        public string SourceFile { get; set; } = Globals.UNKNOWN_STRING;
-
-        /// <summary>Current source line.</summary>
-        public int LineNumber { get; set; } = 1;
-
-        /// <summary>Current parse state. One of idle, do_section, do_sequence, do_functions.</summary>
-        public string State { get; set; } = "idle";
-
-        /// <summary>Accumulated script code lines.</summary>
-        public List<string> CodeLines { get; set; } = new List<string>();
-    }
-
     /// <summary>
     /// Parses/compiles neb file(s). TODO2 could use some speeding up.
     /// </summary>
     public class Compiler
     {
+        #region Helper classes
+        class FileParseContext
+        {
+            /// <summary>Current source file.</summary>
+            public string SourceFile { get; set; } = Globals.UNKNOWN_STRING;
+
+            /// <summary>Current source line.</summary>
+            public int LineNumber { get; set; } = 1;
+
+            /// <summary>Current parse state. One of idle, do_section, do_sequence, do_functions.</summary>
+            public string State { get; set; } = "idle";
+
+            /// <summary>Accumulated script code lines.</summary>
+            public List<string> CodeLines { get; set; } = new List<string>();
+        }
+        #endregion
+
         #region Properties
         /// <summary>Accumulated errors.</summary>
         public List<ScriptError> Errors { get; } = new List<ScriptError>();
@@ -60,6 +62,9 @@ namespace Nebulator.Scripting
         /// <summary>Accumulated lines to go in the constructor.</summary>
         List<string> _initLines = new List<string>();
 
+        /// <summary>Parser state machine.</summary>
+        StateMachine _sm = new StateMachine();
+
         /// <summary>Products of parsing process. Key is generated file name.</summary>
         Dictionary<string, FileParseContext> _filesToCompile = new Dictionary<string, FileParseContext>();
 
@@ -72,82 +77,6 @@ namespace Nebulator.Scripting
         /// <summary>The midi controller definitions from ScriptDefinitions.md.</summary>
         Dictionary<string, string> _midiControllerDefs = new Dictionary<string, string>();
         #endregion
-
-
-
-        /* state machine? TODO2
-        StateMachine _sm = new StateMachine();
-
-        /// <summary>
-        /// Initialize the state machine.
-        /// </summary>
-        void InitStateMachine()
-        {
-            State[] states = new State[]
-            {
-                 new State("idle", null, null,
-                     new Transition("include", ParseInclude),
-                     new Transition("var", ParseVar),
-                     new Transition("const", ParseConst),
-                     new Transition("ctlin", ParseMidiInputController),
-                     new Transition("ctlout", ParseMidiOutputController),
-                     new Transition("ctlkbd", ParseKbdInputController),
-                     new Transition("lever", ParseLever),
-                     new Transition("patch", ParsePatch),
-                     new Transition("", Error)), // invalid other events
-
-                 new State("do_notes", null, null,
-                     new Transition("indent", ParseNote),
-                     new Transition("", Error)), // invalid other events
-
-                 new State("do_loops", null, null,
-                     new Transition("indent", ParseLoop),
-                     new Transition("", Error)), // invalid other events
-
-                 new State("do_functions", null, null,
-                     new Transition("", ParseFunctionsLine)),
-};
-
-            //State[] states = new State[]
-            //{
-            //     // Any state gets this first
-            //     new State("*", null, null,
-            //         new Transition("seq", "do_notes", ParseSeq),
-            //         new Transition("track", "do_loops", ParseTrack),
-            //         new Transition("functions", "do_functions", ParseFunctions)),
-
-            //     new State("idle", null, null,
-            //         new Transition("composition", ParseComposition),
-            //         new Transition("var", ParseVar),
-            //         new Transition("const", ParseConst),
-            //         new Transition("ctlin", ParseMidiInputController),
-            //         new Transition("ctlout", ParseMidiOutputController),
-            //         new Transition("ctlkbd", ParseKbdInputController),
-            //         new Transition("lever", ParseLever),
-            //         new Transition("patch", ParsePatch),
-            //         new Transition("", Error)), // invalid other events
-
-            //     new State("do_notes", null, null,
-            //         new Transition("indent", ParseNote),
-            //         new Transition("", Error)), // invalid other events
-
-            //     new State("do_loops", null, null,
-            //         new Transition("indent", ParseLoop),
-            //         new Transition("", Error)), // invalid other events
-
-            //     new State("do_functions", null, null,
-            //         new Transition("", ParseFunctionsLine)),
-            //};
-
-            // Initialize the state machine.
-            bool valid = _sm.Init(states, "idle");
-        }
-        */
-
-
-
-
-
 
         #region Main method
         /// <summary>
@@ -182,6 +111,7 @@ namespace Nebulator.Scripting
                 LoadDefinitions();
 
                 // Parse.
+                InitStateMachine();
                 DateTime startTime = DateTime.Now;
                 Parse(nebfn);
                 _logger.Info($"Parse files took {(DateTime.Now - startTime).Milliseconds} msec.");
@@ -250,7 +180,7 @@ namespace Nebulator.Scripting
         /// <param name="nebfn">Topmost file in collection.</param>
         void Parse(string nebfn)
         {
-            ///// Start processing from the main file. Recursive so will process any includes.
+            // Start parsing from the main file. Recursive function.
             FileParseContext pcont = new FileParseContext()
             {
                 SourceFile = nebfn,
@@ -258,7 +188,7 @@ namespace Nebulator.Scripting
             };
             ParseOneFile(pcont);
 
-            // Check some forward refs. TODO2 A bit clumsy - probably need a two pass compile.
+            // Finished. Check some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
             foreach(Section sect in _dynamic.Sections.Values)
             {
                 foreach(SectionTrack st in sect.SectionTracks)
@@ -280,7 +210,7 @@ namespace Nebulator.Scripting
                 }
             }
 
-            ///// Add the generated internal code files.
+            // Add the generated internal code files.
             _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileParseContext()
             {
                 SourceFile = "",
@@ -335,98 +265,18 @@ namespace Nebulator.Scripting
 
                     // Remove any comments.
                     int pos = s.IndexOf("//");
-                    string line = pos >= 0 ? s.Left(pos) : s;
+                    string cline = pos >= 0 ? s.Left(pos) : s;
 
-                    List<string> allparts = line.SplitByTokens(" ;");
-
-                    switch (pcont.State)
+                    // Run it.
+                    SmFuncArg farg = new SmFuncArg()
                     {
-                        case "idle":
-                            if (allparts.Count > 0)
-                            {
-                                switch (allparts[0])
-                                {
-                                    case "include":
-                                        ParseInclude(pcont, allparts);
-                                        break;
+                        Context = pcont,
+                        Args = cline.SplitByTokens(" ;"),
+                        CleanedLine = cline
+                    };
 
-                                    case "constant":
-                                        ParseConstant(pcont, allparts);
-                                        break;
-
-                                    case "variable":
-                                        ParseVariable(pcont, allparts);
-                                        break;
-
-                                    case "track":
-                                        ParseTrack(pcont, allparts);
-                                        break;
-
-                                    case "lever":
-                                        ParseLever(pcont, allparts);
-                                        break;
-
-                                    case "midictlin":
-                                        ParseMidiController(pcont, allparts);
-                                        break;
-
-                                    case "midictlout":
-                                        ParseMidiController(pcont, allparts);
-                                        break;
-
-                                    case "section":
-                                        ParseSection(pcont, allparts);
-                                        pcont.State = "do_section";
-                                        break;
-
-                                    case "sequence":
-                                        ParseSequence(pcont, allparts);
-                                        pcont.State = "do_sequence";
-                                        break;
-
-                                    case "functions":
-                                        pcont.State = "do_functions";
-                                        break;
-                                }
-                            }
-                            break;
-
-                        case "do_section":
-                            if (allparts.Count == 0)
-                            {
-                                // Empty line. Resets any current collections.
-                                pcont.State = "idle";
-                            }
-                            else
-                            {
-                                ParseSectionTrack(pcont, allparts);
-                            }
-                            break;
-
-                        case "do_sequence":
-                            if (allparts.Count == 0)
-                            {
-                                // Empty line. Resets any current collections.
-                                pcont.State = "idle";
-                            }
-                            else
-                            {
-                                ParseSequenceElement(pcont, allparts);
-                            }
-                            break;
-
-                        case "do_functions":
-                            if (allparts.Count == 0)
-                            {
-                                // Empty line. Skip it.
-                            }
-                            else
-                            {
-                                // Assume anything else is script.
-                                ParseScriptLine(pcont, allparts, line);
-                            }
-                            break;
-                    }
+                    string evt = farg.Args.Count == 0 ? "blank" : farg.Args[0];
+                    _sm.ProcessEvent(evt, farg);
                 }
 
                 // Postamble.
@@ -438,6 +288,65 @@ namespace Nebulator.Scripting
             }
 
             return valid;
+        }
+        #endregion
+
+        #region Parser state machine
+        /// <summary>
+        /// Generic payload for state machine functions.
+        /// </summary>
+        class SmFuncArg
+        {
+            public FileParseContext Context { get; set; } = null;
+            public List<string> Args { get; set; } = null;
+            public string CleanedLine { get; set; } = "";
+        }
+
+        /// <summary>
+        /// Initialize the state machine.
+        /// </summary>
+        bool InitStateMachine()
+        {
+            State[] states = new State[]
+            {
+                new State("idle", null, null,
+                    new Transition("include", ParseInclude),
+                    new Transition("constant", ParseConstant),
+                    new Transition("variable", ParseVariable),
+                    new Transition("track", ParseTrack),
+                    new Transition("lever", ParseLever),
+                    new Transition("midictlin", ParseMidiController),
+                    new Transition("midictlout", ParseMidiController),
+                    new Transition("section", "do_section", ParseSection),
+                    new Transition("sequence", "do_sequence", ParseSequence),
+                    new Transition("functions", "do_functions"),
+                    new Transition("blank"), // swallow these
+                    new Transition("", SmError)), // invalid other events
+
+                new State("do_section", null, null,
+                    new Transition("blank", "idle"), // done section
+                    new Transition("", ParseSectionTrack)), // element of section
+
+                new State("do_sequence", null, null,
+                    new Transition("blank", "idle"), // done sequence
+                    new Transition("", ParseSequenceElement)), // element of sequence
+
+                new State("do_functions", null, null,
+                    new Transition("", ParseScriptLine)), // all treated the same
+            };
+
+            bool valid = _sm.Init(states, "idle");
+            return valid;
+        }
+
+        /// <summary>
+        /// State machine parse error handler.
+        /// </summary>
+        /// <param name="o"></param>
+        private void SmError(object o)
+        {
+            SmFuncArg farg = o as SmFuncArg;
+            AddParseError(farg.Context, "State machine error");
         }
         #endregion
 
@@ -682,8 +591,10 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Specific line parsers
-        private void ParseInclude(FileParseContext pcont, List<string> parms)
+        private void ParseInclude(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // include path\name.neb
             // 0       1
             // or:
@@ -693,7 +604,7 @@ namespace Nebulator.Scripting
             try
             {
                 // Handle spaces in path.
-                string fn = string.Join(" ", parms.GetRange(1, parms.Count - 1));
+                string fn = string.Join(" ", farg.Args.GetRange(1, farg.Args.Count - 1));
 
                 if (!SourceFiles.Contains(fn)) // Check for already done.
                 {
@@ -712,27 +623,31 @@ namespace Nebulator.Scripting
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid include: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid include: {farg.Args[1]}");
             }
         }
 
-        private void ParseConstant(FileParseContext pcont, List<string> parms)
+        private void ParseConstant(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // constant DRUM_DEF_VOL 100
             // 0        1            2
 
             try
             {
-                _consts[parms[1]] = int.Parse(parms[2]);
+                _consts[farg.Args[1]] = int.Parse(farg.Args[2]);
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid const: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid const: {farg.Args[1]}");
             }
         }
 
-        private void ParseVariable(FileParseContext pcont, List<string> parms)
+        private void ParseVariable(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // variable PITCH 8192
             // 0        1     2
 
@@ -740,19 +655,21 @@ namespace Nebulator.Scripting
             {
                 Variable v = new Variable()
                 {
-                    Name = parms[1],
-                    Value = int.Parse(parms[2])
+                    Name = farg.Args[1],
+                    Value = int.Parse(farg.Args[2])
                 };
                 _dynamic.Vars.Add(v.Name, v);
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid variable: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid variable: {farg.Args[1]}");
             }
         }
 
-        private void ParseSequence(FileParseContext pcont, List<string> parms)
+        private void ParseSequence(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // sequence DRUMS_SIMPLE 8
             // 0        1            2
 
@@ -760,19 +677,21 @@ namespace Nebulator.Scripting
             {
                 Sequence ns = new Sequence()
                 {
-                    Name = parms[1],
-                    Length = ParseConstRef(pcont, parms[2]),
+                    Name = farg.Args[1],
+                    Length = ParseConstRef(farg.Context, farg.Args[2]),
                 };
                 _dynamic.Sequences.Add(ns.Name, ns);
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid sequence: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid sequence: {farg.Args[1]}");
             }
         }
 
-        private void ParseMidiController(FileParseContext pcont, List<string> parms)
+        private void ParseMidiController(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // midictlin  MI1 1 4     MODN
             // midictlout MO1 1 Pitch PITCH
             // 0          1   2 3     4
@@ -781,10 +700,10 @@ namespace Nebulator.Scripting
             {
                 int mctlr = 0;
 
-                switch (parms[3])
+                switch (farg.Args[3])
                 {
                     case string s when s.IsInteger():
-                        mctlr = int.Parse(parms[3]);
+                        mctlr = int.Parse(farg.Args[3]);
                         break;
 
                     case "Pitch":
@@ -792,25 +711,25 @@ namespace Nebulator.Scripting
                         break;
 
                     default:
-                        mctlr = MidiInterface.TranslateController(parms[3]);
+                        mctlr = MidiInterface.TranslateController(farg.Args[3]);
                         break;
                 }
 
                 MidiControlPoint ctl = new MidiControlPoint()
                 {
-                    Channel = int.Parse(parms[2]),
+                    Channel = int.Parse(farg.Args[2]),
                     MidiController = mctlr,
-                    RefVar = ParseVarRef(pcont, parms[4])
+                    RefVar = ParseVarRef(farg.Context, farg.Args[4])
                 };
 
-                switch (parms[0])
+                switch (farg.Args[0])
                 {
                     case "midictlin":
-                        _dynamic.InputMidis.Add(parms[1], ctl);
+                        _dynamic.InputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     case "midictlout":
-                        _dynamic.OutputMidis.Add(parms[1], ctl);
+                        _dynamic.OutputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     default:
@@ -819,12 +738,14 @@ namespace Nebulator.Scripting
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid midi controller: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid midi controller: {farg.Args[1]}");
             }
         }
 
-        private void ParseLever(FileParseContext pcont, List<string> parms)
+        private void ParseLever(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // lever L3 -10 10 MODN
             // 0     1  2   3  4
 
@@ -832,43 +753,47 @@ namespace Nebulator.Scripting
             {
                 LeverControlPoint ctl = new LeverControlPoint()
                 {
-                    Min = int.Parse(parms[2]),
-                    Max = int.Parse(parms[3]),
-                    RefVar = ParseVarRef(pcont, parms[4])
+                    Min = int.Parse(farg.Args[2]),
+                    Max = int.Parse(farg.Args[3]),
+                    RefVar = ParseVarRef(farg.Context, farg.Args[4])
                 };
-                _dynamic.Levers.Add(parms[1], ctl);
+                _dynamic.Levers.Add(farg.Args[1], ctl);
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid lever: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid lever: {farg.Args[1]}");
             }
         }
 
-        private void ParseTrack(FileParseContext pcont, List<string> parms)
+        private void ParseTrack(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
+            // track KEYS 1 5 0 0
+            // 0     1    2 3 4 5
+
             try
             {
-                // track KEYS 1 5 0 0
-                // 0     1    2 3 4 5
-
                 Track nt = new Track()
                 {
-                    Name = parms[1],
-                    Channel = int.Parse(parms[2]),
-                    WobbleVolume = parms.Count > 3 ? ParseConstRef(pcont, parms[3]) : 0,
-                    WobbleTimeBefore = parms.Count > 4 ? -ParseConstRef(pcont, parms[4]) : 0,
-                    WobbleTimeAfter = parms.Count > 5 ? ParseConstRef(pcont, parms[5]) : 0
+                    Name = farg.Args[1],
+                    Channel = int.Parse(farg.Args[2]),
+                    WobbleVolume = farg.Args.Count > 3 ? ParseConstRef(farg.Context, farg.Args[3]) : 0,
+                    WobbleTimeBefore = farg.Args.Count > 4 ? -ParseConstRef(farg.Context, farg.Args[4]) : 0,
+                    WobbleTimeAfter = farg.Args.Count > 5 ? ParseConstRef(farg.Context, farg.Args[5]) : 0
                 };
                 _dynamic.Tracks.Add(nt.Name, nt);
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid track: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid track: {farg.Args[1]}");
             }
         }
 
-        private void ParseSection(FileParseContext pcont, List<string> parms)
+        private void ParseSection(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // section PART1 0 32
             // 0       1     2 3
 
@@ -876,20 +801,22 @@ namespace Nebulator.Scripting
             {
                 Section s = new Section()
                 {
-                    Name = parms[1],
-                    Start = ParseConstRef(pcont, parms[2]),
-                    Length = ParseConstRef(pcont, parms[3])
+                    Name = farg.Args[1],
+                    Start = ParseConstRef(farg.Context, farg.Args[2]),
+                    Length = ParseConstRef(farg.Context, farg.Args[3])
                 };
                 _dynamic.Sections.Add(s.Name, s);
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid section: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid section: {farg.Args[1]}");
             }
         }
 
-        private void ParseSectionTrack(FileParseContext pcont, List<string> parms)
+        private void ParseSectionTrack(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // KEYS   SEQ1           SEQ2       algoXXX()        SEQ2
             // DRUMS  DRUMS_SIMPLE   DRUMS_X
             // 0      1              2          3                4
@@ -898,23 +825,25 @@ namespace Nebulator.Scripting
             {
                 SectionTrack st = new SectionTrack()
                 {
-                    TrackName = parms[0]
+                    TrackName = farg.Args[0]
                 };
 
-                for (int i = 1; i < parms.Count; i++)
+                for (int i = 1; i < farg.Args.Count; i++)
                 {
-                    st.SequenceNames.Add(parms[i]);
+                    st.SequenceNames.Add(farg.Args[i]);
                 }
                 _dynamic.Sections.Values.Last().SectionTracks.Add(st);
             }
             catch (Exception )
             {
-                AddParseError(pcont, $"Invalid section track: {parms[0]}");
+                AddParseError(farg.Context, $"Invalid section track: {farg.Args[0]}");
             }
         }
 
-        private void ParseSequenceElement(FileParseContext pcont, List<string> parms)
+        private void ParseSequenceElement(object o)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // WHEN WHICH VEL 1.50
             // 0    1     2   3
             // 0: 1.23, __x___x___x___x_, function
@@ -933,29 +862,29 @@ namespace Nebulator.Scripting
                 // Support note string, number, drum.
                 SequenceElement seqel = null;
 
-                if (parms[1].IsInteger())
+                if (farg.Args[1].IsInteger())
                 {
                     // Simple note number.
-                    seqel = new SequenceElement(int.Parse(parms[1]))
+                    seqel = new SequenceElement(int.Parse(farg.Args[1]))
                     {
-                        Volume = ParseConstRef(pcont, parms[2])
+                        Volume = ParseConstRef(farg.Context, farg.Args[2])
                     };
                 }
-                else if (_midiDrumDefs.ContainsKey(parms[1]))
+                else if (_midiDrumDefs.ContainsKey(farg.Args[1]))
                 {
                     // It's a drum.
-                    seqel = new SequenceElement(int.Parse(_midiDrumDefs[parms[1]]))
+                    seqel = new SequenceElement(int.Parse(_midiDrumDefs[farg.Args[1]]))
                     {
-                        Volume = ParseConstRef(pcont, parms[2]),
+                        Volume = ParseConstRef(farg.Context, farg.Args[2]),
                         Duration = new Time(1) // nominal duration
                     };
                 }
                 else
                 {
                     // Note or function string form.
-                    seqel = new SequenceElement(parms[1])
+                    seqel = new SequenceElement(farg.Args[1])
                     {
-                        Volume = ParseConstRef(pcont, parms[2])
+                        Volume = ParseConstRef(farg.Context, farg.Args[2])
                     };
 
                     if(seqel.Function != "")
@@ -965,13 +894,13 @@ namespace Nebulator.Scripting
                 }
 
                 // Optional duration for musical note.
-                if (parms.Count > 3)
+                if (farg.Args.Count > 3)
                 {
-                    List<Time> t = ParseTime(pcont, parms[3]);
+                    List<Time> t = ParseTime(farg.Context, farg.Args[3]);
                     seqel.Duration = t[0];
                 }
 
-                List<Time> whens = ParseTime(pcont, parms[0]);
+                List<Time> whens = ParseTime(farg.Context, farg.Args[0]);
                 foreach (Time t in whens)
                 {
                     SequenceElement ncl = new SequenceElement(seqel) { When = t };
@@ -980,21 +909,23 @@ namespace Nebulator.Scripting
             }
             catch (Exception)
             {
-                AddParseError(pcont, $"Invalid note: {parms[1]}");
+                AddParseError(farg.Context, $"Invalid note: {farg.Args[1]}");
             }
         }
 
-        private void ParseScriptLine(FileParseContext pcont, List<string> parms, string original)
+        private void ParseScriptLine(object o) //, string original)
         {
+            SmFuncArg farg = o as SmFuncArg;
+
             // public void On_MODN()
 
             try
             {
                 // Store the whole line with line tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
-                pcont.CodeLines.Add($"{original} //{pcont.LineNumber}");
+                farg.Context.CodeLines.Add($"{farg.CleanedLine} //{farg.Context.LineNumber}");
 
                 // Test for event handler.
-                foreach (string p in parms)
+                foreach (string p in farg.Args)
                 {
                     if (p.StartsWith("On_"))
                     {
@@ -1007,7 +938,7 @@ namespace Nebulator.Scripting
             }
             catch (Exception)
             {
-                AddParseError(pcont, "Invalid function line");
+                AddParseError(farg.Context, "Invalid function line");
             }
         }
         #endregion

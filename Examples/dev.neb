@@ -1,7 +1,7 @@
 
 ///// Tester for dev features.
 
-// TODO2 change
+// TODO2 change?
 // -------------
 // sendMidiNote(Track track, string/int note, int vol, Time/double dur)
 // >>>

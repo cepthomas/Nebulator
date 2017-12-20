@@ -14,7 +14,6 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
-// TODO2 Syntax and autocomplete for .neb files in sublime.
 
 namespace Nebulator
 {
@@ -138,6 +137,13 @@ namespace Nebulator
 
             ////////////////////// test ///////////////////////
             OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
+
+            ExportMidi("test.mid");
+
+            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
+            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+            //Clipboard.SetText(string.Join(Environment.NewLine, v));
+
             //_testHost = new Test.TestHost(this);
             //_testHost.Show();
         }
@@ -211,42 +217,51 @@ namespace Nebulator
         bool Compile()
         {
             bool ok = true;
-            Compiler compiler = new Compiler();
 
-            // Save internal vals now as they will be reloaded during compile.
-            _nebpVals.Save();
-
-            // Compile now.
-            _script = compiler.Execute(_fn);
-
-            // Update file watcher just in case.
-            _watcher.Clear();
-            compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
-
-            // Time points.
-            timeMaster.TimeDefs.Clear();
-
-            if (compiler.Errors.Count == 0 && _script != null)
+            if (_fn == Globals.UNKNOWN_STRING)
             {
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
-                _dirtyFiles = false;
-
-                _script.Dynamic.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
-
-                _compiledSteps = StepUtils.ConvertToSteps(_script.Dynamic);
-
-                _script.ScriptEvent += Script_ScriptEvent;
-                InitMainUi();
-                levers.Init(_script.Surface, _script.Dynamic.Levers.Values);
+                _logger.Warn("No script file loaded.");
+                ok = false;
             }
             else
             {
-                _logger.Warn("Compile failed.");
-                ok = false;
-                SetPlayStatus(PlayCommand.StopRewind);
-                compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
-                _dirtyFiles = true;
+                Compiler compiler = new Compiler();
+
+                // Save internal vals now as they will be reloaded during compile.
+                _nebpVals.Save();
+
+                // Compile now.
+                _script = compiler.Execute(_fn);
+
+                // Update file watcher just in case.
+                _watcher.Clear();
+                compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
+
+                // Time points.
+                timeMaster.TimeDefs.Clear();
+
+                if (compiler.Errors.Count == 0 && _script != null)
+                {
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
+                    _dirtyFiles = false;
+
+                    _script.Dynamic.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
+
+                    _compiledSteps = StepUtils.ConvertToSteps(_script.Dynamic);
+
+                    _script.ScriptEvent += Script_ScriptEvent;
+                    InitMainUi();
+                    levers.Init(_script.Surface, _script.Dynamic.Levers.Values);
+                }
+                else
+                {
+                    _logger.Warn("Compile failed.");
+                    ok = false;
+                    SetPlayStatus(PlayCommand.StopRewind);
+                    compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
+                    _dirtyFiles = true;
+                }
             }
 
             return ok;
@@ -824,7 +839,7 @@ namespace Nebulator
 
         #region User settings
         /// <summary>
-        /// Get the user settings.
+        /// Init the user settings.
         /// </summary>
         void InitSettings()
         {
@@ -1217,16 +1232,25 @@ namespace Nebulator
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
             {
-                Dictionary<int, string> tracks = new Dictionary<int, string>();
-                _script.Dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
-
-                // Convert speed/bpm to sec per tick.
-                double ticksPerMinute = potSpeed.Value; // bpm
-                double ticksPerSec = ticksPerMinute / 60;
-                double secPerTick = 1 / ticksPerSec;
-
-                MidiUtils.ExportMidi(_compiledSteps, saveDlg.FileName, tracks, secPerTick, "Converted from " + _fn);
+                ExportMidi(saveDlg.FileName);
             }
+        }
+
+        /// <summary>
+        /// Output filename.
+        /// </summary>
+        /// <param name="fn"></param>
+        void ExportMidi(string fn)
+        {
+            Dictionary<int, string> tracks = new Dictionary<int, string>();
+            _script.Dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+
+            // Convert speed/bpm to sec per tick.
+            double ticksPerMinute = potSpeed.Value; // bpm
+            double ticksPerSec = ticksPerMinute / 60;
+            double secPerTick = 1 / ticksPerSec;
+
+            MidiUtils.ExportMidi(_compiledSteps, fn, tracks, secPerTick, "Converted from " + _fn);
         }
 
         /// <summary>
@@ -1244,7 +1268,9 @@ namespace Nebulator
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
-                MidiUtils.ImportStyle(openDlg.FileName);
+                var v = MidiUtils.ImportStyle(openDlg.FileName);
+                Clipboard.SetText(string.Join(Environment.NewLine, v));
+                MessageBox.Show("Style file content is in the clipboard");
             }
         }
 

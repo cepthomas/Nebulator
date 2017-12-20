@@ -36,7 +36,7 @@ namespace Nebulator.Scripting
 
     /// <summary>
     /// One note or chord or script function or etc in the sequence. Essentially something that gets played.
-    /// TODO2 microtonal notes. See cbm11-microtonal.mid
+    /// TODO2 Support microtonal notes. See cbm11-microtonal.mid.
     /// </summary>
     public class SequenceElement
     {

@@ -201,7 +201,7 @@ namespace Nebulator.Scripting
         /// <param name="val">Number of notes, +-.</param>
         public void modulate(Track track, int val)
         {
-            track.Modulate = val; //TODO2 is this right? Or modulate to a specified key?
+            track.Modulate = val; //TODO2 Or modulate to a specified key. Requires specifying current key too.
         }
 
         /// <summary>

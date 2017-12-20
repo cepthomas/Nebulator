@@ -33,7 +33,7 @@ out for subsequent reuse.
 - Partial emulation of the Processing language for .NET.
 - A theoretically improved multimedia timer with improved accuracy for sub 10 msec period.
 - Midi classes may be useful elsewhere in conjunction with NAudio.
-- A state machine class that was used in several products. Not currently used for this project but could reappear.
+- A state machine class based on one that was used in several products.
 - Partial import of Yahama style (.sty) files.
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.

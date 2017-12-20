@@ -23,6 +23,7 @@ namespace Nebulator.Midi
         /// <param name="info">Extra info to add to midi file.</param>
         public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> tracks, double secPerTick, string info)
         {
+            // Events per track.
             Dictionary<int, IList<MidiEvent>> trackEvents = new Dictionary<int, IList<MidiEvent>>();
             int deltaTicksPerQuarterNote = 96; // fixed output value
 
@@ -105,7 +106,7 @@ namespace Nebulator.Midi
                 }
             }
 
-            // Finish up track collections.
+            // Finish up tracks with end marker.
             foreach (IList<MidiEvent> let in trackEvents.Values)
             {
                 long ltime = let.Last().AbsoluteTime;
