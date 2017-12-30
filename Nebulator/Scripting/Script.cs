@@ -16,9 +16,6 @@ namespace Nebulator.Scripting
     public partial class Script
     {
         #region Properties
-        /// <summary>The client hosts this control in their UI. It performs the actual graphics drawing and input. </summary>
-        public UserControl Surface { get; private set; } = null;
-
         /// <summary>All the defined variables, controls, etc for use at runtime.</summary>
         public Dynamic Dynamic { get; set; } = new Dynamic();
 
@@ -48,6 +45,10 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Fields
+        /// <summary>The client hosts this control in their UI. It performs the actual graphics drawing and input.</summary>
+        //public UserControl Surface { get; private set; } = null;
+        UserControl _surface = null;
+
         /// <summary>Script randomizer.</summary>
         Random _rand = new Random();
 
@@ -60,14 +61,6 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Internal overhead
-        /// <summary>
-        /// Constructor called by derived scripts.
-        /// </summary>
-        protected Script()
-        {
-            CreateSurface();
-        }
-
         /// <summary>
         /// Execute a script function. No error checking, presumably the compiler did that. Caller will have to deal with any runtime exceptions.
         /// </summary>

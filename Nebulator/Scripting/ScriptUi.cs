@@ -133,14 +133,14 @@ namespace Nebulator.Scripting
         #region Environment 
         //---- Script properties
         public int frameCount { get; private set; } = 1;
-        public int height { get { return Surface.Height; } }
-        public int width { get { return Surface.Width; } }
+        public int height { get { return _surface.Height; } }
+        public int width { get { return _surface.Width; } }
         public void cursor(int which) { throw new NotSupportedException(); }
         public void cursor(PImage image) { throw new NotSupportedException(); }
         public void cursor(PImage image, int x, int y) { throw new NotSupportedException(); }
         public void delay(int msec) { throw new NotSupportedException(); }
         public int displayDensity() { throw new NotSupportedException(); }
-        public bool focused { get { return Surface.Focused; } }
+        public bool focused { get { return _surface.Focused; } }
 
         public int frameRate
         {

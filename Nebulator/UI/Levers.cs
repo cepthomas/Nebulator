@@ -27,7 +27,6 @@ namespace Nebulator.UI
         public Levers()
         {
             InitializeComponent();
-            toolStrip.Renderer = new Common.CheckBoxRenderer(); // for checked color.
         }
 
         /// <summary>
@@ -42,24 +41,25 @@ namespace Nebulator.UI
             UpdateStyles();
 
             BackColor = Globals.UserSettings.BackColor;
-            btnSomething.Image = Utils.ColorizeBitmap(btnSomething.Image, Globals.UserSettings.IconColor);
         }
 
         /// <summary>
         /// Initialize the script specific stuff.
         /// </summary>
-        /// <param name="surface">Where to create controls.</param>
         /// <param name="levers">Specs for levers from script.</param>
-        public void Init(UserControl surface, IEnumerable<LeverControlPoint> levers)
+        public void Init(IEnumerable<LeverControlPoint> levers)
         {
             ////// Draw the levers and hook them up.
 
             // Clean up first.
-            foreach(Control c in splitContainer1.Panel1.Controls)
+            foreach(Control c in Controls)
             {
-                c.Dispose();
+                if(c is Slider)
+                {
+                    c.Dispose();
+                }
             }
-            splitContainer1.Panel1.Controls.Clear();
+            Controls.Clear();
 
             // Process through our list.
             const int SPACING = 5;
@@ -74,7 +74,7 @@ namespace Nebulator.UI
                     Label = l.RefVar.Name,
                     ControlColor = Globals.UserSettings.ControlColor,
                     Font = Globals.UserSettings.ControlFont,
-                    Height = splitContainer1.Panel1.ClientSize.Height - SPACING * 2,
+                    Height = ClientSize.Height - SPACING * 2,
                     Maximum = l.Max,
                     Minimum = l.Min,
                     ResetValue = l.RefVar.Value,
@@ -84,14 +84,9 @@ namespace Nebulator.UI
 
                 sl.ValueChanged += Lever_ValueChanged;
                 Lever_ValueChanged(sl, null); // init it
-                splitContainer1.Panel1.Controls.Add(sl);
+                Controls.Add(sl);
                 x += sl.Width + SPACING;
             });
-
-            ///// Create the surface panel.
-            splitContainer1.Panel2.Controls.Clear();
-            surface.Dock = DockStyle.Fill;
-            splitContainer1.Panel2.Controls.Add(surface);
         }
 
         /// <summary>

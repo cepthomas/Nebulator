@@ -28,60 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.btnSomething = new System.Windows.Forms.ToolStripButton();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.SuspendLayout();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // toolStrip
+            // label1
             // 
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnSomething});
-            this.toolStrip.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(438, 25);
-            this.toolStrip.TabIndex = 1;
-            this.toolStrip.Text = "toolStrip1";
-            // 
-            // btnSomething
-            // 
-            this.btnSomething.CheckOnClick = true;
-            this.btnSomething.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSomething.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
-            this.btnSomething.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSomething.Name = "btnSomething";
-            this.btnSomething.Size = new System.Drawing.Size(23, 22);
-            this.btnSomething.Text = "ummm....";
-            this.btnSomething.ToolTipText = "Turn levers on";
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 25);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.splitContainer1.Size = new System.Drawing.Size(438, 324);
-            this.splitContainer1.SplitterDistance = 45;
-            this.splitContainer1.TabIndex = 2;
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(172, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(86, 24);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Levers!!!!";
             // 
             // Levers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.toolStrip);
+            this.Controls.Add(this.label1);
             this.Name = "Levers";
-            this.Size = new System.Drawing.Size(438, 349);
+            this.Size = new System.Drawing.Size(438, 68);
             this.Load += new System.EventHandler(this.Levers_Load);
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -89,8 +56,6 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripButton btnSomething;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Label label1;
     }
 }

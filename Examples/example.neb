@@ -223,7 +223,7 @@ public override void draw()
     if(playing && moveBall())
     {
         int notenum = random(40, 70);
-        sendMidiNote(SYNTH, notenum, 95, 1.09);
+        // sendMidiNote(SYNTH, notenum, 95, 1.09);
     }
 
     // Draw the ball.

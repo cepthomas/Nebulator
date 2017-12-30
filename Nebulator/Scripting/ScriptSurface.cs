@@ -7,7 +7,11 @@ using System.Windows.Forms;
 using Nebulator.Common;
 using Nebulator.FastTimer;
 
-// TODO1 graphics faster: - try drawRecursive() in script. SharpDx? Separate thread? https://stackoverflow.com/questions/26220964/sharpdxhow-to-place-sharpdx-window-in-winforms-window
+// TODO2 Make the graphics faster and smoother.
+// I messed with SharpDx and OpenTk but it's a jump in complexity that I don't feel like doing right now.
+// Considered WPF but the boost may not be all that big for these simple 2D graphics.
+// But did change to GDI+ buffered per: http://kynosarges.org/WpfPerformance.html.
+
 
 namespace Nebulator.Scripting
 {
@@ -16,12 +20,12 @@ namespace Nebulator.Scripting
     /// </summary>
     public partial class Script
     {
-        #region SurfaceControl stuff
+        #region SurfaceControl
         /// <summary>
         /// Dynamically created user control that the client can site in a form.
         /// All event handlers are supported in the Script class for close binding with properties and rendering.
         /// </summary>
-        class SurfaceControl : UserControl // TODO1 clean up the script/surface interface?
+        class SurfaceControl : UserControl
         {
             public SurfaceControl()
             {
@@ -30,79 +34,60 @@ namespace Nebulator.Scripting
                 BackColor = Globals.UserSettings.BackColor;
             }
         }
+        #endregion
+
+        #region Public access
+        /// <summary>
+        /// Create an instance of the user control. Performs event binding.
+        /// </summary>
+        public UserControl CreateSurface()
+        {
+            _surface?.Dispose();
+
+            _surface = new SurfaceControl();
+
+            // Our event handlers.
+            _surface.Paint += Surface_Paint;
+            _surface.MouseDown += Surface_MouseDown;
+            _surface.MouseUp += Surface_MouseUp;
+            _surface.MouseClick += Surface_MouseClick;
+            _surface.MouseDoubleClick += Surface_MouseDoubleClick;
+            _surface.MouseMove += Surface_MouseMove;
+            _surface.MouseWheel += Surface_MouseWheel;
+            _surface.KeyDown += Surface_KeyDown;
+            _surface.KeyUp += Surface_KeyUp;
+            _surface.KeyPress += Surface_KeyPress;
+
+            return _surface;
+        }
 
         /// <summary>
         /// Redraw if time and enabled.
         /// </summary>
         public void UpdateSurface()
         {
-            if(_loop || _redraw)
+            if (_loop || _redraw)
             {
-                Surface.Invalidate();
+                _surface.Invalidate();
                 _redraw = false;
             }
         }
+        #endregion
 
+        #region Painting
         /// <summary>
-        /// Create an instance of the user control. Performs event binding.
+        /// Calls the script code that generates the bmp to draw.
         /// </summary>
-        void CreateSurface()
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Surface_Paint(object sender, PaintEventArgs e)
         {
-            Surface?.Dispose();
-
-            Surface = new SurfaceControl();
-
-            // Our event handlers.
-            Surface.Paint += Surface_Paint;
-            Surface.MouseDown += Surface_MouseDown;
-            Surface.MouseUp += Surface_MouseUp;
-            Surface.MouseClick += Surface_MouseClick;
-            Surface.MouseDoubleClick += Surface_MouseDoubleClick;
-            Surface.MouseMove += Surface_MouseMove;
-            Surface.MouseWheel += Surface_MouseWheel;
-            Surface.KeyDown += Surface_KeyDown;
-            Surface.KeyUp += Surface_KeyUp;
-            Surface.KeyPress += Surface_KeyPress;
-        }
-
-        ///// <summary>
-        ///// Calls the script code that generates the bmp to draw.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //void Surface_Paint(object sender, PaintEventArgs e)
-        //{
-        //    _gr = e.Graphics;
-        //    //_gr.SmoothingMode = _smooth ? SmoothingMode.AntiAlias : SmoothingMode.None;
-        //    _gr.SmoothingMode = _smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
-        //    _gr.Clear(_bgColor);
-
-        //    // Some housekeeping.
-        //    pMouseX = mouseX;
-        //    pMouseY = mouseY;
-
-        //    // Measure and alert if too slow, or throttle.
-        //    _tanUi.Arm();
-
-        //    // Execute the user code.
-        //    draw();
-
-        //    //println($"draw() took {_tanUi.ReadOne()}");
-        //}
-
-
-        void Surface_Paint(object sender, PaintEventArgs args) // TODO1 smoother?
-        {
-            // From http://kynosarges.org/WpfPerformance.html
-            // GDI+ buffered.
-
- //???           Surface.OnPaint(args);
-            Point[] points = new Point[3];
+            //??? _surface.OnPaint(args);
 
             BufferedGraphicsContext context = new BufferedGraphicsContext();
-            context.MaximumBuffer = Surface.ClientSize;
+            context.MaximumBuffer = _surface.ClientSize;
 
-            using (BufferedGraphics buffer = context.Allocate(args.Graphics, Surface.ClientRectangle))
+            using (BufferedGraphics buffer = context.Allocate(e.Graphics, _surface.ClientRectangle))
             {
                 buffer.Graphics.Clear(_bgColor);
 
@@ -128,49 +113,6 @@ namespace Nebulator.Scripting
 
             context.Dispose();
         }
-
-
-        //protected override void OnPaint(PaintEventArgs args)
-        //{
-        //    base.OnPaint(args);
-        //    Point[] points = new Point[3];
-
-        //    BufferedGraphicsContext context = new BufferedGraphicsContext();
-        //    context.MaximumBuffer = ClientSize;
-
-        //    using (BufferedGraphics buffer = context.Allocate(args.Graphics, ClientRectangle))
-        //    {
-        //        buffer.Graphics.Clear(BackColor);
-
-        //        buffer.Graphics.CompositingMode = CompositingMode.SourceOver;
-        //        buffer.Graphics.CompositingQuality = CompositingQuality.HighQuality;
-        //        buffer.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-        //        buffer.Graphics.SmoothingMode = (App.AntiAliased ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed);
-
-        //        for (int i = 0; i < App.Iterations; i++)
-        //        {
-        //            GdiObjects.GetVertices(i, points);
-
-        //            if (App.Mode != TestMode.PensOnly)
-        //            {
-        //                Brush brush = GdiObjects.GetBrush(i);
-        //                buffer.Graphics.FillPolygon(brush, points);
-        //            }
-
-        //            if (App.Mode != TestMode.BrushesOnly)
-        //            {
-        //                Pen pen = GdiObjects.GetPen(i);
-        //                buffer.Graphics.DrawPolygon(pen, points);
-        //            }
-        //        }
-
-        //        buffer.Render();
-        //    }
-
-        //    context.Dispose();
-        //    MainWindow.OnRenderingComplete();
-        //}
-
         #endregion
 
         #region Mouse handling

@@ -133,7 +133,7 @@ namespace Nebulator
             #endregion
 
             ////////////////////// test ///////////////////////
-            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
+            OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
 
             //ExportMidi("test.mid");
 
@@ -247,8 +247,8 @@ namespace Nebulator
                     _compiledSteps = StepUtils.ConvertToSteps(_script.Dynamic);
 
                     _script.ScriptEvent += Script_ScriptEvent;
-                    InitMainUi();
-                    levers.Init(_script.Surface, _script.Dynamic.Levers.Values);
+
+                    InitUi();
                 }
                 else
                 {
@@ -267,22 +267,25 @@ namespace Nebulator
         /// <summary>
         /// Create the main UI parts from the composition.
         /// </summary>
-        void InitMainUi()
+        void InitUi()
         {
-            ///// Clean up current.
-            foreach (Control ctl in splitContainerMain.Panel1.Controls)
-            {
-                if (ctl is TrackControl)
-                {
-                    splitContainerMain.Panel1.Controls.Remove(ctl as TrackControl);
-                }
-            }
-
             ///// Set up UI.
             const int CONTROL_SPACING = 10;
             int x = timeMaster.Right + CONTROL_SPACING;
 
             ///// The track controls.
+            
+            // Clean up current controls.
+            foreach (Control ctl in splitContainerMain.Panel1.Controls)
+            {
+                if (ctl is TrackControl)
+                {
+                    TrackControl tctl = ctl as TrackControl;
+                    tctl.Dispose();
+                    splitContainerMain.Panel1.Controls.Remove(tctl);
+                }
+            }
+
             foreach (Track t in _script.Dynamic.Tracks.Values)
             {
                 // Init from persistence.
@@ -299,7 +302,7 @@ namespace Nebulator
                 x += trk.Width + CONTROL_SPACING;
             }
 
-            ///// Misc controls.
+            ///// Init other controls.
             potSpeed.Value = Convert.ToInt32(_nebpVals.GetValue("master", "speed"));
             int mv = Convert.ToInt32(_nebpVals.GetValue("master", "volume"));
             chkLoop.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "loop"));
@@ -309,6 +312,21 @@ namespace Nebulator
             timeMaster.MaxTick = _compiledSteps.MaxTick;
             SetPlayStatus(PlayCommand.StopRewind);
             UpdateMenu();
+
+            ///// Init the user input area.
+            // Levers.
+            levers.Init(_script.Dynamic.Levers.Values);
+
+            // Surface area.
+            foreach (Control c in splitContainerInput.Panel2.Controls)
+            {
+                c.Dispose();
+            }
+            splitContainerInput.Panel2.Controls.Clear();
+
+            UserControl surface = _script.CreateSurface();
+            surface.Dock = DockStyle.Fill;
+            splitContainerInput.Panel2.Controls.Add(surface);
         }
         #endregion
 
@@ -441,6 +459,9 @@ namespace Nebulator
                 ///// UI updates /////
                 if (_script != null && e.ElapsedTimers.Contains("UI"))
                 {
+                    // Measure and alert if too slow, or throttle.
+                    //_tanUi.Arm();
+
                     _script.UpdateSurface();
                 }
 
