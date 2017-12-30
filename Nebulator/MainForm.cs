@@ -29,9 +29,6 @@ namespace Nebulator
         /// <summary>Piano child form.</summary>
         Piano _piano = new Piano();
 
-        /// <summary>Test child form.</summary>
-        Test.TestHost _testHost = null;
-
         /// <summary>The current script.</summary>
         Script _script = null;
 
@@ -57,7 +54,7 @@ namespace Nebulator
         Bag _nebpVals = new Bag();
 
         /// <summary>UI update rate.</summary>
-        int _fps = 10;
+        int _fps = 50;
 
         enum PlayCommand { Start, Stop, Rewind, StopRewind, UpdateUiTime }
         #endregion
@@ -138,7 +135,7 @@ namespace Nebulator
             ////////////////////// test ///////////////////////
             OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
 
-            ExportMidi("test.mid");
+            //ExportMidi("test.mid");
 
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
             //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");

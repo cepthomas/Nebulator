@@ -9,15 +9,25 @@
 				"obj",
 				"packages",
 				"Wiki",
-				"_old"
+				"_old",
+				"Test/bin",
+				"Test/bin"
 			],
-			"path": "C:\\Dev\\Nebulator"
+			"path": "."
 		},
 		{
 			"path": "C:\\Dev\\Nebulator.wiki"
 		},
 		{
 			"path": "C:\\Users\\cet\\AppData\\Local\\Nebulator"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"bin",
+				"obj"
+			],
+			"path": "C:\\Dev\\Nebulator\\Test"
 		}
 	],
 	"solution_file": "./Nebulator.sln"

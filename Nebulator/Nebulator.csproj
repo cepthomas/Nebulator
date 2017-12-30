@@ -183,15 +183,6 @@
     <Compile Include="FastTimer\IFastTimer.cs" />
     <Compile Include="FastTimer\MultimediaTimer.cs" />
     <Compile Include="FastTimer\TimingAnalyzer.cs" />
-    <Compile Include="Test\SimpleUT.cs" />
-    <Compile Include="Test\TestCases_SM.cs" />
-    <Compile Include="Test\TestCases_SUT.cs" />
-    <Compile Include="Test\TestHost.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Test\TestHost.Designer.cs">
-      <DependentUpon>TestHost.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\About.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -259,9 +250,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Test\TestHost.resx">
-      <DependentUpon>TestHost.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>

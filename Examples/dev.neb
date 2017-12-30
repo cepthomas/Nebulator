@@ -1,20 +1,6 @@
 
 ///// Tester for dev features.
 
-// TODO2 change?
-// -------------
-// sendMidiNote(Track track, string/int note, int vol, Time/double dur)
-// >>>
-// sendMidiNote(Track track, int whentick, int whentock, int note, int vol, int durtick = 0, int durtock = 0)
-// add utils:
-// int noteConvert(string snote)
-// string noteConvert(int inote)
-
-
-// TODO2 change
-// -----------------
-// Remove stepcollection? Gen all dynamically at runtime?
-
 
 include utils.neb
 
@@ -189,7 +175,7 @@ public override void draw()
 
     // Recursive:
     // noLoop(); // run once only
-    // drawRecursive(0, 0, width / 2, 1); // TODO2 This uses a whole core with GDI
+    // drawRecursive(0, 0, width / 2, 1); // This uses a whole core with GDI.
     // return;
 
     if (mousePressedP)

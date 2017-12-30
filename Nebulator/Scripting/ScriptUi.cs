@@ -28,7 +28,7 @@ namespace Nebulator.Scripting
         Pen _pen = new Pen(Color.Black, 1f) { LineJoin = LineJoin.Round, EndCap = LineCap.Round, StartCap = LineCap.Round };
         SolidBrush _brush = new SolidBrush(Color.Transparent);
         Color _bgColor = Color.LightGray;
-        bool _smooth = false;
+        bool _smooth = true;
         int _xAlign = LEFT;
         int _yAlign = BASELINE;
         Stack<object> _matrixStack = new Stack<object>();

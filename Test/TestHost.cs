@@ -29,11 +29,7 @@ namespace Nebulator.Test
         private void TestHost_Load(object sender, EventArgs e)
         {
             TopMost = true;
-            Go();
-        }
 
-        public void Go()
-        {
             //TestGrid();
 
             TestSimpleUT();
@@ -92,7 +88,7 @@ namespace Nebulator.Test
         /// </summary>
         void Go_Click(object sender, EventArgs e)
         {
-            Go();
+
         }
     }
 }

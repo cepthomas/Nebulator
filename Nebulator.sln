@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebulator", "Nebulator\Nebulator.csproj", "{3212E8CF-DB99-4C4A-99CC-1020A11BDC1D}"
 EndProject
@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{20180D64-A
 		..\Nebulator.wiki\ScriptSyntax.md = ..\Nebulator.wiki\ScriptSyntax.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{6C3C3132-1765-473F-84F9-163CCD69FB68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{3212E8CF-DB99-4C4A-99CC-1020A11BDC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3212E8CF-DB99-4C4A-99CC-1020A11BDC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3212E8CF-DB99-4C4A-99CC-1020A11BDC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C3C3132-1765-473F-84F9-163CCD69FB68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C3C3132-1765-473F-84F9-163CCD69FB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C3C3132-1765-473F-84F9-163CCD69FB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C3C3132-1765-473F-84F9-163CCD69FB68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

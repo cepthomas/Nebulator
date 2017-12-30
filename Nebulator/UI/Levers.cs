@@ -53,6 +53,12 @@ namespace Nebulator.UI
         public void Init(UserControl surface, IEnumerable<LeverControlPoint> levers)
         {
             ////// Draw the levers and hook them up.
+
+            // Clean up first.
+            foreach(Control c in splitContainer1.Panel1.Controls)
+            {
+                c.Dispose();
+            }
             splitContainer1.Panel1.Controls.Clear();
 
             // Process through our list.
