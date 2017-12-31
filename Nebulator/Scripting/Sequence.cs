@@ -15,7 +15,6 @@ namespace Nebulator.Scripting
 
         /// <summary>List of notes or other elements.</summary>
         public List<SequenceElement> Elements { get; set; } = new List<SequenceElement>();
-        //public List<Note> Notes { get; set; } = new List<Note>();
 
         /// <summary>Length in ticks.</summary>
         public int Length { get; set; } = 1;
@@ -28,6 +27,7 @@ namespace Nebulator.Scripting
             List<string> ls = new List<string>
             {
                 $"Name:{Name} Length:{Length}"
+                //$"Name:{Name}"
             };
 
             return string.Join(Environment.NewLine, ls);
@@ -71,7 +71,7 @@ namespace Nebulator.Scripting
             }
             else
             {
-                Notes = NoteUtils.ParseNotes(s);
+                Notes = NoteUtils.ParseNoteString(s);
             }
         }
 

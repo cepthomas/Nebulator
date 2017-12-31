@@ -666,28 +666,6 @@ namespace Nebulator.Scripting
             }
         }
 
-        private void ParseSequence(object o)
-        {
-            SmFuncArg farg = o as SmFuncArg;
-
-            // sequence DRUMS_SIMPLE 8
-            // 0        1            2
-
-            try
-            {
-                Sequence ns = new Sequence()
-                {
-                    Name = farg.Args[1],
-                    Length = ParseConstRef(farg.Context, farg.Args[2]),
-                };
-                _dynamic.Sequences.Add(ns.Name, ns);
-            }
-            catch (Exception)
-            {
-                AddParseError(farg.Context, $"Invalid sequence: {farg.Args[1]}");
-            }
-        }
-
         private void ParseMidiController(object o)
         {
             SmFuncArg farg = o as SmFuncArg;
@@ -840,16 +818,39 @@ namespace Nebulator.Scripting
             }
         }
 
+        private void ParseSequence(object o)
+        {
+            SmFuncArg farg = o as SmFuncArg;
+
+            // sequence DRUMS_SIMPLE 8
+            // 0        1            2
+
+            try
+            {
+                Sequence ns = new Sequence()
+                {
+                    Name = farg.Args[1],
+                    Length = ParseConstRef(farg.Context, farg.Args[2]),
+                };
+                _dynamic.Sequences.Add(ns.Name, ns);
+            }
+            catch (Exception)
+            {
+                AddParseError(farg.Context, $"Invalid sequence: {farg.Args[1]}");
+            }
+        }
+
         private void ParseSequenceElement(object o)
         {
             SmFuncArg farg = o as SmFuncArg;
 
             // WHEN WHICH VEL 1.50
             // 0    1     2   3
-            // 0: 1.23, __x___x___x___x_, function
-            // 1: 60, C.4, C.4.m7, RideCymbal1
-            // 2: vel (opt): 90, const
-            // 3: dur (opt): 1.23
+            // where:
+            // 0 is one of 1.23, __x___x___x___x_, function()
+            // 1 is one of 60, C.4, C.4.m7, RideCymbal1
+            // 2 is one of 90, const (opt)
+            // 3 is 1.23 (opt)
 
             // e.g.
             // 00.00  G.3  90  0.60

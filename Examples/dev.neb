@@ -1,4 +1,26 @@
 
+
+// MidiControlPoint
+// Compiler, Dynamic, MainForm
+
+// LeverControlPoint
+// Compiler, Dynamic, Levers
+
+// Section/SectionTrack
+// Compiler, Dynamic, StepUtils
+
+// Sequence/SequenceElement
+// Compiler, Dynamic, StepUtils, ScriptNeb
+
+// Track
+// Compiler, Dynamic, MainForm, ScriptNeb, StepUtils, TrackControl
+
+// Variable
+// Compiler, Dynamic, MainForm, Levers, ControlPoint
+
+
+
+
 ///// Tester for dev features.
 
 
@@ -26,23 +48,60 @@ lever L3 -10  10    MODN
 ////////// Tracks //////////
 track KEYS   1 5 0 0
 track BASS   2 2 0 0
-track DRUMS 10 4 0 0
 track SYNTH  3 0
+track DRUMS 10 4 0 0
 
 ////////// Sections //////////
-section PART1 0 WHEN2 // name, start, length
+section PART1 0 WHEN2 // section name start length
 KEYS   SEQ1           ALGO1       SEQ1        SEQ2
 DRUMS  DRUMS_SIMPLE   DRUMS_HH 
 
 section PART2 WHEN2 60
-KEYS   SEQ1     SEQ2 
+KEYS   SEQ1      SEQ2 
 DRUMS  DRUMS_HH  DRUMS_HH   
 
 
 ////////// Sequences //////////
 
+sequence SEQ1 8
+00.00  G3     90  0.60
+01.00  A3.m7  90  0.60
+02.00  Bb3    90  0.60
+03.00  C4     90  0.60
+
+sequence SEQ2 8
+00.00  C4  90  0.60
+01.00  D4  90  0.60
+02.00  E4  90  0.60
+03.00  F4  90  0.60
+
+sequence ALGO1 8
+00.00  algoDynamic()  90
+
+
+
+// sequence XXXXXX 8
+// 0.00 F.4.??? 90 0.32
+// 0.32 D#.4 KEYS_DEF_VOL 0.32
+// 1.00 C.4 90 0.32
+// 1.32 B.4.m7 90 0.32
+// 2.00 F.5 90 0.32
+// 2.32 D#.5 KEYS_DEF_VOL 0.32
+// 3.00 C.5 90 0.32
+// 3.32 B.5.m7 90 0.32
+// 4.00 F.3 90 0.32
+// 4.32 D#.3 KEYS_DEF_VOL 0.32
+// 5.00 C.3 90 0.32
+// 5.32 B.3.m7 90 0.32
+// 6.00 F.2 90 0.32
+// 6.32 D#.2 KEYS_DEF_VOL 0.32
+// 7.00 C.2 90 0.32
+// 7.32 B.2.m7 90 0.32
+
+
+
 // Using patterns. Each hit is 1/16 note - fixed res for now.
-sequence DRUMS_SIMPLE 8
+sequence DRUMS_SIMPLE 8 // 32 x 1/16 = 8 x 1/4
 x-------x-------x-------x------- AcousticBassDrum 90
 ----x-------x-x-----x-------x-x- AcousticSnare    80
 
@@ -50,20 +109,77 @@ sequence DRUMS_HH 8
 ------xx------xx------xx------xx ClosedHiHat 100
 
 
-sequence SEQ1 8
-00.00  G.3  90  0.60
-01.00  A.3  90  0.60
-02.00  Bb.3 90  0.60
-03.00  C.4  90  0.60
 
-sequence SEQ2 12
-00.00  C.4  90  0.60
-01.00  D.4  90  0.60
-02.00  E.4  90  0.60
-03.00  F.4  90  0.60
+// sequence SEQXX 8
+// G.3  A.3  Bb.3 C.4  90  
+// G3  A3  Bb3  C4  90  
 
-sequence ALGO1 8
-00.00  algoDynamic()  90
+
+// --- Chord Chart
+// # Title 617812721
+// #STYLE swing
+// #INCLUDE "/u/psl/midi/etc/accagc.cc"
+// #QUANTUM quarter
+// #PART Lbgv
+// Bb / / / Eb7 / / / Bb / / / Bb / Bb /
+// C7 / / / F7 / / / Bb / F7 / Cm / F7 /
+// #PART Lbgv
+// Bb / / / Eb7 / / / Bb / / / Bb / Bb /
+// C7 / / / F7 / / / Bb / Cm F7 Bb / / /
+// #PART Lbgb
+// Eb / / / Eo / / / Bb / / / Bb / D7 /
+// Gm / / / Gb7 / / / F7 / / / F7 / / /
+// #PART Lbgv
+// Bb / / / Eb7 / / / Bb / / / Bb / Bb /
+// Cm / / / F7 / / / Bb / Bb / Bb / / /
+
+
+// --- Chord Symbol Definition
+// # name group trans
+// #CHORD Cm tri 0,0,0,0,-1,0,0,0,0,-1,0,0
+// #CHORD C7 dom7 0,0,0,0,0,0,0,0,0,0,0,0
+// #CHORD D7 dom7 2,2,2,2,2,2,2,2,2,2,2,2
+// #CHORD Eb tri 3,3,3,3,3,3,3,3,3,3,3,3
+// #CHORD Eb7 dom7 3,3,3,3,3,3,3,3,3,3,3,3
+// #CHORD Eo dom7 4,4,4,4,3,4,4,3,4,4,3,4
+// #CHORD F7 dom7 5,5,5,5,5,5,5,5,5,5,5,5
+// #CHORD Gb7 dom7 6,6,6,6,6,6,6,6,6,6,6,6
+// #CHORD Gm tri 7,7,7,7,6,7,7,7,7,6,7,7
+// #CHORD Bb tri -2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2
+
+
+// --- From llfm.pdf:::::::
+// #TITLE Departure Tax
+// #VOICES Paul Peter Scott
+// #SCALE G,A,B,C,D,E,F#
+// #INIT F#3 A3 C4
+// #CHORD 1 . . . 1 . . . 5 . . . 4 . 5 . 5 . . . 5 . . . 1 . . . 4 . 5 . |
+// Scott 45565(5434516543217-7(7717617(--34454(4323456542311-1(1117617(--|
+// Peter 23343(3212354321765-5(5565465(--12232(2171234327165-5(5565465(--|
+// Paul 71111(1757132176542-2(2232132(--57777(6545712175543-3(3332132(--|
+// Figure 19 — ‘‘Departure Tax’’ in SD Format
+// (1 ≡ tonic, 4 ≡ subdominant, 5 ≡ dominant) with periods marking the quarter-note beats in the eight measures.
+// To move this piece to another key would only require changing the #SCALE and #INIT lines.
+
+
+// --- Chord chart
+// # Empty Bed Blues
+// #CHORD C C4 E4 G4 C5
+// #CHORD C7 C4 E4 G4 Bb4
+// #CHORD F C4 F4 A4 C5
+// #CHORD G7 D4 F4 G4 B4
+// #QUANT quarter
+// #ARTIC staccato
+// #REPEAT 8
+// C / / C7 F / G7 /
+// C / G7 / C / C7 /
+// F / / / F / G7 /
+// C/// C///
+// G7 / / / F / G7 /
+// C / F / C / G7 /
+// #ENDRPT
+
+
 
 
 ////////// Functions //////////
@@ -80,7 +196,7 @@ void algoXXX()
 
 public override void setup()
 {
-    scaleNotes = getScaleNotes("Algerian", "G.4");
+    scaleNotes = getScaleNotes("Algerian", "G4");
     println("scaleNotes", scaleNotes.Length);
     notesPlaying = new int[scaleNotes.Length];
 

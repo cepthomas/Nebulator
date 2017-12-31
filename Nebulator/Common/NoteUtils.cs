@@ -100,32 +100,47 @@ namespace Nebulator.Common
         /// <summary>
         /// Parse from input value.
         /// </summary>
-        public static List<int> ParseNotes(string s)
+        public static List<int> ParseNoteString(string s)
         {
             List<int> notes = new List<int>();
 
-            // Parse the input value. Many ways to read and fault.
+            // Parse the input value.
             try
             {
                 // Could be:
-                // F.4 - named note
-                // F.4.dim7 - named chord
-                // 57 - numbered note
-                // LowTom - named drum
+                // F4 - named note
+                // F4.dim7 - named chord
 
                 // Break it up.
                 var parts = s.SplitByToken(".");
-                int? noteNum = ParseNoteString(s);
+                string snote = parts[0];
 
-                if (noteNum == null)
+                // Start with octave.
+                int octave = 4; // default is middle C
+                string soct = parts[0].Last().ToString();
+
+                if(soct.IsInteger())
+                {
+                    octave = int.Parse(soct);
+                    snote = snote.Remove(snote.Length - 1);
+                }
+
+                // Figure out the root note.
+                int? noteNum = NoteNameToNumber(snote);
+                if (noteNum != null)
+                {
+                    // Transpose octave.
+                    noteNum += (octave + 1) * NOTES_PER_OCTAVE;
+                }
+                else
                 {
                     throw new Exception($"Invalid note:{parts[0]}");
                 }
 
-                if (parts.Count > 2)
+                if (parts.Count > 1)
                 {
                     // It's a chord. M, M7, m, m7, etc. Determine the constituents.
-                    List<string> chordParts = _chordDefs[parts[2]].SplitByToken(" ");
+                    List<string> chordParts = _chordDefs[parts[1]].SplitByToken(" ");
 
                     for (int p = 0; p < chordParts.Count; p++)
                     {
@@ -182,7 +197,7 @@ namespace Nebulator.Common
                 int rootOctave = SplitNoteNumber(notes[0]).octave;
                 int rootNoteNum = SplitNoteNumber(notes[0]).root;
 
-                string sroot = $"{GetNote(rootNoteNum)}.{rootOctave}";
+                string sroot = $"{NoteNumberToName(rootNoteNum)}.{rootOctave}";
 
                 if (notes.Count > 1)
                 {
@@ -218,7 +233,7 @@ namespace Nebulator.Common
                         {
                             int octave = SplitNoteNumber(n).octave;
                             int root = SplitNoteNumber(n).root;
-                            snotes.Add($"{GetNote(root)}.{octave}.{UNKNOWN_CHORD}");
+                            snotes.Add($"{NoteNumberToName(root)}.{octave}.{UNKNOWN_CHORD}");
                         }
                     }
                 }
@@ -260,44 +275,17 @@ namespace Nebulator.Common
         /// <summary>
         /// Split a midi note number into root note and octave.
         /// </summary>
-        /// <param name="val"></param>
+        /// <param name="notenum">Absolute note number</param>
         /// <returns>tuple of root and octave</returns>
-        public static (int root, int octave) SplitNoteNumber(int val)
+        public static (int root, int octave) SplitNoteNumber(int notenum)
         {
-            int root = val % NOTES_PER_OCTAVE;
-            int octave = (val / NOTES_PER_OCTAVE) - 1;
+            int root = notenum % NOTES_PER_OCTAVE;
+            int octave = (notenum / NOTES_PER_OCTAVE) - 1;
             return (root, octave);
         }
 
         /// <summary>
-        /// Figure absolute note number from string.
-        /// </summary>
-        /// <param name="sval"></param>
-        /// <returns>Note number or null if invalid.</returns>
-        public static int? ParseNoteString(string sval)
-        {
-            var parts = sval.SplitByToken(".");
-
-            // Start with octave.
-            int octave = 4; // default is middle C
-            if (parts.Count > 1)
-            {
-                octave = int.Parse(parts[1]);
-            }
-
-            // Figure out the root note.
-            int? noteNum = GetNote(parts[0]);
-            if (noteNum != null)
-            {
-                // Transpose octave.
-                noteNum += (octave + 1) * NOTES_PER_OCTAVE;
-            }
-
-            return noteNum;
-        }
-
-        /// <summary>
-        /// Create a list of absolute note numbers.
+        /// Create a list of absolute note numbers for given scale name.
         /// </summary>
         /// <param name="scale">Name of the scale.</param>
         /// <param name="key">Key.octave</param>
@@ -305,9 +293,10 @@ namespace Nebulator.Common
         public static List<int> GetScaleNotes(string scale, string key)
         {
             List<int> notes = null;
-            int? keyNote = ParseNoteString(key);
 
-            if(_scaleDefs.ContainsKey(scale) && keyNote != null)
+            List<int> keyNotes = ParseNoteString(key);
+
+            if (_scaleDefs.ContainsKey(scale) && keyNotes.Count > 0)
             {
                 notes = new List<int>();
 
@@ -319,7 +308,7 @@ namespace Nebulator.Common
                     if (intNum != null)
                     {
                         //noteNum = down ? noteNum - NOTES_PER_OCTAVE : noteNum;
-                        notes.Add(keyNote.Value + intNum.Value);
+                        notes.Add(keyNotes[0] + intNum.Value);
                     }
                 });
             }
@@ -370,7 +359,7 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="snote">The root of the note without octave.</param>
         /// <returns>The number or null if invalid.</returns>
-        static int? GetNote(string snote)
+        static int? NoteNameToNumber(string snote)
         {
             string[] noteNames =
             {
@@ -388,7 +377,7 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="inote"></param>
         /// <returns></returns>
-        static string GetNote(int inote)
+        static string NoteNumberToName(int inote)
         {
             int rootNote = SplitNoteNumber(inote).root;
             string[] noteNames = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };

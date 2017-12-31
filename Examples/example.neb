@@ -60,44 +60,44 @@ BASS   BASS_VERSE    BASS_VERSE    BASS_VERSE    BASS_VERSE
 ///// Sequences /////
 
 sequence KEYS_VERSE1 16
-0.00 G.4.m7 90 1.32
-1.60 G.4.m7 90 0.20
-2.00 G.4.m7 90 0.20
-4.00 G.4.m7 90 1.32
-5.60 G.4.m7 90 0.20
-6.00 G.4.m7 90 0.20
-8.00 G.4.m6 90 1.32
-9.60 G.4.m6 90 0.20
-10.00 G.4.m6 90 0.20
-12.00 G.4.m6 90 1.32
-13.60 G.4.m6 90 0.20
-14.00 G.4.m6 90 0.20
+0.00  G4.m7 90 1.32
+1.60  G4.m7 90 0.20
+2.00  G4.m7 90 0.20
+4.00  G4.m7 90 1.32
+5.60  G4.m7 90 0.20
+6.00  G4.m7 90 0.20
+8.00  G4.m6 90 1.32
+9.60  G4.m6 90 0.20
+10.00 G4.m6 90 0.20
+12.00 G4.m6 90 1.32
+13.60 G4.m6 90 0.20
+14.00 G4.m6 90 0.20
 
 sequence KEYS_VERSE2 8
-0.00 F.4.??? 90 0.32
-0.32 D#.4 KEYS_DEF_VOL 0.32
-1.00 C.4 90 0.32
-1.32 B.4.m7 90 0.32
-2.00 F.5 90 0.32
-2.32 D#.5 KEYS_DEF_VOL 0.32
-3.00 C.5 90 0.32
-3.32 B.5.m7 90 0.32
-4.00 F.3 90 0.32
-4.32 D#.3 KEYS_DEF_VOL 0.32
-5.00 C.3 90 0.32
-5.32 B.3.m7 90 0.32
-6.00 F.2 90 0.32
-6.32 D#.2 KEYS_DEF_VOL 0.32
-7.00 C.2 90 0.32
-7.32 B.2.m7 90 0.32
+0.00 F4.??? 90 0.32
+0.32 D#4    KEYS_DEF_VOL 0.32
+1.00 C4     90 0.32
+1.32 B4.m7  90 0.32
+2.00 F5     90 0.32
+2.32 D#5    KEYS_DEF_VOL 0.32
+3.00 C5     90 0.32
+3.32 B5.m7  90 0.32
+4.00 F3     90 0.32
+4.32 D#3    KEYS_DEF_VOL 0.32
+5.00 C3     90 0.32
+5.32 B3.m7  90 0.32
+6.00 F2     90 0.32
+6.32 D#2    KEYS_DEF_VOL 0.32
+7.00 C2     90 0.32
+7.32 B2.m7  90 0.32
 
 ////// Bass //////
 sequence BASS_VERSE 8
-0.00 C.2 70 0.25
-0.48 C.2 70 0.1/8
-3.32 E.2 70 0.25
-4.00 C.2 70 1.00
-7.48 A#.2 70 0.10
+0.00 C2  70 0.25
+0.48 C2  70 0.1/8
+3.32 E2  70 0.25
+4.00 C2  70 1.00
+7.48 A#2 70 0.10
 
 ////// Drums //////
 
@@ -124,10 +124,10 @@ x-------x-------x-------x------- AcousticBassDrum 90
 
 // Sequenced triggered in script
 sequence DYNAMIC_SEQ 8
-0.00 G.3 90 0.60
-1.00 A.3 90 0.60
-2.00 Bb.3 90 0.60
-3.00 C.4 90 0.60
+0.00 G3  90 0.60
+1.00 A3  90 0.60
+2.00 Bb3 90 0.60
+3.00 C4  90 0.60
 
 // Sequence that calls a script function.
 sequence ALGO1 8
@@ -164,7 +164,7 @@ public override void step()
                 break;
 
             case 8:
-                sendMidiNote(SYNTH, "D.4", 95, 0.00); // named note on, no chase
+                sendMidiNote(SYNTH, "D4", 95, 0.00); // named note on, no chase
                 break;
 
             case 12:
@@ -205,7 +205,7 @@ public override void setup()
     println("setup()");
 
     // Load up a scale.
-    scaleNotes = getScaleNotes("Algerian", "C.4");
+    scaleNotes = getScaleNotes("Algerian", "C4");
 
     // Patches (optional). Only needed if using the Windows GM.
     if(winGm)

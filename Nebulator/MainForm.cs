@@ -132,17 +132,15 @@ namespace Nebulator
             }
             #endregion
 
-            ////////////////////// test ///////////////////////
-            OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
+            #region ////////////////////// debug ///////////////////////
+            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
 
-            //ExportMidi("test.mid");
+            // ExportMidi("test.mid");
 
-            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
-            //Clipboard.SetText(string.Join(Environment.NewLine, v));
-
-            //_testHost = new Test.TestHost(this);
-            //_testHost.Show();
+            // var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
+            // var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+            // Clipboard.SetText(string.Join(Environment.NewLine, v));
+            #endregion
         }
 
         /// <summary>

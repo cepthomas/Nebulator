@@ -6,7 +6,7 @@
     "master.sequence": true,
     "KEYS.volume": 90,
     "BASS.volume": 90,
-    "DRUMS.volume": 90,
-    "SYNTH.volume": 90
+    "SYNTH.volume": 90,
+    "DRUMS.volume": 90
   }
 }

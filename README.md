@@ -13,9 +13,10 @@ I decided to do this as all midi, rather than try to implement native sound gene
 is that I (and you) have plenty of great sounding instruments and effects using my DAW ([Reaper](https://www.reaper.fm/)), so may as well use
 those via a midi loopback driver. Midi has some severe limitations so OSC may appear later.  
 
-A couple of interesting reads on music-by-code:
+Some interesting reads on music-by-code:
 - [Michael Gogins](http://csoundjournal.com/issue17/gogins_composing_in_cpp.html)
 - [ChucK](http://chuck.cs.princeton.edu/)
+- [Peter Langston](http://www.langston.com/Papers/llfm.pdf)
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after 
 a MarkS C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs, and display of whatever
