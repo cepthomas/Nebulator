@@ -46,7 +46,6 @@ namespace Nebulator.Scripting
 
         #region Fields
         /// <summary>The client hosts this control in their UI. It performs the actual graphics drawing and input.</summary>
-        //public UserControl Surface { get; private set; } = null;
         UserControl _surface = null;
 
         /// <summary>Script randomizer.</summary>

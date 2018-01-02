@@ -1,26 +1,5 @@
 
 
-// MidiControlPoint
-// Compiler, Dynamic, MainForm
-
-// LeverControlPoint
-// Compiler, Dynamic, Levers
-
-// Section/SectionTrack
-// Compiler, Dynamic, StepUtils
-
-// Sequence/SequenceElement
-// Compiler, Dynamic, StepUtils, ScriptNeb
-
-// Track
-// Compiler, Dynamic, MainForm, ScriptNeb, StepUtils, TrackControl
-
-// Variable
-// Compiler, Dynamic, MainForm, Levers, ControlPoint
-
-
-
-
 ///// Tester for dev features.
 
 

@@ -50,17 +50,17 @@ public override void setup()
 
     loops.Clear();
     // Key is Ab.
-    loops.Add(new TapeLoop("Ab.4", 17.80,  8.10));
-    loops.Add(new TapeLoop("Ab.5", 17.70,  3.10));
+    loops.Add(new TapeLoop("Ab4", 17.80,  8.10));
+    loops.Add(new TapeLoop("Ab5", 17.70,  3.10));
     // 3rd
-    loops.Add(new TapeLoop("C.5",  21.30,  5.60));
+    loops.Add(new TapeLoop("C5",  21.30,  5.60));
     // 4th
-    loops.Add(new TapeLoop("Db.5", 18.50, 12.60));
+    loops.Add(new TapeLoop("Db5", 18.50, 12.60));
     // 5th
-    loops.Add(new TapeLoop("Eb.5", 20.00,  9.20));
+    loops.Add(new TapeLoop("Eb5", 20.00,  9.20));
     // 6th
-    loops.Add(new TapeLoop("F.4",  19.70,  4.00));
-    loops.Add(new TapeLoop("F.5",  20.00, 14.10));
+    loops.Add(new TapeLoop("F4",  19.70,  4.00));
+    loops.Add(new TapeLoop("F5",  20.00, 14.10));
 
     if(winGm)
     {

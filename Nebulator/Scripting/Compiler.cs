@@ -41,6 +41,9 @@ namespace Nebulator.Scripting
 
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
+
+        /// <summary>Specify the temp dir for tracking down runtime errors.</summary>
+        public string TempDir { get; set; } = "";
         #endregion
 
         #region Fields
@@ -383,20 +386,20 @@ namespace Nebulator.Scripting
                 List<string> paths = new List<string>();
 
                 // Create output area.
-                string tempdir = Path.Combine(_baseDir, "temp");
-                if (Directory.Exists(tempdir))
+                TempDir = Path.Combine(_baseDir, "temp");
+                if (Directory.Exists(TempDir))
                 {
-                    Directory.GetFiles(tempdir).ForEach(f => File.Delete(f));
+                    Directory.GetFiles(TempDir).ForEach(f => File.Delete(f));
                 }
                 else
                 {
-                    Directory.CreateDirectory(tempdir);
+                    Directory.CreateDirectory(TempDir);
                 }
 
                 foreach (string genFn in _filesToCompile.Keys)
                 {
                     FileParseContext ci = _filesToCompile[genFn];
-                    string fullpath = Path.Combine(tempdir, genFn);
+                    string fullpath = Path.Combine(TempDir, genFn);
                     if (File.Exists(fullpath))
                     {
                         File.Delete(fullpath);
