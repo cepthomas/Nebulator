@@ -39,7 +39,7 @@ namespace Nebulator.Common
 
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
         [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
-        public string MidiIn { get; set; } = Globals.UNKNOWN_STRING; // TODO2 support more than one midi port.
+        public string MidiIn { get; set; } = Globals.UNKNOWN_STRING;
 
         [DisplayName("Midi Output"), Description("Your choice of midi output.")]
         [Editor(typeof(MidiPortEditor), typeof(UITypeEditor)), Browsable(true)]

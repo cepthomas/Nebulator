@@ -94,7 +94,22 @@ namespace Nebulator.Test
         /// <returns>void</returns>
         public void PressKey(Keys key)
         {
-            SM.ProcessEvent("KeyPressed", key);
+            Console.WriteLine($"KeyPressed:{key}");
+
+            switch (key)
+            {
+                case Keys.Key_Reset:
+                    SM.ProcessEvent("Reset", key);
+                    break;
+
+                case Keys.Key_Set:
+                    SM.ProcessEvent("SetCombo", key);
+                    break;
+
+                default:
+                    SM.ProcessEvent("DigitKeyPressed", key);
+                    break;
+            }
         }
         #endregion
 
@@ -105,19 +120,16 @@ namespace Nebulator.Test
         {
             State[] states = new State[]
             {
-                new State("*", null, null,  // ANY_STATE
-                    new Transition("KeyPressed", KeyPressed)),
-
                 new State("Initial", InitialEnter, InitialExit,
                     new Transition("IsLocked", "Locked"),
                     new Transition("IsUnlocked", "Unlocked")),
 
                 new State("Locked", LockedEnter, null,
-                    new Transition("ForceFail", ForceFail),
-                    new Transition("DigitKeyPressed", LockedAddDigit),
-                    new Transition("Reset", ClearCurrentEntry),
+                    new Transition("ForceFail", "", ForceFail),
+                    new Transition("DigitKeyPressed", "", LockedAddDigit),
+                    new Transition("Reset", "", ClearCurrentEntry),
                     new Transition("ValidCombo", "Unlocked"),
-                    new Transition("", ClearCurrentEntry)), // ignore other events
+                    new Transition("", "", ClearCurrentEntry)), // ignore other events
                 
                 new State("Unlocked", UnlockedEnter, null,
                     new Transition("Reset", "Locked", ClearCurrentEntry),
@@ -125,7 +137,7 @@ namespace Nebulator.Test
                     new Transition("", "", ClearCurrentEntry)), // ignore other events
                 
                 new State("SettingCombo", ClearCurrentEntry, null,
-                    new Transition("DigitKeyPressed", SetComboAddDigit),
+                    new Transition("DigitKeyPressed", "", SetComboAddDigit),
                     new Transition("SetCombo", "Unlocked", SetCombo),
                     new Transition("Reset", "Unlocked", ClearCurrentEntry)
                     )
@@ -209,7 +221,7 @@ namespace Nebulator.Test
         /// <returns>void</returns>
         private void InitialEnter(Object o)
         {
-            Console.WriteLine("InitialEnter:{0}", o);
+            Console.WriteLine($"InitialEnter:{o}");
             if (HwLockState == HwLockStates.HwIsLocked)
             {
                 SM.ProcessEvent("IsLocked");
@@ -224,46 +236,23 @@ namespace Nebulator.Test
         /// <returns>void</returns>
         private void InitialExit(Object o)
         {
-            Console.WriteLine("InitialExit:{0}", o);
+            Console.WriteLine($"InitialExit:{o}");
         }
 
         /// <summary>Locked transition function.</summary>
         /// <returns>void</returns>
         private void LockedEnter(Object o)
         {
-            Console.WriteLine("LockedEnter:{0}", o);
+            Console.WriteLine($"LockedEnter:{o}");
             HwLock();
             _currentEntry.Clear();
-        }
-
-        /// <summary>Key press transition function.</summary>
-        /// <returns>void</returns>
-        private void KeyPressed(Object o)
-        {
-            Console.WriteLine("KeyPressed:{0}", o);
-            Keys key = (Keys)o;
-
-            switch (key)
-            {
-                case Keys.Key_Reset:
-                    SM.ProcessEvent("Reset", o);
-                    break;
-
-                case Keys.Key_Set:
-                    SM.ProcessEvent("SetCombo", o);
-                    break;
-
-                default:
-                    SM.ProcessEvent("DigitKeyPressed", o);
-                    break;
-            }
         }
 
         /// <summary>Clear the lock</summary>
         /// <returns>void</returns>
         private void ClearCurrentEntry(Object o)
         {
-            Console.WriteLine("ClearCurrentEntry:{0}", o);
+            Console.WriteLine($"ClearCurrentEntry:{o}");
             _currentEntry.Clear();
         }
 
@@ -271,7 +260,7 @@ namespace Nebulator.Test
         /// <returns>void</returns>
         private void LockedAddDigit(Object o)
         {
-            Console.WriteLine("LockedAddDigit:{0}", o);
+            Console.WriteLine($"LockedAddDigit:{o}");
             Keys key = (Keys)o;
 
             _currentEntry.Add(key);
@@ -285,7 +274,7 @@ namespace Nebulator.Test
         /// <returns>void</returns>
         private void SetComboAddDigit(Object o)
         {
-            Console.WriteLine("SetComboAddDigit:{0}", o);
+            Console.WriteLine($"SetComboAddDigit:{o}");
             Keys key = (Keys)o;
 
             _currentEntry.Add(key);
@@ -295,7 +284,7 @@ namespace Nebulator.Test
         /// <returns>void</returns>
         private void SetCombo(Object o)
         {
-            Console.WriteLine("SetCombo:{0}", o);
+            Console.WriteLine($"SetCombo:{o}");
             if (_currentEntry.Count > 0)
             {
                 _combination.Clear();
@@ -308,7 +297,7 @@ namespace Nebulator.Test
         /// <returns>void</returns>
         private void UnlockedEnter(Object o)
         {
-            Console.WriteLine("UnlockedEnter:{0}", o);
+            Console.WriteLine($"UnlockedEnter:{o}");
             HwUnLock();
         }
 

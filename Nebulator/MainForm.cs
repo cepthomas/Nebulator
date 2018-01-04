@@ -136,7 +136,7 @@ namespace Nebulator
             #endregion
 
             #region ////////////////////// debug ///////////////////////
-            OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
+            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
 
             // ExportMidi("test.mid");
 

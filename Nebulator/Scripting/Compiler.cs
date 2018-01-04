@@ -191,7 +191,7 @@ namespace Nebulator.Scripting
             };
             ParseOneFile(pcont);
 
-            // Finished. Check some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
+            // Finished. Patch some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
             foreach(Section sect in _dynamic.Sections.Values)
             {
                 foreach(SectionTrack st in sect.SectionTracks)
@@ -313,29 +313,29 @@ namespace Nebulator.Scripting
             State[] states = new State[]
             {
                 new State("idle", null, null,
-                    new Transition("include", ParseInclude),
-                    new Transition("constant", ParseConstant),
-                    new Transition("variable", ParseVariable),
-                    new Transition("track", ParseTrack),
-                    new Transition("lever", ParseLever),
-                    new Transition("midictlin", ParseMidiController),
-                    new Transition("midictlout", ParseMidiController),
+                    new Transition("include", "", ParseInclude),
+                    new Transition("constant", "", ParseConstant),
+                    new Transition("variable", "", ParseVariable),
+                    new Transition("track", "", ParseTrack),
+                    new Transition("lever", "", ParseLever),
+                    new Transition("midictlin", "", ParseMidiController),
+                    new Transition("midictlout", "", ParseMidiController),
                     new Transition("section", "do_section", ParseSection),
                     new Transition("sequence", "do_sequence", ParseSequence),
                     new Transition("functions", "do_functions"),
                     new Transition("blank"), // swallow these
-                    new Transition("", SmError)), // invalid other events
+                    new Transition("", "", SmError)), // invalid other events
 
                 new State("do_section", null, null,
                     new Transition("blank", "idle"), // done section
-                    new Transition("", ParseSectionTrack)), // element of section
+                    new Transition("", "", ParseSectionTrack)), // element of section
 
                 new State("do_sequence", null, null,
                     new Transition("blank", "idle"), // done sequence
-                    new Transition("", ParseSequenceElement)), // element of sequence
+                    new Transition("", "", ParseSequenceElement)), // element of sequence
 
                 new State("do_functions", null, null,
-                    new Transition("", ParseScriptLine)), // all treated the same
+                    new Transition("", "", ParseScriptLine)), // all treated the same
             };
 
             bool valid = _sm.Init(states, "idle");

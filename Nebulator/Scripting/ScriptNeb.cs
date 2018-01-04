@@ -124,7 +124,7 @@ namespace Nebulator.Scripting
         /// Send a midi note immediately. Respects solo/mute.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
-        /// <param name="snote">Note string using any form allowed in the script. TODO2 Requires double quotes in the script, would be nice to not.</param>
+        /// <param name="snote">Note string using any form allowed in the script. TODO2 Requires double quotes in the script, would be nice to not have to.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void sendMidiNote(Track track, string snote, int vol, Time dur)

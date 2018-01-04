@@ -120,12 +120,6 @@
     <None Include="Resources\glyphicons-114-justify.png" />
     <Compile Include="FastTimer\NebTimer.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Controls\Grid.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Grid.Designer.cs">
-      <DependentUpon>Grid.cs</DependentUpon>
-    </Compile>
     <Compile Include="Midi\MidiInterface.cs" />
     <Compile Include="Midi\MidiUtils.cs" />
     <Compile Include="Midi\Step.cs" />
@@ -233,9 +227,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\TimeControl.resx">
       <DependentUpon>TimeControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Grid.resx">
-      <DependentUpon>Grid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

@@ -8,14 +8,12 @@ namespace Nebulator.Common
 {
     /// <summary>
     /// A generalized implementation of a state machine.
-    /// Not currently used - was part of original parser.
     /// </summary>
     /// <remarks>
     /// States:
     /// - Each state must have a name. 
-    /// - Each state can optionally have an enter and exit action. Enter and exit methods pertain to state changes
-    ///   whereas Transition methods pertain to any transition regardless of whether the state changes or not.
-    /// - Each state should have 1 or more Transitions.
+    /// - Each state must have one or more Transitions.
+    /// - Each state may have an enter and/or exit action executed on state changes.
     /// 
     /// Transitions:
     ///  - Each transition must have an event name.
@@ -26,17 +24,17 @@ namespace Nebulator.Common
     public class StateMachine
     {
         #region Private fields
-        /// <summary>The event queue.</summary>
-        Queue<EventInfo> _eventQueue = new Queue<EventInfo>();
-
         /// <summary>All the states.</summary>
         Dictionary<string, State> _states = new Dictionary<string, State>();
 
-        /// <summary>Reference to any state.</summary>
-        State _anyState = null;
+        /// <summary>The event queue.</summary>
+        Queue<EventInfo> _eventQueue = new Queue<EventInfo>();
 
         /// <summary>Queue serializing access.</summary>
         object _locker = new object();
+
+        /// <summary>Flag to handle recursion in event processing.</summary>
+        bool _processingEvents = false;
         #endregion
 
         #region Properties
@@ -70,7 +68,7 @@ namespace Nebulator.Common
                 {
                     if (st.Transitions is null || st.Transitions.Count == 0)
                     {
-                        string serr = "No transitions for State:" + st.StateName;
+                        string serr = $"No transitions for State:{st.StateName}";
                         Errors.Add(serr);
                     }
                     else
@@ -79,24 +77,10 @@ namespace Nebulator.Common
                         if (!_states.ContainsKey(st.StateName))
                         {
                             _states.Add(st.StateName, st);
-
-                            // Check for the any state handler.
-                            if (st.StateName == "*")
-                            {
-                                if (_anyState is null)
-                                {
-                                    _anyState = _states[st.StateName];
-                                }
-                                else
-                                {
-                                    string serr = "Duplicate Any State:" + st.StateName;
-                                    Errors.Add(serr);
-                                }
-                            }
                         }
                         else
                         {
-                            string serr = "Duplicate State Name:" + st.StateName;
+                            string serr = $"Duplicate State Name:{st.StateName}";
                             Errors.Add(serr);
                         }
                     }
@@ -115,13 +99,13 @@ namespace Nebulator.Common
                 }
                 else // invalid initial state
                 {
-                    string serr = "Invalid Initial State:" + initialState;
+                    string serr = $"Invalid Initial State:{initialState}";
                     Errors.Add(serr);
                 }
             }
             catch (Exception e)
             {
-                string serr = "Exception during initializing:" + e.Message + e.StackTrace;
+                string serr = $"Exception during initializing:{e.Message} ({e.StackTrace})";
                 Errors.Add(serr);
             }
 
@@ -142,70 +126,65 @@ namespace Nebulator.Common
             lock (_locker)
             {
                 // Add the event to the queue.
-                _eventQueue.Enqueue(new EventInfo() { Name = evt, Param = o } );
+                _eventQueue.Enqueue(new EventInfo() { Name = evt, Param = o });
 
-                // Process all events in the event queue.
-                while (_eventQueue.Count > 0 && ok)
+                // Check for recursion through the processing loop - event may be generated internally during processing.
+                if (!_processingEvents)
                 {
-                    EventInfo ei = _eventQueue.Dequeue();
-                    try
+                    _processingEvents = true;
+
+                    // Process all events in the event queue.
+                    while (_eventQueue.Count > 0 && ok)
                     {
-                        // Dig out the correct transition if there is one.
-                        string nextStateName = null;
-
-                        // Start with the any state.
-                        if (_anyState != null)
+                        EventInfo ei = _eventQueue.Dequeue();
+                        try
                         {
-                            nextStateName = _anyState.ProcessEvent(ei);
-                        }
+                            // Dig out the correct transition if there is one.
 
-                        if (nextStateName is null)
-                        {
                             // Try current state.
-                            nextStateName = CurrentState.ProcessEvent(ei);
-                        }
+                            string nextStateName = CurrentState.ProcessEvent(ei);
 
-                        if (nextStateName is null)
+                            if (nextStateName is null)
+                            {
+                                throw new Exception($"State:{CurrentState.StateName} InvalidEvent:{ei.Name}");
+                            }
+
+                            // is there a state change?
+                            if (nextStateName != CurrentState.StateName)
+                            {
+                                // get the next state
+                                State nextState = _states[nextStateName];
+
+                                // Exit current state.
+                                CurrentState.Exit(ei.Param);
+
+                                // Set new state.
+                                CurrentState = nextState;
+
+                                // Enter new state.
+                                CurrentState.Enter(ei.Param);
+                            }
+                        }
+                        catch (Exception e)
                         {
-                            throw new Exception($"State:{CurrentState.StateName} InvalidEvent:{ei.Name}");
+                            // Add to the list of errors.
+                            Errors.Add(e.Message);
+
+                            // Set the return status.
+                            ok = false;
+
+                            // Clean up.
+                            _eventQueue.Clear();
+                            _processingEvents = false;
+
+                            // Rethrow.
+                            //throw;
                         }
-
-                        if (nextStateName == "*") // ANY_STATE
-                        {
-                            nextStateName = CurrentState.StateName;
-                        }
-
-                        // is there a state change?
-                        if (nextStateName != CurrentState.StateName)
-                        {
-                            // get the next state
-                            State nextState = _states[nextStateName];
-
-                            // Exit current state.
-                            CurrentState.Exit(ei.Param);
-
-                            // Set new state.
-                            CurrentState = nextState;
-
-                            // Enter new state.
-                            CurrentState.Enter(ei.Param);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        // Add to the list of errors.
-                        Errors.Add(e.Message);
-
-                        // Set the return status.
-                        ok = false;
-
-                        // Clean up.
-                        _eventQueue.Clear();
-
-                        // Rethrow.
-                        //throw;
                     }
                 }
+
+                // Done for now.
+                _processingEvents = false;
 
                 return ok;
             }
@@ -301,7 +280,7 @@ namespace Nebulator.Common
         private StateMachine.SmFunc _exitFunc = null;
         #endregion
 
-        #region Constructors
+        #region Constructor
         /// <summary>Main constructor.</summary>
         /// <param name="st">Associated state name</param>
         /// <param name="entry">Optional state entry action</param>
@@ -346,7 +325,7 @@ namespace Nebulator.Common
                     }
                     else
                     {
-                        string serr = "Duplicate Default Event defined for:" + StateName;
+                        string serr = $"Duplicate Default Event defined for:{StateName}";
                         errors.Add(serr);
                     }
                 }
@@ -358,7 +337,7 @@ namespace Nebulator.Common
                     }
                     else
                     {
-                        string serr = "Duplicate Event Name:" + t.EventName;
+                        string serr = $"Duplicate Event Name:{t.EventName}";
                         errors.Add(serr);
                     }
                 }
@@ -373,7 +352,7 @@ namespace Nebulator.Common
                 // Is the nextState valid?
                 if (!stateNames.Contains(t.NextState))
                 {
-                    string serr = "Undefined NextState: " + t.NextState;
+                    string serr = $"Undefined NextState:{ t.NextState}";
                     errors.Add(serr);
                 }
             }
@@ -436,24 +415,14 @@ namespace Nebulator.Common
         /// <summary>Optional action - executed before state change</summary>
         public StateMachine.SmFunc TransitionFunc { get; set; } = null;
 
-        /// <summary>Main constructor</summary>
+        /// <summary>Constructor.</summary>
         /// <param name="evt">Incoming event name</param>
         /// <param name="nextState">Next state name</param>
         /// <param name="trans">Optional transition action</param>
-        public Transition(string evt, string nextState, StateMachine.SmFunc trans = null)
+        public Transition(string evt, string nextState = "", StateMachine.SmFunc trans = null)
         {
             EventName = evt;
             NextState = nextState;
-            TransitionFunc = trans;
-        }
-
-        /// <summary>Main constructor</summary>
-        /// <param name="evt">Incoming event name</param>
-        /// <param name="trans">Optional transition action</param>
-        public Transition(string evt, StateMachine.SmFunc trans = null)
-        {
-            EventName = evt;
-            NextState = "";
             TransitionFunc = trans;
         }
 

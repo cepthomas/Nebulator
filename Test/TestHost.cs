@@ -18,32 +18,33 @@ namespace Nebulator.Test
 {
     public partial class TestHost : Form
     {
-        MainForm _mf = null;
-
-        public TestHost(Form parent)
+        public TestHost()
         {
             InitializeComponent();
-            _mf = parent as MainForm;
         }
 
         private void TestHost_Load(object sender, EventArgs e)
         {
-            TopMost = true;
+            // TopMost = true;
 
-            //TestGrid();
+            Go_Click(null, null);
+        }
 
+        /// <summary>
+        /// Go man go!
+        /// </summary>
+        void Go_Click(object sender, EventArgs e)
+        {
             TestSimpleUT();
 
-            //Utils.ExtractAPI(@"C:\Dev\Nebulator\Nebulator\Scripting\ScriptUi.cs");
+            // Utils.ExtractAPI(@"C:\Dev\Nebulator\Nebulator\Scripting\ScriptUi.cs");
 
-            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\example1.neb");
-            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\example2.neb");
-            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\example3.neb");
-            //mf.OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
+            // var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
+            // var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+            // Clipboard.SetText(string.Join(Environment.NewLine, v));
 
-            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
-            //Clipboard.SetText(string.Join(Environment.NewLine, v));
+            // MainForm mf = new MainForm();
+            // mf.OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
         }
 
         /// <summary>
@@ -64,31 +65,26 @@ namespace Nebulator.Test
 
             runner.Context.Lines.ForEach(l => textViewer.AddLine(l, false));
         }
+    }
 
-        /// <summary>
-        /// Tester for chart/grid.
-        /// </summary>
-        void TestGrid()
+
+    /// <summary>Entry point into the test application.</summary>
+    static class Program
+    {
+        /// <summary>Main application thread.</summary>
+        [STAThread]
+        static void Main()
         {
-            Grid grid = new Grid() { Dock = DockStyle.Fill };
-            splitContainer1.Panel1.Controls.Add(grid);
-            Random rand = new Random(111);
-            grid.ToolTipEvent += ((s, e) => e.Text = "TT_" + rand.Next().ToString());
-            List<PointF> data = new List<PointF>();
-            for (int i = 0; i < 10; i++)
+            Application.EnableVisualStyles();
+
+            try
             {
-                data.Add(new PointF(i, rand.Next(20, 80)));
+                Application.Run(new TestHost());
             }
-            grid.InitData(data);
-            grid.Show();
-        }
-
-        /// <summary>
-        /// Go man go!
-        /// </summary>
-        void Go_Click(object sender, EventArgs e)
-        {
-
+            catch (Exception e)
+            {
+                MessageBox.Show(string.Format($"Unhandled exception:{e.Message}{Environment.NewLine}{e.StackTrace}"));
+            }
         }
     }
 }
