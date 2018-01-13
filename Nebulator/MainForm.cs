@@ -14,6 +14,120 @@ using Nebulator.UI;
 using Nebulator.FastTimer;
 using Nebulator.Midi;
 
+/*
+
+TODO1 all this stuff:
+
+Turn off diagnostic tools in debug options?
+
+Suppress errors in project properties >> build
+
+
+------------------------ nameof --------------------------------------
+ (IsNullOrWhiteSpace(lastName))
+    throw new ArgumentException(message: "Cannot be blank", paramName: nameof(lastName));
+
+    
+
+------------------------ Expression-bodied function members --------------------------------------
+The body of a lot of members that we write consist of only one statement that can be represented as an expression. You can reduce that syntax by writing an expression-bodied member instead. It works for methods and read-only properties." For example, an override of ToString() is often a great candidate:
+public override string ToString() => $"{LastName}, {FirstName}";
+You can also use expression-bodied members in read only properties as well:
+public string FullName => $"{FirstName} {LastName}";
+
+--------------------------------------
+My kbd: Pad1=44, pad8=51, knob1=ctlr1, knob8=ctlr8
+
+
+
+--------------------------------------
+drones:
+ - Since you have Ableton, try this: Take any sound, drench it in reverb and print it to an audio file. Now take that
+   audio file, use the warp and change the tempo to a number of your choosing (let's say half the tempo) and drench
+   that in reverb. Rinse and repeat. Do this enough times and you'll get some ridiculous, stretched out pads that sound
+   like they're hanging out next to a black hole.
+ - The key to ambient pads and drones is movement, which can be accomplished in various ways.
+   A wavetable sweep is a tried and trusted classic. For that you need a wavetable synthesizer, obviously. I don't think
+   the KingKorg does that but there should be free softsynths out there that does wavetables. If you can use two different
+   wavetables for two oscillators it will have a better effect. Basically, just set up some LFO's in random mode with a
+   slow rate modulating the wavetables, and run that through chorus, delay and reverb.
+   You can do a similar thing with a subtractive synth if it has waveshaping options (Most synths have square wave PWM,
+   some have wavefolding, some Oberheims and Oberheim clones allow you to sweep between the waveforms).
+ - reverb is key, i'd say filtered saw waves, but whatever works. I tend to use the Octatrack for that. noise, reverb,
+   filter, resampling, som other stuff, resampling, repitching ... I have fun using the OT for that, so I do it this way
+ - On the first bus, first put in a compressor with low ratio and treshold (optional), followed by a reverb with 6 seconds
+   or more of reverb time. On the second bus, first put in a delay with a relatively short delay time (optional, can ofc
+   be adjusted to taste) followed by a pitch shifter set to an octave above.
+   Then send your synth into the first bus, and send the first bus into the second bus, and then send the second bus back
+   into the first bus at a lower level to get your feedback. Done.
+ - Two other ways: Mangle VST (or any granular synthesis VST) with any sample loaded and drenched in FX. Another is 
+   through extreme time stretching. Load up a piano sample and stretch it out like 400-4000% percent. Will yield some 
+   wild results.
+ - +1 on granular. Listen to some Solar Fields for ideas. He is a drone master.
+ - multiple detuned oscillators help.
+
+
+
+--------------------------------------
+Mouse events occur in the following order:
+MouseEnter
+MouseMove
+MouseHover / MouseDown / MouseWheel
+MouseUp
+MouseLeave
+
+
+--------------------------------------
+You may want to look into the EventLoopScheduler It's way more memory efficient since it only maintains a single thread, 
+and execution is guaranteed to be in order. However if you have a task that hangs or runs long you'll end up with 
+a lot of traffic.
+Or if you want you can implement your own FIFO task scheduler. It'd be a good exercise. It would look a lot like the 
+EventLoopScheduler. You have one thread that runs until you tell it to stop and a queue of tasks. If there's no 
+currently running task the scheduler polls the queue and takes off the first task and executes it. If you add tasks 
+you queue them at the end of the queue. If the queue is empty the scheduler just hangs around waiting for tasks to 
+be queued. It would run off the main thread so won't block your application.
+https://social.msdn.microsoft.com/Forums/en-US/4aeda2a4-74cb-43ba-ac94-ce82c26671f5/best-way-to-preschedule-events-with-rx?forum=rx
+http://stackoverflow.com/questions/37038442/using-custom-scheduler-for-audio-stream-time
+
+
+If you're programming against .NET 4.5 or later, you can make your life much easier by converting your code that 
+explicitly uses SynchronizationContext, ThreadPool.QueueUserWorkItem, control.BeginInvoke, etc. over to the 
+new async / await keywords and the Task Parallel Library (TPL), i.e. the API surrounding the Task and Task<TResult> classes. 
+These will, to a very high degree, take care of capturing the UI thread's synchronization context, starting an 
+asynchronous operation, then getting back onto the UI thread so you can process the operation's result.
+
+
+https://msdn.microsoft.com/en-us/library/dd537609.aspx
+
+Parallel.Invoke(() => DoSomeWork(), () => DoSomeOtherWork());
+
+Thread.CurrentThread.Name = "Main";
+
+// Create a task and supply a user delegate by using a lambda expression. 
+Task taskA = new Task( () => Console.WriteLine("Hello from taskA."));
+// Start the task.
+taskA.Start();
+
+// Output a message from the calling thread.
+Console.WriteLine("Hello from thread '{0}'.", Thread.CurrentThread.Name);
+taskA.Wait();
+
+
+--------------------------------------
+https://at.or.at/hans/solitude/
+
+Solitude.png
+
+In the score, time flows from left to right. Each color represents a sample. Each sample controller has 
+two arrays: the brighter, bigger one on top controls sample playback; and a smaller darker one at the 
+bottom controls amp and pan. The lowest point of the sample array is the beginning of the sample, the 
+highest is the end, and the height of the array is how much and what part of the sample to play starting 
+at that point in time. There are between 50 and 100 voice polyphony for the samples. The height of the 
+amp/pan array is the amp, and the y location is the pan.
+
+*/
+
+
 
 namespace Nebulator
 {
@@ -135,14 +249,20 @@ namespace Nebulator
             }
             #endregion
 
-            #region ////////////////////// debug ///////////////////////
-            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
+            #region ////////////////////// debug stuff ///////////////////////
 
-            // ExportMidi("test.mid");
+            Editor.ScriptEditor sed = new Editor.ScriptEditor();
+            sed.Show();
+            sed.TestGrid();
+            Visible = false;
 
-            // var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-            // var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
-            // Clipboard.SetText(string.Join(Environment.NewLine, v));
+            //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
+
+            //ExportMidi("test.mid");
+
+            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
+            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+            //Clipboard.SetText(string.Join(Environment.NewLine, v));
             #endregion
         }
 

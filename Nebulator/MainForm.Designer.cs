@@ -418,7 +418,6 @@
             this.splitContainerInput.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

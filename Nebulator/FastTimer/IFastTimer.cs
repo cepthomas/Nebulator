@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Nebulator.FastTimer
 {
     /// <summary>
-    /// Interface for timer. Allows for experimentation with alternate (reliable) timer implementations.
+    /// Interface for timer. Allows for experimentation with alternate (reliable) timer implementations. TODO2 COnsolidate into one file.
     /// </summary>
     public interface IFastTimer : IDisposable
     {
