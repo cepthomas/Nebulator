@@ -118,7 +118,7 @@ void algoDynamic()
 
         if(notesPlaying[which] == 0)
         {
-            int dur = 4;// random(4, 20);
+            int dur = 2;// random(4, 20);
             notesPlaying[which] = tick + dur;
             sendMidiNote(KEYS, which, random(80, 100), dur);
         }
