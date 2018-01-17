@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Nebulator.Common;
 using Nebulator.Midi;
-using Nebulator.FastTimer;
 
 
 

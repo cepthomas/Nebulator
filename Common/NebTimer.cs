@@ -6,15 +6,51 @@ using System.Runtime.InteropServices;
 using System.Linq;
 
 
-namespace Nebulator.FastTimer
+namespace Nebulator.Common
 {
+    /// <summary>
+    /// FastTimer event args.
+    /// </summary>
+    public class NebTimerEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Elapsed timers.
+        /// </summary>
+        public List<string> ElapsedTimers { get; set; } = new List<string>();
+    }
+
+    /// <summary>
+    /// Represents information about the multimedia timer capabilities.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    struct TimerCaps
+    {
+        /// <summary>
+        /// Minimum supported period in milliseconds.
+        /// </summary>
+        public int periodMin;
+
+        /// <summary>
+        /// Maximum supported period in milliseconds.
+        /// </summary>
+        public int periodMax;
+
+        public static TimerCaps Default
+        {
+            get
+            {
+                return new TimerCaps { periodMin = 1, periodMax = Int32.MaxValue };
+            }
+        }
+    }
+
     /// <summary>
     /// The win multimedia timer is erratic. This class attempts to reduce the error by running at one msec
     /// and managing the requested periods manually. This is accomplished by using a Stopwatch to actually
     /// measure the elapsed time rather than trust the mm timer period. It seems to be an improvement.
     /// Also see "Microsecond and Millisecond C# Timer - CodeProject.html". Good accuracy at the expense of a whole core.
     /// </summary>
-    public class NebTimer : IFastTimer
+    public class NebTimer// : IFastTimer
     {
         class TimerInstance
         {
@@ -61,7 +97,7 @@ namespace Nebulator.FastTimer
         /// <summary>
         /// Occurs when the time period has elapsed.
         /// </summary>
-        public event EventHandler<FastTimerEventArgs> TimerElapsedEvent;
+        public event EventHandler<NebTimerEventArgs> TimerElapsedEvent;
         #endregion
 
         #region Internal support for multimedia timer
@@ -257,7 +293,7 @@ namespace Nebulator.FastTimer
 
                     if (elapsed.Count > 0)
                     {
-                        TimerElapsedEvent?.Invoke(this, new FastTimerEventArgs() { ElapsedTimers = elapsed });
+                        TimerElapsedEvent?.Invoke(this, new NebTimerEventArgs() { ElapsedTimers = elapsed });
                     }
                 }
                 else

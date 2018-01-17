@@ -36,12 +36,12 @@ namespace Nebulator.Controls
         /// <param name="e"></param>
         private void TextViewer_Load(object sender, EventArgs e)
         {
-            txtView.Font = Globals.UserSettings.EditorFont;
-            txtView.BackColor = Globals.UserSettings.BackColor;
+            txtView.Font = Globals.TheSettings.EditorFont;
+            txtView.BackColor = Globals.TheSettings.BackColor;
             txtView.WordWrap = false;
 
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.UserSettings.IconColor);
-            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, Globals.UserSettings.IconColor);
+            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.TheSettings.IconColor);
+            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, Globals.TheSettings.IconColor);
             btnWrap.Checked = true;
         }
 

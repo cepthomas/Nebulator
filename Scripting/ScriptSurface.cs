@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Nebulator.Common;
-using Nebulator.FastTimer;
 
 
 namespace Nebulator.Scripting
@@ -26,7 +25,7 @@ namespace Nebulator.Scripting
             {
                 SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
                 UpdateStyles();
-                BackColor = Globals.UserSettings.BackColor;
+                BackColor = Globals.TheSettings.BackColor;
             }
         }
         #endregion

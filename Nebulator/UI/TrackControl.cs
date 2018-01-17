@@ -44,10 +44,10 @@ namespace Nebulator.UI
         /// </summary>
         private void TrackControl_Load(object sender, EventArgs e)
         {
-            chkSolo.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
-            chkMute.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
-            sldVolume.ControlColor = Globals.UserSettings.ControlColor;
-            sldVolume.Font = Globals.UserSettings.ControlFont;
+            chkSolo.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
+            chkMute.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
+            sldVolume.ControlColor = Globals.TheSettings.ControlColor;
+            sldVolume.Font = Globals.TheSettings.ControlFont;
             sldVolume.Label = BoundTrack.Name;
             sldVolume.Maximum = 200;
             sldVolume.Value = BoundTrack.Volume;

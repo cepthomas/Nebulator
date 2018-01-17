@@ -380,6 +380,9 @@ namespace Nebulator.Scripting
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.exe");
+                cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Scripting.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();

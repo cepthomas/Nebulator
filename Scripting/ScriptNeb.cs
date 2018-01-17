@@ -67,7 +67,7 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>Indicates using internal synth.</summary>
-        public bool winGm { get { return Globals.UserSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
+        public bool winGm { get { return Globals.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
         #endregion
 
         #region Script functions
@@ -103,7 +103,7 @@ namespace Nebulator.Scripting
                     };
 
                     step.Adjust(volume, track.Volume, track.Modulate);
-                    Globals.MidiInterface.Send(step, dur.TotalTocks > 0);
+                    MidiInterface.TheInterface.Send(step, dur.TotalTocks > 0);
                 }
                 else
                 {
@@ -115,7 +115,7 @@ namespace Nebulator.Scripting
                         NoteNumberToPlay = notenum
                     };
 
-                    Globals.MidiInterface.Send(step);
+                    MidiInterface.TheInterface.Send(step);
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace Nebulator.Scripting
                 ControllerValue = val
             };
 
-            Globals.MidiInterface.Send(step);
+            MidiInterface.TheInterface.Send(step);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Nebulator.Scripting
                 PatchNumber = patch
             };
 
-            Globals.MidiInterface.Send(step);
+            MidiInterface.TheInterface.Send(step);
         }
 
         /// <summary>

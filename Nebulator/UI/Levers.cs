@@ -40,7 +40,7 @@ namespace Nebulator.UI
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             UpdateStyles();
 
-            BackColor = Globals.UserSettings.BackColor;
+            BackColor = Globals.TheSettings.BackColor;
         }
 
         /// <summary>
@@ -72,8 +72,8 @@ namespace Nebulator.UI
                 {
                     Location = new Point(x, y),
                     Label = l.RefVar.Name,
-                    ControlColor = Globals.UserSettings.ControlColor,
-                    Font = Globals.UserSettings.ControlFont,
+                    ControlColor = Globals.TheSettings.ControlColor,
+                    Font = Globals.TheSettings.ControlFont,
                     Height = ClientSize.Height - SPACING * 2,
                     Maximum = l.Max,
                     Minimum = l.Min,

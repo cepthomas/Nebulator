@@ -30,7 +30,7 @@ namespace Nebulator.UI
         {
             //SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             //UpdateStyles();
-            BackColor = Globals.UserSettings.BackColor;
+            BackColor = Globals.TheSettings.BackColor;
 
             picBox.BackgroundImage = Properties.Resources.medusa2;
             picBox.BackgroundImageLayout = ImageLayout.Center;
@@ -39,7 +39,7 @@ namespace Nebulator.UI
 
             string s = Markdown.ToHtml(File.ReadAllText(@"Resources\README.md"));
             // Insert some style.
-            s = s.Insert(0, $"<style>body {{ background - color: {Globals.UserSettings.BackColor.Name}; }}</style>");
+            s = s.Insert(0, $"<style>body {{ background - color: {Globals.TheSettings.BackColor.Name}; }}</style>");
             browser.DocumentText = s;
 
             timer1.Start();

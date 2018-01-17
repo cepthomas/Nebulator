@@ -4,9 +4,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
+using Nebulator.Common;
 
 
-namespace Nebulator.Common
+namespace Nebulator.Midi
 {
     /// <summary>Plugin to property grid.</summary>
     public class MidiPortEditor : UITypeEditor
@@ -32,10 +33,10 @@ namespace Nebulator.Common
             switch (context.PropertyDescriptor.Name)
             {
                 case "MidiIn":
-                    foreach (string s in Globals.MidiInterface.MidiInputs)
+                    foreach (string s in MidiInterface.TheInterface.MidiInputs)
                     {
                         int i = lb.Items.Add(s);
-                        if(s == Globals.UserSettings.MidiIn)
+                        if(s == Globals.TheSettings.MidiIn)
                         {
                             lb.SelectedIndex = i;
                         }
@@ -43,10 +44,10 @@ namespace Nebulator.Common
                     break;
 
                 case "MidiOut":
-                    foreach (string s in Globals.MidiInterface.MidiOutputs)
+                    foreach (string s in MidiInterface.TheInterface.MidiOutputs)
                     {
                         int i = lb.Items.Add(s);
-                        if (s == Globals.UserSettings.MidiOut)
+                        if (s == Globals.TheSettings.MidiOut)
                         {
                             lb.SelectedIndex = i;
                         }

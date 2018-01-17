@@ -11,6 +11,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Diagnostics;
+using Nebulator.Common;
 
 
 // This file contains the most recent incarnation of a super simple unit test framework.

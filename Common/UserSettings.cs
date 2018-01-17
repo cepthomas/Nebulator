@@ -38,11 +38,11 @@ namespace Nebulator.Common
         public Color LoopColor { get; set; } = Color.Salmon;
 
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
-        [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
+        // TODO0 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
         public string MidiIn { get; set; } = Globals.UNKNOWN_STRING;
 
         [DisplayName("Midi Output"), Description("Your choice of midi output.")]
-        [Editor(typeof(MidiPortEditor), typeof(UITypeEditor)), Browsable(true)]
+        // TODO0 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor)), Browsable(true)]
         public string MidiOut { get; set; } = Globals.UNKNOWN_STRING;
 
         [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ...")]

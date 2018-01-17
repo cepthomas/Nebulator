@@ -541,7 +541,7 @@ namespace Nebulator.Common
             if(!(btn is null) && btn.CheckOnClick && btn.Checked)
             {
                 Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
-                e.Graphics.FillRectangle(new SolidBrush(Globals.UserSettings.SelectedColor), bounds);
+                e.Graphics.FillRectangle(new SolidBrush(Globals.TheSettings.SelectedColor), bounds);
             }
             else
             {

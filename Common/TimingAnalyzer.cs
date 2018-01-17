@@ -4,7 +4,7 @@ using System.Linq;
 using System.Diagnostics;
 using Nebulator.Common;
 
-namespace Nebulator.FastTimer
+namespace Nebulator.Common
 {
     /// <summary>Diagnostics for timing measurement.</summary>
     public class TimingAnalyzer

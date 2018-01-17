@@ -12,6 +12,9 @@ namespace Nebulator.Midi
     /// </summary>
     public class MidiInterface : IDisposable
     {
+        /// <summary>The one and only midi in/out devices.</summary>
+        public static MidiInterface TheInterface { get; set; } = new MidiInterface();
+
         #region Definitions
         // We borrow a few unused midi controller numbers for internal use.
         // Currently undefined: 3, 9, 14, 15, 20-31, 35, 41, 46, 47, 52-63, 85-87, 89, 90 and 102-119.
@@ -238,7 +241,7 @@ namespace Nebulator.Midi
                         {
                             _midiOut.Send(msg);
 
-                            if (Globals.UserSettings.MidiMonitorOut)
+                            if (Globals.TheSettings.MidiMonitorOut)
                             {
                                 NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"SND: {step}" });
                             }
@@ -342,7 +345,7 @@ namespace Nebulator.Midi
                     NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
                 }
 
-                if (Globals.UserSettings.MidiMonitorIn)
+                if (Globals.TheSettings.MidiMonitorIn)
                 {
                     NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"RCV: {step}" });
                 }
@@ -354,7 +357,7 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            if (Globals.UserSettings.MidiMonitorIn)
+            if (Globals.TheSettings.MidiMonitorIn)
             {
                 NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"ERR: Message:0x{e.RawMessage:X8}" });
             }
@@ -380,9 +383,9 @@ namespace Nebulator.Midi
                     MidiInputs.Add(MidiIn.DeviceInfo(device).ProductName);
                 }
 
-                if (MidiInputs.Count > 0 && MidiInputs.Contains(Globals.UserSettings.MidiIn))
+                if (MidiInputs.Count > 0 && MidiInputs.Contains(Globals.TheSettings.MidiIn))
                 {
-                    _midiIn = new MidiIn(MidiInputs.IndexOf(Globals.UserSettings.MidiIn));
+                    _midiIn = new MidiIn(MidiInputs.IndexOf(Globals.TheSettings.MidiIn));
                     _midiIn.MessageReceived += MidiIn_MessageReceived;
                     _midiIn.ErrorReceived += MidiIn_ErrorReceived;
                     _midiIn.Start();
@@ -417,9 +420,9 @@ namespace Nebulator.Midi
                     MidiOutputs.Add(MidiOut.DeviceInfo(device).ProductName);
                 }
 
-                if (MidiOutputs.Count > 0 && MidiOutputs.Contains(Globals.UserSettings.MidiOut))
+                if (MidiOutputs.Count > 0 && MidiOutputs.Contains(Globals.TheSettings.MidiOut))
                 {
-                    int mi = MidiOutputs.IndexOf(Globals.UserSettings.MidiOut);
+                    int mi = MidiOutputs.IndexOf(Globals.TheSettings.MidiOut);
                     _midiOut = new MidiOut(mi);
                     //_midiOut.Volume = -1; needs to be this
                 }

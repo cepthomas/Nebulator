@@ -75,7 +75,7 @@ namespace Nebulator.Common
             }
 
             ///// Add user chords and scales.
-            foreach (string s in Globals.UserSettings.Chords)
+            foreach (string s in Globals.TheSettings.Chords)
             {
                 List<string> parts = s.SplitByToken(" ");
                 if (parts.Count >= 2)
@@ -87,7 +87,7 @@ namespace Nebulator.Common
             // Add marker for parsed values.
             _chordDefs.Add(UNKNOWN_CHORD, "");
 
-            foreach (string s in Globals.UserSettings.Scales)
+            foreach (string s in Globals.TheSettings.Scales)
             {
                 List<string> parts = s.SplitByToken(" ");
                 if (parts.Count >= 2)

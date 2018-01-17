@@ -4,15 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6C3C3132-1765-473F-84F9-163CCD69FB68}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <ProjectGuid>{D797A9C7-CD82-49C1-8E9D-151C9F3E2320}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nebulator.Test</RootNamespace>
-    <AssemblyName>Nebulator.Test</AssemblyName>
+    <RootNamespace>Nebulator.Midi</RootNamespace>
+    <AssemblyName>Nebulator.Midi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,9 +29,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Nebulator.Test.Program</StartupObject>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MoreLinq, Version=2.9.21302.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.2.9.0\lib\net40\MoreLinq.dll</HintPath>
@@ -48,53 +43,38 @@
       <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MidiInterface.cs" />
+    <Compile Include="MidiPortEditor.cs" />
+    <Compile Include="MidiUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleUT.cs" />
-    <Compile Include="TestCases_SM.cs" />
-    <Compile Include="TestCases_SUT.cs" />
-    <Compile Include="TestHost.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TestHost.Designer.cs">
-      <DependentUpon>TestHost.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="TestHost.resx">
-      <DependentUpon>TestHost.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Step.cs" />
+    <Compile Include="StepCollection.cs" />
+    <Compile Include="StyleParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Midi\Midi.csproj">
-      <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
-      <Name>Midi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Nebulator\Nebulator.csproj">
-      <Project>{3212e8cf-db99-4c4a-99cc-1020a11bdc1d}</Project>
-      <Name>Nebulator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Scripting\Scripting.csproj">
-      <Project>{29a26e51-1494-4bee-9e20-4a4d0f3b34ab}</Project>
-      <Name>Scripting</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

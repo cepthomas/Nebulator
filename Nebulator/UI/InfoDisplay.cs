@@ -37,20 +37,20 @@ namespace Nebulator.UI
         /// <param name="e"></param>
         private void InfoDisplay_Load(object sender, EventArgs e)
         {
-            txtView.Font = Globals.UserSettings.EditorFont;
-            txtView.BackColor = Globals.UserSettings.BackColor;
+            txtView.Font = Globals.TheSettings.EditorFont;
+            txtView.BackColor = Globals.TheSettings.BackColor;
             txtView.WordWrap = false;
 
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.UserSettings.IconColor);
+            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.TheSettings.IconColor);
 
-            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, Globals.UserSettings.IconColor);
+            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, Globals.TheSettings.IconColor);
             //btnWrap.Checked = true;
 
-            btnMonIn.Checked = Globals.UserSettings.MidiMonitorIn;
-            btnMonOut.Checked = Globals.UserSettings.MidiMonitorOut;
-            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, Globals.UserSettings.IconColor);
-            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, Globals.UserSettings.IconColor);
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.UserSettings.IconColor);
+            btnMonIn.Checked = Globals.TheSettings.MidiMonitorIn;
+            btnMonOut.Checked = Globals.TheSettings.MidiMonitorOut;
+            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, Globals.TheSettings.IconColor);
+            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, Globals.TheSettings.IconColor);
+            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.TheSettings.IconColor);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Nebulator.UI
         /// </summary>
         private void BtnMonIn_Click(object sender, EventArgs e)
         {
-            Globals.UserSettings.MidiMonitorIn = btnMonIn.Checked;
+            Globals.TheSettings.MidiMonitorIn = btnMonIn.Checked;
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Nebulator.UI
         /// </summary>
         private void BtnMonOut_Click(object sender, EventArgs e)
         {
-            Globals.UserSettings.MidiMonitorOut = btnMonOut.Checked;
+            Globals.TheSettings.MidiMonitorOut = btnMonOut.Checked;
         }
 
         /// <summary>

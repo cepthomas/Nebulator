@@ -11,7 +11,6 @@ using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Scripting;
 using Nebulator.UI;
-using Nebulator.FastTimer;
 using Nebulator.Midi;
 
 
@@ -30,7 +29,7 @@ namespace Nebulator
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Fast timer.</summary>
-        IFastTimer _nebTimer = null;
+        NebTimer _nebTimer = new NebTimer();
 
         /// <summary>Piano child form.</summary>
         Piano _piano = new Piano();
@@ -78,7 +77,7 @@ namespace Nebulator
             string appDir = Utils.GetAppDir();
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
-            Globals.UserSettings = UserSettings.Load(appDir);
+            Globals.TheSettings = UserSettings.Load(appDir);
             InitializeComponent();
         }
 
@@ -96,22 +95,22 @@ namespace Nebulator
 
             #region Set up midi
             // Input midi events.
-            Globals.MidiInterface.NebMidiInputEvent += Midi_NebMidiInputEvent;
-            Globals.MidiInterface.NebMidiLogEvent += Midi_NebMidiLogEvent;
+            MidiInterface.TheInterface.NebMidiInputEvent += Midi_NebMidiInputEvent;
+            MidiInterface.TheInterface.NebMidiLogEvent += Midi_NebMidiLogEvent;
 
-            Globals.MidiInterface.Init();
+            MidiInterface.TheInterface.Init();
 
             // Midi output timer.
             _nebTimer = new NebTimer();
             SetSpeedTimerPeriod();
             SetUiTimerPeriod();
-            _nebTimer.TimerElapsedEvent += FastTimer_TimerElapsedEvent;
+            _nebTimer.TimerElapsedEvent += TimerElapsedEvent;
             _nebTimer.Start();
             #endregion
 
             #region Piano
-            pianoToolStripMenuItem.Checked = Globals.UserSettings.PianoFormInfo.Visible;
-            _piano.Visible = Globals.UserSettings.PianoFormInfo.Visible;
+            pianoToolStripMenuItem.Checked = Globals.TheSettings.PianoFormInfo.Visible;
+            _piano.Visible = Globals.TheSettings.PianoFormInfo.Visible;
             _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
@@ -166,7 +165,7 @@ namespace Nebulator
             try
             {
                 // Just in case.
-                Globals.MidiInterface.KillAll();
+                MidiInterface.TheInterface.KillAll();
 
                 if(_script != null)
                 {
@@ -202,9 +201,9 @@ namespace Nebulator
                 _nebTimer?.Dispose();
                 _nebTimer = null;
 
-                Globals.MidiInterface?.Stop();
-                Globals.MidiInterface?.Dispose();
-                Globals.MidiInterface = null;
+                MidiInterface.TheInterface?.Stop();
+                MidiInterface.TheInterface?.Dispose();
+                MidiInterface.TheInterface = null;
 
                 components?.Dispose();
             }
@@ -252,7 +251,7 @@ namespace Nebulator
 
                 if (compiler.Errors.Count == 0 && _script != null)
                 {
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.TheSettings.IconColor);
                     _dirtyFiles = false;
 
                     _compileTempDir = compiler.TempDir;
@@ -349,9 +348,9 @@ namespace Nebulator
         /// <summary>
         /// Multimedia timer tick handler.
         /// </summary>
-        void FastTimer_TimerElapsedEvent(object sender, FastTimerEventArgs e)
+        void TimerElapsedEvent(object sender, NebTimerEventArgs e)
         {
-            if (Globals.UserSettings.TimerStats && e.ElapsedTimers.Contains("NEB"))
+            if (Globals.TheSettings.TimerStats && e.ElapsedTimers.Contains("NEB"))
             {
                 // Do some stats gathering for measuring jitter.
                 TimingAnalyzer.Stats stats = _tanNeb.Grab();
@@ -372,7 +371,7 @@ namespace Nebulator
         /// Output next time/step.
         /// </summary>
         /// <param name="e">Information about updates required.</param>
-        void NextStep(FastTimerEventArgs e)
+        void NextStep(NebTimerEventArgs e)
         {
             try
             {
@@ -395,7 +394,7 @@ namespace Nebulator
                                 MidiController = c.MidiController,
                                 ControllerValue = c.RefVar.Value
                             };
-                            Globals.MidiInterface.Send(step);
+                            MidiInterface.TheInterface.Send(step);
                         });
                     }
                 }
@@ -441,7 +440,7 @@ namespace Nebulator
                             {
                                 // Maybe tweak values.
                                 step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
-                                Globals.MidiInterface.Send(step);
+                                MidiInterface.TheInterface.Send(step);
                             }
                         }
                     }
@@ -463,7 +462,7 @@ namespace Nebulator
                             else // stop now
                             {
                                 SetPlayStatus(PlayCommand.StopRewind);
-                                Globals.MidiInterface.KillAll(); // just in case
+                                MidiInterface.TheInterface.KillAll(); // just in case
                             }
                         }
                     }
@@ -480,7 +479,7 @@ namespace Nebulator
                 }
 
                 // In case there are lingering noteoffs that need to be processed.
-                Globals.MidiInterface.Housekeep();
+                MidiInterface.TheInterface.Housekeep();
             }
             catch (Exception ex)
             {
@@ -527,7 +526,7 @@ namespace Nebulator
                     if(!handled)
                     {
                         // Not one we are interested in so pass through.
-                        Globals.MidiInterface.Send(e.Step);
+                        MidiInterface.TheInterface.Send(e.Step);
                     }
                 }
             });
@@ -561,7 +560,7 @@ namespace Nebulator
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    _script.Dynamic.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) Globals.MidiInterface.Kill(t.Channel); });
+                    _script.Dynamic.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -708,7 +707,7 @@ namespace Nebulator
             ToolStripItemCollection menuItems = recentToolStripMenuItem.DropDownItems;
             menuItems.Clear();
 
-            foreach (string s in Globals.UserSettings.RecentFiles)
+            foreach (string s in Globals.TheSettings.RecentFiles)
             {
                 ToolStripMenuItem menuItem = new ToolStripMenuItem(s, null, new EventHandler(Recent_Click));
                 menuItems.Add(menuItem);
@@ -723,7 +722,7 @@ namespace Nebulator
         {
             if (File.Exists(fn))
             {
-                Globals.UserSettings.RecentFiles.UpdateMru(fn);
+                Globals.TheSettings.RecentFiles.UpdateMru(fn);
                 PopulateRecentMenu();
             }
         }
@@ -910,27 +909,27 @@ namespace Nebulator
         /// </summary>
         void InitSettings()
         {
-            if (Globals.UserSettings.MainFormInfo.Width == 0)
+            if (Globals.TheSettings.MainFormInfo.Width == 0)
             {
                 WindowState = FormWindowState.Maximized;
             }
             else
             {
-                Location = new Point(Globals.UserSettings.MainFormInfo.X, Globals.UserSettings.MainFormInfo.Y);
-                Size = new Size(Globals.UserSettings.MainFormInfo.Width, Globals.UserSettings.MainFormInfo.Height);
+                Location = new Point(Globals.TheSettings.MainFormInfo.X, Globals.TheSettings.MainFormInfo.Y);
+                Size = new Size(Globals.TheSettings.MainFormInfo.Width, Globals.TheSettings.MainFormInfo.Height);
                 WindowState = FormWindowState.Normal;
             }
 
             bool top = false;
 
-            _piano.Size = new Size(Globals.UserSettings.PianoFormInfo.Width, Globals.UserSettings.PianoFormInfo.Height);
-            _piano.Visible = Globals.UserSettings.PianoFormInfo.Visible;
+            _piano.Size = new Size(Globals.TheSettings.PianoFormInfo.Width, Globals.TheSettings.PianoFormInfo.Height);
+            _piano.Visible = Globals.TheSettings.PianoFormInfo.Visible;
             _piano.TopMost = top;
 
             // Now we can set the locations.
-            _piano.Location = new Point(Globals.UserSettings.PianoFormInfo.X, Globals.UserSettings.PianoFormInfo.Y);
+            _piano.Location = new Point(Globals.TheSettings.PianoFormInfo.X, Globals.TheSettings.PianoFormInfo.Y);
 
-            splitContainerControl.SplitterDistance = Globals.UserSettings.ControlSplitterPos;
+            splitContainerControl.SplitterDistance = Globals.TheSettings.ControlSplitterPos;
         }
 
         /// <summary>
@@ -938,21 +937,21 @@ namespace Nebulator
         /// </summary>
         void SaveSettings()
         {
-            Globals.UserSettings.PianoFormInfo.FromForm(_piano);
+            Globals.TheSettings.PianoFormInfo.FromForm(_piano);
 
             if (WindowState == FormWindowState.Maximized)
             {
-                Globals.UserSettings.MainFormInfo.Width = 0; // indicates maximized
-                Globals.UserSettings.MainFormInfo.Height = 0;
+                Globals.TheSettings.MainFormInfo.Width = 0; // indicates maximized
+                Globals.TheSettings.MainFormInfo.Height = 0;
             }
             else
             {
-                Globals.UserSettings.MainFormInfo.FromForm(this);
+                Globals.TheSettings.MainFormInfo.FromForm(this);
             }
 
-            Globals.UserSettings.ControlSplitterPos = splitContainerControl.SplitterDistance;
+            Globals.TheSettings.ControlSplitterPos = splitContainerControl.SplitterDistance;
 
-            Globals.UserSettings.Save();
+            Globals.TheSettings.Save();
         }
 
         /// <summary>
@@ -975,7 +974,7 @@ namespace Nebulator
                 {
                     Dock = DockStyle.Fill,
                     PropertySort = PropertySort.NoSort,
-                    SelectedObject = Globals.UserSettings
+                    SelectedObject = Globals.TheSettings
                 };
 
                 // Detect changes of interest.
@@ -1000,7 +999,7 @@ namespace Nebulator
 
                     if (midi)
                     {
-                        Globals.MidiInterface.Init();
+                        MidiInterface.TheInterface.Init();
                     }
 
                     if (notes)
@@ -1037,7 +1036,7 @@ namespace Nebulator
                     VelocityToPlay = 90,
                     Duration = new Time(0)
                 };
-                Globals.MidiInterface.Send(step);
+                MidiInterface.TheInterface.Send(step);
             }
             else
             {
@@ -1048,7 +1047,7 @@ namespace Nebulator
                     NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
                     Velocity = 64
                 };
-                Globals.MidiInterface.Send(step);
+                MidiInterface.TheInterface.Send(step);
             }
         }
 
@@ -1078,7 +1077,7 @@ namespace Nebulator
                 SetPlayStatus(PlayCommand.Stop);
 
                 // Send midi stop all notes just in case.
-                Globals.MidiInterface.KillAll();
+                MidiInterface.TheInterface.KillAll();
             }
             else
             {
@@ -1247,37 +1246,37 @@ namespace Nebulator
         /// </summary>
         void InitControls()
         {
-            BackColor = Globals.UserSettings.BackColor;
+            BackColor = Globals.TheSettings.BackColor;
 
             // Stash the original image in the tag field.
-            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, Globals.UserSettings.IconColor);
+            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, Globals.TheSettings.IconColor);
 
-            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.UserSettings.IconColor);
+            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.TheSettings.IconColor);
 
-            chkLoop.Image = Utils.ColorizeBitmap(chkLoop.Image, Globals.UserSettings.IconColor);
-            chkLoop.BackColor = Globals.UserSettings.BackColor;
-            chkLoop.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
+            chkLoop.Image = Utils.ColorizeBitmap(chkLoop.Image, Globals.TheSettings.IconColor);
+            chkLoop.BackColor = Globals.TheSettings.BackColor;
+            chkLoop.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
 
-            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, Globals.UserSettings.IconColor);
-            chkPlay.BackColor = Globals.UserSettings.BackColor;
-            chkPlay.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
+            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, Globals.TheSettings.IconColor);
+            chkPlay.BackColor = Globals.TheSettings.BackColor;
+            chkPlay.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
 
-            chkSequence.Image = Utils.ColorizeBitmap(chkSequence.Image, Globals.UserSettings.IconColor);
-            chkSequence.BackColor = Globals.UserSettings.BackColor;
-            chkSequence.FlatAppearance.CheckedBackColor = Globals.UserSettings.SelectedColor;
+            chkSequence.Image = Utils.ColorizeBitmap(chkSequence.Image, Globals.TheSettings.IconColor);
+            chkSequence.BackColor = Globals.TheSettings.BackColor;
+            chkSequence.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
 
-            potSpeed.ControlColor = Globals.UserSettings.IconColor;
-            potSpeed.Font = Globals.UserSettings.ControlFont;
+            potSpeed.ControlColor = Globals.TheSettings.IconColor;
+            potSpeed.Font = Globals.TheSettings.ControlFont;
             potSpeed.Invalidate();
 
-            sldVolume.ControlColor = Globals.UserSettings.ControlColor;
-            sldVolume.Font = Globals.UserSettings.ControlFont;
+            sldVolume.ControlColor = Globals.TheSettings.ControlColor;
+            sldVolume.Font = Globals.TheSettings.ControlFont;
             sldVolume.Invalidate();
 
-            timeMaster.ControlColor = Globals.UserSettings.ControlColor;
+            timeMaster.ControlColor = Globals.TheSettings.ControlColor;
             timeMaster.Invalidate();
 
-            infoDisplay.BackColor = Globals.UserSettings.BackColor;
+            infoDisplay.BackColor = Globals.TheSettings.BackColor;
         }
         #endregion
 
@@ -1347,7 +1346,7 @@ namespace Nebulator
         /// <param name="e"></param>
         private void KillMidi_Click(object sender, EventArgs e)
         {
-            Globals.MidiInterface.KillAll();
+            MidiInterface.TheInterface.KillAll();
         }
         #endregion
     }
