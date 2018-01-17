@@ -111,7 +111,6 @@ namespace Nebulator.Scripting
         public void loop() { _loop = true; }
         public void noLoop() { _loop = false; }
 
-
         // Save all fonts, styles etc in a Bag. Restore in popStyle(). These:
         // fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), 
         // ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), 
@@ -214,8 +213,8 @@ namespace Nebulator.Scripting
         {
             x1 -= width / 2;
             y1 -= height / 2;
-            angle1 *= 57.2957801818848f; // 360 / 57.29 = 2*PI
-            angle2 *= 57.2957801818848f;
+            angle1 = Utils.RadiansToDegrees(angle1);
+            angle2 = Utils.RadiansToDegrees(angle2);
             GraphicsPath path = new GraphicsPath();
             path.AddArc(x1, y1, x2, y2, angle1, angle2);
 

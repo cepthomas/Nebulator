@@ -10,7 +10,6 @@ using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Midi;
 
-
 namespace Nebulator.Scripting
 {
     /// <summary>
@@ -408,16 +407,17 @@ namespace Nebulator.Scripting
                     paths.Add(fullpath);
                 }
 
+                // TODO2 Would actually like to use roslyn for C#7 stuff but can't make it work:
+                //Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider providerX = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider();
+                //// Need to fix hardcoded path to compiler - why isn't this fixed by MS?
+                //var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+                //var settings = providerX.GetType().GetField("_compilerSettings", flags).GetValue(providerX);
+                //settings.GetType().GetField("_compilerFullPath", flags).SetValue(settings, Environment.CurrentDirectory + @"\roslyn\csc.exe");
+
+
                 // Make it compile.
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
-
-                // TODO2 Would actually like to use roslyn for C#7 stuff but can't make it work:
-                // Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider provider = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider();
-                // // Need to fix hardcoded path to compiler - why isn't this fixed by MS?
-                // var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-                // var settings = provider.GetType().GetField("_compilerSettings", flags).GetValue(provider);
-                // settings.GetType().GetField("_compilerFullPath", flags).SetValue(settings, Environment.CurrentDirectory + @"\roslyn\csc.exe");
 
                 if (cr.Errors.Count == 0)
                 {
@@ -917,7 +917,7 @@ namespace Nebulator.Scripting
             }
         }
 
-        private void ParseScriptLine(object o) //, string original)
+        private void ParseScriptLine(object o)
         {
             SmFuncArg farg = o as SmFuncArg;
 
@@ -925,8 +925,11 @@ namespace Nebulator.Scripting
 
             try
             {
-                // Store the whole line with line tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
-                farg.Context.CodeLines.Add($"{farg.CleanedLine} //{farg.Context.LineNumber}");
+                if(farg.CleanedLine != "")
+                {
+                    // Store the whole line with line tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
+                    farg.Context.CodeLines.Add($"{farg.CleanedLine} //{farg.Context.LineNumber}");
+                }
 
                 // Test for event handler.
                 foreach (string p in farg.Args)

@@ -4,11 +4,13 @@ variable MAX 60
 
 functions booga 999
 
+int notavar = 911;
+
 bool boing(int notenum = 0)
 {
     bool boinged = false;
 
-    //println("boing");
+    // println("boing");
     if(notenum == 0)
     {
         notenum = (int)random(30, MAX);

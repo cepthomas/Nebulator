@@ -45,6 +45,9 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Fields
+        /// <summary>For magic user script access. TODO2 klunky, need a better way.</summary>
+        protected static Script s;
+
         /// <summary>The client hosts this control in their UI. It performs the actual graphics drawing and input.</summary>
         UserControl _surface = null;
 
@@ -60,6 +63,14 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Internal overhead
+        /// <summary>
+        /// Base constructor for internal stuff.
+        /// </summary>
+        protected Script()
+        {
+            s = this;
+        }
+
         /// <summary>
         /// Execute a script function. No error checking, presumably the compiler did that. Caller will have to deal with any runtime exceptions.
         /// </summary>

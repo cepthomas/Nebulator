@@ -32,17 +32,8 @@ namespace Nebulator.Editor
             splitContainer1.Panel1.Controls.Add(grid);
             Random rand = new Random(111);
             grid.ToolTipEvent += ((s, e) => e.Text = "TT_" + rand.Next().ToString());
-            List<PointF> data = new List<PointF>();
-            for (int i = 0; i < 10; i++)
-            {
-                data.Add(new PointF(i, rand.Next(20, 80)));
-            }
-            grid.InitData(data);
+            grid.InitData();
             grid.Show();
-
-
-            //PolygonEdit ped = new PolygonEdit() { Dock = DockStyle.Fill };
-            //splitContainer1.Panel2.Controls.Add(ped);
         }
     }
 }

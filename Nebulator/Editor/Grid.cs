@@ -157,8 +157,8 @@ namespace Nebulator.Editor
         #endregion
 
         #region Fields - Zooming and shift
-        /// <summary>Speed at which to shift the control (left/right/up/down).</summary>
-        int _shiftSpeed = 5;
+        ///// <summary>Speed at which to shift the control (left/right/up/down).</summary>
+        //int _shiftSpeed = 5;
 
         /// <summary>Speed at which to zoom in/out.</summary>
         float _zoomSpeed = 1.1f; // 1.25f is too fast
@@ -310,8 +310,6 @@ namespace Nebulator.Editor
             // Info filled in by client.
             public string Text { get; set; } = "";
         }
-
-        /// <summary>Publish event for scale change.</summary>
         public event EventHandler<ToolTipEventArgs> ToolTipEvent;
         #endregion
 
@@ -322,8 +320,8 @@ namespace Nebulator.Editor
         List<float> _yVals = new List<float>();
         float _xRange = 0;
         float _yRange = 0;
-        Color _dotColor = Color.Purple;
-        List<PolygonF> _polygons = new List<PolygonF>();
+
+        public List<PolygonF> Polygons { get; set; } = new List<PolygonF>();
 
 
         ////////////////////// from poly editor ////////////////////////////
@@ -395,47 +393,66 @@ namespace Nebulator.Editor
 
         #region Public methods
         /// <summary>Constructs a new grid and initializes the collection.</summary>
-        /// <param name="points">A collection data points</param>
-        public void InitData(List<PointF> points)
+        public void InitData()
         {
-            int pi = 1;
-
-            _polygons.Clear();
-
-            //foreach (PointF pt in points)
-            //{
-            //    _data.Add(new PolygonF DataPoint(pt, "PX", "PY", pi++));
-            //}
-
-            _xVals = points.Select(i => i.X).ToList();
-            _yVals = points.Select(i => i.Y).ToList();
-            _xRange = _xVals.Max() - _xVals.Min();
-            _yRange = _yVals.Max() - _yVals.Min();
-
             _firstPaint = true;
 
-            // Set the default scales.
-            _xMinScale = _xVals.Min();
-            _xMaxScale = _xVals.Max();
-            _yMinScale = _yVals.Min();
-            _yMaxScale = _yVals.Max();
+            //_xVals = points.Select(i => i.X).ToList();
+            //_yVals = points.Select(i => i.Y).ToList();
+            //_xRange = _xVals.Max() - _xVals.Min();
+            //_yRange = _yVals.Max() - _yVals.Min();
 
 
-            Invalidate(); // TODO1 or Refresh()??
+            //// Set the default scales.
+            //_xMinScale = _xVals.Min();
+            //_xMaxScale = _xVals.Max();
+            //_yMinScale = _yVals.Min();
+            //_yMaxScale = _yVals.Max();
+
+
+            Invalidate(); // TODOG or Refresh()??
             //https://blogs.msdn.microsoft.com/subhagpo/2005/02/22/whats-the-difference-between-control-invalidate-control-update-and-control-refresh/
-
-
             //Invalidate() simply adds a region to the update region of the control. The next time WM_PAINT is received, the area you invalidated plus any other invalidated regions, are marked for painting. When RedrawWindow() is called, that will normally post a WM_PAINT message to the application queue. The system is free to do what it wants with that, usually more pressing business, and paint when it can.
             //If you call Update(), you get GDI + 's UpdateWindow() which won't mark a region for repainting, but pushes a WM_PAINT directly to WNDPROC(), bypassing the application queue.
             //If you need an immediate refresh of a control, use Refresh(), which invalidates the region then immediately calls Update().
         }
 
-        /// <summary>Redraws the screen.</summary>
-        public void ReInit()
-        {
-            _firstPaint = true;
-            Invalidate();
-        }
+        ///// <summary>Constructs a new grid and initializes the collection.</summary>
+        ///// <param name="points">A collection data points</param>
+        //public void InitData_old(List<PointF> points)
+        //{
+        //    int pi = 1;
+
+        //    _polygons.Clear();
+
+        //    //foreach (PointF pt in points)
+        //    //{
+        //    //    _data.Add(new PolygonF DataPoint(pt, "PX", "PY", pi++));
+        //    //}
+
+        //    _xVals = points.Select(i => i.X).ToList();
+        //    _yVals = points.Select(i => i.Y).ToList();
+        //    _xRange = _xVals.Max() - _xVals.Min();
+        //    _yRange = _yVals.Max() - _yVals.Min();
+
+        //    _firstPaint = true;
+
+        //    // Set the default scales.
+        //    _xMinScale = _xVals.Min();
+        //    _xMaxScale = _xVals.Max();
+        //    _yMinScale = _yVals.Min();
+        //    _yMaxScale = _yVals.Max();
+
+
+        //    Invalidate(); // TODOG or Refresh()??
+        //    //https://blogs.msdn.microsoft.com/subhagpo/2005/02/22/whats-the-difference-between-control-invalidate-control-update-and-control-refresh/
+
+
+        //    //Invalidate() simply adds a region to the update region of the control. The next time WM_PAINT is received, the area you invalidated plus any other invalidated regions, are marked for painting. When RedrawWindow() is called, that will normally post a WM_PAINT message to the application queue. The system is free to do what it wants with that, usually more pressing business, and paint when it can.
+        //    //If you call Update(), you get GDI + 's UpdateWindow() which won't mark a region for repainting, but pushes a WM_PAINT directly to WNDPROC(), bypassing the application queue.
+        //    //If you need an immediate refresh of a control, use Refresh(), which invalidates the region then immediately calls Update().
+        //}
+
         #endregion
 
         #region Drawing
@@ -516,7 +533,7 @@ namespace Nebulator.Editor
                 float theight = _axisLabelFont.Height;
                 DrawLabel(e.Graphics, space, Height / 2 + size / 2, YAxisLabel, _axisLabelFont, 270);
 
-                // Draw Selection Rectangle if ctrl is down and not dragging cursor. TODO1
+                // Draw Selection Rectangle if ctrl is down and not dragging cursor. TODOG
                 if (KeyboardState.IsKeyDown(Keys.ControlKey) && _drawState == DrawState.MouseMove_Selecting)  // _dragging && _dragCursor == null)
                 {
                     float width = 0.0f, height = 0.0f;
@@ -575,7 +592,7 @@ namespace Nebulator.Editor
                         // Finish this polygon.
                         if (_newPolygon.Points.Count > 2)
                         {
-                            _polygons.Add(_newPolygon);
+                            Polygons.Add(_newPolygon);
                         }
                         _newPolygon = null;
 
@@ -901,7 +918,7 @@ namespace Nebulator.Editor
                             break;
 
                         case PointLocation.OverEdge:
-                            newCursor = Cursors.SizeAll; //TODO1 scrub all cursors.
+                            newCursor = Cursors.SizeAll; //TODOG scrub all cursors.
                             break;
 
                         case PointLocation.OverPolygon:
@@ -911,7 +928,7 @@ namespace Nebulator.Editor
                         case PointLocation.NotPertinent:
                             if ((MouseButtons != MouseButtons.Left) && newPos != _lastMousePos) // Apparently a known issue is that showing a tooltip causes a MouseMove event to get generated.
                             {
-                                // If the mouse is over a point or cursor, show its tooltip. TODO1
+                                // If the mouse is over a point or cursor, show its tooltip. TODOG
 
                                 //DataPoint closestPoint = GetClosestPoint(newPos);
                                 //GridCursor closestCursor = CursorToolTipProvider != null ? GetClosestCursor(newPos) : null;
@@ -985,7 +1002,7 @@ namespace Nebulator.Editor
                     //{
                     //    if ((MouseButtons != MouseButtons.Left) && newPos != _lastMousePos) // Apparently a known issue is that showing a tooltip causes a MouseMove event to get generated.
                     //    {
-                    //        // If the mouse is over a point or cursor, show its tooltip. TODO1
+                    //        // If the mouse is over a point or cursor, show its tooltip. TODOG
 
                     //        //DataPoint closestPoint = GetClosestPoint(newPos);
                     //        //GridCursor closestCursor = CursorToolTipProvider != null ? GetClosestCursor(newPos) : null;
@@ -1058,11 +1075,11 @@ namespace Nebulator.Editor
         /// <param name="e">Event Arguments</param>
         void Grid_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e != null && e.Button == MouseButtons.Right && _polygons.Count > 0)
+            if (e != null && e.Button == MouseButtons.Right && Polygons.Count > 0)
             {
                 ContextMenuStrip cms = new ContextMenuStrip();
                 cms.ShowImageMargin = false;
-                cms.Items.Add("TODO1 any???");
+                cms.Items.Add("TODOG any???");
                 //cms.Items.Add("Set Scale", null, new EventHandler(ShowChartScale));
                 cms.Show(this, new Point(e.X, e.Y));
             }
@@ -1218,9 +1235,9 @@ namespace Nebulator.Editor
         void DrawPolygons(Graphics g)
         {
             // Draw the polygons.
-            foreach (PolygonF polygon in _polygons)
+            foreach (PolygonF polygon in Polygons)
             {
-                // Draw the polygon. TODO1 support non closed. GraphicsPath
+                // Draw the polygon. TODOG support non closed. GraphicsPath
                 g.FillPolygon(Brushes.White, polygon.Points.ToArray());
                 g.DrawPolygon(Pens.Blue, polygon.Points.ToArray());
 
@@ -1265,9 +1282,9 @@ namespace Nebulator.Editor
             GeometryResult gres = new GeometryResult();
 
             // Examine all polygons in reverse order to check the ones on top first.
-            for (int i = _polygons.Count - 1; i >= 0 && res.ploc == PointLocation.NotPertinent; i--)
+            for (int i = Polygons.Count - 1; i >= 0 && res.ploc == PointLocation.NotPertinent; i--)
             {
-                PolygonF polygon = _polygons[i];
+                PolygonF polygon = Polygons[i];
 
                 if (res.ploc == PointLocation.NotPertinent)
                 {
@@ -1429,7 +1446,7 @@ namespace Nebulator.Editor
         /// <summary>Zoom in the charting control.</summary>
         public void ZoomIn()
         {
-            if (_polygons.Count > 0)
+            if (Polygons.Count > 0)
             {
                 float oldXScale = _xZoomFactor;
                 float oldYScale = _yZoomFactor;
@@ -1476,7 +1493,7 @@ namespace Nebulator.Editor
         /// <summary>Zoom out the charting control.</summary>
         public void ZoomOut()
         {
-            if (_polygons.Count > 0)
+            if (Polygons.Count > 0)
             {
                 float oldXScale = _xZoomFactor;
                 float oldYScale = _yZoomFactor;
@@ -1748,7 +1765,6 @@ namespace Nebulator.Editor
         }
 
         /// <summary>Remove all cursors from the collection.</summary>
-        /// <param name="id"></param>
         public void RemoveAllCursors()
         {
             _gridCursors.Clear();

@@ -3,7 +3,7 @@
     "master.volume": 154,
     "master.speed": 44.0,
     "master.loop": false,
-    "master.sequence": false,
+    "master.sequence": true,
     "SOUND.volume": 90
   }
 }

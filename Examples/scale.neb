@@ -1,0 +1,60 @@
+
+
+functions scale_utilities
+
+
+class Scale
+{
+    public int count = 0;
+    int[] scaleNotes;
+    int[] noteWeights;
+    int totalWeight = 0;
+
+    public void Init(string scale, string root)
+    {
+        scaleNotes = s.getScaleNotes(scale, root);
+        count = scaleNotes.Count();
+        noteWeights = new int[count];
+
+        // Default weights.
+        for(int i = 0;i < count;i++)
+        {
+            noteWeights[i] = 100 / count;
+            totalWeight += noteWeights[i];
+        }        
+    }
+
+    public void SetWeight(int index, int weight)
+    {
+        if(index < count)
+        {
+            noteWeights[index] = weight;
+        }
+
+        // Recalc total weight.
+        totalWeight = 0;
+        for(int i = 0;i < count;i++)
+        {
+            totalWeight += noteWeights[i];
+        }        
+    }
+
+    public int NextNote()
+    {
+        int note = 0;
+        int r = s.random(totalWeight);
+        int offset = 0;
+
+        for(int i = 0;i < count;i++)
+        {
+            offset += noteWeights[i];
+            if(r < offset)
+            {
+                note = scaleNotes[i];
+                break;
+            }
+        }
+
+        return note;
+    }
+}

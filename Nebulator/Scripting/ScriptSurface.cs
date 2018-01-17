@@ -7,11 +7,6 @@ using System.Windows.Forms;
 using Nebulator.Common;
 using Nebulator.FastTimer;
 
-// TODO2 Make the graphics faster and smoother.
-// I messed with SharpDx and OpenTk but it's a jump in complexity that I don't feel like doing right now.
-// Considered WPF but the boost may not be all that big for these simple 2D graphics.
-// But did change to GDI+ buffered per: http://kynosarges.org/WpfPerformance.html.
-
 
 namespace Nebulator.Scripting
 {
@@ -210,7 +205,7 @@ namespace Nebulator.Scripting
         }
         #endregion
 
-        #region Keyboard handling - see MainForm region "Keyboard handling"
+        #region Keyboard handling
         /// <summary>
         /// Event handler for keys.
         /// </summary>

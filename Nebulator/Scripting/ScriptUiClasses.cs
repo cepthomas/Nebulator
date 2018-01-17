@@ -189,7 +189,7 @@ namespace Nebulator.Scripting
                 case WHEEL: sact = "WHEEL"; break;
             }
 
-            return string.Format("<MouseEvent {0}@{1},{2} count:{3} button:{4}>", sact, _x, _y, _count, _button);
+            return $"<MouseEvent {sact}@{_x},{_y} count:{_count} button:{_button}>";
         }
     }
 }

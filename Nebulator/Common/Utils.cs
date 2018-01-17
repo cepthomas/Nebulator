@@ -163,7 +163,7 @@ namespace Nebulator.Common
         /// <param name="i"></param>
         /// <param name="dark">Dark or light series, usually dark.</param>
         /// <returns></returns>
-        public static Color GeColor(int i, bool dark = true)
+        public static Color GetColor(int i, bool dark = true)
         {
             Color col = Color.Black;
 
@@ -213,8 +213,23 @@ namespace Nebulator.Common
         }
         #endregion
 
-
         #region Math helpers
+        /// <summary>Conversion.</summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        public static float DegreesToRadians(float angle)
+        {
+            return (float)(Math.PI * angle / 180.0);
+        }
+
+        /// <summary>Conversion.</summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        public static float RadiansToDegrees(float angle)
+        {
+            return (float)(angle * 180.0 / Math.PI);
+        }
+
         /// <summary>
         /// Remap a value to new coordinates.
         /// </summary>

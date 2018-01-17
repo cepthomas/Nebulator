@@ -41,7 +41,7 @@ namespace Nebulator.Editor
         public bool Closed { get; set; } = true;
 
 
-        /*** TODO1 some or all of these::::::::::::::::
+        /*** TODOG some or all of these::::::::::::::::
         /// <summary>Border shape types for tagging indication.</summary>
         public enum BorderShapeType { None = 0, Circle = 1, Square = 2, Triangle = 3 }
 
@@ -101,7 +101,7 @@ namespace Nebulator.Editor
             Points.Add(p);
         }
 
-        public void InsertVertex(int where, PointF which) //TODO1
+        public void InsertVertex(int where, PointF which) //TODOG
         {
             //int ind = 0;
             //for (int i = 0; i < Points.Count; i++)
@@ -323,7 +323,7 @@ namespace Nebulator.Editor
                 // The segments intersect if t1 and t2 are between 0 and 1.
                 res.intersect = ((t1 >= 0) && (t1 <= 1) && (t2 >= 0) && (t2 <= 1)) ? IntersectType.BoundedIntersection : IntersectType.UnboundedIntersection;
 
-                //// Find the closest points on the segments. TODO1 ?
+                //// Find the closest points on the segments. TODOG ?
                 //if (t1 < 0)
                 //{
                 //    t1 = 0;
@@ -418,22 +418,6 @@ namespace Nebulator.Editor
     {
         /// <summary>The size of an object for mouse purposes.</summary>
         public static float HitRange { get; set; } = 3;
-
-        /// <summary>Conversion.</summary>
-        /// <param name="angle"></param>
-        /// <returns></returns>
-        public static float DegreesToRadians(float angle)
-        {
-            return (float)(Math.PI * angle / 180.0);
-        }
-
-        /// <summary>Conversion.</summary>
-        /// <param name="angle"></param>
-        /// <returns></returns>
-        public static float RadiansToDegrees(float angle)
-        {
-            return (float)(angle * 180.0 / Math.PI);
-        }
 
         /// <summary>Rotate a point around center origin.</summary>
         /// <param name="point">Point to rotate.</param>

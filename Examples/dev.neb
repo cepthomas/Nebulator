@@ -1,9 +1,13 @@
 
-
 ///// Tester for dev features.
+
+// My akai kbd midi: Pad1=44, pad8=51, knob1=ctlr1, knob8=ctlr8
+
 
 
 include utils.neb
+include scale.neb
+
 
 ////////// Constants //////////
 constant WHEN2         32
@@ -58,27 +62,6 @@ sequence ALGO1 8
 00.00  algoDynamic()  90
 
 
-
-// sequence XXXXXX 8
-// 0.00 F.4.??? 90 0.32
-// 0.32 D#.4 KEYS_DEF_VOL 0.32
-// 1.00 C.4 90 0.32
-// 1.32 B.4.m7 90 0.32
-// 2.00 F.5 90 0.32
-// 2.32 D#.5 KEYS_DEF_VOL 0.32
-// 3.00 C.5 90 0.32
-// 3.32 B.5.m7 90 0.32
-// 4.00 F.3 90 0.32
-// 4.32 D#.3 KEYS_DEF_VOL 0.32
-// 5.00 C.3 90 0.32
-// 5.32 B.3.m7 90 0.32
-// 6.00 F.2 90 0.32
-// 6.32 D#.2 KEYS_DEF_VOL 0.32
-// 7.00 C.2 90 0.32
-// 7.32 B.2.m7 90 0.32
-
-
-
 // Using patterns. Each hit is 1/16 note - fixed res for now.
 sequence DRUMS_SIMPLE 8 // 32 x 1/16 = 8 x 1/4
 x-------x-------x-------x------- AcousticBassDrum 90
@@ -88,96 +71,23 @@ sequence DRUMS_HH 8
 ------xx------xx------xx------xx ClosedHiHat 100
 
 
-
-// sequence SEQXX 8
-// G.3  A.3  Bb.3 C.4  90  
-// G3  A3  Bb3  C4  90  
-
-
-// --- Chord Chart
-// # Title 617812721
-// #STYLE swing
-// #INCLUDE "/u/psl/midi/etc/accagc.cc"
-// #QUANTUM quarter
-// #PART Lbgv
-// Bb / / / Eb7 / / / Bb / / / Bb / Bb /
-// C7 / / / F7 / / / Bb / F7 / Cm / F7 /
-// #PART Lbgv
-// Bb / / / Eb7 / / / Bb / / / Bb / Bb /
-// C7 / / / F7 / / / Bb / Cm F7 Bb / / /
-// #PART Lbgb
-// Eb / / / Eo / / / Bb / / / Bb / D7 /
-// Gm / / / Gb7 / / / F7 / / / F7 / / /
-// #PART Lbgv
-// Bb / / / Eb7 / / / Bb / / / Bb / Bb /
-// Cm / / / F7 / / / Bb / Bb / Bb / / /
-
-
-// --- Chord Symbol Definition
-// # name group trans
-// #CHORD Cm tri 0,0,0,0,-1,0,0,0,0,-1,0,0
-// #CHORD C7 dom7 0,0,0,0,0,0,0,0,0,0,0,0
-// #CHORD D7 dom7 2,2,2,2,2,2,2,2,2,2,2,2
-// #CHORD Eb tri 3,3,3,3,3,3,3,3,3,3,3,3
-// #CHORD Eb7 dom7 3,3,3,3,3,3,3,3,3,3,3,3
-// #CHORD Eo dom7 4,4,4,4,3,4,4,3,4,4,3,4
-// #CHORD F7 dom7 5,5,5,5,5,5,5,5,5,5,5,5
-// #CHORD Gb7 dom7 6,6,6,6,6,6,6,6,6,6,6,6
-// #CHORD Gm tri 7,7,7,7,6,7,7,7,7,6,7,7
-// #CHORD Bb tri -2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2
-
-
-// --- From llfm.pdf:::::::
-// #TITLE Departure Tax
-// #VOICES Paul Peter Scott
-// #SCALE G,A,B,C,D,E,F#
-// #INIT F#3 A3 C4
-// #CHORD 1 . . . 1 . . . 5 . . . 4 . 5 . 5 . . . 5 . . . 1 . . . 4 . 5 . |
-// Scott 45565(5434516543217-7(7717617(--34454(4323456542311-1(1117617(--|
-// Peter 23343(3212354321765-5(5565465(--12232(2171234327165-5(5565465(--|
-// Paul 71111(1757132176542-2(2232132(--57777(6545712175543-3(3332132(--|
-// Figure 19 — ‘‘Departure Tax’’ in SD Format
-// (1 ≡ tonic, 4 ≡ subdominant, 5 ≡ dominant) with periods marking the quarter-note beats in the eight measures.
-// To move this piece to another key would only require changing the #SCALE and #INIT lines.
-
-
-// --- Chord chart
-// # Empty Bed Blues
-// #CHORD C C4 E4 G4 C5
-// #CHORD C7 C4 E4 G4 Bb4
-// #CHORD F C4 F4 A4 C5
-// #CHORD G7 D4 F4 G4 B4
-// #QUANT quarter
-// #ARTIC staccato
-// #REPEAT 8
-// C / / C7 F / G7 /
-// C / G7 / C / C7 /
-// F / / / F / G7 /
-// C/// C///
-// G7 / / / F / G7 /
-// C / F / C / G7 /
-// #ENDRPT
-
-
-
-
 ////////// Functions //////////
 
-functions booga 999
+functions dev_stuff 999
 
-int[] scaleNotes;
-int[] notesPlaying;
 
-void algoXXX()
-{
-    println("xxxxxxxxxxxxx");
-}
+int[] notesPlaying = new int[128];
+Scale algerian;
+
 
 public override void setup()
 {
-    scaleNotes = getScaleNotes("Algerian", "G4");
-    println("scaleNotes", scaleNotes.Length);
-    notesPlaying = new int[scaleNotes.Length];
+    algerian = new Scale();
+    algerian.Init("Algerian", "C4");
+    // 1 2 b3 #4 5 b6 7
+    algerian.SetWeight(0, 50);
+    algerian.SetWeight(4, 50);
+    algerian.SetWeight(2, 30);
 
     // Patches (optional). Only needed if using the Windows GM.
     if(winGm)
@@ -192,19 +102,37 @@ public override void step()
 {
     if(tock == 0)
     {
-        algoSequences();
+        algoDynamic();
+        //algoSequences();
         //algoRandom();
     }
 }
 
+
 void algoDynamic()
 {
-    println("!!!! algoDynamic");
-}
+    if(random(3) == 0)
+    {
+        int which = algerian.NextNote();
+        println("algoDynamic:", which);
 
-void algoNull()
-{
-    println("!!!! algoNull");
+        if(notesPlaying[which] == 0)
+        {
+            int dur = 4;// random(4, 20);
+            notesPlaying[which] = tick + dur;
+            sendMidiNote(KEYS, which, random(80, 100), dur);
+        }
+    }
+
+    // Turn off any scheduled to stop now.
+    for(int i = 0;i < notesPlaying.Length;i++)
+    {
+        if(notesPlaying[i] != 0 && notesPlaying[i] == tick)
+        {
+            sendMidiNote(KEYS, notesPlaying[i], 0, 0.00);
+            notesPlaying[i] = 0;
+        }
+    }
 }
 
 void algoSequences()
@@ -218,44 +146,7 @@ void algoSequences()
     {
         playSequence(KEYS, SEQ2);
     }
-
-    // if(tick % 20 == 0)
-    // {
-    //     playSequence(KEYS, SEQ3);
-    // }
 }
-
-
-    
-void algoRandom()
-{
-    // TODO2 have scales like:
-    // NaturalMinor | 1 2 b3 4 5 b6 b7 | Aeolian mode or natural minor scale | minor | Phrygian
-    // does each need likelihood of next note? markov?
-
-    if(random(3) == 0)
-    {
-        int which = random(scaleNotes.Length);
-
-        if(notesPlaying[which] == 0)
-        {
-            int dur = random(4, 20);
-            notesPlaying[which] = tick + dur;
-            sendMidiNote(KEYS, scaleNotes[which], 95, dur);
-        }
-    }
-
-    // Turn off any scheduled to stop now.
-    for(int i = 0;i < notesPlaying.Length;i++)
-    {
-        if(notesPlaying[i] != 0 && notesPlaying[i] == tick)
-        {
-            sendMidiNote(KEYS, scaleNotes[i], 0, 0.00);
-            notesPlaying[i] = 0;
-        }
-    }
-}
-
 
 
 public void On_MODN()
