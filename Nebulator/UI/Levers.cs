@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Controls;
-using Nebulator.Scripting;
+using Nebulator.Dynamic;
 
 
 namespace Nebulator.UI
@@ -40,7 +40,7 @@ namespace Nebulator.UI
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             UpdateStyles();
 
-            BackColor = Globals.TheSettings.BackColor;
+            BackColor = UserSettings.TheSettings.BackColor;
         }
 
         /// <summary>
@@ -72,8 +72,8 @@ namespace Nebulator.UI
                 {
                     Location = new Point(x, y),
                     Label = l.RefVar.Name,
-                    ControlColor = Globals.TheSettings.ControlColor,
-                    Font = Globals.TheSettings.ControlFont,
+                    ControlColor = UserSettings.TheSettings.ControlColor,
+                    Font = UserSettings.TheSettings.ControlFont,
                     Height = ClientSize.Height - SPACING * 2,
                     Maximum = l.Max,
                     Minimum = l.Min,

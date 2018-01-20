@@ -67,7 +67,7 @@ namespace Nebulator.Midi
                 {
                     MidiEvent evt = null;
 
-                    double d = (time.Tick + time.Tock / Globals.TOCKS_PER_TICK) * secPerTick * deltaTicksPerQuarterNote;
+                    double d = (time.Tick + time.Tock / Utils.TOCKS_PER_TICK) * secPerTick * deltaTicksPerQuarterNote;
                     long midiTime = (long)d;
 
                     switch (step)
@@ -229,7 +229,7 @@ namespace Nebulator.Midi
                         Time MidiTimeToInternal(long mtime, int tpqn)
                         {
                             //return new Time(mtime / tpqn);
-                            return new Time(mtime * Globals.TOCKS_PER_TICK / tpqn);
+                            return new Time(mtime * Utils.TOCKS_PER_TICK / tpqn);
                         }
 
                         // Process the collected valid events.

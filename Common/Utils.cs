@@ -12,6 +12,17 @@ namespace Nebulator.Common
 {
     public static class Utils
     {
+        #region Constants
+        /// <summary>General purpose marker.</summary>
+        public const string UNKNOWN_STRING = "???";
+
+        /// <summary>Subdivision setting.</summary>
+        public const int TOCKS_PER_TICK = 96; // TODO1 elsewhere?
+
+        /// <summary>Indicates needs user involvement.</summary>
+        public static Color ATTENTION_COLOR = Color.Red;
+        #endregion
+
         #region UI helpers
         /// <summary>
         /// Allows user to enter only integer or float values.
@@ -541,7 +552,7 @@ namespace Nebulator.Common
             if(!(btn is null) && btn.CheckOnClick && btn.Checked)
             {
                 Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
-                e.Graphics.FillRectangle(new SolidBrush(Globals.TheSettings.SelectedColor), bounds);
+                e.Graphics.FillRectangle(new SolidBrush(UserSettings.TheSettings.SelectedColor), bounds);
             }
             else
             {

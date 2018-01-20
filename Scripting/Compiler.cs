@@ -9,6 +9,8 @@ using NLog;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Midi;
+using Nebulator.Dynamic;
+
 
 namespace Nebulator.Scripting
 {
@@ -21,7 +23,7 @@ namespace Nebulator.Scripting
         class FileParseContext
         {
             /// <summary>Current source file.</summary>
-            public string SourceFile { get; set; } = Globals.UNKNOWN_STRING;
+            public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
 
             /// <summary>Current source line.</summary>
             public int LineNumber { get; set; } = 1;
@@ -50,13 +52,10 @@ namespace Nebulator.Scripting
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Starting directory.</summary>
-        string _baseDir = Globals.UNKNOWN_STRING;
+        string _baseDir = Utils.UNKNOWN_STRING;
 
         /// <summary>Script info.</summary>
-        string _scriptName = Globals.UNKNOWN_STRING;
-
-        /// <summary>Collected runtime variables, controls, etc.</summary>
-        Dynamic _dynamic = new Dynamic();
+        string _scriptName = Utils.UNKNOWN_STRING;
 
         /// <summary>Declared constants. Key is name.</summary>
         Dictionary<string, int> _consts = new Dictionary<string, int>();
@@ -90,7 +89,7 @@ namespace Nebulator.Scripting
         {
             Script script = null;
 
-            if(nebfn != Globals.UNKNOWN_STRING && File.Exists(nebfn))
+            if(nebfn != Utils.UNKNOWN_STRING && File.Exists(nebfn))
             {
                 _logger.Info($"Compiling {nebfn}.");
 
@@ -98,7 +97,7 @@ namespace Nebulator.Scripting
                 _filesToCompile.Clear();
                 _consts.Clear();
                 _initLines.Clear();
-                _dynamic = new Dynamic();
+                DynamicEntities.Clear();
                 Errors.Clear();
 
                 // Init things.
@@ -191,11 +190,11 @@ namespace Nebulator.Scripting
             ParseOneFile(pcont);
 
             // Finished. Patch some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
-            foreach(Section sect in _dynamic.Sections.Values)
+            foreach(Section sect in DynamicEntities.Sections.Values)
             {
                 foreach(SectionTrack st in sect.SectionTracks)
                 {
-                    if(_dynamic.Tracks[st.TrackName] == null)
+                    if(DynamicEntities.Tracks[st.TrackName] == null)
                     {
                         pcont.LineNumber = 0; // Don't know the real line number.
                         AddParseError(pcont, $"Invalid track name:{st.TrackName}");
@@ -203,7 +202,7 @@ namespace Nebulator.Scripting
 
                     foreach(string sseq in st.SequenceNames)
                     {
-                        if (_dynamic.Sequences[sseq] == null)
+                        if (DynamicEntities.Sequences[sseq] == null)
                         {
                             pcont.LineNumber = 0; // Don't know the real line number.
                             AddParseError(pcont, $"Invalid sequence name:{sseq}");
@@ -383,6 +382,7 @@ namespace Nebulator.Scripting
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Scripting.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Dynamic.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -437,12 +437,7 @@ namespace Nebulator.Scripting
                         }
                     }
 
-                    if (script != null)
-                    {
-                        // Hand over the collected goods.
-                        script.Dynamic = _dynamic;
-                    }
-                    else
+                    if (script == null)
                     {
                         throw new Exception("Could not instantiate script");
                     }
@@ -453,7 +448,7 @@ namespace Nebulator.Scripting
                     {
                         // The line should end with source line number: "//1234"
                         int origLineNum = 0; // defaults
-                        string origFileName = Globals.UNKNOWN_STRING;
+                        string origFileName = Utils.UNKNOWN_STRING;
 
                         // Dig out the offending source code information.
                         string fpath = Path.GetFileName(err.FileName.ToLower());
@@ -522,13 +517,13 @@ namespace Nebulator.Scripting
             _consts.Keys.ForEach(v => codeLines.Add($"const int {v} = {_consts[v]};"));
 
             // The declared vars with the system hooks.
-            _dynamic.Vars.Values.ForEach(v => codeLines.Add($"int {v.Name} {{ get {{ return Dynamic.Vars[\"{v.Name}\"].Value; }} set {{ Dynamic.Vars[\"{v.Name}\"].Value = value; }} }}"));
+            DynamicEntities.Vars.Values.ForEach(v => codeLines.Add($"int {v.Name} {{ get {{ return DynamicEntities.Vars[\"{v.Name}\"].Value; }} set {{ DynamicEntities.Vars[\"{v.Name}\"].Value = value; }} }}"));
 
             // Needed for runtime script statuses.
-            _dynamic.Tracks.Values.ForEach(t => codeLines.Add($"Track {t.Name} {{ get {{ return Dynamic.Tracks[\"{t.Name}\"]; }} }}"));
+            DynamicEntities.Tracks.Values.ForEach(t => codeLines.Add($"Track {t.Name} {{ get {{ return DynamicEntities.Tracks[\"{t.Name}\"]; }} }}"));
 
             // Used for manual/trigger inputs.
-            _dynamic.Sequences.Values.ForEach(s => codeLines.Add($"Sequence {s.Name} {{ get {{ return Dynamic.Sequences[\"{s.Name}\"]; }} }}"));
+            DynamicEntities.Sequences.Values.ForEach(s => codeLines.Add($"Sequence {s.Name} {{ get {{ return DynamicEntities.Sequences[\"{s.Name}\"]; }} }}"));
 
             // Collected init stuff goes in a constructor.
             codeLines.Add($"public {_scriptName}() : base()");
@@ -585,6 +580,7 @@ namespace Nebulator.Scripting
                 "using System.Windows.Forms;",
                 "using Nebulator.Common;",
                 "using Nebulator.Scripting;",
+                "using Nebulator.Dynamic;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : Script",
@@ -664,7 +660,7 @@ namespace Nebulator.Scripting
                     Name = farg.Args[1],
                     Value = int.Parse(farg.Args[2])
                 };
-                _dynamic.Vars.Add(v.Name, v);
+                DynamicEntities.Vars.Add(v.Name, v);
             }
             catch (Exception)
             {
@@ -709,11 +705,11 @@ namespace Nebulator.Scripting
                 switch (farg.Args[0])
                 {
                     case "midictlin":
-                        _dynamic.InputMidis.Add(farg.Args[1], ctl);
+                        DynamicEntities.InputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     case "midictlout":
-                        _dynamic.OutputMidis.Add(farg.Args[1], ctl);
+                        DynamicEntities.OutputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     default:
@@ -741,7 +737,7 @@ namespace Nebulator.Scripting
                     Max = int.Parse(farg.Args[3]),
                     RefVar = ParseVarRef(farg.Context, farg.Args[4])
                 };
-                _dynamic.Levers.Add(farg.Args[1], ctl);
+                DynamicEntities.Levers.Add(farg.Args[1], ctl);
             }
             catch (Exception)
             {
@@ -766,7 +762,7 @@ namespace Nebulator.Scripting
                     WobbleTimeBefore = farg.Args.Count > 4 ? -ParseConstRef(farg.Context, farg.Args[4]) : 0,
                     WobbleTimeAfter = farg.Args.Count > 5 ? ParseConstRef(farg.Context, farg.Args[5]) : 0
                 };
-                _dynamic.Tracks.Add(nt.Name, nt);
+                DynamicEntities.Tracks.Add(nt.Name, nt);
             }
             catch (Exception)
             {
@@ -789,7 +785,7 @@ namespace Nebulator.Scripting
                     Start = ParseConstRef(farg.Context, farg.Args[2]),
                     Length = ParseConstRef(farg.Context, farg.Args[3])
                 };
-                _dynamic.Sections.Add(s.Name, s);
+                DynamicEntities.Sections.Add(s.Name, s);
             }
             catch (Exception)
             {
@@ -816,7 +812,7 @@ namespace Nebulator.Scripting
                 {
                     st.SequenceNames.Add(farg.Args[i]);
                 }
-                _dynamic.Sections.Values.Last().SectionTracks.Add(st);
+                DynamicEntities.Sections.Values.Last().SectionTracks.Add(st);
             }
             catch (Exception )
             {
@@ -838,7 +834,7 @@ namespace Nebulator.Scripting
                     Name = farg.Args[1],
                     Length = ParseConstRef(farg.Context, farg.Args[2]),
                 };
-                _dynamic.Sequences.Add(ns.Name, ns);
+                DynamicEntities.Sequences.Add(ns.Name, ns);
             }
             catch (Exception)
             {
@@ -911,7 +907,7 @@ namespace Nebulator.Scripting
                 foreach (Time t in whens)
                 {
                     SequenceElement ncl = new SequenceElement(seqel) { When = t };
-                    _dynamic.Sequences.Values.Last().Elements.Add(ncl);
+                    DynamicEntities.Sequences.Values.Last().Elements.Add(ncl);
                 }
             }
             catch (Exception)
@@ -988,7 +984,7 @@ namespace Nebulator.Scripting
             catch (Exception)
             {
                 // Assume it is the name of a reference.
-                v = _dynamic.Vars[s];
+                v = DynamicEntities.Vars[s];
                 if (v is null)
                 {
                     AddParseError(pcont, $"Invalid reference: {s}");
@@ -1048,7 +1044,7 @@ namespace Nebulator.Scripting
                     // Check for valid fractional part.
                     if (int.TryParse(parts[1], out int result))
                     {
-                        if (result >= Globals.TOCKS_PER_TICK)
+                        if (result >= Utils.TOCKS_PER_TICK)
                         {
                             throw null; // too big
                         }
@@ -1077,7 +1073,7 @@ namespace Nebulator.Scripting
                         }
 
                         // Scale.
-                        d *= Globals.TOCKS_PER_TICK;
+                        d *= Utils.TOCKS_PER_TICK;
 
                         // Truncate.
                         d = Math.Floor(d);
@@ -1102,7 +1098,7 @@ namespace Nebulator.Scripting
                         {
                             case 'x':
                                 // Note on.
-                                times.Add(new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Globals.TOCKS_PER_TICK / PATTERN_SIZE));
+                                times.Add(new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Utils.TOCKS_PER_TICK / PATTERN_SIZE));
                                 break;
 
                             case '-':

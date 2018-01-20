@@ -7,28 +7,28 @@ using Nebulator.Common;
 using Nebulator.Midi;
 
 
-namespace Nebulator.Scripting
+namespace Nebulator.Dynamic
 {
-    public class StepUtils
+    public class StepUtils // TODO1 best home?
     {
-        ///// <summary>
-        ///// Turn collected stuff into midi event sequence.
-        ///// </summary>
-        ///// <param name="tracks">The Tracks.</param>
-        ///// <param name="sequences">The Sequences.</param>
-        ///// <returns></returns>
-        public static StepCollection ConvertToSteps(Dynamic dynamic)
+        /// <summary>
+        /// Turn collected stuff into midi event sequence.
+        /// </summary>
+        /// <param name="tracks">The Tracks.</param>
+        /// <param name="sequences">The Sequences.</param>
+        /// <returns></returns>
+        public static StepCollection ConvertToSteps()
         {
             StepCollection steps = new StepCollection();
 
             // Iterate through the sections.
-            foreach (Section sect in dynamic.Sections.Values)
+            foreach (Section sect in DynamicEntities.Sections.Values)
             {
                 // Iterate through the sections tracks.
                 foreach (SectionTrack strack in sect.SectionTracks)
                 {
                     // Get the pertinent Track object.
-                    Track track = dynamic.Tracks[strack.TrackName];
+                    Track track = DynamicEntities.Tracks[strack.TrackName];
 
                     // For processing current Sequence.
                     int seqOffset = sect.Start;
@@ -36,7 +36,7 @@ namespace Nebulator.Scripting
                     // Gen steps for each sequence.
                     foreach (string sseq in strack.SequenceNames)
                     {
-                        Sequence seq = dynamic.Sequences[sseq];
+                        Sequence seq = DynamicEntities.Sequences[sseq];
                         StepCollection stepsToAdd = ConvertToSteps(track, seq, seqOffset);
                         steps.Add(stepsToAdd);
                         seqOffset += seq.Length;
@@ -52,8 +52,8 @@ namespace Nebulator.Scripting
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
-        /// <param name="tick">Which tick to start at. If -1 use current Tick.</param>
-        public static StepCollection ConvertToSteps(Track track, Sequence seq, int tick = -1)
+        /// <param name="tick">Which tick to start at.</param>
+        public static StepCollection ConvertToSteps(Track track, Sequence seq, int tick)
         {
             StepCollection steps = new StepCollection();
 
@@ -62,7 +62,8 @@ namespace Nebulator.Scripting
                 // Create the note start and stop times.
                 int toffset = tick == -1 ? 0 : track.NextTime();
 
-                Time startNoteTime = new Time(tick == -1 ? Globals.StepTime.Tick : tick, toffset) + seqel.When;
+                //Time startNoteTime = new Time(tick == -1 ? Script.StepTime.Tick : tick, toffset) + seqel.When;
+                Time startNoteTime = new Time(tick, toffset) + seqel.When;
                 Time stopNoteTime = startNoteTime + seqel.Duration;
 
                 if(seqel.Function != "")

@@ -63,7 +63,6 @@
     <Compile Include="AssemblyInfoTool.cs" />
     <Compile Include="Bag.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Globals.cs" />
     <Compile Include="KeyboardState.cs" />
     <Compile Include="LazyCollection.cs" />
     <Compile Include="Logging.cs" />

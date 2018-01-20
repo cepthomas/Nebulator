@@ -82,8 +82,7 @@ Scale algerian;
 
 public override void setup()
 {
-    algerian = new Scale();
-    algerian.Init("Algerian", "C4");
+    algerian = new Scale("Algerian", "C4");
     // 1 2 b3 #4 5 b6 7
     algerian.SetWeight(0, 50);
     algerian.SetWeight(4, 50);
@@ -114,11 +113,11 @@ void algoDynamic()
     if(random(3) == 0)
     {
         int which = algerian.NextNote();
-        println("algoDynamic:", which);
 
-        if(notesPlaying[which] == 0)
+        if(notesPlaying[which] == 0) // check if already playing
         {
-            int dur = 2;// random(4, 20);
+            println("algoDynamic:", which);
+            int dur = random(4, 10);
             notesPlaying[which] = tick + dur;
             sendMidiNote(KEYS, which, random(80, 100), dur);
         }

@@ -75,7 +75,7 @@ namespace Nebulator.Common
             }
 
             ///// Add user chords and scales.
-            foreach (string s in Globals.TheSettings.Chords)
+            foreach (string s in UserSettings.TheSettings.Chords)
             {
                 List<string> parts = s.SplitByToken(" ");
                 if (parts.Count >= 2)
@@ -87,7 +87,7 @@ namespace Nebulator.Common
             // Add marker for parsed values.
             _chordDefs.Add(UNKNOWN_CHORD, "");
 
-            foreach (string s in Globals.TheSettings.Scales)
+            foreach (string s in UserSettings.TheSettings.Scales)
             {
                 List<string> parts = s.SplitByToken(" ");
                 if (parts.Count >= 2)
@@ -258,7 +258,7 @@ namespace Nebulator.Common
         /// <returns></returns>
         public static string FormatDrum(int note)
         {
-            string drumName = Globals.UNKNOWN_STRING;
+            string drumName = Utils.UNKNOWN_STRING;
 
             foreach (KeyValuePair<string, string> kv in _drumDefs)
             {

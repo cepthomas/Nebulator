@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Nebulator.Common;
 
-
 namespace Nebulator.UI
 {
     public partial class InfoDisplay : UserControl
@@ -37,20 +36,20 @@ namespace Nebulator.UI
         /// <param name="e"></param>
         private void InfoDisplay_Load(object sender, EventArgs e)
         {
-            txtView.Font = Globals.TheSettings.EditorFont;
-            txtView.BackColor = Globals.TheSettings.BackColor;
+            txtView.Font = UserSettings.TheSettings.EditorFont;
+            txtView.BackColor = UserSettings.TheSettings.BackColor;
             txtView.WordWrap = false;
 
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.TheSettings.IconColor);
+            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
 
-            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, Globals.TheSettings.IconColor);
+            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
             //btnWrap.Checked = true;
 
-            btnMonIn.Checked = Globals.TheSettings.MidiMonitorIn;
-            btnMonOut.Checked = Globals.TheSettings.MidiMonitorOut;
-            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, Globals.TheSettings.IconColor);
-            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, Globals.TheSettings.IconColor);
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, Globals.TheSettings.IconColor);
+            btnMonIn.Checked = UserSettings.TheSettings.MidiMonitorIn;
+            btnMonOut.Checked = UserSettings.TheSettings.MidiMonitorOut;
+            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
+            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
+            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
         }
 
         /// <summary>
@@ -97,7 +96,7 @@ namespace Nebulator.UI
         /// <param name="msg">The message.</param>
         public void AddMidiMessage(string msg)
         {
-            AddInfoLine($"{Globals.StepTime} {msg}");
+            AddInfoLine(msg);
         }
 
         /// <summary>
@@ -113,7 +112,7 @@ namespace Nebulator.UI
         /// </summary>
         private void BtnMonIn_Click(object sender, EventArgs e)
         {
-            Globals.TheSettings.MidiMonitorIn = btnMonIn.Checked;
+            UserSettings.TheSettings.MidiMonitorIn = btnMonIn.Checked;
         }
 
         /// <summary>
@@ -121,7 +120,7 @@ namespace Nebulator.UI
         /// </summary>
         private void BtnMonOut_Click(object sender, EventArgs e)
         {
-            Globals.TheSettings.MidiMonitorOut = btnMonOut.Checked;
+            UserSettings.TheSettings.MidiMonitorOut = btnMonOut.Checked;
         }
 
         /// <summary>

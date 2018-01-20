@@ -19,13 +19,13 @@ namespace Nebulator.Scripting
         public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
 
         /// <summary>Original source file.</summary>
-        public string SourceFile { get; set; } = Globals.UNKNOWN_STRING;
+        public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Original source line number.</summary>
         public int LineNumber { get; set; } = 0;
 
         /// <summary>Message from parse or compile or runtime error.</summary>
-        public string Message { get; set; } = Globals.UNKNOWN_STRING;
+        public string Message { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Readable.</summary>
         public override string ToString() => $"{ErrorType} Error: {SourceFile}({LineNumber}): {Message}";

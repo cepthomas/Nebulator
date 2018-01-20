@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{29A26E51-1494-4BEE-9E20-4A4D0F3B34AB}</ProjectGuid>
+    <ProjectGuid>{F3AAA729-B1A5-41E4-B6B1-E5240777A1CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nebulator.Scripting</RootNamespace>
-    <AssemblyName>Nebulator.Scripting</AssemblyName>
+    <RootNamespace>Nebulator.Dynamic</RootNamespace>
+    <AssemblyName>Nebulator.Dynamic</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>IDE1006, CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,25 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MoreLinq, Version=2.9.21302.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
-      <HintPath>..\packages\morelinq.2.9.0\lib\net40\MoreLinq.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,41 +43,24 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Compiler.cs" />
+    <Compile Include="ControlPoint.cs" />
+    <Compile Include="DynamicEntities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Script.cs" />
-    <Compile Include="ScriptError.cs" />
-    <Compile Include="ScriptNeb.cs" />
-    <Compile Include="ScriptSurface.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ScriptSurface.Designer.cs">
-      <DependentUpon>ScriptSurface.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ScriptUi.cs" />
-    <Compile Include="ScriptUiClasses.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Include="Section.cs" />
+    <Compile Include="Sequence.cs" />
+    <Compile Include="StepUtils.cs" />
+    <Compile Include="Track.cs" />
+    <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Dynamic\Dynamic.csproj">
-      <Project>{f3aaa729-b1a5-41e4-b6b1-e5240777a1ca}</Project>
-      <Name>Dynamic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Midi\Midi.csproj">
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ScriptSurface.resx">
-      <DependentUpon>ScriptSurface.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

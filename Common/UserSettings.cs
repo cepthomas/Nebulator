@@ -38,12 +38,12 @@ namespace Nebulator.Common
         public Color LoopColor { get; set; } = Color.Salmon;
 
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
-        // TODO0 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
-        public string MidiIn { get; set; } = Globals.UNKNOWN_STRING;
+        // TODO1 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
+        public string MidiIn { get; set; } = Utils.UNKNOWN_STRING;
 
         [DisplayName("Midi Output"), Description("Your choice of midi output.")]
-        // TODO0 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor)), Browsable(true)]
-        public string MidiOut { get; set; } = Globals.UNKNOWN_STRING;
+        // TODO1 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor)), Browsable(true)]
+        public string MidiOut { get; set; } = Utils.UNKNOWN_STRING;
 
         [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ...")]
         [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
@@ -52,9 +52,6 @@ namespace Nebulator.Common
         [DisplayName("Scales"), Description("Your custom scales in the form of: NAME 1 2 b5 ...")]
         [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
         public List<string> Scales { get; set; } = new List<string>();
-
-        [DisplayName("Timer Debug"), Description("Turn on some metrics gathering.")]
-        public bool TimerStats { get; set; } = false;
         #endregion
 
         #region Persisted non-editable properties
@@ -77,8 +74,11 @@ namespace Nebulator.Common
         public int ControlSplitterPos { get; set; } = 800;
         #endregion
 
+        /// <summary>Current user settings.</summary>
+        public static UserSettings TheSettings { get; set; } = new UserSettings();
+
         /// <summary>The file name.</summary>
-        string _fn = Globals.UNKNOWN_STRING;
+        string _fn = Utils.UNKNOWN_STRING;
 
         /// <summary>Default constructor.</summary>
         public UserSettings()
@@ -94,31 +94,29 @@ namespace Nebulator.Common
         }
 
         /// <summary>Create object from file.</summary>
-        public static UserSettings Load(string appDir)
+        public static void Load(string appDir)
         {
-            UserSettings us = null;
+            TheSettings = null;
             string fn = Path.Combine(appDir, "settings.json");
 
             try
             {
                 string json = File.ReadAllText(fn);
-                us = JsonConvert.DeserializeObject<UserSettings>(json);
+                TheSettings = JsonConvert.DeserializeObject<UserSettings>(json);
 
                 // Clean up bad file names.
-                us.RecentFiles.RemoveAll(f => !File.Exists(f));
+                TheSettings.RecentFiles.RemoveAll(f => !File.Exists(f));
 
-                us._fn = fn;
+                TheSettings._fn = fn;
             }
             catch (Exception)
             {
                 // Doesn't exist, create a new one.
-                us = new UserSettings
+                TheSettings = new UserSettings
                 {
                     _fn = fn
                 };
             }
-
-            return us;
         }
         #endregion
     }

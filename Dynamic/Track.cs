@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Nebulator.Common;
 
 
-namespace Nebulator.Scripting
+namespace Nebulator.Dynamic
 {
     /// <summary>Track state.</summary>
     public enum TrackState { Normal, Mute, Solo }
@@ -15,7 +15,7 @@ namespace Nebulator.Scripting
     {
         #region Properties
         /// <summary>The name for this track.</summary>
-        public string Name { get; set; } = Globals.UNKNOWN_STRING;
+        public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The midi channel to use: 1 - 16.</summary>
         public int Channel { get; set; } = 1;

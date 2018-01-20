@@ -16,7 +16,7 @@ namespace Nebulator.Scripting
     /// </summary>
     public class color
     {
-        public Color NativeColor { get; } = Color.Black;
+        public Color NativeColor { get; set; } = Color.Black;
 
         public color(int r, int g, int b)
         {
@@ -176,7 +176,7 @@ namespace Nebulator.Scripting
 
         public override string ToString()
         {
-            string sact = Globals.UNKNOWN_STRING;
+            string sact = Utils.UNKNOWN_STRING;
             switch (_action)
             {
                 case CLICK: sact = "CLICK"; break;

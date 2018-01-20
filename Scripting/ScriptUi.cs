@@ -14,29 +14,10 @@ namespace Nebulator.Scripting
 {
     /// <summary>
     /// Processing emulation script stuff.
-    /// The properties and functions are organized similarly to the API in https://processing.org/reference/.
+    /// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
     /// </summary>
     public partial class Script
     {
-        #region Fields - internal
-        /// <summary>Current working Graphics object to draw on.</summary>
-        Graphics _gr = null;
-        #endregion
-
-        #region Fields - storage for current state
-        Font _font = new Font("Arial", 12f, GraphicsUnit.Pixel);
-        Pen _pen = new Pen(Color.Black, 1f) { LineJoin = LineJoin.Round, EndCap = LineCap.Round, StartCap = LineCap.Round };
-        SolidBrush _brush = new SolidBrush(Color.Transparent);
-        Color _bgColor = Color.LightGray;
-        bool _smooth = true;
-        int _xAlign = LEFT;
-        int _yAlign = BASELINE;
-        Stack<object> _matrixStack = new Stack<object>();
-        Bag _style = new Bag();
-        bool _loop = true;
-        bool _redraw = false;
-        #endregion
-
         #region Definitions - same values as Processing
         //---- Math
         public const float QUARTER_PI = (float)(Math.PI / 4.0);
@@ -131,15 +112,13 @@ namespace Nebulator.Scripting
 
         #region Environment 
         //---- Script properties
-        public int frameCount { get; private set; } = 1;
-        public int height { get { return _surface.Height; } }
-        public int width { get { return _surface.Width; } }
         public void cursor(int which) { throw new NotSupportedException(); }
         public void cursor(PImage image) { throw new NotSupportedException(); }
         public void cursor(PImage image, int x, int y) { throw new NotSupportedException(); }
         public void delay(int msec) { throw new NotSupportedException(); }
         public int displayDensity() { throw new NotSupportedException(); }
-        public bool focused { get { return _surface.Focused; } }
+        public bool focused { get; internal set; }
+        public int frameCount { get; private set; } = 1;
 
         public int frameRate
         {
@@ -156,6 +135,7 @@ namespace Nebulator.Scripting
         }
 
         public void fullScreen() { throw new NotSupportedException(); }
+        public int height { get; internal set; }
         public void noCursor() { throw new NotSupportedException(); }
         public void noSmooth() { _smooth = false; }
         public void pixelDensity(int density) { throw new NotSupportedException(); }
@@ -164,6 +144,7 @@ namespace Nebulator.Scripting
         public void size(int width, int height) { throw new NotSupportedException(); }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
+        public int width { get; internal set; }
         #endregion
 
         #region Data
@@ -385,13 +366,13 @@ namespace Nebulator.Scripting
         #region Input
         #region Input - Mouse
         //---- Script properties
-        public bool mousePressedP { get; private set; } = false;
-        public int mouseButton { get; private set; } = LEFT;
-        public int mouseWheelValue { get; private set; } = 0;
-        public int mouseX { get; private set; } = 0;
-        public int mouseY { get; private set; } = 0;
-        public int pMouseX { get; private set; } = 0;
-        public int pMouseY { get; private set; } = 0;
+        public bool mousePressedP { get; internal set; } = false;
+        public int mouseButton { get; internal set; } = LEFT;
+        public int mouseWheelValue { get; internal set; } = 0;
+        public int mouseX { get; internal set; } = 0;
+        public int mouseY { get; internal set; } = 0;
+        public int pMouseX { get; internal set; } = 0;
+        public int pMouseY { get; internal set; } = 0;
         //---- Function overrides
         public virtual void mouseClicked() { }
         public virtual void mouseDragged() { }
@@ -404,8 +385,8 @@ namespace Nebulator.Scripting
         #region Input - Keyboard
         //---- Script properties
         public char key { get; internal set; } = ' ';
-        public int keyCode { get; private set; } = 0;
-        public bool keyPressedP { get; private set; } = false;
+        public int keyCode { get; internal set; } = 0;
+        public bool keyPressedP { get; internal set; } = false;
         //---- Function overrides
         public virtual void keyPressed() { }
         public virtual void keyReleased() { }

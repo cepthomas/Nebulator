@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Nebulator.Common;
-using Nebulator.Scripting;
+using Nebulator.Dynamic;
 
 
 namespace Nebulator.UI
@@ -44,10 +44,10 @@ namespace Nebulator.UI
         /// </summary>
         private void TrackControl_Load(object sender, EventArgs e)
         {
-            chkSolo.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
-            chkMute.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
-            sldVolume.ControlColor = Globals.TheSettings.ControlColor;
-            sldVolume.Font = Globals.TheSettings.ControlFont;
+            chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+            chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+            sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.Font = UserSettings.TheSettings.ControlFont;
             sldVolume.Label = BoundTrack.Name;
             sldVolume.Maximum = 200;
             sldVolume.Value = BoundTrack.Volume;

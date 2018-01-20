@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace Nebulator.Scripting
+namespace Nebulator.Dynamic
 {
     /// <summary>
     /// Defines an input or output midi control. TODO2 Support OSC and/or multiple midis.

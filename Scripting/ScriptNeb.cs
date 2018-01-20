@@ -3,12 +3,13 @@ using System.Linq;
 using System.Collections.Generic;
 using Nebulator.Common;
 using Nebulator.Midi;
+using Nebulator.Dynamic;
 
 
 namespace Nebulator.Scripting
 {
     /// <summary>
-    /// Nebulator specific script stuff.
+    /// Nebulator specific script stuff. Additions to the core processing-like stuff.
     /// </summary>
     public partial class Script
     {
@@ -19,22 +20,22 @@ namespace Nebulator.Scripting
 
         #region User script properties
         /// <summary>Current Nebulator step time.</summary>
-        public Time stepTime { get { return Globals.StepTime; } }
+        public Time stepTime { get { return DynamicEntities.StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return Globals.StepTime.Tick; } }
+        public int tick { get { return DynamicEntities.StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return Globals.StepTime.Tock; } }
+        public int tock { get { return DynamicEntities.StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return (float)Globals.RealTime; } }
+        public float now { get { return (float)DynamicEntities.RealTime; } }
 
         /// <summary>Neb step clock is running.</summary>
-        public bool playing { get { return Globals.Playing; } }
+        public bool playing { get { return DynamicEntities.Playing; } }
 
         /// <summary>Tock subdivision.</summary>
-        public int tocksPerTick { get { return Globals.TOCKS_PER_TICK; } }
+        public int tocksPerTick { get { return Utils.TOCKS_PER_TICK; } }
 
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
         public float speed
@@ -67,10 +68,10 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>Indicates using internal synth.</summary>
-        public bool winGm { get { return Globals.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
+        public bool winGm { get { return UserSettings.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
         #endregion
 
-        #region Script functions
+        #region Script callable functions
         /// <summary>
         /// Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.
         /// </summary>
@@ -80,7 +81,7 @@ namespace Nebulator.Scripting
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated.</param>
         public void sendMidiNote(Track track, int inote, int vol, Time dur)
         {
-            bool _anySolo = Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+            bool _anySolo = DynamicEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
             bool play = track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo);
 
@@ -211,7 +212,7 @@ namespace Nebulator.Scripting
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = StepUtils.ConvertToSteps(track, seq);
+            StepCollection scoll = StepUtils.ConvertToSteps(track, seq, DynamicEntities.StepTime.Tick);
             RuntimeSteps.Add(scoll);
         }
 

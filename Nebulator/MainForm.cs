@@ -12,12 +12,7 @@ using Nebulator.Controls;
 using Nebulator.Scripting;
 using Nebulator.UI;
 using Nebulator.Midi;
-
-
-//TODO2 Turn off diagnostic tools in debug options?
-//TODO2 nameof: throw new ArgumentException(message: "Cannot be blank", paramName: nameof(lastName));
-//TODO2 Expression-bodied function members: public string FullName => $"{FirstName} {LastName}";
-//TODO2 Threads: EventLoopScheduler, async / await keywords and the Task Parallel Library
+using Nebulator.Dynamic;
 
 
 namespace Nebulator
@@ -43,11 +38,14 @@ namespace Nebulator
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
         LazyCollection<Variable> _ctrlChanges = new LazyCollection<Variable>() { AllowOverwrite = true };
 
-        /// <summary>Diagnostics for nebulator clock timing measurement.</summary>
-        TimingAnalyzer _tanNeb = new TimingAnalyzer() { SampleSize = 100 };
+        ///// <summary>Diagnostics for nebulator clock timing measurement.</summary>
+        //TimingAnalyzer _tanTimer = new TimingAnalyzer() { SampleSize = 100 };
+
+        ///// <summary>Diagnostics for UI execution time.</summary>
+        //TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
 
         /// <summary>Current neb file name.</summary>
-        string _fn = Globals.UNKNOWN_STRING;
+        string _fn = Utils.UNKNOWN_STRING;
 
         /// <summary>Detect changed composition files.</summary>
         MultiFileWatcher _watcher = new MultiFileWatcher();
@@ -77,7 +75,7 @@ namespace Nebulator
             string appDir = Utils.GetAppDir();
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
-            Globals.TheSettings = UserSettings.Load(appDir);
+            UserSettings.Load(appDir);
             InitializeComponent();
         }
 
@@ -109,8 +107,8 @@ namespace Nebulator
             #endregion
 
             #region Piano
-            pianoToolStripMenuItem.Checked = Globals.TheSettings.PianoFormInfo.Visible;
-            _piano.Visible = Globals.TheSettings.PianoFormInfo.Visible;
+            pianoToolStripMenuItem.Checked = UserSettings.TheSettings.PianoFormInfo.Visible;
+            _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
             _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
@@ -147,7 +145,7 @@ namespace Nebulator
             //sed.TestGrid();
             //Visible = false;
 
-            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
+            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
 
             //ExportMidi("test.mid");
 
@@ -176,7 +174,7 @@ namespace Nebulator
                     _nebpVals.SetValue("master", "loop", chkLoop.Checked);
                     _nebpVals.SetValue("master", "sequence", chkSequence.Checked);
 
-                    _script.Dynamic.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
+                    DynamicEntities.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
 
@@ -227,7 +225,7 @@ namespace Nebulator
         {
             bool ok = true;
 
-            if (_fn == Globals.UNKNOWN_STRING)
+            if (_fn == Utils.UNKNOWN_STRING)
             {
                 _logger.Warn("No script file loaded.");
                 ok = false;
@@ -251,14 +249,14 @@ namespace Nebulator
 
                 if (compiler.Errors.Count == 0 && _script != null)
                 {
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.TheSettings.IconColor);
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
                     _dirtyFiles = false;
 
                     _compileTempDir = compiler.TempDir;
 
-                    _script.Dynamic.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
+                    DynamicEntities.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
 
-                    _compiledSteps = StepUtils.ConvertToSteps(_script.Dynamic);
+                    _compiledSteps = StepUtils.ConvertToSteps();
 
                     _script.ScriptEvent += Script_ScriptEvent;
 
@@ -270,7 +268,7 @@ namespace Nebulator
                     ok = false;
                     SetPlayStatus(PlayCommand.StopRewind);
                     compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Utils.ATTENTION_COLOR);
                     _dirtyFiles = true;
                 }
             }
@@ -300,7 +298,7 @@ namespace Nebulator
                 }
             }
 
-            foreach (Track t in _script.Dynamic.Tracks.Values)
+            foreach (Track t in DynamicEntities.Tracks.Values)
             {
                 // Init from persistence.
                 int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
@@ -329,18 +327,10 @@ namespace Nebulator
 
             ///// Init the user input area.
             // Levers.
-            levers.Init(_script.Dynamic.Levers.Values);
+            levers.Init(DynamicEntities.Levers.Values);
 
             // Surface area.
-            foreach (Control c in splitContainerInput.Panel2.Controls)
-            {
-                c.Dispose();
-            }
-            splitContainerInput.Panel2.Controls.Clear();
-
-            UserControl surface = _script.CreateSurface();
-            surface.Dock = DockStyle.Fill;
-            splitContainerInput.Panel2.Controls.Add(surface);
+            scriptSurface.InitScript(_script);
         }
         #endregion
 
@@ -350,15 +340,12 @@ namespace Nebulator
         /// </summary>
         void TimerElapsedEvent(object sender, NebTimerEventArgs e)
         {
-            if (Globals.TheSettings.TimerStats && e.ElapsedTimers.Contains("NEB"))
-            {
-                // Do some stats gathering for measuring jitter.
-                TimingAnalyzer.Stats stats = _tanNeb.Grab();
-                if (stats != null)
-                {
-                    _logger.Info($"Midi timiing: {stats}");
-                }
-            }
+            //// Do some stats gathering for measuring jitter.
+            //TimingAnalyzer.Stats stats = _tanTimer.Grab();
+            //if (stats != null)
+            //{
+            //    _logger.Info($"Midi timiing: {stats}");
+            //}
 
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker)delegate ()
@@ -382,7 +369,7 @@ namespace Nebulator
                     _script.ExecScriptFunction(var.Name);
 
                     // Output any midictlout controllers.
-                    IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+                    IEnumerable<MidiControlPoint> ctlpts = DynamicEntities.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
 
                     if (ctlpts != null && ctlpts.Count() > 0)
                     {
@@ -403,7 +390,7 @@ namespace Nebulator
                 _ctrlChanges.Clear();
 
                 ////// Neb steps /////
-                if (Globals.Playing && e.ElapsedTimers.Contains("NEB"))
+                if (DynamicEntities.Playing && e.ElapsedTimers.Contains("NEB"))
                 {
                     if(_script != null)
                     {
@@ -411,23 +398,23 @@ namespace Nebulator
                         _script.step();
 
                         // Do runtime steps.
-                        _script.RuntimeSteps.GetSteps(Globals.StepTime).ForEach(s => PlayStep(s));
-                        _script.RuntimeSteps.DeleteSteps(Globals.StepTime);
+                        _script.RuntimeSteps.GetSteps(DynamicEntities.StepTime).ForEach(s => PlayStep(s));
+                        _script.RuntimeSteps.DeleteSteps(DynamicEntities.StepTime);
                     }
 
                     // Do the compiled steps.
                     if(chkSequence.Checked)
                     {
-                        _compiledSteps.GetSteps(Globals.StepTime).ForEach(s => PlayStep(s));
+                        _compiledSteps.GetSteps(DynamicEntities.StepTime).ForEach(s => PlayStep(s));
                     }
 
                     // Local common function
                     void PlayStep(Step step)
                     {
-                        Track track = _script.Dynamic.Tracks[step.TrackName];
+                        Track track = DynamicEntities.Tracks[step.TrackName];
 
                         // Is it ok to play now?
-                        bool _anySolo = _script.Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                        bool _anySolo = DynamicEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
                         bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
 
                         if (play)
@@ -446,14 +433,14 @@ namespace Nebulator
                     }
 
                     ///// Bump time.
-                    Globals.StepTime.Advance();
+                    DynamicEntities.StepTime.Advance();
 
                     ////// Check for end of play.
                     // If no steps or not selected, free running mode so always keep going.
                     if(_compiledSteps.Times.Count() != 0 && chkSequence.Checked)
                     {
                         // Check for end and loop condition.
-                        if (Globals.StepTime.Tick >= _compiledSteps.MaxTick)
+                        if (DynamicEntities.StepTime.Tick >= _compiledSteps.MaxTick)
                         {
                             if (chkLoop.Checked) // keep going
                             {
@@ -473,9 +460,10 @@ namespace Nebulator
                 ///// UI updates /////
                 if (_script != null && e.ElapsedTimers.Contains("UI"))
                 {
-                    // Measure and alert if too slow, or throttle.
+                    // Measure and alert if too slow, or throttle. TODO2
                     //_tanUi.Arm();
-                    _script.UpdateSurface();
+
+                    scriptSurface.UpdateSurface();
                 }
 
                 // In case there are lingering noteoffs that need to be processed.
@@ -506,7 +494,7 @@ namespace Nebulator
                     // Process through our list.
                     if(_script != null)
                     {
-                        IEnumerable<MidiControlPoint> ctlpts = _script.Dynamic.InputMidis.Values.Where((c, m) => (
+                        IEnumerable<MidiControlPoint> ctlpts = DynamicEntities.InputMidis.Values.Where((c, m) => (
                             c.MidiController == scc.MidiController &&
                             c.Channel == scc.Channel));
 
@@ -539,7 +527,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                infoDisplay.AddMidiMessage(e.Message);
+                infoDisplay.AddMidiMessage($"{DynamicEntities.StepTime} {e.Message}");
                 if (e.Message.StartsWith("ERR"))
                 {
                     _logger.Error(e.Message);
@@ -555,12 +543,12 @@ namespace Nebulator
             if (sender is TrackControl)
             {
                 // Check for solos.
-                bool _anySolo = _script.Dynamic.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = DynamicEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    _script.Dynamic.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
+                    DynamicEntities.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -583,7 +571,7 @@ namespace Nebulator
         {
             SetPlayStatus(PlayCommand.Stop);
 
-            string srcFile = Globals.UNKNOWN_STRING;
+            string srcFile = Utils.UNKNOWN_STRING;
             int srcLine = -1;
 
             // Locate the offending frame.
@@ -686,7 +674,7 @@ namespace Nebulator
                     _nebpVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     _fn = fn;
                     _dirtyFiles = true;
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Utils.ATTENTION_COLOR);
                     AddToRecentDefs(fn);
                     Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
 
@@ -707,7 +695,7 @@ namespace Nebulator
             ToolStripItemCollection menuItems = recentToolStripMenuItem.DropDownItems;
             menuItems.Clear();
 
-            foreach (string s in Globals.TheSettings.RecentFiles)
+            foreach (string s in UserSettings.TheSettings.RecentFiles)
             {
                 ToolStripMenuItem menuItem = new ToolStripMenuItem(s, null, new EventHandler(Recent_Click));
                 menuItems.Add(menuItem);
@@ -722,7 +710,7 @@ namespace Nebulator
         {
             if (File.Exists(fn))
             {
-                Globals.TheSettings.RecentFiles.UpdateMru(fn);
+                UserSettings.TheSettings.RecentFiles.UpdateMru(fn);
                 PopulateRecentMenu();
             }
         }
@@ -739,7 +727,7 @@ namespace Nebulator
             {
                 //_logger.Info("Watcher_Changed");
                 _dirtyFiles = true;
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.ATTENTION_COLOR);
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Utils.ATTENTION_COLOR);
                 UpdateMenu();
             });
         }
@@ -792,7 +780,7 @@ namespace Nebulator
         /// </summary>
         void Time_ValueChanged(object sender, EventArgs e)
         {
-            Globals.StepTime = timeMaster.CurrentTime;
+            DynamicEntities.StepTime = timeMaster.CurrentTime;
             SetPlayStatus(PlayCommand.UpdateUiTime);
         }
         #endregion
@@ -909,27 +897,27 @@ namespace Nebulator
         /// </summary>
         void InitSettings()
         {
-            if (Globals.TheSettings.MainFormInfo.Width == 0)
+            if (UserSettings.TheSettings.MainFormInfo.Width == 0)
             {
                 WindowState = FormWindowState.Maximized;
             }
             else
             {
-                Location = new Point(Globals.TheSettings.MainFormInfo.X, Globals.TheSettings.MainFormInfo.Y);
-                Size = new Size(Globals.TheSettings.MainFormInfo.Width, Globals.TheSettings.MainFormInfo.Height);
+                Location = new Point(UserSettings.TheSettings.MainFormInfo.X, UserSettings.TheSettings.MainFormInfo.Y);
+                Size = new Size(UserSettings.TheSettings.MainFormInfo.Width, UserSettings.TheSettings.MainFormInfo.Height);
                 WindowState = FormWindowState.Normal;
             }
 
             bool top = false;
 
-            _piano.Size = new Size(Globals.TheSettings.PianoFormInfo.Width, Globals.TheSettings.PianoFormInfo.Height);
-            _piano.Visible = Globals.TheSettings.PianoFormInfo.Visible;
+            _piano.Size = new Size(UserSettings.TheSettings.PianoFormInfo.Width, UserSettings.TheSettings.PianoFormInfo.Height);
+            _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
             _piano.TopMost = top;
 
             // Now we can set the locations.
-            _piano.Location = new Point(Globals.TheSettings.PianoFormInfo.X, Globals.TheSettings.PianoFormInfo.Y);
+            _piano.Location = new Point(UserSettings.TheSettings.PianoFormInfo.X, UserSettings.TheSettings.PianoFormInfo.Y);
 
-            splitContainerControl.SplitterDistance = Globals.TheSettings.ControlSplitterPos;
+            splitContainerControl.SplitterDistance = UserSettings.TheSettings.ControlSplitterPos;
         }
 
         /// <summary>
@@ -937,21 +925,21 @@ namespace Nebulator
         /// </summary>
         void SaveSettings()
         {
-            Globals.TheSettings.PianoFormInfo.FromForm(_piano);
+            UserSettings.TheSettings.PianoFormInfo.FromForm(_piano);
 
             if (WindowState == FormWindowState.Maximized)
             {
-                Globals.TheSettings.MainFormInfo.Width = 0; // indicates maximized
-                Globals.TheSettings.MainFormInfo.Height = 0;
+                UserSettings.TheSettings.MainFormInfo.Width = 0; // indicates maximized
+                UserSettings.TheSettings.MainFormInfo.Height = 0;
             }
             else
             {
-                Globals.TheSettings.MainFormInfo.FromForm(this);
+                UserSettings.TheSettings.MainFormInfo.FromForm(this);
             }
 
-            Globals.TheSettings.ControlSplitterPos = splitContainerControl.SplitterDistance;
+            UserSettings.TheSettings.ControlSplitterPos = splitContainerControl.SplitterDistance;
 
-            Globals.TheSettings.Save();
+            UserSettings.TheSettings.Save();
         }
 
         /// <summary>
@@ -974,7 +962,7 @@ namespace Nebulator
                 {
                     Dock = DockStyle.Fill,
                     PropertySort = PropertySort.NoSort,
-                    SelectedObject = Globals.TheSettings
+                    SelectedObject = UserSettings.TheSettings
                 };
 
                 // Detect changes of interest.
@@ -1071,7 +1059,7 @@ namespace Nebulator
                 _logger.Warn("No script file loaded");
                 SetPlayStatus(PlayCommand.Stop);
             }
-            else if (Globals.Playing)
+            else if (DynamicEntities.Playing)
             {
                 ///// Stop!
                 SetPlayStatus(PlayCommand.Stop);
@@ -1112,29 +1100,29 @@ namespace Nebulator
             {
                 case PlayCommand.Start:
                     chkPlay.Checked = true;
-                    Globals.Playing = true;
+                    DynamicEntities.Playing = true;
                     break;
 
                 case PlayCommand.Stop:
                     chkPlay.Checked = false;
-                    Globals.Playing = false;
+                    DynamicEntities.Playing = false;
                     break;
 
                 case PlayCommand.Rewind:
-                    Globals.StepTime.Reset();
+                    DynamicEntities.StepTime.Reset();
                     break;
 
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
-                    Globals.Playing = false;
-                    Globals.StepTime.Reset();
+                    DynamicEntities.Playing = false;
+                    DynamicEntities.StepTime.Reset();
                     break;
 
                 case PlayCommand.UpdateUiTime:
                     break;
             }
 
-            timeMaster.CurrentTime = Globals.StepTime;
+            timeMaster.CurrentTime = DynamicEntities.StepTime;
         }
         #endregion
 
@@ -1213,7 +1201,7 @@ namespace Nebulator
         /// </summary>
         void UpdateMenu()
         {
-            settingsToolStripMenuItem.Enabled = !Globals.Playing;
+            settingsToolStripMenuItem.Enabled = !DynamicEntities.Playing;
         }
 
         /// <summary>
@@ -1223,7 +1211,7 @@ namespace Nebulator
         {
             // Convert speed/bpm to msec per tock.
             double ticksPerMinute = potSpeed.Value; // sec/tick, bpm
-            double tocksPerMinute = ticksPerMinute * Globals.TOCKS_PER_TICK;
+            double tocksPerMinute = ticksPerMinute * Utils.TOCKS_PER_TICK;
             double tocksPerSec = tocksPerMinute / 60;
             double tocksPerMsec = tocksPerSec / 1000;
             double msecPerTock = 1 / tocksPerMsec;
@@ -1246,37 +1234,37 @@ namespace Nebulator
         /// </summary>
         void InitControls()
         {
-            BackColor = Globals.TheSettings.BackColor;
+            BackColor = UserSettings.TheSettings.BackColor;
 
             // Stash the original image in the tag field.
-            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, Globals.TheSettings.IconColor);
+            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
 
-            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Globals.TheSettings.IconColor);
+            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
 
-            chkLoop.Image = Utils.ColorizeBitmap(chkLoop.Image, Globals.TheSettings.IconColor);
-            chkLoop.BackColor = Globals.TheSettings.BackColor;
-            chkLoop.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
+            chkLoop.Image = Utils.ColorizeBitmap(chkLoop.Image, UserSettings.TheSettings.IconColor);
+            chkLoop.BackColor = UserSettings.TheSettings.BackColor;
+            chkLoop.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, Globals.TheSettings.IconColor);
-            chkPlay.BackColor = Globals.TheSettings.BackColor;
-            chkPlay.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
+            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
+            chkPlay.BackColor = UserSettings.TheSettings.BackColor;
+            chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            chkSequence.Image = Utils.ColorizeBitmap(chkSequence.Image, Globals.TheSettings.IconColor);
-            chkSequence.BackColor = Globals.TheSettings.BackColor;
-            chkSequence.FlatAppearance.CheckedBackColor = Globals.TheSettings.SelectedColor;
+            chkSequence.Image = Utils.ColorizeBitmap(chkSequence.Image, UserSettings.TheSettings.IconColor);
+            chkSequence.BackColor = UserSettings.TheSettings.BackColor;
+            chkSequence.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            potSpeed.ControlColor = Globals.TheSettings.IconColor;
-            potSpeed.Font = Globals.TheSettings.ControlFont;
+            potSpeed.ControlColor = UserSettings.TheSettings.IconColor;
+            potSpeed.Font = UserSettings.TheSettings.ControlFont;
             potSpeed.Invalidate();
 
-            sldVolume.ControlColor = Globals.TheSettings.ControlColor;
-            sldVolume.Font = Globals.TheSettings.ControlFont;
+            sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.Font = UserSettings.TheSettings.ControlFont;
             sldVolume.Invalidate();
 
-            timeMaster.ControlColor = Globals.TheSettings.ControlColor;
+            timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
             timeMaster.Invalidate();
 
-            infoDisplay.BackColor = Globals.TheSettings.BackColor;
+            infoDisplay.BackColor = UserSettings.TheSettings.BackColor;
         }
         #endregion
 
@@ -1308,7 +1296,7 @@ namespace Nebulator
         void ExportMidi(string fn)
         {
             Dictionary<int, string> tracks = new Dictionary<int, string>();
-            _script.Dynamic.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+            DynamicEntities.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
 
             // Convert speed/bpm to sec per tick.
             double ticksPerMinute = potSpeed.Value; // bpm

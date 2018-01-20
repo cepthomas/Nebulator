@@ -10,7 +10,7 @@ class Scale
     int[] noteWeights;
     int totalWeight = 0;
 
-    public void Init(string scale, string root)
+    public Scale(string scale, string root)
     {
         scaleNotes = s.getScaleNotes(scale, root);
         count = scaleNotes.Count();

@@ -42,9 +42,9 @@
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.splitContainerInput = new System.Windows.Forms.SplitContainer();
             this.levers = new Nebulator.UI.Levers();
-            this.label1 = new System.Windows.Forms.Label();
             this.infoDisplay = new Nebulator.UI.InfoDisplay();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.scriptSurface = new Nebulator.Scripting.ScriptSurface();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -340,7 +340,7 @@
             // 
             // splitContainerInput.Panel2
             // 
-            this.splitContainerInput.Panel2.Controls.Add(this.label1);
+            this.splitContainerInput.Panel2.Controls.Add(this.scriptSurface);
             this.splitContainerInput.Size = new System.Drawing.Size(447, 502);
             this.splitContainerInput.SplitterDistance = 46;
             this.splitContainerInput.TabIndex = 0;
@@ -353,17 +353,6 @@
             this.levers.Name = "levers";
             this.levers.Size = new System.Drawing.Size(447, 46);
             this.levers.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.Teal;
-            this.label1.Location = new System.Drawing.Point(117, 155);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(165, 24);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Surface goes here";
             // 
             // infoDisplay
             // 
@@ -381,6 +370,15 @@
             this.toolTip.ReshowDelay = 0;
             this.toolTip.UseAnimation = false;
             this.toolTip.UseFading = false;
+            // 
+            // scriptSurface
+            // 
+            this.scriptSurface.BackColor = System.Drawing.Color.AliceBlue;
+            this.scriptSurface.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scriptSurface.Location = new System.Drawing.Point(0, 0);
+            this.scriptSurface.Name = "scriptSurface";
+            this.scriptSurface.Size = new System.Drawing.Size(447, 452);
+            this.scriptSurface.TabIndex = 2;
             // 
             // MainForm
             // 
@@ -413,11 +411,11 @@
             this.splitContainerControl.ResumeLayout(false);
             this.splitContainerInput.Panel1.ResumeLayout(false);
             this.splitContainerInput.Panel2.ResumeLayout(false);
-            this.splitContainerInput.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerInput)).EndInit();
             this.splitContainerInput.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -449,8 +447,8 @@
         private System.Windows.Forms.CheckBox chkSequence;
         private UI.InfoDisplay infoDisplay;
         private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainerInput;
+        private Scripting.ScriptSurface scriptSurface;
     }
 }
 

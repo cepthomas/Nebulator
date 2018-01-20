@@ -442,15 +442,6 @@ namespace Nebulator.Editor
         //    _xMaxScale = _xVals.Max();
         //    _yMinScale = _yVals.Min();
         //    _yMaxScale = _yVals.Max();
-
-
-        //    Invalidate(); // TODOG or Refresh()??
-        //    //https://blogs.msdn.microsoft.com/subhagpo/2005/02/22/whats-the-difference-between-control-invalidate-control-update-and-control-refresh/
-
-
-        //    //Invalidate() simply adds a region to the update region of the control. The next time WM_PAINT is received, the area you invalidated plus any other invalidated regions, are marked for painting. When RedrawWindow() is called, that will normally post a WM_PAINT message to the application queue. The system is free to do what it wants with that, usually more pressing business, and paint when it can.
-        //    //If you call Update(), you get GDI + 's UpdateWindow() which won't mark a region for repainting, but pushes a WM_PAINT directly to WNDPROC(), bypassing the application queue.
-        //    //If you need an immediate refresh of a control, use Refresh(), which invalidates the region then immediately calls Update().
         //}
 
         #endregion

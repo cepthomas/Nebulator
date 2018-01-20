@@ -241,7 +241,7 @@ namespace Nebulator.Midi
                         {
                             _midiOut.Send(msg);
 
-                            if (Globals.TheSettings.MidiMonitorOut)
+                            if (UserSettings.TheSettings.MidiMonitorOut)
                             {
                                 NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"SND: {step}" });
                             }
@@ -345,7 +345,7 @@ namespace Nebulator.Midi
                     NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
                 }
 
-                if (Globals.TheSettings.MidiMonitorIn)
+                if (UserSettings.TheSettings.MidiMonitorIn)
                 {
                     NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"RCV: {step}" });
                 }
@@ -357,7 +357,7 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            if (Globals.TheSettings.MidiMonitorIn)
+            if (UserSettings.TheSettings.MidiMonitorIn)
             {
                 NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"ERR: Message:0x{e.RawMessage:X8}" });
             }
@@ -383,9 +383,9 @@ namespace Nebulator.Midi
                     MidiInputs.Add(MidiIn.DeviceInfo(device).ProductName);
                 }
 
-                if (MidiInputs.Count > 0 && MidiInputs.Contains(Globals.TheSettings.MidiIn))
+                if (MidiInputs.Count > 0 && MidiInputs.Contains(UserSettings.TheSettings.MidiIn))
                 {
-                    _midiIn = new MidiIn(MidiInputs.IndexOf(Globals.TheSettings.MidiIn));
+                    _midiIn = new MidiIn(MidiInputs.IndexOf(UserSettings.TheSettings.MidiIn));
                     _midiIn.MessageReceived += MidiIn_MessageReceived;
                     _midiIn.ErrorReceived += MidiIn_ErrorReceived;
                     _midiIn.Start();
@@ -420,9 +420,9 @@ namespace Nebulator.Midi
                     MidiOutputs.Add(MidiOut.DeviceInfo(device).ProductName);
                 }
 
-                if (MidiOutputs.Count > 0 && MidiOutputs.Contains(Globals.TheSettings.MidiOut))
+                if (MidiOutputs.Count > 0 && MidiOutputs.Contains(UserSettings.TheSettings.MidiOut))
                 {
-                    int mi = MidiOutputs.IndexOf(Globals.TheSettings.MidiOut);
+                    int mi = MidiOutputs.IndexOf(UserSettings.TheSettings.MidiOut);
                     _midiOut = new MidiOut(mi);
                     //_midiOut.Volume = -1; needs to be this
                 }

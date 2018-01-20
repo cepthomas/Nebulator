@@ -36,7 +36,7 @@ namespace Nebulator.Midi
                     foreach (string s in MidiInterface.TheInterface.MidiInputs)
                     {
                         int i = lb.Items.Add(s);
-                        if(s == Globals.TheSettings.MidiIn)
+                        if(s == UserSettings.TheSettings.MidiIn)
                         {
                             lb.SelectedIndex = i;
                         }
@@ -47,7 +47,7 @@ namespace Nebulator.Midi
                     foreach (string s in MidiInterface.TheInterface.MidiOutputs)
                     {
                         int i = lb.Items.Add(s);
-                        if (s == Globals.TheSettings.MidiOut)
+                        if (s == UserSettings.TheSettings.MidiOut)
                         {
                             lb.SelectedIndex = i;
                         }

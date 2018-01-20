@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midi", "Midi\Midi.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scripting", "Scripting\Scripting.csproj", "{29A26E51-1494-4BEE-9E20-4A4D0F3B34AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamic", "Dynamic\Dynamic.csproj", "{F3AAA729-B1A5-41E4-B6B1-E5240777A1CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{29A26E51-1494-4BEE-9E20-4A4D0F3B34AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29A26E51-1494-4BEE-9E20-4A4D0F3B34AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29A26E51-1494-4BEE-9E20-4A4D0F3B34AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AAA729-B1A5-41E4-B6B1-E5240777A1CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AAA729-B1A5-41E4-B6B1-E5240777A1CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AAA729-B1A5-41E4-B6B1-E5240777A1CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AAA729-B1A5-41E4-B6B1-E5240777A1CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

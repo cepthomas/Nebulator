@@ -32,7 +32,7 @@ It's all WinForms. I recognize that WPF/UWP is superior technology but I can ban
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped
 out for subsequent reuse.
 - Partial emulation of the Processing language for .NET.
-- A theoretically improved multimedia timer with improved accuracy for sub 10 msec period.
+- A theoretically better multimedia timer with improved accuracy for sub 10 msec period.
 - Midi classes may be useful elsewhere in conjunction with NAudio.
 - A state machine class based on one that was used in several products.
 - Partial import of Yahama style (.sty) files.
