@@ -38,19 +38,17 @@ namespace Nebulator.Common
         public Color LoopColor { get; set; } = Color.Salmon;
 
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
-        // TODO1 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
+        [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
         public string MidiIn { get; set; } = Utils.UNKNOWN_STRING;
 
-        [DisplayName("Midi Output"), Description("Your choice of midi output.")]
-        // TODO1 [Editor(typeof(MidiPortEditor), typeof(UITypeEditor)), Browsable(true)]
+        [DisplayName("Midi Output"), Description("Your choice of midi output."), Browsable(true)]
+        [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
         public string MidiOut { get; set; } = Utils.UNKNOWN_STRING;
 
-        [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ...")]
-        [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
+        [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ..."), Browsable(true)]
         public List<string> Chords { get; set; } = new List<string>();
 
-        [DisplayName("Scales"), Description("Your custom scales in the form of: NAME 1 2 b5 ...")]
-        [Editor(typeof(StringListEditor), typeof(UITypeEditor))]
+        [DisplayName("Scales"), Description("Your custom scales in the form of: NAME 1 2 b5 ..."), Browsable(true)]
         public List<string> Scales { get; set; } = new List<string>();
         #endregion
 
@@ -74,11 +72,13 @@ namespace Nebulator.Common
         public int ControlSplitterPos { get; set; } = 800;
         #endregion
 
-        /// <summary>Current user settings.</summary>
-        public static UserSettings TheSettings { get; set; } = new UserSettings();
-
+        #region Fields
         /// <summary>The file name.</summary>
         string _fn = Utils.UNKNOWN_STRING;
+        #endregion
+
+        /// <summary>Current global user settings.</summary>
+        public static UserSettings TheSettings { get; set; } = new UserSettings();
 
         /// <summary>Default constructor.</summary>
         public UserSettings()
@@ -119,6 +119,49 @@ namespace Nebulator.Common
             }
         }
         #endregion
+    }
+
+    /// <summary>Plugin to property grid.</summary>
+    public class MidiPortEditor : UITypeEditor
+    {
+        // Kludge alert....
+        public static List<string> Inputs { get; set; } = new List<string>();
+        public static List<string> Outputs { get; set; } = new List<string>();
+
+        IWindowsFormsEditorService _service = null;
+
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
+            _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+            ListBox lb = new ListBox() { SelectionMode = SelectionMode.One };
+            lb.Click += (object sender, EventArgs e) => { _service.CloseDropDown(); };
+
+            // Fill the list box.
+            if (context.PropertyDescriptor.Name == "MidiIn")
+            {
+                Inputs.ForEach(v =>
+                {
+                    int i = lb.Items.Add(v);
+                    lb.SelectedIndex = v == UserSettings.TheSettings.MidiIn ? i : lb.SelectedIndex;
+                });
+            }
+            else // "MidiOut"
+            {
+                Outputs.ForEach(v =>
+                {
+                    int i = lb.Items.Add(v);
+                    lb.SelectedIndex = v == UserSettings.TheSettings.MidiOut ? i : lb.SelectedIndex;
+                });
+            }
+
+            _service.DropDownControl(lb);
+            return lb.SelectedItem.ToString();
+        }
+
+        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+        {
+            return UITypeEditorEditStyle.DropDown;
+        }
     }
 
     [Serializable]

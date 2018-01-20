@@ -30,7 +30,6 @@ namespace Nebulator.Midi
         public const int MIDDLE_C = 60;
         #endregion
 
-
         #region Fields
         /// <summary>My logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();

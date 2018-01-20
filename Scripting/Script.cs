@@ -18,7 +18,7 @@ namespace Nebulator.Scripting
     public partial class Script
     {
         #region Properties
-        /// <summary>Steps added by script functions at runtime. TODO1 add to dynamic?</summary>
+        /// <summary>Steps added by script functions at runtime e.g. playSequence().</summary>
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
         #endregion
 

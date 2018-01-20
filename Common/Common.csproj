@@ -71,7 +71,6 @@
     <Compile Include="NoteUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateMachine.cs" />
-    <Compile Include="StringListEditor.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="TimingAnalyzer.cs" />
     <Compile Include="UserSettings.cs" />

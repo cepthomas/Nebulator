@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 using System.Reflection;
 using System.Drawing;
+using System.Drawing.Design;
 using Nebulator.Common;
+
 
 namespace Nebulator.Controls
 {
@@ -234,6 +237,163 @@ namespace Nebulator.Controls
 
                 Refresh();
             }
+        }
+    }
+
+    /// <summary>
+    /// Generic property editor for lists of strings in PropertyGridEx.
+    /// </summary>
+    public class ListEditor : UITypeEditor
+    {
+        private IWindowsFormsEditorService _service = null;
+
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
+            _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+
+            // If you need to access something about the context of the property (the parent object etc), that is what the 
+            // ITypeDescriptorContext (in EditValue) provides; it tells you the PropertyDescriptor and Instance (the MyType) that is involved.
+
+            // Ask the host for the string options.
+            PropertyGridEx pgex = _service.GetType().GetProperty("Parent").GetValue(_service, null) as PropertyGridEx;
+            List<string> listvals = new List<string>();
+            pgex.RaisePropertyGridExEvent(context.PropertyDescriptor.Name, listvals);
+
+            string selval = value.ToString(); // the editor contents
+
+            if (listvals != null && listvals.Count > 0)
+            {
+                ListBox lb = new ListBox();
+                lb.SelectionMode = SelectionMode.One;
+                lb.Click += ListBox_Click;
+
+                // Fill the list box.
+                foreach (string s in listvals)
+                {
+                    int i = lb.Items.Add(s);
+                }
+
+                _service.DropDownControl(lb);
+
+                if (lb.SelectedItem != null)
+                {
+                    selval = lb.SelectedItem.ToString();
+                }
+            }
+
+            return selval;
+        }
+
+        /// <summary>Clean up.</summary>
+        private void ListBox_Click(object sender, EventArgs e)
+        {
+            if (_service != null)
+            {
+                _service.CloseDropDown();
+            }
+        }
+
+        /// <summary>Required override.</summary>
+        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+        {
+            return UITypeEditorEditStyle.DropDown;
+        }
+    }
+
+    /// <summary>
+    /// Plug in to property grid.
+    /// </summary>
+    public class StringListEditor : UITypeEditor
+    {
+        TextBox _tbox = null;
+
+        //public override object GetEditor(Type editorBaseType)
+        //{
+        //    Type t = Type.GetType("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+        //    return TypeDescriptor.CreateInstance(null, t, new Type[] { typeof(Type) }, new object[] { typeof(string) });
+        //}
+
+        /// <summary>
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="provider"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
+            IWindowsFormsEditorService editorService = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+
+            if (value != null && value is List<string>)
+            {
+                List<string> vals = value as List<string>;
+                //List<string> vals = value.ToString().SplitByTokens(Environment.NewLine);
+
+                _tbox = new TextBox()
+                {
+                    Multiline = true,
+                    Height = 100,
+                    ScrollBars = ScrollBars.Vertical,
+                    //AcceptsReturn = true
+                    Text = string.Join(Environment.NewLine, vals)
+                };
+
+                _tbox.Select(0, 0);
+                _tbox.KeyDown += Text_KeyDown;
+                _tbox.Leave += Text_Leave;
+
+                editorService.DropDownControl(_tbox);
+
+                // Done.
+                vals.Clear();
+
+                foreach (string s in _tbox.Text.SplitByToken(Environment.NewLine))
+                {
+                    vals.Add(s);
+                }
+
+                value = vals;
+            }
+
+            return value.DeepClone(); // Forces prop grid to see the change.
+        }
+
+        /// <summary>
+        /// Handle enter key.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Text_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Enter:
+                    _tbox.AppendText(Environment.NewLine);
+                    e.Handled = true;
+                    break;
+
+                default:
+                    // Don't care;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Save entered values.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Text_Leave(object sender, EventArgs e)
+        {
+            // Done.
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+        {
+            return UITypeEditorEditStyle.DropDown;
         }
     }
 }

@@ -20,19 +20,19 @@ namespace Nebulator.Scripting
 
         #region User script properties
         /// <summary>Current Nebulator step time.</summary>
-        public Time stepTime { get { return DynamicEntities.StepTime; } }
+        public Time stepTime { get { return Dynamic.DynamicEntities.StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return DynamicEntities.StepTime.Tick; } }
+        public int tick { get { return Dynamic.DynamicEntities.StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return DynamicEntities.StepTime.Tock; } }
+        public int tock { get { return Dynamic.DynamicEntities.StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return (float)DynamicEntities.RealTime; } }
+        public float now { get { return (float)Dynamic.DynamicEntities.RealTime; } }
 
         /// <summary>Neb step clock is running.</summary>
-        public bool playing { get { return DynamicEntities.Playing; } }
+        public bool playing { get { return Dynamic.DynamicEntities.Playing; } }
 
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Utils.TOCKS_PER_TICK; } }
@@ -125,7 +125,7 @@ namespace Nebulator.Scripting
         /// Send a midi note immediately. Respects solo/mute.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
-        /// <param name="snote">Note string using any form allowed in the script. TODO2 Requires double quotes in the script, would be nice to not have to.</param>
+        /// <param name="snote">Note string using any form allowed in the script. TODO2 Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void sendMidiNote(Track track, string snote, int vol, Time dur)
@@ -202,7 +202,7 @@ namespace Nebulator.Scripting
         /// <param name="val">Number of notes, +-.</param>
         public void modulate(Track track, int val)
         {
-            track.Modulate = val; //TODO2 Or modulate to a specified key. Requires specifying current key too.
+            track.Modulate = val; // TODO2 And/or modulate to a specified key. Requires specifying current key too.
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace Nebulator.Scripting
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = StepUtils.ConvertToSteps(track, seq, DynamicEntities.StepTime.Tick);
+            StepCollection scoll = DynamicEntities.ConvertToSteps(track, seq, Dynamic.DynamicEntities.StepTime.Tick);
             RuntimeSteps.Add(scoll);
         }
 

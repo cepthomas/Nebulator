@@ -16,11 +16,11 @@ namespace Nebulator.Common
         /// <summary>General purpose marker.</summary>
         public const string UNKNOWN_STRING = "???";
 
-        /// <summary>Subdivision setting.</summary>
-        public const int TOCKS_PER_TICK = 96; // TODO1 elsewhere?
-
         /// <summary>Indicates needs user involvement.</summary>
         public static Color ATTENTION_COLOR = Color.Red;
+
+        /// <summary>Subdivision setting.</summary>
+        public const int TOCKS_PER_TICK = 96;
         #endregion
 
         #region UI helpers
