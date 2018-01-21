@@ -59,9 +59,6 @@ namespace Nebulator
         /// <summary>Persisted internal values for current neb file.</summary>
         Bag _nebpVals = new Bag();
 
-        /// <summary>UI update rate.</summary>
-        int _fps = 50;
-
         enum PlayCommand { Start, Stop, Rewind, StopRewind, UpdateUiTime }
         #endregion
 
@@ -174,7 +171,7 @@ namespace Nebulator
                     _nebpVals.SetValue("master", "loop", chkLoop.Checked);
                     _nebpVals.SetValue("master", "sequence", chkSequence.Checked);
 
-                    Dynamic.DynamicEntities.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
+                    Dynamic.ScriptEntities.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
 
@@ -255,17 +252,17 @@ namespace Nebulator
                     _compileTempDir = compiler.TempDir;
 
                     // Collect important times.
-                    DynamicEntities.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
+                    ScriptEntities.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
 
                     // Convert compiled stuff to step collection.
                     _compiledSteps.Clear();
-                    foreach (Section sect in DynamicEntities.Sections.Values)
+                    foreach (Section sect in ScriptEntities.Sections.Values)
                     {
                         // Iterate through the sections tracks.
                         foreach (SectionTrack strack in sect.SectionTracks)
                         {
                             // Get the pertinent Track object.
-                            Track track = DynamicEntities.Tracks[strack.TrackName];
+                            Track track = ScriptEntities.Tracks[strack.TrackName];
 
                             // For processing current Sequence.
                             int seqOffset = sect.Start;
@@ -273,16 +270,18 @@ namespace Nebulator
                             // Gen steps for each sequence.
                             foreach (string sseq in strack.SequenceNames)
                             {
-                                Sequence seq = DynamicEntities.Sequences[sseq];
-                                StepCollection stepsToAdd = DynamicEntities.ConvertToSteps(track, seq, seqOffset);
+                                Sequence seq = ScriptEntities.Sequences[sseq];
+                                StepCollection stepsToAdd = ScriptEntities.ConvertToSteps(track, seq, seqOffset);
                                 _compiledSteps.Add(stepsToAdd);
                                 seqOffset += seq.Length;
                             }
                         }
                     }
 
-                    // Hook in event handler.
-                    _script.ScriptEvent += Script_ScriptEvent;
+                    // Hook in event handlers.
+                    _script.ScriptMessageEvent += Script_ScriptMessageEvent;
+                    _script.ScriptSpeedChangeEvent += Script_ScriptSpeedChangeEvent;
+                    _script.ScriptVolumeChangeEvent += Script_ScriptVolumeChangeEvent;
 
                     // Show everything.
                     InitUi();
@@ -323,7 +322,7 @@ namespace Nebulator
                 }
             }
 
-            foreach (Track t in Dynamic.DynamicEntities.Tracks.Values)
+            foreach (Track t in Dynamic.ScriptEntities.Tracks.Values)
             {
                 // Init from persistence.
                 int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
@@ -352,7 +351,7 @@ namespace Nebulator
 
             ///// Init the user input area.
             // Levers.
-            levers.Init(Dynamic.DynamicEntities.Levers.Values);
+            levers.Init(Dynamic.ScriptEntities.Levers.Values);
 
             // Surface area.
             scriptSurface.InitScript(_script);
@@ -394,7 +393,7 @@ namespace Nebulator
                     _script.ExecScriptFunction(var.Name);
 
                     // Output any midictlout controllers.
-                    IEnumerable<MidiControlPoint> ctlpts = Dynamic.DynamicEntities.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+                    IEnumerable<MidiControlPoint> ctlpts = Dynamic.ScriptEntities.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
 
                     if (ctlpts != null && ctlpts.Count() > 0)
                     {
@@ -415,7 +414,7 @@ namespace Nebulator
                 _ctrlChanges.Clear();
 
                 ////// Neb steps /////
-                if (Dynamic.DynamicEntities.Playing && e.ElapsedTimers.Contains("NEB"))
+                if (DynamicEntities.Playing && e.ElapsedTimers.Contains("NEB"))
                 {
                     if(_script != null)
                     {
@@ -423,23 +422,23 @@ namespace Nebulator
                         _script.step();
 
                         // Do runtime steps.
-                        _script.RuntimeSteps.GetSteps(Dynamic.DynamicEntities.StepTime).ForEach(s => PlayStep(s));
-                        _script.RuntimeSteps.DeleteSteps(Dynamic.DynamicEntities.StepTime);
+                        _script.RuntimeSteps.GetSteps(DynamicEntities.StepTime).ForEach(s => PlayStep(s));
+                        _script.RuntimeSteps.DeleteSteps(DynamicEntities.StepTime);
                     }
 
                     // Do the compiled steps.
                     if(chkSequence.Checked)
                     {
-                        _compiledSteps.GetSteps(Dynamic.DynamicEntities.StepTime).ForEach(s => PlayStep(s));
+                        _compiledSteps.GetSteps(DynamicEntities.StepTime).ForEach(s => PlayStep(s));
                     }
 
                     // Local common function
                     void PlayStep(Step step)
                     {
-                        Track track = Dynamic.DynamicEntities.Tracks[step.TrackName];
+                        Track track = ScriptEntities.Tracks[step.TrackName];
 
                         // Is it ok to play now?
-                        bool _anySolo = Dynamic.DynamicEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                        bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
                         bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
 
                         if (play)
@@ -458,14 +457,14 @@ namespace Nebulator
                     }
 
                     ///// Bump time.
-                    Dynamic.DynamicEntities.StepTime.Advance();
+                    DynamicEntities.StepTime.Advance();
 
                     ////// Check for end of play.
                     // If no steps or not selected, free running mode so always keep going.
                     if(_compiledSteps.Times.Count() != 0 && chkSequence.Checked)
                     {
                         // Check for end and loop condition.
-                        if (Dynamic.DynamicEntities.StepTime.Tick >= _compiledSteps.MaxTick)
+                        if (DynamicEntities.StepTime.Tick >= _compiledSteps.MaxTick)
                         {
                             if (chkLoop.Checked) // keep going
                             {
@@ -519,7 +518,7 @@ namespace Nebulator
                     // Process through our list.
                     if(_script != null)
                     {
-                        IEnumerable<MidiControlPoint> ctlpts = Dynamic.DynamicEntities.InputMidis.Values.Where((c, m) => (
+                        IEnumerable<MidiControlPoint> ctlpts = Dynamic.ScriptEntities.InputMidis.Values.Where((c, m) => (
                             c.MidiController == scc.MidiController &&
                             c.Channel == scc.Channel));
 
@@ -552,7 +551,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                infoDisplay.AddMidiMessage($"{Dynamic.DynamicEntities.StepTime} {e.Message}");
+                infoDisplay.AddMidiMessage($"{DynamicEntities.StepTime} {e.Message}");
                 if (e.Message.StartsWith("ERR"))
                 {
                     _logger.Error(e.Message);
@@ -568,12 +567,12 @@ namespace Nebulator
             if (sender is TrackControl)
             {
                 // Check for solos.
-                bool _anySolo = DynamicEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    Dynamic.DynamicEntities.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
+                    Dynamic.ScriptEntities.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -805,7 +804,7 @@ namespace Nebulator
         /// </summary>
         void Time_ValueChanged(object sender, EventArgs e)
         {
-            Dynamic.DynamicEntities.StepTime = timeMaster.CurrentTime;
+            DynamicEntities.StepTime = timeMaster.CurrentTime;
             SetPlayStatus(PlayCommand.UpdateUiTime);
         }
         #endregion
@@ -839,45 +838,6 @@ namespace Nebulator
             {
                 infoDisplay.AddInfoLine(msg);
             });
-        }
-
-        /// <summary>
-        /// A message from the script to display to the user.
-        /// Request for information.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Script_ScriptEvent(object sender, Script.ScriptEventArgs e)
-        {
-            if(e.Message != null)
-            {
-                BeginInvoke((MethodInvoker)delegate ()
-                {
-                    infoDisplay.AddInfo(e.Message);
-                });
-            }
-
-            if (e.Volume != null)
-            {
-                sldVolume.Value = (int)e.Volume;
-            }
-
-            if (e.Speed != null)
-            {
-                potSpeed.Value = (int)e.Speed;
-                SetSpeedTimerPeriod();
-            }
-
-            if (e.FrameRate != null)
-            {
-                _fps = (int)e.FrameRate;
-                SetUiTimerPeriod();
-            }
-
-            // Return all current.
-            e.Volume = sldVolume.Value;
-            e.Speed = potSpeed.Value;
-            e.FrameRate = _fps;
         }
 
         /// <summary>
@@ -1004,13 +964,13 @@ namespace Nebulator
                 if(propsChanged.Count > 0)
                 {
                     bool midi = false;
-                    bool notes = false;
+                    bool defs = false;
                     bool ctrls = false;
 
                     propsChanged.ForEach(p =>
                     {
                         midi |= p.Contains("Midi");
-                        notes |= (p.Contains("Notes") | p.Contains("Scales"));
+                        defs |= (p.Contains("Notes") | p.Contains("Scales"));
                         ctrls |= (p.Contains("Font") | p.Contains("Color"));
                     });
 
@@ -1019,7 +979,7 @@ namespace Nebulator
                         MidiInterface.TheInterface.Init();
                     }
 
-                    if (notes)
+                    if (defs)
                     {
                         NoteUtils.Init();
                     }
@@ -1028,6 +988,9 @@ namespace Nebulator
                     {
                         MessageBox.Show("UI changes require a restart to take effect."); // TODO2 Update controls without restarting.
                     }
+
+                    // Always safe.
+                    SetSpeedTimerPeriod();
 
                     SaveSettings();
                 }
@@ -1090,7 +1053,7 @@ namespace Nebulator
                 _logger.Warn("No script file loaded");
                 SetPlayStatus(PlayCommand.Stop);
             }
-            else if (Dynamic.DynamicEntities.Playing)
+            else if (DynamicEntities.Playing)
             {
                 ///// Stop!
                 SetPlayStatus(PlayCommand.Stop);
@@ -1131,29 +1094,29 @@ namespace Nebulator
             {
                 case PlayCommand.Start:
                     chkPlay.Checked = true;
-                    Dynamic.DynamicEntities.Playing = true;
+                    DynamicEntities.Playing = true;
                     break;
 
                 case PlayCommand.Stop:
                     chkPlay.Checked = false;
-                    Dynamic.DynamicEntities.Playing = false;
+                    DynamicEntities.Playing = false;
                     break;
 
                 case PlayCommand.Rewind:
-                    Dynamic.DynamicEntities.StepTime.Reset();
+                    DynamicEntities.StepTime.Reset();
                     break;
 
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
-                    Dynamic.DynamicEntities.Playing = false;
-                    Dynamic.DynamicEntities.StepTime.Reset();
+                    DynamicEntities.Playing = false;
+                    DynamicEntities.StepTime.Reset();
                     break;
 
                 case PlayCommand.UpdateUiTime:
                     break;
             }
 
-            timeMaster.CurrentTime = Dynamic.DynamicEntities.StepTime;
+            timeMaster.CurrentTime = DynamicEntities.StepTime;
         }
         #endregion
 
@@ -1217,6 +1180,42 @@ namespace Nebulator
         }
         #endregion
 
+        #region Handlers for events from script
+        /// <summary>
+        /// Notification of change.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Script_ScriptSpeedChangeEvent(object sender, Script.ScriptSpeedChangeEventArgs e)
+        {
+            potSpeed.Value = (int)e.Speed;
+            SetSpeedTimerPeriod();
+        }
+
+        /// <summary>
+        /// Notification of change.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Script_ScriptVolumeChangeEvent(object sender, Script.ScriptVolumeChangeEventArgs e)
+        {
+            sldVolume.Value = e.Volume;
+        }
+
+        /// <summary>
+        /// A message from the script to display to the user.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Script_ScriptMessageEvent(object sender, Script.ScriptMessageEventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                infoDisplay.AddInfo(e.Message);
+            });
+        }
+        #endregion
+
         #region Internal stuff
         /// <summary>
         /// The meaning of life.
@@ -1232,7 +1231,7 @@ namespace Nebulator
         /// </summary>
         void UpdateMenu()
         {
-            settingsToolStripMenuItem.Enabled = !Dynamic.DynamicEntities.Playing;
+            settingsToolStripMenuItem.Enabled = !DynamicEntities.Playing;
         }
 
         /// <summary>
@@ -1255,7 +1254,7 @@ namespace Nebulator
         void SetUiTimerPeriod()
         {
             // Convert fps to msec per frame.
-            double framesPerMsec = (double)_fps / 1000;
+            double framesPerMsec = (double)UserSettings.TheSettings.FrameRate / 1000;
             double msecPerFrame = 1 / framesPerMsec;
             _nebTimer.SetTimer("UI", (int)msecPerFrame);
         }
@@ -1327,7 +1326,7 @@ namespace Nebulator
         void ExportMidi(string fn)
         {
             Dictionary<int, string> tracks = new Dictionary<int, string>();
-            Dynamic.DynamicEntities.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+            Dynamic.ScriptEntities.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
 
             // Convert speed/bpm to sec per tick.
             double ticksPerMinute = potSpeed.Value; // bpm

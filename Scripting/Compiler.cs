@@ -15,7 +15,7 @@ using Nebulator.Dynamic;
 namespace Nebulator.Scripting
 {
     /// <summary>
-    /// Parses/compiles neb file(s). TODO2 could use some speeding up.
+    /// Parses/compiles neb file(s).
     /// </summary>
     public class Compiler
     {
@@ -97,7 +97,7 @@ namespace Nebulator.Scripting
                 _filesToCompile.Clear();
                 _consts.Clear();
                 _initLines.Clear();
-                Dynamic.DynamicEntities.Clear();
+                Dynamic.ScriptEntities.Clear();
                 Errors.Clear();
 
                 // Init things.
@@ -190,11 +190,11 @@ namespace Nebulator.Scripting
             ParseOneFile(pcont);
 
             // Finished. Patch some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
-            foreach(Section sect in Dynamic.DynamicEntities.Sections.Values)
+            foreach(Section sect in Dynamic.ScriptEntities.Sections.Values)
             {
                 foreach(SectionTrack st in sect.SectionTracks)
                 {
-                    if(Dynamic.DynamicEntities.Tracks[st.TrackName] == null)
+                    if(Dynamic.ScriptEntities.Tracks[st.TrackName] == null)
                     {
                         pcont.LineNumber = 0; // Don't know the real line number.
                         AddParseError(pcont, $"Invalid track name:{st.TrackName}");
@@ -202,7 +202,7 @@ namespace Nebulator.Scripting
 
                     foreach(string sseq in st.SequenceNames)
                     {
-                        if (Dynamic.DynamicEntities.Sequences[sseq] == null)
+                        if (Dynamic.ScriptEntities.Sequences[sseq] == null)
                         {
                             pcont.LineNumber = 0; // Don't know the real line number.
                             AddParseError(pcont, $"Invalid sequence name:{sseq}");
@@ -517,13 +517,13 @@ namespace Nebulator.Scripting
             _consts.Keys.ForEach(v => codeLines.Add($"const int {v} = {_consts[v]};"));
 
             // The declared vars with the system hooks.
-            Dynamic.DynamicEntities.Vars.Values.ForEach(v => codeLines.Add($"int {v.Name} {{ get {{ return DynamicEntities.Vars[\"{v.Name}\"].Value; }} set {{ DynamicEntities.Vars[\"{v.Name}\"].Value = value; }} }}"));
+            ScriptEntities.Vars.Values.ForEach(v => codeLines.Add($"int {v.Name} {{ get {{ return ScriptEntities.Vars[\"{v.Name}\"].Value; }} set {{ ScriptEntities.Vars[\"{v.Name}\"].Value = value; }} }}"));
 
             // Needed for runtime script statuses.
-            Dynamic.DynamicEntities.Tracks.Values.ForEach(t => codeLines.Add($"Track {t.Name} {{ get {{ return DynamicEntities.Tracks[\"{t.Name}\"]; }} }}"));
+            ScriptEntities.Tracks.Values.ForEach(t => codeLines.Add($"Track {t.Name} {{ get {{ return ScriptEntities.Tracks[\"{t.Name}\"]; }} }}"));
 
             // Used for manual/trigger inputs.
-            Dynamic.DynamicEntities.Sequences.Values.ForEach(s => codeLines.Add($"Sequence {s.Name} {{ get {{ return DynamicEntities.Sequences[\"{s.Name}\"]; }} }}"));
+            ScriptEntities.Sequences.Values.ForEach(s => codeLines.Add($"Sequence {s.Name} {{ get {{ return ScriptEntities.Sequences[\"{s.Name}\"]; }} }}"));
 
             // Collected init stuff goes in a constructor.
             codeLines.Add($"public {_scriptName}() : base()");
@@ -660,7 +660,7 @@ namespace Nebulator.Scripting
                     Name = farg.Args[1],
                     Value = int.Parse(farg.Args[2])
                 };
-                Dynamic.DynamicEntities.Vars.Add(v.Name, v);
+                Dynamic.ScriptEntities.Vars.Add(v.Name, v);
             }
             catch (Exception)
             {
@@ -705,11 +705,11 @@ namespace Nebulator.Scripting
                 switch (farg.Args[0])
                 {
                     case "midictlin":
-                        Dynamic.DynamicEntities.InputMidis.Add(farg.Args[1], ctl);
+                        Dynamic.ScriptEntities.InputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     case "midictlout":
-                        Dynamic.DynamicEntities.OutputMidis.Add(farg.Args[1], ctl);
+                        Dynamic.ScriptEntities.OutputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     default:
@@ -737,7 +737,7 @@ namespace Nebulator.Scripting
                     Max = int.Parse(farg.Args[3]),
                     RefVar = ParseVarRef(farg.Context, farg.Args[4])
                 };
-                Dynamic.DynamicEntities.Levers.Add(farg.Args[1], ctl);
+                Dynamic.ScriptEntities.Levers.Add(farg.Args[1], ctl);
             }
             catch (Exception)
             {
@@ -762,7 +762,7 @@ namespace Nebulator.Scripting
                     WobbleTimeBefore = farg.Args.Count > 4 ? -ParseConstRef(farg.Context, farg.Args[4]) : 0,
                     WobbleTimeAfter = farg.Args.Count > 5 ? ParseConstRef(farg.Context, farg.Args[5]) : 0
                 };
-                Dynamic.DynamicEntities.Tracks.Add(nt.Name, nt);
+                Dynamic.ScriptEntities.Tracks.Add(nt.Name, nt);
             }
             catch (Exception)
             {
@@ -785,7 +785,7 @@ namespace Nebulator.Scripting
                     Start = ParseConstRef(farg.Context, farg.Args[2]),
                     Length = ParseConstRef(farg.Context, farg.Args[3])
                 };
-                Dynamic.DynamicEntities.Sections.Add(s.Name, s);
+                Dynamic.ScriptEntities.Sections.Add(s.Name, s);
             }
             catch (Exception)
             {
@@ -812,7 +812,7 @@ namespace Nebulator.Scripting
                 {
                     st.SequenceNames.Add(farg.Args[i]);
                 }
-                Dynamic.DynamicEntities.Sections.Values.Last().SectionTracks.Add(st);
+                Dynamic.ScriptEntities.Sections.Values.Last().SectionTracks.Add(st);
             }
             catch (Exception )
             {
@@ -834,7 +834,7 @@ namespace Nebulator.Scripting
                     Name = farg.Args[1],
                     Length = ParseConstRef(farg.Context, farg.Args[2]),
                 };
-                Dynamic.DynamicEntities.Sequences.Add(ns.Name, ns);
+                Dynamic.ScriptEntities.Sequences.Add(ns.Name, ns);
             }
             catch (Exception)
             {
@@ -907,7 +907,7 @@ namespace Nebulator.Scripting
                 foreach (Time t in whens)
                 {
                     SequenceElement ncl = new SequenceElement(seqel) { When = t };
-                    Dynamic.DynamicEntities.Sequences.Values.Last().Elements.Add(ncl);
+                    Dynamic.ScriptEntities.Sequences.Values.Last().Elements.Add(ncl);
                 }
             }
             catch (Exception)
@@ -984,7 +984,7 @@ namespace Nebulator.Scripting
             catch (Exception)
             {
                 // Assume it is the name of a reference.
-                v = Dynamic.DynamicEntities.Vars[s];
+                v = Dynamic.ScriptEntities.Vars[s];
                 if (v is null)
                 {
                     AddParseError(pcont, $"Invalid reference: {s}");

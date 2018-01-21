@@ -2,13 +2,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Nebulator.Common;
-using Nebulator.Midi;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Nebulator.Common;
+using Nebulator.Midi;
 using Nebulator.Dynamic;
 
-// TODO1 Thread for script execution step()/draw()? EventLoopScheduler, async / await keywords and the Task Parallel Library
+// TODO2 Thread for script execution step()/draw()? EventLoopScheduler, async / await keywords and the Task Parallel Library
 
 namespace Nebulator.Scripting
 {
@@ -22,23 +22,15 @@ namespace Nebulator.Scripting
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
         #endregion
 
-        #region Events
-        /// <summary>Interaction with the host. TODO1 A bit klunky, could be improved. Separate events for each?</summary>
-        public class ScriptEventArgs : EventArgs
-        {
-            /// <summary>If not null, print this.</summary>
-            public string Message { get; set; } = null;
+        #region Script events
+        public class ScriptMessageEventArgs : EventArgs { public string Message { get; set; } = ""; }
+        public event EventHandler<ScriptMessageEventArgs> ScriptMessageEvent;
 
-            /// <summary>Master speed in bpm. If null means get otherwise set.</summary>
-            public double? Speed { get; set; } = null;
+        public class ScriptSpeedChangeEventArgs : EventArgs { public double Speed { get; set; } = 0; }
+        public event EventHandler<ScriptSpeedChangeEventArgs> ScriptSpeedChangeEvent;
 
-            /// <summary>Master volume. If null means get otherwise set.</summary>
-            public int? Volume { get; set; } = null;
-
-            /// <summary>Script can select UI rate in fps. If null means get otherwise set.</summary>
-            public int? FrameRate { get; set; } = null;
-        }
-        public event EventHandler<ScriptEventArgs> ScriptEvent;
+        public class ScriptVolumeChangeEventArgs : EventArgs { public int Volume { get; set; } = 0; }
+        public event EventHandler<ScriptVolumeChangeEventArgs> ScriptVolumeChangeEvent;
         #endregion
 
         #region Fields
@@ -81,17 +73,23 @@ namespace Nebulator.Scripting
         /// <summary>Current working Graphics object to draw on. Internal so surface can access</summary>
         internal Graphics _gr = null;
 
-        /// <summary>Script functions that are called from the main nebulator. They are identified by name/key. Typically they are controller input handlers such that the key is the name of the input.</summary>
+        /// <summary>
+        /// Script functions that are called from the main nebulator. They are identified by name/key.
+        /// Typically they are controller input handlers such that the key is the name of the input.
+        /// </summary>
         protected Dictionary<string, ScriptFunction> _scriptFunctions = new Dictionary<string, ScriptFunction>();
         public delegate void ScriptFunction();
 
-        /// <summary>For magic user script access. TODO1 kinda klunky, need a better way.</summary>
+        /// <summary>
+        /// Reference to current script so nested classes have access to it.
+        /// Processing uses java which would not require this hack.
+        /// </summary>
         protected static Script s;
         #endregion
 
         #region Internal functions
         /// <summary>
-        /// Base constructor provides access to internal stuff.
+        /// Base constructor provides internal access to the script.
         /// </summary>
         protected internal Script()
         {

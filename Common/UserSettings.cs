@@ -37,6 +37,9 @@ namespace Nebulator.Common
         [DisplayName("Loop Color"), Description("The color used for loop block display."), Browsable(true)]
         public Color LoopColor { get; set; } = Color.Salmon;
 
+        [DisplayName("Frame Rate"), Description("Select UI rate in fps."), Browsable(true)]
+        public int FrameRate { get; set; } = 30;
+
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
         [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
         public string MidiIn { get; set; } = Utils.UNKNOWN_STRING;

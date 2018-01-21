@@ -76,7 +76,7 @@ namespace Nebulator.Scripting
         //---- Function overrides
         public virtual void setup() { }
         public virtual void draw() { }
-        
+
         //---- Script functions
         public void exit() { throw new NotSupportedException(); }
 
@@ -119,21 +119,7 @@ namespace Nebulator.Scripting
         public int displayDensity() { throw new NotSupportedException(); }
         public bool focused { get; internal set; }
         public int frameCount { get; private set; } = 1;
-
-        public int frameRate
-        {
-            get
-            {
-                ScriptEventArgs args = new ScriptEventArgs();
-                ScriptEvent?.Invoke(this, args);
-                return (int)args.FrameRate;
-            }
-            set
-            {
-                ScriptEvent?.Invoke(this, new ScriptEventArgs() { FrameRate = value });
-            }
-        }
-
+        public int frameRate { get { throw new NotSupportedException(); } }
         public void fullScreen() { throw new NotSupportedException(); }
         public int height { get; internal set; }
         public void noCursor() { throw new NotSupportedException(); }
@@ -423,8 +409,8 @@ namespace Nebulator.Scripting
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) { ScriptEvent?.Invoke(this, new ScriptEventArgs() { Message = string.Join(" ", vars) }); }
-        public void println(params object[] vars) { ScriptEvent?.Invoke(this, new ScriptEventArgs() { Message = string.Join(" ", vars) + Environment.NewLine }); }
+        public void print(params object[] vars) { ScriptMessageEvent?.Invoke(this, new ScriptMessageEventArgs() { Message = string.Join(" ", vars) }); }
+        public void println(params object[] vars) { ScriptMessageEvent?.Invoke(this, new ScriptMessageEventArgs() { Message = string.Join(" ", vars) + Environment.NewLine }); }
         public void printArray(params object[] ps) { throw new NotSupportedException(); }
         #endregion
 

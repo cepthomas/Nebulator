@@ -20,19 +20,19 @@ namespace Nebulator.Scripting
 
         #region User script properties
         /// <summary>Current Nebulator step time.</summary>
-        public Time stepTime { get { return Dynamic.DynamicEntities.StepTime; } }
+        public Time stepTime { get { return DynamicEntities.StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return Dynamic.DynamicEntities.StepTime.Tick; } }
+        public int tick { get { return DynamicEntities.StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return Dynamic.DynamicEntities.StepTime.Tock; } }
+        public int tock { get { return DynamicEntities.StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return (float)Dynamic.DynamicEntities.RealTime; } }
+        public float now { get { return (float)DynamicEntities.RealTime; } }
 
         /// <summary>Neb step clock is running.</summary>
-        public bool playing { get { return Dynamic.DynamicEntities.Playing; } }
+        public bool playing { get { return DynamicEntities.Playing; } }
 
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Utils.TOCKS_PER_TICK; } }
@@ -40,31 +40,15 @@ namespace Nebulator.Scripting
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
         public float speed
         {
-            get
-            {
-                ScriptEventArgs args = new ScriptEventArgs();
-                ScriptEvent?.Invoke(this, args);
-                return (float)args.Speed;
-            }
-            set
-            {
-                ScriptEvent?.Invoke(this, new ScriptEventArgs() { Speed = value });
-            }
+            get { return (float)DynamicEntities.Speed; }
+            set { ScriptSpeedChangeEvent?.Invoke(this, new ScriptSpeedChangeEventArgs() { Speed = value }); }
         }
 
         /// <summary>Nebulator master Volume.</summary>
         public int volume
         {
-            get
-            {
-                ScriptEventArgs args = new ScriptEventArgs();
-                ScriptEvent?.Invoke(this, args);
-                return (int)args.Volume;
-            }
-            set
-            {
-                ScriptEvent?.Invoke(this, new ScriptEventArgs() { Volume = value });
-            }
+            get { return DynamicEntities.Volume; }
+            set { ScriptVolumeChangeEvent?.Invoke(this, new ScriptVolumeChangeEventArgs() { Volume = value }); }
         }
 
         /// <summary>Indicates using internal synth.</summary>
@@ -81,7 +65,7 @@ namespace Nebulator.Scripting
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated.</param>
         public void sendMidiNote(Track track, int inote, int vol, Time dur)
         {
-            bool _anySolo = DynamicEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+            bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
             bool play = track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo);
 
@@ -212,7 +196,7 @@ namespace Nebulator.Scripting
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = DynamicEntities.ConvertToSteps(track, seq, Dynamic.DynamicEntities.StepTime.Tick);
+            StepCollection scoll = ScriptEntities.ConvertToSteps(track, seq, DynamicEntities.StepTime.Tick);
             RuntimeSteps.Add(scoll);
         }
 
