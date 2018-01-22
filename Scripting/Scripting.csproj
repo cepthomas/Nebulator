@@ -73,6 +73,7 @@
     </Compile>
     <Compile Include="ScriptUi.cs" />
     <Compile Include="ScriptUiClasses.cs" />
+    <Compile Include="ScriptUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -97,7 +97,7 @@ namespace Nebulator.Scripting
                 _filesToCompile.Clear();
                 _consts.Clear();
                 _initLines.Clear();
-                Dynamic.ScriptEntities.Clear();
+                ScriptEntities.Clear();
                 Errors.Clear();
 
                 // Init things.
@@ -189,12 +189,12 @@ namespace Nebulator.Scripting
             };
             ParseOneFile(pcont);
 
-            // Finished. Patch some forward refs. TODO1 A bit clumsy - probably should be a two pass compile.
-            foreach(Section sect in Dynamic.ScriptEntities.Sections.Values)
+            // Finished. Patch some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
+            foreach(Section sect in ScriptEntities.Sections.Values)
             {
                 foreach(SectionTrack st in sect.SectionTracks)
                 {
-                    if(Dynamic.ScriptEntities.Tracks[st.TrackName] == null)
+                    if(ScriptEntities.Tracks[st.TrackName] == null)
                     {
                         pcont.LineNumber = 0; // Don't know the real line number.
                         AddParseError(pcont, $"Invalid track name:{st.TrackName}");
@@ -202,7 +202,7 @@ namespace Nebulator.Scripting
 
                     foreach(string sseq in st.SequenceNames)
                     {
-                        if (Dynamic.ScriptEntities.Sequences[sseq] == null)
+                        if (ScriptEntities.Sequences[sseq] == null)
                         {
                             pcont.LineNumber = 0; // Don't know the real line number.
                             AddParseError(pcont, $"Invalid sequence name:{sseq}");
@@ -539,7 +539,7 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Create the file containing extra stuff. TODO1 Probably shouldn't do this every time.
+        /// Create the file containing extra stuff. TODO2 Probably shouldn't do this every time.
         /// </summary>
         /// <returns></returns>
         List<string> GenSuppFileContents()
@@ -660,7 +660,7 @@ namespace Nebulator.Scripting
                     Name = farg.Args[1],
                     Value = int.Parse(farg.Args[2])
                 };
-                Dynamic.ScriptEntities.Vars.Add(v.Name, v);
+                ScriptEntities.Vars.Add(v.Name, v);
             }
             catch (Exception)
             {
@@ -705,11 +705,11 @@ namespace Nebulator.Scripting
                 switch (farg.Args[0])
                 {
                     case "midictlin":
-                        Dynamic.ScriptEntities.InputMidis.Add(farg.Args[1], ctl);
+                        ScriptEntities.InputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     case "midictlout":
-                        Dynamic.ScriptEntities.OutputMidis.Add(farg.Args[1], ctl);
+                        ScriptEntities.OutputMidis.Add(farg.Args[1], ctl);
                         break;
 
                     default:
@@ -737,7 +737,7 @@ namespace Nebulator.Scripting
                     Max = int.Parse(farg.Args[3]),
                     RefVar = ParseVarRef(farg.Context, farg.Args[4])
                 };
-                Dynamic.ScriptEntities.Levers.Add(farg.Args[1], ctl);
+                ScriptEntities.Levers.Add(farg.Args[1], ctl);
             }
             catch (Exception)
             {
@@ -762,7 +762,7 @@ namespace Nebulator.Scripting
                     WobbleTimeBefore = farg.Args.Count > 4 ? -ParseConstRef(farg.Context, farg.Args[4]) : 0,
                     WobbleTimeAfter = farg.Args.Count > 5 ? ParseConstRef(farg.Context, farg.Args[5]) : 0
                 };
-                Dynamic.ScriptEntities.Tracks.Add(nt.Name, nt);
+                ScriptEntities.Tracks.Add(nt.Name, nt);
             }
             catch (Exception)
             {
@@ -785,7 +785,7 @@ namespace Nebulator.Scripting
                     Start = ParseConstRef(farg.Context, farg.Args[2]),
                     Length = ParseConstRef(farg.Context, farg.Args[3])
                 };
-                Dynamic.ScriptEntities.Sections.Add(s.Name, s);
+                ScriptEntities.Sections.Add(s.Name, s);
             }
             catch (Exception)
             {
@@ -812,7 +812,7 @@ namespace Nebulator.Scripting
                 {
                     st.SequenceNames.Add(farg.Args[i]);
                 }
-                Dynamic.ScriptEntities.Sections.Values.Last().SectionTracks.Add(st);
+                ScriptEntities.Sections.Values.Last().SectionTracks.Add(st);
             }
             catch (Exception )
             {
@@ -834,7 +834,7 @@ namespace Nebulator.Scripting
                     Name = farg.Args[1],
                     Length = ParseConstRef(farg.Context, farg.Args[2]),
                 };
-                Dynamic.ScriptEntities.Sequences.Add(ns.Name, ns);
+                ScriptEntities.Sequences.Add(ns.Name, ns);
             }
             catch (Exception)
             {
@@ -907,7 +907,7 @@ namespace Nebulator.Scripting
                 foreach (Time t in whens)
                 {
                     SequenceElement ncl = new SequenceElement(seqel) { When = t };
-                    Dynamic.ScriptEntities.Sequences.Values.Last().Elements.Add(ncl);
+                    ScriptEntities.Sequences.Values.Last().Elements.Add(ncl);
                 }
             }
             catch (Exception)
@@ -984,7 +984,7 @@ namespace Nebulator.Scripting
             catch (Exception)
             {
                 // Assume it is the name of a reference.
-                v = Dynamic.ScriptEntities.Vars[s];
+                v = ScriptEntities.Vars[s];
                 if (v is null)
                 {
                     AddParseError(pcont, $"Invalid reference: {s}");

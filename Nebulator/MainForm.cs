@@ -149,7 +149,7 @@ namespace Nebulator
             //sed.TestGrid();
             //Visible = false;
 
-            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // airport  dev  example  lsys
+            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
 
             //ExportMidi("test.mid");
 
@@ -279,7 +279,7 @@ namespace Nebulator
                             foreach (string sseq in strack.SequenceNames)
                             {
                                 Sequence seq = ScriptEntities.Sequences[sseq];
-                                StepCollection stepsToAdd = ScriptEntities.ConvertToSteps(track, seq, seqOffset);
+                                StepCollection stepsToAdd = ScriptUtils.ConvertToSteps(track, seq, seqOffset);
                                 _compiledSteps.Add(stepsToAdd);
                                 seqOffset += seq.Length;
                             }
@@ -975,7 +975,7 @@ namespace Nebulator
                     SelectedObject = UserSettings.TheSettings
                 };
 
-                // Fill the options. TODO1 Should be cleaner way than this...
+                // Supply the midi options. TODO2 Should be a cleaner way than this. Wrestling with the ComponentModel...
                 MidiPortEditor.Inputs = MidiInterface.TheInterface.MidiInputs;
                 MidiPortEditor.Outputs = MidiInterface.TheInterface.MidiOutputs;
 
@@ -986,38 +986,36 @@ namespace Nebulator
                 f.Controls.Add(pg);
                 f.ShowDialog();
 
-                if(propsChanged.Count > 0)
+                // Figure out what changed.
+                bool midi = false;
+                bool defs = false;
+                bool ctrls = false;
+
+                propsChanged.ForEach(p =>
                 {
-                    bool midi = false;
-                    bool defs = false;
-                    bool ctrls = false;
+                    midi |= p.Contains("Midi");
+                    defs |= (p.Contains("Notes") | p.Contains("Scales"));
+                    ctrls |= (p.Contains("Font") | p.Contains("Color"));
+                });
 
-                    propsChanged.ForEach(p =>
-                    {
-                        midi |= p.Contains("Midi");
-                        defs |= (p.Contains("Notes") | p.Contains("Scales"));
-                        ctrls |= (p.Contains("Font") | p.Contains("Color"));
-                    });
-
-                    if (midi)
-                    {
-                        MidiInterface.TheInterface.Init();
-                    }
-
-                    if (defs)
-                    {
-                        NoteUtils.Init();
-                    }
-
-                    if (ctrls)
-                    {
-                        MessageBox.Show("UI changes require a restart to take effect."); // TODO2 Update controls without restarting.
-                    }
-
-                    // Always safe to do this.
-                    SetUiTimerPeriod();
-                    SaveSettings();
+                if (midi)
+                {
+                    MidiInterface.TheInterface.Init();
                 }
+
+                if (defs)
+                {
+                    NoteUtils.Init();
+                }
+
+                if (ctrls)
+                {
+                    MessageBox.Show("UI changes require a restart to take effect."); // TODO2 Update controls without restarting.
+                }
+
+                // Always safe to do this.
+                SetUiTimerPeriod();
+                SaveSettings();
             }
         }
         #endregion

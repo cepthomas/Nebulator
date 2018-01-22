@@ -188,7 +188,7 @@ namespace Nebulator.Scripting
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = ScriptEntities.ConvertToSteps(track, seq, RtVals.StepTime.Tick);
+            StepCollection scoll = ScriptUtils.ConvertToSteps(track, seq, RtVals.StepTime.Tick);
             RtVals.RuntimeSteps.Add(scoll);
         }
 

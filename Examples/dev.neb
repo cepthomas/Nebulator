@@ -99,6 +99,12 @@ public override void setup()
 
 public override void step()
 {
+    // if(tick == 5)
+    // {
+    //     speed = 50;
+    //     volume = 50;
+    // }
+
     if(tock == 0)
     {
         algoDynamic();

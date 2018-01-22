@@ -60,7 +60,6 @@ namespace Nebulator.Scripting
         public override string ToString() => $"{ErrorType} Error: {SourceFile}({LineNumber}): {Message}";
     }
 
-
     /// <summary>
     /// Core functions of script. User scripts inherit from this class.
     /// </summary>
