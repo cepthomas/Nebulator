@@ -38,7 +38,7 @@ namespace Nebulator.Midi
         Dictionary<(string part, int channel), List<MidiEvent>> _events = new Dictionary<(string, int), List<MidiEvent>>();
 
         /// <summary>Name of current part being processed.</summary>
-        string _currentPart = Utils.UNKNOWN_STRING;
+        string _currentPart = Definitions.UNKNOWN_STRING;
         #endregion
 
         #region Public methods

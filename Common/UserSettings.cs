@@ -37,16 +37,16 @@ namespace Nebulator.Common
         [DisplayName("Loop Color"), Description("The color used for loop block display."), Browsable(true)]
         public Color LoopColor { get; set; } = Color.Salmon;
 
-        [DisplayName("Frame Rate"), Description("Select UI rate in fps."), Browsable(true)]
+        [DisplayName("Frame Rate"), Description("Select UI rate in fps. Note that Processing allows the script to change this but I don't."), Browsable(true)]
         public int FrameRate { get; set; } = 30;
 
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
         [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
-        public string MidiIn { get; set; } = Utils.UNKNOWN_STRING;
+        public string MidiIn { get; set; } = Definitions.UNKNOWN_STRING;
 
         [DisplayName("Midi Output"), Description("Your choice of midi output."), Browsable(true)]
         [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
-        public string MidiOut { get; set; } = Utils.UNKNOWN_STRING;
+        public string MidiOut { get; set; } = Definitions.UNKNOWN_STRING;
 
         [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ..."), Browsable(true)]
         public List<string> Chords { get; set; } = new List<string>();
@@ -77,7 +77,7 @@ namespace Nebulator.Common
 
         #region Fields
         /// <summary>The file name.</summary>
-        string _fn = Utils.UNKNOWN_STRING;
+        string _fn = Definitions.UNKNOWN_STRING;
         #endregion
 
         /// <summary>Current global user settings.</summary>

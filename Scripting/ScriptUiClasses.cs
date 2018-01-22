@@ -176,7 +176,7 @@ namespace Nebulator.Scripting
 
         public override string ToString()
         {
-            string sact = Utils.UNKNOWN_STRING;
+            string sact = Definitions.UNKNOWN_STRING;
             switch (_action)
             {
                 case CLICK: sact = "CLICK"; break;

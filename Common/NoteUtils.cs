@@ -258,7 +258,7 @@ namespace Nebulator.Common
         /// <returns></returns>
         public static string FormatDrum(int note)
         {
-            string drumName = Utils.UNKNOWN_STRING;
+            string drumName = Definitions.UNKNOWN_STRING;
 
             foreach (KeyValuePair<string, string> kv in _drumDefs)
             {

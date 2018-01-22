@@ -15,7 +15,7 @@ namespace Nebulator.Dynamic
     {
         #region Properties
         /// <summary>The name for this section.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
+        public string Name { get; set; } = Definitions.UNKNOWN_STRING;
 
         /// <summary>Start Tick.</summary>
         public int Start { get; set; } = 0;
@@ -35,7 +35,7 @@ namespace Nebulator.Dynamic
     {
         #region Properties
         /// <summary>The name for the associated track.</summary>
-        public string TrackName { get; set; } = Utils.UNKNOWN_STRING;
+        public string TrackName { get; set; } = Definitions.UNKNOWN_STRING;
 
         /// <summary>The names for the associated Sequences.</summary>
         public List<string> SequenceNames { get; set; } = new List<string>();

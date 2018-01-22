@@ -20,36 +20,28 @@ namespace Nebulator.Scripting
 
         #region User script properties
         /// <summary>Current Nebulator step time.</summary>
-        public Time stepTime { get { return DynamicEntities.StepTime; } }
+        public Time stepTime { get { return RtVals.StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return DynamicEntities.StepTime.Tick; } }
+        public int tick { get { return RtVals.StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return DynamicEntities.StepTime.Tock; } }
+        public int tock { get { return RtVals.StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return (float)DynamicEntities.RealTime; } }
+        public float now { get { return RtVals.RealTime; } }
 
         /// <summary>Neb step clock is running.</summary>
-        public bool playing { get { return DynamicEntities.Playing; } }
+        public bool playing { get { return RtVals.Playing; } }
 
         /// <summary>Tock subdivision.</summary>
-        public int tocksPerTick { get { return Utils.TOCKS_PER_TICK; } }
+        public int tocksPerTick { get { return Definitions.TOCKS_PER_TICK; } }
 
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
-        public float speed
-        {
-            get { return (float)DynamicEntities.Speed; }
-            set { ScriptSpeedChangeEvent?.Invoke(this, new ScriptSpeedChangeEventArgs() { Speed = value }); }
-        }
+        public float speed { get { return RtVals.Speed; } set { RtVals.Speed = value; } }
 
         /// <summary>Nebulator master Volume.</summary>
-        public int volume
-        {
-            get { return DynamicEntities.Volume; }
-            set { ScriptVolumeChangeEvent?.Invoke(this, new ScriptVolumeChangeEventArgs() { Volume = value }); }
-        }
+        public int volume { get { return RtVals.Volume; } set { RtVals.Volume = value; } }
 
         /// <summary>Indicates using internal synth.</summary>
         public bool winGm { get { return UserSettings.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
@@ -88,7 +80,7 @@ namespace Nebulator.Scripting
                     };
 
                     step.Adjust(volume, track.Volume, track.Modulate);
-                    MidiInterface.TheInterface.Send(step, dur.TotalTocks > 0);
+                    MidiInterface.TheInterface.Send(step);//, dur.TotalTocks > 0);
                 }
                 else
                 {
@@ -109,7 +101,7 @@ namespace Nebulator.Scripting
         /// Send a midi note immediately. Respects solo/mute.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
-        /// <param name="snote">Note string using any form allowed in the script. TODO2 Requires double quotes in the script.</param>
+        /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void sendMidiNote(Track track, string snote, int vol, Time dur)
@@ -196,8 +188,8 @@ namespace Nebulator.Scripting
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = ScriptEntities.ConvertToSteps(track, seq, DynamicEntities.StepTime.Tick);
-            RuntimeSteps.Add(scoll);
+            StepCollection scoll = ScriptEntities.ConvertToSteps(track, seq, RtVals.StepTime.Tick);
+            RtVals.RuntimeSteps.Add(scoll);
         }
 
         /// <summary>

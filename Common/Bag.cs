@@ -13,7 +13,7 @@ namespace Nebulator.Common
     public class Bag
     {
         /// <summary>The file name.</summary> 
-        string _fn = Utils.UNKNOWN_STRING;
+        string _fn = Definitions.UNKNOWN_STRING;
 
         /// <summary>Misc dynamic values that we want to persist. Needs to be public so serializer can see it.</summary>
         public Dictionary<string, object> Values { get; set; } = new Dictionary<string, object>();
@@ -76,7 +76,7 @@ namespace Nebulator.Common
         /// </summary>
         public void Save()
         {
-            if (_fn != Utils.UNKNOWN_STRING)
+            if (_fn != Definitions.UNKNOWN_STRING)
             {
                 string json = JsonConvert.SerializeObject(this, Formatting.Indented);
                 File.WriteAllText(_fn, json);

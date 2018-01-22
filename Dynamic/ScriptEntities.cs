@@ -49,13 +49,14 @@ namespace Nebulator.Dynamic
             Tracks.Clear();
             Sequences.Clear();
         }
+
         /// <summary>
         /// Generate steps from sequence notes.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(Track track, Sequence seq, int startTick) // TODO2 Needs better home than here.
+        public static StepCollection ConvertToSteps(Track track, Sequence seq, int startTick) // TODO1 Needs better home than here.
         {
             StepCollection steps = new StepCollection();
 
@@ -97,12 +98,12 @@ namespace Nebulator.Dynamic
                         };
                         steps.AddStep(startNoteTime, step);
 
-                        // Maybe add a deferred stop note.
-                        if (stopNoteTime != startNoteTime)
-                        {
-                            steps.AddStep(stopNoteTime, new StepNoteOff(step));
-                        }
-                        // else client is taking care of it.
+                        //// Maybe add a deferred stop note.
+                        //if (stopNoteTime != startNoteTime)
+                        //{
+                        //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
+                        //}
+                        //// else client is taking care of it.
                     }
                 }
             }

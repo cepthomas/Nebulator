@@ -10,9 +10,8 @@ using System.Diagnostics;
 
 namespace Nebulator.Common
 {
-    public static class Utils
+    public static class Definitions
     {
-        #region Constants
         /// <summary>General purpose marker.</summary>
         public const string UNKNOWN_STRING = "???";
 
@@ -21,8 +20,10 @@ namespace Nebulator.Common
 
         /// <summary>Subdivision setting.</summary>
         public const int TOCKS_PER_TICK = 96;
-        #endregion
+    }
 
+    public static class Utils
+    {
         #region UI helpers
         /// <summary>
         /// Allows user to enter only integer or float values.

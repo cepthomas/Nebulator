@@ -168,7 +168,7 @@ public override void step()
                 break;
 
             case 12:
-                sendMidiNote(SYNTH, 62, 0, 0.00); // numbered note (D.4) off
+                sendMidiNote(SYNTH, 62, 0, 0.00); // numbered note (D4 above) off
                 break;
 
             case 24:

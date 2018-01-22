@@ -409,8 +409,8 @@ namespace Nebulator.Scripting
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) { ScriptMessageEvent?.Invoke(this, new ScriptMessageEventArgs() { Message = string.Join(" ", vars) }); }
-        public void println(params object[] vars) { ScriptMessageEvent?.Invoke(this, new ScriptMessageEventArgs() { Message = string.Join(" ", vars) + Environment.NewLine }); }
+        public void print(params object[] vars) { RtVals.PrintLines.Add(string.Join(" ", vars)); }
+        public void println(params object[] vars) { RtVals.PrintLines.Add(string.Join(" ", vars) + Environment.NewLine); }
         public void printArray(params object[] ps) { throw new NotSupportedException(); }
         #endregion
 

@@ -170,7 +170,7 @@ namespace Nebulator.Midi
         /// </summary>
         /// <param name="step"></param>
         /// <param name="chase">Let midi output generate the note off.</param>
-        public void Send(Step step, bool chase = false)
+        public void Send(Step step) //, bool chase = false)
         {
             // Critical code section
             lock (_midiLock)
@@ -188,9 +188,9 @@ namespace Nebulator.Midi
                                     Utils.Constrain(stt.VelocityToPlay, 0, MAX_MIDI_VOLUME));
                                 msg = evt.GetAsShortMessage();
 
-                                if(chase)
+                                if(stt.Duration.TotalTocks > 0)
                                 {
-                                    // Remove any lingering note offs.
+                                    // Remove any lingering note offs and add a fresh one.
                                     _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber);
                                     _stops.Add(new StepNoteOff(stt));
                                 }

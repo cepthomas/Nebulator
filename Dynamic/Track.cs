@@ -15,7 +15,7 @@ namespace Nebulator.Dynamic
     {
         #region Properties
         /// <summary>The name for this track.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
+        public string Name { get; set; } = Definitions.UNKNOWN_STRING;
 
         /// <summary>The midi channel to use: 1 - 16.</summary>
         public int Channel { get; set; } = 1;

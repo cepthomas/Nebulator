@@ -23,7 +23,7 @@ namespace Nebulator.Scripting
         class FileParseContext
         {
             /// <summary>Current source file.</summary>
-            public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
+            public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
 
             /// <summary>Current source line.</summary>
             public int LineNumber { get; set; } = 1;
@@ -52,10 +52,10 @@ namespace Nebulator.Scripting
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Starting directory.</summary>
-        string _baseDir = Utils.UNKNOWN_STRING;
+        string _baseDir = Definitions.UNKNOWN_STRING;
 
         /// <summary>Script info.</summary>
-        string _scriptName = Utils.UNKNOWN_STRING;
+        string _scriptName = Definitions.UNKNOWN_STRING;
 
         /// <summary>Declared constants. Key is name.</summary>
         Dictionary<string, int> _consts = new Dictionary<string, int>();
@@ -89,7 +89,7 @@ namespace Nebulator.Scripting
         {
             Script script = null;
 
-            if(nebfn != Utils.UNKNOWN_STRING && File.Exists(nebfn))
+            if(nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
             {
                 _logger.Info($"Compiling {nebfn}.");
 
@@ -189,7 +189,7 @@ namespace Nebulator.Scripting
             };
             ParseOneFile(pcont);
 
-            // Finished. Patch some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
+            // Finished. Patch some forward refs. TODO1 A bit clumsy - probably should be a two pass compile.
             foreach(Section sect in Dynamic.ScriptEntities.Sections.Values)
             {
                 foreach(SectionTrack st in sect.SectionTracks)
@@ -410,7 +410,7 @@ namespace Nebulator.Scripting
                     paths.Add(fullpath);
                 }
 
-                // TODO2 Would actually like to use roslyn for C#7 stuff but it's a pain to implement for Win7.
+                // TODO2 Would actually like to use roslyn for C#7 stuff but it's a pain to implement.
                 //Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider providerX = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider();
                 //// Need to fix hardcoded path to compiler - why isn't this fixed by MS?
                 //var flags = BindingFlags.NonPublic | BindingFlags.Instance;
@@ -448,7 +448,7 @@ namespace Nebulator.Scripting
                     {
                         // The line should end with source line number: "//1234"
                         int origLineNum = 0; // defaults
-                        string origFileName = Utils.UNKNOWN_STRING;
+                        string origFileName = Definitions.UNKNOWN_STRING;
 
                         // Dig out the offending source code information.
                         string fpath = Path.GetFileName(err.FileName.ToLower());
@@ -464,7 +464,7 @@ namespace Nebulator.Scripting
                                 // Must be an internal error. Do the best we can.
                                 Errors.Add(new ScriptError()
                                 {
-                                    ErrorType = ScriptErrorType.Compile,
+                                    ErrorType = ScriptError.ScriptErrorType.Compile,
                                     SourceFile = err.FileName,
                                     LineNumber = err.Line,
                                     Message = $"Internal Error: {err.ErrorText} in: {origLine}"
@@ -475,7 +475,7 @@ namespace Nebulator.Scripting
                                 int.TryParse(origLine.Substring(ind + 2), out origLineNum);
                                 Errors.Add(new ScriptError()
                                 {
-                                    ErrorType = ScriptErrorType.Compile,
+                                    ErrorType = ScriptError.ScriptErrorType.Compile,
                                     SourceFile = origFileName,
                                     LineNumber = origLineNum,
                                     Message = err.ErrorText
@@ -494,7 +494,7 @@ namespace Nebulator.Scripting
             {
                 Errors.Add(new ScriptError()
                 {
-                    ErrorType = ScriptErrorType.Compile,
+                    ErrorType = ScriptError.ScriptErrorType.Compile,
                     Message = "Exception: " + ex.Message,
                     SourceFile = "",
                     LineNumber = 0
@@ -539,7 +539,7 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Create the file containing extra stuff. TODO2 Probably shouldn't do this every time.
+        /// Create the file containing extra stuff. TODO1 Probably shouldn't do this every time.
         /// </summary>
         /// <returns></returns>
         List<string> GenSuppFileContents()
@@ -959,7 +959,7 @@ namespace Nebulator.Scripting
         {
             Errors.Add(new ScriptError()
             {
-                ErrorType = ScriptErrorType.Parse,
+                ErrorType = ScriptError.ScriptErrorType.Parse,
                 Message = msg,
                 SourceFile = pcont.SourceFile,
                 LineNumber = pcont.LineNumber
@@ -1044,7 +1044,7 @@ namespace Nebulator.Scripting
                     // Check for valid fractional part.
                     if (int.TryParse(parts[1], out int result))
                     {
-                        if (result >= Utils.TOCKS_PER_TICK)
+                        if (result >= Definitions.TOCKS_PER_TICK)
                         {
                             throw null; // too big
                         }
@@ -1073,7 +1073,7 @@ namespace Nebulator.Scripting
                         }
 
                         // Scale.
-                        d *= Utils.TOCKS_PER_TICK;
+                        d *= Definitions.TOCKS_PER_TICK;
 
                         // Truncate.
                         d = Math.Floor(d);
@@ -1098,7 +1098,7 @@ namespace Nebulator.Scripting
                         {
                             case 'x':
                                 // Note on.
-                                times.Add(new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Utils.TOCKS_PER_TICK / PATTERN_SIZE));
+                                times.Add(new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Definitions.TOCKS_PER_TICK / PATTERN_SIZE));
                                 break;
 
                             case '-':

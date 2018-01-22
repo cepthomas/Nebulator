@@ -12,25 +12,63 @@ using Nebulator.Dynamic;
 
 namespace Nebulator.Scripting
 {
+    /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
+    public class RuntimeValues
+    {
+        /// <summary>Main > Script</summary>
+        public bool Playing { get; set; }
+
+        /// <summary>Main > Script</summary>
+        public Time StepTime { get; set; }
+
+        /// <summary>Main > Script</summary>
+        public float RealTime { get; set; }
+
+        /// <summary>Main > Script > Main</summary>
+        public float Speed { get; set; }
+
+        /// <summary>Main > Script > Main</summary>
+        public int Volume { get; set; }
+
+        /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script > Main</summary>
+        public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
+
+        /// <summary>Script > Main</summary>
+        public List<string> PrintLines { get; private set; } = new List<string>();
+    }
+
+    /// <summary>
+    /// General error container.
+    /// </summary>
+    public class ScriptError
+    {
+        public enum ScriptErrorType { None, Parse, Compile, Runtime }
+
+        /// <summary>Where it came from.</summary>
+        public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
+
+        /// <summary>Original source file.</summary>
+        public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
+
+        /// <summary>Original source line number.</summary>
+        public int LineNumber { get; set; } = 0;
+
+        /// <summary>Message from parse or compile or runtime error.</summary>
+        public string Message { get; set; } = Definitions.UNKNOWN_STRING;
+
+        /// <summary>Readable.</summary>
+        public override string ToString() => $"{ErrorType} Error: {SourceFile}({LineNumber}): {Message}";
+    }
+
+
     /// <summary>
     /// Core functions of script. User scripts inherit from this class.
     /// </summary>
     public partial class Script
     {
         #region Properties
-        /// <summary>Steps added by script functions at runtime e.g. playSequence().</summary>
-        public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
-        #endregion
-
-        #region Script events
-        public class ScriptMessageEventArgs : EventArgs { public string Message { get; set; } = ""; }
-        public event EventHandler<ScriptMessageEventArgs> ScriptMessageEvent;
-
-        public class ScriptSpeedChangeEventArgs : EventArgs { public double Speed { get; set; } = 0; }
-        public event EventHandler<ScriptSpeedChangeEventArgs> ScriptSpeedChangeEvent;
-
-        public class ScriptVolumeChangeEventArgs : EventArgs { public int Volume { get; set; } = 0; }
-        public event EventHandler<ScriptVolumeChangeEventArgs> ScriptVolumeChangeEvent;
+        /// <summary>Current working set of dynamic values - things shared between host and script.</summary>
+        public RuntimeValues RtVals { get; set; } = new RuntimeValues();
         #endregion
 
         #region Fields
@@ -58,19 +96,19 @@ namespace Nebulator.Scripting
         /// <summary>Where to keep style stack.</summary>
         Bag _style = new Bag();
 
-        /// <summary>Background color. Internal so surface can access.</summary>
+        /// <summary>Background color. Internal so ScriptSurface can access.</summary>
         internal Color _bgColor = Color.LightGray;
 
-        /// <summary>Smoothing option. Internal so surface can access.</summary>
+        /// <summary>Smoothing option. Internal so ScriptSurface can access.</summary>
         internal bool _smooth = true;
 
-        /// <summary>Loop option. Internal so surface can access.</summary>
+        /// <summary>Loop option. Internal so ScriptSurface can access.</summary>
         internal bool _loop = true;
 
-        /// <summary>Redraw option. Internal so surface can access.</summary>
+        /// <summary>Redraw option. Internal so ScriptSurface can access.</summary>
         internal bool _redraw = false;
 
-        /// <summary>Current working Graphics object to draw on. Internal so surface can access</summary>
+        /// <summary>Current working Graphics object to draw on. Internal so ScriptSurface can access</summary>
         internal Graphics _gr = null;
 
         /// <summary>
