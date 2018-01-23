@@ -73,7 +73,7 @@ namespace Nebulator.Scripting
 
             using (BufferedGraphics buffer = context.Allocate(e.Graphics, ClientRectangle))
             {
-                if (_script != null)
+                if (_script != null && _script.playing)
                 {
                     buffer.Graphics.Clear(_script._bgColor);
 

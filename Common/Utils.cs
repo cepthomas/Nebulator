@@ -412,7 +412,7 @@ namespace Nebulator.Common
 
                     s.Trim();
 
-                    if(l.Contains("NotSupportedException"))
+                    if(l.Contains("ScriptInvalidFunctionException"))
                     {
                         s = s.Insert(0, "//NI ");
                     }

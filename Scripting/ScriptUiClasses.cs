@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using System.Text;
 using Nebulator.Common;
 
-// Processing java source: https://github.com/processing/processing/blob/master/core/src/processing
 
+// Mappings between Processing and nebulator classes.
 
 namespace Nebulator.Scripting
 {

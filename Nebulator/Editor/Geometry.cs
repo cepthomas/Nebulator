@@ -41,7 +41,7 @@ namespace Nebulator.Editor
         public bool Closed { get; set; } = true;
 
 
-        /*** TODOG some or all of these::::::::::::::::
+        /*** :::::::::::::::: some or all of these::::::::::::::::
         /// <summary>Border shape types for tagging indication.</summary>
         public enum BorderShapeType { None = 0, Circle = 1, Square = 2, Triangle = 3 }
 
@@ -101,7 +101,7 @@ namespace Nebulator.Editor
             Points.Add(p);
         }
 
-        public void InsertVertex(int where, PointF which) //TODOG
+        public void InsertVertex(int where, PointF which) //::::::::::::::::
         {
             //int ind = 0;
             //for (int i = 0; i < Points.Count; i++)
@@ -323,7 +323,7 @@ namespace Nebulator.Editor
                 // The segments intersect if t1 and t2 are between 0 and 1.
                 res.intersect = ((t1 >= 0) && (t1 <= 1) && (t2 >= 0) && (t2 <= 1)) ? IntersectType.BoundedIntersection : IntersectType.UnboundedIntersection;
 
-                //// Find the closest points on the segments. TODOG ?
+                //// Find the closest points on the segments. :::::::::::::::: ?
                 //if (t1 < 0)
                 //{
                 //    t1 = 0;

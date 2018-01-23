@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using Nebulator.Common;
 
+// TODO2 Get all this working, or at least figure out what it's supposed to do...
 
 
 namespace Nebulator.Editor
@@ -410,7 +411,7 @@ namespace Nebulator.Editor
             //_yMaxScale = _yVals.Max();
 
 
-            Invalidate(); // TODOG or Refresh()??
+            Invalidate(); // :::::::::::::::: or Refresh()??
             //https://blogs.msdn.microsoft.com/subhagpo/2005/02/22/whats-the-difference-between-control-invalidate-control-update-and-control-refresh/
             //Invalidate() simply adds a region to the update region of the control. The next time WM_PAINT is received, the area you invalidated plus any other invalidated regions, are marked for painting. When RedrawWindow() is called, that will normally post a WM_PAINT message to the application queue. The system is free to do what it wants with that, usually more pressing business, and paint when it can.
             //If you call Update(), you get GDI + 's UpdateWindow() which won't mark a region for repainting, but pushes a WM_PAINT directly to WNDPROC(), bypassing the application queue.
@@ -524,7 +525,7 @@ namespace Nebulator.Editor
                 float theight = _axisLabelFont.Height;
                 DrawLabel(e.Graphics, space, Height / 2 + size / 2, YAxisLabel, _axisLabelFont, 270);
 
-                // Draw Selection Rectangle if ctrl is down and not dragging cursor. TODOG
+                // Draw Selection Rectangle if ctrl is down and not dragging cursor. ::::::::::::::::
                 if (KeyboardState.IsKeyDown(Keys.ControlKey) && _drawState == DrawState.MouseMove_Selecting)  // _dragging && _dragCursor == null)
                 {
                     float width = 0.0f, height = 0.0f;
@@ -909,7 +910,7 @@ namespace Nebulator.Editor
                             break;
 
                         case PointLocation.OverEdge:
-                            newCursor = Cursors.SizeAll; //TODOG scrub all cursors.
+                            newCursor = Cursors.SizeAll; //:::::::::::::::: scrub all cursors.
                             break;
 
                         case PointLocation.OverPolygon:
@@ -919,7 +920,7 @@ namespace Nebulator.Editor
                         case PointLocation.NotPertinent:
                             if ((MouseButtons != MouseButtons.Left) && newPos != _lastMousePos) // Apparently a known issue is that showing a tooltip causes a MouseMove event to get generated.
                             {
-                                // If the mouse is over a point or cursor, show its tooltip. TODOG
+                                // If the mouse is over a point or cursor, show its tooltip. ::::::::::::::::
 
                                 //DataPoint closestPoint = GetClosestPoint(newPos);
                                 //GridCursor closestCursor = CursorToolTipProvider != null ? GetClosestCursor(newPos) : null;
@@ -993,7 +994,7 @@ namespace Nebulator.Editor
                     //{
                     //    if ((MouseButtons != MouseButtons.Left) && newPos != _lastMousePos) // Apparently a known issue is that showing a tooltip causes a MouseMove event to get generated.
                     //    {
-                    //        // If the mouse is over a point or cursor, show its tooltip. TODOG
+                    //        // If the mouse is over a point or cursor, show its tooltip. ::::::::::::::::
 
                     //        //DataPoint closestPoint = GetClosestPoint(newPos);
                     //        //GridCursor closestCursor = CursorToolTipProvider != null ? GetClosestCursor(newPos) : null;
@@ -1070,7 +1071,7 @@ namespace Nebulator.Editor
             {
                 ContextMenuStrip cms = new ContextMenuStrip();
                 cms.ShowImageMargin = false;
-                cms.Items.Add("TODOG any???");
+                cms.Items.Add(":::::::::::::::: any???");
                 //cms.Items.Add("Set Scale", null, new EventHandler(ShowChartScale));
                 cms.Show(this, new Point(e.X, e.Y));
             }
@@ -1228,7 +1229,7 @@ namespace Nebulator.Editor
             // Draw the polygons.
             foreach (PolygonF polygon in Polygons)
             {
-                // Draw the polygon. TODOG support non closed. GraphicsPath
+                // Draw the polygon. :::::::::::::::: support non closed. GraphicsPath
                 g.FillPolygon(Brushes.White, polygon.Points.ToArray());
                 g.DrawPolygon(Pens.Blue, polygon.Points.ToArray());
 

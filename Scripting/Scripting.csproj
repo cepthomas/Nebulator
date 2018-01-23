@@ -64,6 +64,7 @@
     <Compile Include="Compiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script.cs" />
+    <Compile Include="ScriptClasses.cs" />
     <Compile Include="ScriptNeb.cs" />
     <Compile Include="ScriptSurface.cs">
       <SubType>UserControl</SubType>

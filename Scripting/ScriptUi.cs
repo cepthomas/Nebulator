@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Text;
 using Nebulator.Common;
 
-// Processing java source: https://github.com/processing/processing/blob/master/core/src/processing
+// Processing implementation. Some borrowed from Processing java source: https://github.com/processing/processing/blob/master/core/src/processing
 
 
 namespace Nebulator.Scripting
@@ -78,7 +78,7 @@ namespace Nebulator.Scripting
         public virtual void draw() { }
 
         //---- Script functions
-        public void exit() { throw new NotSupportedException(); }
+        public void exit() { throw new ScriptInvalidFunctionException(nameof(exit)); }
 
         // Stops Processing from continuously executing the code within draw(). If loop() is called, the code
         // in draw() begins to run continuously again. If using noLoop() in setup(), it should be the last line
@@ -96,8 +96,8 @@ namespace Nebulator.Scripting
         // fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), 
         // ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), 
         // emissive(), specular(), shininess(), ambient()
-        public void popStyle() { throw new NotSupportedException(); }
-        public void pushStyle() { throw new NotSupportedException(); }
+        public void popStyle() { throw new ScriptInvalidFunctionException(nameof(popStyle)); }
+        public void pushStyle() { throw new ScriptInvalidFunctionException(nameof(pushStyle)); }
 
         // Executes the code within draw() one time. This functions allows the program to update the display window
         // only when necessary, for example when an event registered by mousePressed() or keyPressed() occurs.
@@ -107,73 +107,73 @@ namespace Nebulator.Scripting
         // use loop() and noLoop().
         public void redraw() { _redraw = true; }
 
-        public void thread() { throw new NotSupportedException(); } // BackgroundWorker?
+        public void thread() { throw new ScriptInvalidFunctionException(nameof(thread)); }
         #endregion
 
         #region Environment 
         //---- Script properties
-        public void cursor(int which) { throw new NotSupportedException(); }
-        public void cursor(PImage image) { throw new NotSupportedException(); }
-        public void cursor(PImage image, int x, int y) { throw new NotSupportedException(); }
-        public void delay(int msec) { throw new NotSupportedException(); }
-        public int displayDensity() { throw new NotSupportedException(); }
+        public void cursor(int which) { throw new ScriptInvalidFunctionException(nameof(cursor)); }
+        public void cursor(PImage image) { throw new ScriptInvalidFunctionException(nameof(cursor)); }
+        public void cursor(PImage image, int x, int y) { throw new ScriptInvalidFunctionException(nameof(cursor)); }
+        public void delay(int msec) { throw new ScriptInvalidFunctionException(nameof(delay)); }
+        public int displayDensity() { throw new ScriptInvalidFunctionException(nameof(displayDensity)); }
         public bool focused { get; internal set; }
         public int frameCount { get; private set; } = 1;
-        public int frameRate { get { throw new NotSupportedException(); } }
-        public void fullScreen() { throw new NotSupportedException(); }
+        public int frameRate { get { throw new ScriptInvalidFunctionException(nameof(frameRate)); } }
+        public void fullScreen() { throw new ScriptInvalidFunctionException(nameof(fullScreen)); }
         public int height { get; internal set; }
-        public void noCursor() { throw new NotSupportedException(); }
+        public void noCursor() { throw new ScriptInvalidFunctionException(nameof(noCursor)); }
         public void noSmooth() { _smooth = false; }
-        public void pixelDensity(int density) { throw new NotSupportedException(); }
-        public int pixelHeight { get { throw new NotSupportedException(); } }
-        public int pixelWidth { get { throw new NotSupportedException(); } }
-        public void size(int width, int height) { throw new NotSupportedException(); }
+        public void pixelDensity(int density) { throw new ScriptInvalidFunctionException(nameof(pixelDensity)); }
+        public int pixelHeight { get { throw new ScriptInvalidFunctionException(nameof(pixelHeight)); } }
+        public int pixelWidth { get { throw new ScriptInvalidFunctionException(nameof(pixelWidth)); } }
+        public void size(int width, int height) { throw new ScriptInvalidFunctionException(nameof(size)); }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
         public int width { get; internal set; }
         #endregion
 
         #region Data
-        public string binary(object value) { throw new NotSupportedException(); }
-        public bool boolean(object value) { throw new NotSupportedException(); }
-        public byte @byte (object value) { throw new NotSupportedException(); }
-        public char @char (object value) { throw new NotSupportedException(); }
-        public float @float(object value) { throw new NotSupportedException(); }
-        public string hex(object value) { throw new NotSupportedException(); }
+        public string binary(object value) { throw new ScriptInvalidFunctionException(nameof(binary)); }
+        public bool boolean(object value) { throw new ScriptInvalidFunctionException(nameof(boolean)); }
+        public byte @byte (object value) { throw new ScriptInvalidFunctionException(nameof(@byte)); }
+        public char @char (object value) { throw new ScriptInvalidFunctionException(nameof(@char)); }
+        public float @float(object value) { throw new ScriptInvalidFunctionException(nameof(@float)); }
+        public string hex(object value) { throw new ScriptInvalidFunctionException(nameof(hex)); }
         public int @int(float val) { return (int)val; }
         public string str(object value) { return value.ToString(); }
-        public int unbinary(string value) { throw new NotSupportedException(); }
-        public int unhex(string value) { throw new NotSupportedException(); }
+        public int unbinary(string value) { throw new ScriptInvalidFunctionException(nameof(unbinary)); }
+        public int unhex(string value) { throw new ScriptInvalidFunctionException(nameof(unhex)); }
 
         #region Data - String Functions
-        public string join(params object[] ps) { throw new NotSupportedException(); }
-        public string match(params object[] ps) { throw new NotSupportedException(); }
-        public string matchAll(params object[] ps) { throw new NotSupportedException(); }
-        public string nf(params object[] ps) { throw new NotSupportedException(); }
-        public string nfc(params object[] ps) { throw new NotSupportedException(); }
-        public string nfp(params object[] ps) { throw new NotSupportedException(); }
-        public string nfs(params object[] ps) { throw new NotSupportedException(); }
-        public string split(params object[] ps) { throw new NotSupportedException(); }
-        public string splitTokens(params object[] ps) { throw new NotSupportedException(); }
-        public string trim(params object[] ps) { throw new NotSupportedException(); }
+        public string join(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(join)); }
+        public string match(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(match)); }
+        public string matchAll(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(matchAll)); }
+        public string nf(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(nf)); }
+        public string nfc(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(nfc)); }
+        public string nfp(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(nfp)); }
+        public string nfs(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(nfs)); }
+        public string split(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(split)); }
+        public string splitTokens(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(splitTokens)); }
+        public string trim(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(trim)); }
         #endregion
 
         #region Data - Array Functions
-        public void append(params object[] ps) { throw new NotSupportedException(); }
-        public void arrayCopy(params object[] ps) { throw new NotSupportedException(); }
-        public void concat(params object[] ps) { throw new NotSupportedException(); }
-        public void expand(params object[] ps) { throw new NotSupportedException(); }
-        public void reverse(params object[] ps) { throw new NotSupportedException(); }
-        public void shorten(params object[] ps) { throw new NotSupportedException(); }
-        public void sort(params object[] ps) { throw new NotSupportedException(); }
-        public void splice(params object[] ps) { throw new NotSupportedException(); }
-        public void subset(params object[] ps) { throw new NotSupportedException(); }
+        public void append(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(append)); }
+        public void arrayCopy(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(arrayCopy)); }
+        public void concat(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(concat)); }
+        public void expand(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(expand)); }
+        public void reverse(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(reverse)); }
+        public void shorten(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(shorten)); }
+        public void sort(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(sort)); }
+        public void splice(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(splice)); }
+        public void subset(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(subset)); }
         #endregion
         #endregion
 
         #region Shape 
-        public void createShape(params object[] ps) { throw new NotSupportedException(); }
-        public void loadShape(params object[] ps) { throw new NotSupportedException(); }
+        public void createShape(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(createShape)); }
+        public void loadShape(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadShape)); }
 
         #region Shape - 2D Primitives
         public void arc(float x1, float y1, float x2, float y2, float angle1, float angle2, int style)
@@ -265,30 +265,30 @@ namespace Nebulator.Scripting
             _gr.DrawBezier(_pen, x1, y1, x2, y2, x3, y3, x4, y4);
         }
 
-        public void bezierDetail(params object[] ps) { throw new NotSupportedException(); }
-        public void bezierPoint(params object[] ps) { throw new NotSupportedException(); }
-        public void bezierTangent(params object[] ps) { throw new NotSupportedException(); }
+        public void bezierDetail(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(bezierDetail)); }
+        public void bezierPoint(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(bezierPoint)); }
+        public void bezierTangent(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(bezierTangent)); }
 
         public void curve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
         {
             _gr.DrawCurve(_pen, new Point[4] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3), new Point(x4, y4) }, 1, 1, 0.5f);
         }
 
-        public void curveDetail(params object[] ps) { throw new NotSupportedException(); }
-        public void curvePoint(params object[] ps) { throw new NotSupportedException(); }
-        public void curveTangent(params object[] ps) { throw new NotSupportedException(); }
-        public void curveTightness(params object[] ps) { throw new NotSupportedException(); }
+        public void curveDetail(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(curveDetail)); }
+        public void curvePoint(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(curvePoint)); }
+        public void curveTangent(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(curveTangent)); }
+        public void curveTightness(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(curveTightness)); }
         #endregion
 
         #region Shape - 3D Primitives
-        public void box(params object[] ps) { throw new NotSupportedException(); }
-        public void sphere(params object[] ps) { throw new NotSupportedException(); }
-        public void sphereDetail(params object[] ps) { throw new NotSupportedException(); }
+        public void box(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(box)); }
+        public void sphere(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(sphere)); }
+        public void sphereDetail(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(sphereDetail)); }
         #endregion
 
         #region Shape - Attributes
-        public void ellipseMode(int mode) { throw new NotSupportedException(); }
-        public void rectMode(int mode) { throw new NotSupportedException(); }
+        public void ellipseMode(int mode) { throw new ScriptInvalidFunctionException(nameof(ellipseMode)); }
+        public void rectMode(int mode) { throw new ScriptInvalidFunctionException(nameof(rectMode)); }
 
         public void strokeCap(int style)
         {
@@ -333,19 +333,19 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Shape - Vertex
-        public void beginContour(params object[] ps) { throw new NotSupportedException(); }
-        public void beginShape(params object[] ps) { throw new NotSupportedException(); }
-        public void bezierVertex(params object[] ps) { throw new NotSupportedException(); }
-        public void curveVertex(params object[] ps) { throw new NotSupportedException(); }
-        public void endContour(params object[] ps) { throw new NotSupportedException(); }
-        public void endShape(params object[] ps) { throw new NotSupportedException(); }
-        public void quadraticVertex(params object[] ps) { throw new NotSupportedException(); }
-        public void vertex(params object[] ps) { throw new NotSupportedException(); }
+        public void beginContour(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(beginContour)); }
+        public void beginShape(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(beginShape)); }
+        public void bezierVertex(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(bezierVertex)); }
+        public void curveVertex(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(curveVertex)); }
+        public void endContour(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(endContour)); }
+        public void endShape(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(endShape)); }
+        public void quadraticVertex(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(quadraticVertex)); }
+        public void vertex(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(vertex)); }
         #endregion
 
         #region Shape - Loading & Displaying
-        public void shape(params object[] ps) { throw new NotSupportedException(); }
-        public void shapeMode(params object[] ps) { throw new NotSupportedException(); }
+        public void shape(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(shape)); }
+        public void shapeMode(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(shapeMode)); }
         #endregion
         #endregion
 
@@ -380,20 +380,20 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Input - Files
-        public void createInput(params object[] ps) { throw new NotSupportedException(); }
-        public void createReader(params object[] ps) { throw new NotSupportedException(); }
-        public void launch(params object[] ps) { throw new NotSupportedException(); }
-        public void loadBytes(params object[] ps) { throw new NotSupportedException(); }
-        public void loadJSONArray(params object[] ps) { throw new NotSupportedException(); }
-        public void loadJSONObject(params object[] ps) { throw new NotSupportedException(); }
-        public void loadStrings(params object[] ps) { throw new NotSupportedException(); }
-        public void loadTable(params object[] ps) { throw new NotSupportedException(); }
-        public void loadXML(params object[] ps) { throw new NotSupportedException(); }
-        public void parseJSONArray(params object[] ps) { throw new NotSupportedException(); }
-        public void parseJSONObject(params object[] ps) { throw new NotSupportedException(); }
-        public void parseXML(params object[] ps) { throw new NotSupportedException(); }
-        public void selectFolder(params object[] ps) { throw new NotSupportedException(); }
-        public void selectInput(params object[] ps) { throw new NotSupportedException(); }
+        public void createInput(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(createInput)); }
+        public void createReader(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(createReader)); }
+        public void launch(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(launch)); }
+        public void loadBytes(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadBytes)); }
+        public void loadJSONArray(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadJSONArray)); }
+        public void loadJSONObject(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadJSONObject)); }
+        public void loadStrings(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadStrings)); }
+        public void loadTable(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadTable)); }
+        public void loadXML(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadXML)); }
+        public void parseJSONArray(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(parseJSONArray)); }
+        public void parseJSONObject(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(parseJSONObject)); }
+        public void parseXML(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(parseXML)); }
+        public void selectFolder(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(selectFolder)); }
+        public void selectInput(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(selectInput)); }
         #endregion
 
         #region Input - Time & Date
@@ -411,91 +411,91 @@ namespace Nebulator.Scripting
         #region Output - Text Area
         public void print(params object[] vars) { RtVals.PrintLines.Add(string.Join(" ", vars)); }
         public void println(params object[] vars) { RtVals.PrintLines.Add(string.Join(" ", vars) + Environment.NewLine); }
-        public void printArray(params object[] ps) { throw new NotSupportedException(); }
+        public void printArray(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(printArray)); }
         #endregion
 
         #region Output - Image
-        public void save(string fn) { throw new NotSupportedException(); }
-        public void saveFrame() { throw new NotSupportedException(); }
-        public void saveFrame(string fn) { throw new NotSupportedException(); }
+        public void save(string fn) { throw new ScriptInvalidFunctionException(nameof(save)); }
+        public void saveFrame() { throw new ScriptInvalidFunctionException(nameof(saveFrame)); }
+        public void saveFrame(string fn) { throw new ScriptInvalidFunctionException(nameof(saveFrame)); }
         #endregion
 
         #region Output - Files
-        public void beginRaw(params object[] ps) { throw new NotSupportedException(); }
-        public void beginRecord(params object[] ps) { throw new NotSupportedException(); }
-        public void createOutput(params object[] ps) { throw new NotSupportedException(); }
-        public void createWriter(params object[] ps) { throw new NotSupportedException(); }
-        public void endRaw(params object[] ps) { throw new NotSupportedException(); }
-        public void endRecord(params object[] ps) { throw new NotSupportedException(); }
+        public void beginRaw(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(beginRaw)); }
+        public void beginRecord(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(beginRecord)); }
+        public void createOutput(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(createOutput)); }
+        public void createWriter(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(createWriter)); }
+        public void endRaw(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(endRaw)); }
+        public void endRecord(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(endRecord)); }
         #endregion
 
         #region Output - PrintWriter
-        public void saveBytes(params object[] ps) { throw new NotSupportedException(); }
-        public void saveJSONArray(params object[] ps) { throw new NotSupportedException(); }
-        public void saveJSONObject(params object[] ps) { throw new NotSupportedException(); }
-        public void saveStream(params object[] ps) { throw new NotSupportedException(); }
-        public void saveStrings(params object[] ps) { throw new NotSupportedException(); }
-        public void saveTable(params object[] ps) { throw new NotSupportedException(); }
-        public void saveXML(params object[] ps) { throw new NotSupportedException(); }
-        public void selectOutput(params object[] ps) { throw new NotSupportedException(); }
+        public void saveBytes(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(saveBytes)); }
+        public void saveJSONArray(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(saveJSONArray)); }
+        public void saveJSONObject(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(saveJSONObject)); }
+        public void saveStream(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(saveStream)); }
+        public void saveStrings(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(saveStrings)); }
+        public void saveTable(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(saveTable)); }
+        public void saveXML(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(saveXML)); }
+        public void selectOutput(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(selectOutput)); }
         #endregion
         #endregion
 
         #region Transform 
-        public void applyMatrix(params object[] ps) { throw new NotSupportedException(); }
+        public void applyMatrix(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(applyMatrix)); }
         public void popMatrix() { _gr.Transform = (Matrix)_matrixStack.Pop(); }
-        public void printMatrix(params object[] ps) { throw new NotSupportedException(); }
+        public void printMatrix(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(printMatrix)); }
         public void pushMatrix() { _matrixStack.Push(_gr.Transform); }
-        public void resetMatrix(params object[] ps) { throw new NotSupportedException(); }
+        public void resetMatrix(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(resetMatrix)); }
         public void rotate(float angle) { _gr.RotateTransform((angle * 180.0f / PI)); }
-        public void rotateX(params object[] ps) { throw new NotSupportedException(); }
-        public void rotateY(params object[] ps) { throw new NotSupportedException(); }
-        public void rotateZ(params object[] ps) { throw new NotSupportedException(); }
+        public void rotateX(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(rotateX)); }
+        public void rotateY(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(rotateY)); }
+        public void rotateZ(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(rotateZ)); }
         public void scale(float sc) { _gr.ScaleTransform(sc, sc); }
         public void scale(float scx, float scy) { _gr.ScaleTransform(scx, scy); }
-        public void shearX(params object[] ps) { throw new NotSupportedException(); }
-        public void shearY(params object[] ps) { throw new NotSupportedException(); }
+        public void shearX(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(shearX)); }
+        public void shearY(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(shearY)); }
         public void translate(float dx, float dy) { _gr.TranslateTransform(dx, dy); }
         #endregion
 
         #region Lights & Camera
         #region Lights & Camera - Lights
-        public string ambientLight(params object[] ps) { throw new NotSupportedException(); }
-        public string directionalLight(params object[] ps) { throw new NotSupportedException(); }
-        public string lightFalloff(params object[] ps) { throw new NotSupportedException(); }
-        public string lights(params object[] ps) { throw new NotSupportedException(); }
-        public string lightSpecular(params object[] ps) { throw new NotSupportedException(); }
-        public string noLights(params object[] ps) { throw new NotSupportedException(); }
-        public string normal(params object[] ps) { throw new NotSupportedException(); }
-        public string pointLight(params object[] ps) { throw new NotSupportedException(); }
-        public string spotLight(params object[] ps) { throw new NotSupportedException(); }
+        public string ambientLight(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(ambientLight)); }
+        public string directionalLight(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(directionalLight)); }
+        public string lightFalloff(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(lightFalloff)); }
+        public string lights(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(lights)); }
+        public string lightSpecular(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(lightSpecular)); }
+        public string noLights(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(noLights)); }
+        public string normal(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(normal)); }
+        public string pointLight(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(pointLight)); }
+        public string spotLight(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(spotLight)); }
         #endregion
 
         #region Lights & Camera - Camera
-        public string beginCamera(params object[] ps) { throw new NotSupportedException(); }
-        public string camera(params object[] ps) { throw new NotSupportedException(); }
-        public string endCamera(params object[] ps) { throw new NotSupportedException(); }
-        public string frustum(params object[] ps) { throw new NotSupportedException(); }
-        public string ortho(params object[] ps) { throw new NotSupportedException(); }
-        public string perspective(params object[] ps) { throw new NotSupportedException(); }
-        public string printCamera(params object[] ps) { throw new NotSupportedException(); }
-        public string printProjection(params object[] ps) { throw new NotSupportedException(); }
+        public string beginCamera(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(beginCamera)); }
+        public string camera(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(camera)); }
+        public string endCamera(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(endCamera)); }
+        public string frustum(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(frustum)); }
+        public string ortho(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(ortho)); }
+        public string perspective(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(perspective)); }
+        public string printCamera(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(printCamera)); }
+        public string printProjection(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(printProjection)); }
         #endregion
 
         #region Lights & Camera - Coordinates
-        public string modelX(params object[] ps) { throw new NotSupportedException(); }
-        public string modelY(params object[] ps) { throw new NotSupportedException(); }
-        public string modelZ(params object[] ps) { throw new NotSupportedException(); }
-        public string screenX(params object[] ps) { throw new NotSupportedException(); }
-        public string screenY(params object[] ps) { throw new NotSupportedException(); }
-        public string screenZ(params object[] ps) { throw new NotSupportedException(); }
+        public string modelX(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(modelX)); }
+        public string modelY(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(modelY)); }
+        public string modelZ(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(modelZ)); }
+        public string screenX(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(screenX)); }
+        public string screenY(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(screenY)); }
+        public string screenZ(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(screenZ)); }
         #endregion
 
         #region Lights & Camera - Material Properties
-        public string ambient(params object[] ps) { throw new NotSupportedException(); }
-        public string emissive(params object[] ps) { throw new NotSupportedException(); }
-        public string shininess(params object[] ps) { throw new NotSupportedException(); }
-        public string specular(params object[] ps) { throw new NotSupportedException(); }
+        public string ambient(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(ambient)); }
+        public string emissive(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(emissive)); }
+        public string shininess(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(shininess)); }
+        public string specular(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(specular)); }
         #endregion
         #endregion
 
@@ -518,8 +518,8 @@ namespace Nebulator.Scripting
         public void background(string pcolor) { background(new color(pcolor)); }
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
-        public void clear() { throw new NotSupportedException(); }
-        public void colorMode(params object[] ps) { throw new NotSupportedException(); }
+        public void clear() { throw new ScriptInvalidFunctionException(nameof(clear)); }
+        public void colorMode(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(colorMode)); }
 
         public void fill(int r, int g, int b, int a)
         {
@@ -585,7 +585,7 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Image 
-        public PImage createImage(params object[] ps) { throw new NotSupportedException(); }
+        public PImage createImage(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(createImage)); }
 
         #region Image - Loading & Displaying
         public void image(PImage img, float x, float y)
@@ -600,48 +600,48 @@ namespace Nebulator.Scripting
             _gr.DrawImage(img.image(), x1, y1, x2, y2);
         }
 
-        public void imageMode(int mode) { throw new NotSupportedException(); }
+        public void imageMode(int mode) { throw new ScriptInvalidFunctionException(nameof(imageMode)); }
 
         public PImage loadImage(string filename)
         {
             return new PImage(filename);
         }
 
-        public void noTint(params object[] ps) { throw new NotSupportedException(); }
-        public void requestImage(params object[] ps) { throw new NotSupportedException(); }
-        public void tint(params object[] ps) { throw new NotSupportedException(); }
+        public void noTint(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(noTint)); }
+        public void requestImage(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(requestImage)); }
+        public void tint(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(tint)); }
         #endregion
 
         #region Image - Textures
-        public void texture(params object[] ps) { throw new NotSupportedException(); }
-        public void textureMode(params object[] ps) { throw new NotSupportedException(); }
-        public void textureWrap(params object[] ps) { throw new NotSupportedException(); }
+        public void texture(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(texture)); }
+        public void textureMode(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(textureMode)); }
+        public void textureWrap(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(textureWrap)); }
         #endregion
 
         #region Image - Pixels
         // pixels[]
-        public void blend(params object[] ps) { throw new NotSupportedException(); }
-        public void copy(params object[] ps) { throw new NotSupportedException(); }
-        public void filter(params object[] ps) { throw new NotSupportedException(); }
-        public PImage get(int x, int y, int width, int height) { throw new NotSupportedException(); }
-        public color get(int x, int y) { throw new NotSupportedException(); }
-        public void loadPixels(params object[] ps) { throw new NotSupportedException(); }
-        public void set(int x, int y, color pcolor) { throw new NotSupportedException(); }
-        public void set(int x, int y, PImage src) { throw new NotSupportedException(); }
-        public void updatePixels(params object[] ps) { throw new NotSupportedException(); }
+        public void blend(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(blend)); }
+        public void copy(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(copy)); }
+        public void filter(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(filter)); }
+        public PImage get(int x, int y, int width, int height) { throw new ScriptInvalidFunctionException(nameof(get)); }
+        public color get(int x, int y) { throw new ScriptInvalidFunctionException(nameof(get)); }
+        public void loadPixels(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadPixels)); }
+        public void set(int x, int y, color pcolor) { throw new ScriptInvalidFunctionException(nameof(set)); }
+        public void set(int x, int y, PImage src) { throw new ScriptInvalidFunctionException(nameof(set)); }
+        public void updatePixels(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(updatePixels)); }
         #endregion
         #endregion
 
         #region Rendering 
-        public void blendMode(params object[] ps) { throw new NotSupportedException(); }
-        public void clip(params object[] ps) { throw new NotSupportedException(); }
-        public void createGraphics(params object[] ps) { throw new NotSupportedException(); }
-        public void noClip(params object[] ps) { throw new NotSupportedException(); }
+        public void blendMode(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(blendMode)); }
+        public void clip(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(clip)); }
+        public void createGraphics(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(createGraphics)); }
+        public void noClip(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(noClip)); }
 
         #region Rendering - Shaders
-        public void loadShader(params object[] ps) { throw new NotSupportedException(); }
-        public void resetShader(params object[] ps) { throw new NotSupportedException(); }
-        public void shader(params object[] ps) { throw new NotSupportedException(); }
+        public void loadShader(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadShader)); }
+        public void resetShader(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(resetShader)); }
+        public void shader(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(shader)); }
         #endregion
         #endregion
 
@@ -652,7 +652,7 @@ namespace Nebulator.Scripting
             return new PFont(name, size);
         }
 
-        public PFont loadFont(params object[] ps) { throw new NotSupportedException(); }
+        public PFont loadFont(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(loadFont)); }
 
         public void text(string s, float x, float y)
         {
@@ -684,10 +684,10 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Typography - Attributes
-        public void textAlign(int alignX) { throw new NotSupportedException(); }
-        public void textAlign(int alignX, int alignY) { throw new NotSupportedException(); }
-        public void textLeading(int leading) { throw new NotSupportedException(); }
-        public void textMode(params object[] ps) { throw new NotSupportedException(); }
+        public void textAlign(int alignX) { throw new ScriptInvalidFunctionException(nameof(textAlign)); }
+        public void textAlign(int alignX, int alignY) { throw new ScriptInvalidFunctionException(nameof(textAlign)); }
+        public void textLeading(int leading) { throw new ScriptInvalidFunctionException(nameof(textLeading)); }
+        public void textMode(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(textMode)); }
         public void textSize(int pts) { _font = new Font(_font.Name, pts); }
         public int textWidth(string s) { return (int)Math.Round(_gr.MeasureString(s, _font, width).Width); }
         public int textWidth(char ch) { return textWidth(ch.ToString()); }
@@ -740,9 +740,9 @@ namespace Nebulator.Scripting
         #endregion
 
         #region Math - Random
-        public void noise(params object[] ps) { throw new NotSupportedException(); }
-        public void noiseDetail(params object[] ps) { throw new NotSupportedException(); }
-        public void noiseSeed(params object[] ps) { throw new NotSupportedException(); }
+        public void noise(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(noise)); }
+        public void noiseDetail(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(noiseDetail)); }
+        public void noiseSeed(params object[] ps) { throw new ScriptInvalidFunctionException(nameof(noiseSeed)); }
         public float random(float max) { return (float)_rand.NextDouble() * max; }
         public float random(float min, float max) { return min + (float)_rand.NextDouble() * (max - min); }
         public int random(int max) { return _rand.Next(max); }

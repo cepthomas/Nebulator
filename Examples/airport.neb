@@ -104,7 +104,7 @@ public override void draw()
         line(10, y, width - 10, y);
 
         // Draw ball.
-        int radius = 30;
+        int radius = 40;
         strokeWeight(3);
 
         int total = (loop.duration + loop.delay).TotalTocks;
@@ -116,7 +116,7 @@ public override void draw()
 
             if(pos < loop.delay.TotalTocks)
             {
-                noFill();
+                fill(220);
             }
             else 
             {
@@ -124,6 +124,10 @@ public override void draw()
             }
 
             ellipse(x, y, radius, radius);
+
+            fill(40, 10, 200);
+            textSize(10); 
+            text(loop.snote, x - 15, y - 10);
         }
     }
 }
