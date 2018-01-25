@@ -99,7 +99,6 @@
     <Compile Include="Controls\TimeControl.Designer.cs">
       <DependentUpon>TimeControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor\Geometry.cs" />
     <None Include="..\..\Nebulator.wiki\ScriptDefinitions.md">
       <Link>Resources\ScriptDefinitions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -159,12 +158,6 @@
     <Compile Include="UI\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor\Grid.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\Grid.Designer.cs">
-      <DependentUpon>Grid.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\InfoDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -182,12 +175,6 @@
     </Compile>
     <Compile Include="UI\Piano.Designer.cs">
       <DependentUpon>Piano.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\ScriptEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editor\ScriptEditor.Designer.cs">
-      <DependentUpon>ScriptEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\TrackControl.cs">
       <SubType>UserControl</SubType>
@@ -232,9 +219,6 @@
     <EmbeddedResource Include="UI\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Grid.resx">
-      <DependentUpon>Grid.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\InfoDisplay.resx">
       <DependentUpon>InfoDisplay.cs</DependentUpon>
     </EmbeddedResource>
@@ -243,9 +227,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Piano.resx">
       <DependentUpon>Piano.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\ScriptEditor.resx">
-      <DependentUpon>ScriptEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TrackControl.resx">
       <DependentUpon>TrackControl.cs</DependentUpon>

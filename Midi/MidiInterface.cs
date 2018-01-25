@@ -335,7 +335,7 @@ namespace Nebulator.Midi
             {
                 if(step is StepNoteOn || step is StepNoteOff)
                 {
-                    // Pass through. TODO2 or do something useful with it, similar to _ctrlChanges. Map ranges of notes to different things.
+                    // Pass through. TODO1 or do something useful with it, similar to _ctrlChanges. Map ranges of notes to different things.
                     Send(step);
                 }
                 else

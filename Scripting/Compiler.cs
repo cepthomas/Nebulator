@@ -258,7 +258,7 @@ namespace Nebulator.Scripting
                 List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
 
                 // Preamble.
-                pcont.CodeLines.AddRange(GenCommonFileContents(pcont.SourceFile));
+                pcont.CodeLines.AddRange(GenTopOfFile(pcont.SourceFile));
 
                 for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
                 {
@@ -281,11 +281,7 @@ namespace Nebulator.Scripting
                 }
 
                 // Postamble.
-                pcont.CodeLines.AddRange(new List<string>
-                {
-                    "}",
-                    "}"
-                });
+                pcont.CodeLines.AddRange(GenBottomOfFile());
             }
 
             return valid;
@@ -511,7 +507,7 @@ namespace Nebulator.Scripting
         List<string> GenMainFileContents()
         {
             // Create the main/generated file. Indicated by empty source file name.
-            List<string> codeLines = GenCommonFileContents("");
+            List<string> codeLines = GenTopOfFile("");
 
             // The constants.
             _consts.Keys.ForEach(v => codeLines.Add($"const int {v} = {_consts[v]};"));
@@ -532,8 +528,7 @@ namespace Nebulator.Scripting
             codeLines.Add("}");
 
             // Bottom stuff.
-            codeLines.Add("}");
-            codeLines.Add("}");
+            codeLines.AddRange(GenBottomOfFile());
 
             return codeLines;
         }
@@ -545,7 +540,7 @@ namespace Nebulator.Scripting
         List<string> GenSuppFileContents()
         {
             // Create the supplementary file. Indicated by empty source file name.
-            List<string> codeLines = GenCommonFileContents("");
+            List<string> codeLines = GenTopOfFile("");
 
             // The various defines.
             _midiInstrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_midiInstrumentDefs[k]};"));
@@ -553,20 +548,19 @@ namespace Nebulator.Scripting
             _midiControllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_midiControllerDefs[k]};"));
 
             // Bottom stuff.
-            codeLines.Add("}");
-            codeLines.Add("}");
+            codeLines.AddRange(GenBottomOfFile());
 
             return codeLines;
         }
 
         /// <summary>
-        /// Create the boilerplate file stuff.
+        /// Create the boilerplate file top stuff.
         /// </summary>
         /// <param name="fn">Source file name. Empty means it's an internal file.</param>
         /// <returns></returns>
-        List<string> GenCommonFileContents(string fn)
+        List<string> GenTopOfFile(string fn)
         {
-            // Create the supplementary file.
+            // Create the common contents.
             List<string> codeLines = new List<string>
             {
                 $"//{fn}",
@@ -590,6 +584,21 @@ namespace Nebulator.Scripting
             return codeLines;
         }
 
+        /// <summary>
+        /// Create the boilerplate file bottom stuff.
+        /// </summary>
+        /// <returns></returns>
+        List<string> GenBottomOfFile()
+        {
+            // Create the common contents.
+            List<string> codeLines = new List<string>
+            {
+                "}",
+                "}"
+            };
+
+            return codeLines;
+        }
         #endregion
 
         #region Specific line parsers

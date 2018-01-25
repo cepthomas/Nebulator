@@ -144,11 +144,6 @@ namespace Nebulator
 
             #region Debug stuff
 #if _CTDEV
-            //Editor.ScriptEditor sed = new Editor.ScriptEditor();
-            //sed.Show();
-            //sed.TestGrid();
-            //Visible = false;
-
             OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
 
             //ExportMidi("test.mid");

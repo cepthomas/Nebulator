@@ -8,7 +8,7 @@ using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 
-// TODO2 Thread for script execution step()/draw()? async / await keywords and the Task Parallel Library
+// TODO2 Thread for script execution step()/draw()? Task Parallel Library async / await
 
 namespace Nebulator.Scripting
 {
