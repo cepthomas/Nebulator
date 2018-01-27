@@ -97,9 +97,9 @@ namespace Nebulator.Controls
 
             // Internal.
             Brush brush = new SolidBrush(ControlColor);
-            if(MaxTick != 0)
+            if(MaxTick != 0 && _current.Tick < _maxTick)
             {
-                pe.Graphics.FillRectangle(brush, 1, 1, ((Width - 2) * _current.Tick / MaxTick), Height - 2);
+                pe.Graphics.FillRectangle(brush, 1, 1, ((Width - 2) * _current.Tick / _maxTick), Height - 2);
             }
 
             // Text.
@@ -124,8 +124,6 @@ namespace Nebulator.Controls
             sval = GetTimeDef(_current.Tick);
             pe.Graphics.DrawString(sval, _font2, Brushes.Black, r2, format);
 #endif
-
-            //base.OnPaint(pe);
         }
 
         /// <summary>

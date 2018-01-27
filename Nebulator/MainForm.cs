@@ -143,8 +143,8 @@ namespace Nebulator
             #endregion
 
             #region Debug stuff
-#if _CTDEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
+#if _DEV
+            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys  processing
 
             //ExportMidi("test.mid");
 
@@ -970,9 +970,9 @@ namespace Nebulator
                     SelectedObject = UserSettings.TheSettings
                 };
 
-                // Supply the midi options. TODO2 Should be a cleaner way than this. Wrestling with the ComponentModel...
-                MidiPortEditor.Inputs = MidiInterface.TheInterface.MidiInputs;
-                MidiPortEditor.Outputs = MidiInterface.TheInterface.MidiOutputs;
+                // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
+                ListSelector.Options.Add("MidiIn", MidiInterface.TheInterface.MidiInputs);
+                ListSelector.Options.Add("MidiOut", MidiInterface.TheInterface.MidiOutputs);
 
                 // Detect changes of interest.
                 List<string> propsChanged = new List<string>();
@@ -1005,7 +1005,7 @@ namespace Nebulator
 
                 if (ctrls)
                 {
-                    MessageBox.Show("UI changes require a restart to take effect."); // TODO2 Update controls without restarting.
+                    MessageBox.Show("UI changes require a restart to take effect.");
                 }
 
                 // Always safe to do this.

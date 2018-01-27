@@ -95,7 +95,7 @@ namespace Nebulator.Controls
             // Internal.
             Brush brush = new SolidBrush(ControlColor);
             int x = Width * (_value - Minimum) / (Maximum - Minimum);
-            pe.Graphics.FillRectangle(brush, 1, 1, x, Height - 2);
+            pe.Graphics.FillRectangle(brush, 1, 1, x - 2, Height - 2);
 
             // Text.
             StringFormat format = new StringFormat()
@@ -116,8 +116,6 @@ namespace Nebulator.Controls
             {
                 pe.Graphics.DrawString(sval, Font, Brushes.Black, ClientRectangle, format);
             }
-
-            //base.OnPaint(pe);
         }
 
         /// <summary>

@@ -73,6 +73,7 @@
     <Compile Include="StateMachine.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="TimingAnalyzer.cs" />
+    <Compile Include="UITypeEditors.cs" />
     <Compile Include="UserSettings.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WaitCursor.cs" />

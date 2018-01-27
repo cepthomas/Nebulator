@@ -1,7 +1,7 @@
 
 ///// Tester for dev features.
 
-// My akai kbd midi: Pad1=44, pad8=51, knob1=ctlr1, knob8=ctlr8
+// My akai kbd midi: Pad1-8 = 44-51, knob1-8 = ctlr1-8
 
 
 
@@ -10,7 +10,7 @@ include scale.neb
 
 
 ////////// Constants //////////
-constant WHEN2         32
+constant WHEN1         32
 constant KEYS_DEF_VOL 100
 constant DRUM_DEF_VOL 100
 
@@ -35,14 +35,15 @@ track SYNTH  3 0
 track DRUMS 10 4 0 0
 
 ////////// Sections //////////
-section PART1 0 WHEN2 // section name start length
-KEYS   SEQ1           ALGO1       SEQ1        SEQ2
-DRUMS  DRUMS_SIMPLE   DRUMS_HH 
+section PART1 0 WHEN1 // section name start length
+KEYS   SEQ1           ALGO1       SEQ1          SEQ2
+DRUMS  DRUMS_SIMPLE   DRUMS_HH    DRUMS_SIMPLE  DRUMS_HH
 
-section PART2 WHEN2 60
+section PART2 WHEN1 60
 KEYS   SEQ1      SEQ2 
 DRUMS  DRUMS_HH  DRUMS_HH   
 
+// 46??
 
 ////////// Sequences //////////
 
@@ -74,7 +75,6 @@ sequence DRUMS_HH 8
 ////////// Functions //////////
 
 functions dev_stuff 999
-
 
 int[] notesPlaying = new int[128];
 Scale algerian;
@@ -116,25 +116,25 @@ public override void step()
 
 void algoDynamic()
 {
-    if(random(3) == 0)
+    //if(random(3) == 0)
     {
         int which = algerian.NextNote();
 
-        if(notesPlaying[which] == 0) // check if already playing
+        if(notesPlaying[which] == 0) // don't play if already playing
         {
-            println("algoDynamic:", which);
-            int dur = random(4, 10);
+            //println("algoDynamic:", which);
+            int dur = random(1, 8);
             notesPlaying[which] = tick + dur;
-            sendMidiNote(KEYS, which, random(80, 100), dur);
+            sendMidiNote(SYNTH, which, random(80, 100), dur);
         }
     }
 
-    // Turn off any scheduled to stop now.
+    // Remove any scheduled to stop now.
     for(int i = 0;i < notesPlaying.Length;i++)
     {
         if(notesPlaying[i] != 0 && notesPlaying[i] == tick)
         {
-            sendMidiNote(KEYS, notesPlaying[i], 0, 0.00);
+            //sendMidiNote(SYNTH, notesPlaying[i], 0, 0.00);
             notesPlaying[i] = 0;
         }
     }
@@ -142,15 +142,15 @@ void algoDynamic()
 
 void algoSequences()
 {
-    if(tick % 9 == 0)
-    {
-        playSequence(KEYS, SEQ1);
-    }
+    // if(tick % 9 == 0)
+    // {
+    //     playSequence(KEYS, SEQ1);
+    // }
 
-    if(tick % 13 == 0)
-    {
-        playSequence(KEYS, SEQ2);
-    }
+    // if(tick % 13 == 0)
+    // {
+    //     playSequence(KEYS, SEQ2);
+    // }
 }
 
 
@@ -169,6 +169,10 @@ public override void draw()
     // drawRecursive(0, 0, width / 2, 1); // This uses a whole core with GDI.
     // return;
 
+    drawTarget(width * 0.25f, height * 0.4f, 200, 4);
+    drawTarget(width * 0.5f, height * 0.5f, 300, 10);
+    drawTarget(width * 0.75f, height * 0.3f, 120, 6);    
+
     if (mousePressedP)
     {
         //println("mouse is pressed");
@@ -186,6 +190,19 @@ public override void mouseClicked()
     // sendMidiNote(SYNTH, sn, 90, 0.48);
 
     boing();
+}
+
+
+// Just a thing from Functions example.
+void drawTarget(float xloc, float yloc, int size, int num)
+{
+    int grayvalues = 255 / num;
+    float steps = size / num;
+    for (int i = 0; i < num; i++)
+    {
+        fill(i * grayvalues);
+        ellipse(xloc, yloc, size - i * steps, size - i * steps);
+    }
 }
 
 

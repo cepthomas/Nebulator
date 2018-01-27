@@ -178,7 +178,7 @@ namespace Nebulator.Scripting
         /// <param name="val">Number of notes, +-.</param>
         public void modulate(Track track, int val)
         {
-            track.Modulate = val; // TODO1 And/or modulate to a specified key. Requires specifying current key too.
+            track.Modulate = val; // TODO And/or modulate to a specified key. Requires specifying current key too.
         }
 
         /// <summary>

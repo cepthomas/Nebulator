@@ -67,15 +67,24 @@ namespace Nebulator.Scripting
     {
         Bitmap _bmp;
 
+        public color[] pixels { get; private set; }
         public int width { get { return _bmp.Width; } }
         public int height { get { return _bmp.Height; } }
         public PImage(string fname) { _bmp = new Bitmap(fname); }
         public PImage(Bitmap bm) { _bmp = bm; }
+        public color get(int x, int y) { return new color(_bmp.GetPixel(x, y)); }
+        public PImage get(int x, int y, int width, int height) { return new PImage(_bmp.Clone(new Rectangle(x, y, width, height), _bmp.PixelFormat)); }
+        public void set(int x, int y, color color) { _bmp.SetPixel(x, y, color.NativeColor); }
+        public void set(int x, int y, PImage img) { Graphics.FromImage(_bmp).DrawImageUnscaled(img.image(), x, y); }
+        public bool save(string filename) { throw new ScriptNotImplementedException(nameof(save)); }
+
+        // I don't think I need these:
+        public void loadPixels() { }
+        public void updatePixels() { }
+        public void updatePixels(int x, int y, int w, int h) { }
+ 
+        // Just for nebulator:
         public Bitmap image() { return _bmp; }
-        public color getPixel(int x, int y) { return new color(_bmp.GetPixel(x, y)); }
-        public PImage getSubImage(int x, int y, int width, int height) { return new PImage(_bmp.Clone(new Rectangle(x, y, width, height), _bmp.PixelFormat)); }
-        public void setArea(int x, int y, color color) { _bmp.SetPixel(x, y, color.NativeColor); }
-        public void setArea(int x, int y, PImage img) { Graphics.FromImage(_bmp).DrawImageUnscaled(img.image(), x, y); }
 
         public void resize(int width, int height)
         {

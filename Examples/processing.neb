@@ -1,0 +1,488 @@
+
+///// Tester for processing workalike.
+
+// C:\Tools\AStyle --style=allman "C:\Dev\Nebulator\Examples\processing.neb"
+// pause
+
+// Changes:
+// - boolean to bool.
+// - added functions processing 999
+// - public override void setup(), draw(), keyPressed() etc
+// - fixed all floating point vals -> n.nnf
+// - @int()
+// - frameRate() to prop
+// - mousePressed to mousePressedP
+// - color alive = color(0, 200, 0) etc - added new
+// - array length -> Length
+// - int[][] to int[,]
+
+
+
+functions processing 999
+
+public override void setup()
+{
+
+}
+
+public override void draw()
+{
+
+}
+
+///////////////////////////////////
+void draw_regular_polygon()
+{
+    background(102);
+
+    pushMatrix();
+    translate(width*0.2f, height * 0.5f);
+    rotate(frameCount / 200);
+    polygon(0, 0, 82, 3);  // Triangle
+    popMatrix();
+
+    pushMatrix();
+    translate(width * 0.5f, height * 0.5f);
+    rotate(frameCount / 50);
+    polygon(0, 0, 80, 20);  // Icosahedron
+    popMatrix();
+
+    pushMatrix();
+    translate(width * 0.8f, height * 0.5f);
+    rotate(frameCount / -100);
+    polygon(0, 0, 70, 7);  // Heptagon
+    popMatrix();
+}
+
+void polygon(float x, float y, float radius, int npoints)
+{
+    float angle = TWO_PI / npoints;
+    beginShape();
+    for (float a = 0; a < TWO_PI; a += angle)
+    {
+        float sx = x + cos(a) * radius;
+        float sy = y + sin(a) * radius;
+        vertex(sx, sy);
+    }
+    endShape(CLOSE);
+}
+
+
+///////////////////////////////////
+void setup_bezier()
+{
+    size(640, 360);
+    stroke(255);
+    noFill();
+}
+
+void draw_bezier()
+{
+    background(0);
+    for (int i = 0; i < 200; i += 20)
+    {
+        bezier(mouseX - (i / 2), 40 + i, 410, 20, 440, 300, 240 - (i / 16), 300 + (i / 8));
+    }
+}
+
+
+
+///////////////////////////////////
+int dim;
+
+void setup_radial_gradient()
+{
+    size(640, 360);
+    dim = width / 2;
+    background(0);
+    colorMode(HSB, 360, 100, 100);
+    noStroke();
+    ellipseMode(RADIUS);
+    frameRate = 1;
+}
+
+void draw_radial_gradient()
+{
+    background(0);
+    for (int x = 0; x <= width; x+=dim)
+    {
+        drawGradient(x, height / 2);
+    }
+}
+
+void drawGradient(float x, float y)
+{
+    int radius = dim / 2;
+    int h = random(0, 360);
+    for (int r = radius; r > 0; --r)
+    {
+        fill(h, 90, 90);
+        ellipse(x, y, r, r);
+        h = (h + 1) % 360;
+    }
+}
+
+
+
+
+///////////////////////////////////////////////////
+float x1, x2, y1, y2;
+float angle1, angle2;
+float scalar = 70;
+
+void setup_sine_cosine()
+{
+    size(640, 360);
+    noStroke();
+    rectMode(CENTER);
+}
+
+void draw_sine_cosine()
+{
+    background(0);
+
+    float ang1 = radians(angle1);
+    float ang2 = radians(angle2);
+
+    x1 = width / 2 + (scalar * cos(ang1));
+    x2 = width / 2 + (scalar * cos(ang2));
+
+    y1 = height / 2 + (scalar * sin(ang1));
+    y2 = height / 2 + (scalar * sin(ang2));
+
+    fill(255);
+    rect(width * 0.5f, height * 0.5f, 140, 140);
+
+    fill(0, 102, 153);
+    ellipse(x1, height * 0.5f - 120, scalar, scalar);
+    ellipse(x2, height * 0.5f + 120, scalar, scalar);
+
+    fill(255, 204, 0);
+    ellipse(width * 0.5f - 120, y1, scalar, scalar);
+    ellipse(width * 0.5f + 120, y2, scalar, scalar);
+
+    angle1 += 2;
+    angle2 += 3;
+
+}
+
+
+////////////////////////////////////////////////
+void draw_embedded_iteration()
+{
+    size(640, 360);
+    background(0);
+
+    int gridSize = 40;
+
+    for (int x = gridSize; x <= width - gridSize; x += gridSize)
+    {
+        for (int y = gridSize; y <= height - gridSize; y += gridSize)
+        {
+            noStroke();
+            fill(255);
+            rect(x - 1, y - 1, 3, 3);
+            stroke(255, 100);
+            line(x, y, width / 2, height / 2);
+        }
+    }
+}
+
+
+
+////////////////////////////////////////////////
+PImage img;
+int smallPoint, largePoint;
+
+void setup_pointillism()
+{
+    size(640, 360);
+    img = loadImage("moonwalk.jpg");
+    smallPoint = 4;
+    largePoint = 40;
+    imageMode(CENTER);
+    noStroke();
+    background(255);
+}
+
+void draw_pointillism()
+{
+    float pointillize = map(mouseX, 0, width, smallPoint, largePoint);
+    int x = @int(random(img.width));
+    int y = @int(random(img.height));
+    color pix = img.get(x, y);
+    fill(pix, 128);
+    ellipse(x, y, pointillize, pointillize);
+}
+
+////////////////////////////////////////////////
+void setup_random_gaussian()
+{
+    size(640, 360);
+    background(0);
+}
+
+void draw_random_gaussian()
+{
+    // Get a gaussian random number w/ mean of 0 and standard deviation of 1.0
+    float val = randomGaussian();
+
+    float sd = 60;                  // Define a standard deviation
+    float mean = width / 2;           // Define a mean value (middle of the screen along the x-axis)
+    float x = ( val * sd ) + mean;  // Scale the gaussian random number by standard deviation and mean
+
+    noStroke();
+    fill(255, 10);
+    noStroke();
+    ellipse(x, height / 2, 32, 32);   // Draw an ellipse at our "normal" random location
+}
+
+
+////////////////////////////////////////////////
+String[] lines;
+int index = 0;
+
+void setup_loadfiles1()
+{
+    size(200, 200);
+    background(0);
+    stroke(255);
+    frameRate = 12;
+    lines = loadStrings("positions.txt");
+}
+
+void draw_loadfiles1()
+{
+    if (index < lines.Length)
+    {
+        String[] pieces = split(lines[index], '\t');
+        if (pieces.Length == 2)
+        {
+            int x = @int(pieces[0]) * 2;
+            int y = @int(pieces[1]) * 2;
+            point(x, y);
+        }
+        // Go to the next line for the next run through draw()
+        index = index + 1;
+    }
+}
+
+
+////////////////////////////////////////////////
+// Size of cells
+int cellSize = 5;
+
+// How likely for a cell to be alive at start (in percentage)
+float probabilityOfAliveAtStart = 15;
+
+// Variables for timer
+int interval = 100;
+int lastRecordedTime = 0;
+
+// Colors for active/inactive cells
+color alive = new color(0, 200, 0);
+color dead = new color(0);
+
+// Array of cells
+int[,] cells;
+
+// Buffer to record the state of the cells and use this while changing the others in the interations
+int[,] cellsBuffer;
+
+// Pause
+bool pause = false;
+
+void setup_gol()
+{
+    size (640, 360);
+
+    // Instantiate arrays
+    cells = new int[width / cellSize, height / cellSize];
+    cellsBuffer = new int[width / cellSize, height / cellSize];
+
+    // This stroke will draw the background grid
+    stroke(48);
+
+    noSmooth();
+
+    // Initialization of cells
+    for (int x = 0; x < width / cellSize; x++)
+    {
+        for (int y = 0; y < height / cellSize; y++)
+        {
+            float state = random (100);
+            if (state > probabilityOfAliveAtStart)
+            {
+                state = 0;
+            }
+            else
+            {
+                state = 1;
+            }
+            cells[x, y] = @int(state); // Save state of each cell
+        }
+    }
+    background(0); // Fill in black in case cells don't cover all the windows
+}
+
+
+void draw_gol()
+{
+
+    //Draw grid
+    for (int x = 0; x < width / cellSize; x++)
+    {
+        for (int y = 0; y < height / cellSize; y++)
+        {
+            if (cells[x, y]==1)
+            {
+                fill(alive); // If alive
+            }
+            else
+            {
+                fill(dead); // If dead
+            }
+            rect (x * cellSize, y * cellSize, cellSize, cellSize);
+        }
+    }
+    // Iterate if timer ticks
+    if (millis() - lastRecordedTime>interval)
+    {
+        if (!pause)
+        {
+            iteration();
+            lastRecordedTime = millis();
+        }
+    }
+
+    // Create  new cells manually on pause
+    if (pause && mousePressedP)
+    {
+        // Map and avoid out of bound errors
+        int xCellOver = @int(map(mouseX, 0, width, 0, width / cellSize));
+        xCellOver = constrain(xCellOver, 0, width / cellSize-1);
+        int yCellOver = @int(map(mouseY, 0, height, 0, height / cellSize));
+        yCellOver = constrain(yCellOver, 0, height / cellSize-1);
+
+        // Check against cells in buffer
+        if (cellsBuffer[xCellOver, yCellOver] == 1)   // Cell is alive
+        {
+            cells[xCellOver, yCellOver] = 0; // Kill
+            fill(dead); // Fill with kill color
+        }
+        else   // Cell is dead
+        {
+            cells[xCellOver, yCellOver] = 1; // Make alive
+            fill(alive); // Fill alive color
+        }
+    }
+    else if (pause && !mousePressedP)   // And then save to buffer once mouse goes up
+    {
+        // Save cells to buffer (so we opeate with one array keeping the other intact)
+        for (int x = 0; x<width / cellSize; x++)
+        {
+            for (int y = 0; y < height / cellSize; y++)
+            {
+                cellsBuffer[x, y] = cells[x, y];
+            }
+        }
+    }
+}
+
+
+
+void iteration()   // When the clock ticks
+{
+    // Save cells to buffer (so we opeate with one array keeping the other intact)
+    for (int x = 0; x < width / cellSize; x++)
+    {
+        for (int y = 0; y < height / cellSize; y++)
+        {
+            cellsBuffer[x, y] = cells[x, y];
+        }
+    }
+
+    // Visit each cell:
+    for (int x = 0; x < width / cellSize; x++)
+    {
+        for (int y = 0; y < height / cellSize; y++)
+        {
+            // And visit all the neighbours of each cell
+            int neighbours = 0; // We'll count the neighbours
+            for (int xx = x - 1; xx <= x + 1; xx++)
+            {
+                for (int yy = y - 1; yy <= y + 1; yy++)
+                {
+                    if (((xx >= 0) && (xx < width / cellSize)) && ((yy >= 0) && (yy < height / cellSize)))   // Make sure you are not out of bounds
+                    {
+                        if (!((xx == x) && (yy == y)))   // Make sure to to check against self
+                        {
+                            if (cellsBuffer[xx, yy] == 1)
+                            {
+                                neighbours ++; // Check alive neighbours and count them
+                            }
+                        } // End of if
+                    } // End of if
+                } // End of yy loop
+            } //End of xx loop
+            // We've checked the neigbours: apply rules!
+            if (cellsBuffer[x, y] == 1)   // The cell is alive: kill it if necessary
+            {
+                if (neighbours < 2 || neighbours > 3)
+                {
+                    cells[x, y] = 0; // Die unless it has 2 or 3 neighbours
+                }
+            }
+            else   // The cell is dead: make it live if necessary
+            {
+                if (neighbours == 3 )
+                {
+                    cells[x, y] = 1; // Only if it has 3 neighbours
+                }
+            } // End of if
+        } // End of y loop
+    } // End of x loop
+} // End of function
+
+public override void keyPressed()
+{
+    if (key == 'r' || key == 'R')
+    {
+        // Restart: reinitialization of cells
+        for (int x = 0; x < width / cellSize; x++)
+        {
+            for (int y = 0; y < height / cellSize; y++)
+            {
+                float state = random (100);
+                if (state > probabilityOfAliveAtStart)
+                {
+                    state = 0;
+                }
+                else
+                {
+                    state = 1;
+                }
+                cells[x, y] = @int(state); // Save state of each cell
+            }
+        }
+    }
+    if (key==' ')   // On/off of pause
+    {
+        pause = !pause;
+    }
+    if (key=='c' || key == 'C')   // Clear all
+    {
+        for (int x = 0; x < width / cellSize; x++)
+        {
+            for (int y = 0; y < height / cellSize; y++)
+            {
+                cells[x, y] = 0; // Save all to zero
+            }
+        }
+    }
+}
+
+////////////////////////////////////////////////
+
+
+

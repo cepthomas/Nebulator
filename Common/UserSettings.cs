@@ -41,11 +41,11 @@ namespace Nebulator.Common
         public int FrameRate { get; set; } = 30;
 
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
-        [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
+        [Editor(typeof(ListSelector), typeof(UITypeEditor))]
         public string MidiIn { get; set; } = Definitions.UNKNOWN_STRING;
 
         [DisplayName("Midi Output"), Description("Your choice of midi output."), Browsable(true)]
-        [Editor(typeof(MidiPortEditor), typeof(UITypeEditor))]
+        [Editor(typeof(ListSelector), typeof(UITypeEditor))]
         public string MidiOut { get; set; } = Definitions.UNKNOWN_STRING;
 
         [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ..."), Browsable(true)]
@@ -122,49 +122,6 @@ namespace Nebulator.Common
             }
         }
         #endregion
-    }
-
-    /// <summary>Plugin to property grid.</summary>
-    public class MidiPortEditor : UITypeEditor
-    {
-        // Kludge alert....
-        public static List<string> Inputs { get; set; } = new List<string>();
-        public static List<string> Outputs { get; set; } = new List<string>();
-
-        IWindowsFormsEditorService _service = null;
-
-        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
-        {
-            _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
-            ListBox lb = new ListBox() { SelectionMode = SelectionMode.One };
-            lb.Click += (object sender, EventArgs e) => { _service.CloseDropDown(); };
-
-            // Fill the list box.
-            if (context.PropertyDescriptor.Name == "MidiIn")
-            {
-                Inputs.ForEach(v =>
-                {
-                    int i = lb.Items.Add(v);
-                    lb.SelectedIndex = v == UserSettings.TheSettings.MidiIn ? i : lb.SelectedIndex;
-                });
-            }
-            else // "MidiOut"
-            {
-                Outputs.ForEach(v =>
-                {
-                    int i = lb.Items.Add(v);
-                    lb.SelectedIndex = v == UserSettings.TheSettings.MidiOut ? i : lb.SelectedIndex;
-                });
-            }
-
-            _service.DropDownControl(lb);
-            return lb.SelectedItem.ToString();
-        }
-
-        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
-        {
-            return UITypeEditorEditStyle.DropDown;
-        }
     }
 
     [Serializable]

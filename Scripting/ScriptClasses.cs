@@ -11,10 +11,10 @@ using Nebulator.Midi;
 
 namespace Nebulator.Scripting
 {
-    public class ScriptInvalidFunctionException : Exception
+    public class ScriptNotImplementedException : Exception
     {
-        ScriptInvalidFunctionException() {  }
-        public ScriptInvalidFunctionException(string function) : base($"Invalid script function: {function}()") { }
+        ScriptNotImplementedException() {  }
+        public ScriptNotImplementedException(string function) : base($"Invalid script function: {function}()") { }
     }
 
     /// <summary>Stuff shared between Main and Script on a per step basis.</summary>

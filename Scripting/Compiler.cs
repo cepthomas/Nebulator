@@ -181,7 +181,7 @@ namespace Nebulator.Scripting
         /// <param name="nebfn">Topmost file in collection.</param>
         void Parse(string nebfn)
         {
-            // Start parsing from the main file. Recursive function.
+            // Start parsing from the main file. ParseOneFile is a recursive function.
             FileParseContext pcont = new FileParseContext()
             {
                 SourceFile = nebfn,
@@ -189,7 +189,7 @@ namespace Nebulator.Scripting
             };
             ParseOneFile(pcont);
 
-            // Finished. Patch some forward refs. TODO2 A bit clumsy - probably should be a two pass compile.
+            // Finished. Patch up some forward refs. Probably should be a two pass compile.
             foreach(Section sect in ScriptEntities.Sections.Values)
             {
                 foreach(SectionTrack st in sect.SectionTracks)
@@ -221,7 +221,7 @@ namespace Nebulator.Scripting
             _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileParseContext()
             {
                 SourceFile = "",
-                CodeLines = GenSuppFileContents()
+                CodeLines = GenDefFileContents()
             });
         }
 
@@ -406,7 +406,7 @@ namespace Nebulator.Scripting
                     paths.Add(fullpath);
                 }
 
-                // TODO2 Would actually like to use roslyn for C#7 stuff but it's a pain to implement.
+                // Would actually like to use roslyn for C#7 stuff but it's a pain to implement.
                 //Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider providerX = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider();
                 //// Need to fix hardcoded path to compiler - why isn't this fixed by MS?
                 //var flags = BindingFlags.NonPublic | BindingFlags.Instance;
@@ -534,10 +534,10 @@ namespace Nebulator.Scripting
         }
 
         /// <summary>
-        /// Create the file containing extra stuff. TODO2 Probably shouldn't do this every time.
+        /// Create the file containing definitions.
         /// </summary>
         /// <returns></returns>
-        List<string> GenSuppFileContents()
+        List<string> GenDefFileContents()
         {
             // Create the supplementary file. Indicated by empty source file name.
             List<string> codeLines = GenTopOfFile("");
