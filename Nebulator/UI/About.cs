@@ -19,6 +19,7 @@ namespace Nebulator.UI
         public About()
         {
             InitializeComponent();
+            SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
         }
 
         /// <summary>
@@ -28,8 +29,6 @@ namespace Nebulator.UI
         /// <param name="e"></param>
         private void About_Load(object sender, EventArgs e)
         {
-            //SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
-            //UpdateStyles();
             BackColor = UserSettings.TheSettings.BackColor;
 
             picBox.BackgroundImage = Properties.Resources.medusa2;

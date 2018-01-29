@@ -13,20 +13,13 @@ using MoreLinq;
 
 namespace Nebulator.Common
 {
-    public static class Definitions //TODO clean/simplify these
-    {
-        /// <summary>General purpose marker.</summary>
-        public const string UNKNOWN_STRING = "???";
-
-        /// <summary>Indicates needs user involvement.</summary>
-        public static Color ATTENTION_COLOR = Color.Red;
-
-        /// <summary>Subdivision setting.</summary>
-        public const int TOCKS_PER_TICK = 96;
-    }
-
     public static class Utils
     {
+        #region Constants
+        /// <summary>General purpose marker.</summary>
+        public const string UNKNOWN_STRING = "???";
+        #endregion
+
         #region UI helpers
         /// <summary>
         /// Allows user to enter only integer or float values.

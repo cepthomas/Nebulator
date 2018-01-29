@@ -1,5 +1,5 @@
 
-// Take on Eno's Music for Airports - ported from github.com/teropa/musicforairports.js
+// A take on Eno's Music for Airports - ported from github.com/teropa/musicforairports.js
 
 
 ///// Constants /////
@@ -23,10 +23,7 @@ lever L3 0 255 MODF
 ///// Tracks /////
 track SOUND 1 5 0 0
 
-
 ///// Functions /////
-functions
-
 class TapeLoop
 {
     public string snote;

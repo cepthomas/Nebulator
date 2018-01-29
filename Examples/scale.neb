@@ -1,9 +1,7 @@
 
+///// Functions /////
 
-functions scale_utilities
-
-
-class Scale
+public class Scale
 {
     public int count = 0;
     int[] scaleNotes;

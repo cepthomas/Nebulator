@@ -11,7 +11,7 @@ namespace Nebulator.Dynamic
     public class Sequence
     {
         /// <summary>Name used for instantiation.</summary>
-        public string Name { get; set; } = Definitions.UNKNOWN_STRING;
+        public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>List of notes or other elements.</summary>
         public List<SequenceElement> Elements { get; set; } = new List<SequenceElement>();

@@ -72,9 +72,7 @@ sequence DRUMS_HH 8
 ------xx------xx------xx------xx ClosedHiHat 100
 
 
-////////// Functions //////////
-
-functions dev_stuff 999
+///// Functions /////
 
 int[] notesPlaying = new int[128];
 Scale algerian;

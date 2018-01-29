@@ -138,7 +138,6 @@ sequence NULL 8
 
 
 ///// Functions /////
-functions
 
 // Simple variables for functions.
 float posX = 50;

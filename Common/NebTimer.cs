@@ -50,7 +50,7 @@ namespace Nebulator.Common
     /// measure the elapsed time rather than trust the mm timer period. It seems to be an improvement.
     /// Also see "Microsecond and Millisecond C# Timer - CodeProject.html". Good accuracy at the expense of a whole core.
     /// </summary>
-    public class NebTimer// : IFastTimer
+    public class NebTimer
     {
         class TimerInstance
         {

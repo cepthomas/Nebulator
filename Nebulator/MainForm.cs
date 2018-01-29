@@ -53,7 +53,7 @@ namespace Nebulator
         //TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
 
         /// <summary>Current neb file name.</summary>
-        string _fn = Definitions.UNKNOWN_STRING;
+        string _fn = Utils.UNKNOWN_STRING;
 
         /// <summary>Detect changed composition files.</summary>
         MultiFileWatcher _watcher = new MultiFileWatcher();
@@ -67,6 +67,10 @@ namespace Nebulator
         /// <summary>Persisted internal values for current neb file.</summary>
         Bag _nebpVals = new Bag();
 
+        /// <summary>Indicates needs user involvement.</summary>
+        Color _attentionColor = Color.Red;
+
+        /// <summary>Internal status.</summary>
         enum PlayCommand { Start, Stop, Rewind, StopRewind, UpdateUiTime }
         #endregion
 
@@ -145,7 +149,7 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
+            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
 
             //ExportMidi("test.mid");
 
@@ -226,7 +230,7 @@ namespace Nebulator
         {
             bool ok = true;
 
-            if (_fn == Definitions.UNKNOWN_STRING)
+            if (_fn == Utils.UNKNOWN_STRING)
             {
                 _logger.Warn("No script file loaded.");
                 ok = false;
@@ -291,7 +295,7 @@ namespace Nebulator
                     ok = false;
                     SetPlayStatus(PlayCommand.StopRewind);
                     compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Definitions.ATTENTION_COLOR);
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
                     _dirtyFiles = true;
                 }
             }
@@ -417,8 +421,6 @@ namespace Nebulator
                 {
                     if(_script != null)
                     {
-                        // Do any script execute stuff. This is done first as the script may manipulate things.
-
                         // Package up the runtime stuff the script may need.
                         _script.RtVals.Playing = _playing;
                         _script.RtVals.StepTime = _stepTime;
@@ -443,8 +445,8 @@ namespace Nebulator
                         _script.RtVals.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                         _script.RtVals.RuntimeSteps.DeleteSteps(_stepTime);
 
-                        _script.RtVals.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
-                        _script.RtVals.PrintLines.Clear();
+                        _script.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
+                        _script.PrintLines.Clear();
                     }
 
                     // Do the compiled steps.
@@ -617,7 +619,7 @@ namespace Nebulator
         {
             SetPlayStatus(PlayCommand.Stop);
 
-            string srcFile = Definitions.UNKNOWN_STRING;
+            string srcFile = Utils.UNKNOWN_STRING;
             int srcLine = -1;
 
             // Locate the offending frame.
@@ -720,7 +722,7 @@ namespace Nebulator
                     _nebpVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     _fn = fn;
                     _dirtyFiles = true;
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Definitions.ATTENTION_COLOR);
+                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
                     AddToRecentDefs(fn);
                     Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
 
@@ -773,7 +775,7 @@ namespace Nebulator
             {
                 //_logger.Info("Watcher_Changed");
                 _dirtyFiles = true;
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Definitions.ATTENTION_COLOR);
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
                 UpdateMenu();
             });
         }
@@ -1206,7 +1208,7 @@ namespace Nebulator
         {
             // Convert speed/bpm to msec per tock.
             double ticksPerMinute = potSpeed.Value; // sec/tick, aka bpm
-            double tocksPerMinute = ticksPerMinute * Definitions.TOCKS_PER_TICK;
+            double tocksPerMinute = ticksPerMinute * Time.TOCKS_PER_TICK;
             double tocksPerSec = tocksPerMinute / 60;
             double tocksPerMsec = tocksPerSec / 1000;
             double msecPerTock = 1 / tocksPerMsec;

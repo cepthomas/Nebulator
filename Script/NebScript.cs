@@ -15,40 +15,30 @@ namespace Nebulator.Script
 {
     public class NebScript : NProcessing.Script
     {
-        ///////////////////////// TODO cleanup all internal stuff ///////////////////////////
-
         /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
         public class RuntimeValues
         {
             /// <summary>Main -> Script</summary>
-            public bool Playing { get; set; }
+            public bool Playing { get; set; } = false;
 
             /// <summary>Main -> Script</summary>
-            public Time StepTime { get; set; }
+            public Time StepTime { get; set; } = new Time();
 
             /// <summary>Main -> Script</summary>
-            public float RealTime { get; set; }
+            public float RealTime { get; set; } = 0.0f;
 
             /// <summary>Main -> Script -> Main</summary>
-            public float Speed { get; set; }
+            public float Speed { get; set; } = 0.0f;
 
             /// <summary>Main -> Script -> Main</summary>
-            public int Volume { get; set; }
+            public int Volume { get; set; } = 0;
 
             /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
             public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
-
-            /// <summary>Script -> Main</summary>
-            public List<string> PrintLines { get; private set; } = new List<string>();
         }
 
         /// <summary>Current working set of dynamic values - things shared between host and script.</summary>
         public RuntimeValues RtVals { get; set; } = new RuntimeValues();
-
-        ////////////////////////////////////////////////////////////////////////
-
-
-
 
         #region Functions that can be overridden in the user script
         /// <summary>Called every Nebulator Tock.</summary>
@@ -72,7 +62,7 @@ namespace Nebulator.Script
         public bool playing { get { return RtVals.Playing; } }
 
         /// <summary>Tock subdivision.</summary>
-        public int tocksPerTick { get { return Definitions.TOCKS_PER_TICK; } }
+        public int tocksPerTick { get { return Time.TOCKS_PER_TICK; } }
 
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
         public float speed { get { return RtVals.Speed; } set { RtVals.Speed = value; } }

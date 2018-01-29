@@ -263,7 +263,7 @@ namespace Nebulator.Common
     {
         #region Properties
         /// <summary>The state name.</summary>
-        public string StateName { get; } = Definitions.UNKNOWN_STRING;
+        public string StateName { get; } = Utils.UNKNOWN_STRING;
 
         /// <summary>All the transitions possible for this state.</summary>
         public Dictionary<string, Transition> Transitions { get; set; } = new Dictionary<string, Transition>();
@@ -407,10 +407,10 @@ namespace Nebulator.Common
     public class Transition
     {
         /// <summary>The name of the event that triggers this transition.</summary>
-        public string EventName { get; } = Definitions.UNKNOWN_STRING;
+        public string EventName { get; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Change state to this after execution action.</summary>
-        public string NextState { get; set; } = Definitions.UNKNOWN_STRING;
+        public string NextState { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Optional action - executed before state change</summary>
         public StateMachine.SmFunc TransitionFunc { get; set; } = null;
@@ -440,7 +440,7 @@ namespace Nebulator.Common
     public class EventInfo
     {
         /// <summary>Unique event name.</summary>
-        public string Name { get; set; } = Definitions.UNKNOWN_STRING;
+        public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Event data.</summary>
         public object Param { get; set; } = null;

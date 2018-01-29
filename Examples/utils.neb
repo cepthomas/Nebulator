@@ -2,7 +2,7 @@
 constant VEL 95
 variable MAX 60
 
-functions booga 999
+///// Functions /////
 
 int notavar = 911;
 

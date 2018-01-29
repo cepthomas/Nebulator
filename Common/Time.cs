@@ -9,6 +9,12 @@ namespace Nebulator.Common
     /// </summary>
     public class Time
     {
+        #region Constants
+        /// <summary>Subdivision setting.</summary>
+        public const int TOCKS_PER_TICK = 96;
+        #endregion
+
+        #region Properties
         /// <summary>Left of the decimal point.</summary>
         public int Tick { get; set; } = 0;
 
@@ -16,7 +22,8 @@ namespace Nebulator.Common
         public int Tock { get; set; } = 0;
 
         /// <summary>Total Tocks for the unit of time.</summary>
-        public int TotalTocks { get { return Tick * Definitions.TOCKS_PER_TICK + Tock; } }
+        public int TotalTocks { get { return Tick * TOCKS_PER_TICK + Tock; } }
+        #endregion
 
         #region Constructors
         /// <summary>
@@ -52,14 +59,14 @@ namespace Nebulator.Common
 
             if (tock >= 0)
             {
-                Tick = tick + tock / Definitions.TOCKS_PER_TICK;
-                Tock = tock % Definitions.TOCKS_PER_TICK;
+                Tick = tick + tock / TOCKS_PER_TICK;
+                Tock = tock % TOCKS_PER_TICK;
             }
             else
             {
                 int atock = Math.Abs(tock);
-                Tick = tick - (atock / Definitions.TOCKS_PER_TICK) - 1;
-                Tock = Definitions.TOCKS_PER_TICK - (atock % Definitions.TOCKS_PER_TICK);
+                Tick = tick - (atock / TOCKS_PER_TICK) - 1;
+                Tock = TOCKS_PER_TICK - (atock % TOCKS_PER_TICK);
             }
         }
 
@@ -74,8 +81,8 @@ namespace Nebulator.Common
                 throw new Exception("Negative value is invalid");
             }
 
-            Tick = tocks / Definitions.TOCKS_PER_TICK;
-            Tock = tocks % Definitions.TOCKS_PER_TICK;
+            Tick = tocks / TOCKS_PER_TICK;
+            Tock = tocks % TOCKS_PER_TICK;
         }
 
         /// <summary>
@@ -89,8 +96,8 @@ namespace Nebulator.Common
                 throw new Exception("Negative value is invalid");
             }
 
-            Tick = (int)(tocks / Definitions.TOCKS_PER_TICK);
-            Tock = (int)(tocks % Definitions.TOCKS_PER_TICK);
+            Tick = (int)(tocks / TOCKS_PER_TICK);
+            Tock = (int)(tocks % TOCKS_PER_TICK);
         }
 
         /// <summary>
@@ -158,8 +165,8 @@ namespace Nebulator.Common
 
         public static Time operator +(Time t1, Time t2)
         {
-            int tick = t1.Tick + t2.Tick + (t1.Tock + t2.Tock) / Definitions.TOCKS_PER_TICK;
-            int tock = (t1.Tock + t2.Tock) % Definitions.TOCKS_PER_TICK;
+            int tick = t1.Tick + t2.Tick + (t1.Tock + t2.Tock) / TOCKS_PER_TICK;
+            int tock = (t1.Tock + t2.Tock) % TOCKS_PER_TICK;
             return new Time(tick, tock);
         }
         #endregion
@@ -174,7 +181,7 @@ namespace Nebulator.Common
             bool newTick = false;
             Tock++;
 
-            if(Tock >= Definitions.TOCKS_PER_TICK)
+            if(Tock >= TOCKS_PER_TICK)
             {
                 Tick++;
                 Tock = 0;

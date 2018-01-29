@@ -225,8 +225,8 @@ namespace Nebulator.Test
 
                     // Output the error string with file/line.
                     int line = -1;
-                    string fn = Definitions.UNKNOWN_STRING;
-                    string msg = Definitions.UNKNOWN_STRING;
+                    string fn = Utils.UNKNOWN_STRING;
+                    string msg = Utils.UNKNOWN_STRING;
                     StackTrace st = null;
 
                     if (flag == StepFlag.Error)

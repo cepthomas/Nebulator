@@ -4,9 +4,9 @@
     "master.speed": 101.0,
     "master.loop": false,
     "master.sequence": true,
-    "KEYS.volume": 181,
+    "KEYS.volume": 151,
     "BASS.volume": 139,
-    "SYNTH.volume": 160,
-    "DRUMS.volume": 90
+    "SYNTH.volume": 136,
+    "DRUMS.volume": 142
   }
 }

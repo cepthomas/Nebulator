@@ -12,9 +12,11 @@ namespace Nebulator.Midi
     /// </summary>
     public class MidiInterface : IDisposable
     {
+        #region Singleton
         /// <summary>The one and only midi in/out devices.</summary>
         public static MidiInterface TheInterface { get; set; } = new MidiInterface();
-
+        #endregion
+        
         #region Definitions
         // We borrow a few unused midi controller numbers for internal use.
         // Currently undefined: 3, 9, 14, 15, 20-31, 35, 41, 46, 47, 52-63, 85-87, 89, 90 and 102-119.

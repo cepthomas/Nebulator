@@ -17,7 +17,7 @@ using Nebulator.Dynamic;
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Parses/compiles neb file(s).
+    /// Parses/compiles neb file(s). Big brother version of the one in NProcessing.
     /// </summary>
     public class Compiler
     {
@@ -25,7 +25,7 @@ namespace Nebulator.Script
         class FileParseContext
         {
             /// <summary>Current source file.</summary>
-            public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
+            public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
 
             /// <summary>Current source line.</summary>
             public int LineNumber { get; set; } = 1;
@@ -54,10 +54,10 @@ namespace Nebulator.Script
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Starting directory.</summary>
-        string _baseDir = Definitions.UNKNOWN_STRING;
+        string _baseDir = Utils.UNKNOWN_STRING;
 
         /// <summary>Script info.</summary>
-        string _scriptName = Definitions.UNKNOWN_STRING;
+        string _scriptName = Utils.UNKNOWN_STRING;
 
         /// <summary>Declared constants. Key is name.</summary>
         Dictionary<string, int> _consts = new Dictionary<string, int>();
@@ -98,7 +98,7 @@ namespace Nebulator.Script
             ScriptEntities.Clear();
             Errors.Clear();
 
-            if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
+            if (nebfn != Utils.UNKNOWN_STRING && File.Exists(nebfn))
             {
                 _logger.Info($"Compiling {nebfn}.");
 
@@ -276,6 +276,7 @@ namespace Nebulator.Script
                         CleanedLine = cline
                     };
 
+                    // What's the event?
                     string evt = farg.Args.Count == 0 ? "blank" : farg.Args[0];
                     _sm.ProcessEvent(evt, farg);
                 }
@@ -316,9 +317,8 @@ namespace Nebulator.Script
                     new Transition("midictlout", "", ParseMidiController),
                     new Transition("section", "do_section", ParseSection),
                     new Transition("sequence", "do_sequence", ParseSequence),
-                    new Transition("functions", "do_functions"), // TODO figure a better way to do this
-                    new Transition("blank"), // swallow these
-                    new Transition("", "", SmError)), // invalid other events
+                    new Transition("blank"), // just swallow these
+                    new Transition("", "", ParseScriptLine)), // everything else is assumed part of a script
 
                 new State("do_section", null, null,
                     new Transition("blank", "idle"), // done section
@@ -327,9 +327,6 @@ namespace Nebulator.Script
                 new State("do_sequence", null, null,
                     new Transition("blank", "idle"), // done sequence
                     new Transition("", "", ParseSequenceElement)), // element of sequence
-
-                new State("do_functions", null, null,
-                    new Transition("", "", ParseScriptLine)), // all treated the same
             };
 
             bool valid = _sm.Init(states, "idle");
@@ -407,14 +404,6 @@ namespace Nebulator.Script
                     paths.Add(fullpath);
                 }
 
-                // Would actually like to use roslyn for C#7 stuff but it's a pain to implement.
-                //Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider providerX = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider();
-                //// Need to fix hardcoded path to compiler - why isn't this fixed by MS?
-                //var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-                //var settings = providerX.GetType().GetField("_compilerSettings", flags).GetValue(providerX);
-                //settings.GetType().GetField("_compilerFullPath", flags).SetValue(settings, Environment.CurrentDirectory + @"\roslyn\csc.exe");
-
-
                 // Make it compile.
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
@@ -445,7 +434,7 @@ namespace Nebulator.Script
                     {
                         // The line should end with source line number: "//1234"
                         int origLineNum = 0; // defaults
-                        string origFileName = Definitions.UNKNOWN_STRING;
+                        string origFileName = Utils.UNKNOWN_STRING;
 
                         // Dig out the offending source code information.
                         string fpath = Path.GetFileName(err.FileName.ToLower());
@@ -939,8 +928,6 @@ namespace Nebulator.Script
         {
             SmFuncArg farg = o as SmFuncArg;
 
-            // public void On_MODN()
-
             try
             {
                 if (farg.CleanedLine != "")
@@ -1063,7 +1050,7 @@ namespace Nebulator.Script
                     // Check for valid fractional part.
                     if (int.TryParse(parts[1], out int result))
                     {
-                        if (result >= Definitions.TOCKS_PER_TICK)
+                        if (result >= Time.TOCKS_PER_TICK)
                         {
                             throw null; // too big
                         }
@@ -1092,7 +1079,7 @@ namespace Nebulator.Script
                         }
 
                         // Scale.
-                        d *= Definitions.TOCKS_PER_TICK;
+                        d *= Time.TOCKS_PER_TICK;
 
                         // Truncate.
                         d = Math.Floor(d);
@@ -1117,7 +1104,7 @@ namespace Nebulator.Script
                         {
                             case 'x':
                                 // Note on.
-                                times.Add(new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Definitions.TOCKS_PER_TICK / PATTERN_SIZE));
+                                times.Add(new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Time.TOCKS_PER_TICK / PATTERN_SIZE));
                                 break;
 
                             case '-':
