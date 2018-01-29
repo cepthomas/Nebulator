@@ -55,7 +55,12 @@ namespace Nebulator.Controls
         public Color ControlColor { get; set; } = Color.Orange;
 
         /// <summary>
-        /// All the important time points with their names.
+        /// Show/hide progress.
+        /// </summary>
+        public bool ShowProgress { get; set; } = true;
+
+        /// <summary>
+        /// All the important time points with their names. Used also by tooltip.
         /// </summary>
         [ReadOnly(true)]
         [Browsable(false)]
@@ -97,7 +102,7 @@ namespace Nebulator.Controls
 
             // Internal.
             Brush brush = new SolidBrush(ControlColor);
-            if(MaxTick != 0 && _current.Tick < _maxTick)
+            if(ShowProgress && MaxTick != 0 && _current.Tick < _maxTick)
             {
                 pe.Graphics.FillRectangle(brush, 1, 1, ((Width - 2) * _current.Tick / _maxTick), Height - 2);
             }

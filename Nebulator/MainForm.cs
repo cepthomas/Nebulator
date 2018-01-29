@@ -9,10 +9,11 @@ using NLog;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Controls;
-using Nebulator.Scripting;
+using Nebulator.Script;
 using Nebulator.UI;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
+using NProcessing;
 
 
 namespace Nebulator
@@ -30,7 +31,7 @@ namespace Nebulator
         Piano _piano = new Piano();
 
         /// <summary>The current script.</summary>
-        Script _script = null;
+        NebScript _script = null;
 
         /// <summary>Playing the part.</summary>
         bool _playing = false;
@@ -144,7 +145,7 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys  processing
+            OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // airport  dev  example  lsys
 
             //ExportMidi("test.mid");
 
@@ -274,7 +275,7 @@ namespace Nebulator
                             foreach (string sseq in strack.SequenceNames)
                             {
                                 Sequence seq = ScriptEntities.Sequences[sseq];
-                                StepCollection stepsToAdd = ScriptUtils.ConvertToSteps(track, seq, seqOffset);
+                                StepCollection stepsToAdd = NebScript.ConvertToSteps(track, seq, seqOffset);
                                 _compiledSteps.Add(stepsToAdd);
                                 seqOffset += seq.Length;
                             }
@@ -416,7 +417,7 @@ namespace Nebulator
                 {
                     if(_script != null)
                     {
-                        // Do any script execute stuff. This is done now as the script may manipulate things.
+                        // Do any script execute stuff. This is done first as the script may manipulate things.
 
                         // Package up the runtime stuff the script may need.
                         _script.RtVals.Playing = _playing;
@@ -451,6 +452,7 @@ namespace Nebulator
                     {
                         _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                     }
+                    timeMaster.ShowProgress = chkSequence.Checked;
 
                     // Local common function
                     void PlayStep(Step step)

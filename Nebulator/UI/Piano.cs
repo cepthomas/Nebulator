@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using System.Linq;
 using System.IO;
 using Nebulator.Common;
-using Nebulator.Scripting;
 using Nebulator.Midi;
 
 

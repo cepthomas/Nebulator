@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Nebulator.Common;
-using Nebulator.Scripting;
 using Nebulator.Controls;
 using Nebulator.UI;
 

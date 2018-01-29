@@ -1,18 +1,55 @@
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using NLog;
+using MoreLinq;
+using NProcessing;
 using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 
 
-namespace Nebulator.Scripting
+namespace Nebulator.Script
 {
-    /// <summary>
-    /// Nebulator specific script stuff. Additions to the core processing-like stuff.
-    /// </summary>
-    public partial class Script
+    public class NebScript : NProcessing.Script
     {
+        ///////////////////////// TODO cleanup all internal stuff ///////////////////////////
+
+        /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
+        public class RuntimeValues
+        {
+            /// <summary>Main -> Script</summary>
+            public bool Playing { get; set; }
+
+            /// <summary>Main -> Script</summary>
+            public Time StepTime { get; set; }
+
+            /// <summary>Main -> Script</summary>
+            public float RealTime { get; set; }
+
+            /// <summary>Main -> Script -> Main</summary>
+            public float Speed { get; set; }
+
+            /// <summary>Main -> Script -> Main</summary>
+            public int Volume { get; set; }
+
+            /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
+            public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
+
+            /// <summary>Script -> Main</summary>
+            public List<string> PrintLines { get; private set; } = new List<string>();
+        }
+
+        /// <summary>Current working set of dynamic values - things shared between host and script.</summary>
+        public RuntimeValues RtVals { get; set; } = new RuntimeValues();
+
+        ////////////////////////////////////////////////////////////////////////
+
+
+
+
         #region Functions that can be overridden in the user script
         /// <summary>Called every Nebulator Tock.</summary>
         public virtual void step() { }
@@ -188,7 +225,7 @@ namespace Nebulator.Scripting
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = ScriptUtils.ConvertToSteps(track, seq, RtVals.StepTime.Tick);
+            StepCollection scoll = ConvertToSteps(track, seq, RtVals.StepTime.Tick);
             RtVals.RuntimeSteps.Add(scoll);
         }
 
@@ -202,6 +239,88 @@ namespace Nebulator.Scripting
         {
             List<int> notes = NoteUtils.GetScaleNotes(scale, key);
             return notes != null ? notes.ToArray() : new int[0];
+        }
+        #endregion
+
+        #region Internal members and functions
+        /// <summary>
+        /// Script functions that are called from the main nebulator. They are identified by name/key.
+        /// Typically they are controller input handlers such that the key is the name of the input.
+        /// </summary>
+        protected Dictionary<string, ScriptFunction> _scriptFunctions = new Dictionary<string, ScriptFunction>();
+        public delegate void ScriptFunction();
+
+        /// <summary>
+        /// Execute a script function. No error checking, presumably the compiler did that. Caller will have to deal with any runtime exceptions.
+        /// </summary>
+        /// <param name="which"></param>
+        public void ExecScriptFunction(string which)
+        {
+            if (_scriptFunctions.ContainsKey(which))
+            {
+                _scriptFunctions[which].Invoke();
+            }
+        }
+        
+        /// <summary>
+        /// Generate steps from sequence notes.
+        /// </summary>
+        /// <param name="track">Which track to send it on.</param>
+        /// <param name="seq">Which notes to send.</param>
+        /// <param name="startTick">Which tick to start at.</param>
+        public static StepCollection ConvertToSteps(Track track, Sequence seq, int startTick)
+        {
+            StepCollection steps = new StepCollection();
+
+            foreach (SequenceElement seqel in seq.Elements)
+            {
+                // Create the note start and stop times.
+                int toffset = startTick == -1 ? 0 : track.NextTime();
+
+                //Time startNoteTime = new Time(tick == -1 ? Script.StepTime.Tick : tick, toffset) + seqel.When;
+                Time startNoteTime = new Time(startTick, toffset) + seqel.When;
+                Time stopNoteTime = startNoteTime + seqel.Duration;
+
+                if (seqel.Function != "")
+                {
+                    StepSpecial step = new StepSpecial()
+                    {
+                        TrackName = track.Name,
+                        Channel = track.Channel,
+                        Function = seqel.Function
+                    };
+                    steps.AddStep(startNoteTime, step);
+                }
+                else // plain ordinary
+                {
+                    // Process all note numbers.
+                    foreach (int noteNum in seqel.Notes)
+                    {
+                        ///// Note on.
+                        int vel = track.NextVol(seqel.Volume);
+                        StepNoteOn step = new StepNoteOn()
+                        {
+                            TrackName = track.Name,
+                            Channel = track.Channel,
+                            NoteNumber = noteNum,
+                            NoteNumberToPlay = noteNum,
+                            Velocity = vel,
+                            VelocityToPlay = vel,
+                            Duration = seqel.Duration
+                        };
+                        steps.AddStep(startNoteTime, step);
+
+                        //// Maybe add a deferred stop note.
+                        //if (stopNoteTime != startNoteTime)
+                        //{
+                        //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
+                        //}
+                        //// else client is taking care of it.
+                    }
+                }
+            }
+
+            return steps;
         }
         #endregion
     }

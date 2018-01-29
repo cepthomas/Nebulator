@@ -58,8 +58,8 @@
     <Reference Include="Markdig, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Markdig.0.13.0\lib\net40\Markdig.dll</HintPath>
     </Reference>
-    <Reference Include="MoreLinq, Version=2.9.21302.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
-      <HintPath>..\packages\morelinq.2.9.0\lib\net40\MoreLinq.dll</HintPath>
+    <Reference Include="MoreLinq, Version=2.10.21623.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.2.10.0\lib\net40\MoreLinq.dll</HintPath>
     </Reference>
     <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
@@ -68,7 +68,11 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NProcessing, Version=0.9.6603.17982, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NProcessing.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -354,9 +358,9 @@
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Scripting\Scripting.csproj">
-      <Project>{29a26e51-1494-4bee-9e20-4a4d0f3b34ab}</Project>
-      <Name>Scripting</Name>
+    <ProjectReference Include="..\Script\Script.csproj">
+      <Project>{1202e3e2-7ff4-4132-9041-aade2aa9a584}</Project>
+      <Name>Script</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

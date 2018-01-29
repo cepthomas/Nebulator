@@ -44,7 +44,7 @@
             this.levers = new Nebulator.UI.Levers();
             this.infoDisplay = new Nebulator.UI.InfoDisplay();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.scriptSurface = new Nebulator.Scripting.ScriptSurface();
+            this.scriptSurface = new NProcessing.Surface();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -448,7 +448,7 @@
         private UI.InfoDisplay infoDisplay;
         private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainerInput;
-        private Scripting.ScriptSurface scriptSurface;
+        private NProcessing.Surface scriptSurface;
     }
 }
 

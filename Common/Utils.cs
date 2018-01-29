@@ -7,10 +7,13 @@ using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters.Binary;
+using MoreLinq;
+
 
 namespace Nebulator.Common
 {
-    public static class Definitions
+    public static class Definitions //TODO clean/simplify these
     {
         /// <summary>General purpose marker.</summary>
         public const string UNKNOWN_STRING = "???";
@@ -58,47 +61,16 @@ namespace Nebulator.Common
             char c = e.KeyChar;
             e.Handled = !(char.IsLetterOrDigit(c) || (c == '\b') || (c == ' '));
         }
-
-        /// <summary>
-        /// Colorize a bitmap.
-        /// </summary>
-        /// <param name="original"></param>
-        /// <param name="newcol"></param>
-        /// <returns></returns>
-        public static Bitmap ColorizeBitmap(Image original, Color newcol)
-        {
-            Bitmap origbmp = original as Bitmap;
-            Bitmap newbmp = new Bitmap(original.Width, original.Height);
-
-            for (int y = 0; y < newbmp.Height; y++)
-            {
-                for (int x = 0; x < newbmp.Width; x++)
-                {
-                    // Get the pixel from the image.
-                    Color acol = origbmp.GetPixel(x, y);
-
-                    // Test for not background.
-                    if(acol.A > 0)
-                    {
-                        Color c = Color.FromArgb(acol.A, newcol.R, newcol.G, newcol.B);
-                        newbmp.SetPixel(x, y, c);
-                    }
-                }
-            }
-
-            return newbmp;
-        }
         #endregion
 
-        #region Misc utils
+        #region System utils
         /// <summary>
         /// Returns a string with the application version information.
         /// </summary>
         public static string GetVersionString()
         {
             Version ver = typeof(Utils).Assembly.GetName().Version;
-            string ret = $"{ver.Major}.{ver.Minor}.{ver.Build}";
-            return ret;
+            return $"{ver.Major}.{ver.Minor}.{ver.Build}";
         }
 
         /// <summary>
@@ -108,8 +80,7 @@ namespace Nebulator.Common
         public static string GetAppDir()
         {
             string localdir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string appDir = Path.Combine(localdir, "Nebulator");
-            return appDir;
+            return Path.Combine(localdir, "Nebulator");
         }
 
         /// <summary>
@@ -222,6 +193,36 @@ namespace Nebulator.Common
 
             //return the resulting bitmap
             return result;
+        }
+
+        /// <summary>
+        /// Colorize a bitmap.
+        /// </summary>
+        /// <param name="original"></param>
+        /// <param name="newcol"></param>
+        /// <returns></returns>
+        public static Bitmap ColorizeBitmap(Image original, Color newcol)
+        {
+            Bitmap origbmp = original as Bitmap;
+            Bitmap newbmp = new Bitmap(original.Width, original.Height);
+
+            for (int y = 0; y < newbmp.Height; y++)
+            {
+                for (int x = 0; x < newbmp.Width; x++)
+                {
+                    // Get the pixel from the image.
+                    Color acol = origbmp.GetPixel(x, y);
+
+                    // Test for not background.
+                    if (acol.A > 0)
+                    {
+                        Color c = Color.FromArgb(acol.A, newcol.R, newcol.G, newcol.B);
+                        newbmp.SetPixel(x, y, c);
+                    }
+                }
+            }
+
+            return newbmp;
         }
         #endregion
 
@@ -347,198 +348,131 @@ namespace Nebulator.Common
             return val;
         }
         #endregion
+    }
 
-        #region Things that have nothing to do with this project really
+    public static class Extensions
+    {
         /// <summary>
-        /// Partial extraction of API for the wiki doc.
+        /// Test for integer string.
         /// </summary>
-        /// <param name="fn"></param>
-        public static void ExtractAPI(string fn)
+        /// <param name="sourceString"></param>
+        /// <returns></returns>
+        public static bool IsInteger(this string sourceString)
         {
-            List<string> all = new List<string>();
-            List<string> part = new List<string>();
-            bool firstRegion = true;
-
-            foreach (string l in File.ReadAllLines(fn))
-            {
-                string s = l.Trim();
-
-                if (s.StartsWith("#region"))
-                {
-                    s = s.Remove(0, 7).Trim();
-
-                    if(firstRegion)
-                    {
-                        firstRegion = false;
-                    }
-                    else
-                    {
-                        // Sort accumulated by property or function name.
-                        part.Sort((x, y) =>
-                        {
-                            List<string> lsx = x.SplitByTokens(" (");
-                            List<string> lsy = y.SplitByTokens(" (");
-                            lsx.Remove("virtual");
-                            lsy.Remove("virtual");
-                            return lsx[1].CompareTo(lsy[1]);
-                        });
-
-                        if(part.Count > 0)
-                        {
-                            all.AddRange(part);
-                        }
-                        else
-                        {
-                            all.Add("None implemented.");
-                        }
-                        part.Clear();
-                        all.Add("```");
-                        all.Add("");
-                    }
-
-                    all.Add("# " + s);
-                    all.Add("```c#");
-                }
-
-                if (s.StartsWith("public "))
-                {
-                    s = s.Remove(0, 7);
-
-                    int i = s.IndexOf('{');
-                    if(i != -1)
-                    {
-                        s = s.Left(i);
-                    }
-
-                    s.Trim();
-
-                    if(l.Contains("ScriptNotImplementedException"))
-                    {
-                        s = s.Insert(0, "//NI ");
-                    }
-                    else
-                    {
-                        part.Add(s);
-                    }
-                }
-            }
-
-            all.Add("```");
-
-            Clipboard.SetText(string.Join(Environment.NewLine, all));
+            bool isint = true;
+            sourceString.ForEach(c => isint &= char.IsNumber(c));
+            return isint;
         }
 
         /// <summary>
-        /// Utility to dump contents of dir structure.
+        /// Test for alpha string.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="els"></param>
-        public static void DumpDir(string path, List<string> els)
+        /// <param name="sourceString"></param>
+        /// <returns></returns>
+        public static bool IsAlpha(this string sourceString)
         {
-            //List<string> els = new List<string>();
-            DirectoryInfo di = new DirectoryInfo(path);
+            bool isalpha = true;
+            sourceString.ForEach(c => isalpha &= char.IsLetter(c));
+            return isalpha;
+        }
 
-            foreach (FileInfo info in di.GetFiles())
+        /// <summary>
+        /// Returns the rightmost characters of a string based on the number of characters specified.
+        /// </summary>
+        /// <param name="str">The source string to return characters from.</param>
+        /// <param name="numChars">The number of rightmost characters to return.</param>
+        /// <returns>The rightmost characters of a string.</returns>
+        public static string Right(this string str, int numChars)
+        {
+            numChars = Utils.Constrain(numChars, 0, str.Length);
+            return str.Substring(str.Length - numChars, numChars);
+        }
+
+        /// <summary>
+        /// Returns the leftmost number of chars in the string.
+        /// </summary>
+        /// <param name="str">The source string .</param>
+        /// <param name="numChars">The number of characters to get from the source string.</param>
+        /// <returns>The leftmost number of characters to return from the source string supplied.</returns>
+        public static string Left(this string str, int numChars)
+        {
+            numChars = Utils.Constrain(numChars, 0, str.Length);
+            return str.Substring(0, numChars);
+        }
+
+        /// <summary>
+        /// Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
+        /// </summary>
+        /// <param name="text">The string to split up.</param>
+        /// <param name="tokens">The char token(s) to split by.</param>
+        /// <param name="trim">Remove whitespace at each end.</param>
+        /// <returns>Return the parts as a list.</returns>
+        public static List<string> SplitByTokens(this string text, string tokens, bool trim = true)
+        {
+            var ret = new List<string>();
+            var list = text.Split(tokens.ToCharArray(), trim ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
+            list.ForEach(s => ret.Add(trim ? s.Trim() : s));
+            return ret;
+        }
+
+        /// <summary>
+        /// Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
+        /// </summary>
+        /// <param name="text">The string to split up.</param>
+        /// <param name="splitby">The string to split by.</param>
+        /// <param name="trim">Remove whitespace at each end.</param>
+        /// <returns>Return the parts as a list.</returns>
+        public static List<string> SplitByToken(this string text, string splitby, bool trim = true)
+        {
+            var ret = new List<string>();
+            var list = text.Split(new string[] { splitby }, trim ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
+            list.ForEach(s => ret.Add(trim ? s.Trim() : s));
+            return ret;
+        }
+
+        /// <summary>
+        /// Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
+        /// There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
+        /// The binary serialization is apparently slower but safer. Feel free to reimplement with a better way.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static T DeepClone<T>(this T obj)
+        {
+            using (var ms = new MemoryStream())
             {
-                if (info.Length > 10000000)
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+                return (T)formatter.Deserialize(ms);
+            }
+        }
+
+        /// <summary>
+        /// Update the MRU.
+        /// </summary>
+        /// <param name="mruList">The MRU.</param>
+        /// <param name="newVal">New value(s) to perhaps insert.</param>
+        public static void UpdateMru(this List<string> mruList, string newVal)
+        {
+            // First check if it's already in there.
+            for (int i = 0; i < mruList.Count; i++)
+            {
+                if (newVal == mruList[i])
                 {
-                    //els.Add($"{0}: {1}", info.Length / 1000000, info.FullName));
-                    Console.WriteLine($"{info.Length / 1000000}: {info.FullName}");
+                    // Remove from current location so we can stuff it back in later.
+                    mruList.Remove(mruList[i]);
                 }
             }
 
-            foreach (DirectoryInfo info in di.GetDirectories())
+            // Insert at the front and trim the tail.
+            mruList.Insert(0, newVal);
+            while (mruList.Count > 20)
             {
-                DumpDir(info.FullName, els);
+                mruList.RemoveAt(mruList.Count - 1);
             }
         }
-        #endregion
-
-        #region Char conversion
-        /// <summary>
-        /// General purpose decoder for keys. Because windows makes it kind of difficult.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="modifiers"></param>
-        /// <returns>Converted char - 0 if not convertible, and keyCode(s).</returns>
-        public static (char ch, List<Keys> keyCodes) KeyToChar(Keys key, Keys modifiers)
-        {
-            char ch = (char)0;
-            List<Keys> keyCodes = new List<Keys>();
-
-            bool shift = modifiers.HasFlag(Keys.Shift);
-            bool iscap = (Console.CapsLock && !shift) || (!Console.CapsLock && shift);
-
-            // Check modifiers.
-            if (modifiers.HasFlag(Keys.Control)) keyCodes.Add(Keys.Control);
-            if (modifiers.HasFlag(Keys.Alt)) keyCodes.Add(Keys.Alt);
-            if (modifiers.HasFlag(Keys.Shift)) keyCodes.Add(Keys.Shift);
-
-            switch (key)
-            {
-                case Keys.Enter: ch = '\n'; break;
-                case Keys.Tab: ch = '\t'; break;
-                case Keys.Space: ch = ' '; break;
-                case Keys.Back: ch = (char)8; break;
-                case Keys.Escape: ch = (char)27; break;
-                case Keys.Delete: ch = (char)127; break;
-
-                case Keys.Left: keyCodes.Add(Keys.Left); break;
-                case Keys.Right: keyCodes.Add(Keys.Right); break;
-                case Keys.Up: keyCodes.Add(Keys.Up); break;
-                case Keys.Down: keyCodes.Add(Keys.Down); break;
-
-                case Keys.D0: ch = shift ? ')' : '0'; break;
-                case Keys.D1: ch = shift ? '!' : '1'; break;
-                case Keys.D2: ch = shift ? '@' : '2'; break;
-                case Keys.D3: ch = shift ? '#' : '3'; break;
-                case Keys.D4: ch = shift ? '$' : '4'; break;
-                case Keys.D5: ch = shift ? '%' : '5'; break;
-                case Keys.D6: ch = shift ? '^' : '6'; break;
-                case Keys.D7: ch = shift ? '&' : '7'; break;
-                case Keys.D8: ch = shift ? '*' : '8'; break;
-                case Keys.D9: ch = shift ? '(' : '9'; break;
-
-                case Keys.Oemplus: ch = shift ? '+' : '='; break;
-                case Keys.OemMinus: ch = shift ? '_' : '-'; break;
-                case Keys.OemQuestion: ch = shift ? '?' : '/'; break;
-                case Keys.Oemcomma: ch = shift ? '<' : ','; break;
-                case Keys.OemPeriod: ch = shift ? '>' : '.'; break;
-                case Keys.OemQuotes: ch = shift ? '\"' : '\''; break;
-                case Keys.OemSemicolon: ch = shift ? ':' : ';'; break;
-                case Keys.OemPipe: ch = shift ? '|' : '\\'; break;
-                case Keys.OemCloseBrackets: ch = shift ? '}' : ']'; break;
-                case Keys.OemOpenBrackets: ch = shift ? '{' : '['; break;
-                case Keys.Oemtilde: ch = shift ? '~' : '`'; break;
-
-                case Keys.NumPad0: ch = '0'; break;
-                case Keys.NumPad1: ch = '1'; break;
-                case Keys.NumPad2: ch = '2'; break;
-                case Keys.NumPad3: ch = '3'; break;
-                case Keys.NumPad4: ch = '4'; break;
-                case Keys.NumPad5: ch = '5'; break;
-                case Keys.NumPad6: ch = '6'; break;
-                case Keys.NumPad7: ch = '7'; break;
-                case Keys.NumPad8: ch = '8'; break;
-                case Keys.NumPad9: ch = '9'; break;
-                case Keys.Subtract: ch = '-'; break;
-                case Keys.Add: ch = '+'; break;
-                case Keys.Decimal: ch = '.'; break;
-                case Keys.Divide: ch = '/'; break;
-                case Keys.Multiply: ch = '*'; break;
-
-                default:
-                    if (key >= Keys.A && key <= Keys.Z)
-                    {
-                        // UC is 65-90  LC is 97-122
-                        ch = iscap ? ch = (char)(int)key : (char)(int)(key + 32);
-                    }
-                    break;
-            }
-
-            return (ch, keyCodes);
-        }
-        #endregion
     }
 
     /// <summary>

@@ -9,7 +9,7 @@ using System.Reflection;
 
 // To use it in your project, remove these lines from your AssemblyInfo.cs:
 [assembly: AssemblyCompany("Tyrell Corp")]
-[assembly: AssemblyCopyright("Me")]
+[assembly: AssemblyCopyright("MIT License")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("0.9.*")]

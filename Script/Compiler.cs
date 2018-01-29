@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
 using System.CodeDom.Compiler;
 using System.Reflection;
-using System.IO;
-using System.Text;
 using NLog;
 using MoreLinq;
+using NProcessing;
 using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 
 
-namespace Nebulator.Scripting
+namespace Nebulator.Script
 {
     /// <summary>
     /// Parses/compiles neb file(s).
@@ -85,22 +87,20 @@ namespace Nebulator.Scripting
         /// </summary>
         /// <param name="nebfn">Fully qualified path to topmost file.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public Script Execute(string nebfn)
+        public NebScript Execute(string nebfn)
         {
-            Script script = null;
+            NebScript script = null;
 
-            if(nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
+            // Reset everything.
+            _filesToCompile.Clear();
+            _consts.Clear();
+            _initLines.Clear();
+            ScriptEntities.Clear();
+            Errors.Clear();
+
+            if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
             {
                 _logger.Info($"Compiling {nebfn}.");
-
-                // Reset everything.
-                _filesToCompile.Clear();
-                _consts.Clear();
-                _initLines.Clear();
-                ScriptEntities.Clear();
-                Errors.Clear();
-
-                // Init things.
 
                 // Get and sanitize the script name.
                 _scriptName = Path.GetFileNameWithoutExtension(nebfn);
@@ -190,17 +190,17 @@ namespace Nebulator.Scripting
             ParseOneFile(pcont);
 
             // Finished. Patch up some forward refs. Probably should be a two pass compile.
-            foreach(Section sect in ScriptEntities.Sections.Values)
+            foreach (Section sect in ScriptEntities.Sections.Values)
             {
-                foreach(SectionTrack st in sect.SectionTracks)
+                foreach (SectionTrack st in sect.SectionTracks)
                 {
-                    if(ScriptEntities.Tracks[st.TrackName] == null)
+                    if (ScriptEntities.Tracks[st.TrackName] == null)
                     {
                         pcont.LineNumber = 0; // Don't know the real line number.
                         AddParseError(pcont, $"Invalid track name:{st.TrackName}");
                     }
 
-                    foreach(string sseq in st.SequenceNames)
+                    foreach (string sseq in st.SequenceNames)
                     {
                         if (ScriptEntities.Sequences[sseq] == null)
                         {
@@ -316,7 +316,7 @@ namespace Nebulator.Scripting
                     new Transition("midictlout", "", ParseMidiController),
                     new Transition("section", "do_section", ParseSection),
                     new Transition("sequence", "do_sequence", ParseSequence),
-                    new Transition("functions", "do_functions"),
+                    new Transition("functions", "do_functions"), // TODO figure a better way to do this
                     new Transition("blank"), // swallow these
                     new Transition("", "", SmError)), // invalid other events
 
@@ -352,9 +352,9 @@ namespace Nebulator.Scripting
         /// Top level compiler.
         /// </summary>
         /// <returns></returns>
-        Script Compile()
+        NebScript Compile()
         {
-            Script script = null;
+            NebScript script = null;
 
             try
             {
@@ -374,11 +374,12 @@ namespace Nebulator.Scripting
                 cp.ReferencedAssemblies.Add("System.Drawing.dll");
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
+                cp.ReferencedAssemblies.Add("NProcessing.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.exe");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Scripting.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Dynamic.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -402,7 +403,7 @@ namespace Nebulator.Scripting
                     {
                         File.Delete(fullpath);
                     }
-                    File.WriteAllLines(fullpath, ci.CodeLines.FormatSourceCode());
+                    File.WriteAllLines(fullpath, NpUtils.FormatSourceCode(ci.CodeLines));
                     paths.Add(fullpath);
                 }
 
@@ -425,11 +426,11 @@ namespace Nebulator.Scripting
                     // Bind to the script interface.
                     foreach (Type t in assy.GetTypes())
                     {
-                        if (t.BaseType != null && t.BaseType.Name == "Script")
+                        if (t.BaseType != null && t.BaseType.Name == "NebScript")
                         {
                             // We have a good script file. Create the executable object.
                             Object o = Activator.CreateInstance(t);
-                            script = o as Script;
+                            script = o as NebScript;
                         }
                     }
 
@@ -480,8 +481,13 @@ namespace Nebulator.Scripting
                         }
                         else
                         {
-                            // Should never happen...
-                            _logger.Error("This should never happen...");
+                            Errors.Add(new ScriptError()
+                            {
+                                ErrorType = ScriptError.ScriptErrorType.Compile,
+                                SourceFile = "None",
+                                LineNumber = -1,
+                                Message = err.ErrorText
+                            });
                         }
                     }
                 }
@@ -522,8 +528,11 @@ namespace Nebulator.Scripting
             ScriptEntities.Sequences.Values.ForEach(s => codeLines.Add($"Sequence {s.Name} {{ get {{ return ScriptEntities.Sequences[\"{s.Name}\"]; }} }}"));
 
             // Collected init stuff goes in a constructor.
+            // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack.
+            codeLines.Add("protected static NebScript s;");
             codeLines.Add($"public {_scriptName}() : base()");
             codeLines.Add("{");
+            codeLines.Add("s = this;");
             _initLines.ForEach(l => codeLines.Add(l));
             codeLines.Add("}");
 
@@ -572,12 +581,13 @@ namespace Nebulator.Scripting
                 "using System.Drawing;",
                 "using System.Drawing.Drawing2D;",
                 "using System.Windows.Forms;",
+                "using NProcessing;",
                 "using Nebulator.Common;",
-                "using Nebulator.Scripting;",
                 "using Nebulator.Dynamic;",
+                "using Nebulator.Script;",
                 "namespace Nebulator.UserScript",
                 "{",
-                $"public partial class {_scriptName} : Script",
+                $"public partial class {_scriptName} : NebScript",
                 "{"
             };
 
@@ -626,7 +636,7 @@ namespace Nebulator.Scripting
                         LineNumber = 1
                     };
 
-                    if(!ParseOneFile(subcont))
+                    if (!ParseOneFile(subcont))
                     {
                         throw new Exception(fn);
                     }
@@ -823,7 +833,7 @@ namespace Nebulator.Scripting
                 }
                 ScriptEntities.Sections.Values.Last().SectionTracks.Add(st);
             }
-            catch (Exception )
+            catch (Exception)
             {
                 AddParseError(farg.Context, $"Invalid section track: {farg.Args[0]}");
             }
@@ -899,7 +909,7 @@ namespace Nebulator.Scripting
                         Volume = ParseConstRef(farg.Context, farg.Args[2])
                     };
 
-                    if(seqel.Function != "")
+                    if (seqel.Function != "")
                     {
                         _initLines.Add($"_scriptFunctions.Add(\"{seqel.Function}\", {seqel.Function});");
                     }
@@ -933,7 +943,7 @@ namespace Nebulator.Scripting
 
             try
             {
-                if(farg.CleanedLine != "")
+                if (farg.CleanedLine != "")
                 {
                     // Store the whole line with line tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
                     farg.Context.CodeLines.Add($"{farg.CleanedLine} //{farg.Context.LineNumber}");
@@ -1020,7 +1030,7 @@ namespace Nebulator.Scripting
             catch (Exception)
             {
                 // Assumes it is the name of a defined value.
-                if(_consts.ContainsKey(s))
+                if (_consts.ContainsKey(s))
                 {
                     c = _consts[s];
                 }
@@ -1045,7 +1055,7 @@ namespace Nebulator.Scripting
             try
             {
                 // Test for pattern or Time.
-                if(s.Contains("."))
+                if (s.Contains("."))
                 {
                     // Single time value.
                     var parts = s.SplitByToken(".");
@@ -1103,7 +1113,7 @@ namespace Nebulator.Scripting
 
                     for (int i = 0; i < s.Length; i++)
                     {
-                        switch(s[i])
+                        switch (s[i])
                         {
                             case 'x':
                                 // Note on.

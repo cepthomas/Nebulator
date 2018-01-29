@@ -20,6 +20,21 @@
 		},
 		{
 			"path": "C:\\Users\\cet\\AppData\\Local\\Nebulator"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				".vs",
+				"NProcessing/bin",
+				"NProcessing/obj",
+				"Test/bin",
+				"Test/obj",
+				"packages"
+			],
+			"path": "C:\\Dev\\NProcessing"
+		},
+		{
+			"path": "C:\\Dev\\NProcessing.wiki"
 		}
 	],
 	"solution_file": "./Nebulator.sln"
