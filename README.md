@@ -19,7 +19,7 @@ It's all WinForms. I recognize that WPF/UWP is superior (right?) technology but 
 
 
 # NProcessing
-The Processing-like UI part was originally built in to this app but it seemed prudent to separate it out into a standalone application. Find it here: [NProcessing doc](https://github.com/cepthomas/NProcessing/wiki). Nebulator uses that component for the UI aspects.
+The Processing-like UI part was originally built in to this app but it seemed prudent to separate it out into a standalone application. Find it here: [NProcessing](https://github.com/cepthomas/NProcessing). Nebulator uses that component for the UI aspects.
 
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.
@@ -36,14 +36,14 @@ This project contains a bunch of components that are either recycled or created 
 
 # Third Party
 This application uses these excellent FOSS components:
-- [MoreLinq](https://morelinq.github.io)
-- NAudio DLL and modified controls, midi file: [NAudio](https://github.com/naudio/NAudio)
-- Modified multimedia timer and piano control: [Leslie Sanford's Midi Toolkit](https://github.com/tebjan/Sanford.Multimedia.Midi)
-- Logging: [NLog](http://nlog-project.org/)
-- Markdown processing: [Markdig](https://github.com/lunet-io/markdig)
-- Json processor: [Newtonsoft](https://www.nuget.org/packages/Newtonsoft.Json/). Note - uses 9.0.1 - don't update!
-- Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/)
-- Button icons: [Glyphicons Free](http://glyphicons.com/)
+- [MoreLinq](https://morelinq.github.io) (MIT)
+- NAudio DLL and modified controls, midi file: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License)
+- Modified multimedia timer and piano control: [Leslie Sanford's Midi Toolkit](https://github.com/tebjan/Sanford.Multimedia.Midi) (MIT)
+- Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause)
+- Markdown processing: [Markdig](https://github.com/lunet-io/markdig) (BSD 2-Clause)
+- Json processor: [Newtonsoft](https://www.nuget.org/packages/Newtonsoft.Json/) (MIT) Note - uses 9.0.1 - don't update!
+- Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt)
+- Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0)
 
 # License
 https://github.com/cepthomas/Nebulator/blob/master/LICENSE

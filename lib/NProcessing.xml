@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NProcessing</name>
+    </assembly>
+    <members>
+        <member name="T:NProcessing.color">
+            <summary>
+            Map Processing color class to native.
+            </summary>
+        </member>
+        <member name="T:NProcessing.PImage">
+            <summary>
+            Map Processing PImage class to native.
+            </summary>
+        </member>
+        <member name="T:NProcessing.PFont">
+            <summary>
+            Map Processing PFont class to native.
+            </summary>
+        </member>
+        <member name="T:NProcessing.Event">
+            <summary>
+            Port of Processing java class.
+            </summary>
+        </member>
+        <member name="T:NProcessing.MouseEvent">
+            <summary>
+            Port of Processing java class.
+            </summary>
+        </member>
+        <member name="T:NProcessing.Compiler">
+            <summary>
+            Parses/compiles vanilla NProcessing file(s).
+            </summary>
+        </member>
+        <member name="P:NProcessing.Compiler.FileParseContext.SourceFile">
+            <summary>Current source file.</summary>
+        </member>
+        <member name="P:NProcessing.Compiler.FileParseContext.LineNumber">
+            <summary>Current source line.</summary>
+        </member>
+        <member name="P:NProcessing.Compiler.FileParseContext.CodeLines">
+            <summary>Accumulated script code lines.</summary>
+        </member>
+        <member name="P:NProcessing.Compiler.Errors">
+            <summary>Accumulated errors.</summary>
+        </member>
+        <member name="P:NProcessing.Compiler.TempDir">
+            <summary>Specify the temp dir for tracking down runtime errors.</summary>
+        </member>
+        <member name="F:NProcessing.Compiler._baseDir">
+            <summary>Starting directory.</summary>
+        </member>
+        <member name="F:NProcessing.Compiler._scriptName">
+            <summary>Script info.</summary>
+        </member>
+        <member name="F:NProcessing.Compiler._filesToCompile">
+            <summary>Products of parsing process. Key is generated file name.</summary>
+        </member>
+        <member name="F:NProcessing.Compiler.UNKNOWN_STRING">
+            <summary>General purpose marker.</summary>
+        </member>
+        <member name="M:NProcessing.Compiler.Execute(System.String)">
+            <summary>
+            Run the whole thing.
+            </summary>
+            <param name="fn">Fully qualified path to topmost file.</param>
+            <returns>The newly minted script object or null if failed.</returns>
+        </member>
+        <member name="M:NProcessing.Compiler.ParseOneFile(NProcessing.Compiler.FileParseContext)">
+            <summary>
+            Parse one file. This is recursive to support nested include.
+            </summary>
+            <param name="pcont">The parse context.</param>
+        </member>
+        <member name="M:NProcessing.Compiler.Compile">
+            <summary>
+            Top level compiler.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.Compiler.GenMainFileContents">
+            <summary>
+            Create the file containing all the glue.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.Compiler.GenTopOfFile(System.String)">
+            <summary>
+            Create the boilerplate file top stuff.
+            </summary>
+            <param name="fn">Source file name. Empty means it's an internal file.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.Compiler.GenBottomOfFile">
+            <summary>
+            Create the boilerplate file bottom stuff.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.Compiler.AddError(System.String,System.Int32,System.String)">
+            <summary>
+            Formatter for error info.
+            </summary>
+            <param name="srcFile"></param>
+            <param name="line"></param>
+            <param name="msg"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NProcessing.ScriptNotImplementedException">
+            <summary>Script exceptions.</summary>
+        </member>
+        <member name="T:NProcessing.Script">
+            <summary>
+            Processing emulation script stuff.
+            The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
+            </summary>
+        </member>
+        <member name="P:NProcessing.Script.PrintLines">
+            <summary>Lines from script println() for display by host.</summary>
+        </member>
+        <member name="F:NProcessing.Script._rand">
+            <summary>Script randomizer.</summary>
+        </member>
+        <member name="F:NProcessing.Script._font">
+            <summary>Current font to draw.</summary>
+        </member>
+        <member name="F:NProcessing.Script._pen">
+            <summary>Current pen to draw.</summary>
+        </member>
+        <member name="F:NProcessing.Script._brush">
+            <summary>Current brush to draw.</summary>
+        </member>
+        <member name="F:NProcessing.Script._xAlign">
+            <summary>Current text alignment.</summary>
+        </member>
+        <member name="F:NProcessing.Script._yAlign">
+            <summary>Current text alignment.</summary>
+        </member>
+        <member name="F:NProcessing.Script._matrixStack">
+            <summary>General purpose stack</summary>
+        </member>
+        <member name="F:NProcessing.Script._bgColor">
+            <summary>Background color. Internal so Surface can access.</summary>
+        </member>
+        <member name="F:NProcessing.Script._smooth">
+            <summary>Smoothing option. Internal so Surface can access.</summary>
+        </member>
+        <member name="F:NProcessing.Script._loop">
+            <summary>Loop option. Internal so Surface can access.</summary>
+        </member>
+        <member name="F:NProcessing.Script._redraw">
+            <summary>Redraw option. Internal so Surface can access.</summary>
+        </member>
+        <member name="F:NProcessing.Script._gr">
+            <summary>Current working Graphics object to draw on. Internal so Surface can access</summary>
+        </member>
+        <member name="T:NProcessing.Surface">
+            <summary>The client hosts this control in their UI. It performs the actual graphics drawing and input.</summary>
+        </member>
+        <member name="F:NProcessing.Surface._script">
+            <summary>The current script.</summary>
+        </member>
+        <member name="M:NProcessing.Surface.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:NProcessing.Surface.InitScript(NProcessing.Script)">
+            <summary>
+            Update per new script object.
+            </summary>
+            <param name="script"></param>
+        </member>
+        <member name="M:NProcessing.Surface.UpdateSurface">
+            <summary>
+            Redraw if it's time and enabled.
+            </summary>
+        </member>
+        <member name="M:NProcessing.Surface.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Calls the script code that generates the bmp to draw.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Event handler.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Event handler.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Event handler.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnMouseDoubleClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Event handler.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Event handler.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnMouseWheel(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Event handler.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.ProcessMouseEvent(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Common routine to update mouse stuff.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Event handler for keys.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnKeyUp(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Event handler for keys.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Event handler for keys.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NProcessing.Surface.ProcessKeys(System.ValueTuple{System.Char,System.Collections.Generic.List{System.Windows.Forms.Keys}})">
+            <summary>
+            Convert generic utility output to flavor that Processing understands.
+            </summary>
+            <param name="keys"></param>
+        </member>
+        <member name="F:NProcessing.Surface.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NProcessing.Surface.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NProcessing.Surface.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:NProcessing.NpUtils.DegreesToRadians(System.Single)">
+            <summary>Conversion.</summary>
+            <param name="angle"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.NpUtils.RadiansToDegrees(System.Single)">
+            <summary>Conversion.</summary>
+            <param name="angle"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.NpUtils.Constrain(System.Double,System.Double,System.Double)">
+            <summary>Bounds limits a value.</summary>
+            <param name="val"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.NpUtils.Constrain(System.Int32,System.Int32,System.Int32)">
+            <summary>Bounds limits a value.</summary>
+            <param name="val"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NProcessing.NpUtils.FormatSourceCode(System.Collections.Generic.List{System.String})">
+            <summary>Rudimentary C# source code formatter to make generated files somewhat readable.</summary>
+            <param name="src">Lines to prettify.</param>
+            <returns>Formatted lines.</returns>
+        </member>
+        <member name="M:NProcessing.NpUtils.KeyToChar(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
+            <summary>General purpose decoder for keys. Because windows makes it kind of difficult.</summary>
+            <param name="key"></param>
+            <param name="modifiers"></param>
+            <returns>Tuple of Converted char (0 if not convertible) and keyCode(s).</returns>
+        </member>
+        <member name="M:NProcessing.NpUtils.GetKeyState(System.Windows.Forms.Keys)">
+            <summary>Key state query. Based on https://stackoverflow.com/questions/1100285/how-to-detect-the-currently-pressed-key. </summary>
+            <param name="key">Which key.</param>
+            <returns></returns>
+        </member>
+        <member name="T:NProcessing.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:NProcessing.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:NProcessing.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+    </members>
+</doc>

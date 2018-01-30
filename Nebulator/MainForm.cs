@@ -237,7 +237,7 @@ namespace Nebulator
             }
             else
             {
-                Compiler compiler = new Compiler();
+                NebCompiler compiler = new NebCompiler();
 
                 // Save internal nebp file vals now as they will be reloaded during compile.
                 _nebpVals.Save();

@@ -13,7 +13,7 @@ using Nebulator.Dynamic;
 
 namespace Nebulator.Script
 {
-    public class NebScript : NProcessing.Script
+    public class NebScript : NProcessing.Script //TODO is this really the best way to do this? Think...
     {
         /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
         public class RuntimeValues

@@ -16,10 +16,31 @@ using Nebulator.Dynamic;
 
 namespace Nebulator.Script
 {
+    /// <summary>General script error container.</summary>
+    public class ScriptError
+    {
+        public enum ScriptErrorType { None, Parse, Compile, Runtime }
+
+        /// <summary>Where it came from.</summary>
+        public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
+
+        /// <summary>Original source file.</summary>
+        public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>Original source line number.</summary>
+        public int LineNumber { get; set; } = 0;
+
+        /// <summary>Message from parse or compile or runtime error.</summary>
+        public string Message { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>Readable.</summary>
+        public override string ToString() => $"{ErrorType} Error: {SourceFile}({LineNumber}): {Message}";
+    }
+
     /// <summary>
     /// Parses/compiles neb file(s). Big brother version of the one in NProcessing.
     /// </summary>
-    public class Compiler
+    public class NebCompiler
     {
         #region Helper classes
         class FileParseContext

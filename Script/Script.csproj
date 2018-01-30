@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compiler.cs" />
+    <Compile Include="NebCompiler.cs" />
     <Compile Include="NebScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
