@@ -149,7 +149,7 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
+            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
 
             //ExportMidi("test.mid");
 

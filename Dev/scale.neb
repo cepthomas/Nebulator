@@ -15,7 +15,7 @@ public class Scale
         noteWeights = new int[count];
 
         // Default weights.
-        for(int i = 0;i < count;i++)
+        for(int i = 0; i < count; i++)
         {
             noteWeights[i] = 100 / count;
             totalWeight += noteWeights[i];
@@ -37,7 +37,7 @@ public class Scale
         }        
     }
 
-    public int NextNote()
+    public int RandomNote()
     {
         int note = 0;
         int r = s.random(totalWeight);

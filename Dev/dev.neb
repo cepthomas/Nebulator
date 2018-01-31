@@ -5,7 +5,7 @@
 
 
 
-include utils.neb
+include ..\Examples\utils.neb
 include scale.neb
 
 
@@ -43,8 +43,6 @@ section PART2 WHEN1 60
 KEYS   SEQ1      SEQ2 
 DRUMS  DRUMS_HH  DRUMS_HH   
 
-// 46??
-
 ////////// Sequences //////////
 
 sequence SEQ1 8
@@ -63,7 +61,7 @@ sequence ALGO1 8
 00.00  algoDynamic()  90
 
 
-// Using patterns. Each hit is 1/16 note - fixed res for now.
+// Sequences using patterns. Each hit is 1/16 note - fixed res for now.
 sequence DRUMS_SIMPLE 8 // 32 x 1/16 = 8 x 1/4
 x-------x-------x-------x------- AcousticBassDrum 90
 ----x-------x-x-----x-------x-x- AcousticSnare    80
@@ -74,17 +72,16 @@ sequence DRUMS_HH 8
 
 ///// Functions /////
 
-int[] notesPlaying = new int[128];
-Scale algerian;
-
+int[] _notesPlaying = new int[128];
+Scale _algerian;
 
 public override void setup()
 {
-    algerian = new Scale("Algerian", "C4");
+    _algerian = new Scale("Algerian", "C4");
     // 1 2 b3 #4 5 b6 7
-    algerian.SetWeight(0, 50);
-    algerian.SetWeight(4, 50);
-    algerian.SetWeight(2, 30);
+    _algerian.SetWeight(0, 50);
+    _algerian.SetWeight(4, 50);
+    _algerian.SetWeight(2, 30);
 
     // Patches (optional). Only needed if using the Windows GM.
     if(winGm)
@@ -116,24 +113,24 @@ void algoDynamic()
 {
     //if(random(3) == 0)
     {
-        int which = algerian.NextNote();
+        int which = _algerian.RandomNote();
 
-        if(notesPlaying[which] == 0) // don't play if already playing
+        if(_notesPlaying[which] == 0) // don't play if already playing
         {
             //println("algoDynamic:", which);
             int dur = random(1, 8);
-            notesPlaying[which] = tick + dur;
+            _notesPlaying[which] = tick + dur;
             sendMidiNote(SYNTH, which, random(80, 100), dur);
         }
     }
 
     // Remove any scheduled to stop now.
-    for(int i = 0;i < notesPlaying.Length;i++)
+    for(int i = 0;i < _notesPlaying.Length;i++)
     {
-        if(notesPlaying[i] != 0 && notesPlaying[i] == tick)
+        if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
         {
-            //sendMidiNote(SYNTH, notesPlaying[i], 0, 0.00);
-            notesPlaying[i] = 0;
+            //sendMidiNote(SYNTH, _notesPlaying[i], 0, 0.00);
+            _notesPlaying[i] = 0;
         }
     }
 }
@@ -160,6 +157,7 @@ public void On_MODN()
 
 public override void draw()
 {
+    //println("draw");
     background(100, COL1, 200);
 
     // Recursive:
@@ -167,9 +165,9 @@ public override void draw()
     // drawRecursive(0, 0, width / 2, 1); // This uses a whole core with GDI.
     // return;
 
-    drawTarget(width * 0.25f, height * 0.4f, 200, 4);
+    drawTarget(width * 0.15f, height * 0.4f, 100, 4);
     drawTarget(width * 0.5f, height * 0.5f, 300, 10);
-    drawTarget(width * 0.75f, height * 0.3f, 120, 6);    
+    drawTarget(width * 0.85f, height * 0.3f, 150, 6);    
 
     if (mousePressedP)
     {
@@ -184,27 +182,33 @@ public override void draw()
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
-    // int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    // sendMidiNote(SYNTH, sn, 90, 0.48);
+    int sn = (int)map(mouseX, 0, width, 55, 70);
+    sendMidiNote(SYNTH, sn, 90, 0.48);
 
-    boing();
+    // or:
+    //boing();
 }
 
 
 // Just a thing from Functions example.
+float _ypos = 0;
+int _c = 0;
+
 void drawTarget(float xloc, float yloc, int size, int num)
 {
     int grayvalues = 255 / num;
     float steps = size / num;
     for (int i = 0; i < num; i++)
     {
-        fill(i * grayvalues);
+        fill(i * grayvalues, num * 10, (_c * 1) % 255);
         ellipse(xloc, yloc, size - i * steps, size - i * steps);
+        //psychedelic:
+        _c++;
     }
 }
 
 
-// Recursive rendering - chokes Script.draw()
+// Recursive rendering. CPU intensive.
 void drawRecursive(float x, float y, float squareSize, float minSize)
 {
     rect(x, y, squareSize, squareSize);

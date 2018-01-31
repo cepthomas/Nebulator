@@ -38,7 +38,7 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// Parses/compiles neb file(s). Big brother version of the one in NProcessing.
+    /// Parses/compiles *.neb file(s). Big brother version of the one in NProcessing.
     /// </summary>
     public class NebCompiler
     {

@@ -13,7 +13,7 @@ using Nebulator.Dynamic;
 
 namespace Nebulator.Script
 {
-    public class NebScript : NProcessing.Script //TODO is this really the best way to do this? Think...
+    public class NebScript : NProcessing.Script
     {
         /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
         public class RuntimeValues
@@ -81,7 +81,7 @@ namespace Nebulator.Script
         /// <param name="track">Which track to send it on.</param>
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
-        /// <param name="dur">How long it lasts in Time. 0 means no note off generated.</param>
+        /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
         public void sendMidiNote(Track track, int inote, int vol, Time dur)
         {
             bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
@@ -205,11 +205,11 @@ namespace Nebulator.Script
         /// <param name="val">Number of notes, +-.</param>
         public void modulate(Track track, int val)
         {
-            track.Modulate = val; // TODO And/or modulate to a specified key. Requires specifying current key too.
+            track.Modulate = val;
         }
 
         /// <summary>
-        /// Send a sequence.
+        /// Send a named sequence.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
@@ -217,6 +217,17 @@ namespace Nebulator.Script
         {
             StepCollection scoll = ConvertToSteps(track, seq, RtVals.StepTime.Tick);
             RtVals.RuntimeSteps.Add(scoll);
+        }
+
+        /// <summary>
+        /// Convert the argument into numbered notes.
+        /// </summary>
+        /// <param name="note">Note string using any form allowed in the script.</param>
+        /// <returns>Array of notes or empty if invalid.</returns>
+        public int[] getNotes(string note)
+        {
+            List<int> notes = NoteUtils.ParseNoteString(note);
+            return notes != null ? notes.ToArray() : new int[0];
         }
 
         /// <summary>
