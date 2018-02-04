@@ -32,7 +32,7 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.btnGo = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.textViewer = new Nebulator.Controls.TextViewer();
+            this.textViewer = new System.Windows.Forms.RichTextBox();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -105,7 +105,7 @@
 
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton btnGo;
-        private Controls.TextViewer textViewer;
+        private System.Windows.Forms.RichTextBox textViewer;
         private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

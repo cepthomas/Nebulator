@@ -203,7 +203,7 @@ void drawTarget(float xloc, float yloc, int size, int num)
         fill(i * grayvalues, num * 10, (_c * 1) % 255);
         ellipse(xloc, yloc, size - i * steps, size - i * steps);
         //psychedelic:
-        _c++;
+        //_c++;
     }
 }
 

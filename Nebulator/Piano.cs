@@ -8,7 +8,7 @@ using Nebulator.Common;
 using Nebulator.Midi;
 
 
-namespace Nebulator.UI
+namespace Nebulator
 {
     /// <summary>
     /// Piano control borrowed from Leslie Sanford with extras.

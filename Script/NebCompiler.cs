@@ -51,7 +51,7 @@ namespace Nebulator.Script
             /// <summary>Current source line.</summary>
             public int LineNumber { get; set; } = 1;
 
-            /// <summary>Current parse state. One of idle, do_section, do_sequence, do_functions.</summary>
+            /// <summary>Current parse state.</summary>
             public string State { get; set; } = "idle";
 
             /// <summary>Accumulated script code lines.</summary>
@@ -66,7 +66,7 @@ namespace Nebulator.Script
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
 
-        /// <summary>Specify the temp dir for tracking down runtime errors.</summary>
+        /// <summary>Specifies the temp dir for tracking down runtime errors.</summary>
         public string TempDir { get; set; } = "";
         #endregion
 
@@ -404,23 +404,14 @@ namespace Nebulator.Script
 
                 // Create output area.
                 TempDir = Path.Combine(_baseDir, "temp");
-                if (Directory.Exists(TempDir))
-                {
-                    Directory.GetFiles(TempDir).ForEach(f => File.Delete(f));
-                }
-                else
-                {
-                    Directory.CreateDirectory(TempDir);
-                }
+                Directory.CreateDirectory(TempDir);
+                Directory.GetFiles(TempDir).ForEach(f => File.Delete(f));
 
                 foreach (string genFn in _filesToCompile.Keys)
                 {
                     FileParseContext ci = _filesToCompile[genFn];
                     string fullpath = Path.Combine(TempDir, genFn);
-                    if (File.Exists(fullpath))
-                    {
-                        File.Delete(fullpath);
-                    }
+                    File.Delete(fullpath);
                     File.WriteAllLines(fullpath, NpUtils.FormatSourceCode(ci.CodeLines));
                     paths.Add(fullpath);
                 }

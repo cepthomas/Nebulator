@@ -8,7 +8,7 @@ using Nebulator.Controls;
 using Nebulator.Dynamic;
 
 
-namespace Nebulator.UI
+namespace Nebulator
 {
     public partial class Levers : UserControl
     {

@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Nebulator.Common;
-using Nebulator.Controls;
-using Nebulator.UI;
+//using Nebulator.Common;
+//using Nebulator.Controls;
+//using Nebulator;
 
 
 namespace Nebulator.Test
@@ -56,13 +56,14 @@ namespace Nebulator.Test
             runner.RunCases(cases);
 
             // Show results
-            textViewer.Colors.Clear();
             textViewer.Clear();
-            textViewer.Colors.Add("*** ", Color.Pink);
-            textViewer.Colors.Add("!!! ", Color.Plum);
-            textViewer.Colors.Add("--- ", Color.LightGreen);
+            //textViewer.Colors.Clear();
+            //textViewer.Colors.Add("*** ", Color.Pink);
+            //textViewer.Colors.Add("!!! ", Color.Plum);
+            //textViewer.Colors.Add("--- ", Color.LightGreen);
 
-            runner.Context.Lines.ForEach(l => textViewer.AddLine(l, false));
+            //runner.Context.Lines.ForEach(l => textViewer.AddLine(l, false));
+            runner.Context.Lines.ForEach(l => textViewer.AppendText(l));
         }
     }
 

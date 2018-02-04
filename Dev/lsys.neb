@@ -11,6 +11,11 @@ lever L1 0 255 COL1
 lever L2 -5000 0 INITANG
 
 
+// For NProcessing:
+// int COL1 = 200;
+// int INITANG = -3963;
+
+
 ///// Functions /////
 
 // The lines to draw.
@@ -18,12 +23,20 @@ List<Point> lines = new List<Point>();
 
 public override void setup()
 {
-    //println("setup()");
-    genLSys(-1.359672, -0.138235, -3963.7485, 14.11);
+    genLSys(-1.359672, -0.138235, INITANG, 14.11);
+    println("setup()");
+    noLoop();
 }
+
+int xx = 0;
 
 public override void draw()
 {
+    if(xx++ % 50 == 0)
+    {
+        println("draw()");
+    }
+
     background(COL1, 100, 200);
 
     for (var i = 0; i < lines.Count; i += 2)
@@ -38,6 +51,14 @@ public void On_INITANG()
 {
     //println("On_INITANG", INITANG);
     genLSys(-1.359672, -0.138235, INITANG, 14.11);
+    redraw();
+    //println("On_INITANG()", _loop);
+}
+
+public override void mouseClicked()
+{
+    genLSys(-1.359672, -0.138235, mouseX, 14.11);
+    redraw();
 }
 
 ///// L-systems generator.

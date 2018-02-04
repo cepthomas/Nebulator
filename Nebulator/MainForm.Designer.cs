@@ -41,8 +41,8 @@
             this.btnRewind = new System.Windows.Forms.Button();
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.splitContainerInput = new System.Windows.Forms.SplitContainer();
-            this.levers = new Nebulator.UI.Levers();
-            this.infoDisplay = new Nebulator.UI.InfoDisplay();
+            this.levers = new Nebulator.Levers();
+            this.infoDisplay = new Nebulator.InfoDisplay();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.scriptSurface = new NProcessing.Surface();
             this.menuStrip1.SuspendLayout();
@@ -415,17 +415,13 @@
             this.splitContainerInput.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        //private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
-        //private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        //private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
@@ -439,13 +435,13 @@
         private System.Windows.Forms.SplitContainer splitContainerControl;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private UI.Levers levers;
+        private Levers levers;
         private Controls.TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkSequence;
-        private UI.InfoDisplay infoDisplay;
+        private InfoDisplay infoDisplay;
         private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainerInput;
         private NProcessing.Surface scriptSurface;

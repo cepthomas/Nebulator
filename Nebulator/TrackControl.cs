@@ -5,7 +5,7 @@ using Nebulator.Common;
 using Nebulator.Dynamic;
 
 
-namespace Nebulator.UI
+namespace Nebulator
 {
     /// <summary>
     /// Common track controller.

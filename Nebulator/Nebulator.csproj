@@ -91,18 +91,6 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Controls\TextViewer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\TextViewer.Designer.cs">
-      <DependentUpon>TextViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\TimeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\TimeControl.Designer.cs">
-      <DependentUpon>TimeControl.cs</DependentUpon>
-    </Compile>
     <None Include="..\..\Nebulator.wiki\ScriptDefinitions.md">
       <Link>Resources\ScriptDefinitions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -112,41 +100,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
-    <None Include="Resources\glyphicons-360-file-export.png" />
-    <None Include="Resources\glyphicons-114-justify.png" />
-    <Compile Include="Controls\Fader.cs">
+    <Compile Include="TimeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\Fader.Designer.cs">
-      <DependentUpon>Fader.cs</DependentUpon>
+    <Compile Include="TimeControl.Designer.cs">
+      <DependentUpon>TimeControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Pan.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Pan.Designer.cs">
-      <DependentUpon>Pan.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Pot.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Pot.Designer.cs">
-      <DependentUpon>Pot.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PropertyGridEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\Meter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Meter.Designer.cs">
-      <DependentUpon>Meter.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Slider.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Slider.Designer.cs">
-      <DependentUpon>Slider.cs</DependentUpon>
-    </Compile>
+    <EmbeddedResource Include="TimeControl.resx">
+      <DependentUpon>TimeControl.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -156,57 +118,36 @@
     <None Include="Resources\medusa.png" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\About.cs">
+    <Compile Include="About.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\About.Designer.cs">
+    <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\InfoDisplay.cs">
+    <Compile Include="InfoDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\InfoDisplay.Designer.cs">
+    <Compile Include="InfoDisplay.Designer.cs">
       <DependentUpon>InfoDisplay.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Levers.cs">
+    <Compile Include="Levers.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Levers.Designer.cs">
+    <Compile Include="Levers.Designer.cs">
       <DependentUpon>Levers.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Piano.cs">
+    <Compile Include="Piano.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Piano.Designer.cs">
+    <Compile Include="Piano.Designer.cs">
       <DependentUpon>Piano.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\TrackControl.cs">
+    <Compile Include="TrackControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\TrackControl.Designer.cs">
+    <Compile Include="TrackControl.Designer.cs">
       <DependentUpon>TrackControl.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Controls\Fader.resx">
-      <DependentUpon>Fader.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Pan.resx">
-      <DependentUpon>Pan.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Pot.resx">
-      <DependentUpon>Pot.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Meter.resx">
-      <DependentUpon>Meter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Slider.resx">
-      <DependentUpon>Slider.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\TextViewer.resx">
-      <DependentUpon>TextViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\TimeControl.resx">
-      <DependentUpon>TimeControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -220,19 +161,19 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UI\About.resx">
+    <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\InfoDisplay.resx">
+    <EmbeddedResource Include="InfoDisplay.resx">
       <DependentUpon>InfoDisplay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Levers.resx">
+    <EmbeddedResource Include="Levers.resx">
       <DependentUpon>Levers.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Piano.resx">
+    <EmbeddedResource Include="Piano.resx">
       <DependentUpon>Piano.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\TrackControl.resx">
+    <EmbeddedResource Include="TrackControl.resx">
       <DependentUpon>TrackControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
@@ -349,6 +290,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Controls\Controls.csproj">
+      <Project>{433a6140-96c9-4fc8-9f3b-e937a4cf71e1}</Project>
+      <Name>Controls</Name>
     </ProjectReference>
     <ProjectReference Include="..\Dynamic\Dynamic.csproj">
       <Project>{f3aaa729-b1a5-41e4-b6b1-e5240777a1ca}</Project>

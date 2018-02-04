@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamic", "Dynamic\Dynamic.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Script", "Script\Script.csproj", "{1202E3E2-7FF4-4132-9041-AADE2AA9A584}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controls", "Controls\Controls.csproj", "{433A6140-96C9-4FC8-9F3B-E937A4CF71E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{1202E3E2-7FF4-4132-9041-AADE2AA9A584}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1202E3E2-7FF4-4132-9041-AADE2AA9A584}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1202E3E2-7FF4-4132-9041-AADE2AA9A584}.Release|Any CPU.Build.0 = Release|Any CPU
+		{433A6140-96C9-4FC8-9F3B-E937A4CF71E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{433A6140-96C9-4FC8-9F3B-E937A4CF71E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{433A6140-96C9-4FC8-9F3B-E937A4CF71E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{433A6140-96C9-4FC8-9F3B-E937A4CF71E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

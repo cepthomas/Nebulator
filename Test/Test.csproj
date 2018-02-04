@@ -83,10 +83,6 @@
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Nebulator\Nebulator.csproj">
-      <Project>{3212e8cf-db99-4c4a-99cc-1020a11bdc1d}</Project>
-      <Name>Nebulator</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

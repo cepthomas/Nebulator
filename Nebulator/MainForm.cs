@@ -10,7 +10,7 @@ using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
-using Nebulator.UI;
+using Nebulator;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 using NProcessing;
@@ -149,7 +149,7 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
+            OpenFile(@"C:\Dev\Nebulator\Dev\lsys.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
 
             //ExportMidi("test.mid");
 
@@ -512,6 +512,8 @@ namespace Nebulator
                     //_tanUi.Arm();
 
                     scriptSurface.UpdateSurface();
+                    //TODO? _script.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
+                    //TODO? _script.PrintLines.Clear();
                 }
 
                 // In case there are lingering noteoffs that need to be processed.

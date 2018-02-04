@@ -72,7 +72,7 @@ namespace Nebulator.Common
         public List<string> RecentFiles { get; set; } = new List<string>();
 
         [Browsable(false)]
-        public int ControlSplitterPos { get; set; } = 800;
+        public int ControlSplitterPos { get; set; } = 800; // TODO also V/H option.
         #endregion
 
         #region Fields

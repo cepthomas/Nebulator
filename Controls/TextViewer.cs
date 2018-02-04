@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Nebulator.Common;
 
-namespace Nebulator.UI
+namespace Nebulator.Controls
 {
-    public partial class InfoDisplay : UserControl
+    public partial class TextViewer : UserControl
     {
         /// <summary>
         /// The colors to display when text is matched.
@@ -21,35 +21,28 @@ namespace Nebulator.UI
         public Dictionary<string, Color> Colors { get; set; } = new Dictionary<string, Color>();
 
         /// <summary>
-        /// 
+        /// Constructor.
         /// </summary>
-        public InfoDisplay()
+        public TextViewer()
         {
             InitializeComponent();
             toolStrip1.Renderer = new Common.CheckBoxRenderer(); // for checked color.
         }
 
         /// <summary>
-        /// 
+        /// Initialize everything.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void InfoDisplay_Load(object sender, EventArgs e)
+        private void TextViewer_Load(object sender, EventArgs e)
         {
             txtView.Font = UserSettings.TheSettings.EditorFont;
             txtView.BackColor = UserSettings.TheSettings.BackColor;
             txtView.WordWrap = false;
 
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
-
             btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
-            //btnWrap.Checked = true;
-
-            btnMonIn.Checked = UserSettings.TheSettings.MidiMonitorIn;
-            btnMonOut.Checked = UserSettings.TheSettings.MidiMonitorOut;
-            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
-            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
+            btnWrap.Checked = false;
         }
 
         /// <summary>
@@ -57,9 +50,9 @@ namespace Nebulator.UI
         /// </summary>
         /// <param name="text">The message.</param>
         /// <param name="trim">True to truncate continuous displays.</param>
-        public void AddInfoLine(string text, bool trim = true)
+        public void AddLine(string text, bool trim = true)
         {
-            AddInfo(text + Environment.NewLine, trim);
+            Add(text + Environment.NewLine, trim);
         }
 
         /// <summary>
@@ -67,7 +60,7 @@ namespace Nebulator.UI
         /// </summary>
         /// <param name="text">The message.</param>
         /// <param name="trim">True to truncate continuous displays.</param>
-        public void AddInfo(string text, bool trim = true)
+        public void Add(string text, bool trim = true)
         {
             if (trim && txtView.TextLength > 5000)
             {
@@ -91,36 +84,21 @@ namespace Nebulator.UI
         }
 
         /// <summary>
-        /// A message to display to the user.
-        /// </summary>
-        /// <param name="msg">The message.</param>
-        public void AddMidiMessage(string msg)
-        {
-            AddInfoLine(msg);
-        }
-
-        /// <summary>
         /// 
         /// </summary>
-        private void BtnClear_Click(object sender, EventArgs e)
+        public void Clear()
         {
             txtView.Clear();
         }
 
         /// <summary>
-        /// Monitor midi in messages. Note that monitoring slows down processing so use judiciously.
+        /// 
         /// </summary>
-        private void BtnMonIn_Click(object sender, EventArgs e)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Clear_Click(object sender, EventArgs e)
         {
-            UserSettings.TheSettings.MidiMonitorIn = btnMonIn.Checked;
-        }
-
-        /// <summary>
-        /// Monitor midi out messages. Note that monitoring slows down processing so use judiciously.
-        /// </summary>
-        private void BtnMonOut_Click(object sender, EventArgs e)
-        {
-            UserSettings.TheSettings.MidiMonitorOut = btnMonOut.Checked;
+            Clear();
         }
 
         /// <summary>

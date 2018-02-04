@@ -6,7 +6,7 @@ using Markdig;
 using Nebulator.Common;
 
 
-namespace Nebulator.UI
+namespace Nebulator
 {
     /// <summary>
     /// Cheesy about page.
