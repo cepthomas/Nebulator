@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using NLog;
 using MoreLinq;
-using NProcessing;
 using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
@@ -13,7 +12,7 @@ using Nebulator.Dynamic;
 
 namespace Nebulator.Script
 {
-    public class NebScript : NProcessing.Script
+    public partial class ScriptCore
     {
         /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
         public class RuntimeValues

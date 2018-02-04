@@ -8,7 +8,6 @@ using System.CodeDom.Compiler;
 using System.Reflection;
 using NLog;
 using MoreLinq;
-using NProcessing;
 using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
@@ -108,9 +107,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="nebfn">Fully qualified path to topmost file.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public NebScript Execute(string nebfn)
+        public ScriptCore Execute(string nebfn)
         {
-            NebScript script = null;
+            ScriptCore script = null;
 
             // Reset everything.
             _filesToCompile.Clear();
@@ -370,9 +369,9 @@ namespace Nebulator.Script
         /// Top level compiler.
         /// </summary>
         /// <returns></returns>
-        NebScript Compile()
+        ScriptCore Compile()
         {
-            NebScript script = null;
+            ScriptCore script = null;
 
             try
             {
@@ -392,7 +391,6 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("System.Drawing.dll");
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
-                cp.ReferencedAssemblies.Add("NProcessing.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.exe");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
@@ -412,7 +410,7 @@ namespace Nebulator.Script
                     FileParseContext ci = _filesToCompile[genFn];
                     string fullpath = Path.Combine(TempDir, genFn);
                     File.Delete(fullpath);
-                    File.WriteAllLines(fullpath, NpUtils.FormatSourceCode(ci.CodeLines));
+                    File.WriteAllLines(fullpath, Utils.FormatSourceCode(ci.CodeLines));
                     paths.Add(fullpath);
                 }
 
@@ -427,11 +425,11 @@ namespace Nebulator.Script
                     // Bind to the script interface.
                     foreach (Type t in assy.GetTypes())
                     {
-                        if (t.BaseType != null && t.BaseType.Name == "NebScript")
+                        if (t.BaseType != null && t.BaseType.Name == "ScriptCore")
                         {
                             // We have a good script file. Create the executable object.
                             Object o = Activator.CreateInstance(t);
-                            script = o as NebScript;
+                            script = o as ScriptCore;
                         }
                     }
 
@@ -530,7 +528,7 @@ namespace Nebulator.Script
 
             // Collected init stuff goes in a constructor.
             // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack.
-            codeLines.Add("protected static NebScript s;");
+            codeLines.Add("protected static ScriptCore s;");
             codeLines.Add($"public {_scriptName}() : base()");
             codeLines.Add("{");
             codeLines.Add("s = this;");
@@ -582,13 +580,12 @@ namespace Nebulator.Script
                 "using System.Drawing;",
                 "using System.Drawing.Drawing2D;",
                 "using System.Windows.Forms;",
-                "using NProcessing;",
                 "using Nebulator.Common;",
                 "using Nebulator.Dynamic;",
                 "using Nebulator.Script;",
                 "namespace Nebulator.UserScript",
                 "{",
-                $"public partial class {_scriptName} : NebScript",
+                $"public partial class {_scriptName} : ScriptCore",
                 "{"
             };
 

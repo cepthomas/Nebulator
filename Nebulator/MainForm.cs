@@ -10,10 +10,8 @@ using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
-using Nebulator;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
-using NProcessing;
 
 
 namespace Nebulator
@@ -31,7 +29,7 @@ namespace Nebulator
         Piano _piano = new Piano();
 
         /// <summary>The current script.</summary>
-        NebScript _script = null;
+        ScriptCore _script = null;
 
         /// <summary>Playing the part.</summary>
         bool _playing = false;
@@ -279,7 +277,7 @@ namespace Nebulator
                             foreach (string sseq in strack.SequenceNames)
                             {
                                 Sequence seq = ScriptEntities.Sequences[sseq];
-                                StepCollection stepsToAdd = NebScript.ConvertToSteps(track, seq, seqOffset);
+                                StepCollection stepsToAdd = ScriptCore.ConvertToSteps(track, seq, seqOffset);
                                 _compiledSteps.Add(stepsToAdd);
                                 seqOffset += seq.Length;
                             }
