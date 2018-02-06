@@ -11,15 +11,12 @@ Some interesting reads on music-by-code:
 - [ChucK](http://chuck.cs.princeton.edu/)
 - [Peter Langston](http://www.langston.com/Papers/llfm.pdf)
 
-While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs, and display of whatever on the UI. The API is similar to that for [Processing](https://processing.org/).  
+While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs, and display of whatever on the UI.
 
 And a static declarative model is also supported if you want to write note sequence descriptions instead. Or you can combine declarative and procedural in the same piece. Wow!
 
-It's all WinForms. I recognize that WPF/UWP is superior (right?) technology but I can bang out most UI I need in WF lickety split.
+The script syntax is roughly based on that used by [Processing](https://processing.org/), combined with C# language features. In fact, a subset of the Processing graphics functions is implemented to support the UI/graphical aspects. Simple Processing scripts should port easily and run fine.
 
-
-# NProcessing
-The Processing-like UI part was originally built in to this app but it seemed prudent to separate it out into a standalone application. Find it here: [NProcessing](https://github.com/cepthomas/NProcessing). Nebulator uses that component for the UI aspects.
 
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.

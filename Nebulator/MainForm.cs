@@ -415,7 +415,7 @@ namespace Nebulator
                 _ctrlChanges.Clear();
 
                 ////// Neb steps /////
-                if (_playing && e.ElapsedTimers.Contains("NEB"))
+                if (_playing && e.ElapsedTimers.Contains("NEB")) // TODO rethink the what is playing when (neb/ui) stuff...
                 {
                     if(_script != null)
                     {
