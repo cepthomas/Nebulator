@@ -103,24 +103,24 @@ sequence BASS_VERSE 8
 
 // "musical"
 sequence DRUMS_VERSE 8
-0.00 AcousticBassDrum DRUM_DEF_VOL
-1.00 RideCymbal1 DRUM_DEF_VOL
-1.10 RideCymbal1 DRUM_DEF_VOL
-1.60 HiMidTom DRUM_DEF_VOL
-2.00 AcousticBassDrum DRUM_DEF_VOL
-3.00 RideCymbal1 DRUM_DEF_VOL
-3.10 RideCymbal1 DRUM_DEF_VOL
-4.00 AcousticBassDrum DRUM_DEF_VOL
-5.00 RideCymbal1 DRUM_DEF_VOL
-5.10 RideCymbal1 DRUM_DEF_VOL
-5.60 HiMidTom DRUM_DEF_VOL
-6.00 AcousticBassDrum DRUM_DEF_VOL
-7.00 CrashCymbal2 DRUM_DEF_VOL
+0.00 AcousticBassDrum  DRUM_DEF_VOL
+1.00 RideCymbal1       DRUM_DEF_VOL
+1.10 RideCymbal1       DRUM_DEF_VOL
+1.60 HiMidTom          DRUM_DEF_VOL
+2.00 AcousticBassDrum  DRUM_DEF_VOL
+3.00 RideCymbal1       DRUM_DEF_VOL
+3.10 RideCymbal1       DRUM_DEF_VOL
+4.00 AcousticBassDrum  DRUM_DEF_VOL
+5.00 RideCymbal1       DRUM_DEF_VOL
+5.10 RideCymbal1       DRUM_DEF_VOL
+5.60 HiMidTom          DRUM_DEF_VOL
+6.00 AcousticBassDrum  DRUM_DEF_VOL
+7.00 CrashCymbal2      DRUM_DEF_VOL
 
 // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
 sequence DRUMS_SIMPLE 8
-x-------x-------x-------x------- AcousticBassDrum 90
-----x-------x-x-----x-------x-x- AcousticSnare 80
+x-------x-------x-------x-------  AcousticBassDrum  90
+----x-------x-x-----x-------x-x-  AcousticSnare     80
 
 // Sequenced triggered in script
 sequence DYNAMIC_SEQ 8

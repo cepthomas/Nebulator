@@ -52,7 +52,7 @@
             this.browser.Location = new System.Drawing.Point(12, 12);
             this.browser.MinimumSize = new System.Drawing.Size(20, 20);
             this.browser.Name = "browser";
-            this.browser.Size = new System.Drawing.Size(875, 730);
+            this.browser.Size = new System.Drawing.Size(875, 434);
             this.browser.TabIndex = 1;
             // 
             // timer1
@@ -65,7 +65,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.PaleTurquoise;
-            this.ClientSize = new System.Drawing.Size(899, 754);
+            this.ClientSize = new System.Drawing.Size(899, 458);
             this.Controls.Add(this.browser);
             this.Controls.Add(this.picBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;

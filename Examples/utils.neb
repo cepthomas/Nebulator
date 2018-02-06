@@ -1,4 +1,5 @@
 
+// Define some Neb style vars.
 constant VEL 95
 variable MAX 60
 
@@ -19,4 +20,21 @@ bool boing(int notenum = 0)
 
     sendMidiNote(SYNTH, notenum, VEL, 1.09);
     return boinged;
+}
+
+
+// Example of an included class.
+public class Dummy
+{
+    int _thing = 0;
+
+    public Dummy(int thing)
+    {
+        _thing = thing;
+    }
+
+    public int GetThing(int value)
+    {
+        return _thing * s.random(value); // s. notation!
+    }
 }

@@ -13,9 +13,6 @@ using Nebulator.Midi;
 using Nebulator.Dynamic;
 
 
-//constant name value TODO??? or like name = constant ...
-
-
 namespace Nebulator.Script
 {
     /// <summary>General script error container.</summary>

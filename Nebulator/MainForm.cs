@@ -147,7 +147,7 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Dev\lsys.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
+            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
 
             //ExportMidi("test.mid");
 
@@ -415,7 +415,7 @@ namespace Nebulator
                 _ctrlChanges.Clear();
 
                 ////// Neb steps /////
-                if (_playing && e.ElapsedTimers.Contains("NEB")) // TODO rethink the what is playing when (neb/ui) stuff...
+                if (_playing && e.ElapsedTimers.Contains("NEB")) // TODO rethink the what is playing when (neb/ui) stuff... test with lsys.
                 {
                     if(_script != null)
                     {
@@ -511,7 +511,7 @@ namespace Nebulator
 
                     scriptSurface.UpdateSurface();
                     //TODO? _script.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
-                    //TODO? _script.PrintLines.Clear();
+                    // _script.PrintLines.Clear();
                 }
 
                 // In case there are lingering noteoffs that need to be processed.
