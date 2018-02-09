@@ -12,6 +12,11 @@ namespace Nebulator
 {
     public partial class Levers : UserControl
     {
+        #region Fields
+        /// <summary>Internal flag.</summary>
+        bool _init = true;
+        #endregion
+
         #region Events
         /// <summary>Reporting a change to listeners.</summary>
         public event EventHandler<LeverChangeEventArgs> LeverChangeEvent;
@@ -49,9 +54,11 @@ namespace Nebulator
         /// <param name="levers">Specs for levers from script.</param>
         public void Init(IEnumerable<LeverControlPoint> levers)
         {
+            _init = true;
+
             ////// Draw the levers and hook them up.
 
-            // Clean up first.
+            // Clean up old ones first.
             foreach(Control c in Controls)
             {
                 if(c is Slider)
@@ -87,6 +94,8 @@ namespace Nebulator
                 Controls.Add(sl);
                 x += sl.Width + SPACING;
             });
+
+            _init = false;
         }
 
         /// <summary>
@@ -96,7 +105,7 @@ namespace Nebulator
         /// <param name="e"></param>
         private void Lever_ValueChanged(object sender, EventArgs e)
         {
-            if(sender is Slider)
+            if(!_init && sender is Slider)
             {
                 // Update the bound var and report to the master.
                 Slider sl = sender as Slider;

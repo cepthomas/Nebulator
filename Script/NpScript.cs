@@ -6,27 +6,16 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Nebulator.Common;
 
+// Processing API stuff.
 
 namespace Nebulator.Script
 {
-    /// <summary>Script exceptions.</summary>
-    public class ScriptNotImplementedException : Exception
-    {
-        ScriptNotImplementedException() { }
-        public ScriptNotImplementedException(string function) : base($"Invalid script function: {function}()") { }
-    }
-
     /// <summary>
     /// Processing emulation script stuff.
     /// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
     /// </summary>
     public partial class ScriptCore
     {
-        #region Properties
-        /// <summary>Lines from script println() for display by host.</summary>
-        public List<string> PrintLines { get; private set; } = new List<string>();
-        #endregion
-
         #region Internal fields
         /// <summary>Script randomizer.</summary>
         Random _rand = new Random();
@@ -461,8 +450,8 @@ namespace Nebulator.Script
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) { PrintLines.Add(string.Join(" ", vars)); }
-        public void println(params object[] vars) { PrintLines.Add(string.Join(" ", vars) + Environment.NewLine); }
+        public void print(params object[] vars) { Context.PrintLines.Add(string.Join(" ", vars)); }
+        public void println(params object[] vars) { Context.PrintLines.Add(string.Join(" ", vars) + Environment.NewLine); }
         public void printArray(params object[] ps) { throw new ScriptNotImplementedException(nameof(printArray)); }
         #endregion
 

@@ -91,12 +91,29 @@ namespace Nebulator
         /// </summary>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            ///// App innards.
-            InitSettings();
+            #region Init main UI from settings
+            if (UserSettings.TheSettings.MainFormInfo.Width == 0)
+            {
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                Location = new Point(UserSettings.TheSettings.MainFormInfo.X, UserSettings.TheSettings.MainFormInfo.Y);
+                Size = new Size(UserSettings.TheSettings.MainFormInfo.Width, UserSettings.TheSettings.MainFormInfo.Height);
+                WindowState = FormWindowState.Normal;
+            }
 
+            _piano.Size = new Size(UserSettings.TheSettings.PianoFormInfo.Width, UserSettings.TheSettings.PianoFormInfo.Height);
+            _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
+            _piano.TopMost = false;
+            _piano.Location = new Point(UserSettings.TheSettings.PianoFormInfo.X, UserSettings.TheSettings.PianoFormInfo.Y);
+            #endregion
+
+            #region App innards
             InitLogging();
 
             PopulateRecentMenu();
+            #endregion
 
             #region Set up midi
             // Input midi events.
@@ -147,7 +164,7 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
+            OpenFile(@"C:\Dev\Nebulator\Dev\lsys.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
 
             //ExportMidi("test.mid");
 
@@ -375,7 +392,10 @@ namespace Nebulator
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker)delegate ()
             {
-                NextStep(e);
+                if(_script != null)
+                {
+                    NextStep(e);
+                }
             });
         }
 
@@ -387,7 +407,7 @@ namespace Nebulator
         {
             try
             {
-                ////// Process changed vars //////
+                ////// Process changed vars regardless of any other status //////
                 foreach (Variable var in _ctrlChanges.Values)
                 {
                     // Execute any script handlers.
@@ -415,68 +435,41 @@ namespace Nebulator
                 _ctrlChanges.Clear();
 
                 ////// Neb steps /////
-                if (_playing && e.ElapsedTimers.Contains("NEB")) // TODO rethink the what is playing when (neb/ui) stuff... test with lsys.
+                if (_playing && e.ElapsedTimers.Contains("NEB"))
                 {
-                    if(_script != null)
+                    // Package up the runtime stuff the script may need.
+                    _script.Context.Playing = _playing;
+                    _script.Context.StepTime = _stepTime;
+                    _script.Context.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
+                    _script.Context.Speed = (float)potSpeed.Value;
+                    _script.Context.Volume = sldVolume.Value;
+                    _script.Context.PrintLines.Clear();
+
+                    // Kick it.
+                    _script.step();
+
+                    // Process whatever the script may have done.
+                    if (_script.Context.Speed != potSpeed.Value)
                     {
-                        // Package up the runtime stuff the script may need.
-                        _script.RtVals.Playing = _playing;
-                        _script.RtVals.StepTime = _stepTime;
-                        _script.RtVals.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
-                        _script.RtVals.Speed = (float)potSpeed.Value;
-                        _script.RtVals.Volume = sldVolume.Value;
-
-                        _script.step();
-
-                        // Process whatever the script may have done.
-                        if (_script.RtVals.Speed != potSpeed.Value)
-                        {
-                            potSpeed.Value = _script.RtVals.Speed;
-                            SetSpeedTimerPeriod();
-                        }
-
-                        if (_script.RtVals.Volume != sldVolume.Value)
-                        {
-                            sldVolume.Value = _script.RtVals.Volume;
-                        }
-
-                        _script.RtVals.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                        _script.RtVals.RuntimeSteps.DeleteSteps(_stepTime);
-
-                        _script.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
-                        _script.PrintLines.Clear();
+                        potSpeed.Value = _script.Context.Speed;
+                        SetSpeedTimerPeriod();
                     }
 
-                    // Do the compiled steps.
+                    if (_script.Context.Volume != sldVolume.Value)
+                    {
+                        sldVolume.Value = _script.Context.Volume;
+                    }
+
+                    // Process any sequence steps the script added.
+                    _script.Context.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                    _script.Context.RuntimeSteps.DeleteSteps(_stepTime);
+
+                    // Now do the compiled steps.
                     if (chkSequence.Checked)
                     {
                         _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                     }
                     timeMaster.ShowProgress = chkSequence.Checked;
-
-                    // Local common function
-                    void PlayStep(Step step)
-                    {
-                        Track track = ScriptEntities.Tracks[step.TrackName];
-
-                        // Is it ok to play now?
-                        bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
-                        bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
-
-                        if (play)
-                        {
-                            if(step is StepSpecial)
-                            {
-                                _script.ExecScriptFunction((step as StepSpecial).Function);
-                            }
-                            else
-                            {
-                                // Maybe tweak values.
-                                step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
-                                MidiInterface.TheInterface.Send(step);
-                            }
-                        }
-                    }
 
                     ///// Bump time.
                     _stepTime.Advance();
@@ -504,18 +497,43 @@ namespace Nebulator
                 }
 
                 ///// UI updates /////
-                if (_script != null && e.ElapsedTimers.Contains("UI"))
+                if (e.ElapsedTimers.Contains("UI"))
                 {
                     // Measure and alert if too slow, or throttle.
                     //_tanUi.Arm();
-
                     scriptSurface.UpdateSurface();
-                    //TODO? _script.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
-                    // _script.PrintLines.Clear();
                 }
 
-                // In case there are lingering noteoffs that need to be processed.
+                // Show any accumulated messages.
+                _script.Context.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
+                _script.Context.PrintLines.Clear();
+
+                // Process any lingering noteoffs.
                 MidiInterface.TheInterface.Housekeep();
+
+                ///// Local common function
+                void PlayStep(Step step)
+                {
+                    Track track = ScriptEntities.Tracks[step.TrackName];
+
+                    // Is it ok to play now?
+                    bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                    bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
+
+                    if (play)
+                    {
+                        if (step is StepInternal)
+                        {
+                            _script.ExecScriptFunction((step as StepInternal).Function);
+                        }
+                        else
+                        {
+                            // Maybe tweak values.
+                            step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
+                            MidiInterface.TheInterface.Send(step);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -902,36 +920,7 @@ namespace Nebulator
 
         #region User settings
         /// <summary>
-        /// Init from the user settings.
-        /// </summary>
-        void InitSettings()
-        {
-            if (UserSettings.TheSettings.MainFormInfo.Width == 0)
-            {
-                WindowState = FormWindowState.Maximized;
-            }
-            else
-            {
-                Location = new Point(UserSettings.TheSettings.MainFormInfo.X, UserSettings.TheSettings.MainFormInfo.Y);
-                Size = new Size(UserSettings.TheSettings.MainFormInfo.Width, UserSettings.TheSettings.MainFormInfo.Height);
-                WindowState = FormWindowState.Normal;
-            }
-
-            bool top = false;
-
-            _piano.Size = new Size(UserSettings.TheSettings.PianoFormInfo.Width, UserSettings.TheSettings.PianoFormInfo.Height);
-            _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
-            _piano.TopMost = top;
-
-            // Now we can set the locations.
-            _piano.Location = new Point(UserSettings.TheSettings.PianoFormInfo.X, UserSettings.TheSettings.PianoFormInfo.Y);
-
-            splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
-            splitContainerControl.SplitterDistance = UserSettings.TheSettings.ControlSplitterPos;
-        }
-
-        /// <summary>
-        /// Save user settings.
+        /// Save user settings that aren't automatic.
         /// </summary>
         void SaveSettings()
         {
@@ -956,7 +945,7 @@ namespace Nebulator
         /// <summary>
         /// Edit the options in a property grid.
         /// </summary>
-        private void Settings_Click(object sender, EventArgs e) // TODO consolidate with _Load() and InitSettings() and SaveSettings() etc...
+        private void Settings_Click(object sender, EventArgs e)//  TODO consolidate with xxx_Load() and InitSettings() and SaveSettings() etc...
         {
             using (Form f = new Form()
             {
@@ -995,7 +984,7 @@ namespace Nebulator
                 f.Controls.Add(pg);
                 f.ShowDialog();
 
-                // Figure out what changed - handled differently.
+                // Figure out what changed - each handled differently.
                 if (midi)
                 {
                     MidiInterface.TheInterface.Init();
@@ -1282,6 +1271,9 @@ namespace Nebulator
             timeMaster.Invalidate();
 
             infoDisplay.BackColor = UserSettings.TheSettings.BackColor;
+
+            splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
+            splitContainerControl.SplitterDistance = UserSettings.TheSettings.ControlSplitterPos;
         }
         #endregion
 

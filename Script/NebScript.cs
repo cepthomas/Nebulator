@@ -9,36 +9,12 @@ using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 
+// Nebulator API stuff.
 
 namespace Nebulator.Script
 {
     public partial class ScriptCore
     {
-        /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
-        public class RuntimeValues
-        {
-            /// <summary>Main -> Script</summary>
-            public bool Playing { get; set; } = false;
-
-            /// <summary>Main -> Script</summary>
-            public Time StepTime { get; set; } = new Time();
-
-            /// <summary>Main -> Script</summary>
-            public float RealTime { get; set; } = 0.0f;
-
-            /// <summary>Main -> Script -> Main</summary>
-            public float Speed { get; set; } = 0.0f;
-
-            /// <summary>Main -> Script -> Main</summary>
-            public int Volume { get; set; } = 0;
-
-            /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
-            public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
-        }
-
-        /// <summary>Current working set of dynamic values - things shared between host and script.</summary>
-        public RuntimeValues RtVals { get; set; } = new RuntimeValues();
-
         #region Functions that can be overridden in the user script
         /// <summary>Called every Nebulator Tock.</summary>
         public virtual void step() { }
@@ -46,28 +22,28 @@ namespace Nebulator.Script
 
         #region User script properties
         /// <summary>Current Nebulator step time.</summary>
-        public Time stepTime { get { return RtVals.StepTime; } }
+        public Time stepTime { get { return Context.StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return RtVals.StepTime.Tick; } }
+        public int tick { get { return Context.StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return RtVals.StepTime.Tock; } }
+        public int tock { get { return Context.StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return RtVals.RealTime; } }
+        public float now { get { return Context.RealTime; } }
 
         /// <summary>Neb step clock is running.</summary>
-        public bool playing { get { return RtVals.Playing; } }
+        public bool playing { get { return Context.Playing; } }
 
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Time.TOCKS_PER_TICK; } }
 
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
-        public float speed { get { return RtVals.Speed; } set { RtVals.Speed = value; } }
+        public float speed { get { return Context.Speed; } set { Context.Speed = value; } }
 
         /// <summary>Nebulator master Volume.</summary>
-        public int volume { get { return RtVals.Volume; } set { RtVals.Volume = value; } }
+        public int volume { get { return Context.Volume; } set { Context.Volume = value; } }
 
         /// <summary>Indicates using internal synth.</summary>
         public bool winGm { get { return UserSettings.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
@@ -214,8 +190,8 @@ namespace Nebulator.Script
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = ConvertToSteps(track, seq, RtVals.StepTime.Tick);
-            RtVals.RuntimeSteps.Add(scoll);
+            StepCollection scoll = ConvertToSteps(track, seq, Context.StepTime.Tick);
+            Context.RuntimeSteps.Add(scoll);
         }
 
         /// <summary>
@@ -239,88 +215,6 @@ namespace Nebulator.Script
         {
             List<int> notes = NoteUtils.GetScaleNotes(scale, key);
             return notes != null ? notes.ToArray() : new int[0];
-        }
-        #endregion
-
-        #region Internal members and functions
-        /// <summary>
-        /// Script functions that are called from the main nebulator. They are identified by name/key.
-        /// Typically they are controller input handlers such that the key is the name of the input.
-        /// </summary>
-        protected Dictionary<string, ScriptFunction> _scriptFunctions = new Dictionary<string, ScriptFunction>();
-        public delegate void ScriptFunction();
-
-        /// <summary>
-        /// Execute a script function. No error checking, presumably the compiler did that. Caller will have to deal with any runtime exceptions.
-        /// </summary>
-        /// <param name="which"></param>
-        public void ExecScriptFunction(string which)
-        {
-            if (_scriptFunctions.ContainsKey(which))
-            {
-                _scriptFunctions[which].Invoke();
-            }
-        }
-        
-        /// <summary>
-        /// Generate steps from sequence notes.
-        /// </summary>
-        /// <param name="track">Which track to send it on.</param>
-        /// <param name="seq">Which notes to send.</param>
-        /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(Track track, Sequence seq, int startTick)
-        {
-            StepCollection steps = new StepCollection();
-
-            foreach (SequenceElement seqel in seq.Elements)
-            {
-                // Create the note start and stop times.
-                int toffset = startTick == -1 ? 0 : track.NextTime();
-
-                //Time startNoteTime = new Time(tick == -1 ? Script.StepTime.Tick : tick, toffset) + seqel.When;
-                Time startNoteTime = new Time(startTick, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + seqel.Duration;
-
-                if (seqel.Function != "")
-                {
-                    StepSpecial step = new StepSpecial()
-                    {
-                        TrackName = track.Name,
-                        Channel = track.Channel,
-                        Function = seqel.Function
-                    };
-                    steps.AddStep(startNoteTime, step);
-                }
-                else // plain ordinary
-                {
-                    // Process all note numbers.
-                    foreach (int noteNum in seqel.Notes)
-                    {
-                        ///// Note on.
-                        int vel = track.NextVol(seqel.Volume);
-                        StepNoteOn step = new StepNoteOn()
-                        {
-                            TrackName = track.Name,
-                            Channel = track.Channel,
-                            NoteNumber = noteNum,
-                            NoteNumberToPlay = noteNum,
-                            Velocity = vel,
-                            VelocityToPlay = vel,
-                            Duration = seqel.Duration
-                        };
-                        steps.AddStep(startNoteTime, step);
-
-                        //// Maybe add a deferred stop note.
-                        //if (stopNoteTime != startNoteTime)
-                        //{
-                        //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
-                        //}
-                        //// else client is taking care of it.
-                    }
-                }
-            }
-
-            return steps;
         }
         #endregion
     }

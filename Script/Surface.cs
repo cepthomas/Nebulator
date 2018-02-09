@@ -52,9 +52,8 @@ namespace Nebulator.Script
         /// </summary>
         public void UpdateSurface()
         {
-            if (_script != null && (_script._loop || _script._redraw))
+            if (_script._loop || _script._redraw)
             {
-                _script.PrintLines.Clear();
                 Invalidate();
             }
         }

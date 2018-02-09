@@ -57,6 +57,7 @@
     <Compile Include="NpClasses.cs" />
     <Compile Include="NpScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptCore.cs" />
     <Compile Include="Surface.cs">
       <SubType>UserControl</SubType>
     </Compile>

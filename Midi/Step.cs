@@ -140,10 +140,10 @@ namespace Nebulator.Midi
         }
     }
 
-    /// <summary>Used for things that are not actually midi - internal use.</summary>
-    public class StepSpecial : Step
+    /// <summary>Used for internal things that are not actually midi.</summary>
+    public class StepInternal : Step
     {
-        /// <summary>Function to call.</summary>
+        /// <summary>A function to call.</summary>
         public string Function { get; set; } = "";
 
         /// <summary>For viewing pleasure.</summary>

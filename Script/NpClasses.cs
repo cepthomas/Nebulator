@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Text;
 using Nebulator.Common;
 
+// Processing API stuff.
 
 namespace Nebulator.Script
 {
