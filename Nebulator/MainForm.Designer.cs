@@ -42,9 +42,9 @@
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.splitContainerInput = new System.Windows.Forms.SplitContainer();
             this.levers = new Nebulator.Levers();
+            this.scriptSurface = new Nebulator.Script.Surface();
             this.infoDisplay = new Nebulator.InfoDisplay();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.scriptSurface = new Script.Surface();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -229,6 +229,7 @@
             this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
             this.timeMaster.MaxTick = 0;
             this.timeMaster.Name = "timeMaster";
+            this.timeMaster.ShowProgress = true;
             this.timeMaster.Size = new System.Drawing.Size(175, 34);
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
@@ -322,7 +323,7 @@
             // 
             this.splitContainerControl.Panel2.Controls.Add(this.infoDisplay);
             this.splitContainerControl.Size = new System.Drawing.Size(826, 502);
-            this.splitContainerControl.SplitterDistance = 447;
+            this.splitContainerControl.SplitterDistance = 404;
             this.splitContainerControl.TabIndex = 2;
             // 
             // splitContainerInput
@@ -341,7 +342,7 @@
             // splitContainerInput.Panel2
             // 
             this.splitContainerInput.Panel2.Controls.Add(this.scriptSurface);
-            this.splitContainerInput.Size = new System.Drawing.Size(447, 502);
+            this.splitContainerInput.Size = new System.Drawing.Size(404, 502);
             this.splitContainerInput.SplitterDistance = 46;
             this.splitContainerInput.TabIndex = 0;
             // 
@@ -351,15 +352,24 @@
             this.levers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.levers.Location = new System.Drawing.Point(0, 0);
             this.levers.Name = "levers";
-            this.levers.Size = new System.Drawing.Size(447, 46);
+            this.levers.Size = new System.Drawing.Size(404, 46);
             this.levers.TabIndex = 0;
+            // 
+            // scriptSurface
+            // 
+            this.scriptSurface.BackColor = System.Drawing.Color.AliceBlue;
+            this.scriptSurface.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scriptSurface.Location = new System.Drawing.Point(0, 0);
+            this.scriptSurface.Name = "scriptSurface";
+            this.scriptSurface.Size = new System.Drawing.Size(404, 452);
+            this.scriptSurface.TabIndex = 2;
             // 
             // infoDisplay
             // 
             this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
             this.infoDisplay.Location = new System.Drawing.Point(0, 0);
             this.infoDisplay.Name = "infoDisplay";
-            this.infoDisplay.Size = new System.Drawing.Size(375, 502);
+            this.infoDisplay.Size = new System.Drawing.Size(418, 502);
             this.infoDisplay.TabIndex = 0;
             // 
             // toolTip
@@ -370,15 +380,6 @@
             this.toolTip.ReshowDelay = 0;
             this.toolTip.UseAnimation = false;
             this.toolTip.UseFading = false;
-            // 
-            // scriptSurface
-            // 
-            this.scriptSurface.BackColor = System.Drawing.Color.AliceBlue;
-            this.scriptSurface.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scriptSurface.Location = new System.Drawing.Point(0, 0);
-            this.scriptSurface.Name = "scriptSurface";
-            this.scriptSurface.Size = new System.Drawing.Size(447, 452);
-            this.scriptSurface.TabIndex = 2;
             // 
             // MainForm
             // 
@@ -415,6 +416,7 @@
             this.splitContainerInput.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

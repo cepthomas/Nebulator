@@ -3,6 +3,7 @@
 
 // My akai kbd midi: Pad1-8 = 44-51, knob1-8 = ctlr1-8
 
+//disable the "Diagnostic Tools" option in the debug settings.
 
 
 include ..\Examples\utils.neb
@@ -36,12 +37,12 @@ track DRUMS 10 4 0 0
 
 ////////// Sections //////////
 section PART1 0 WHEN1 // section name start length
-KEYS   SEQ1           ALGO1       SEQ1          SEQ2
-DRUMS  DRUMS_SIMPLE   DRUMS_HH    DRUMS_SIMPLE  DRUMS_HH
+KEYS    SEQ1           ALGO1       SEQ1          SEQ2
+DRUMS   DRUMS_SIMPLE   DRUMS_HH    DRUMS_SIMPLE  DRUMS_HH
 
 section PART2 WHEN1 60
-KEYS   SEQ1      SEQ2 
-DRUMS  DRUMS_HH  DRUMS_HH   
+KEYS    SEQ1      SEQ2 
+DRUMS   DRUMS_HH  DRUMS_HH   
 
 ////////// Sequences //////////
 
@@ -62,12 +63,12 @@ sequence ALGO1 8
 
 
 // Sequences using patterns. Each hit is 1/16 note - fixed res for now.
-sequence DRUMS_SIMPLE 8 // 32 x 1/16 = 8 x 1/4
-x-------x-------x-------x------- AcousticBassDrum 90
-----x-------x-x-----x-------x-x- AcousticSnare    80
+sequence  DRUMS_SIMPLE  8 // 32 x 1/16 = 8 x 1/4
+x-------x-------x-------x-------  AcousticBassDrum  90
+----x-------x-x-----x-------x-x-  AcousticSnare     80
 
-sequence DRUMS_HH 8
-------xx------xx------xx------xx ClosedHiHat 100
+sequence  DRUMS_HH  8
+------xx------xx------xx------xx  ClosedHiHat  100
 
 
 ///// Functions /////
@@ -90,6 +91,9 @@ public override void setup()
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Pad3Polysynth);
     }
+
+    // Recursive:
+    //noLoop(); // run once only
 }
 
 public override void step()
@@ -117,7 +121,7 @@ void algoDynamic()
 
         if(_notesPlaying[which] == 0) // don't play if already playing
         {
-            println("algoDynamic:", which);
+            //println("algoDynamic:", which);
             int dur = random(1, 8);
             _notesPlaying[which] = tick + dur;
             sendMidiNote(SYNTH, which, random(80, 100), dur);
@@ -158,10 +162,9 @@ public void On_MODN()
 public override void draw()
 {
     //println("draw");
-    background(100, COL1, 200);
+    background(COL1, 100, 200);
 
     // Recursive:
-    // noLoop(); // run once only
     // drawRecursive(0, 0, width / 2, 1); // This uses a whole core with GDI.
     // return;
 

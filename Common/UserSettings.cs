@@ -37,6 +37,9 @@ namespace Nebulator.Common
         [DisplayName("Loop Color"), Description("The color used for loop block display."), Browsable(true)]
         public Color LoopColor { get; set; } = Color.Salmon;
 
+        [DisplayName("UI Orientation"), Description("Set UI pane orientation."), Browsable(true)]
+        public Orientation UiOrientation { get; set; } = Orientation.Horizontal;
+
         [DisplayName("Frame Rate"), Description("Select UI rate in fps. Note that Processing allows the script to change this but I don't."), Browsable(true)]
         public int FrameRate { get; set; } = 30;
 
@@ -72,7 +75,7 @@ namespace Nebulator.Common
         public List<string> RecentFiles { get; set; } = new List<string>();
 
         [Browsable(false)]
-        public int ControlSplitterPos { get; set; } = 800; // TODO also V/H option.
+        public int ControlSplitterPos { get; set; } = 800;
         #endregion
 
         #region Fields

@@ -7,18 +7,18 @@ constant SOUND_DEF_VOL 100
 
 ///// Variables /////
 variable COLOR 240 // change color
-variable MODF 100 // modulate filter - linked in reaper project
+variable MODF  100 // modulate filter - linked in reaper project
 variable PITCH 8192 // center is 8192
 
 ///// Realtime Controllers /////
-midictlin  MI1 1 4 MODF
+midictlin  MI1 1 4     MODF
 midictlout MO1 1 Pitch PITCH
-midictlout MO2 1 4 MODF
+midictlout MO2 1 4     MODF
 
 ////// Levers //////
-lever L1 0 255 COLOR
+lever L1 0 255   COLOR
 lever L2 0 16383 PITCH // max range
-lever L3 0 255 MODF
+lever L3 0 255   MODF
 
 ///// Tracks /////
 track SOUND 1 5 0 0

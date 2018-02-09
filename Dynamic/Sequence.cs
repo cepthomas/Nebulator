@@ -63,7 +63,7 @@ namespace Nebulator.Dynamic
         /// <param name="s"></param>
         public SequenceElement(string s)
         {
-            if(s.Contains("()")) //TODO or get rid of this spec?
+            if(s.Contains("()"))
             {
                 Function = s.Replace("()", "");
                 Notes.Clear();

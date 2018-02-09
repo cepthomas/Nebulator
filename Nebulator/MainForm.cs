@@ -902,7 +902,7 @@ namespace Nebulator
 
         #region User settings
         /// <summary>
-        /// Init the user settings.
+        /// Init from the user settings.
         /// </summary>
         void InitSettings()
         {
@@ -926,11 +926,12 @@ namespace Nebulator
             // Now we can set the locations.
             _piano.Location = new Point(UserSettings.TheSettings.PianoFormInfo.X, UserSettings.TheSettings.PianoFormInfo.Y);
 
+            splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
             splitContainerControl.SplitterDistance = UserSettings.TheSettings.ControlSplitterPos;
         }
 
         /// <summary>
-        /// Save the user settings.
+        /// Save user settings.
         /// </summary>
         void SaveSettings()
         {
@@ -946,6 +947,7 @@ namespace Nebulator
                 UserSettings.TheSettings.MainFormInfo.FromForm(this);
             }
 
+            UserSettings.TheSettings.UiOrientation = splitContainerControl.Orientation;
             UserSettings.TheSettings.ControlSplitterPos = splitContainerControl.SplitterDistance;
 
             UserSettings.TheSettings.Save();
@@ -954,7 +956,7 @@ namespace Nebulator
         /// <summary>
         /// Edit the options in a property grid.
         /// </summary>
-        private void Settings_Click(object sender, EventArgs e)
+        private void Settings_Click(object sender, EventArgs e) // TODO consolidate with _Load() and InitSettings() and SaveSettings() etc...
         {
             using (Form f = new Form()
             {
@@ -979,24 +981,21 @@ namespace Nebulator
                 ListSelector.Options.Add("MidiOut", MidiInterface.TheInterface.MidiOutputs);
 
                 // Detect changes of interest.
-                List<string> propsChanged = new List<string>();
-                pg.PropertyValueChanged += (sdr, args) => { propsChanged.Add(args.ChangedItem.PropertyDescriptor.Name); };
+                bool midi = false;
+                bool defs = false;
+                bool ctrls = false;
+                pg.PropertyValueChanged += (sdr, args) =>
+                {
+                    string p = args.ChangedItem.PropertyDescriptor.Name;
+                    midi |= p.Contains("Midi");
+                    defs |= (p.Contains("Notes") | p.Contains("Scales"));
+                    ctrls |= (p.Contains("Font") | p.Contains("Color"));
+                };
 
                 f.Controls.Add(pg);
                 f.ShowDialog();
 
-                // Figure out what changed.
-                bool midi = false;
-                bool defs = false;
-                bool ctrls = false;
-
-                propsChanged.ForEach(p =>
-                {
-                    midi |= p.Contains("Midi");
-                    defs |= (p.Contains("Notes") | p.Contains("Scales"));
-                    ctrls |= (p.Contains("Font") | p.Contains("Color"));
-                });
-
+                // Figure out what changed - handled differently.
                 if (midi)
                 {
                     MidiInterface.TheInterface.Init();
@@ -1012,8 +1011,10 @@ namespace Nebulator
                     MessageBox.Show("UI changes require a restart to take effect.");
                 }
 
-                // Always safe to do this.
+                // Always safe to update these.
                 SetUiTimerPeriod();
+                splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
+
                 SaveSettings();
             }
         }

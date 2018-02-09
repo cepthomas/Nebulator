@@ -98,8 +98,10 @@ namespace Nebulator.Common
         }
 
         /// <summary>
-        /// Parse from input value.
+        /// Parse note or notes from input value.
         /// </summary>
+        /// <param name="s">String name</param>
+        /// <returns>List of note numbers - empty if invalid.</returns>
         public static List<int> ParseNoteString(string s)
         {
             List<int> notes = new List<int>();
@@ -169,13 +171,18 @@ namespace Nebulator.Common
             }
             catch (Exception)
             {
-                throw new Exception("Invalid note or chord: " + s);
+                //throw new Exception("Invalid note or chord: " + s);
+                notes.Clear();
             }
 
             return notes;
         }
 
-        /// <summary>White key?</summary>
+        /// <summary>
+        /// Is it a white key?
+        /// </summary>
+        /// <param name="notenum">Which note</param>
+        /// <returns>True/false</returns>
         public static bool IsNatural(int notenum)
         {
             int[] naturals = { 0, 2, 4, 5, 7, 9, 11 };
@@ -255,7 +262,7 @@ namespace Nebulator.Common
         /// Convert note number to corresponding drum name.
         /// </summary>
         /// <param name="note"></param>
-        /// <returns></returns>
+        /// <returns>The drum name</returns>
         public static string FormatDrum(int note)
         {
             string drumName = Utils.UNKNOWN_STRING;
