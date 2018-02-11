@@ -13,9 +13,16 @@ using Nebulator.Common;
 
 namespace Nebulator.Script
 {
-    /// <summary>The client hosts this control in their UI. It performs the actual graphics drawing and input.</summary>
+    /// <summary>
+    /// The client hosts this control in their UI. It performs the actual graphics drawing and input.
+    /// </summary>
     public partial class Surface : UserControl
     {
+        #region Events
+        /// <summary>Reporting a runtime error to listeners.</summary>
+        public event EventHandler<Exception> RuntimeErrorEvent;
+        #endregion
+
         #region Fields
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
@@ -28,7 +35,6 @@ namespace Nebulator.Script
         public Surface()
         {
             InitializeComponent();
-
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             UpdateStyles();
         }
@@ -43,8 +49,6 @@ namespace Nebulator.Script
             _script.width = Width;
             _script.height = Height;
             _script.focused = Focused;
-            _script.setup();
-            Invalidate();
         }
 
         /// <summary>
@@ -66,39 +70,39 @@ namespace Nebulator.Script
         /// <param name="e"></param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            BufferedGraphicsContext context = new BufferedGraphicsContext
-            {
-                MaximumBuffer = ClientSize
-            };
-
+            using (BufferedGraphicsContext context = new BufferedGraphicsContext { MaximumBuffer = ClientSize } )
             using (BufferedGraphics buffer = context.Allocate(e.Graphics, ClientRectangle))
             {
                 if (_script != null && (_script._loop || _script._redraw))
                 {
-                    buffer.Graphics.Clear(_script._bgColor);
+                    try
+                    {
+                        _script._redraw = false;
 
-                    buffer.Graphics.CompositingMode = CompositingMode.SourceOver;
-                    buffer.Graphics.CompositingQuality = CompositingQuality.HighQuality;
-                    buffer.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    buffer.Graphics.SmoothingMode = _script._smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
+                        buffer.Graphics.Clear(_script._bgColor);
 
-                    // Hand over to the script for drawing.
-                    _script._gr = buffer.Graphics;
+                        buffer.Graphics.CompositingMode = CompositingMode.SourceOver;
+                        buffer.Graphics.CompositingQuality = CompositingQuality.HighQuality;
+                        buffer.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                        buffer.Graphics.SmoothingMode = _script._smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
 
-                    // Some housekeeping.
-                    _script.pMouseX = _script.mouseX;
-                    _script.pMouseY = _script.mouseY;
+                        // Hand over to the script for drawing.
+                        _script._gr = buffer.Graphics;
 
-                    // Execute the user code.
-                    _script.draw();
+                        // Some housekeeping.
+                        _script.pMouseX = _script.mouseX;
+                        _script.pMouseY = _script.mouseY;
 
-                    buffer.Render();
-
-                    _script._redraw = false;
+                        // Execute the user script code.
+                        _script.draw();
+                        buffer.Render();
+                    }
+                    catch (Exception ex)
+                    {
+                        RuntimeErrorEvent?.Invoke(this, ex);
+                    }
                 }
             }
-
-            context.Dispose();
         }
         #endregion
 
@@ -325,7 +329,7 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Script status updates
+        #region Window status updates
         private void Surface_Resize(object sender, EventArgs e)
         {
             if (_script != null)

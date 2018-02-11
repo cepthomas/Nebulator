@@ -2,18 +2,62 @@
 ///// Tester for Processing workalike.
 
 // Try an "import".
-include utils.pde
+include nputils.neb
 
 
 public override void setup()
 {
     println("setup()");
 
+    //setup_fail();
+
+    //setup_bezier();
+    //setup_radial_gradient();
+    //setup_sine_cosine();
+    //setup_pointillism();
+    //setup_random_gaussian();
+    //setup_loadfiles1();
+    //setup_gol();
 }
 
 public override void draw()
 {
+    //draw_fail();
+
     draw_ball();
+    //draw_regular_polygon();
+    //draw_bezier();
+    //draw_radial_gradient();
+    //draw_sine_cosine();
+    //draw_pointillism();
+    //draw_random_gaussian();
+    //draw_loadfiles1();
+    //draw_gol();
+    //draw_embedded_iteration();
+}
+
+void setup_fail()
+{
+    println("setup_fail()");
+    int x = 1;
+    int y = 0;
+    int z = x / y;
+}
+
+void draw_fail()
+{
+    println("draw_fail()");
+    int x = 1;
+    int y = 0;
+    int z = x / y;
+}
+
+public override void step()
+{
+    //println("step()");
+    int x = 1;
+    int y = 0;
+    //int z = x / y;
 }
 
 
@@ -82,8 +126,6 @@ bool moveBall()
     }
     return edge;
 }
-
-
 
 
 ///////////////////////////////////
@@ -177,7 +219,6 @@ void drawGradient(float x, float y)
         h = (h + 1) % 360;
     }
 }
-
 
 
 
@@ -537,8 +578,4 @@ public override void keyPressed()
         }
     }
 }
-
-////////////////////////////////////////////////
-
-
 

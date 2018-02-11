@@ -42,7 +42,7 @@
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.splitContainerInput = new System.Windows.Forms.SplitContainer();
             this.levers = new Nebulator.Levers();
-            this.scriptSurface = new Nebulator.Script.Surface();
+            this.surface = new Nebulator.Script.Surface();
             this.infoDisplay = new Nebulator.InfoDisplay();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
@@ -341,7 +341,7 @@
             // 
             // splitContainerInput.Panel2
             // 
-            this.splitContainerInput.Panel2.Controls.Add(this.scriptSurface);
+            this.splitContainerInput.Panel2.Controls.Add(this.surface);
             this.splitContainerInput.Size = new System.Drawing.Size(404, 502);
             this.splitContainerInput.SplitterDistance = 46;
             this.splitContainerInput.TabIndex = 0;
@@ -357,12 +357,12 @@
             // 
             // scriptSurface
             // 
-            this.scriptSurface.BackColor = System.Drawing.Color.AliceBlue;
-            this.scriptSurface.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scriptSurface.Location = new System.Drawing.Point(0, 0);
-            this.scriptSurface.Name = "scriptSurface";
-            this.scriptSurface.Size = new System.Drawing.Size(404, 452);
-            this.scriptSurface.TabIndex = 2;
+            this.surface.BackColor = System.Drawing.Color.AliceBlue;
+            this.surface.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.surface.Location = new System.Drawing.Point(0, 0);
+            this.surface.Name = "scriptSurface";
+            this.surface.Size = new System.Drawing.Size(404, 452);
+            this.surface.TabIndex = 2;
             // 
             // infoDisplay
             // 
@@ -397,9 +397,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
-            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainerMain.Panel1.ResumeLayout(false);
@@ -446,7 +443,7 @@
         private InfoDisplay infoDisplay;
         private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainerInput;
-        private Script.Surface scriptSurface;
+        private Script.Surface surface;
     }
 }
 

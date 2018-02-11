@@ -7,7 +7,7 @@ using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 
-// Stuff not associated with Processing or Nebulator APIs.
+// Internal stuff not associated with Processing or Nebulator APIs.
 
 namespace Nebulator.Script
 {
@@ -15,15 +15,12 @@ namespace Nebulator.Script
     public class ScriptNotImplementedException : Exception
     {
         ScriptNotImplementedException() { }
-        public ScriptNotImplementedException(string function) : base($"Invalid script function: {function}()") { }
+        public ScriptNotImplementedException(string element) : base($"Invalid script element: {element}()") { }
     }
 
     /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
     public class RuntimeContext
     {
-        /// <summary>Main -> Script</summary>
-        public bool Playing { get; set; } = false;
-
         /// <summary>Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
 

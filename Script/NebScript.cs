@@ -33,9 +33,6 @@ namespace Nebulator.Script
         /// <summary>Actual time since start pressed.</summary>
         public float now { get { return Context.RealTime; } }
 
-        /// <summary>Neb step clock is running.</summary>
-        public bool playing { get { return Context.Playing; } }
-
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Time.TOCKS_PER_TICK; } }
 

@@ -18,6 +18,11 @@ namespace Nebulator
 {
     public partial class MainForm : Form
     {
+        #region Enums
+        /// <summary>Internal status.</summary>
+        enum PlayCommand { Start, Stop, Rewind, StopRewind, UpdateUiTime }
+        #endregion
+
         #region Fields
         /// <summary>App logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
@@ -31,9 +36,6 @@ namespace Nebulator
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
 
-        /// <summary>Playing the part.</summary>
-        bool _playing = false;
-
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
 
@@ -46,18 +48,14 @@ namespace Nebulator
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
         LazyCollection<Variable> _ctrlChanges = new LazyCollection<Variable>() { AllowOverwrite = true };
 
-        ///// <summary>Diagnostics for timing measurement.</summary>
-        //TimingAnalyzer _tanTimer = new TimingAnalyzer() { SampleSize = 100 };
-        //TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
-
         /// <summary>Current neb file name.</summary>
         string _fn = Utils.UNKNOWN_STRING;
 
         /// <summary>Detect changed composition files.</summary>
         MultiFileWatcher _watcher = new MultiFileWatcher();
 
-        /// <summary>Files that have been changed externally, will require a recompile.</summary>
-        bool _dirtyFiles = false;
+        /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
+        bool _needCompile = false;
 
         /// <summary>The temp dir for tracking down runtime errors.</summary>
         string _compileTempDir = "";
@@ -68,8 +66,9 @@ namespace Nebulator
         /// <summary>Indicates needs user involvement.</summary>
         Color _attentionColor = Color.Red;
 
-        /// <summary>Internal status.</summary>
-        enum PlayCommand { Start, Stop, Rewind, StopRewind, UpdateUiTime }
+        ///// <summary>Diagnostics for timing measurement.</summary>
+        //TimingAnalyzer _tanTimer = new TimingAnalyzer() { SampleSize = 100 };
+        //TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
         #endregion
 
         #region Lifecycle
@@ -89,7 +88,7 @@ namespace Nebulator
         /// <summary>
         /// Initialize form controls.
         /// </summary>
-        private void MainForm_Load(object sender, EventArgs e)
+        void MainForm_Load(object sender, EventArgs e)
         {
             #region Init main UI from settings
             if (UserSettings.TheSettings.MainFormInfo.Width == 0)
@@ -117,8 +116,8 @@ namespace Nebulator
 
             #region Set up midi
             // Input midi events.
-            MidiInterface.TheInterface.NebMidiInputEvent += Midi_NebMidiInputEvent;
-            MidiInterface.TheInterface.NebMidiLogEvent += Midi_NebMidiLogEvent;
+            MidiInterface.TheInterface.NebMidiInputEvent += Midi_InputEvent;
+            MidiInterface.TheInterface.NebMidiLogEvent += Midi_LogEvent;
 
             MidiInterface.TheInterface.Init();
 
@@ -143,8 +142,6 @@ namespace Nebulator
 
             levers.LeverChangeEvent += Levers_Changed;
 
-            UpdateMenu();
-
             NoteUtils.Init();
 
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
@@ -162,9 +159,12 @@ namespace Nebulator
             }
             #endregion
 
+            // Catches runtime errors during drawing.
+            surface.RuntimeErrorEvent += (object esender, Exception ex) => { ProcessRuntimeError(ex); };
+
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Dev\lsys.neb"); // Examples\airport  Dev\dev  Examples\example  Dev\lsys
+            OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // Examples\airport  Dev\dev  Examples\example  Examples\lsys  Dev\nptest.neb
 
             //ExportMidi("test.mid");
 
@@ -178,7 +178,7 @@ namespace Nebulator
         /// <summary>
         /// Clean up on shutdown.
         /// </summary>
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
             {
@@ -228,13 +228,6 @@ namespace Nebulator
 
             base.Dispose(disposing);
         }
-
-        /// <summary>
-        /// Adjust controls.
-        /// </summary>
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-        }
         #endregion
 
         #region Compile
@@ -269,9 +262,7 @@ namespace Nebulator
 
                 if (compiler.Errors.Count == 0 && _script != null)
                 {
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
-                    _dirtyFiles = false;
-
+                    SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 
                     // Collect important times.
@@ -303,6 +294,7 @@ namespace Nebulator
 
                     // Show everything.
                     InitUi();
+                    SetCompileStatus(true);
                 }
                 else
                 {
@@ -310,8 +302,7 @@ namespace Nebulator
                     ok = false;
                     SetPlayStatus(PlayCommand.StopRewind);
                     compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
-                    _dirtyFiles = true;
+                    SetCompileStatus(false);
                 }
             }
 
@@ -365,14 +356,34 @@ namespace Nebulator
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
             SetPlayStatus(PlayCommand.StopRewind);
-            UpdateMenu();
 
             ///// Init the user input area.
             // Levers.
             levers.Init(ScriptEntities.Levers.Values);
 
             // Surface area.
-            scriptSurface.InitScript(_script);
+            surface.InitScript(_script);
+            ExecuteThrowingFunction(_script.setup);
+            surface.UpdateSurface();
+        }
+
+        /// <summary>
+        /// Update system statuses.
+        /// </summary>
+        /// <param name="compileStatus"></param>
+        void SetCompileStatus(bool compileStatus)
+        {
+            if (compileStatus)
+            {
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+                _needCompile = false;
+            }
+            else
+            {
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
+                _needCompile = true;
+            }
+
         }
         #endregion
 
@@ -405,139 +416,133 @@ namespace Nebulator
         /// <param name="e">Information about updates required.</param>
         void NextStep(NebTimerEventArgs e)
         {
-            try
+            ////// Process changed vars regardless of any other status //////
+            foreach (Variable var in _ctrlChanges.Values)
             {
-                ////// Process changed vars regardless of any other status //////
-                foreach (Variable var in _ctrlChanges.Values)
+                // Execute any script handlers.
+                ExecuteThrowingFunction(_script.ExecScriptFunction, var.Name);
+
+                // Output any midictlout controllers.
+                IEnumerable<MidiControlPoint> ctlpts = ScriptEntities.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+
+                if (ctlpts != null && ctlpts.Count() > 0)
                 {
-                    // Execute any script handlers.
-                    _script.ExecScriptFunction(var.Name);
-
-                    // Output any midictlout controllers.
-                    IEnumerable<MidiControlPoint> ctlpts = ScriptEntities.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
-
-                    if (ctlpts != null && ctlpts.Count() > 0)
+                    ctlpts.ForEach(c =>
                     {
-                        ctlpts.ForEach(c =>
+                        StepControllerChange step = new StepControllerChange()
                         {
-                            StepControllerChange step = new StepControllerChange()
-                            {
-                                Channel = c.Channel,
-                                MidiController = c.MidiController,
-                                ControllerValue = c.RefVar.Value
-                            };
-                            MidiInterface.TheInterface.Send(step);
-                        });
-                    }
-                }
-
-                // Reset controllers for next go around.
-                _ctrlChanges.Clear();
-
-                ////// Neb steps /////
-                if (_playing && e.ElapsedTimers.Contains("NEB"))
-                {
-                    // Package up the runtime stuff the script may need.
-                    _script.Context.Playing = _playing;
-                    _script.Context.StepTime = _stepTime;
-                    _script.Context.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
-                    _script.Context.Speed = (float)potSpeed.Value;
-                    _script.Context.Volume = sldVolume.Value;
-                    _script.Context.PrintLines.Clear();
-
-                    // Kick it.
-                    _script.step();
-
-                    // Process whatever the script may have done.
-                    if (_script.Context.Speed != potSpeed.Value)
-                    {
-                        potSpeed.Value = _script.Context.Speed;
-                        SetSpeedTimerPeriod();
-                    }
-
-                    if (_script.Context.Volume != sldVolume.Value)
-                    {
-                        sldVolume.Value = _script.Context.Volume;
-                    }
-
-                    // Process any sequence steps the script added.
-                    _script.Context.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                    _script.Context.RuntimeSteps.DeleteSteps(_stepTime);
-
-                    // Now do the compiled steps.
-                    if (chkSequence.Checked)
-                    {
-                        _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                    }
-                    timeMaster.ShowProgress = chkSequence.Checked;
-
-                    ///// Bump time.
-                    _stepTime.Advance();
-
-                    ////// Check for end of play.
-                    // If no steps or not selected, free running mode so always keep going.
-                    if(_compiledSteps.Times.Count() != 0 && chkSequence.Checked)
-                    {
-                        // Check for end and loop condition.
-                        if (_stepTime.Tick >= _compiledSteps.MaxTick)
-                        {
-                            if (chkLoop.Checked) // keep going
-                            {
-                                SetPlayStatus(PlayCommand.Rewind);
-                            }
-                            else // stop now
-                            {
-                                SetPlayStatus(PlayCommand.StopRewind);
-                                MidiInterface.TheInterface.KillAll(); // just in case
-                            }
-                        }
-                    }
-                    // else keep going
-                    SetPlayStatus(PlayCommand.UpdateUiTime);
-                }
-
-                ///// UI updates /////
-                if (e.ElapsedTimers.Contains("UI"))
-                {
-                    // Measure and alert if too slow, or throttle.
-                    //_tanUi.Arm();
-                    scriptSurface.UpdateSurface();
-                }
-
-                // Show any accumulated messages.
-                _script.Context.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
-                _script.Context.PrintLines.Clear();
-
-                // Process any lingering noteoffs.
-                MidiInterface.TheInterface.Housekeep();
-
-                ///// Local common function
-                void PlayStep(Step step)
-                {
-                    Track track = ScriptEntities.Tracks[step.TrackName];
-
-                    // Is it ok to play now?
-                    bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
-                    bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
-
-                    if (play)
-                    {
-                        if (step is StepInternal)
-                        {
-                            _script.ExecScriptFunction((step as StepInternal).Function);
-                        }
-                        else
-                        {
-                            // Maybe tweak values.
-                            step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
-                            MidiInterface.TheInterface.Send(step);
-                        }
-                    }
+                            Channel = c.Channel,
+                            MidiController = c.MidiController,
+                            ControllerValue = c.RefVar.Value
+                        };
+                        MidiInterface.TheInterface.Send(step);
+                    });
                 }
             }
-            catch (Exception ex)
+
+            // Reset controllers for next go around.
+            _ctrlChanges.Clear();
+
+            ////// Neb steps /////
+            if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB"))
             {
-                ProcessRunTimeError(ex);
+                // Package up the runtime stuff the script may need.
+                _script.Context.StepTime = _stepTime;
+                _script.Context.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
+                _script.Context.Speed = (float)potSpeed.Value;
+                _script.Context.Volume = sldVolume.Value;
+                _script.Context.RuntimeSteps.Clear();
+
+                // Kick it.
+                ExecuteThrowingFunction(_script.step);
+
+                // Process whatever the script may have done.
+                if (_script.Context.Speed != potSpeed.Value)
+                {
+                    potSpeed.Value = _script.Context.Speed;
+                    SetSpeedTimerPeriod();
+                }
+
+                if (_script.Context.Volume != sldVolume.Value)
+                {
+                    sldVolume.Value = _script.Context.Volume;
+                }
+
+                // Process any sequence steps the script added.
+                _script.Context.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                _script.Context.RuntimeSteps.DeleteSteps(_stepTime);
+
+                // Now do the compiled steps.
+                if (chkSequence.Checked)
+                {
+                    _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                }
+                timeMaster.ShowProgress = chkSequence.Checked;
+
+                ///// Bump time.
+                _stepTime.Advance();
+
+                ////// Check for end of play.
+                // If no steps or not selected, free running mode so always keep going.
+                if(_compiledSteps.Times.Count() != 0 && chkSequence.Checked)
+                {
+                    // Check for end and loop condition.
+                    if (_stepTime.Tick >= _compiledSteps.MaxTick)
+                    {
+                        if (chkLoop.Checked) // keep going
+                        {
+                            SetPlayStatus(PlayCommand.Rewind);
+                        }
+                        else // stop now
+                        {
+                            SetPlayStatus(PlayCommand.StopRewind);
+                            MidiInterface.TheInterface.KillAll(); // just in case
+                        }
+                    }
+                }
+                // else keep going
+
+                SetPlayStatus(PlayCommand.UpdateUiTime);
+            }
+
+            ///// UI updates /////
+            if (chkPlay.Checked && e.ElapsedTimers.Contains("UI") && !_needCompile)
+            {
+                // Measure and alert if too slow, or throttle.
+                //_tanUi.Arm();
+
+                ExecuteThrowingFunction(surface.UpdateSurface);
+            }
+
+            // Process any lingering noteoffs.
+            MidiInterface.TheInterface.Housekeep();
+
+            // Process any accumulated messages.
+            _script.Context.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
+            _script.Context.PrintLines.Clear();
+
+            ///// Local common function
+            void PlayStep(Step step)
+            {
+                Track track = ScriptEntities.Tracks[step.TrackName];
+
+                // Is it ok to play now?
+                bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
+
+                if (play)
+                {
+                    if (step is StepInternal)
+                    {
+                        ExecuteThrowingFunction(_script.ExecScriptFunction, (step as StepInternal).Function);
+                    }
+                    else
+                    {
+                        // Maybe tweak values.
+                        step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
+                        MidiInterface.TheInterface.Send(step);
+                    }
+                }
             }
         }
 
@@ -546,7 +551,7 @@ namespace Nebulator
         /// Is it a midi controller? Look it up in the inputs.
         /// If not a ctlr or not found, send to the midi output, otherwise trigger listeners.
         /// </summary>
-        void Midi_NebMidiInputEvent(object sender, MidiInterface.NebMidiInputEventArgs e)
+        void Midi_InputEvent(object sender, MidiInterface.NebMidiInputEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -589,7 +594,7 @@ namespace Nebulator
         /// <summary>
         /// Process midi log event.
         /// </summary>
-        private void Midi_NebMidiLogEvent(object sender, MidiInterface.NebMidiLogEventArgs e)
+        void Midi_LogEvent(object sender, MidiInterface.NebMidiLogEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -633,16 +638,17 @@ namespace Nebulator
         /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
         /// </summary>
         /// <param name="ex"></param>
-        void ProcessRunTimeError(Exception ex)
+        void ProcessRuntimeError(Exception ex)
         {
             SetPlayStatus(PlayCommand.Stop);
-
-            string srcFile = Utils.UNKNOWN_STRING;
-            int srcLine = -1;
+            SetCompileStatus(false);
 
             // Locate the offending frame.
+            string srcFile = Utils.UNKNOWN_STRING;
+            int srcLine = -1;
             StackTrace st = new StackTrace(ex, true);
             StackFrame sf = null;
+
             for (int i = 0; i < st.FrameCount;i++)
             {
                 StackFrame stf = st.GetFrame(i);
@@ -653,7 +659,7 @@ namespace Nebulator
                 }
             }
 
-            if(sf != null)
+            if (sf != null)
             {
                 // Dig out generated file parts.
                 string genFile = sf.GetFileName();
@@ -700,18 +706,17 @@ namespace Nebulator
         /// <summary>
         /// The user has asked to open a recent file.
         /// </summary>
-        private void Recent_Click(object sender, EventArgs e)
+        void Recent_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             string fn = sender.ToString();
             OpenFile(fn);
-            UpdateMenu();
         }
 
         /// <summary>
         /// Allows the user to select a neb file from file system.
         /// </summary>
-        private void Open_Click(object sender, EventArgs e)
+        void Open_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
@@ -722,7 +727,6 @@ namespace Nebulator
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
                 OpenFile(openDlg.FileName);
-                UpdateMenu();
             }
         }
 
@@ -739,8 +743,7 @@ namespace Nebulator
                     _logger.Info($"Reading neb file: {fn}");
                     _nebpVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     _fn = fn;
-                    _dirtyFiles = true;
-                    btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
+                    SetCompileStatus(true);
                     AddToRecentDefs(fn);
                     Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
 
@@ -756,23 +759,23 @@ namespace Nebulator
         /// <summary>
         /// Create the menu with the recently used files.
         /// </summary>
-        private void PopulateRecentMenu()
+        void PopulateRecentMenu()
         {
             ToolStripItemCollection menuItems = recentToolStripMenuItem.DropDownItems;
             menuItems.Clear();
 
-            foreach (string s in UserSettings.TheSettings.RecentFiles)
+            UserSettings.TheSettings.RecentFiles.ForEach(f =>
             {
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(s, null, new EventHandler(Recent_Click));
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(f, null, new EventHandler(Recent_Click));
                 menuItems.Add(menuItem);
-            }
+            });
         }
 
         /// <summary>
         /// Update the mru with the user selection.
         /// </summary>
         /// <param name="fn">The selected file.</param>
-        private void AddToRecentDefs(string fn)
+        void AddToRecentDefs(string fn)
         {
             if (File.Exists(fn))
             {
@@ -791,10 +794,7 @@ namespace Nebulator
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker)delegate ()
             {
-                //_logger.Info("Watcher_Changed");
-                _dirtyFiles = true;
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
-                UpdateMenu();
+                SetCompileStatus(false);
             });
         }
         #endregion
@@ -803,7 +803,7 @@ namespace Nebulator
         /// <summary>
         /// Go or stop button.
         /// </summary>
-        private void Play_Click(object sender, EventArgs e)
+        void Play_Click(object sender, EventArgs e)
         {
             Play();
         }
@@ -834,11 +834,10 @@ namespace Nebulator
         /// <summary>
         /// Manual recompile.
         /// </summary>
-        private void Compile_Click(object sender, EventArgs e)
+        void Compile_Click(object sender, EventArgs e)
         {
             Compile();
             SetPlayStatus(PlayCommand.StopRewind);
-            UpdateMenu();
         }
 
         /// <summary>
@@ -887,7 +886,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LogShow_Click(object sender, EventArgs e)
+        void LogShow_Click(object sender, EventArgs e)
         {
             using (Form f = new Form()
             {
@@ -945,7 +944,7 @@ namespace Nebulator
         /// <summary>
         /// Edit the options in a property grid.
         /// </summary>
-        private void Settings_Click(object sender, EventArgs e)//  TODO consolidate with xxx_Load() and InitSettings() and SaveSettings() etc...
+        void Settings_Click(object sender, EventArgs e)
         {
             using (Form f = new Form()
             {
@@ -1015,7 +1014,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Piano_PianoKeyEvent(object sender, Piano.PianoKeyEventArgs e)
+        void Piano_PianoKeyEvent(object sender, Piano.PianoKeyEventArgs e)
         {
             if(e.Down)
             {
@@ -1045,7 +1044,7 @@ namespace Nebulator
         /// <summary>
         /// Turn piano on/off.
         /// </summary>
-        private void Piano_Click(object sender, EventArgs e)
+        void Piano_Click(object sender, EventArgs e)
         {
             _piano.Visible = pianoToolStripMenuItem.Checked;
         }
@@ -1057,39 +1056,25 @@ namespace Nebulator
         /// </summary>
         void Play()
         {
-            if(_script == null)
+            if (chkPlay.Checked)
             {
-                _logger.Warn("No script file loaded");
-                SetPlayStatus(PlayCommand.Stop);
-            }
-            else if (_playing)
-            {
-                ///// Stop!
-                SetPlayStatus(PlayCommand.Stop);
-
-                // Send midi stop all notes just in case.
-                MidiInterface.TheInterface.KillAll();
-            }
-            else
-            {
-                ///// Start!
-                bool ok = _dirtyFiles ? Compile() : true;
+                // Start!
+                bool ok = _needCompile ? Compile() : true;
 
                 if (ok)
                 {
                     SetSpeedTimerPeriod();
-                    // Init the script.
-                    try
-                    {
-                        _script.setup();
-                    }
-                    catch (Exception ex)
-                    {
-                        ProcessRunTimeError(ex);
-                    }
                 }
 
                 SetPlayStatus(ok ? PlayCommand.Start : PlayCommand.Stop);
+            }
+            else
+            {
+                // Stop!
+                SetPlayStatus(PlayCommand.Stop);
+
+                // Send midi stop all notes just in case.
+                MidiInterface.TheInterface.KillAll();
             }
         }
 
@@ -1103,13 +1088,11 @@ namespace Nebulator
             {
                 case PlayCommand.Start:
                     chkPlay.Checked = true;
-                    _playing = true;
                     _startTime = DateTime.Now;
                     break;
 
                 case PlayCommand.Stop:
                     chkPlay.Checked = false;
-                    _playing = false;
                     break;
 
                 case PlayCommand.Rewind:
@@ -1118,7 +1101,6 @@ namespace Nebulator
 
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
-                    _playing = false;
                     _stepTime.Reset();
                     break;
 
@@ -1145,48 +1127,6 @@ namespace Nebulator
                 Play();
                 e.Handled = true;
             }
-            else
-            {
-                // Pass along.
-                e.Handled = false;
-            }
-        }
-
-        /// <summary>
-        /// Do some global key handling.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void MainForm_KeyUp(object sender, KeyEventArgs e)
-        {
-            //if (e.KeyCode == Keys.Space)
-            //{
-            //    e.Handled = true;
-            //}
-            //else
-            //{
-            //    // Pass along.
-            //    e.Handled = false;
-            //}
-        }
-
-        /// <summary>
-        /// Do some global key handling.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void MainForm_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //// Watch for space bar which starts/stops play.
-            //if(e.KeyChar == ' ')
-            //{
-            //    e.Handled = true;
-            //}
-            //else
-            //{
-            //    // Pass along - we don't care.
-            //    e.Handled = false;
-            //}
         }
         #endregion
 
@@ -1228,21 +1168,12 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Set menu/toolbar item enables according to system states.
-        /// </summary>
-        void UpdateMenu()
-        {
-            settingsToolStripMenuItem.Enabled = !_playing;
-        }
-
-        /// <summary>
         /// Colorize by theme.
         /// </summary>
         void InitControls()
         {
             BackColor = UserSettings.TheSettings.BackColor;
 
-            // Stash the original image in the tag field.
             btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
 
             btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
@@ -1275,6 +1206,27 @@ namespace Nebulator
             splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
             splitContainerControl.SplitterDistance = UserSettings.TheSettings.ControlSplitterPos;
         }
+        
+        /// <summary>
+        /// Helper to handle runtime script errors.
+        /// </summary>
+        /// <param name="func">The function to execute.</param>
+        void ExecuteThrowingFunction(Action func)
+        {
+            try { func(); }
+            catch (Exception e) { ProcessRuntimeError(e); }
+        }
+
+        /// <summary>
+        /// Helper to handle runtime script errors.
+        /// </summary>
+        /// <param name="func">The function to execute.</param>
+        /// <param name="arg">{Arg for func.</param>
+        void ExecuteThrowingFunction(Action<string> func, string arg)
+        {
+            try { func(arg); }
+            catch (Exception e) { ProcessRuntimeError(e); }
+        }
         #endregion
 
         #region Midi utilities
@@ -1283,7 +1235,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ExportMidi_Click(object sender, EventArgs e)
+        void ExportMidi_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveDlg = new SaveFileDialog()
             {
@@ -1320,7 +1272,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ImportStyle_Click(object sender, EventArgs e)
+        void ImportStyle_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
@@ -1341,7 +1293,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void KillMidi_Click(object sender, EventArgs e)
+        void KillMidi_Click(object sender, EventArgs e)
         {
             MidiInterface.TheInterface.KillAll();
         }
