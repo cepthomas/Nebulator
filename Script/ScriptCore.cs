@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 using Nebulator.Common;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
@@ -12,10 +13,10 @@ using Nebulator.Dynamic;
 namespace Nebulator.Script
 {
     /// <summary>Script exceptions.</summary>
-    public class ScriptNotImplementedException : Exception
+    public class ScriptNotImplementedException : Exception  // TODOX don't use ScriptNotImplementedException, error at compile time?
     {
         ScriptNotImplementedException() { }
-        public ScriptNotImplementedException(string element) : base($"Invalid script element: {element}()") { }
+        public ScriptNotImplementedException(string element) : base($"Invalid script function or property: {element}()") { }
     }
 
     /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
@@ -23,6 +24,9 @@ namespace Nebulator.Script
     {
         /// <summary>Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
+
+        /// <summary>Main -> Script</summary>
+        public bool Playing { get; set; } = false;
 
         /// <summary>Main -> Script</summary>
         public float RealTime { get; set; } = 0.0f;
@@ -33,25 +37,35 @@ namespace Nebulator.Script
         /// <summary>Main -> Script -> Main</summary>
         public int Volume { get; set; } = 0;
 
+        /// <summary>Main -> Script -> Main</summary>
+        public int FrameRate { get; set; } = 0;
+
         /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
-
-        /// <summary>Lines from script println() for display by host.</summary>
-        public List<string> PrintLines { get; private set; } = new List<string>();
     }
 
     public partial class ScriptCore
     {
+        #region Fields
+        /// <summary>My logger.</summary>
+        Logger _logger = LogManager.GetCurrentClassLogger();
+        #endregion
+
+        #region Properties
         /// <summary>Current working set of dynamic values - things shared between host and script.</summary>
         public RuntimeContext Context { get; set; } = new RuntimeContext();
+        #endregion
 
+        #region Events
         /// <summary>
         /// Script functions that are called from the main nebulator. They are identified by name/key.
         /// Typically they are controller input handlers such that the key is the name of the input.
         /// </summary>
         protected Dictionary<string, ScriptFunction> _scriptFunctions = new Dictionary<string, ScriptFunction>();
         public delegate void ScriptFunction();
+        #endregion
 
+        #region Public functions
         /// <summary>
         /// Execute a script function. Minimal error checking, presumably the compiler did that.
         /// Caller will have to deal with any runtime exceptions.
@@ -124,5 +138,6 @@ namespace Nebulator.Script
 
             return steps;
         }
+        #endregion
     }
 }

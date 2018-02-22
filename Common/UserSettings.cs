@@ -40,9 +40,6 @@ namespace Nebulator.Common
         [DisplayName("UI Orientation"), Description("Set UI pane orientation."), Browsable(true)]
         public Orientation UiOrientation { get; set; } = Orientation.Horizontal;
 
-        [DisplayName("Frame Rate"), Description("Select UI rate in fps. Note that Processing allows the script to change this but I don't."), Browsable(true)]
-        public int FrameRate { get; set; } = 30;
-
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
         [Editor(typeof(ListSelector), typeof(UITypeEditor))]
         public string MidiIn { get; set; } = Utils.UNKNOWN_STRING;

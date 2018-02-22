@@ -19,8 +19,13 @@ namespace Nebulator.Script
     public partial class Surface : UserControl
     {
         #region Events
-        /// <summary>Reporting a runtime error to listeners.</summary>
-        public event EventHandler<Exception> RuntimeErrorEvent;
+        /// <summary>Reporting a runtime error to listeners. TODO part of ScriptCore instead?</summary>
+        public event EventHandler<RuntimeErrorEventArgs> RuntimeErrorEvent;
+
+        public class RuntimeErrorEventArgs : EventArgs
+        {
+            public Exception Exception { get; set; } = null;
+        }
         #endregion
 
         #region Fields
@@ -99,7 +104,7 @@ namespace Nebulator.Script
                     }
                     catch (Exception ex)
                     {
-                        RuntimeErrorEvent?.Invoke(this, ex);
+                        RuntimeErrorEvent?.Invoke(this, new RuntimeErrorEventArgs() { Exception = ex } );
                     }
                 }
             }

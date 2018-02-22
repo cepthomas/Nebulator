@@ -10,7 +10,7 @@ using Nebulator.Midi;
 namespace Nebulator.Dynamic
 {
     /// <summary>
-    /// All the script stuff we might want at runtime.
+    /// All the dynamic script stuff we might want at runtime.
     /// </summary>
     public class ScriptEntities
     {

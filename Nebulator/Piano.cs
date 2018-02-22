@@ -27,12 +27,13 @@ namespace Nebulator
         #endregion
 
         #region Events
+        public event EventHandler<PianoKeyEventArgs> PianoKeyEvent;
+
         public class PianoKeyEventArgs : EventArgs
         {
             public int NoteId { get; set; }
             public bool Down { get; set; }
         }
-        public event EventHandler<PianoKeyEventArgs> PianoKeyEvent;
         #endregion
 
         #region Lifecycle
@@ -225,7 +226,9 @@ namespace Nebulator
         public int NoteId { get; set; } = MidiInterface.MIDDLE_C;
         #endregion
 
+        #region Events
         public event EventHandler<Piano.PianoKeyEventArgs> PianoKeyEvent;
+        #endregion
 
         public PianoKey(Piano owner, bool isNatural, int noteId)
         {

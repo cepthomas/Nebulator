@@ -22,21 +22,22 @@ namespace Nebulator.Common
         /// <param name="logEvent">Describes the event.</param>
         protected override void Write(LogEventInfo logEvent)
         {
-            if (ClientNotification != null)
-            {
-                string preamble = "";
-                if (logEvent.Level == LogLevel.Fatal || logEvent.Level == LogLevel.Error)
-                {
-                    preamble = "ERROR: ";
-                }
-                else if (logEvent.Level == LogLevel.Warn)
-                {
-                    preamble = "WARNING: ";
-                }
+            ClientNotification?.Invoke(logEvent.Message);
 
-                ClientNotification(preamble + logEvent.Message);
-                //ClientNotification(logEvent.TimeStamp.ToString(Globals.TimeStringMsec) + ": " + preamble + logEvent.Message);
-            }
+            //if (ClientNotification != null) TODOX more info?
+            //{
+            //    string preamble = "";
+            //    if (logEvent.Level == LogLevel.Fatal || logEvent.Level == LogLevel.Error)
+            //    {
+            //        preamble = "ERROR: ";
+            //    }
+            //    else if (logEvent.Level == LogLevel.Warn)
+            //    {
+            //        preamble = "WARNING: ";
+            //    }
+
+            //    ClientNotification(preamble + logEvent.Message);
+            //}
         }
     }
 }

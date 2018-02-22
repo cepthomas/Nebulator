@@ -20,6 +20,7 @@ namespace Nebulator
         #region Events
         /// <summary>Reporting a change to listeners.</summary>
         public event EventHandler<LeverChangeEventArgs> LeverChangeEvent;
+
         public class LeverChangeEventArgs : EventArgs
         {
             public Variable RefVar { get; set; } = null;

@@ -135,12 +135,16 @@ namespace Nebulator.Script
                 InitStateMachine();
                 DateTime startTime = DateTime.Now;
                 Parse(nebfn);
-                _logger.Info($"Parse files took {(DateTime.Now - startTime).Milliseconds} msec.");
+                _logger.Info($"Parse took {(DateTime.Now - startTime).Milliseconds} msec.");
 
                 // Compile.
                 startTime = DateTime.Now;
                 script = Compile();
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
+            }
+            else
+            {
+                _logger.Error($"Invalid file {nebfn}.");
             }
 
             return script;

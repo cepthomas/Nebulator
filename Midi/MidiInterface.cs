@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using NAudio.Midi;
-using NLog;
 using Nebulator.Common;
 
 
@@ -33,9 +32,6 @@ namespace Nebulator.Midi
         #endregion
 
         #region Fields
-        /// <summary>My logger.</summary>
-        Logger _logger = LogManager.GetCurrentClassLogger();
-
         /// <summary>Midi input device.</summary>
         MidiIn _midiIn = null;
 
@@ -64,9 +60,15 @@ namespace Nebulator.Midi
 
         /// <summary>Request for logging service.</summary>
         public event EventHandler<NebMidiLogEventArgs> NebMidiLogEvent;
+
         public class NebMidiLogEventArgs : EventArgs
         {
-            /// <summary>Something to log.</summary>
+            public enum LogCategory { Info, Send, Recv, Error }
+
+            /// <summary>Log Category.</summary>
+            public LogCategory Category { get; set; } = LogCategory.Info;
+
+            /// <summary>Text to log.</summary>
             public string Message { get; set; } = null;
         }
         #endregion
@@ -244,12 +246,12 @@ namespace Nebulator.Midi
 
                             if (UserSettings.TheSettings.MidiMonitorOut)
                             {
-                                NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"SND: {step}" });
+                                LogSendMsg(step.ToString());
                             }
                         }
                         catch (Exception ex)
                         {
-                            _logger.Error($"Midi couldn't send step {step}: {ex.Message}");
+                            LogErrMsg($"Midi couldn't send step {step}: {ex.Message}");
                         }
                     }
                 }
@@ -337,7 +339,7 @@ namespace Nebulator.Midi
             {
                 if(step is StepNoteOn || step is StepNoteOff)
                 {
-                    // Pass through. TODO or do something useful with it, similar to _ctrlChanges. Map ranges of notes to different things.
+                    // Pass through. TODO or do something useful with it: change note, map to controller, etc.
                     Send(step);
                 }
                 else
@@ -348,7 +350,7 @@ namespace Nebulator.Midi
 
                 if (UserSettings.TheSettings.MidiMonitorIn)
                 {
-                    NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"RCV: {step}" });
+                    LogRcvMsg(step.ToString());
                 }
             }
         }
@@ -360,7 +362,7 @@ namespace Nebulator.Midi
         {
             if (UserSettings.TheSettings.MidiMonitorIn)
             {
-                NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"ERR: Message:0x{e.RawMessage:X8}" });
+                LogErrMsg($"Message:0x{e.RawMessage:X8}");
             }
         }
 
@@ -393,12 +395,12 @@ namespace Nebulator.Midi
                 }
                 else
                 {
-                    NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"INF: No midi input device selected." });
+                    LogInfoMsg("No midi input device selected.");
                 }
             }
             catch (Exception ex)
             {
-                NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"ERR: Init midi in failed: {ex.Message}" });
+                LogErrMsg($"Init midi in failed: {ex.Message}");
             }
         }
 
@@ -429,12 +431,12 @@ namespace Nebulator.Midi
                 }
                 else
                 {
-                    NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"ERR: No midi output device selected." });
+                    LogErrMsg("No midi output device selected.");
                 }
             }
             catch (Exception ex)
             {
-                NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Message = $"ERR: Init midi out failed: {ex.Message}" });
+                LogErrMsg($"Init midi out failed: {ex.Message}");
             }
         }
 
@@ -460,6 +462,28 @@ namespace Nebulator.Midi
                 MidiController = (int)MidiController.AllNotesOff
             };
             Send(step);
+        }
+        #endregion
+
+        #region Log message helpers
+        void LogInfoMsg(string msg)
+        {
+            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Info, Message = msg });
+        }
+
+        void LogSendMsg(string msg)
+        {
+            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Send, Message = msg });
+        }
+
+        void LogRcvMsg(string msg)
+        {
+            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Recv, Message = msg });
+        }
+
+        void LogErrMsg(string msg)
+        {
+            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Error, Message = msg });
         }
         #endregion
     }

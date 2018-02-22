@@ -70,10 +70,12 @@ namespace Nebulator.Controls
         }
         #endregion
 
+        #region Events
         /// <summary>
         /// Slider value changed event.
         /// </summary>
         public event EventHandler ValueChanged;
+        #endregion
 
         /// <summary>
         /// Creates a new Slider control.

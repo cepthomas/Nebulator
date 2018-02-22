@@ -202,7 +202,7 @@
             this.chkSequence.Name = "chkSequence";
             this.chkSequence.Size = new System.Drawing.Size(32, 32);
             this.chkSequence.TabIndex = 39;
-            this.toolTip.SetToolTip(this.chkSequence, "Run sequence steps");
+            this.toolTip.SetToolTip(this.chkSequence, "Run compiled sequence steps");
             this.chkSequence.UseVisualStyleBackColor = true;
             // 
             // btnCompile
@@ -355,12 +355,12 @@
             this.levers.Size = new System.Drawing.Size(404, 46);
             this.levers.TabIndex = 0;
             // 
-            // scriptSurface
+            // surface
             // 
             this.surface.BackColor = System.Drawing.Color.AliceBlue;
             this.surface.Dock = System.Windows.Forms.DockStyle.Fill;
             this.surface.Location = new System.Drawing.Point(0, 0);
-            this.surface.Name = "scriptSurface";
+            this.surface.Name = "surface";
             this.surface.Size = new System.Drawing.Size(404, 452);
             this.surface.TabIndex = 2;
             // 

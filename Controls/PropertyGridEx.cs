@@ -15,6 +15,9 @@ namespace Nebulator.Controls
     public class PropertyGridEx : PropertyGrid
     {
         #region Events
+        /// <summary>The property grid is reporting something.</summary>
+        public event EventHandler<PropertyGridExEventArgs> PropertyGridExEvent;
+
         /// <summary>General event for raising events not natively supported by the property grid.</summary>
         public class PropertyGridExEventArgs : EventArgs
         {
@@ -25,10 +28,7 @@ namespace Nebulator.Controls
             public object EventData { get; set; }
         }
 
-        /// <summary>The property grid is reporting something.</summary>
-        public event EventHandler<PropertyGridExEventArgs> PropertyGridExEvent;
-
-        /// <summary>Children call this to send something back to the host.</summary>
+        /// <summary>Children can call this to send something back to the host.</summary>
         public void RaisePropertyGridExEvent(string eventType, object ps = null)
         {
             PropertyGridExEvent?.Invoke(this, new PropertyGridExEventArgs() { EventType = eventType, EventData = ps });

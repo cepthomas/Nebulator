@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NLog;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Midi;
@@ -21,6 +20,9 @@ namespace Nebulator.Script
         #endregion
 
         #region User script properties
+        /// <summary>Sound is playing.</summary>
+        public bool playing { get { return Context.Playing; } }
+
         /// <summary>Current Nebulator step time.</summary>
         public Time stepTime { get { return Context.StepTime; } }
 

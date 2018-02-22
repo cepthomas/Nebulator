@@ -13,15 +13,19 @@ namespace Nebulator
 {
     public partial class InfoDisplay : UserControl
     {
-        /// <summary>
-        /// The colors to display when text is matched.
-        /// </summary>
+        #region Properties
+        /// <summary>The colors to display when text is matched.</summary>
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Dictionary<string, Color> Colors { get; set; } = new Dictionary<string, Color>();
 
+        /// <summary>Limit the display size.</summary>
+        public int MaxLength { get; set; } = 5000;
+        #endregion
+
+        #region Lifecycle
         /// <summary>
-        /// 
+        /// Construct.
         /// </summary>
         public InfoDisplay()
         {
@@ -30,7 +34,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// 
+        /// Init.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -51,25 +55,16 @@ namespace Nebulator
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
         }
+        #endregion
 
-        /// <summary>
-        /// A message to display to the user. Adds EOL.
-        /// </summary>
-        /// <param name="text">The message.</param>
-        /// <param name="trim">True to truncate continuous displays.</param>
-        public void AddInfoLine(string text, bool trim = true)
-        {
-            AddInfo(text + Environment.NewLine, trim);
-        }
-
+        #region Public functions
         /// <summary>
         /// A message to display to the user. Doesn't add EOL.
         /// </summary>
         /// <param name="text">The message.</param>
-        /// <param name="trim">True to truncate continuous displays.</param>
-        public void AddInfo(string text, bool trim = true)
+        public void AddInfo(string text)
         {
-            if (trim && txtView.TextLength > 5000)
+            if (txtView.TextLength > MaxLength)
             {
                 txtView.Select(0, 1000);
                 txtView.SelectedText = "";
@@ -89,15 +84,7 @@ namespace Nebulator
             txtView.AppendText(text);
             txtView.ScrollToCaret();
         }
-
-        /// <summary>
-        /// A message to display to the user.
-        /// </summary>
-        /// <param name="msg">The message.</param>
-        public void AddMidiMessage(string msg)
-        {
-            AddInfoLine(msg);
-        }
+        #endregion
 
         /// <summary>
         /// 
@@ -107,6 +94,7 @@ namespace Nebulator
             txtView.Clear();
         }
 
+        #region Button handlers
         /// <summary>
         /// Monitor midi in messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
@@ -132,5 +120,6 @@ namespace Nebulator
         {
             txtView.WordWrap = btnWrap.Checked;
         }
+        #endregion
     }
 }

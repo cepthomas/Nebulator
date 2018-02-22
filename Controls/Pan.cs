@@ -38,10 +38,12 @@ namespace Nebulator.Controls
         public Color ControlColor { get; set; } = Color.Orange;
         #endregion
 
+        #region Events
         /// <summary>
         /// True when pan value changed.
         /// </summary>
         public event EventHandler PanChanged;
+        #endregion
 
         /// <summary>
         /// Creates a new PanSlider control.

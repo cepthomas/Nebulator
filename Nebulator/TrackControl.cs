@@ -21,9 +21,10 @@ namespace Nebulator
 
         #region Events
         /// <summary>
-        /// User edit event.
+        /// User changed something.
         /// </summary>
         public event EventHandler<TrackChangeEventArgs> TrackChangeEvent;
+
         public class TrackChangeEventArgs : EventArgs
         {
             public string What { get; set; } = "";

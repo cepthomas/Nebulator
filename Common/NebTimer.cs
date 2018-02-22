@@ -9,17 +9,6 @@ using System.Linq;
 namespace Nebulator.Common
 {
     /// <summary>
-    /// FastTimer event args.
-    /// </summary>
-    public class NebTimerEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Elapsed timers.
-        /// </summary>
-        public List<string> ElapsedTimers { get; set; } = new List<string>();
-    }
-
-    /// <summary>
     /// Represents information about the multimedia timer capabilities.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
@@ -34,14 +23,6 @@ namespace Nebulator.Common
         /// Maximum supported period in milliseconds.
         /// </summary>
         public int periodMax;
-
-        public static TimerCaps Default
-        {
-            get
-            {
-                return new TimerCaps { periodMin = 1, periodMax = Int32.MaxValue };
-            }
-        }
     }
 
     /// <summary>
@@ -62,47 +43,40 @@ namespace Nebulator.Common
         }
 
         #region Fields
-        /// <summary>
-        /// All the timer instances. Key is id.
-        /// </summary>
+        /// <summary>All the timer instances. Key is id.</summary>
         Dictionary<string, TimerInstance> _timers = new Dictionary<string, TimerInstance>();
 
-        /// <summary>
-        /// Used for more accurate timing.
-        /// </summary>
+        /// <summary>Used for more accurate timing.</summary>
         Stopwatch _sw = new Stopwatch();
 
-        /// <summary>
-        /// Indicates whether or not the timer is running.
-        /// </summary>
+        /// <summary>Indicates whether or not the timer is running.</summary>
         bool _running = false;
 
-        /// <summary>
-        /// Stopwatch support.
-        /// </summary>
+        /// <summary>Stopwatch support.</summary>
         long _lastTicks = -1;
 
-        /// <summary>
-        /// Indicates whether or not the timer has been disposed.
-        /// </summary>
+        /// <summary>Indicates whether or not the timer has been disposed.</summary>
         bool _disposed = false;
 
-        /// <summary>
-        /// Msec for mm timer tick.
-        /// </summary>
+        /// <summary>Msec for mm timer tick.</summary>
         const int MMTIMER_PERIOD = 1;
         #endregion
 
         #region Events
-        /// <summary>
-        /// Occurs when the time period has elapsed.
-        /// </summary>
-        public event EventHandler<NebTimerEventArgs> TimerElapsedEvent;
+        /// <summary>Occurs when the time period has elapsed.</summary>
+        public event EventHandler<TimerEventArgs> TimerElapsedEvent;
+
+        /// <summary>FastTimer event args.</summary>
+        public class TimerEventArgs : EventArgs
+        {
+            /// <summary>Elapsed timers.</summary>
+            public List<string> ElapsedTimers { get; set; } = new List<string>();
+        }
         #endregion
 
         #region Internal support for multimedia timer
         /// <summary>
-        /// mm timer identifier.
+        /// Multimedia timer identifier.
         /// </summary>
         int _timerID = -1;
 
@@ -133,9 +107,7 @@ namespace Nebulator.Common
         [DllImport("winmm.dll")]
         private static extern int timeGetDevCaps(ref TimerCaps caps, int sizeOfTimerCaps);
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <summary>Start her up.</summary>
         /// <param name="delay">Event delay, in milliseconds.If this value is not in the range of the minimum and maximum event delays supported by the timer, the function returns an error.</param>
         /// <param name="resolution">Resolution of the timer event, in milliseconds. The resolution increases with smaller values; a resolution of 0 indicates periodic events should occur with the greatest possible accuracy. To reduce system overhead, however, you should use the maximum value appropriate for your application.</param>
         /// <param name="proc">Pointer to a callback function that is called once upon expiration of a single event or periodically upon expiration of periodic events.</param>
@@ -203,8 +175,8 @@ namespace Nebulator.Common
             }
         }
         #endregion
-
-        #region Methods
+        
+        #region Public functions
         /// <summary>
         /// Add a new timer instance.
         /// </summary>
@@ -255,7 +227,9 @@ namespace Nebulator.Common
             _running = false;
             _sw.Stop();
         }
+        #endregion
 
+        #region Private functions
         /// <summary>
         /// Multimedia timer callback. Don't trust the accuracy of the mm timer so measure actual using a stopwatch.
         /// </summary>
@@ -293,7 +267,7 @@ namespace Nebulator.Common
 
                     if (elapsed.Count > 0)
                     {
-                        TimerElapsedEvent?.Invoke(this, new NebTimerEventArgs() { ElapsedTimers = elapsed });
+                        TimerElapsedEvent?.Invoke(this, new TimerEventArgs() { ElapsedTimers = elapsed });
                     }
                 }
                 else

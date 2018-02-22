@@ -36,6 +36,9 @@ namespace Nebulator
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
 
+        /// <summary>Frame rate in fps.</summary>
+        int _frameRate = 30;
+
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
 
@@ -60,15 +63,14 @@ namespace Nebulator
         /// <summary>The temp dir for tracking down runtime errors.</summary>
         string _compileTempDir = "";
 
-        /// <summary>Persisted internal values for current neb file.</summary>
+        /// <summary>Persisted internal values for current neb/nebp file.</summary>
         Bag _nebpVals = new Bag();
 
         /// <summary>Indicates needs user involvement.</summary>
         Color _attentionColor = Color.Red;
 
-        ///// <summary>Diagnostics for timing measurement.</summary>
-        //TimingAnalyzer _tanTimer = new TimingAnalyzer() { SampleSize = 100 };
-        //TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 50 };
+        /// <summary>Diagnostics for timing measurement.</summary>
+        TimingAnalyzer _tanTimer = new TimingAnalyzer() { SampleSize = 100 };
         #endregion
 
         #region Lifecycle
@@ -160,11 +162,11 @@ namespace Nebulator
             #endregion
 
             // Catches runtime errors during drawing.
-            surface.RuntimeErrorEvent += (object esender, Exception ex) => { ProcessRuntimeError(ex); };
+            surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessRuntimeError(eargs); };
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb"); // Examples\airport  Dev\dev  Examples\example  Examples\lsys  Dev\nptest.neb
+            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // Examples\airport  Dev\dev  Examples\example  Examples\lsys  Dev\nptest.neb
 
             //ExportMidi("test.mid");
 
@@ -295,6 +297,9 @@ namespace Nebulator
                     // Show everything.
                     InitUi();
                     SetCompileStatus(true);
+                    WriteScriptContext();
+                    ExecuteThrowingFunction(_script.setup);
+                    ReadScriptContext();
                 }
                 else
                 {
@@ -363,8 +368,7 @@ namespace Nebulator
 
             // Surface area.
             surface.InitScript(_script);
-            ExecuteThrowingFunction(_script.setup);
-            surface.UpdateSurface();
+            //ExecuteThrowingFunction(surface.UpdateSurface);
         }
 
         /// <summary>
@@ -391,7 +395,7 @@ namespace Nebulator
         /// <summary>
         /// Multimedia timer tick handler.
         /// </summary>
-        void TimerElapsedEvent(object sender, NebTimerEventArgs e)
+        void TimerElapsedEvent(object sender, NebTimer.TimerEventArgs e)
         {
             //// Do some stats gathering for measuring jitter.
             //TimingAnalyzer.Stats stats = _tanTimer.Grab();
@@ -414,7 +418,7 @@ namespace Nebulator
         /// Output next time/step.
         /// </summary>
         /// <param name="e">Information about updates required.</param>
-        void NextStep(NebTimerEventArgs e)
+        void NextStep(NebTimer.TimerEventArgs e)
         {
             ////// Process changed vars regardless of any other status //////
             foreach (Variable var in _ctrlChanges.Values)
@@ -443,30 +447,13 @@ namespace Nebulator
             // Reset controllers for next go around.
             _ctrlChanges.Clear();
 
-            ////// Neb steps /////
-            if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB"))
-            {
-                // Package up the runtime stuff the script may need.
-                _script.Context.StepTime = _stepTime;
-                _script.Context.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
-                _script.Context.Speed = (float)potSpeed.Value;
-                _script.Context.Volume = sldVolume.Value;
-                _script.Context.RuntimeSteps.Clear();
+            WriteScriptContext();
 
+            ////// Neb steps /////
+            if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB") && !_needCompile)
+            {
                 // Kick it.
                 ExecuteThrowingFunction(_script.step);
-
-                // Process whatever the script may have done.
-                if (_script.Context.Speed != potSpeed.Value)
-                {
-                    potSpeed.Value = _script.Context.Speed;
-                    SetSpeedTimerPeriod();
-                }
-
-                if (_script.Context.Volume != sldVolume.Value)
-                {
-                    sldVolume.Value = _script.Context.Volume;
-                }
 
                 // Process any sequence steps the script added.
                 _script.Context.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
@@ -506,20 +493,23 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            if (chkPlay.Checked && e.ElapsedTimers.Contains("UI") && !_needCompile)
+            //if (chkPlay.Checked && e.ElapsedTimers.Contains("UI") && !_needCompile) TODOX chkPlay.Checked?
+            if (e.ElapsedTimers.Contains("UI") && !_needCompile)
             {
                 // Measure and alert if too slow, or throttle.
                 //_tanUi.Arm();
 
-                ExecuteThrowingFunction(surface.UpdateSurface);
+                ExecuteThrowingFunction(surface.UpdateSurface); //TODOX doesn't work until playing???
             }
+
+            ReadScriptContext();
 
             // Process any lingering noteoffs.
             MidiInterface.TheInterface.Housekeep();
 
-            // Process any accumulated messages.
-            _script.Context.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
-            _script.Context.PrintLines.Clear();
+            //// Process any accumulated messages.
+            //_script.Context.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
+            //_script.Context.PrintLines.Clear();
 
             ///// Local common function
             void PlayStep(Step step)
@@ -598,11 +588,17 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                infoDisplay.AddMidiMessage($"{_stepTime} {e.Message}");
-                if (e.Message.StartsWith("ERR"))
-                {
-                    _logger.Error(e.Message);
-                }
+                // Route all midi events through log.
+                string s = $"Midi{e.Category} {_stepTime} {e.Message}";
+                _logger.Info(s);
+
+                // the old way:
+                //string s = $"Midi{e.Category} {_stepTime} {e.Message}{Environment.NewLine}";
+                //infoDisplay.AddInfo(s);
+                //if(UserSettings.TheSettings.LogMidi)
+                //{
+                //    _logger.Info(s);
+                //}
             });
         }
 
@@ -637,8 +633,8 @@ namespace Nebulator
         /// <summary>
         /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
         /// </summary>
-        /// <param name="ex"></param>
-        void ProcessRuntimeError(Exception ex)
+        /// <param name="args"></param>
+        void ProcessRuntimeError(Surface.RuntimeErrorEventArgs args)
         {
             SetPlayStatus(PlayCommand.Stop);
             SetCompileStatus(false);
@@ -646,7 +642,7 @@ namespace Nebulator
             // Locate the offending frame.
             string srcFile = Utils.UNKNOWN_STRING;
             int srcLine = -1;
-            StackTrace st = new StackTrace(ex, true);
+            StackTrace st = new StackTrace(args.Exception, true);
             StackFrame sf = null;
 
             for (int i = 0; i < st.FrameCount;i++)
@@ -682,7 +678,7 @@ namespace Nebulator
                     ErrorType = ScriptError.ScriptErrorType.Runtime,
                     SourceFile = srcFile,
                     LineNumber = srcLine,
-                    Message = ex.Message
+                    Message = args.Exception.Message
                 };
 
                 _logger.Error(err.ToString());
@@ -694,10 +690,49 @@ namespace Nebulator
                     ErrorType = ScriptError.ScriptErrorType.Runtime,
                     SourceFile = "",
                     LineNumber = -1,
-                    Message = ex.Message
+                    Message = args.Exception.Message
                 };
 
                 _logger.Error(err.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Fill in the context stuff for use by the script.
+        /// </summary>
+        void WriteScriptContext()
+        {
+            // Package up the runtime stuff the script may need.
+            _script.Context.Playing = chkPlay.Checked;
+            _script.Context.StepTime = _stepTime;
+            _script.Context.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
+            _script.Context.Speed = (float)potSpeed.Value;
+            _script.Context.Volume = sldVolume.Value;
+            _script.Context.FrameRate = _frameRate;
+            _script.Context.RuntimeSteps.Clear();
+        }
+
+        /// <summary>
+        /// Process any context stuff the script may have changed.
+        /// </summary>
+        void ReadScriptContext()
+        {
+            // Process whatever the script may have done.
+            if (_script.Context.Speed != potSpeed.Value)
+            {
+                potSpeed.Value = _script.Context.Speed;
+                SetSpeedTimerPeriod();
+            }
+
+            if (_script.Context.Volume != sldVolume.Value)
+            {
+                sldVolume.Value = _script.Context.Volume;
+            }
+
+            if (_script.Context.FrameRate != _frameRate)
+            {
+                _frameRate = _script.Context.FrameRate;
+                SetUiTimerPeriod();
             }
         }
         #endregion
@@ -855,7 +890,7 @@ namespace Nebulator
         /// Init all logging functions.
         /// </summary>
         void InitLogging()
-        {
+        { 
             string appDir = Utils.GetAppDir();
 
             FileInfo fi = new FileInfo(Path.Combine(appDir, "log.txt"));
@@ -866,18 +901,19 @@ namespace Nebulator
             }
 
             // Hook to client window.
-            LogClientNotificationTarget.ClientNotification += Syslog_ClientNotification;
+            LogClientNotificationTarget.ClientNotification += Log_ClientNotification;
         }
 
         /// <summary>
         /// A message from the logger to display to the user.
         /// </summary>
         /// <param name="msg">The message.</param>
-        void Syslog_ClientNotification(string msg)
+        void Log_ClientNotification(string msg)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                infoDisplay.AddInfoLine(msg);
+                string s = $"{msg}{Environment.NewLine}"; //.Replace(ScriptCore.SCRIPT_PRINT_PREFIX, "");
+                infoDisplay.AddInfo(s);
             });
         }
 
@@ -1151,7 +1187,7 @@ namespace Nebulator
         void SetUiTimerPeriod()
         {
             // Convert fps to msec per frame.
-            double framesPerMsec = (double)UserSettings.TheSettings.FrameRate / 1000;
+            double framesPerMsec = (double)_frameRate / 1000;
             double msecPerFrame = 1 / framesPerMsec;
             _nebTimer.SetTimer("UI", (int)msecPerFrame);
         }
@@ -1214,7 +1250,7 @@ namespace Nebulator
         void ExecuteThrowingFunction(Action func)
         {
             try { func(); }
-            catch (Exception e) { ProcessRuntimeError(e); }
+            catch (Exception e) { ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = e } ); }
         }
 
         /// <summary>
@@ -1225,7 +1261,7 @@ namespace Nebulator
         void ExecuteThrowingFunction(Action<string> func, string arg)
         {
             try { func(arg); }
-            catch (Exception e) { ProcessRuntimeError(e); }
+            catch (Exception e) { ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = e }); }
         }
         #endregion
 

@@ -67,11 +67,14 @@ namespace Nebulator.Controls
         public Dictionary<Time, string> TimeDefs { get; set; } = new Dictionary<Time, string>();
         #endregion
 
+        #region Events
         /// <summary>
         /// Value changed event.
         /// </summary>
         public event EventHandler ValueChanged;
+        #endregion
 
+        #region Lifecycle
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -91,7 +94,9 @@ namespace Nebulator.Controls
             toolTip.SetToolTip(this, "Current time");
             Invalidate();
         }
+        #endregion
 
+        #region Drawing
         /// <summary>
         /// Draw the slider.
         /// </summary>
@@ -130,7 +135,9 @@ namespace Nebulator.Controls
             pe.Graphics.DrawString(sval, _font2, Brushes.Black, r2, format);
 #endif
         }
+        #endregion
 
+        #region UI handlers
         /// <summary>
         /// Handle mouse position including dragging.
         /// </summary>
@@ -163,6 +170,31 @@ namespace Nebulator.Controls
             base.OnMouseDown(e);
         }
 
+        /// <summary>
+        /// Fine adjustment.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimeControl_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.Add:
+                case Keys.Up:
+                    _current.Tick++;
+                    e.IsInputKey = true;
+                    break;
+
+                case Keys.Subtract:
+                case Keys.Down:
+                    _current.Tick--;
+                    e.IsInputKey = true;
+                    break;
+            }
+        }
+        #endregion
+
+        #region Private functions
         /// <summary>
         /// Common updater.
         /// </summary>
@@ -207,28 +239,6 @@ namespace Nebulator.Controls
 
             return s;
         }
-
-        /// <summary>
-        /// Fine adjustment.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TimeControl_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            switch (e.KeyData)
-            {
-                case Keys.Add:
-                case Keys.Up:
-                    _current.Tick++;
-                    e.IsInputKey = true;
-                    break;
-
-                case Keys.Subtract:
-                case Keys.Down:
-                    _current.Tick--;
-                    e.IsInputKey = true;
-                    break;
-            }
-        }
+        #endregion
     }
 }

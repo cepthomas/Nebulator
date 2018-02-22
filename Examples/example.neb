@@ -47,10 +47,10 @@ DRUMS   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE
 BASS    BASS_VERSE    BASS_VERSE    BASS_VERSE    BASS_VERSE
 
 section PART2 WHEN2 WHEN3 // 16
-KEYS    KEYS_VERSE2    KEYS_VERSE2
-DRUMS   DRUMS_SIMPLE   DRUMS_SIMPLE 
-BASS    BASS_VERSE     BASS_VERSE
-SYNTH   NULL           ALGO1
+KEYS    KEYS_VERSE2   KEYS_VERSE2
+DRUMS   DRUMS_SIMPLE  DRUMS_SIMPLE 
+BASS    BASS_VERSE    BASS_VERSE
+SYNTH   NULL          ALGO1
 
 section PART3 WHEN3 WHEN4 // 32
 KEYS    KEYS_VERSE1   KEYS_VERSE1
@@ -206,7 +206,7 @@ public override void setup()
     // Load up a scale.
     scaleNotes = getScaleNotes("Algerian", "C4");
 
-    // Patches (optional). Only needed if using the Windows GM.
+    // Patches - only needed if using the Windows GM.
     if(winGm)
     {
         sendPatch(KEYS, AcousticGrandPiano);

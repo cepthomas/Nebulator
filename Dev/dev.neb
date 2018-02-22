@@ -1,9 +1,7 @@
 
-///// Tester for dev features.
+///// Tester for development features.
 
 // My akai kbd midi: Pad1-8 = 44-51, knob1-8 = ctlr1-8
-
-//disable the "Diagnostic Tools" option in the debug settings.
 
 
 include ..\Examples\utils.neb
@@ -84,7 +82,6 @@ public override void setup()
     _algerian.SetWeight(4, 50);
     _algerian.SetWeight(2, 30);
 
-    // Patches (optional). Only needed if using the Windows GM.
     if(winGm)
     {
         sendPatch(KEYS, AcousticGrandPiano);

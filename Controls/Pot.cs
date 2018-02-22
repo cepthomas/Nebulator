@@ -58,10 +58,12 @@ namespace Nebulator.Controls
         public int DecPlaces { get; set; } = 1;
         #endregion
 
+        #region Events
         /// <summary>
         /// Value changed event.
         /// </summary>
         public event EventHandler ValueChanged;
+        #endregion
 
         /// <summary>
         /// Creates a new pot control.

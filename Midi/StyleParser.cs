@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using NAudio.Midi;
-using NLog;
 using Nebulator.Common;
 
 

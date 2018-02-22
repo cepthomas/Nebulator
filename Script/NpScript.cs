@@ -11,7 +11,7 @@ using Nebulator.Common;
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Processing emulation script stuff.
+    /// Processing emulation script stuff. TODOX add more functionality. Update API too.
     /// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
     /// </summary>
     public partial class ScriptCore
@@ -50,8 +50,13 @@ namespace Nebulator.Script
         /// <summary>Redraw option. Internal so Surface can access.</summary>
         internal bool _redraw = false;
 
-        /// <summary>Current working Graphics object to draw on. Internal so Surface can access</summary>
+        /// <summary>Current working Graphics object to draw on. Internal so Surface can access.</summary>
         internal Graphics _gr = null;
+        #endregion
+
+        #region Constants
+        /// <summary>Flag for printX() output text.</summary>
+        public const string SCRIPT_PRINT_PREFIX = "print: ";
         #endregion
 
         #region Definitions - same values as Processing
@@ -159,7 +164,7 @@ namespace Nebulator.Script
         public int displayDensity() { throw new ScriptNotImplementedException(nameof(displayDensity)); }
         public bool focused { get; internal set; }
         public int frameCount { get; private set; } = 1;
-        public int frameRate { get { throw new ScriptNotImplementedException(nameof(frameRate)); } set { throw new ScriptNotImplementedException(nameof(frameRate)); } }
+        public int frameRate { get { return Context.FrameRate; } set { Context.FrameRate = value; } }
         public void fullScreen() { throw new ScriptNotImplementedException(nameof(fullScreen)); }
         public int height { get; internal set; }
         public void noCursor() { throw new ScriptNotImplementedException(nameof(noCursor)); }
@@ -256,7 +261,7 @@ namespace Nebulator.Script
             x1 -= width / 2;
             y1 -= height / 2;
             _gr.FillEllipse(_brush, x1, y1, width, height);
-            _gr.DrawEllipse(_pen, x1, y1, width, height);
+           // _gr.DrawEllipse(_pen, x1, y1, width, height);
         }
 
         public void line(float x1, float y1, float x2, float y2)
@@ -450,9 +455,23 @@ namespace Nebulator.Script
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) { Context.PrintLines.Add(string.Join(" ", vars)); }
-        public void println(params object[] vars) { Context.PrintLines.Add(string.Join(" ", vars) + Environment.NewLine); }
-        public void printArray(params object[] ps) { throw new ScriptNotImplementedException(nameof(printArray)); }
+        public void print(params object[] vars) // TODO how to handle this different from println?
+        {
+            _logger.Info($"{SCRIPT_PRINT_PREFIX}{string.Join(" ", vars)}");
+        }
+
+        public void println(params object[] vars)
+        {
+            _logger.Info($"{SCRIPT_PRINT_PREFIX}{string.Join(" ", vars)}");
+        }
+
+        public void printArray(Array what)
+        {
+            for (int i = 0; i < what.Length; i++)
+            {
+                _logger.Info($"{SCRIPT_PRINT_PREFIX}[{i}] {what.GetValue(i)}");
+            }
+        }
         #endregion
 
         #region Output - Image
@@ -549,7 +568,7 @@ namespace Nebulator.Script
             b = constrain(b, 0, 255);
             a = constrain(a, 0, 255);
             _bgColor = Color.FromArgb(a, r, g, b);
-            _gr.Clear(_bgColor);
+//            _gr.Clear(_bgColor);
         }
 
         public void background(int r, int g, int b) { background(r, g, b, 255); }
@@ -574,7 +593,7 @@ namespace Nebulator.Script
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }
         public void fill(int gray, int a) { fill(gray, gray, gray, a); }
-        public void fill(color pcolor) { _brush.Color = pcolor.NativeColor; }
+        public void fill(color pcolor) { _brush.Color = pcolor.NativeColor; _pen.Color = pcolor.NativeColor; }
         public void fill(color pcolor, int a) { fill(pcolor, a); }
         public void fill(string scolor) { fill(scolor); }
         public void fill(string scolor, int a) { fill(new color(scolor), a); }
