@@ -49,9 +49,7 @@ namespace Nebulator.Script
         #endregion
 
         #region Script callable functions
-        /// <summary>
-        /// Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.
-        /// </summary>
+        /// <summary>Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
@@ -98,9 +96,7 @@ namespace Nebulator.Script
             }
         }
 
-        /// <summary>
-        /// Send a midi note immediately. Respects solo/mute.
-        /// </summary>
+        /// <summary>Send a midi note immediately. Respects solo/mute.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
@@ -111,9 +107,7 @@ namespace Nebulator.Script
             note.Notes.ForEach(n => sendMidiNote(track, n, vol, dur));
         }
 
-        /// <summary>
-        /// Send a midi note immediately. Respects solo/mute.
-        /// </summary>
+        /// <summary>Send a midi note immediately. Respects solo/mute.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script.</param>
         /// <param name="vol">Note volume.</param>
@@ -124,9 +118,7 @@ namespace Nebulator.Script
             note.Notes.ForEach(n => sendMidiNote(track, n, vol, new Time(dur)));
         }
 
-        /// <summary>
-        /// Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.
-        /// </summary>
+        /// <summary>Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
@@ -136,9 +128,7 @@ namespace Nebulator.Script
             sendMidiNote(track, inote, vol, new Time(dur));
         }
 
-        /// <summary>
-        /// Send a midi controller immediately.
-        /// </summary>
+        /// <summary>Send a midi controller immediately.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>
@@ -155,9 +145,7 @@ namespace Nebulator.Script
             MidiInterface.TheInterface.Send(step);
         }
 
-        /// <summary>
-        /// Send a midi patch immediately.
-        /// </summary>
+        /// <summary>Send a midi patch immediately.</summary>
         /// <param name="track"></param>
         /// <param name="patch"></param>
         public void sendPatch(Track track, int patch)
@@ -172,9 +160,7 @@ namespace Nebulator.Script
             MidiInterface.TheInterface.Send(step);
         }
 
-        /// <summary>
-        /// Modulate all notes on the track by number of notes. Can be changed on the fly altering all subsequent notes.
-        /// </summary>
+        /// <summary>Modulate all notes on the track by number of notes. Can be changed on the fly altering all subsequent notes.</summary>
         /// <param name="track">Track to alter notes on.</param>
         /// <param name="val">Number of notes, +-.</param>
         public void modulate(Track track, int val)
@@ -182,9 +168,7 @@ namespace Nebulator.Script
             track.Modulate = val;
         }
 
-        /// <summary>
-        /// Send a named sequence.
-        /// </summary>
+        /// <summary>Send a named sequence.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
@@ -193,9 +177,7 @@ namespace Nebulator.Script
             Context.RuntimeSteps.Add(scoll);
         }
 
-        /// <summary>
-        /// Convert the argument into numbered notes.
-        /// </summary>
+        /// <summary>Convert the argument into numbered notes.</summary>
         /// <param name="note">Note string using any form allowed in the script.</param>
         /// <returns>Array of notes or empty if invalid.</returns>
         public int[] getNotes(string note)
@@ -204,9 +186,7 @@ namespace Nebulator.Script
             return notes != null ? notes.ToArray() : new int[0];
         }
 
-        /// <summary>
-        /// Get an array of scale notes.
-        /// </summary>
+        /// <summary>Get an array of scale notes.</summary>
         /// <param name="scale">One of the named scales from ScriptDefinitions.md.</param>
         /// <param name="key">Note name and octave.</param>
         /// <returns>Array of notes or empty if invalid.</returns>

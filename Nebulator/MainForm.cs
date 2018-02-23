@@ -166,7 +166,12 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb"); // Examples\airport  Dev\dev  Examples\example  Examples\lsys  Dev\nptest.neb
+
+            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
             //ExportMidi("test.mid");
 
@@ -262,7 +267,12 @@ namespace Nebulator
                 // Time points.
                 timeMaster.TimeDefs.Clear();
 
-                if (compiler.Errors.Count == 0 && _script != null)
+                // Process errors. Some are warnings.
+                List<ScriptError> realErrors = new List<ScriptError>();
+                List<ScriptError> warnings = new List<ScriptError>();
+                compiler.Errors.ForEach(e => { if (e.ErrorType == ScriptError.ScriptErrorType.CompileWarning) warnings.Add(e); else realErrors.Add(e); } );
+
+                if (realErrors.Count == 0 && _script != null)
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
@@ -306,9 +316,11 @@ namespace Nebulator
                     _logger.Warn("Compile failed.");
                     ok = false;
                     SetPlayStatus(PlayCommand.StopRewind);
-                    compiler.Errors.ForEach(e => _logger.Warn(e.ToString()));
                     SetCompileStatus(false);
                 }
+
+                warnings.ForEach(e => _logger.Warn(e.ToString()));
+                realErrors.ForEach(e => _logger.Error(e.ToString()));
             }
 
             return ok;
@@ -493,13 +505,13 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            //if (chkPlay.Checked && e.ElapsedTimers.Contains("UI") && !_needCompile) TODOX chkPlay.Checked?
+            //if (chkPlay.Checked && e.ElapsedTimers.Contains("UI") && !_needCompile) TODO chkPlay.Checked?
             if (e.ElapsedTimers.Contains("UI") && !_needCompile)
             {
                 // Measure and alert if too slow, or throttle.
                 //_tanUi.Arm();
 
-                ExecuteThrowingFunction(surface.UpdateSurface); //TODOX doesn't work until playing???
+                ExecuteThrowingFunction(surface.UpdateSurface); //TODO doesn't work until playing???
             }
 
             ReadScriptContext();

@@ -24,7 +24,7 @@ namespace Nebulator.Common
         {
             ClientNotification?.Invoke(logEvent.Message);
 
-            //if (ClientNotification != null) TODOX more info?
+            //if (ClientNotification != null) // With more info.
             //{
             //    string preamble = "";
             //    if (logEvent.Level == LogLevel.Fatal || logEvent.Level == LogLevel.Error)
@@ -35,7 +35,6 @@ namespace Nebulator.Common
             //    {
             //        preamble = "WARNING: ";
             //    }
-
             //    ClientNotification(preamble + logEvent.Message);
             //}
         }

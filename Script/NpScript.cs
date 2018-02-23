@@ -11,7 +11,7 @@ using Nebulator.Common;
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Processing emulation script stuff. TODOX add more functionality. Update API too.
+    /// Processing emulation script stuff. TODO parse API with a py script (also NebScript).
     /// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
     /// </summary>
     public partial class ScriptCore
@@ -123,7 +123,7 @@ namespace Nebulator.Script
         public virtual void draw() { }
 
         //---- Script functions
-        public void exit() { throw new ScriptNotImplementedException(nameof(exit)); }
+        //public void exit() { NotImpl(nameof(exit)); }
 
         // Stops Processing from continuously executing the code within draw(). If loop() is called, the code
         // in draw() begins to run continuously again. If using noLoop() in setup(), it should be the last line
@@ -141,8 +141,8 @@ namespace Nebulator.Script
         // fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), 
         // ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), 
         // emissive(), specular(), shininess(), ambient()
-        public void popStyle() { throw new ScriptNotImplementedException(nameof(popStyle)); }
-        public void pushStyle() { throw new ScriptNotImplementedException(nameof(pushStyle)); }
+        //public void popStyle() { NotImpl(nameof(popStyle)); }
+        //public void pushStyle() { NotImpl(nameof(pushStyle)); }
 
         // Executes the code within draw() one time. This functions allows the program to update the display window
         // only when necessary, for example when an event registered by mousePressed() or keyPressed() occurs.
@@ -152,74 +152,74 @@ namespace Nebulator.Script
         // use loop() and noLoop().
         public void redraw() { _redraw = true; }
 
-        public void thread() { throw new ScriptNotImplementedException(nameof(thread)); }
+        //public void thread() { NotImpl(nameof(thread)); }
         #endregion
 
         #region Environment 
         //---- Script properties
-        public void cursor(int which) { throw new ScriptNotImplementedException(nameof(cursor)); }
-        public void cursor(PImage image) { throw new ScriptNotImplementedException(nameof(cursor)); }
-        public void cursor(PImage image, int x, int y) { throw new ScriptNotImplementedException(nameof(cursor)); }
-        public void delay(int msec) { throw new ScriptNotImplementedException(nameof(delay)); }
-        public int displayDensity() { throw new ScriptNotImplementedException(nameof(displayDensity)); }
+        //public void cursor(int which) { NotImpl(nameof(cursor)); }
+        //public void cursor(PImage image) { NotImpl(nameof(cursor)); }
+        //public void cursor(PImage image, int x, int y) { NotImpl(nameof(cursor)); }
+        //public void delay(int msec) { NotImpl(nameof(delay)); }
+        //public int displayDensity() { NotImpl(nameof(displayDensity)); }
         public bool focused { get; internal set; }
         public int frameCount { get; private set; } = 1;
         public int frameRate { get { return Context.FrameRate; } set { Context.FrameRate = value; } }
-        public void fullScreen() { throw new ScriptNotImplementedException(nameof(fullScreen)); }
+        public void fullScreen() { NotImpl(nameof(fullScreen)); }
         public int height { get; internal set; }
-        public void noCursor() { throw new ScriptNotImplementedException(nameof(noCursor)); }
+        //public void noCursor() { NotImpl(nameof(noCursor)); }
         public void noSmooth() { _smooth = false; }
-        public void pixelDensity(int density) { throw new ScriptNotImplementedException(nameof(pixelDensity)); }
-        public int pixelHeight { get { throw new ScriptNotImplementedException(nameof(pixelHeight)); } }
-        public int pixelWidth { get { throw new ScriptNotImplementedException(nameof(pixelWidth)); } }
-        public void size(int width, int height) { throw new ScriptNotImplementedException(nameof(size)); }
+        public void pixelDensity(int density) { NotImpl(nameof(pixelDensity)); }
+        public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Default is 1"); return 1; } }
+        public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Default is 1"); return 1; } }
+        public void size(int width, int height) { NotImpl(nameof(size), "Set by Script Surface"); }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
         public int width { get; internal set; }
         #endregion
 
         #region Data
-        public string binary(object value) { throw new ScriptNotImplementedException(nameof(binary)); }
-        public bool boolean(object value) { throw new ScriptNotImplementedException(nameof(boolean)); }
-        public byte @byte (object value) { throw new ScriptNotImplementedException(nameof(@byte)); }
-        public char @char (object value) { throw new ScriptNotImplementedException(nameof(@char)); }
-        public float @float(object value) { throw new ScriptNotImplementedException(nameof(@float)); }
-        public string hex(object value) { throw new ScriptNotImplementedException(nameof(hex)); }
+        //public string binary(object value) { NotImpl(nameof(binary)); }
+        //public bool boolean(object value) { NotImpl(nameof(boolean)); }
+        //public byte @byte (object value) { NotImpl(nameof(@byte)); }
+        //public char @char (object value) { NotImpl(nameof(@char)); }
+        //public float @float(object value) { NotImpl(nameof(@float)); }
+        //public string hex(object value) { NotImpl(nameof(hex)); }
         public int @int(float val) { return (int)val; }
         public int @int(string val) { return int.Parse(val); }
         public string str(object value) { return value.ToString(); }
-        public int unbinary(string value) { throw new ScriptNotImplementedException(nameof(unbinary)); }
-        public int unhex(string value) { throw new ScriptNotImplementedException(nameof(unhex)); }
+        //public int unbinary(string value) { NotImpl(nameof(unbinary)); }
+        //public int unhex(string value) { NotImpl(nameof(unhex)); }
 
         #region Data - String Functions
-        public string join(params object[] ps) { throw new ScriptNotImplementedException(nameof(join)); }
-        public string match(params object[] ps) { throw new ScriptNotImplementedException(nameof(match)); }
-        public string matchAll(params object[] ps) { throw new ScriptNotImplementedException(nameof(matchAll)); }
-        public string nf(params object[] ps) { throw new ScriptNotImplementedException(nameof(nf)); }
-        public string nfc(params object[] ps) { throw new ScriptNotImplementedException(nameof(nfc)); }
-        public string nfp(params object[] ps) { throw new ScriptNotImplementedException(nameof(nfp)); }
-        public string nfs(params object[] ps) { throw new ScriptNotImplementedException(nameof(nfs)); }
-        public string[] split(params object[] ps) { throw new ScriptNotImplementedException(nameof(split)); }
-        public string[] splitTokens(params object[] ps) { throw new ScriptNotImplementedException(nameof(splitTokens)); }
-        public string trim(params object[] ps) { throw new ScriptNotImplementedException(nameof(trim)); }
+        //public string join(params object[] ps) { NotImpl(nameof(join)); }
+        //public string match(params object[] ps) { NotImpl(nameof(match)); }
+        //public string matchAll(params object[] ps) { NotImpl(nameof(matchAll)); }
+        //public string nf(params object[] ps) { NotImpl(nameof(nf)); }
+        //public string nfc(params object[] ps) { NotImpl(nameof(nfc)); }
+        //public string nfp(params object[] ps) { NotImpl(nameof(nfp)); }
+        //public string nfs(params object[] ps) { NotImpl(nameof(nfs)); }
+        //public string[] split(params object[] ps) { NotImpl(nameof(split)); }
+        //public string[] splitTokens(params object[] ps) { NotImpl(nameof(splitTokens)); }
+        //public string trim(params object[] ps) { NotImpl(nameof(trim)); }
         #endregion
 
         #region Data - Array Functions
-        public void append(params object[] ps) { throw new ScriptNotImplementedException(nameof(append)); }
-        public void arrayCopy(params object[] ps) { throw new ScriptNotImplementedException(nameof(arrayCopy)); }
-        public void concat(params object[] ps) { throw new ScriptNotImplementedException(nameof(concat)); }
-        public void expand(params object[] ps) { throw new ScriptNotImplementedException(nameof(expand)); }
-        public void reverse(params object[] ps) { throw new ScriptNotImplementedException(nameof(reverse)); }
-        public void shorten(params object[] ps) { throw new ScriptNotImplementedException(nameof(shorten)); }
-        public void sort(params object[] ps) { throw new ScriptNotImplementedException(nameof(sort)); }
-        public void splice(params object[] ps) { throw new ScriptNotImplementedException(nameof(splice)); }
-        public void subset(params object[] ps) { throw new ScriptNotImplementedException(nameof(subset)); }
+        //public void append(params object[] ps) { NotImpl(nameof(append)); }
+        //public void arrayCopy(params object[] ps) { NotImpl(nameof(arrayCopy)); }
+        //public void concat(params object[] ps) { NotImpl(nameof(concat)); }
+        //public void expand(params object[] ps) { NotImpl(nameof(expand)); }
+        //public void reverse(params object[] ps) { NotImpl(nameof(reverse)); }
+        //public void shorten(params object[] ps) { NotImpl(nameof(shorten)); }
+        //public void sort(params object[] ps) { NotImpl(nameof(sort)); }
+        //public void splice(params object[] ps) { NotImpl(nameof(splice)); }
+        //public void subset(params object[] ps) { NotImpl(nameof(subset)); }
         #endregion
         #endregion
 
         #region Shape 
-        public void createShape(params object[] ps) { throw new ScriptNotImplementedException(nameof(createShape)); }
-        public void loadShape(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadShape)); }
+        //public void createShape(params object[] ps) { NotImpl(nameof(createShape)); }
+        //public void loadShape(params object[] ps) { NotImpl(nameof(loadShape)); }
 
         #region Shape - 2D Primitives
         public void arc(float x1, float y1, float x2, float y2, float angle1, float angle2, int style)
@@ -311,30 +311,30 @@ namespace Nebulator.Script
             _gr.DrawBezier(_pen, x1, y1, x2, y2, x3, y3, x4, y4);
         }
 
-        public void bezierDetail(params object[] ps) { throw new ScriptNotImplementedException(nameof(bezierDetail)); }
-        public void bezierPoint(params object[] ps) { throw new ScriptNotImplementedException(nameof(bezierPoint)); }
-        public void bezierTangent(params object[] ps) { throw new ScriptNotImplementedException(nameof(bezierTangent)); }
+        //public void bezierDetail(params object[] ps) { NotImpl(nameof(bezierDetail)); }
+        //public void bezierPoint(params object[] ps) { NotImpl(nameof(bezierPoint)); }
+        //public void bezierTangent(params object[] ps) { NotImpl(nameof(bezierTangent)); }
 
         public void curve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
         {
             _gr.DrawCurve(_pen, new Point[4] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3), new Point(x4, y4) }, 1, 1, 0.5f);
         }
 
-        public void curveDetail(params object[] ps) { throw new ScriptNotImplementedException(nameof(curveDetail)); }
-        public void curvePoint(params object[] ps) { throw new ScriptNotImplementedException(nameof(curvePoint)); }
-        public void curveTangent(params object[] ps) { throw new ScriptNotImplementedException(nameof(curveTangent)); }
-        public void curveTightness(params object[] ps) { throw new ScriptNotImplementedException(nameof(curveTightness)); }
+        //public void curveDetail(params object[] ps) { NotImpl(nameof(curveDetail)); }
+        //public void curvePoint(params object[] ps) { NotImpl(nameof(curvePoint)); }
+        //public void curveTangent(params object[] ps) { NotImpl(nameof(curveTangent)); }
+        //public void curveTightness(params object[] ps) { NotImpl(nameof(curveTightness)); }
         #endregion
 
         #region Shape - 3D Primitives
-        public void box(params object[] ps) { throw new ScriptNotImplementedException(nameof(box)); }
-        public void sphere(params object[] ps) { throw new ScriptNotImplementedException(nameof(sphere)); }
-        public void sphereDetail(params object[] ps) { throw new ScriptNotImplementedException(nameof(sphereDetail)); }
+        //public void box(params object[] ps) { NotImpl(nameof(box)); }
+        //public void sphere(params object[] ps) { NotImpl(nameof(sphere)); }
+        //public void sphereDetail(params object[] ps) { NotImpl(nameof(sphereDetail)); }
         #endregion
 
         #region Shape - Attributes
-        public void ellipseMode(int mode) { throw new ScriptNotImplementedException(nameof(ellipseMode)); }
-        public void rectMode(int mode) { throw new ScriptNotImplementedException(nameof(rectMode)); }
+        //public void ellipseMode(int mode) { NotImpl(nameof(ellipseMode)); }
+        //public void rectMode(int mode) { NotImpl(nameof(rectMode)); }
 
         public void strokeCap(int style)
         {
@@ -379,19 +379,19 @@ namespace Nebulator.Script
         #endregion
 
         #region Shape - Vertex
-        public void beginContour(params object[] ps) { throw new ScriptNotImplementedException(nameof(beginContour)); }
-        public void beginShape(params object[] ps) { throw new ScriptNotImplementedException(nameof(beginShape)); }
-        public void bezierVertex(params object[] ps) { throw new ScriptNotImplementedException(nameof(bezierVertex)); }
-        public void curveVertex(params object[] ps) { throw new ScriptNotImplementedException(nameof(curveVertex)); }
-        public void endContour(params object[] ps) { throw new ScriptNotImplementedException(nameof(endContour)); }
-        public void endShape(params object[] ps) { throw new ScriptNotImplementedException(nameof(endShape)); }
-        public void quadraticVertex(params object[] ps) { throw new ScriptNotImplementedException(nameof(quadraticVertex)); }
-        public void vertex(params object[] ps) { throw new ScriptNotImplementedException(nameof(vertex)); }
+        //public void beginContour(params object[] ps) { NotImpl(nameof(beginContour)); }
+        //public void beginShape(params object[] ps) { NotImpl(nameof(beginShape)); }
+        //public void bezierVertex(params object[] ps) { NotImpl(nameof(bezierVertex)); }
+        //public void curveVertex(params object[] ps) { NotImpl(nameof(curveVertex)); }
+        //public void endContour(params object[] ps) { NotImpl(nameof(endContour)); }
+        //public void endShape(params object[] ps) { NotImpl(nameof(endShape)); }
+        //public void quadraticVertex(params object[] ps) { NotImpl(nameof(quadraticVertex)); }
+        //public void vertex(params object[] ps) { NotImpl(nameof(vertex)); }
         #endregion
 
         #region Shape - Loading & Displaying
-        public void shape(params object[] ps) { throw new ScriptNotImplementedException(nameof(shape)); }
-        public void shapeMode(params object[] ps) { throw new ScriptNotImplementedException(nameof(shapeMode)); }
+        //public void shape(params object[] ps) { NotImpl(nameof(shape)); }
+        //public void shapeMode(params object[] ps) { NotImpl(nameof(shapeMode)); }
         #endregion
         #endregion
 
@@ -426,20 +426,20 @@ namespace Nebulator.Script
         #endregion
 
         #region Input - Files
-        public void createInput(params object[] ps) { throw new ScriptNotImplementedException(nameof(createInput)); }
-        public void createReader(params object[] ps) { throw new ScriptNotImplementedException(nameof(createReader)); }
-        public void launch(params object[] ps) { throw new ScriptNotImplementedException(nameof(launch)); }
-        public void loadBytes(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadBytes)); }
-        public void loadJSONArray(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadJSONArray)); }
-        public void loadJSONObject(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadJSONObject)); }
-        public string[] loadStrings(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadStrings)); }
-        public void loadTable(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadTable)); }
-        public void loadXML(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadXML)); }
-        public void parseJSONArray(params object[] ps) { throw new ScriptNotImplementedException(nameof(parseJSONArray)); }
-        public void parseJSONObject(params object[] ps) { throw new ScriptNotImplementedException(nameof(parseJSONObject)); }
-        public void parseXML(params object[] ps) { throw new ScriptNotImplementedException(nameof(parseXML)); }
-        public void selectFolder(params object[] ps) { throw new ScriptNotImplementedException(nameof(selectFolder)); }
-        public void selectInput(params object[] ps) { throw new ScriptNotImplementedException(nameof(selectInput)); }
+        //public void createInput(params object[] ps) { NotImpl(nameof(createInput)); }
+        //public void createReader(params object[] ps) { NotImpl(nameof(createReader)); }
+        //public void launch(params object[] ps) { NotImpl(nameof(launch)); }
+        //public void loadBytes(params object[] ps) { NotImpl(nameof(loadBytes)); }
+        //public void loadJSONArray(params object[] ps) { NotImpl(nameof(loadJSONArray)); }
+        //public void loadJSONObject(params object[] ps) { NotImpl(nameof(loadJSONObject)); }
+        //public string[] loadStrings(params object[] ps) { NotImpl(nameof(loadStrings)); }
+        //public void loadTable(params object[] ps) { NotImpl(nameof(loadTable)); }
+        //public void loadXML(params object[] ps) { NotImpl(nameof(loadXML)); }
+        //public void parseJSONArray(params object[] ps) { NotImpl(nameof(parseJSONArray)); }
+        //public void parseJSONObject(params object[] ps) { NotImpl(nameof(parseJSONObject)); }
+        //public void parseXML(params object[] ps) { NotImpl(nameof(parseXML)); }
+        //public void selectFolder(params object[] ps) { NotImpl(nameof(selectFolder)); }
+        //public void selectInput(params object[] ps) { NotImpl(nameof(selectInput)); }
         #endregion
 
         #region Input - Time & Date
@@ -475,87 +475,87 @@ namespace Nebulator.Script
         #endregion
 
         #region Output - Image
-        public void save(string fn) { throw new ScriptNotImplementedException(nameof(save)); }
-        public void saveFrame() { throw new ScriptNotImplementedException(nameof(saveFrame)); }
-        public void saveFrame(string fn) { throw new ScriptNotImplementedException(nameof(saveFrame)); }
+        //public void save(string fn) { NotImpl(nameof(save)); }
+        //public void saveFrame() { NotImpl(nameof(saveFrame)); }
+        //public void saveFrame(string fn) { NotImpl(nameof(saveFrame)); }
         #endregion
 
         #region Output - Files
-        public void beginRaw(params object[] ps) { throw new ScriptNotImplementedException(nameof(beginRaw)); }
-        public void beginRecord(params object[] ps) { throw new ScriptNotImplementedException(nameof(beginRecord)); }
-        public void createOutput(params object[] ps) { throw new ScriptNotImplementedException(nameof(createOutput)); }
-        public void createWriter(params object[] ps) { throw new ScriptNotImplementedException(nameof(createWriter)); }
-        public void endRaw(params object[] ps) { throw new ScriptNotImplementedException(nameof(endRaw)); }
-        public void endRecord(params object[] ps) { throw new ScriptNotImplementedException(nameof(endRecord)); }
+        //public void beginRaw(params object[] ps) { NotImpl(nameof(beginRaw)); }
+        //public void beginRecord(params object[] ps) { NotImpl(nameof(beginRecord)); }
+        //public void createOutput(params object[] ps) { NotImpl(nameof(createOutput)); }
+        //public void createWriter(params object[] ps) { NotImpl(nameof(createWriter)); }
+        //public void endRaw(params object[] ps) { NotImpl(nameof(endRaw)); }
+        //public void endRecord(params object[] ps) { NotImpl(nameof(endRecord)); }
         #endregion
 
         #region Output - PrintWriter
-        public void saveBytes(params object[] ps) { throw new ScriptNotImplementedException(nameof(saveBytes)); }
-        public void saveJSONArray(params object[] ps) { throw new ScriptNotImplementedException(nameof(saveJSONArray)); }
-        public void saveJSONObject(params object[] ps) { throw new ScriptNotImplementedException(nameof(saveJSONObject)); }
-        public void saveStream(params object[] ps) { throw new ScriptNotImplementedException(nameof(saveStream)); }
-        public void saveStrings(params object[] ps) { throw new ScriptNotImplementedException(nameof(saveStrings)); }
-        public void saveTable(params object[] ps) { throw new ScriptNotImplementedException(nameof(saveTable)); }
-        public void saveXML(params object[] ps) { throw new ScriptNotImplementedException(nameof(saveXML)); }
-        public void selectOutput(params object[] ps) { throw new ScriptNotImplementedException(nameof(selectOutput)); }
+        //public void saveBytes(params object[] ps) { NotImpl(nameof(saveBytes)); }
+        //public void saveJSONArray(params object[] ps) { NotImpl(nameof(saveJSONArray)); }
+        //public void saveJSONObject(params object[] ps) { NotImpl(nameof(saveJSONObject)); }
+        //public void saveStream(params object[] ps) { NotImpl(nameof(saveStream)); }
+        //public void saveStrings(params object[] ps) { NotImpl(nameof(saveStrings)); }
+        //public void saveTable(params object[] ps) { NotImpl(nameof(saveTable)); }
+        //public void saveXML(params object[] ps) { NotImpl(nameof(saveXML)); }
+        //public void selectOutput(params object[] ps) { NotImpl(nameof(selectOutput)); }
         #endregion
         #endregion
 
         #region Transform 
-        public void applyMatrix(params object[] ps) { throw new ScriptNotImplementedException(nameof(applyMatrix)); }
+        //public void applyMatrix(params object[] ps) { NotImpl(nameof(applyMatrix)); }
         public void popMatrix() { _gr.Transform = (Matrix)_matrixStack.Pop(); }
-        public void printMatrix(params object[] ps) { throw new ScriptNotImplementedException(nameof(printMatrix)); }
+        //public void printMatrix(params object[] ps) { NotImpl(nameof(printMatrix)); }
         public void pushMatrix() { _matrixStack.Push(_gr.Transform); }
-        public void resetMatrix(params object[] ps) { throw new ScriptNotImplementedException(nameof(resetMatrix)); }
+        //public void resetMatrix(params object[] ps) { NotImpl(nameof(resetMatrix)); }
         public void rotate(float angle) { _gr.RotateTransform((angle * 180.0f / PI)); }
-        public void rotateX(params object[] ps) { throw new ScriptNotImplementedException(nameof(rotateX)); }
-        public void rotateY(params object[] ps) { throw new ScriptNotImplementedException(nameof(rotateY)); }
-        public void rotateZ(params object[] ps) { throw new ScriptNotImplementedException(nameof(rotateZ)); }
+        //public void rotateX(params object[] ps) { NotImpl(nameof(rotateX)); }
+        //public void rotateY(params object[] ps) { NotImpl(nameof(rotateY)); }
+        //public void rotateZ(params object[] ps) { NotImpl(nameof(rotateZ)); }
         public void scale(float sc) { _gr.ScaleTransform(sc, sc); }
         public void scale(float scx, float scy) { _gr.ScaleTransform(scx, scy); }
-        public void shearX(params object[] ps) { throw new ScriptNotImplementedException(nameof(shearX)); }
-        public void shearY(params object[] ps) { throw new ScriptNotImplementedException(nameof(shearY)); }
+        //public void shearX(params object[] ps) { NotImpl(nameof(shearX)); }
+        //public void shearY(params object[] ps) { NotImpl(nameof(shearY)); }
         public void translate(float dx, float dy) { _gr.TranslateTransform(dx, dy); }
         #endregion
 
         #region Lights & Camera
         #region Lights & Camera - Lights
-        public string ambientLight(params object[] ps) { throw new ScriptNotImplementedException(nameof(ambientLight)); }
-        public string directionalLight(params object[] ps) { throw new ScriptNotImplementedException(nameof(directionalLight)); }
-        public string lightFalloff(params object[] ps) { throw new ScriptNotImplementedException(nameof(lightFalloff)); }
-        public string lights(params object[] ps) { throw new ScriptNotImplementedException(nameof(lights)); }
-        public string lightSpecular(params object[] ps) { throw new ScriptNotImplementedException(nameof(lightSpecular)); }
-        public string noLights(params object[] ps) { throw new ScriptNotImplementedException(nameof(noLights)); }
-        public string normal(params object[] ps) { throw new ScriptNotImplementedException(nameof(normal)); }
-        public string pointLight(params object[] ps) { throw new ScriptNotImplementedException(nameof(pointLight)); }
-        public string spotLight(params object[] ps) { throw new ScriptNotImplementedException(nameof(spotLight)); }
+        //public string ambientLight(params object[] ps) { NotImpl(nameof(ambientLight)); }
+        //public string directionalLight(params object[] ps) { NotImpl(nameof(directionalLight)); }
+        //public string lightFalloff(params object[] ps) { NotImpl(nameof(lightFalloff)); }
+        //public string lights(params object[] ps) { NotImpl(nameof(lights)); }
+        //public string lightSpecular(params object[] ps) { NotImpl(nameof(lightSpecular)); }
+        //public string noLights(params object[] ps) { NotImpl(nameof(noLights)); }
+        //public string normal(params object[] ps) { NotImpl(nameof(normal)); }
+        //public string pointLight(params object[] ps) { NotImpl(nameof(pointLight)); }
+        //public string spotLight(params object[] ps) { NotImpl(nameof(spotLight)); }
         #endregion
 
         #region Lights & Camera - Camera
-        public string beginCamera(params object[] ps) { throw new ScriptNotImplementedException(nameof(beginCamera)); }
-        public string camera(params object[] ps) { throw new ScriptNotImplementedException(nameof(camera)); }
-        public string endCamera(params object[] ps) { throw new ScriptNotImplementedException(nameof(endCamera)); }
-        public string frustum(params object[] ps) { throw new ScriptNotImplementedException(nameof(frustum)); }
-        public string ortho(params object[] ps) { throw new ScriptNotImplementedException(nameof(ortho)); }
-        public string perspective(params object[] ps) { throw new ScriptNotImplementedException(nameof(perspective)); }
-        public string printCamera(params object[] ps) { throw new ScriptNotImplementedException(nameof(printCamera)); }
-        public string printProjection(params object[] ps) { throw new ScriptNotImplementedException(nameof(printProjection)); }
+        //public string beginCamera(params object[] ps) { NotImpl(nameof(beginCamera)); }
+        //public string camera(params object[] ps) { NotImpl(nameof(camera)); }
+        //public string endCamera(params object[] ps) { NotImpl(nameof(endCamera)); }
+        //public string frustum(params object[] ps) { NotImpl(nameof(frustum)); }
+        //public string ortho(params object[] ps) { NotImpl(nameof(ortho)); }
+        //public string perspective(params object[] ps) { NotImpl(nameof(perspective)); }
+        //public string printCamera(params object[] ps) { NotImpl(nameof(printCamera)); }
+        //public string printProjection(params object[] ps) { NotImpl(nameof(printProjection)); }
         #endregion
 
         #region Lights & Camera - Coordinates
-        public string modelX(params object[] ps) { throw new ScriptNotImplementedException(nameof(modelX)); }
-        public string modelY(params object[] ps) { throw new ScriptNotImplementedException(nameof(modelY)); }
-        public string modelZ(params object[] ps) { throw new ScriptNotImplementedException(nameof(modelZ)); }
-        public string screenX(params object[] ps) { throw new ScriptNotImplementedException(nameof(screenX)); }
-        public string screenY(params object[] ps) { throw new ScriptNotImplementedException(nameof(screenY)); }
-        public string screenZ(params object[] ps) { throw new ScriptNotImplementedException(nameof(screenZ)); }
+        //public string modelX(params object[] ps) { NotImpl(nameof(modelX)); }
+        //public string modelY(params object[] ps) { NotImpl(nameof(modelY)); }
+        //public string modelZ(params object[] ps) { NotImpl(nameof(modelZ)); }
+        //public string screenX(params object[] ps) { NotImpl(nameof(screenX)); }
+        //public string screenY(params object[] ps) { NotImpl(nameof(screenY)); }
+        //public string screenZ(params object[] ps) { NotImpl(nameof(screenZ)); }
         #endregion
 
         #region Lights & Camera - Material Properties
-        public string ambient(params object[] ps) { throw new ScriptNotImplementedException(nameof(ambient)); }
-        public string emissive(params object[] ps) { throw new ScriptNotImplementedException(nameof(emissive)); }
-        public string shininess(params object[] ps) { throw new ScriptNotImplementedException(nameof(shininess)); }
-        public string specular(params object[] ps) { throw new ScriptNotImplementedException(nameof(specular)); }
+        //public string ambient(params object[] ps) { NotImpl(nameof(ambient)); }
+        //public string emissive(params object[] ps) { NotImpl(nameof(emissive)); }
+        //public string shininess(params object[] ps) { NotImpl(nameof(shininess)); }
+        //public string specular(params object[] ps) { NotImpl(nameof(specular)); }
         #endregion
         #endregion
 
@@ -578,8 +578,8 @@ namespace Nebulator.Script
         public void background(string pcolor) { background(new color(pcolor)); }
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
-        public void clear() { throw new ScriptNotImplementedException(nameof(clear)); }
-        public void colorMode(params object[] ps) { throw new ScriptNotImplementedException(nameof(colorMode)); }
+        //public void clear() { NotImpl(nameof(clear)); }
+        //public void colorMode(params object[] ps) { NotImpl(nameof(colorMode)); }
 
         public void fill(int r, int g, int b, int a)
         {
@@ -645,7 +645,7 @@ namespace Nebulator.Script
         #endregion
 
         #region Image 
-        public PImage createImage(int w, int h, int format) { throw new ScriptNotImplementedException(nameof(PImage)); }
+        //public PImage createImage(int w, int h, int format) { NotImpl(nameof(PImage)); }
 
         #region Image - Loading & Displaying
         public void image(PImage img, float x, float y)
@@ -660,48 +660,48 @@ namespace Nebulator.Script
             _gr.DrawImage(img.image(), x1, y1, x2, y2);
         }
 
-        public void imageMode(int mode) { throw new ScriptNotImplementedException(nameof(imageMode)); }
+        //public void imageMode(int mode) { NotImpl(nameof(imageMode)); }
 
         public PImage loadImage(string filename)
         {
             return new PImage(filename);
         }
 
-        public void noTint(params object[] ps) { throw new ScriptNotImplementedException(nameof(noTint)); }
-        public void requestImage(params object[] ps) { throw new ScriptNotImplementedException(nameof(requestImage)); }
-        public void tint(params object[] ps) { throw new ScriptNotImplementedException(nameof(tint)); }
+        //public void noTint(params object[] ps) { NotImpl(nameof(noTint)); }
+        //public void requestImage(params object[] ps) { NotImpl(nameof(requestImage)); }
+        //public void tint(params object[] ps) { NotImpl(nameof(tint)); }
         #endregion
 
         #region Image - Textures
-        public void texture(params object[] ps) { throw new ScriptNotImplementedException(nameof(texture)); }
-        public void textureMode(params object[] ps) { throw new ScriptNotImplementedException(nameof(textureMode)); }
-        public void textureWrap(params object[] ps) { throw new ScriptNotImplementedException(nameof(textureWrap)); }
+        //public void texture(params object[] ps) { NotImpl(nameof(texture)); }
+        //public void textureMode(params object[] ps) { NotImpl(nameof(textureMode)); }
+        //public void textureWrap(params object[] ps) { NotImpl(nameof(textureWrap)); }
         #endregion
 
         #region Image - Pixels
         // pixels[]
-        public void blend(params object[] ps) { throw new ScriptNotImplementedException(nameof(blend)); }
-        public void copy(params object[] ps) { throw new ScriptNotImplementedException(nameof(copy)); }
-        public void filter(params object[] ps) { throw new ScriptNotImplementedException(nameof(filter)); }
-        public PImage get(int x, int y, int width, int height) { throw new ScriptNotImplementedException(nameof(get)); }
-        public color get(int x, int y) { throw new ScriptNotImplementedException(nameof(get)); }
-        public void loadPixels(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadPixels)); }
-        public void set(int x, int y, color pcolor) { throw new ScriptNotImplementedException(nameof(set)); }
-        public void set(int x, int y, PImage src) { throw new ScriptNotImplementedException(nameof(set)); }
-        public void updatePixels(params object[] ps) { throw new ScriptNotImplementedException(nameof(updatePixels)); }
+        //public void blend(params object[] ps) { NotImpl(nameof(blend)); }
+        //public void copy(params object[] ps) { NotImpl(nameof(copy)); }
+        //public void filter(params object[] ps) { NotImpl(nameof(filter)); }
+        //public PImage get(int x, int y, int width, int height) { NotImpl(nameof(get)); }
+        //public color get(int x, int y) { NotImpl(nameof(get)); }
+        //public void loadPixels(params object[] ps) { NotImpl(nameof(loadPixels)); }
+        //public void set(int x, int y, color pcolor) { NotImpl(nameof(set)); }
+        //public void set(int x, int y, PImage src) { NotImpl(nameof(set)); }
+        //public void updatePixels(params object[] ps) { NotImpl(nameof(updatePixels)); }
         #endregion
         #endregion
 
         #region Rendering 
-        public void blendMode(params object[] ps) { throw new ScriptNotImplementedException(nameof(blendMode)); }
-        public void clip(params object[] ps) { throw new ScriptNotImplementedException(nameof(clip)); }
-        public void createGraphics(params object[] ps) { throw new ScriptNotImplementedException(nameof(createGraphics)); }
-        public void noClip(params object[] ps) { throw new ScriptNotImplementedException(nameof(noClip)); }
+        //public void blendMode(params object[] ps) { NotImpl(nameof(blendMode)); }
+        //public void clip(params object[] ps) { NotImpl(nameof(clip)); }
+        //public void createGraphics(params object[] ps) { NotImpl(nameof(createGraphics)); }
+        //public void noClip(params object[] ps) { NotImpl(nameof(noClip)); }
 
         #region Rendering - Shaders
-        public void loadShader(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadShader)); }
-        public void resetShader(params object[] ps) { throw new ScriptNotImplementedException(nameof(resetShader)); }
-        public void shader(params object[] ps) { throw new ScriptNotImplementedException(nameof(shader)); }
+        //public void loadShader(params object[] ps) { NotImpl(nameof(loadShader)); }
+        //public void resetShader(params object[] ps) { NotImpl(nameof(resetShader)); }
+        //public void shader(params object[] ps) { NotImpl(nameof(shader)); }
         #endregion
         #endregion
 
@@ -712,7 +712,7 @@ namespace Nebulator.Script
             return new PFont(name, size);
         }
 
-        public PFont loadFont(params object[] ps) { throw new ScriptNotImplementedException(nameof(loadFont)); }
+        //public PFont loadFont(params object[] ps) { NotImpl(nameof(loadFont)); }
 
         public void text(string s, float x, float y)
         {
@@ -743,10 +743,10 @@ namespace Nebulator.Script
         #endregion
 
         #region Typography - Attributes
-        public void textAlign(int alignX) { throw new ScriptNotImplementedException(nameof(textAlign)); }
-        public void textAlign(int alignX, int alignY) { throw new ScriptNotImplementedException(nameof(textAlign)); }
-        public void textLeading(int leading) { throw new ScriptNotImplementedException(nameof(textLeading)); }
-        public void textMode(params object[] ps) { throw new ScriptNotImplementedException(nameof(textMode)); }
+        //public void textAlign(int alignX) { NotImpl(nameof(textAlign)); }
+        //public void textAlign(int alignX, int alignY) { NotImpl(nameof(textAlign)); }
+        //public void textLeading(int leading) { NotImpl(nameof(textLeading)); }
+        //public void textMode(params object[] ps) { NotImpl(nameof(textMode)); }
         public void textSize(int pts) { _font = new Font(_font.Name, pts); }
         public int textWidth(string s) { return (int)Math.Round(_gr.MeasureString(s, _font, width).Width); }
         public int textWidth(char ch) { return textWidth(ch.ToString()); }
@@ -799,9 +799,9 @@ namespace Nebulator.Script
         #endregion
 
         #region Math - Random
-        public void noise(params object[] ps) { throw new ScriptNotImplementedException(nameof(noise)); }
-        public void noiseDetail(params object[] ps) { throw new ScriptNotImplementedException(nameof(noiseDetail)); }
-        public void noiseSeed(params object[] ps) { throw new ScriptNotImplementedException(nameof(noiseSeed)); }
+        //public void noise(params object[] ps) { NotImpl(nameof(noise)); }
+        //public void noiseDetail(params object[] ps) { NotImpl(nameof(noiseDetail)); }
+        //public void noiseSeed(params object[] ps) { NotImpl(nameof(noiseSeed)); }
         public float random(float max) { return (float)_rand.NextDouble() * max; }
         public float random(float min, float max) { return min + (float)_rand.NextDouble() * (max - min); }
         public int random(int max) { return _rand.Next(max); }

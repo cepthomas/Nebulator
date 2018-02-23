@@ -12,13 +12,6 @@ using Nebulator.Dynamic;
 
 namespace Nebulator.Script
 {
-    /// <summary>Script exceptions.</summary>
-    public class ScriptNotImplementedException : Exception  // TODOX don't use ScriptNotImplementedException, error at compile time?
-    {
-        ScriptNotImplementedException() { }
-        public ScriptNotImplementedException(string element) : base($"Invalid script function or property: {element}()") { }
-    }
-
     /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
     public class RuntimeContext
     {
@@ -137,6 +130,16 @@ namespace Nebulator.Script
             }
 
             return steps;
+        }
+        #endregion
+
+        #region Private functions
+        /// <summary>Handle unimplemented script elements that we can safely ignore. But do tell the user.</summary>
+        /// <param name="name"></param>
+        /// <param name="desc"></param>
+        void NotImpl(string name, string desc = "")
+        {
+            _logger.Warn($"{name} not implemented. {desc}");
         }
         #endregion
     }

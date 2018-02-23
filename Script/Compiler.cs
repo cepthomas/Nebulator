@@ -18,7 +18,7 @@ namespace Nebulator.Script
     /// <summary>General script error container.</summary>
     public class ScriptError
     {
-        public enum ScriptErrorType { None, Parse, Compile, Runtime }
+        public enum ScriptErrorType { None, Parse, CompileWarning, CompileError, Runtime }
 
         /// <summary>Where it came from.</summary>
         public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
@@ -33,7 +33,7 @@ namespace Nebulator.Script
         public string Message { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Readable.</summary>
-        public override string ToString() => $"{ErrorType} Error: {SourceFile}({LineNumber}): {Message}";
+        public override string ToString() => $"{ErrorType} {SourceFile}({LineNumber}): {Message}";
     }
 
     /// <summary>
@@ -164,7 +164,7 @@ namespace Nebulator.Script
                 // Read the file.
                 Dictionary<string, string> section = new Dictionary<string, string>();
 
-                foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md"))
+                foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md")) // TODO parse once with a py script.
                 {
                     List<string> parts = sl.SplitByToken("|");
 
@@ -464,10 +464,10 @@ namespace Nebulator.Script
                                 // Must be an internal error. Do the best we can.
                                 Errors.Add(new ScriptError()
                                 {
-                                    ErrorType = ScriptError.ScriptErrorType.Compile,
+                                    ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.CompileWarning : ScriptError.ScriptErrorType.CompileError,
                                     SourceFile = err.FileName,
                                     LineNumber = err.Line,
-                                    Message = $"Internal Error: {err.ErrorText} in: {origLine}"
+                                    Message = $"InternalError: {err.ErrorText} in: {origLine}"
                                 });
                             }
                             else
@@ -475,7 +475,7 @@ namespace Nebulator.Script
                                 int.TryParse(origLine.Substring(ind + 2), out origLineNum);
                                 Errors.Add(new ScriptError()
                                 {
-                                    ErrorType = ScriptError.ScriptErrorType.Compile,
+                                    ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.CompileWarning : ScriptError.ScriptErrorType.CompileError,
                                     SourceFile = origFileName,
                                     LineNumber = origLineNum,
                                     Message = err.ErrorText
@@ -486,7 +486,7 @@ namespace Nebulator.Script
                         {
                             Errors.Add(new ScriptError()
                             {
-                                ErrorType = ScriptError.ScriptErrorType.Compile,
+                                ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.CompileWarning : ScriptError.ScriptErrorType.CompileError,
                                 SourceFile = "None",
                                 LineNumber = -1,
                                 Message = err.ErrorText
@@ -499,7 +499,7 @@ namespace Nebulator.Script
             {
                 Errors.Add(new ScriptError()
                 {
-                    ErrorType = ScriptError.ScriptErrorType.Compile,
+                    ErrorType = ScriptError.ScriptErrorType.CompileError,
                     Message = "Exception: " + ex.Message,
                     SourceFile = "",
                     LineNumber = 0

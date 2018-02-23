@@ -19,7 +19,7 @@ namespace Nebulator.Script
     public partial class Surface : UserControl
     {
         #region Events
-        /// <summary>Reporting a runtime error to listeners. TODO part of ScriptCore instead?</summary>
+        /// <summary>Reports a runtime error to listeners.</summary>
         public event EventHandler<RuntimeErrorEventArgs> RuntimeErrorEvent;
 
         public class RuntimeErrorEventArgs : EventArgs

@@ -75,13 +75,11 @@ namespace Nebulator.Script
         public PImage get(int x, int y, int width, int height) { return new PImage(_bmp.Clone(new Rectangle(x, y, width, height), _bmp.PixelFormat)); }
         public void set(int x, int y, color color) { _bmp.SetPixel(x, y, color.NativeColor); }
         public void set(int x, int y, PImage img) { Graphics.FromImage(_bmp).DrawImageUnscaled(img.image(), x, y); }
-        public bool save(string filename) { throw new ScriptNotImplementedException(nameof(save)); }
+        //public bool save(string filename) { NotImpl(nameof(save)); }
+        //public void loadPixels() { NotImpl(nameof(loadPixels)); }
+        //public void updatePixels() { NotImpl(nameof(updatePixels)); }
+        //public void updatePixels(int x, int y, int w, int h) { NotImpl(nameof(updatePixels)); }
 
-        // I don't think I need these:
-        public void loadPixels() { }
-        public void updatePixels() { }
-        public void updatePixels(int x, int y, int w, int h) { }
- 
         // Added:
         public Bitmap image() { return _bmp; }
 
