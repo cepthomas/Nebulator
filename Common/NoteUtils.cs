@@ -43,7 +43,7 @@ namespace Nebulator.Common
             // Drum:
             // AcousticBassDrum | 35
 
-            foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md")) // TODO parse once with a py script.
+            foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md"))
             {
                 List<string> parts = sl.SplitByToken("|");
 
@@ -74,7 +74,7 @@ namespace Nebulator.Common
                 }
             }
 
-            ///// Add user chords and scales. TODO or define in script?
+            ///// Add user chords and scales.
             foreach (string s in UserSettings.TheSettings.Chords)
             {
                 List<string> parts = s.SplitByToken(" ");

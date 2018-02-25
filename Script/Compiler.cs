@@ -129,11 +129,12 @@ namespace Nebulator.Script
                 _scriptName = sb.ToString();
 
                 _baseDir = Path.GetDirectoryName(nebfn);
-                LoadDefinitions();
+
 
                 // Parse.
+                DateTime startTime = DateTime.Now; // metrics
+                LoadDefinitions();
                 InitStateMachine();
-                DateTime startTime = DateTime.Now;
                 Parse(nebfn);
                 _logger.Info($"Parse took {(DateTime.Now - startTime).Milliseconds} msec.");
 
@@ -164,7 +165,7 @@ namespace Nebulator.Script
                 // Read the file.
                 Dictionary<string, string> section = new Dictionary<string, string>();
 
-                foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md")) // TODO parse once with a py script.
+                foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md"))
                 {
                     List<string> parts = sl.SplitByToken("|");
 

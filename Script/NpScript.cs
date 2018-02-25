@@ -11,7 +11,7 @@ using Nebulator.Common;
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Processing emulation script stuff. TODO parse API with a py script (also NebScript).
+    /// Processing emulation script stuff. TODO parse API with a py script?
     /// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
     /// </summary>
     public partial class ScriptCore

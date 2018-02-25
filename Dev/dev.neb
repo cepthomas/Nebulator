@@ -8,6 +8,13 @@ include ..\Examples\utils.neb
 include scale.neb
 
 
+
+////////// Chords and scales //////////
+// chord X1 1 2 3
+// chord X2 4 5 6
+// scale S1 1 2 3
+// scale S2 4 5 6
+
 ////////// Constants //////////
 constant WHEN1         32
 constant KEYS_DEF_VOL 100
