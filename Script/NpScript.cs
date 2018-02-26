@@ -4,14 +4,19 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
+using MoreLinq;
 using Nebulator.Common;
 
 // Processing API stuff.
 
+// TODO these: beginShape, endShape, vertex
+
+
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Processing emulation script stuff. TODO parse API with a py script?
+    /// Processing emulation script stuff.
     /// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
     /// </summary>
     public partial class ScriptCore
@@ -123,35 +128,12 @@ namespace Nebulator.Script
         public virtual void draw() { }
 
         //---- Script functions
-        //public void exit() { NotImpl(nameof(exit)); }
-
-        // Stops Processing from continuously executing the code within draw(). If loop() is called, the code
-        // in draw() begins to run continuously again. If using noLoop() in setup(), it should be the last line
-        // inside the block.
-        // When noLoop() is used, it's not possible to manipulate or access the screen inside event handling functions
-        // such as mousePressed() or keyPressed(). Instead, use those functions to call redraw() or loop(), which will
-        // run draw(), which can update the screen properly. This means that when noLoop() has been called, no drawing
-        // can happen, and functions like saveFrame() or loadPixels() may not be used.
-        // Note that if the sketch is resized, redraw() will be called to update the sketch, even after noLoop() has
-        // been specified. Otherwise, the sketch would enter an odd state until loop() was called.
+        public void exit() { NotImpl(nameof(exit), "This is probably not what you want to do."); exit(); }
         public void loop() { _loop = true; }
         public void noLoop() { _loop = false; }
-
-        // Save all fonts, styles etc and restore in popStyle():
-        // fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), 
-        // ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), 
-        // emissive(), specular(), shininess(), ambient()
         //public void popStyle() { NotImpl(nameof(popStyle)); }
         //public void pushStyle() { NotImpl(nameof(pushStyle)); }
-
-        // Executes the code within draw() one time. This functions allows the program to update the display window
-        // only when necessary, for example when an event registered by mousePressed() or keyPressed() occurs.
-        // In structuring a program, it only makes sense to call redraw() within events such as mousePressed().
-        // This is because redraw() does not run draw() immediately(it only sets a flag that indicates an update is needed). 
-        // The redraw() function does not work properly when called inside draw(). To enable/disable animations,
-        // use loop() and noLoop().
         public void redraw() { _redraw = true; }
-
         //public void thread() { NotImpl(nameof(thread)); }
         #endregion
 
@@ -165,14 +147,14 @@ namespace Nebulator.Script
         public bool focused { get; internal set; }
         public int frameCount { get; private set; } = 1;
         public int frameRate { get { return Context.FrameRate; } set { Context.FrameRate = value; } }
-        public void fullScreen() { NotImpl(nameof(fullScreen)); }
+        public void fullScreen() { NotImpl(nameof(fullScreen), "Size is fixed by main form"); }
         public int height { get; internal set; }
         //public void noCursor() { NotImpl(nameof(noCursor)); }
         public void noSmooth() { _smooth = false; }
         public void pixelDensity(int density) { NotImpl(nameof(pixelDensity)); }
-        public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Default is 1"); return 1; } }
-        public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Default is 1"); return 1; } }
-        public void size(int width, int height) { NotImpl(nameof(size), "Set by Script Surface"); }
+        public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Fixed to 1"); return 1; } }
+        public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Fixed to 1"); return 1; } }
+        public void size(int width, int height) { NotImpl(nameof(size), "Size is fixed by main form"); }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
         public int width { get; internal set; }
@@ -192,34 +174,36 @@ namespace Nebulator.Script
         //public int unhex(string value) { NotImpl(nameof(unhex)); }
 
         #region Data - String Functions
-        //public string join(params object[] ps) { NotImpl(nameof(join)); }
-        //public string match(params object[] ps) { NotImpl(nameof(match)); }
-        //public string matchAll(params object[] ps) { NotImpl(nameof(matchAll)); }
-        //public string nf(params object[] ps) { NotImpl(nameof(nf)); }
-        //public string nfc(params object[] ps) { NotImpl(nameof(nfc)); }
-        //public string nfp(params object[] ps) { NotImpl(nameof(nfp)); }
-        //public string nfs(params object[] ps) { NotImpl(nameof(nfs)); }
-        //public string[] split(params object[] ps) { NotImpl(nameof(split)); }
-        //public string[] splitTokens(params object[] ps) { NotImpl(nameof(splitTokens)); }
-        //public string trim(params object[] ps) { NotImpl(nameof(trim)); }
+        public string join(string[] list, char separator) { return string.Join(separator.ToString(), list); }
+        //public string match() { NotImpl(nameof(match)); }
+        //public string matchAll() { NotImpl(nameof(matchAll)); }
+        //public string nf() { NotImpl(nameof(nf)); }
+        //public string nfc() { NotImpl(nameof(nfc)); }
+        //public string nfp() { NotImpl(nameof(nfp)); }
+        //public string nfs() { NotImpl(nameof(nfs)); }
+        public string[] split(string value, char delim) { return value.SplitByToken(delim.ToString()).ToArray(); }
+        public string[] split(string value, string delim) { return value.SplitByToken(delim).ToArray(); }
+        public string[] splitTokens(string value, string delim) { return value.SplitByTokens(delim).ToArray(); }
+        public string trim(string str) { return str.Trim(); }
+        public string[] trim(string[] array) { return array.Select(i => i.Trim()).ToArray(); }
         #endregion
 
         #region Data - Array Functions
-        //public void append(params object[] ps) { NotImpl(nameof(append)); }
-        //public void arrayCopy(params object[] ps) { NotImpl(nameof(arrayCopy)); }
-        //public void concat(params object[] ps) { NotImpl(nameof(concat)); }
-        //public void expand(params object[] ps) { NotImpl(nameof(expand)); }
-        //public void reverse(params object[] ps) { NotImpl(nameof(reverse)); }
-        //public void shorten(params object[] ps) { NotImpl(nameof(shorten)); }
-        //public void sort(params object[] ps) { NotImpl(nameof(sort)); }
-        //public void splice(params object[] ps) { NotImpl(nameof(splice)); }
-        //public void subset(params object[] ps) { NotImpl(nameof(subset)); }
+        //public void append() { NotImpl(nameof(append)); }
+        //public void arrayCopy() { NotImpl(nameof(arrayCopy)); }
+        //public void concat() { NotImpl(nameof(concat)); }
+        //public void expand() { NotImpl(nameof(expand)); }
+        //public void reverse() { NotImpl(nameof(reverse)); }
+        //public void shorten() { NotImpl(nameof(shorten)); }
+        //public void sort() { NotImpl(nameof(sort)); }
+        //public void splice() { NotImpl(nameof(splice)); }
+        //public void subset() { NotImpl(nameof(subset)); }
         #endregion
         #endregion
 
         #region Shape 
-        //public void createShape(params object[] ps) { NotImpl(nameof(createShape)); }
-        //public void loadShape(params object[] ps) { NotImpl(nameof(loadShape)); }
+        //public void createShape() { NotImpl(nameof(createShape)); }
+        //public void loadShape() { NotImpl(nameof(loadShape)); }
 
         #region Shape - 2D Primitives
         public void arc(float x1, float y1, float x2, float y2, float angle1, float angle2, int style)
@@ -261,7 +245,7 @@ namespace Nebulator.Script
             x1 -= width / 2;
             y1 -= height / 2;
             _gr.FillEllipse(_brush, x1, y1, width, height);
-           // _gr.DrawEllipse(_pen, x1, y1, width, height);
+            //_gr.DrawEllipse(_pen, x1, y1, width, height);
         }
 
         public void line(float x1, float y1, float x2, float y2)
@@ -311,30 +295,30 @@ namespace Nebulator.Script
             _gr.DrawBezier(_pen, x1, y1, x2, y2, x3, y3, x4, y4);
         }
 
-        //public void bezierDetail(params object[] ps) { NotImpl(nameof(bezierDetail)); }
-        //public void bezierPoint(params object[] ps) { NotImpl(nameof(bezierPoint)); }
-        //public void bezierTangent(params object[] ps) { NotImpl(nameof(bezierTangent)); }
+        //public void bezierDetail() { NotImpl(nameof(bezierDetail)); }
+        //public void bezierPoint() { NotImpl(nameof(bezierPoint)); }
+        //public void bezierTangent() { NotImpl(nameof(bezierTangent)); }
 
         public void curve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
         {
             _gr.DrawCurve(_pen, new Point[4] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3), new Point(x4, y4) }, 1, 1, 0.5f);
         }
 
-        //public void curveDetail(params object[] ps) { NotImpl(nameof(curveDetail)); }
-        //public void curvePoint(params object[] ps) { NotImpl(nameof(curvePoint)); }
-        //public void curveTangent(params object[] ps) { NotImpl(nameof(curveTangent)); }
-        //public void curveTightness(params object[] ps) { NotImpl(nameof(curveTightness)); }
+        //public void curveDetail() { NotImpl(nameof(curveDetail)); }
+        //public void curvePoint() { NotImpl(nameof(curvePoint)); }
+        //public void curveTangent() { NotImpl(nameof(curveTangent)); }
+        //public void curveTightness() { NotImpl(nameof(curveTightness)); }
         #endregion
 
         #region Shape - 3D Primitives
-        //public void box(params object[] ps) { NotImpl(nameof(box)); }
-        //public void sphere(params object[] ps) { NotImpl(nameof(sphere)); }
-        //public void sphereDetail(params object[] ps) { NotImpl(nameof(sphereDetail)); }
+        //public void box() { NotImpl(nameof(box)); }
+        //public void sphere() { NotImpl(nameof(sphere)); }
+        //public void sphereDetail() { NotImpl(nameof(sphereDetail)); }
         #endregion
 
         #region Shape - Attributes
-        //public void ellipseMode(int mode) { NotImpl(nameof(ellipseMode)); }
-        //public void rectMode(int mode) { NotImpl(nameof(rectMode)); }
+        public void ellipseMode(int mode) { NotImpl(nameof(ellipseMode), "Fixed to CORNER mode."); }
+        public void rectMode(int mode) { NotImpl(nameof(rectMode), "Fixed to CORNER mode."); }
 
         public void strokeCap(int style)
         {
@@ -379,19 +363,19 @@ namespace Nebulator.Script
         #endregion
 
         #region Shape - Vertex
-        //public void beginContour(params object[] ps) { NotImpl(nameof(beginContour)); }
-        //public void beginShape(params object[] ps) { NotImpl(nameof(beginShape)); }
-        //public void bezierVertex(params object[] ps) { NotImpl(nameof(bezierVertex)); }
-        //public void curveVertex(params object[] ps) { NotImpl(nameof(curveVertex)); }
-        //public void endContour(params object[] ps) { NotImpl(nameof(endContour)); }
-        //public void endShape(params object[] ps) { NotImpl(nameof(endShape)); }
-        //public void quadraticVertex(params object[] ps) { NotImpl(nameof(quadraticVertex)); }
-        //public void vertex(params object[] ps) { NotImpl(nameof(vertex)); }
+        //public void beginContour() { NotImpl(nameof(beginContour)); }
+        //public void beginShape() { NotImpl(nameof(beginShape)); }
+        //public void bezierVertex() { NotImpl(nameof(bezierVertex)); }
+        //public void curveVertex() { NotImpl(nameof(curveVertex)); }
+        //public void endContour() { NotImpl(nameof(endContour)); }
+        //public void endShape() { NotImpl(nameof(endShape)); }
+        //public void quadraticVertex() { NotImpl(nameof(quadraticVertex)); }
+        //public void vertex() { NotImpl(nameof(vertex)); }
         #endregion
 
         #region Shape - Loading & Displaying
-        //public void shape(params object[] ps) { NotImpl(nameof(shape)); }
-        //public void shapeMode(params object[] ps) { NotImpl(nameof(shapeMode)); }
+        //public void shape() { NotImpl(nameof(shape)); }
+        //public void shapeMode() { NotImpl(nameof(shapeMode)); }
         #endregion
         #endregion
 
@@ -426,20 +410,20 @@ namespace Nebulator.Script
         #endregion
 
         #region Input - Files
-        //public void createInput(params object[] ps) { NotImpl(nameof(createInput)); }
-        //public void createReader(params object[] ps) { NotImpl(nameof(createReader)); }
-        //public void launch(params object[] ps) { NotImpl(nameof(launch)); }
-        //public void loadBytes(params object[] ps) { NotImpl(nameof(loadBytes)); }
-        //public void loadJSONArray(params object[] ps) { NotImpl(nameof(loadJSONArray)); }
-        //public void loadJSONObject(params object[] ps) { NotImpl(nameof(loadJSONObject)); }
-        //public string[] loadStrings(params object[] ps) { NotImpl(nameof(loadStrings)); }
-        //public void loadTable(params object[] ps) { NotImpl(nameof(loadTable)); }
-        //public void loadXML(params object[] ps) { NotImpl(nameof(loadXML)); }
-        //public void parseJSONArray(params object[] ps) { NotImpl(nameof(parseJSONArray)); }
-        //public void parseJSONObject(params object[] ps) { NotImpl(nameof(parseJSONObject)); }
-        //public void parseXML(params object[] ps) { NotImpl(nameof(parseXML)); }
-        //public void selectFolder(params object[] ps) { NotImpl(nameof(selectFolder)); }
-        //public void selectInput(params object[] ps) { NotImpl(nameof(selectInput)); }
+        //public void createInput() { NotImpl(nameof(createInput)); }
+        //public void createReader() { NotImpl(nameof(createReader)); }
+        //public void launch() { NotImpl(nameof(launch)); }
+        //public void loadBytes() { NotImpl(nameof(loadBytes)); }
+        //public void loadJSONArray() { NotImpl(nameof(loadJSONArray)); }
+        //public void loadJSONObject() { NotImpl(nameof(loadJSONObject)); }
+        public string[] loadStrings(string filename) { return File.ReadAllLines(filename); }
+        //public void loadTable() { NotImpl(nameof(loadTable)); }
+        //public void loadXML() { NotImpl(nameof(loadXML)); }
+        //public void parseJSONArray() { NotImpl(nameof(parseJSONArray)); }
+        //public void parseJSONObject() { NotImpl(nameof(parseJSONObject)); }
+        //public void parseXML() { NotImpl(nameof(parseXML)); }
+        //public void selectFolder() { NotImpl(nameof(selectFolder)); }
+        //public void selectInput() { NotImpl(nameof(selectInput)); }
         #endregion
 
         #region Input - Time & Date
@@ -481,96 +465,87 @@ namespace Nebulator.Script
         #endregion
 
         #region Output - Files
-        //public void beginRaw(params object[] ps) { NotImpl(nameof(beginRaw)); }
-        //public void beginRecord(params object[] ps) { NotImpl(nameof(beginRecord)); }
-        //public void createOutput(params object[] ps) { NotImpl(nameof(createOutput)); }
-        //public void createWriter(params object[] ps) { NotImpl(nameof(createWriter)); }
-        //public void endRaw(params object[] ps) { NotImpl(nameof(endRaw)); }
-        //public void endRecord(params object[] ps) { NotImpl(nameof(endRecord)); }
+        //public void beginRaw() { NotImpl(nameof(beginRaw)); }
+        //public void beginRecord() { NotImpl(nameof(beginRecord)); }
+        //public void createOutput() { NotImpl(nameof(createOutput)); }
+        //public void createWriter() { NotImpl(nameof(createWriter)); }
+        //public void endRaw() { NotImpl(nameof(endRaw)); }
+        //public void endRecord() { NotImpl(nameof(endRecord)); }
         #endregion
 
         #region Output - PrintWriter
-        //public void saveBytes(params object[] ps) { NotImpl(nameof(saveBytes)); }
-        //public void saveJSONArray(params object[] ps) { NotImpl(nameof(saveJSONArray)); }
-        //public void saveJSONObject(params object[] ps) { NotImpl(nameof(saveJSONObject)); }
-        //public void saveStream(params object[] ps) { NotImpl(nameof(saveStream)); }
-        //public void saveStrings(params object[] ps) { NotImpl(nameof(saveStrings)); }
-        //public void saveTable(params object[] ps) { NotImpl(nameof(saveTable)); }
-        //public void saveXML(params object[] ps) { NotImpl(nameof(saveXML)); }
-        //public void selectOutput(params object[] ps) { NotImpl(nameof(selectOutput)); }
+        //public void saveBytes() { NotImpl(nameof(saveBytes)); }
+        //public void saveJSONArray() { NotImpl(nameof(saveJSONArray)); }
+        //public void saveJSONObject() { NotImpl(nameof(saveJSONObject)); }
+        //public void saveStream() { NotImpl(nameof(saveStream)); }
+        //public void saveStrings() { NotImpl(nameof(saveStrings)); }
+        //public void saveTable() { NotImpl(nameof(saveTable)); }
+        //public void saveXML() { NotImpl(nameof(saveXML)); }
+        //public void selectOutput() { NotImpl(nameof(selectOutput)); }
         #endregion
         #endregion
 
         #region Transform 
-        //public void applyMatrix(params object[] ps) { NotImpl(nameof(applyMatrix)); }
+        //public void applyMatrix() { NotImpl(nameof(applyMatrix)); }
         public void popMatrix() { _gr.Transform = (Matrix)_matrixStack.Pop(); }
-        //public void printMatrix(params object[] ps) { NotImpl(nameof(printMatrix)); }
+        //public void printMatrix() { NotImpl(nameof(printMatrix)); }
         public void pushMatrix() { _matrixStack.Push(_gr.Transform); }
-        //public void resetMatrix(params object[] ps) { NotImpl(nameof(resetMatrix)); }
+        //public void resetMatrix() { NotImpl(nameof(resetMatrix)); }
         public void rotate(float angle) { _gr.RotateTransform((angle * 180.0f / PI)); }
-        //public void rotateX(params object[] ps) { NotImpl(nameof(rotateX)); }
-        //public void rotateY(params object[] ps) { NotImpl(nameof(rotateY)); }
-        //public void rotateZ(params object[] ps) { NotImpl(nameof(rotateZ)); }
+        //public void rotateX() { NotImpl(nameof(rotateX)); }
+        //public void rotateY() { NotImpl(nameof(rotateY)); }
+        //public void rotateZ() { NotImpl(nameof(rotateZ)); }
         public void scale(float sc) { _gr.ScaleTransform(sc, sc); }
         public void scale(float scx, float scy) { _gr.ScaleTransform(scx, scy); }
-        //public void shearX(params object[] ps) { NotImpl(nameof(shearX)); }
-        //public void shearY(params object[] ps) { NotImpl(nameof(shearY)); }
+        //public void shearX() { NotImpl(nameof(shearX)); }
+        //public void shearY() { NotImpl(nameof(shearY)); }
         public void translate(float dx, float dy) { _gr.TranslateTransform(dx, dy); }
         #endregion
 
         #region Lights & Camera
         #region Lights & Camera - Lights
-        //public string ambientLight(params object[] ps) { NotImpl(nameof(ambientLight)); }
-        //public string directionalLight(params object[] ps) { NotImpl(nameof(directionalLight)); }
-        //public string lightFalloff(params object[] ps) { NotImpl(nameof(lightFalloff)); }
-        //public string lights(params object[] ps) { NotImpl(nameof(lights)); }
-        //public string lightSpecular(params object[] ps) { NotImpl(nameof(lightSpecular)); }
-        //public string noLights(params object[] ps) { NotImpl(nameof(noLights)); }
-        //public string normal(params object[] ps) { NotImpl(nameof(normal)); }
-        //public string pointLight(params object[] ps) { NotImpl(nameof(pointLight)); }
-        //public string spotLight(params object[] ps) { NotImpl(nameof(spotLight)); }
+        //public string ambientLight() { NotImpl(nameof(ambientLight)); }
+        //public string directionalLight() { NotImpl(nameof(directionalLight)); }
+        //public string lightFalloff() { NotImpl(nameof(lightFalloff)); }
+        //public string lights() { NotImpl(nameof(lights)); }
+        //public string lightSpecular() { NotImpl(nameof(lightSpecular)); }
+        //public string noLights() { NotImpl(nameof(noLights)); }
+        //public string normal() { NotImpl(nameof(normal)); }
+        //public string pointLight() { NotImpl(nameof(pointLight)); }
+        //public string spotLight() { NotImpl(nameof(spotLight)); }
         #endregion
 
         #region Lights & Camera - Camera
-        //public string beginCamera(params object[] ps) { NotImpl(nameof(beginCamera)); }
-        //public string camera(params object[] ps) { NotImpl(nameof(camera)); }
-        //public string endCamera(params object[] ps) { NotImpl(nameof(endCamera)); }
-        //public string frustum(params object[] ps) { NotImpl(nameof(frustum)); }
-        //public string ortho(params object[] ps) { NotImpl(nameof(ortho)); }
-        //public string perspective(params object[] ps) { NotImpl(nameof(perspective)); }
-        //public string printCamera(params object[] ps) { NotImpl(nameof(printCamera)); }
-        //public string printProjection(params object[] ps) { NotImpl(nameof(printProjection)); }
+        //public string beginCamera() { NotImpl(nameof(beginCamera)); }
+        //public string camera() { NotImpl(nameof(camera)); }
+        //public string endCamera() { NotImpl(nameof(endCamera)); }
+        //public string frustum() { NotImpl(nameof(frustum)); }
+        //public string ortho() { NotImpl(nameof(ortho)); }
+        //public string perspective() { NotImpl(nameof(perspective)); }
+        //public string printCamera() { NotImpl(nameof(printCamera)); }
+        //public string printProjection() { NotImpl(nameof(printProjection)); }
         #endregion
 
         #region Lights & Camera - Coordinates
-        //public string modelX(params object[] ps) { NotImpl(nameof(modelX)); }
-        //public string modelY(params object[] ps) { NotImpl(nameof(modelY)); }
-        //public string modelZ(params object[] ps) { NotImpl(nameof(modelZ)); }
-        //public string screenX(params object[] ps) { NotImpl(nameof(screenX)); }
-        //public string screenY(params object[] ps) { NotImpl(nameof(screenY)); }
-        //public string screenZ(params object[] ps) { NotImpl(nameof(screenZ)); }
+        //public string modelX() { NotImpl(nameof(modelX)); }
+        //public string modelY() { NotImpl(nameof(modelY)); }
+        //public string modelZ() { NotImpl(nameof(modelZ)); }
+        //public string screenX() { NotImpl(nameof(screenX)); }
+        //public string screenY() { NotImpl(nameof(screenY)); }
+        //public string screenZ() { NotImpl(nameof(screenZ)); }
         #endregion
 
         #region Lights & Camera - Material Properties
-        //public string ambient(params object[] ps) { NotImpl(nameof(ambient)); }
-        //public string emissive(params object[] ps) { NotImpl(nameof(emissive)); }
-        //public string shininess(params object[] ps) { NotImpl(nameof(shininess)); }
-        //public string specular(params object[] ps) { NotImpl(nameof(specular)); }
+        //public string ambient() { NotImpl(nameof(ambient)); }
+        //public string emissive() { NotImpl(nameof(emissive)); }
+        //public string shininess() { NotImpl(nameof(shininess)); }
+        //public string specular() { NotImpl(nameof(specular)); }
         #endregion
         #endregion
 
         #region Color
         #region Color - Setting
-        public void background(int r, int g, int b, int a)
-        {
-            r = constrain(r, 0, 255);
-            g = constrain(g, 0, 255);
-            b = constrain(b, 0, 255);
-            a = constrain(a, 0, 255);
-            _bgColor = Color.FromArgb(a, r, g, b);
-//            _gr.Clear(_bgColor);
-        }
-
+        public void background(int r, int g, int b, int a) { _bgColor = SafeColor(r, g, b, a); }
         public void background(int r, int g, int b) { background(r, g, b, 255); }
         public void background(int gray) { background(gray, gray, gray, 255); }
         public void background(int gray, int a) { background(gray, gray, gray, a); }
@@ -579,17 +554,8 @@ namespace Nebulator.Script
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
         //public void clear() { NotImpl(nameof(clear)); }
-        //public void colorMode(params object[] ps) { NotImpl(nameof(colorMode)); }
-
-        public void fill(int r, int g, int b, int a)
-        {
-            r = Utils.Constrain(r, 0, 255);
-            g = Utils.Constrain(g, 0, 255);
-            b = Utils.Constrain(b, 0, 255);
-            a = Utils.Constrain(a, 0, 255);
-            _brush.Color = Color.FromArgb(a, r, g, b);
-        }
-
+        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "Fixed to RGB"); }
+        public void fill(int r, int g, int b, int a) { _brush.Color = SafeColor(r, g, b, a); }
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }
         public void fill(int gray, int a) { fill(gray, gray, gray, a); }
@@ -599,16 +565,7 @@ namespace Nebulator.Script
         public void fill(string scolor, int a) { fill(new color(scolor), a); }
         public void noFill() { _brush.Color = Color.Transparent; }
         public void noStroke() { _pen.Width = 0; }
-
-        public void stroke(int r, int g, int b, int a)
-        {
-            r = Utils.Constrain(r, 0, 255);
-            g = Utils.Constrain(g, 0, 255);
-            b = Utils.Constrain(b, 0, 255);
-            a = Utils.Constrain(a, 0, 255);
-            _pen.Color = Color.FromArgb(a, r, g, b);
-        }
-
+        public void stroke(int r, int g, int b, int a) { _pen.Color = SafeColor(r, g, b, a); }
         public void stroke(int r, int g, int b) { stroke(r, g, b, 255); }
         public void stroke(int gray) { stroke(gray, gray, gray, 255); }
         public void stroke(int gray, int a) { stroke(gray, gray, gray, a); }
@@ -640,7 +597,6 @@ namespace Nebulator.Script
             int a = (int)lerp(c1.NativeColor.A, c2.NativeColor.A, amt);
             return new color(r, g, b, a);
         }
-
         #endregion
         #endregion
 
@@ -660,48 +616,48 @@ namespace Nebulator.Script
             _gr.DrawImage(img.image(), x1, y1, x2, y2);
         }
 
-        //public void imageMode(int mode) { NotImpl(nameof(imageMode)); }
+        public void imageMode(int mode) { NotImpl(nameof(imageMode), "Fixed to CORNER mode."); }
 
         public PImage loadImage(string filename)
         {
             return new PImage(filename);
         }
 
-        //public void noTint(params object[] ps) { NotImpl(nameof(noTint)); }
-        //public void requestImage(params object[] ps) { NotImpl(nameof(requestImage)); }
-        //public void tint(params object[] ps) { NotImpl(nameof(tint)); }
+        //public void noTint() { NotImpl(nameof(noTint)); }
+        //public void requestImage() { NotImpl(nameof(requestImage)); }
+        //public void tint() { NotImpl(nameof(tint)); }
         #endregion
 
         #region Image - Textures
-        //public void texture(params object[] ps) { NotImpl(nameof(texture)); }
-        //public void textureMode(params object[] ps) { NotImpl(nameof(textureMode)); }
-        //public void textureWrap(params object[] ps) { NotImpl(nameof(textureWrap)); }
+        //public void texture() { NotImpl(nameof(texture)); }
+        //public void textureMode() { NotImpl(nameof(textureMode)); }
+        //public void textureWrap() { NotImpl(nameof(textureWrap)); }
         #endregion
 
         #region Image - Pixels
         // pixels[]
-        //public void blend(params object[] ps) { NotImpl(nameof(blend)); }
-        //public void copy(params object[] ps) { NotImpl(nameof(copy)); }
-        //public void filter(params object[] ps) { NotImpl(nameof(filter)); }
+        //public void blend() { NotImpl(nameof(blend)); }
+        //public void copy() { NotImpl(nameof(copy)); }
+        //public void filter() { NotImpl(nameof(filter)); }
         //public PImage get(int x, int y, int width, int height) { NotImpl(nameof(get)); }
         //public color get(int x, int y) { NotImpl(nameof(get)); }
-        //public void loadPixels(params object[] ps) { NotImpl(nameof(loadPixels)); }
+        //public void loadPixels() { NotImpl(nameof(loadPixels)); }
         //public void set(int x, int y, color pcolor) { NotImpl(nameof(set)); }
         //public void set(int x, int y, PImage src) { NotImpl(nameof(set)); }
-        //public void updatePixels(params object[] ps) { NotImpl(nameof(updatePixels)); }
+        //public void updatePixels() { NotImpl(nameof(updatePixels)); }
         #endregion
         #endregion
 
         #region Rendering 
-        //public void blendMode(params object[] ps) { NotImpl(nameof(blendMode)); }
-        //public void clip(params object[] ps) { NotImpl(nameof(clip)); }
-        //public void createGraphics(params object[] ps) { NotImpl(nameof(createGraphics)); }
-        //public void noClip(params object[] ps) { NotImpl(nameof(noClip)); }
+        //public void blendMode() { NotImpl(nameof(blendMode)); }
+        //public void clip() { NotImpl(nameof(clip)); }
+        //public void createGraphics() { NotImpl(nameof(createGraphics)); }
+        //public void noClip() { NotImpl(nameof(noClip)); }
 
         #region Rendering - Shaders
-        //public void loadShader(params object[] ps) { NotImpl(nameof(loadShader)); }
-        //public void resetShader(params object[] ps) { NotImpl(nameof(resetShader)); }
-        //public void shader(params object[] ps) { NotImpl(nameof(shader)); }
+        //public void loadShader() { NotImpl(nameof(loadShader)); }
+        //public void resetShader() { NotImpl(nameof(resetShader)); }
+        //public void shader() { NotImpl(nameof(shader)); }
         #endregion
         #endregion
 
@@ -712,7 +668,7 @@ namespace Nebulator.Script
             return new PFont(name, size);
         }
 
-        //public PFont loadFont(params object[] ps) { NotImpl(nameof(loadFont)); }
+        //public PFont loadFont() { NotImpl(nameof(loadFont)); }
 
         public void text(string s, float x, float y)
         {
@@ -746,7 +702,7 @@ namespace Nebulator.Script
         //public void textAlign(int alignX) { NotImpl(nameof(textAlign)); }
         //public void textAlign(int alignX, int alignY) { NotImpl(nameof(textAlign)); }
         //public void textLeading(int leading) { NotImpl(nameof(textLeading)); }
-        //public void textMode(params object[] ps) { NotImpl(nameof(textMode)); }
+        //public void textMode() { NotImpl(nameof(textMode)); }
         public void textSize(int pts) { _font = new Font(_font.Name, pts); }
         public int textWidth(string s) { return (int)Math.Round(_gr.MeasureString(s, _font, width).Width); }
         public int textWidth(char ch) { return textWidth(ch.ToString()); }
@@ -799,9 +755,9 @@ namespace Nebulator.Script
         #endregion
 
         #region Math - Random
-        //public void noise(params object[] ps) { NotImpl(nameof(noise)); }
-        //public void noiseDetail(params object[] ps) { NotImpl(nameof(noiseDetail)); }
-        //public void noiseSeed(params object[] ps) { NotImpl(nameof(noiseSeed)); }
+        //public void noise() { NotImpl(nameof(noise)); }
+        //public void noiseDetail() { NotImpl(nameof(noiseDetail)); }
+        //public void noiseSeed() { NotImpl(nameof(noiseSeed)); }
         public float random(float max) { return (float)_rand.NextDouble() * max; }
         public float random(float min, float max) { return min + (float)_rand.NextDouble() * (max - min); }
         public int random(int max) { return _rand.Next(max); }
@@ -815,7 +771,6 @@ namespace Nebulator.Script
             var randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
             var randNormal = mean + sigma * randStdNormal;
             return (float)randNormal;
-
         }
         public void randomSeed(int seed) { _rand = new Random(seed); }
         #endregion

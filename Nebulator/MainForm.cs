@@ -511,7 +511,7 @@ namespace Nebulator
                 // Measure and alert if too slow, or throttle.
                 //_tanUi.Arm();
 
-                ExecuteThrowingFunction(surface.UpdateSurface); //TODO doesn't work until playing???
+                ExecuteThrowingFunction(surface.UpdateSurface); //TODO doesn't work until playing?
             }
 
             ReadScriptContext();

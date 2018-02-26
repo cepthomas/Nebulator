@@ -47,12 +47,6 @@ namespace Nebulator.Common
         [DisplayName("Midi Output"), Description("Your choice of midi output."), Browsable(true)]
         [Editor(typeof(ListSelector), typeof(UITypeEditor))]
         public string MidiOut { get; set; } = Utils.UNKNOWN_STRING;
-
-        [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ..."), Browsable(true)]
-        public List<string> Chords { get; set; } = new List<string>();
-
-        [DisplayName("Scales"), Description("Your custom scales in the form of: NAME 1 2 b5 ..."), Browsable(true)]
-        public List<string> Scales { get; set; } = new List<string>();
         #endregion
 
         #region Persisted non-editable properties

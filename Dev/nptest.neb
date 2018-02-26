@@ -1,8 +1,6 @@
 
 ///// Tester for Processing workalike.
 
-// TODO deal with these: beginShape, colorMode, ellipseMode, endShape, imageMode, loadStrings, rectMode, split, vertex
-
 
 // Try "import".
 include nputils.neb

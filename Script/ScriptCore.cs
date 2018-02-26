@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using NLog;
 using Nebulator.Common;
 using Nebulator.Midi;
@@ -13,7 +14,7 @@ using Nebulator.Dynamic;
 namespace Nebulator.Script
 {
     /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
-    public class RuntimeContext
+    public class RuntimeContext // TODO cleaner way?
     {
         /// <summary>Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
@@ -45,7 +46,7 @@ namespace Nebulator.Script
         #endregion
 
         #region Properties
-        /// <summary>Current working set of dynamic values - things shared between host and script.</summary>
+        /// <summary>Set of things shared between host and script at runtime.</summary>
         public RuntimeContext Context { get; set; } = new RuntimeContext();
         #endregion
 
@@ -140,6 +141,16 @@ namespace Nebulator.Script
         void NotImpl(string name, string desc = "")
         {
             _logger.Warn($"{name} not implemented. {desc}");
+        }
+
+        /// <summary>Bounds check a color definition.
+        Color SafeColor(int r, int g, int b, int a)
+        {
+            r = constrain(r, 0, 255);
+            g = constrain(g, 0, 255);
+            b = constrain(b, 0, 255);
+            a = constrain(a, 0, 255);
+            return Color.FromArgb(a, r, g, b);
         }
         #endregion
     }

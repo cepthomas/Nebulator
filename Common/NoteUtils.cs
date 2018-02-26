@@ -12,7 +12,7 @@ namespace Nebulator.Common
     {
         #region Fields
         const int NOTES_PER_OCTAVE = 12;
-        const string UNKNOWN_CHORD = "???";
+        const string UNKNOWN_CHORD = Utils.UNKNOWN_STRING;
 
         /// <summary>The chord definitions from ScriptDefinitions.md and user settings. Key is chord name, Value is string of constituent notes.</summary>
         static Dictionary<string, string> _chordDefs = new Dictionary<string, string>();
@@ -71,28 +71,6 @@ namespace Nebulator.Common
                 else
                 {
                     section = null;
-                }
-            }
-
-            ///// Add user chords and scales.
-            foreach (string s in UserSettings.TheSettings.Chords)
-            {
-                List<string> parts = s.SplitByToken(" ");
-                if (parts.Count >= 2)
-                {
-                    _chordDefs.Add(parts[0], string.Join(" ", parts.GetRange(1, parts.Count - 1)));
-                }
-            }
-
-            // Add marker for parsed values.
-            _chordDefs.Add(UNKNOWN_CHORD, "");
-
-            foreach (string s in UserSettings.TheSettings.Scales)
-            {
-                List<string> parts = s.SplitByToken(" ");
-                if (parts.Count >= 2)
-                {
-                    _scaleDefs.Add(parts[0], string.Join(" ", parts.GetRange(1, parts.Count - 1)));
                 }
             }
         }

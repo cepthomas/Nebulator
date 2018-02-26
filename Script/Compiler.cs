@@ -37,7 +37,7 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// Parses/compiles *.neb file(s). Big brother version of the one in NProcessing.
+    /// Parses/compiles *.neb file(s).
     /// </summary>
     public class NebCompiler
     {
@@ -122,23 +122,21 @@ namespace Nebulator.Script
             {
                 _logger.Info($"Compiling {nebfn}.");
 
-                // Get and sanitize the script name.
+                ///// Get and sanitize the script name.
                 _scriptName = Path.GetFileNameWithoutExtension(nebfn);
                 StringBuilder sb = new StringBuilder();
                 _scriptName.ForEach(c => sb.Append(char.IsLetterOrDigit(c) ? c : '_'));
                 _scriptName = sb.ToString();
-
                 _baseDir = Path.GetDirectoryName(nebfn);
 
-
-                // Parse.
+                ///// Parse.
                 DateTime startTime = DateTime.Now; // metrics
                 LoadDefinitions();
                 InitStateMachine();
                 Parse(nebfn);
                 _logger.Info($"Parse took {(DateTime.Now - startTime).Milliseconds} msec.");
 
-                // Compile.
+                ///// Compile.
                 startTime = DateTime.Now;
                 script = Compile();
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
