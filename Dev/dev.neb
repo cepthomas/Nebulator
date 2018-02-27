@@ -8,39 +8,6 @@ include ..\Examples\utils.neb
 include scale.neb
 
 
-// [DisplayName("Chords"), Description("Your custom chords in the form of: NAME 1 2 b5 ..."), Browsable(true)]
-// public List<string> Chords { get; set; } = new List<string>();
-
-// [DisplayName("Scales"), Description("Your custom scales in the form of: NAME 1 2 b5 ..."), Browsable(true)]
-// public List<string> Scales { get; set; } = new List<string>();
-
-"Chords": [  "X1 1 2 3",  "X2 4 5 6"]
-"Scales": [  "S1 1 2 3",  "S2 4 5 6"]
-
-
-/////// Add user chords and scales. TODO
-//foreach (string s in UserSettings.TheSettings.Chords)
-//{
-//    List<string> parts = s.SplitByToken(" ");
-//    if (parts.Count >= 2)
-//    {
-//        _chordDefs.Add(parts[0], string.Join(" ", parts.GetRange(1, parts.Count - 1)));
-//    }
-//}
-
-//// Add marker for parsed values.
-//_chordDefs.Add(UNKNOWN_CHORD, "");
-
-//foreach (string s in UserSettings.TheSettings.Scales)
-//{
-//    List<string> parts = s.SplitByToken(" ");
-//    if (parts.Count >= 2)
-//    {
-//        _scaleDefs.Add(parts[0], string.Join(" ", parts.GetRange(1, parts.Count - 1)));
-//    }
-//}
-
-
 ////////// Constants //////////
 constant WHEN1         32
 constant KEYS_DEF_VOL 100
@@ -50,6 +17,11 @@ constant DRUM_DEF_VOL 100
 variable COL1   200 // change color
 variable MODN     0 // modulate notes
 variable PITCH 8192 // center is 8192
+
+////////// Chords and scales //////////
+notes CHORD1   1 2 3
+notes CHORD2   1 4 6 b13
+notes MY_SCALE 1 3 4 b7
 
 ////////// Realtime Controllers //////////
 midictlin  MI1 1 4     MODN
@@ -78,10 +50,10 @@ DRUMS   DRUMS_HH  DRUMS_HH
 ////////// Sequences //////////
 
 sequence SEQ1 8
-00.00  G3     90  0.60
-01.00  A3.m7  90  0.60
-02.00  Bb3    90  0.60
-03.00  C4     90  0.60
+00.00  G3        90  0.60
+01.00  A3.m7     90  0.60
+02.00  Bb3       90  0.60
+03.00  C4.CHORD2 90  0.60
 
 sequence SEQ2 8
 00.00  C4  90  0.60
@@ -114,6 +86,12 @@ public override void setup()
     _algerian.SetWeight(0, 50);
     _algerian.SetWeight(4, 50);
     _algerian.SetWeight(2, 30);
+
+
+    // Test stuff.
+    int[] notes = getNotes("C4");
+    int[] scaleNotes = getScaleNotes("Algerian", "C4");
+
 
     if(winGm)
     {

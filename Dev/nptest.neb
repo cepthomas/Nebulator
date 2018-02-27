@@ -225,12 +225,11 @@ void draw_radial_gradient()
     }
 }
 
-void drawGradient(float x, float y)
+void drawGradient(float x, float y) //TODO fix for RGB or implement HSB.
 {
     int radius = dim / 2;
 
     // Was  >>>>
-
     // int h = random(0, 360);
     // for (int r = radius; r > 0; --r)
     // {

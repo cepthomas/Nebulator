@@ -12,10 +12,13 @@ namespace Nebulator.Common
     public class LazyCollection<T> where T : class
     {
         /// <summary>The internal collection.</summary>
-        Dictionary<string, T> _vals = new Dictionary<string, T>();
+        Dictionary<string, T> _items = new Dictionary<string, T>();
+
+        /// <summary>Get all keys.</summary>
+        public IEnumerable<string> Keys { get { return _items.Keys; } }
 
         /// <summary>Get all values.</summary>
-        public IEnumerable<T> Values { get { return _vals.Values; } }
+        public IEnumerable<T> Values { get { return _items.Values; } }
 
         /// <summary>Allow replacement of existing items.</summary>
         public bool AllowOverwrite { get; set; } = false;
@@ -25,7 +28,7 @@ namespace Nebulator.Common
         /// </summary>
         public void Clear()
         {
-            _vals.Clear();
+            _items.Clear();
         }
 
         /// <summary>
@@ -35,13 +38,13 @@ namespace Nebulator.Common
         /// <param name="val">Value.</param>
         public void Add(string name, T val)
         {
-            if (!_vals.ContainsKey(name))
+            if (!_items.ContainsKey(name))
             {
-                _vals.Add(name, val);
+                _items.Add(name, val);
             }
             else if(AllowOverwrite)
             {
-                _vals[name] = val;
+                _items[name] = val;
             }
             else
             {
@@ -58,17 +61,17 @@ namespace Nebulator.Common
         {
             get
             {
-                return _vals.ContainsKey(name) ? _vals[name] : null;
+                return _items.ContainsKey(name) ? _items[name] : null;
             }
             set
             {
-                if (!_vals.ContainsKey(name))
+                if (!_items.ContainsKey(name))
                 {
-                    _vals.Add(name, value);
+                    _items.Add(name, value);
                 }
                 else
                 {
-                    _vals[name] = value;
+                    _items[name] = value;
                 }
             }
         }

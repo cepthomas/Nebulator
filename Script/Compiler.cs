@@ -101,7 +101,14 @@ namespace Nebulator.Script
         Dictionary<string, string> _midiControllerDefs = new Dictionary<string, string>();
         #endregion
 
-        #region Main method
+
+
+
+
+
+
+
+        #region Main function
         /// <summary>
         /// Run the Compiler.
         /// </summary>
@@ -300,7 +307,7 @@ namespace Nebulator.Script
                     };
 
                     // What's the event?
-                    string evt = farg.Args.Count == 0 ? "blank" : farg.Args[0];
+                    string evt = farg.Args.Count == 0 ? "empty" : farg.Args[0];
                     _sm.ProcessEvent(evt, farg);
                 }
 
@@ -334,21 +341,22 @@ namespace Nebulator.Script
                     new Transition("include", "", ParseInclude),
                     new Transition("constant", "", ParseConstant),
                     new Transition("variable", "", ParseVariable),
+                    new Transition("notes", "", ParseNotes),
                     new Transition("track", "", ParseTrack),
                     new Transition("lever", "", ParseLever),
                     new Transition("midictlin", "", ParseMidiController),
                     new Transition("midictlout", "", ParseMidiController),
                     new Transition("section", "do_section", ParseSection),
                     new Transition("sequence", "do_sequence", ParseSequence),
-                    new Transition("blank"), // just swallow these
+                    new Transition("empty"), // just swallow these
                     new Transition("", "", ParseScriptLine)), // everything else is assumed part of a script
 
                 new State("do_section", null, null,
-                    new Transition("blank", "idle"), // done section
+                    new Transition("empty", "idle"), // done section
                     new Transition("", "", ParseSectionTrack)), // element of section
 
                 new State("do_sequence", null, null,
-                    new Transition("blank", "idle"), // done sequence
+                    new Transition("empty", "idle"), // done sequence
                     new Transition("", "", ParseSequenceElement)), // element of sequence
             };
 
@@ -688,6 +696,24 @@ namespace Nebulator.Script
             }
         }
 
+        private void ParseNotes(object o)
+        {
+            SmFuncArg farg = o as SmFuncArg;
+
+            // notes MY_CHORD 1 4 6 b13
+            // notes MY_SCALE 1 3 4 b7
+            // 0     1        2 ....
+
+            try
+            {
+                ScriptEntities.NoteDefs.Add(farg.Args[1], farg.Args.GetRange(2, farg.Args.Count - 2));
+            }
+            catch (Exception)
+            {
+                AddParseError(farg.Context, $"Invalid notes: {farg.Args[1]}");
+            }
+        }
+
         private void ParseMidiController(object o)
         {
             SmFuncArg farg = o as SmFuncArg;
@@ -913,6 +939,10 @@ namespace Nebulator.Script
                     if (seqel.Function != "")
                     {
                         _initLines.Add($"_scriptFunctions.Add(\"{seqel.Function}\", {seqel.Function});");
+                    }
+                    else if(seqel.Notes.Count == 0)
+                    {
+                        AddParseError(farg.Context, $"Invalid note:{farg.Args[1]}");
                     }
                 }
 

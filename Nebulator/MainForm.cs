@@ -170,8 +170,8 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
             //ExportMidi("test.mid");
 
@@ -1018,13 +1018,11 @@ namespace Nebulator
 
                 // Detect changes of interest.
                 bool midi = false;
-                bool defs = false;
                 bool ctrls = false;
                 pg.PropertyValueChanged += (sdr, args) =>
                 {
                     string p = args.ChangedItem.PropertyDescriptor.Name;
                     midi |= p.Contains("Midi");
-                    defs |= (p.Contains("Notes") | p.Contains("Scales"));
                     ctrls |= (p.Contains("Font") | p.Contains("Color"));
                 };
 
@@ -1035,11 +1033,6 @@ namespace Nebulator
                 if (midi)
                 {
                     MidiInterface.TheInterface.Init();
-                }
-
-                if (defs)
-                {
-                    NoteUtils.Init();
                 }
 
                 if (ctrls)

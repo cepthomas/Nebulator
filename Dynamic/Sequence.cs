@@ -70,7 +70,7 @@ namespace Nebulator.Dynamic
             }
             else
             {
-                Notes = NoteUtils.ParseNoteString(s);
+                Notes = NoteUtils.ParseNoteString(s, ScriptEntities.NoteDefs);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Nebulator.Dynamic
             Function = seqel.Function;
             When = new Time(seqel.When);
             Duration = new Time(seqel.Duration);
-            seqel.Notes.ForEach(n => Notes.Add(n));
+            Notes = seqel.Notes.DeepClone();
         }
         #endregion
 

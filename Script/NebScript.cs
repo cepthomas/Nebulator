@@ -104,7 +104,15 @@ namespace Nebulator.Script
         public void sendMidiNote(Track track, string snote, int vol, Time dur)
         {
             SequenceElement note = new SequenceElement(snote);
-            note.Notes.ForEach(n => sendMidiNote(track, n, vol, dur));
+
+            if (note.Notes.Count == 0)
+            {
+                _logger.Warn($"Invalid note:{snote}");
+            }
+            else
+            {
+                note.Notes.ForEach(n => sendMidiNote(track, n, vol, dur));
+            }
         }
 
         /// <summary>Send a midi note immediately. Respects solo/mute.</summary>
@@ -115,7 +123,15 @@ namespace Nebulator.Script
         public void sendMidiNote(Track track, string snote, int vol, double dur)
         {
             SequenceElement note = new SequenceElement(snote);
-            note.Notes.ForEach(n => sendMidiNote(track, n, vol, new Time(dur)));
+
+            if (note.Notes.Count == 0)
+            {
+                _logger.Warn($"Invalid note:{snote}");
+            }
+            else
+            {
+                note.Notes.ForEach(n => sendMidiNote(track, n, vol, new Time(dur)));
+            }
         }
 
         /// <summary>Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
@@ -182,7 +198,7 @@ namespace Nebulator.Script
         /// <returns>Array of notes or empty if invalid.</returns>
         public int[] getNotes(string note)
         {
-            List<int> notes = NoteUtils.ParseNoteString(note);
+            List<int> notes = NoteUtils.ParseNoteString(note, ScriptEntities.NoteDefs);
             return notes != null ? notes.ToArray() : new int[0];
         }
 
@@ -192,7 +208,7 @@ namespace Nebulator.Script
         /// <returns>Array of notes or empty if invalid.</returns>
         public int[] getScaleNotes(string scale, string key)
         {
-            List<int> notes = NoteUtils.GetScaleNotes(scale, key);
+            List<int> notes = NoteUtils.GetScaleNotes(scale, key, ScriptEntities.NoteDefs);
             return notes != null ? notes.ToArray() : new int[0];
         }
         #endregion

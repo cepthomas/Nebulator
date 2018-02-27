@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using MoreLinq;
 
 
 namespace Nebulator.Common
@@ -14,14 +15,14 @@ namespace Nebulator.Common
         const int NOTES_PER_OCTAVE = 12;
         const string UNKNOWN_CHORD = Utils.UNKNOWN_STRING;
 
-        /// <summary>The chord definitions from ScriptDefinitions.md and user settings. Key is chord name, Value is string of constituent notes.</summary>
-        static Dictionary<string, string> _chordDefs = new Dictionary<string, string>();
+        /// <summary>The chord definitions from ScriptDefinitions.md. Key is chord name, Value is list of constituent notes.</summary>
+        static LazyCollection<List<string>> _stockChordDefs = new LazyCollection<List<string>>();
 
-        /// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is string of constituent notes.</summary>
-        static Dictionary<string, string> _scaleDefs = new Dictionary<string, string>();
+        /// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is list of constituent notes.</summary>
+        static LazyCollection<List<string>> _stockScaleDefs = new LazyCollection<List<string>>();
 
         /// <summary>The midi drum definitions from ScriptDefinitions.md. Key is midi drum name, value is note num.</summary>
-        static Dictionary<string, string> _drumDefs = new Dictionary<string, string>();
+        static LazyCollection<List<string>> _stockDrumDefs = new LazyCollection<List<string>>();
         #endregion
 
         #region Public functions
@@ -30,12 +31,13 @@ namespace Nebulator.Common
         /// </summary>
         public static void Init()
         {
-            _chordDefs.Clear();
-            _scaleDefs.Clear();
-            _drumDefs.Clear();
+            _stockChordDefs.Clear();
+            _stockScaleDefs.Clear();
+            _stockDrumDefs.Clear();
 
             ///// Read the defs file.
-            Dictionary<string, string> section = null;
+            LazyCollection<List<string>> section = null;
+
             // Chord:
             // M | 1 3 5 | Named after the major 3rd interval between root and 3.
             // Scale:
@@ -52,19 +54,19 @@ namespace Nebulator.Common
                     switch (parts[0])
                     {
                         case "Chord":
-                            section = _chordDefs;
+                            section = _stockChordDefs;
                             break;
 
                         case "Scale":
-                            section = _scaleDefs;
+                            section = _stockScaleDefs;
                             break;
 
                         case "Drum":
-                            section = _drumDefs;
+                            section = _stockDrumDefs;
                             break;
 
                         case string s when !s.StartsWith("---"):
-                            section?.Add(parts[0], parts[1]);
+                            section?.Add(parts[0], parts.GetRange(1, parts.Count - 1));
                             break;
                     }
                 }
@@ -76,11 +78,12 @@ namespace Nebulator.Common
         }
 
         /// <summary>
-        /// Parse note or notes from input value.
+        /// Parse note or notes from input value. Checks both stock items and those defined in the script.
         /// </summary>
-        /// <param name="s">String name</param>
+        /// <param name="s">String to parse.</param>
+        /// <param name="scriptNoteDefs">Scales defined in the script.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
-        public static List<int> ParseNoteString(string s)
+        public static List<int> ParseNoteString(string s, LazyCollection<List<string>> scriptNoteDefs)
         {
             List<int> notes = new List<int>();
 
@@ -90,6 +93,7 @@ namespace Nebulator.Common
                 // Could be:
                 // F4 - named note
                 // F4.dim7 - named chord
+                // F4.BLA - user defined chord
 
                 // Break it up.
                 var parts = s.SplitByToken(".");
@@ -119,8 +123,13 @@ namespace Nebulator.Common
 
                 if (parts.Count > 1)
                 {
-                    // It's a chord. M, M7, m, m7, etc. Determine the constituents.
-                    List<string> chordParts = _chordDefs[parts[1]].SplitByToken(" ");
+                    // It's a chord. M, M7, m, m7, etc. Determine the constituents. Start with the stock collection then try user defs.
+                    var chordParts = _stockChordDefs[parts[1]];
+
+                    if(chordParts == null)
+                    {
+                        chordParts = scriptNoteDefs[parts[1]];
+                    }
 
                     for (int p = 0; p < chordParts.Count; p++)
                     {
@@ -149,8 +158,51 @@ namespace Nebulator.Common
             }
             catch (Exception)
             {
-                //throw new Exception("Invalid note or chord: " + s);
+                //throw new Exception("Invalid note or chord:" + s);
                 notes.Clear();
+            }
+
+            return notes;
+        }
+
+        /// <summary>
+        /// Create a list of absolute note numbers for given scale name. Checks both stock items and those defined in the script.
+        /// </summary>
+        /// <param name="scale">Name of the scale.</param>
+        /// <param name="key">Key.octave</param>
+        /// <param name="scriptNoteDefs">Scales defined in the script.</param>
+        /// <returns>List of scale notes - empty if invalid.</returns>
+        public static List<int> GetScaleNotes(string scale, string key, LazyCollection<List<string>> scriptNoteDefs)
+        {
+            var notes = new List<int>();
+
+            // Dig out the root note.
+            List<int> keyNotes = ParseNoteString(key, scriptNoteDefs);
+
+            if (keyNotes.Count > 0)
+            {
+                // Start with the stock collection then try user defs.
+                var scaleParts = _stockScaleDefs[scale];
+
+                if (scaleParts == null)
+                {
+                    scaleParts = scriptNoteDefs[scale];
+                }
+
+                if (scaleParts != null)
+                {
+                    // "1 2 b3 #4 5 b6 7"
+
+                    scaleParts.ForEach(si =>
+                    {
+                        int? intNum = GetInterval(si);
+                        if (intNum != null)
+                        {
+                            //noteNum = down ? noteNum - NOTES_PER_OCTAVE : noteNum;
+                            notes.Add(keyNotes[0] + intNum.Value);
+                        }
+                    });
+                }
             }
 
             return notes;
@@ -164,7 +216,7 @@ namespace Nebulator.Common
         public static bool IsNatural(int notenum)
         {
             int[] naturals = { 0, 2, 4, 5, 7, 9, 11 };
-            return naturals.Contains(SplitNoteNumber(notenum).root % 12);
+            return naturals.Contains(SplitNoteNumber(notenum).root % NOTES_PER_OCTAVE);
         }
 
         /// <summary>
@@ -197,11 +249,11 @@ namespace Nebulator.Common
 
                     string s = string.Join(" ", intervals);
                     string chord = null;
-                    foreach(KeyValuePair<string, string> kv in _chordDefs)
+                    foreach(string key in _stockChordDefs.Keys)
                     {
-                        if(kv.Value == s)
+                        if(string.Join(" ", _stockChordDefs[key]) == s)
                         {
-                            chord = kv.Key;
+                            chord = key;
                             break;
                         }
                     }
@@ -245,11 +297,11 @@ namespace Nebulator.Common
         {
             string drumName = Utils.UNKNOWN_STRING;
 
-            foreach (KeyValuePair<string, string> kv in _drumDefs)
+            foreach (string key in _stockDrumDefs.Keys)
             {
-                if (kv.Value == note.ToString())
+                if (string.Join(" ", _stockDrumDefs[key]) == note.ToString())
                 {
-                    drumName = kv.Key;
+                    drumName = key;
                     break;
                 }
             }
@@ -267,38 +319,6 @@ namespace Nebulator.Common
             int root = notenum % NOTES_PER_OCTAVE;
             int octave = (notenum / NOTES_PER_OCTAVE) - 1;
             return (root, octave);
-        }
-
-        /// <summary>
-        /// Create a list of absolute note numbers for given scale name.
-        /// </summary>
-        /// <param name="scale">Name of the scale.</param>
-        /// <param name="key">Key.octave</param>
-        /// <returns>List of scale notes or null if invalid.</returns>
-        public static List<int> GetScaleNotes(string scale, string key)
-        {
-            List<int> notes = null;
-
-            List<int> keyNotes = ParseNoteString(key);
-
-            if (_scaleDefs.ContainsKey(scale) && keyNotes.Count > 0)
-            {
-                notes = new List<int>();
-
-                // "1 2 b3 #4 5 b6 7"
-
-                _scaleDefs[scale].SplitByToken(" ").ForEach(si =>
-                {
-                    int? intNum = GetInterval(si);
-                    if (intNum != null)
-                    {
-                        //noteNum = down ? noteNum - NOTES_PER_OCTAVE : noteNum;
-                        notes.Add(keyNotes[0] + intNum.Value);
-                    }
-                });
-            }
-
-            return notes;
         }
         #endregion
 

@@ -12,7 +12,7 @@ namespace Nebulator.Dynamic
     /// <summary>
     /// All the dynamic script stuff we might want at runtime.
     /// </summary>
-    public class ScriptEntities
+    public class ScriptEntities // TODO getting kind of big - refactor.
     {
         /// <summary>Declared variables.</summary>
         public static LazyCollection<Variable> Vars { get; set; } = new LazyCollection<Variable>();
@@ -35,6 +35,9 @@ namespace Nebulator.Dynamic
         /// <summary>All sequences.</summary>
         public static LazyCollection<Sequence> Sequences { get; set; } = new LazyCollection<Sequence>();
 
+        /// <summary>The user chord and scale definitions. Value is list of constituent notes.</summary>
+        public static LazyCollection<List<string>> NoteDefs { get; set; } = new LazyCollection<List<string>>();
+
         /// <summary>Don't even try to do this.</summary>
         ScriptEntities() { }
 
@@ -48,6 +51,7 @@ namespace Nebulator.Dynamic
             Sections.Clear();
             Tracks.Clear();
             Sequences.Clear();
+            NoteDefs.Clear();
         }
     }
 }

@@ -439,10 +439,7 @@ namespace Nebulator.Script
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) // TODO how to handle this different from println?
-        {
-            _logger.Info($"{SCRIPT_PRINT_PREFIX}{string.Join(" ", vars)}");
-        }
+        public void print(params object[] vars) { NotImpl(nameof(ellipseMode), "Use println."); }
 
         public void println(params object[] vars)
         {
