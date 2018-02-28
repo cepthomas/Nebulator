@@ -131,9 +131,11 @@ namespace Nebulator.Common
                         chordParts = scriptNoteDefs[parts[1]];
                     }
 
-                    for (int p = 0; p < chordParts.Count; p++)
+                    var chordNotes = chordParts[0].SplitByToken(" ");
+
+                    for (int p = 0; p < chordNotes.Count; p++)
                     {
-                        string interval = chordParts[p];
+                        string interval = chordNotes[p];
                         bool down = false;
 
                         if (interval.StartsWith("-"))

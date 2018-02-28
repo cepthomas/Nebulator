@@ -166,11 +166,11 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
             //ExportMidi("test.mid");
 
@@ -504,13 +504,12 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            //if (chkPlay.Checked && e.ElapsedTimers.Contains("UI") && !_needCompile) TODO chkPlay.Checked?
-            if (e.ElapsedTimers.Contains("UI") && !_needCompile)
+            if (e.ElapsedTimers.Contains("UI") && !_needCompile) // && chkPlay.Checked?
             {
                 // Measure and alert if too slow, or throttle.
                 //_tanUi.Arm();
 
-                ExecuteThrowingFunction(surface.UpdateSurface); //TODO doesn't work until playing?
+                ExecuteThrowingFunction(surface.UpdateSurface);
             }
 
             ReadScriptContext();

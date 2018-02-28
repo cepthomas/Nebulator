@@ -10,9 +10,9 @@ using Nebulator.Midi;
 namespace Nebulator.Dynamic
 {
     /// <summary>
-    /// All the dynamic script stuff we might want at runtime.
+    /// All the dynamic script stuff we might want at runtime. Essentially globals. Getting kind of big...
     /// </summary>
-    public class ScriptEntities // TODO getting kind of big - refactor.
+    public class ScriptEntities
     {
         /// <summary>Declared variables.</summary>
         public static LazyCollection<Variable> Vars { get; set; } = new LazyCollection<Variable>();

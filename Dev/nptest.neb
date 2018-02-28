@@ -11,7 +11,7 @@ public override void setup()
     // testStuff();
     // setup_force_fail();
     // setup_bezier();
-    setup_radial_gradient();
+    // setup_radial_gradient();
     // setup_sine_cosine();
     // setup_random_gaussian();
 
@@ -24,8 +24,8 @@ public override void draw()
     // draw_force_fail();
     // draw_ball();
     // draw_bezier();
-    draw_radial_gradient();
-    // draw_regular_polygon();
+    // draw_radial_gradient();
+    draw_regular_polygon();
     // draw_sine_cosine();
     // draw_random_gaussian();
     // draw_embedded_iteration();
@@ -195,7 +195,7 @@ void polygon(float x, float y, float radius, int npoints)
         //vertex(sx, sy);
         vertex((int)sx, (int)sy);
     }
-    endShape(CLOSE);
+    endShape();//CLOSE);
 }
 
 

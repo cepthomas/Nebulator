@@ -14,7 +14,7 @@ using Nebulator.Dynamic;
 namespace Nebulator.Script
 {
     /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
-    public class RuntimeContext // TODO cleaner way?
+    public class RuntimeContext
     {
         /// <summary>Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
