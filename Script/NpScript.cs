@@ -10,7 +10,27 @@ using Nebulator.Common;
 
 // Processing API stuff.
 
-// TODO these: beginShape, endShape, vertex
+
+
+
+
+// filled closed shape
+// beginShape();
+// vertex(30, 20);
+// vertex(85, 20);
+// vertex(85, 75);
+// vertex(30, 75);
+// endShape(CLOSE);
+
+// unfilled unclosed shape
+// noFill();
+// beginShape();
+// vertex(30, 20);
+// vertex(85, 20);
+// vertex(85, 75);
+// vertex(30, 75);
+// endShape();
+
 
 
 namespace Nebulator.Script
@@ -145,16 +165,16 @@ namespace Nebulator.Script
         //public void delay(int msec) { NotImpl(nameof(delay)); }
         //public int displayDensity() { NotImpl(nameof(displayDensity)); }
         public bool focused { get; internal set; }
-        public int frameCount { get; private set; } = 1;
+        public int frameCount { get; internal set; } = 1;
         public int frameRate { get { return Context.FrameRate; } set { Context.FrameRate = value; } }
-        public void fullScreen() { NotImpl(nameof(fullScreen), "Size is fixed by main form"); }
+        public void fullScreen() { NotImpl(nameof(fullScreen), "Size is fixed by main form."); }
         public int height { get; internal set; }
         //public void noCursor() { NotImpl(nameof(noCursor)); }
         public void noSmooth() { _smooth = false; }
         public void pixelDensity(int density) { NotImpl(nameof(pixelDensity)); }
-        public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Fixed to 1"); return 1; } }
-        public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Fixed to 1"); return 1; } }
-        public void size(int width, int height) { NotImpl(nameof(size), "Size is fixed by main form"); }
+        public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Fixed at 1."); return 1; } }
+        public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Fixed at 1."); return 1; } }
+        public void size(int width, int height) { NotImpl(nameof(size), "Size is fixed by main form."); }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
         public int width { get; internal set; }
@@ -317,8 +337,8 @@ namespace Nebulator.Script
         #endregion
 
         #region Shape - Attributes
-        public void ellipseMode(int mode) { NotImpl(nameof(ellipseMode), "Fixed to CORNER mode."); }
-        public void rectMode(int mode) { NotImpl(nameof(rectMode), "Fixed to CORNER mode."); }
+        public void ellipseMode(int mode) { NotImpl(nameof(ellipseMode), "Fixed at CORNER mode."); }
+        public void rectMode(int mode) { NotImpl(nameof(rectMode), "Fixed at CORNER mode."); }
 
         public void strokeCap(int style)
         {
@@ -362,15 +382,40 @@ namespace Nebulator.Script
         public void strokeWeight(int width) { _pen.Width = width; }
         #endregion
 
+
+// Current drawing points.
+List<Point> _vertexes = new List<Point>();
+
+
+
         #region Shape - Vertex
         //public void beginContour() { NotImpl(nameof(beginContour)); }
-        //public void beginShape() { NotImpl(nameof(beginShape)); }
+        public void beginShape() { _vertexes.Clear(); }
+        //public void beginShape(int kind) { NotImpl(nameof(beginShape)); } // POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, and QUAD_STRIP
         //public void bezierVertex() { NotImpl(nameof(bezierVertex)); }
         //public void curveVertex() { NotImpl(nameof(curveVertex)); }
         //public void endContour() { NotImpl(nameof(endContour)); }
-        //public void endShape() { NotImpl(nameof(endShape)); }
+        public void endShape(int mode = -1)
+        {
+            if (mode == -1) // Not closed - draw lines.
+            {
+                _gr.DrawLines(_pen, _vertexes.ToArray());
+            }
+            else if (mode == CLOSE)
+            {
+                _gr.DrawPolygon(_pen, _vertexes.ToArray());
+                if (_brush.Color != Color.Transparent)
+                {
+                    _gr.FillPolygon(_brush, _vertexes.ToArray());
+                }
+            }
+            else
+            {
+                NotImpl(nameof(endShape));
+            }
+        }
         //public void quadraticVertex() { NotImpl(nameof(quadraticVertex)); }
-        //public void vertex() { NotImpl(nameof(vertex)); }
+        public void vertex(int x, int y) { _vertexes.Add(new Point(x, y)); } // Just x/y.
         #endregion
 
         #region Shape - Loading & Displaying
@@ -439,13 +484,11 @@ namespace Nebulator.Script
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) { NotImpl(nameof(ellipseMode), "Use println."); }
-
+        public void print(params object[] vars) { NotImpl(nameof(ellipseMode), "Use println()."); }
         public void println(params object[] vars)
         {
             _logger.Info($"{SCRIPT_PRINT_PREFIX}{string.Join(" ", vars)}");
         }
-
         public void printArray(Array what)
         {
             for (int i = 0; i < what.Length; i++)
@@ -551,13 +594,13 @@ namespace Nebulator.Script
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
         //public void clear() { NotImpl(nameof(clear)); }
-        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "Fixed to RGB"); }
+        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "Fixed at RGB"); }
         public void fill(int r, int g, int b, int a) { _brush.Color = SafeColor(r, g, b, a); }
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }
         public void fill(int gray, int a) { fill(gray, gray, gray, a); }
         public void fill(color pcolor) { _brush.Color = pcolor.NativeColor; _pen.Color = pcolor.NativeColor; }
-        public void fill(color pcolor, int a) { fill(pcolor, a); }
+        public void fill(color pcolor, int a) { fill(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, a); }
         public void fill(string scolor) { fill(scolor); }
         public void fill(string scolor, int a) { fill(new color(scolor), a); }
         public void noFill() { _brush.Color = Color.Transparent; }
@@ -613,7 +656,7 @@ namespace Nebulator.Script
             _gr.DrawImage(img.image(), x1, y1, x2, y2);
         }
 
-        public void imageMode(int mode) { NotImpl(nameof(imageMode), "Fixed to CORNER mode."); }
+        public void imageMode(int mode) { NotImpl(nameof(imageMode), "Fixed at CORNER mode."); }
 
         public PImage loadImage(string filename)
         {

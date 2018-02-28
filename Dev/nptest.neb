@@ -8,32 +8,30 @@ include nputils.neb
 
 public override void setup()
 {
-    //testStuff();
-    //setup_force_fail();
-    //setup_bezier();
-
+    // testStuff();
+    // setup_force_fail();
+    // setup_bezier();
     setup_radial_gradient();
+    // setup_sine_cosine();
+    // setup_random_gaussian();
 
-    //setup_sine_cosine();
-    //setup_pointillism();
-    //setup_random_gaussian();
-    //setup_loadfiles1();
+    // setup_pointillism();
+    // setup_loadfiles1();
 }
 
 public override void draw()
 {
-    //draw_force_fail();
-    //draw_ball();
-    //draw_bezier();
-
+    // draw_force_fail();
+    // draw_ball();
+    // draw_bezier();
     draw_radial_gradient();
+    // draw_regular_polygon();
+    // draw_sine_cosine();
+    // draw_random_gaussian();
+    // draw_embedded_iteration();
 
-    //draw_regular_polygon();
-    //draw_sine_cosine();
-    //draw_pointillism();
-    //draw_random_gaussian();
-    //draw_loadfiles1();
-    //draw_embedded_iteration();
+    // draw_pointillism();
+    // draw_loadfiles1();
 }
 
 
@@ -168,20 +166,20 @@ void draw_regular_polygon()
     background(102);
 
     pushMatrix();
-    translate(width*0.2f, height * 0.5f);
-    rotate(frameCount / 200);
+    translate(width * 0.2f, height * 0.5f);
+    rotate(frameCount / 20); // 200
     polygon(0, 0, 82, 3);  // Triangle
     popMatrix();
 
     pushMatrix();
     translate(width * 0.5f, height * 0.5f);
-    rotate(frameCount / 50);
-    polygon(0, 0, 80, 20);  // Icosahedron
+    rotate(frameCount / 10); // 50
+    polygon(0, 0, 80, 10);  // 20 = Icosahedron
     popMatrix();
 
     pushMatrix();
     translate(width * 0.8f, height * 0.5f);
-    rotate(frameCount / -100);
+    rotate(frameCount / -10); // -100
     polygon(0, 0, 70, 7);  // Heptagon
     popMatrix();
 }
@@ -194,7 +192,8 @@ void polygon(float x, float y, float radius, int npoints)
     {
         float sx = x + cos(a) * radius;
         float sy = y + sin(a) * radius;
-        vertex(sx, sy);
+        //vertex(sx, sy);
+        vertex((int)sx, (int)sy);
     }
     endShape(CLOSE);
 }
@@ -207,18 +206,18 @@ int dim;
 
 void setup_radial_gradient()
 {
-    size(640, 360);
+    //size(640, 360);
     dim = width / 2;
-    background(0);
-    colorMode(HSB, 360, 100, 100);
+    background(100);
+    //colorMode(HSB, 360, 100, 100);
     noStroke();
-    ellipseMode(RADIUS);
+    //ellipseMode(RADIUS);
     frameRate = 1;
 }
 
 void draw_radial_gradient()
 {
-    background(0);
+    //background(0);
     for (int x = 0; x <= width; x += dim)
     {
         drawGradient(x, height / 2);
@@ -293,7 +292,7 @@ void draw_sine_cosine()
 ///////////////////// embedded iteration ///////////////////////////
 void draw_embedded_iteration()
 {
-    size(640, 360);
+    //size(640, 360);
     background(0);
 
     int gridSize = 40;
@@ -319,11 +318,11 @@ int smallPoint, largePoint;
 
 void setup_pointillism()
 {
-    size(640, 360);
-    img = loadImage("moonwalk.jpg");
+    //size(640, 360);
+    img = loadImage(@"C:\Dev\Nebulator\Dev\moonwalk.jpg");
     smallPoint = 4;
     largePoint = 40;
-    imageMode(CENTER);
+    //imageMode(CENTER);
     noStroke();
     background(255);
 }
@@ -341,7 +340,8 @@ void draw_pointillism()
 ///////////////////// random gaussian ///////////////////////////
 void setup_random_gaussian()
 {
-    size(640, 360);
+    //size(640, 360);
+    frameRate = 5; // added 
     background(0);
 }
 
@@ -351,7 +351,7 @@ void draw_random_gaussian()
     float val = randomGaussian();
 
     float sd = 60;                  // Define a standard deviation
-    float mean = width / 2;           // Define a mean value (middle of the screen along the x-axis)
+    float mean = width / 2;         // Define a mean value (middle of the screen along the x-axis)
     float x = ( val * sd ) + mean;  // Scale the gaussian random number by standard deviation and mean
 
     noStroke();

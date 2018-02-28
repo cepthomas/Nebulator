@@ -99,6 +99,7 @@ namespace Nebulator.Script
                         _script.pMouseY = _script.mouseY;
 
                         // Execute the user script code.
+                        _script.frameCount++;
                         _script.draw();
                         buffer.Render();
                     }

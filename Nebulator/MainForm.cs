@@ -166,12 +166,11 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-
             //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
             //ExportMidi("test.mid");
 
@@ -660,7 +659,7 @@ namespace Nebulator
             for (int i = 0; i < st.FrameCount;i++)
             {
                 StackFrame stf = st.GetFrame(i);
-                if(stf.GetFileName().ToUpper().Contains(_compileTempDir.ToUpper()))
+                if(stf.GetFileName() != null && stf.GetFileName().ToUpper().Contains(_compileTempDir.ToUpper()))
                 {
                     sf = stf;
                     break;
