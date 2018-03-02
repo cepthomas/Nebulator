@@ -227,7 +227,7 @@ namespace Nebulator.Script
                     if (ScriptEntities.Tracks[st.TrackName] == null)
                     {
                         pcont.LineNumber = 0; // Don't know the real line number.
-                        AddParseError(pcont, $"Invalid track name:{st.TrackName}");
+                        AddParseError(pcont, $"Invalid track name: {st.TrackName}");
                     }
 
                     foreach (string sseq in st.SequenceNames)
@@ -235,7 +235,7 @@ namespace Nebulator.Script
                         if (ScriptEntities.Sequences[sseq] == null)
                         {
                             pcont.LineNumber = 0; // Don't know the real line number.
-                            AddParseError(pcont, $"Invalid sequence name:{sseq}");
+                            AddParseError(pcont, $"Invalid sequence name: {sseq}");
                         }
                     }
                 }
@@ -942,7 +942,7 @@ namespace Nebulator.Script
                     }
                     else if(seqel.Notes.Count == 0)
                     {
-                        AddParseError(farg.Context, $"Invalid note:{farg.Args[1]}");
+                        AddParseError(farg.Context, $"Invalid note: {farg.Args[1]}");
                     }
                 }
 

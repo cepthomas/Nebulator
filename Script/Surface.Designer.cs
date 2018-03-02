@@ -35,12 +35,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "Surface";
-            this.Size = new System.Drawing.Size(271, 176);
+            this.Size = new System.Drawing.Size(237, 204);
             this.Enter += new System.EventHandler(this.Surface_Enter);
             this.Leave += new System.EventHandler(this.Surface_Leave);
             this.Resize += new System.EventHandler(this.Surface_Resize);
             this.ResumeLayout(false);
-
         }
 
         #endregion

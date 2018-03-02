@@ -118,7 +118,7 @@ namespace Nebulator.Common
                 }
                 else
                 {
-                    throw new Exception($"Invalid note:{parts[0]}");
+                    throw new Exception($"Invalid note: {parts[0]}");
                 }
 
                 if (parts.Count > 1)
@@ -160,7 +160,7 @@ namespace Nebulator.Common
             }
             catch (Exception)
             {
-                //throw new Exception("Invalid note or chord:" + s);
+                //throw new Exception("Invalid note or chord: " + s);
                 notes.Clear();
             }
 
@@ -284,7 +284,7 @@ namespace Nebulator.Common
             }
             catch (Exception)
             {
-                throw new Exception($"Invalid note list:{string.Join(",", notes)}");
+                throw new Exception($"Invalid note list: {string.Join(",", notes)}");
             }
 
             return snotes;

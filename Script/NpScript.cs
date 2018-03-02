@@ -11,28 +11,6 @@ using Nebulator.Common;
 // Processing API stuff.
 
 
-
-
-
-// filled closed shape
-// beginShape();
-// vertex(30, 20);
-// vertex(85, 20);
-// vertex(85, 75);
-// vertex(30, 75);
-// endShape(CLOSE);
-
-// unfilled unclosed shape
-// noFill();
-// beginShape();
-// vertex(30, 20);
-// vertex(85, 20);
-// vertex(85, 75);
-// vertex(30, 75);
-// endShape();
-
-
-
 namespace Nebulator.Script
 {
     /// <summary>
@@ -262,9 +240,9 @@ namespace Nebulator.Script
 
         public void ellipse(float x1, float y1, float width, float height)
         {
-            x1 -= width / 2;
-            y1 -= height / 2;
-            _gr.FillEllipse(_brush, x1, y1, width, height);
+            x1 -= width;
+            y1 -= height;
+            _gr.FillEllipse(_brush, x1, y1, width * 2, height *2);
             //_gr.DrawEllipse(_pen, x1, y1, width, height);
         }
 
@@ -475,7 +453,7 @@ List<Point> _vertexes = new List<Point>();
         public int day() { return DateTime.Now.Day; }
         public int hour() { return DateTime.Now.Hour; }
         public int minute() { return DateTime.Now.Minute; }
-        public int millis() { return DateTime.Now.Millisecond; }
+        public int millis() { return (int)(Context.RealTime * 1000); }
         public int month() { return DateTime.Now.Month; }
         public int second() { return DateTime.Now.Second; }
         public int year() { return DateTime.Now.Year; }

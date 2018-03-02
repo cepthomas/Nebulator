@@ -48,7 +48,7 @@ namespace Nebulator.Common
             }
             else
             {
-                throw new Exception("Collection already contains name " + name);
+                throw new Exception("Collection already contains name: " + name);
             }
         }
 

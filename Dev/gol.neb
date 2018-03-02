@@ -27,7 +27,7 @@ bool pause = false;
 
 public override void setup()
 {
-     //xxx size (640, 360);
+     //size (640, 360);
 
     // Instantiate arrays
     cells = new int[width / cellSize, height / cellSize];
@@ -79,7 +79,7 @@ public override void draw()
         }
     }
     // Iterate if timer ticks
-    if (millis() - lastRecordedTime>interval)
+    if (millis() - lastRecordedTime > interval)
     {
         if (!pause)
         {
@@ -179,6 +179,8 @@ void iteration()   // When the clock ticks
 
 public override void keyPressed()
 {
+    println(key);
+
     if (key == 'r' || key == 'R')
     {
         // Restart: reinitialization of cells
@@ -199,10 +201,13 @@ public override void keyPressed()
             }
         }
     }
-    if (key==' ')   // On/off of pause
+
+    //xxx if (key==' ')   // On/off of pause
+    if (key=='p')   // On/off of pause
     {
         pause = !pause;
     }
+    
     if (key=='c' || key == 'C')   // Clear all
     {
         for (int x = 0; x < width / cellSize; x++)

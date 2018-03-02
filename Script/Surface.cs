@@ -61,7 +61,7 @@ namespace Nebulator.Script
         /// </summary>
         public void UpdateSurface()
         {
-            if (_script._loop || _script._redraw)
+            if (_script != null && (_script._loop || _script._redraw))
             {
                 Invalidate();
             }
@@ -75,10 +75,10 @@ namespace Nebulator.Script
         /// <param name="e"></param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            using (BufferedGraphicsContext context = new BufferedGraphicsContext { MaximumBuffer = ClientSize } )
-            using (BufferedGraphics buffer = context.Allocate(e.Graphics, ClientRectangle))
+            if (_script != null && (_script._loop || _script._redraw))
             {
-                if (_script != null && (_script._loop || _script._redraw))
+                using (BufferedGraphicsContext context = new BufferedGraphicsContext { MaximumBuffer = ClientSize })
+                using (BufferedGraphics buffer = context.Allocate(e.Graphics, ClientRectangle))
                 {
                     try
                     {
@@ -105,7 +105,7 @@ namespace Nebulator.Script
                     }
                     catch (Exception ex)
                     {
-                        RuntimeErrorEvent?.Invoke(this, new RuntimeErrorEventArgs() { Exception = ex } );
+                        RuntimeErrorEvent?.Invoke(this, new RuntimeErrorEventArgs() { Exception = ex });
                     }
                 }
             }
@@ -125,6 +125,7 @@ namespace Nebulator.Script
                 _script.mousePressedP = true;
                 _script.mousePressed();
             }
+            base.OnMouseDown(e);
         }
 
         /// <summary>
@@ -139,6 +140,7 @@ namespace Nebulator.Script
                 _script.mousePressedP = false;
                 _script.mouseReleased();
             }
+            base.OnMouseUp(e);
         }
 
         /// <summary>
@@ -159,15 +161,7 @@ namespace Nebulator.Script
                     _script.mouseMoved();
                 }
             }
-        }
-
-        /// <summary>
-        /// Event handler.
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnMouseDoubleClick(MouseEventArgs e)
-        {
-            // Not supported in processing
+            base.OnMouseMove(e);
         }
 
         /// <summary>
@@ -181,6 +175,7 @@ namespace Nebulator.Script
                 ProcessMouseEvent(e);
                 _script.mouseClicked();
             }
+            base.OnMouseClick(e); /// ???????
         }
 
         /// <summary>
@@ -194,6 +189,7 @@ namespace Nebulator.Script
                 ProcessMouseEvent(e);
                 _script.mouseWheel();
             }
+            base.OnMouseWheel(e); /// ???????
         }
 
         /// <summary>

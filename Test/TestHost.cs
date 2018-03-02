@@ -8,9 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-//using Nebulator.Common;
-//using Nebulator.Controls;
-//using Nebulator;
+using Nebulator.Common;
+using Nebulator.Script;
 
 
 namespace Nebulator.Test
@@ -25,6 +24,9 @@ namespace Nebulator.Test
         private void TestHost_Load(object sender, EventArgs e)
         {
             // TopMost = true;
+
+            splitContainer1.Panel1.Controls.Add(new Script.Surface());
+
 
             Go_Click(null, null);
         }

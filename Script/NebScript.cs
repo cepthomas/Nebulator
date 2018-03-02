@@ -107,7 +107,7 @@ namespace Nebulator.Script
 
             if (note.Notes.Count == 0)
             {
-                _logger.Warn($"Invalid note:{snote}");
+                _logger.Warn($"Invalid note: {snote}");
             }
             else
             {
@@ -126,7 +126,7 @@ namespace Nebulator.Script
 
             if (note.Notes.Count == 0)
             {
-                _logger.Warn($"Invalid note:{snote}");
+                _logger.Warn($"Invalid note: {snote}");
             }
             else
             {

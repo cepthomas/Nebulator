@@ -9,6 +9,7 @@ include nputils.neb
 public override void setup()
 {
     // testStuff();
+
     // setup_force_fail();
     // setup_bezier();
     // setup_radial_gradient();
@@ -25,7 +26,7 @@ public override void draw()
     // draw_ball();
     // draw_bezier();
     // draw_radial_gradient();
-    draw_regular_polygon();
+    // draw_regular_polygon();
     // draw_sine_cosine();
     // draw_random_gaussian();
     // draw_embedded_iteration();
@@ -38,6 +39,8 @@ public override void draw()
 ////////////// test /////////////////////
 void testStuff()
 {
+
+
     int[] vals = { 1, 2, 3, 4, 5 };
 
     println("println()", vals[2]);
@@ -45,6 +48,11 @@ void testStuff()
     printArray(vals);
 }
 
+public override void keyPressed()
+{
+    
+    println(key);
+}
 
 ////////////// bezier /////////////////////
 void setup_bezier()
@@ -209,9 +217,9 @@ void setup_radial_gradient()
     //size(640, 360);
     dim = width / 2;
     background(100);
-    //colorMode(HSB, 360, 100, 100);
+    colorMode(HSB, 360, 100, 100);
     noStroke();
-    //ellipseMode(RADIUS);
+    ellipseMode(RADIUS);
     frameRate = 1;
 }
 
@@ -224,7 +232,7 @@ void draw_radial_gradient()
     }
 }
 
-void drawGradient(float x, float y) //TODO fix for RGB or implement HSB.
+void drawGradient(float x, float y)
 {
     int radius = dim / 2;
 
@@ -237,6 +245,7 @@ void drawGradient(float x, float y) //TODO fix for RGB or implement HSB.
     //     h = (h + 1) % 360;
     // }
 
+    // Not really right, based on HSB.
     int h = random(0, 255);
     for (int r = radius; r > 0; --r)
     {
@@ -255,7 +264,7 @@ float scalar = 70;
 
 void setup_sine_cosine()
 {
-    size(640, 360);
+    //size(640, 360);
     noStroke();
     rectMode(CENTER);
 }

@@ -368,6 +368,7 @@
             // 
             this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
             this.infoDisplay.Location = new System.Drawing.Point(0, 0);
+            this.infoDisplay.MaxLength = 5000;
             this.infoDisplay.Name = "infoDisplay";
             this.infoDisplay.Size = new System.Drawing.Size(418, 502);
             this.infoDisplay.TabIndex = 0;

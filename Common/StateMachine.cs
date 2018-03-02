@@ -146,7 +146,7 @@ namespace Nebulator.Common
 
                             if (nextStateName is null)
                             {
-                                throw new Exception($"State:{CurrentState.StateName} InvalidEvent:{ei.Name}");
+                                throw new Exception($"State: {CurrentState.StateName} InvalidEvent: {ei.Name}");
                             }
 
                             // is there a state change?
