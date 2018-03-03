@@ -13,41 +13,11 @@ using Nebulator.Dynamic;
 
 namespace Nebulator.Script
 {
-    /// <summary>Stuff shared between Main and Script on a per step basis.</summary>
-    public class RuntimeContext
-    {
-        /// <summary>Main -> Script</summary>
-        public Time StepTime { get; set; } = new Time();
-
-        /// <summary>Main -> Script</summary>
-        public bool Playing { get; set; } = false;
-
-        /// <summary>Main -> Script</summary>
-        public float RealTime { get; set; } = 0.0f;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public float Speed { get; set; } = 0.0f;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public int Volume { get; set; } = 0;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public int FrameRate { get; set; } = 0;
-
-        /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
-        public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
-    }
-
     public partial class ScriptCore
     {
         #region Fields
         /// <summary>My logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
-        #endregion
-
-        #region Properties
-        /// <summary>Set of things shared between host and script at runtime.</summary>
-        public RuntimeContext Context { get; set; } = new RuntimeContext();
         #endregion
 
         #region Events

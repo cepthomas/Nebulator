@@ -12,8 +12,22 @@ namespace Nebulator.Dynamic
     /// <summary>
     /// All the dynamic script stuff we might want at runtime. Essentially globals.
     /// </summary>
-    public class ScriptEntities
+    public class DynamicElements
     {
+        // TODO don't let this get too big.
+        //
+        // DynamicElements refs
+        //     Vars - Compiler
+        //     InputMidis / OutputMidis / Levers / Sections / Sequences - Compiler, MainForm
+        //     Tracks - Compiler, MainForm, NebScript
+        //     NoteDefs - Compiler, Sequence, NebScript
+        //     These - MainForm, NebScript, NpScript
+        //         StepTime, Playing, RealTime - Main -> Script
+        //         Speed, Volume, FrameRate - Main -> Script -> Main
+        //         RuntimeSteps - Script -> Main
+
+
+        #region Things defined in the script
         /// <summary>Declared variables.</summary>
         public static LazyCollection<Variable> Vars { get; set; } = new LazyCollection<Variable>();
 
@@ -37,9 +51,34 @@ namespace Nebulator.Dynamic
 
         /// <summary>The user chord and scale definitions. Value is list of constituent notes.</summary>
         public static LazyCollection<List<string>> NoteDefs { get; set; } = new LazyCollection<List<string>>();
+        #endregion
+
+        #region Things shared between host and script at runtime on a per step basis
+        /// <summary>Main -> Script</summary>
+        public static Time StepTime { get; set; } = new Time();
+
+        /// <summary>Main -> Script</summary>
+        public static bool Playing { get; set; } = false;
+
+        /// <summary>Main -> Script</summary>
+        public static float RealTime { get; set; } = 0.0f;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public static float Speed { get; set; } = 0.0f;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public static int Volume { get; set; } = 0;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public static int FrameRate { get; set; } = 0;
+
+        /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
+        public static StepCollection RuntimeSteps { get; private set; } = new StepCollection();
+        #endregion
+
 
         /// <summary>Don't even try to do this.</summary>
-        ScriptEntities() { }
+        DynamicElements() { }
 
         /// <summary>Reset everything.</summary>
         public static void Clear()
@@ -52,6 +91,7 @@ namespace Nebulator.Dynamic
             Tracks.Clear();
             Sequences.Clear();
             NoteDefs.Clear();
+            RuntimeSteps.Clear();
         }
     }
 }

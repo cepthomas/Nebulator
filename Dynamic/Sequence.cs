@@ -70,7 +70,7 @@ namespace Nebulator.Dynamic
             }
             else
             {
-                Notes = NoteUtils.ParseNoteString(s, ScriptEntities.NoteDefs);
+                Notes = NoteUtils.ParseNoteString(s, DynamicElements.NoteDefs);
             }
         }
 

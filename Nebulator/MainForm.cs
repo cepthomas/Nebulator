@@ -201,7 +201,7 @@ namespace Nebulator
                     _nebpVals.SetValue("master", "loop", chkLoop.Checked);
                     _nebpVals.SetValue("master", "sequence", chkSequence.Checked);
 
-                    ScriptEntities.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
+                    DynamicElements.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
 
@@ -278,17 +278,17 @@ namespace Nebulator
                     _compileTempDir = compiler.TempDir;
 
                     // Collect important times.
-                    ScriptEntities.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
+                    DynamicElements.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
 
                     // Convert compiled stuff to step collection.
                     _compiledSteps.Clear();
-                    foreach (Section sect in ScriptEntities.Sections.Values)
+                    foreach (Section sect in DynamicElements.Sections.Values)
                     {
                         // Iterate through the sections tracks.
                         foreach (SectionTrack strack in sect.SectionTracks)
                         {
                             // Get the pertinent Track object.
-                            Track track = ScriptEntities.Tracks[strack.TrackName];
+                            Track track = DynamicElements.Tracks[strack.TrackName];
 
                             // For processing current Sequence.
                             int seqOffset = sect.Start;
@@ -296,7 +296,7 @@ namespace Nebulator
                             // Gen steps for each sequence.
                             foreach (string sseq in strack.SequenceNames)
                             {
-                                Sequence seq = ScriptEntities.Sequences[sseq];
+                                Sequence seq = DynamicElements.Sequences[sseq];
                                 StepCollection stepsToAdd = ScriptCore.ConvertToSteps(track, seq, seqOffset);
                                 _compiledSteps.Add(stepsToAdd);
                                 seqOffset += seq.Length;
@@ -307,21 +307,10 @@ namespace Nebulator
                     // Show everything.
                     InitUi();
 
-
-
-
-                    // Surface area. xxxxxxxxxxxxxxxxxxxxxxx was in InitUi()
+                    // Surface area.
                     surface.InitScript(_script);
-                    //ExecuteThrowingFunction(surface.UpdateSurface);
-
-
 
                     SetCompileStatus(true);
-
-                    //xxxxxxxxxxxxxx these:
-                    //WriteScriptContext();
-                    //ExecuteThrowingFunction(_script.setup);
-                    //ReadScriptContext();
                 }
                 else
                 {
@@ -360,7 +349,7 @@ namespace Nebulator
                 }
             }
 
-            foreach (Track t in ScriptEntities.Tracks.Values)
+            foreach (Track t in DynamicElements.Tracks.Values)
             {
                 // Init from persistence.
                 int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
@@ -388,7 +377,7 @@ namespace Nebulator
 
             ///// Init the user input area.
             // Levers.
-            levers.Init(ScriptEntities.Levers.Values);
+            levers.Init(DynamicElements.Levers.Values);
         }
 
         /// <summary>
@@ -447,7 +436,7 @@ namespace Nebulator
                 ExecuteThrowingFunction(_script.ExecScriptFunction, var.Name);
 
                 // Output any midictlout controllers.
-                IEnumerable<MidiControlPoint> ctlpts = ScriptEntities.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+                IEnumerable<MidiControlPoint> ctlpts = DynamicElements.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
 
                 if (ctlpts != null && ctlpts.Count() > 0)
                 {
@@ -467,8 +456,14 @@ namespace Nebulator
             // Reset controllers for next go around.
             _ctrlChanges.Clear();
 
-            // Share runtime info with script.
-            WriteScriptContext();
+            ///// Package up the runtime stuff the script may need. /////
+            DynamicElements.Playing = chkPlay.Checked;
+            DynamicElements.StepTime = _stepTime;
+            DynamicElements.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
+            DynamicElements.Speed = (float)potSpeed.Value;
+            DynamicElements.Volume = sldVolume.Value;
+            DynamicElements.FrameRate = _frameRate;
+            DynamicElements.RuntimeSteps.Clear();
 
             ////// Neb steps /////
             if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB") && !_needCompile)
@@ -477,8 +472,8 @@ namespace Nebulator
                 ExecuteThrowingFunction(_script.step);
 
                 // Process any sequence steps the script added.
-                _script.Context.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                _script.Context.RuntimeSteps.DeleteSteps(_stepTime);
+                DynamicElements.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                DynamicElements.RuntimeSteps.DeleteSteps(_stepTime);
 
                 // Now do the compiled steps.
                 if (chkSequence.Checked)
@@ -522,23 +517,34 @@ namespace Nebulator
                 ExecuteThrowingFunction(surface.UpdateSurface);
             }
 
-            // See what the script did with runtime info.
-            ReadScriptContext();
+            ///// Process whatever the script may have done. /////
+            if (DynamicElements.Speed != potSpeed.Value)
+            {
+                potSpeed.Value = DynamicElements.Speed;
+                SetSpeedTimerPeriod();
+            }
 
-            // Process any lingering noteoffs.
+            if (DynamicElements.Volume != sldVolume.Value)
+            {
+                sldVolume.Value = DynamicElements.Volume;
+            }
+
+            if (DynamicElements.FrameRate != _frameRate)
+            {
+                _frameRate = DynamicElements.FrameRate;
+                SetUiTimerPeriod();
+            }
+
+            ///// Process any lingering noteoffs. /////
             MidiInterface.TheInterface.Housekeep();
 
-            //// Process any accumulated messages.
-            //_script.Context.PrintLines.ForEach(l => BeginInvoke((MethodInvoker)delegate () { infoDisplay.AddInfo(l); }));
-            //_script.Context.PrintLines.Clear();
-
-            ///// Local common function
+            ///// Local common function /////
             void PlayStep(Step step)
             {
-                Track track = ScriptEntities.Tracks[step.TrackName];
+                Track track = DynamicElements.Tracks[step.TrackName];
 
                 // Is it ok to play now?
-                bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = DynamicElements.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
                 bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
 
                 if (play)
@@ -576,7 +582,7 @@ namespace Nebulator
                     // Process through our list.
                     if(_script != null)
                     {
-                        IEnumerable<MidiControlPoint> ctlpts = ScriptEntities.InputMidis.Values.Where((c, m) => (
+                        IEnumerable<MidiControlPoint> ctlpts = DynamicElements.InputMidis.Values.Where((c, m) => (
                             c.MidiController == scc.MidiController &&
                             c.Channel == scc.Channel));
 
@@ -631,12 +637,12 @@ namespace Nebulator
             if (sender is TrackControl)
             {
                 // Check for solos.
-                bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = DynamicElements.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    ScriptEntities.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
+                    DynamicElements.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -715,45 +721,6 @@ namespace Nebulator
                 };
 
                 _logger.Error(err.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Fill in the context stuff for use by the script.
-        /// </summary>
-        void WriteScriptContext()
-        {
-            // Package up the runtime stuff the script may need.
-            _script.Context.Playing = chkPlay.Checked;
-            _script.Context.StepTime = _stepTime;
-            _script.Context.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
-            _script.Context.Speed = (float)potSpeed.Value;
-            _script.Context.Volume = sldVolume.Value;
-            _script.Context.FrameRate = _frameRate;
-            _script.Context.RuntimeSteps.Clear();
-        }
-
-        /// <summary>
-        /// Process any context stuff the script may have changed.
-        /// </summary>
-        void ReadScriptContext()
-        {
-            // Process whatever the script may have done.
-            if (_script.Context.Speed != potSpeed.Value)
-            {
-                potSpeed.Value = _script.Context.Speed;
-                SetSpeedTimerPeriod();
-            }
-
-            if (_script.Context.Volume != sldVolume.Value)
-            {
-                sldVolume.Value = _script.Context.Volume;
-            }
-
-            if (_script.Context.FrameRate != _frameRate)
-            {
-                _frameRate = _script.Context.FrameRate;
-                SetUiTimerPeriod();
             }
         }
         #endregion
@@ -1307,7 +1274,7 @@ namespace Nebulator
         void ExportMidi(string fn)
         {
             Dictionary<int, string> tracks = new Dictionary<int, string>();
-            ScriptEntities.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+            DynamicElements.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
 
             // Convert speed/bpm to sec per tick.
             double ticksPerMinute = potSpeed.Value; // bpm

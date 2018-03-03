@@ -7,6 +7,8 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using MoreLinq;
 using Nebulator.Common;
+using Nebulator.Dynamic;
+
 
 // Processing API stuff.
 
@@ -144,7 +146,7 @@ namespace Nebulator.Script
         //public int displayDensity() { NotImpl(nameof(displayDensity)); }
         public bool focused { get; internal set; }
         public int frameCount { get; internal set; } = 1;
-        public int frameRate { get { return Context.FrameRate; } set { Context.FrameRate = value; } }
+        public int frameRate { get { return DynamicElements.FrameRate; } set { DynamicElements.FrameRate = value; } }
         public void fullScreen() { NotImpl(nameof(fullScreen), "Size is set by main form."); }
         public int height { get; internal set; }
         //public void noCursor() { NotImpl(nameof(noCursor)); }
@@ -453,7 +455,7 @@ List<Point> _vertexes = new List<Point>();
         public int day() { return DateTime.Now.Day; }
         public int hour() { return DateTime.Now.Hour; }
         public int minute() { return DateTime.Now.Minute; }
-        public int millis() { return (int)(Context.RealTime * 1000); }
+        public int millis() { return (int)(DynamicElements.RealTime * 1000); }
         public int month() { return DateTime.Now.Month; }
         public int second() { return DateTime.Now.Second; }
         public int year() { return DateTime.Now.Year; }

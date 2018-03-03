@@ -54,7 +54,7 @@
     </Compile>
     <Compile Include="ControlPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptEntities.cs" />
+    <Compile Include="DynamicElements.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="Sequence.cs" />
     <Compile Include="Track.cs" />

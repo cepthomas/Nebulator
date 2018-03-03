@@ -21,28 +21,28 @@ namespace Nebulator.Script
 
         #region User script properties
         /// <summary>Sound is playing.</summary>
-        public bool playing { get { return Context.Playing; } }
+        public bool playing { get { return DynamicElements.Playing; } }
 
         /// <summary>Current Nebulator step time.</summary>
-        public Time stepTime { get { return Context.StepTime; } }
+        public Time stepTime { get { return DynamicElements.StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return Context.StepTime.Tick; } }
+        public int tick { get { return DynamicElements.StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return Context.StepTime.Tock; } }
+        public int tock { get { return DynamicElements.StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return Context.RealTime; } }
+        public float now { get { return DynamicElements.RealTime; } }
 
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Time.TOCKS_PER_TICK; } }
 
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
-        public float speed { get { return Context.Speed; } set { Context.Speed = value; } }
+        public float speed { get { return DynamicElements.Speed; } set { DynamicElements.Speed = value; } }
 
         /// <summary>Nebulator master Volume.</summary>
-        public int volume { get { return Context.Volume; } set { Context.Volume = value; } }
+        public int volume { get { return DynamicElements.Volume; } set { DynamicElements.Volume = value; } }
 
         /// <summary>Indicates using internal synth.</summary>
         public bool winGm { get { return UserSettings.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
@@ -56,7 +56,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
         public void sendMidiNote(Track track, int inote, int vol, Time dur)
         {
-            bool _anySolo = ScriptEntities.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+            bool _anySolo = DynamicElements.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
 
             bool play = track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo);
 
@@ -189,8 +189,8 @@ namespace Nebulator.Script
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(Track track, Sequence seq)
         {
-            StepCollection scoll = ConvertToSteps(track, seq, Context.StepTime.Tick);
-            Context.RuntimeSteps.Add(scoll);
+            StepCollection scoll = ConvertToSteps(track, seq, DynamicElements.StepTime.Tick);
+            DynamicElements.RuntimeSteps.Add(scoll);
         }
 
         /// <summary>Convert the argument into numbered notes.</summary>
@@ -198,7 +198,7 @@ namespace Nebulator.Script
         /// <returns>Array of notes or empty if invalid.</returns>
         public int[] getNotes(string note)
         {
-            List<int> notes = NoteUtils.ParseNoteString(note, ScriptEntities.NoteDefs);
+            List<int> notes = NoteUtils.ParseNoteString(note, DynamicElements.NoteDefs);
             return notes != null ? notes.ToArray() : new int[0];
         }
 
@@ -208,7 +208,7 @@ namespace Nebulator.Script
         /// <returns>Array of notes or empty if invalid.</returns>
         public int[] getScaleNotes(string scale, string key)
         {
-            List<int> notes = NoteUtils.GetScaleNotes(scale, key, ScriptEntities.NoteDefs);
+            List<int> notes = NoteUtils.GetScaleNotes(scale, key, DynamicElements.NoteDefs);
             return notes != null ? notes.ToArray() : new int[0];
         }
         #endregion
