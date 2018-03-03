@@ -12,7 +12,7 @@ public override void setup()
 
     // setup_force_fail();
     // setup_bezier();
-    // setup_radial_gradient();
+    setup_radial_gradient();
     // setup_sine_cosine();
     // setup_random_gaussian();
 
@@ -25,7 +25,7 @@ public override void draw()
     // draw_force_fail();
     // draw_ball();
     // draw_bezier();
-    // draw_radial_gradient();
+    draw_radial_gradient();
     // draw_regular_polygon();
     // draw_sine_cosine();
     // draw_random_gaussian();
@@ -39,8 +39,6 @@ public override void draw()
 ////////////// test /////////////////////
 void testStuff()
 {
-
-
     int[] vals = { 1, 2, 3, 4, 5 };
 
     println("println()", vals[2]);
@@ -50,7 +48,6 @@ void testStuff()
 
 public override void keyPressed()
 {
-    
     println(key);
 }
 
@@ -225,11 +222,19 @@ void setup_radial_gradient()
 
 void draw_radial_gradient()
 {
-    //background(0);
+    // background(0);
+
+    int y = random(0, height);
+
     for (int x = 0; x <= width; x += dim)
     {
-        drawGradient(x, height / 2);
+        drawGradient(x, y);
     }
+
+    // for (int x = 0; x <= width; x += dim)
+    // {
+    //     drawGradient(x, height / 2);
+    // }
 }
 
 void drawGradient(float x, float y)
@@ -254,7 +259,6 @@ void drawGradient(float x, float y)
         h++;
     }
 }
-
 
 
 ////////////////////// sine cosine /////////////////////////////
@@ -320,7 +324,6 @@ void draw_embedded_iteration()
 }
 
 
-
 ////////////////////// pointillism //////////////////////////
 PImage img;
 int smallPoint, largePoint;
@@ -356,7 +359,7 @@ void setup_random_gaussian()
 
 void draw_random_gaussian()
 {
-    // Get a gaussian random number w/ mean of 0 and standard deviation of 1.0
+    // Get a gaussian random number with mean of 0 and standard deviation of 1.0
     float val = randomGaussian();
 
     float sd = 60;                  // Define a standard deviation
@@ -398,4 +401,3 @@ void draw_loadfiles1()
         index = index + 1;
     }
 }
-

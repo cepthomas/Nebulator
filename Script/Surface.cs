@@ -42,6 +42,8 @@ namespace Nebulator.Script
             InitializeComponent();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             UpdateStyles();
+
+            ResizeRedraw = true;
         }
 
         /// <summary>
@@ -77,36 +79,31 @@ namespace Nebulator.Script
         {
             if (_script != null && (_script._loop || _script._redraw))
             {
-                using (BufferedGraphicsContext context = new BufferedGraphicsContext { MaximumBuffer = ClientSize })
-                using (BufferedGraphics buffer = context.Allocate(e.Graphics, ClientRectangle))
+                try
                 {
-                    try
-                    {
-                        _script._redraw = false;
+                    _script._redraw = false;
 
-                        buffer.Graphics.Clear(_script._bgColor);
+        //            e.Graphics.Clear(_script._bgColor); // TODO might need a property to indicate overdraw current or draw new.
 
-                        buffer.Graphics.CompositingMode = CompositingMode.SourceOver;
-                        buffer.Graphics.CompositingQuality = CompositingQuality.HighQuality;
-                        buffer.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                        buffer.Graphics.SmoothingMode = _script._smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
+                    e.Graphics.CompositingMode = CompositingMode.SourceOver;
+                    e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    e.Graphics.SmoothingMode = _script._smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
 
-                        // Hand over to the script for drawing.
-                        _script._gr = buffer.Graphics;
+                    // Hand over to the script for drawing.
+                    _script._gr = e.Graphics;
 
-                        // Some housekeeping.
-                        _script.pMouseX = _script.mouseX;
-                        _script.pMouseY = _script.mouseY;
+                    // Some housekeeping.
+                    _script.pMouseX = _script.mouseX;
+                    _script.pMouseY = _script.mouseY;
 
-                        // Execute the user script code.
-                        _script.frameCount++;
-                        _script.draw();
-                        buffer.Render();
-                    }
-                    catch (Exception ex)
-                    {
-                        RuntimeErrorEvent?.Invoke(this, new RuntimeErrorEventArgs() { Exception = ex });
-                    }
+                    // Execute the user script code.
+                    _script.frameCount++;
+                    _script.draw();
+                }
+                catch (Exception ex)
+                {
+                    RuntimeErrorEvent?.Invoke(this, new RuntimeErrorEventArgs() { Exception = ex });
                 }
             }
         }

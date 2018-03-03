@@ -9,26 +9,6 @@ using Nebulator.Midi;
 
 namespace Nebulator.Dynamic
 {
-    // TODO ScriptEntities getting kind of big... combine with RuntimeContext?
-    // class ScriptEntities refs
-    //     Vars - Compiler
-    //     InputMidis/OutputMidis/Levers/Sections/Sequences - Compiler, MainForm
-    //     Tracks - Compiler, MainForm, NebScript
-    //     NoteDefs - Compiler, Sequence, NebScript
-    // 
-    // class RuntimeContext refs - MainForm, NebScript
-    //     Main -> Script
-    //     public Time StepTime
-    //     public bool Playing
-    //     public float RealTime
-    //     Main -> Script -> Main
-    //     public float Speed
-    //     public int Volume
-    //     public int FrameRate
-    //     Script -> Main
-    //     public StepCollection RuntimeSteps
-
-
     /// <summary>
     /// All the dynamic script stuff we might want at runtime. Essentially globals.
     /// </summary>
