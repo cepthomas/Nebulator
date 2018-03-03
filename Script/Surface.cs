@@ -31,6 +31,12 @@ namespace Nebulator.Script
         #region Fields
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
+
+        /// <summary>Current working Graphics object to draw on.</summary>
+        Bitmap _bitmap;
+
+        /// <summary>Indicates if setup() needed.</summary>
+        bool _setupRun = false;
         #endregion
 
         #region Lifecycle
@@ -45,7 +51,9 @@ namespace Nebulator.Script
 
             ResizeRedraw = true;
         }
+        #endregion
 
+        #region Public functions
         /// <summary>
         /// Update per new script object.
         /// </summary>
@@ -56,6 +64,9 @@ namespace Nebulator.Script
             _script.width = Width;
             _script.height = Height;
             _script.focused = Focused;
+
+            _bitmap = new Bitmap(Width, Height);
+            _setupRun = false;
         }
 
         /// <summary>
@@ -65,6 +76,8 @@ namespace Nebulator.Script
         {
             if (_script != null && (_script._loop || _script._redraw))
             {
+                Draw();
+
                 Invalidate();
             }
         }
@@ -75,23 +88,28 @@ namespace Nebulator.Script
         /// Calls the script code that generates the bmp to draw.
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnPaint(PaintEventArgs e)
+        void Draw()
         {
-            if (_script != null && (_script._loop || _script._redraw))
+            using (Graphics graphics = Graphics.FromImage(_bitmap))
             {
                 try
                 {
                     _script._redraw = false;
 
-        //            e.Graphics.Clear(_script._bgColor); // TODO might need a property to indicate overdraw current or draw new.
+                    graphics.CompositingMode = CompositingMode.SourceOver;
+                    graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    graphics.SmoothingMode = _script._smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
 
-                    e.Graphics.CompositingMode = CompositingMode.SourceOver;
-                    e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
-                    e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    e.Graphics.SmoothingMode = _script._smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
+                    // Hand over to the script for drawing on.
+                    _script._gr = graphics;
 
-                    // Hand over to the script for drawing.
-                    _script._gr = e.Graphics;
+                    if(!_setupRun)
+                    {
+                        _script.setup();
+                        _setupRun = true;
+                        _script.frameCount = 0;
+                    }
 
                     // Some housekeeping.
                     _script.pMouseX = _script.mouseX;
@@ -105,6 +123,18 @@ namespace Nebulator.Script
                 {
                     RuntimeErrorEvent?.Invoke(this, new RuntimeErrorEventArgs() { Exception = ex });
                 }
+            }
+        }
+
+        /// <summary>
+        /// Renders the stored bitmap to the UI.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            if (_script != null && (_script._loop || _script._redraw))
+            {
+                e.Graphics.DrawImage(_bitmap, new Point(0, 0));
             }
         }
         #endregion
@@ -336,6 +366,9 @@ namespace Nebulator.Script
                 _script.width = Width;
                 _script.height = Height;
             }
+
+            // Force a re-init.
+            _setupRun = false;
         }
 
         private void Surface_Enter(object sender, EventArgs e)

@@ -126,13 +126,13 @@ namespace Nebulator.Script
         public virtual void draw() { }
 
         //---- Script functions
-        public void exit() { NotImpl(nameof(exit), "This is probably not what you want to do."); exit(); }
-        public void loop() { _loop = true; }
-        public void noLoop() { _loop = false; }
-        //public void popStyle() { NotImpl(nameof(popStyle)); }
-        //public void pushStyle() { NotImpl(nameof(pushStyle)); }
-        public void redraw() { _redraw = true; }
-        //public void thread() { NotImpl(nameof(thread)); }
+        protected void exit() { NotImpl(nameof(exit), "This is probably not what you want to do."); exit(); }
+        protected void loop() { _loop = true; }
+        protected void noLoop() { _loop = false; }
+        //protected void popStyle() { NotImpl(nameof(popStyle)); }
+        //protected void pushStyle() { NotImpl(nameof(pushStyle)); }
+        protected void redraw() { _redraw = true; }
+        //protected void thread() { NotImpl(nameof(thread)); }
         #endregion
 
         #region Environment 
@@ -145,14 +145,14 @@ namespace Nebulator.Script
         public bool focused { get; internal set; }
         public int frameCount { get; internal set; } = 1;
         public int frameRate { get { return Context.FrameRate; } set { Context.FrameRate = value; } }
-        public void fullScreen() { NotImpl(nameof(fullScreen), "Size is fixed by main form."); }
+        public void fullScreen() { NotImpl(nameof(fullScreen), "Size is set by main form."); }
         public int height { get; internal set; }
         //public void noCursor() { NotImpl(nameof(noCursor)); }
         public void noSmooth() { _smooth = false; }
         public void pixelDensity(int density) { NotImpl(nameof(pixelDensity)); }
-        public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Fixed at 1."); return 1; } }
-        public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Fixed at 1."); return 1; } }
-        public void size(int width, int height) { NotImpl(nameof(size), "Size is fixed by main form."); }
+        public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Assume 1."); return 1; } }
+        public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Assume 1."); return 1; } }
+        public void size(int width, int height) { NotImpl(nameof(size), "Size is set by main form."); }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
         public int width { get; internal set; }
@@ -315,8 +315,8 @@ namespace Nebulator.Script
         #endregion
 
         #region Shape - Attributes
-        public void ellipseMode(int mode) { NotImpl(nameof(ellipseMode), "Fixed at CORNER mode."); }
-        public void rectMode(int mode) { NotImpl(nameof(rectMode), "Fixed at CORNER mode."); }
+        public void ellipseMode(int mode) { NotImpl(nameof(ellipseMode), "Assume CORNER mode."); }
+        public void rectMode(int mode) { NotImpl(nameof(rectMode), "Assume CORNER mode."); }
 
         public void strokeCap(int style)
         {
@@ -462,7 +462,7 @@ List<Point> _vertexes = new List<Point>();
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) { NotImpl(nameof(ellipseMode), "Use println()."); }
+        public void print(params object[] vars) { NotImpl(nameof(print), "Use println()."); }
         public void println(params object[] vars)
         {
             _logger.Info($"{SCRIPT_PRINT_PREFIX}{string.Join(" ", vars)}");
@@ -563,7 +563,7 @@ List<Point> _vertexes = new List<Point>();
 
         #region Color
         #region Color - Setting
-        public void background(int r, int g, int b, int a) { _bgColor = SafeColor(r, g, b, a); }
+        public void background(int r, int g, int b, int a) { _bgColor = SafeColor(r, g, b, a); _gr.Clear(_bgColor); }
         public void background(int r, int g, int b) { background(r, g, b, 255); }
         public void background(int gray) { background(gray, gray, gray, 255); }
         public void background(int gray, int a) { background(gray, gray, gray, a); }
@@ -572,7 +572,7 @@ List<Point> _vertexes = new List<Point>();
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
         //public void clear() { NotImpl(nameof(clear)); }
-        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "Fixed at RGB"); }
+        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "Assume RGB."); }
         public void fill(int r, int g, int b, int a) { _brush.Color = SafeColor(r, g, b, a); }
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }
@@ -634,7 +634,7 @@ List<Point> _vertexes = new List<Point>();
             _gr.DrawImage(img.image(), x1, y1, x2, y2);
         }
 
-        public void imageMode(int mode) { NotImpl(nameof(imageMode), "Fixed at CORNER mode."); }
+        public void imageMode(int mode) { NotImpl(nameof(imageMode), "Assume CORNER mode."); }
 
         public PImage loadImage(string filename)
         {

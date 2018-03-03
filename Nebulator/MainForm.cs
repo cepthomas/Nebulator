@@ -306,10 +306,22 @@ namespace Nebulator
 
                     // Show everything.
                     InitUi();
+
+
+
+
+                    // Surface area. xxxxxxxxxxxxxxxxxxxxxxx was in InitUi()
+                    surface.InitScript(_script);
+                    //ExecuteThrowingFunction(surface.UpdateSurface);
+
+
+
                     SetCompileStatus(true);
-                    WriteScriptContext();
-                    ExecuteThrowingFunction(_script.setup);
-                    ReadScriptContext();
+
+                    //xxxxxxxxxxxxxx these:
+                    //WriteScriptContext();
+                    //ExecuteThrowingFunction(_script.setup);
+                    //ReadScriptContext();
                 }
                 else
                 {
@@ -377,10 +389,6 @@ namespace Nebulator
             ///// Init the user input area.
             // Levers.
             levers.Init(ScriptEntities.Levers.Values);
-
-            // Surface area.
-            surface.InitScript(_script);
-            //ExecuteThrowingFunction(surface.UpdateSurface);
         }
 
         /// <summary>
@@ -459,6 +467,7 @@ namespace Nebulator
             // Reset controllers for next go around.
             _ctrlChanges.Clear();
 
+            // Share runtime info with script.
             WriteScriptContext();
 
             ////// Neb steps /////
@@ -513,6 +522,7 @@ namespace Nebulator
                 ExecuteThrowingFunction(surface.UpdateSurface);
             }
 
+            // See what the script did with runtime info.
             ReadScriptContext();
 
             // Process any lingering noteoffs.
