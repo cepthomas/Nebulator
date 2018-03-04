@@ -4,7 +4,6 @@
 // My akai kbd midi: Pad1-8 = 44-51, knob1-8 = ctlr1-8
 
 
-include ..\Examples\utils.neb
 include scale.neb
 
 
@@ -90,18 +89,14 @@ public override void setup()
     _algerian.SetWeight(4, 50);
     _algerian.SetWeight(2, 30);
 
-
-    // Test stuff.
-    int[] notes = getNotes("C4");
-    int[] scaleNotes = getScaleNotes("Algerian", "C4");
-
-
     if(winGm)
     {
         sendPatch(KEYS, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Pad3Polysynth);
     }
+
+    frameRate = 2;
 }
 
 public override void step()
@@ -115,8 +110,6 @@ public override void step()
     if(tock == 0)
     {
         algoDynamic();
-        //algoSequences();
-        //algoRandom();
     }
 }
 
@@ -126,11 +119,12 @@ void algoDynamic()
     //if(random(3) == 0)
     {
         int which = _algerian.RandomNote();
+        println(which);
 
         if(_notesPlaying[which] == 0) // don't play if already playing
         {
             //println("algoDynamic:", which);
-            int dur = random(1, 8);
+            int dur = random(1, 4);
             _notesPlaying[which] = tick + dur;
             sendMidiNote(SYNTH, which, random(80, 100), dur);
         }
@@ -141,14 +135,10 @@ void algoDynamic()
     {
         if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
         {
-            //sendMidiNote(SYNTH, _notesPlaying[i], 0, 0.00);
             _notesPlaying[i] = 0;
         }
     }
-}
 
-void algoSequences()
-{
     // if(tick % 9 == 0)
     // {
     //     playSequence(KEYS, SEQ1);
@@ -169,25 +159,16 @@ public void On_MODN()
 public override void draw()
 {
     //println("draw");
-    background(COL1, 100, 200);
 
-    // Recursive:
-    // drawRecursive(0, 0, width / 2, 1); // This uses a whole core with GDI.
+    background(150);
+
+    fill(COL1, 100, 200);
+
+    ellipse(random(50, width - 50), random(50, height - 50), random(50, 100), random(50, 100));
+
+    rect(random(50, width - 50), random(50, height - 50), random(50, 100), random(50, 100));
+
     // noLoop(); // run once only
-    // return;
-
-    drawTarget(width * 0.15f, height * 0.4f, 100, 4);
-    drawTarget(width * 0.5f, height * 0.5f, 300, 10);
-    drawTarget(width * 0.85f, height * 0.3f, 150, 6);    
-
-    if (mousePressedP)
-    {
-        println("mouse is pressed");
-        fill(random(255), random(255), random(255));
-        strokeWeight(2);
-        stroke(0, 100);
-        ellipse(mouseX, mouseY, 80, 80);
-    }
 }
 
 public override void mouseClicked()
@@ -195,39 +176,4 @@ public override void mouseClicked()
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, 55, 70);
     sendMidiNote(SYNTH, sn, 90, 0.48);
-}
-
-
-/////// Just a thing from Functions example.
-float _ypos = 0;
-int _c = 0;
-
-void drawTarget(float xloc, float yloc, int size, int num)
-{
-    int grayvalues = 255 / num;
-    float steps = size / num;
-    for (int i = 0; i < num; i++)
-    {
-        fill(i * grayvalues, num * 10, (_c * 1) % 255);
-        ellipse(xloc, yloc, size - i * steps, size - i * steps);
-        
-        //psychedelic:
-        _c++;
-    }
-}
-
-
-// Recursive rendering. CPU intensive.
-void drawRecursive(float x, float y, float squareSize, float minSize)
-{
-    rect(x, y, squareSize, squareSize);
-    rect(x + squareSize, y, squareSize, squareSize);
-    rect(x, y + squareSize, squareSize, squareSize);
-    
-    if (squareSize > minSize)
-    {
-        drawRecursive(x, y, squareSize / 2, minSize);
-        drawRecursive(x + squareSize, y, squareSize / 2, minSize);
-        drawRecursive(x, y + squareSize, squareSize / 2, minSize);
-    }
 }

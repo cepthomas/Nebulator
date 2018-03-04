@@ -1,6 +1,10 @@
 
 Stuff to implement (probably) in neb files. Make some "library" files.
 
+
+-------------------------
+Exquisite Score is a web application which allows users to collaborate on short musical compositions using the paradigm of the parlor game Exquisite Corpse. Through a MIDI-sequencer interface, composers each contribute a section to a piece of music, only seeing a brief fragment immediately preceding their section. Exquisite Score went through many iterations and was tested by several students and musicians. Several short pieces were produced, some of which are included and analyzed here. Exquisite Score succeeds in providing a new way to create collaborative musical compositions that celebrate the novel and creative.
+
 -------------------------
 Modulate to a specified key. Requires specifying current key too.
 

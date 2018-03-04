@@ -242,13 +242,11 @@ namespace Nebulator.Script
 
         public void ellipse(float x1, float y1, float w, float h)
         {
-            //x1 -= w;
-            //y1 -= h;
-            //_gr.FillEllipse(_brush, x1, y1, w * 2, h * 2);
+            // Convert to GDI coords.
             x1 -= w / 2;
             y1 -= h / 2;
             _gr.FillEllipse(_brush, x1, y1, w, h);
-            //_gr.FillEllipse(_brush, x1, y1, w, h);
+            _gr.DrawEllipse(_pen, x1, y1, w, h);
         }
 
         public void line(float x1, float y1, float x2, float y2)
@@ -280,7 +278,7 @@ namespace Nebulator.Script
 
         public void rect(float x1, float y1, float w, float h)
         {
-            _gr.FillRectangle(_brush, x1 - 0.5f, y1 - 0.5f, w, h);
+            _gr.FillRectangle(_brush, x1, y1, w, h);
             _gr.DrawRectangle(_pen, x1, y1, w, h);
         }
 

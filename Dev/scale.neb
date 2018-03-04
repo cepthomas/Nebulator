@@ -31,7 +31,7 @@ public class Scale
 
         // Recalc total weight.
         totalWeight = 0;
-        for(int i = 0;i < count;i++)
+        for(int i = 0; i < count; i++)
         {
             totalWeight += noteWeights[i];
         }        
@@ -43,7 +43,7 @@ public class Scale
         int r = s.random(totalWeight);
         int offset = 0;
 
-        for(int i = 0;i < count;i++)
+        for(int i = 0; i < count; i++)
         {
             offset += noteWeights[i];
             if(r < offset)

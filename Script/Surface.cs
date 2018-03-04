@@ -11,6 +11,9 @@ using System.Windows.Forms;
 using Nebulator.Common;
 
 
+//https://www.codeproject.com/Articles/1217543/The-astounding-Pickovers-biomorphs
+//Instead of using the SetPixel method of the Bitmap class, I have used an optimized way by using an array of integers containing the pixel colors. At the end of the process, this data is copied into the Bitmap using a single operation.
+
 namespace Nebulator.Script
 {
     /// <summary>
@@ -77,7 +80,6 @@ namespace Nebulator.Script
             if (_script != null && (_script._loop || _script._redraw))
             {
                 Draw();
-
                 Invalidate();
             }
         }
@@ -135,7 +137,7 @@ namespace Nebulator.Script
         /// <param name="e"></param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (_script != null && (_script._loop || _script._redraw))
+            if(_bitmap != null)
             {
                 e.Graphics.DrawImage(_bitmap, new Point(0, 0));
             }
