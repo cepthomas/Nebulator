@@ -86,7 +86,7 @@ public void On_MODF()
 
 public override void draw()
 {
-    background(COLOR, 100, 200);
+    background(COLOR, 100, 200); // means redraw the whole thing
     int dy = height / (loops.Count + 1);
     strokeCap(ROUND);
 
@@ -101,7 +101,7 @@ public override void draw()
         line(10, y, width - 10, y);
 
         // Draw ball.
-        int radius = 40;
+        int radius = 20;
         strokeWeight(3);
 
         int total = (loop.duration + loop.delay).TotalTocks;

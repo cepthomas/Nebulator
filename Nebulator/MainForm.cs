@@ -169,9 +169,9 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\gol.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
             //ExportMidi("test.mid");
 
@@ -512,9 +512,15 @@ namespace Nebulator
             if (e.ElapsedTimers.Contains("UI") && !_needCompile) // && chkPlay.Checked?
             {
                 // Measure and alert if too slow, or throttle.
-                //_tanUi.Arm();
+                //_tanTimer.Arm();
 
                 ExecuteThrowingFunction(surface.UpdateSurface);
+
+                //TimingAnalyzer.Stats stats = _tanTimer.Grab();
+                //if (stats != null)
+                //{
+                //    Console.WriteLine(stats.ToString());
+                //}
             }
 
             ///// Process whatever the script may have done. /////

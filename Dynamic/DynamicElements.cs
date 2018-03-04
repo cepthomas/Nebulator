@@ -10,18 +10,16 @@ using Nebulator.Midi;
 namespace Nebulator.Dynamic
 {
     /// <summary>
-    /// All the dynamic script stuff we might want at runtime. Essentially globals.
+    /// All the dynamic script stuff we might want at runtime. Essentially globals. TODO don't let this get too big.
     /// </summary>
     public class DynamicElements
     {
-        // TODO don't let this get too big.
-        //
         // DynamicElements refs
         //     Vars - Compiler
         //     InputMidis / OutputMidis / Levers / Sections / Sequences - Compiler, MainForm
         //     Tracks - Compiler, MainForm, NebScript
         //     NoteDefs - Compiler, Sequence, NebScript
-        //     These - MainForm, NebScript, NpScript
+        //     MainForm, NebScript, NpScript:
         //         StepTime, Playing, RealTime - Main -> Script
         //         Speed, Volume, FrameRate - Main -> Script -> Main
         //         RuntimeSteps - Script -> Main

@@ -154,7 +154,7 @@ namespace Nebulator.Script
         public void pixelDensity(int density) { NotImpl(nameof(pixelDensity)); }
         public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Assume 1."); return 1; } }
         public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Assume 1."); return 1; } }
-        public void size(int width, int height) { NotImpl(nameof(size), "Size is set by main form."); }
+        public void size(int w, int h) { NotImpl(nameof(size), "Size is set by main form."); }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
         public int width { get; internal set; }
@@ -240,12 +240,15 @@ namespace Nebulator.Script
             arc(x1, y1, x2, y2, angle1, angle2 - angle1, OPEN);
         }
 
-        public void ellipse(float x1, float y1, float width, float height)
+        public void ellipse(float x1, float y1, float w, float h)
         {
-            x1 -= width;
-            y1 -= height;
-            _gr.FillEllipse(_brush, x1, y1, width * 2, height *2);
-            //_gr.DrawEllipse(_pen, x1, y1, width, height);
+            //x1 -= w;
+            //y1 -= h;
+            //_gr.FillEllipse(_brush, x1, y1, w * 2, h * 2);
+            x1 -= w / 2;
+            y1 -= h / 2;
+            _gr.FillEllipse(_brush, x1, y1, w, h);
+            //_gr.FillEllipse(_brush, x1, y1, w, h);
         }
 
         public void line(float x1, float y1, float x2, float y2)
@@ -359,7 +362,7 @@ namespace Nebulator.Script
             }
         }
 
-        public void strokeWeight(int width) { _pen.Width = width; }
+        public void strokeWeight(int w) { _pen.Width = w; }
         #endregion
 
 
@@ -626,9 +629,8 @@ List<Point> _vertexes = new List<Point>();
         #region Image - Loading & Displaying
         public void image(PImage img, float x, float y)
         {
-            float width = img.image().Width;
-            float height = img.image().Height;
             _gr.DrawImageUnscaled(img.image(), (int)x, (int)y);
+            //_gr.DrawImage(img.image(), (int)x, (int)y, img.image().Width, img.image().Height);
         }
 
         public void image(PImage img, float x1, float y1, float x2, float y2)
@@ -659,7 +661,7 @@ List<Point> _vertexes = new List<Point>();
         //public void blend() { NotImpl(nameof(blend)); }
         //public void copy() { NotImpl(nameof(copy)); }
         //public void filter() { NotImpl(nameof(filter)); }
-        //public PImage get(int x, int y, int width, int height) { NotImpl(nameof(get)); }
+        //public PImage get(int x, int y, int w, int h) { NotImpl(nameof(get)); }
         //public color get(int x, int y) { NotImpl(nameof(get)); }
         //public void loadPixels() { NotImpl(nameof(loadPixels)); }
         //public void set(int x, int y, color pcolor) { NotImpl(nameof(set)); }

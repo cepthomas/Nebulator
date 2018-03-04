@@ -106,6 +106,9 @@ namespace Nebulator.Script
 
                     if(!_setupRun)
                     {
+                        _script.width = Width;
+                        _script.height = Height;
+                        _script.focused = Focused;
                         _script.setup();
                         _setupRun = true;
                         _script.frameCount = 0;

@@ -76,7 +76,10 @@ sequence  DRUMS_HH  8
 
 ///// Functions /////
 
+// Index is note number, value is when to stop it.
 int[] _notesPlaying = new int[128];
+
+// Test scale.
 Scale _algerian;
 
 public override void setup()
@@ -160,7 +163,6 @@ void algoSequences()
     // }
 }
 
-
 public void On_MODN()
 {
     println("MODN changed to", MODN);
@@ -182,7 +184,7 @@ public override void draw()
 
     if (mousePressedP)
     {
-        //println("mouse is pressed");
+        println("mouse is pressed");
         fill(random(255), random(255), random(255));
         strokeWeight(2);
         stroke(0, 100);
@@ -213,8 +215,9 @@ void drawTarget(float xloc, float yloc, int size, int num)
     {
         fill(i * grayvalues, num * 10, (_c * 1) % 255);
         ellipse(xloc, yloc, size - i * steps, size - i * steps);
+        
         //psychedelic:
-        //_c++;
+        _c++;
     }
 }
 

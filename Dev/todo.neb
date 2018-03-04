@@ -1,13 +1,8 @@
 
-
-
 Stuff to implement (probably) in neb files. Make some "library" files.
-
-
 
 -------------------------
 Modulate to a specified key. Requires specifying current key too.
-
 
 
 -------------------------
@@ -74,7 +69,7 @@ Pärt designed strict rules to control how the harmonic voices move with the mel
 
 In Tintinnabuli there are two dominant voices. The first voice or the "tintinnabular voice" sings or performs an arpeggio or the tonic triad. The second voice moves diatonically in a stepwise motion. One of the clearest and most famous examples of this is "Spiegel im Spiegel," seen above in the Gravity trailer.
 
-Für Alina (1976), the work in which he discovered the triad series, which he made his “simple, little guiding rule.” Describing the sound of the triad as like that of pealing bells
+Für Alina (1976), the work in which he discovered the triad series, which he made his “simple, little guiding rule.” Describing the sound of the triad as like that of pealing bells.
 
 -------------------------
 Between 1912 and 1922 Schoenberg came to realize that he was searching for a new method of composition that would provide a new basis for musical structure to replace the old basis of tonality, which he felt was being stretched and distorted too much to remain a unifying structural principle. Instead of using 1 or 2 tones as main points of focus for an entire composition (as key centres in tonal music), Schoenberg suggested using all 12 tones “related only to one another.” In such a system, unlike tonality, no notes would predominate as focal points, nor would any hierarchy of importance be assigned to the individual tones.
@@ -89,7 +84,6 @@ Twelve-tone music is an example of serialism (q.v.) in music.
 Serialism, in music, technique that has been used in some musical compositions roughly since World War I. Strictly speaking, a serial pattern in music is merely one that repeats over and over for a significant stretch of a composition. In this sense, some medieval composers wrote serial music, because they made use of isorhythm, which is a distinct rhythmic pattern that repeats many times regardless of what melodies it belongs to. Another pre-20th-century example of serialism is the ground bass, a pattern of harmonies or of melody that repeats, most often in the lower vocal or instrumental parts of a composition. Countless numbers of composers have written music with a ground bass. The term serial music is often used interchangeably with 12-tone music (q.v.), but the latter is more properly an example of the former.
 
 
-
 -------------------------
 
 Support microtonal notes with Pitch changes:
@@ -102,15 +96,13 @@ RPN MSB = 0: Bn 65 00
 Data MSB: Bn 06 mm (mm sets bend range in semitones. mm can be from 00 to 18 for 0 to 24 (+/- 12) semitones both up and down) 
 Data LSB=0 (usually not required): Bn 26 00
 So to set Pitch Bend Range to +/- 12 semitones:
-HEX        ;  DECIMAL
-Bn 65 00 ; 101  00 MSB
+HEX      ; DECIMAL
+Bn 65 00 ; 101 00 MSB
 Bn 64 00 ; 100 00 LSB
-Bn 06 18 ; 06 24 MSB
-Bn 26 00 ; 38 00 LSB
+Bn 06 18 ;  06 24 MSB
+Bn 26 00 ;  38 00 LSB
 
 RPN & NRPN Reset:
 RPN LSB = 7F: Bn 64 7F 
 RPN MSB = 7F: Bn 65 7F 
 Send this alone (no data messages) immediately after all other RPN and NRPN messages have been sent.          
-
-

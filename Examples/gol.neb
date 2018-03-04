@@ -1,6 +1,5 @@
 
-// Game of life.
-// https://processing.org/examples/gameoflife.html
+// Game of life from https://processing.org/examples/gameoflife.html
 
 // Size of cells
 int cellSize = 5;
