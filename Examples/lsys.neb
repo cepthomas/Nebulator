@@ -19,7 +19,7 @@ List<Point> lines = new List<Point>();
 public override void setup()
 {
     genLSys(-1.359672, -0.138235, INITANG, 14.11);
-    println("setup()");
+    print("setup()");
     noLoop();
 }
 
@@ -37,10 +37,10 @@ public override void draw()
 
 public void On_INITANG()
 {
-    println("On_INITANG", INITANG);
+    print("On_INITANG", INITANG);
     genLSys(-1.359672, -0.138235, INITANG, 14.11);
     redraw();
-    //println("On_INITANG()", _loop);
+    //print("On_INITANG()", _loop);
 }
 
 public override void mouseClicked()

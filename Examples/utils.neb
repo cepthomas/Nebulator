@@ -11,7 +11,7 @@ bool boing(int notenum = 0)
 {
     bool boinged = false;
 
-    // println("boing");
+    // print("boing");
     if(notenum == 0)
     {
         notenum = (int)random(30, MAX);

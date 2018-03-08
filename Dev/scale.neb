@@ -6,7 +6,7 @@ public class Scale
     public int count = 0;
     int[] scaleNotes;
     int[] noteWeights;
-    int totalWeight = 0;
+    int totalWeight = 100;
 
     public Scale(string scale, string root)
     {
@@ -14,11 +14,10 @@ public class Scale
         count = scaleNotes.Count();
         noteWeights = new int[count];
 
-        // Default weights.
+        // Set default weights.
         for(int i = 0; i < count; i++)
         {
             noteWeights[i] = 100 / count;
-            totalWeight += noteWeights[i];
         }        
     }
 
@@ -41,6 +40,7 @@ public class Scale
     {
         int note = 0;
         int r = s.random(totalWeight);
+        s.print(">>>", r);
         int offset = 0;
 
         for(int i = 0; i < count; i++)

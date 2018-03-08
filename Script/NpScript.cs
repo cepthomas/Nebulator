@@ -146,7 +146,8 @@ namespace Nebulator.Script
         //public int displayDensity() { NotImpl(nameof(displayDensity)); }
         public bool focused { get; internal set; }
         public int frameCount { get; internal set; } = 1;
-        public int frameRate { get { return DynamicElements.FrameRate; } set { DynamicElements.FrameRate = value; } }
+        public int frameRate() { return DynamicElements.FrameRate; }
+        public void frameRate(int num) { DynamicElements.FrameRate = num; }
         public void fullScreen() { NotImpl(nameof(fullScreen), "Size is set by main form."); }
         public int height { get; internal set; }
         //public void noCursor() { NotImpl(nameof(noCursor)); }
@@ -408,7 +409,7 @@ List<Point> _vertexes = new List<Point>();
         #region Input
         #region Input - Mouse
         //---- Script properties
-        public bool mousePressedP { get; internal set; } = false;
+        public bool mouseIsPressed { get; internal set; } = false;
         public int mouseButton { get; internal set; } = LEFT;
         public int mouseWheelValue { get; internal set; } = 0;
         public int mouseX { get; internal set; } = 0;
@@ -428,7 +429,7 @@ List<Point> _vertexes = new List<Point>();
         //---- Script properties
         public char key { get; internal set; } = ' ';
         public int keyCode { get; internal set; } = 0;
-        public bool keyPressedP { get; internal set; } = false;
+        public bool keyIsPressed { get; internal set; } = false;
         //---- Function overrides
         public virtual void keyPressed() { }
         public virtual void keyReleased() { }
@@ -465,8 +466,8 @@ List<Point> _vertexes = new List<Point>();
 
         #region Output
         #region Output - Text Area
-        public void print(params object[] vars) { NotImpl(nameof(print), "Use println()."); }
-        public void println(params object[] vars)
+        //public void println(params object[] vars) { NotImpl(nameof(print), "Use print()."); }
+        public void print(params object[] vars)
         {
             _logger.Info($"{SCRIPT_PRINT_PREFIX}{string.Join(" ", vars)}");
         }
@@ -575,7 +576,7 @@ List<Point> _vertexes = new List<Point>();
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
         //public void clear() { NotImpl(nameof(clear)); }
-        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "Assume RGB."); }
+        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "TODO implement HSB. Assume RGB."); }
         public void fill(int r, int g, int b, int a) { _brush.Color = SafeColor(r, g, b, a); }
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }

@@ -39,14 +39,14 @@ void testStuff()
 {
     int[] vals = { 1, 2, 3, 4, 5 };
 
-    println("println()", vals[2]);
-    print("println", vals[4]);
+    print("print()", vals[2]);
+    print("print", vals[4]);
     printArray(vals);
 }
 
 public override void keyPressed()
 {
-    println(key);
+    print(key);
 }
 
 ////////////// bezier /////////////////////
@@ -70,7 +70,7 @@ void draw_bezier()
 ///////////////////// force fail /////////////////////////////////
 void setup_force_fail()
 {
-    println("setup_force_fail()");
+    print("setup_force_fail()");
     int x = 1;
     int y = 0;
     int z = x / y;
@@ -78,7 +78,7 @@ void setup_force_fail()
 
 void draw_force_fail()
 {
-    println("draw_force_fail()");
+    print("draw_force_fail()");
     int x = 1;
     int y = 0;
     int z = x / y;
@@ -86,7 +86,7 @@ void draw_force_fail()
 
 public override void step()
 {
-    //println("step()");
+    //print("step()");
     int x = 1;
     int y = 0;
     //int z = x / y;
@@ -115,9 +115,9 @@ void draw_ball()
     fill(c);
     ellipse(posX, posY, ballSize, ballSize);
 
-    if (mousePressedP)
+    if (mouseIsPressed)
     {
-        //println("mouse is pressed");
+        //print("mouse is pressed");
         fill(random(255), random(255), random(255));
         strokeWeight(2);
         stroke(0, 100);
@@ -215,7 +215,7 @@ void setup_radial_gradient()
     colorMode(HSB, 360, 100, 100);
     noStroke();
     ellipseMode(RADIUS);
-    frameRate = 1;
+    frameRate(1);
 }
 
 void draw_radial_gradient()
@@ -354,7 +354,7 @@ void draw_pointillism()
 void setup_random_gaussian()
 {
     //size(640, 360);
-    frameRate = 5; // added 
+    frameRate(5); // added 
     background(0);
 }
 
@@ -383,7 +383,7 @@ void setup_loadfiles1()
     size(200, 200);
     background(0);
     stroke(255);
-    frameRate = 12;
+    frameRate(12);
     lines = loadStrings("positions.txt");
 }
 

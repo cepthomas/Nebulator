@@ -14,6 +14,9 @@ using Nebulator.Midi;
 using Nebulator.Dynamic;
 
 
+// TODO Get rid of the s. rqmt: ScriptSyntax.md: s.print("DoIt got:", val); Needs roslyn.
+
+
 namespace Nebulator
 {
     public partial class MainForm : Form
@@ -199,8 +202,8 @@ namespace Nebulator
                     _nebpVals.Clear();
                     _nebpVals.SetValue("master", "volume", sldVolume.Value);
                     _nebpVals.SetValue("master", "speed", potSpeed.Value);
-                    _nebpVals.SetValue("master", "loop", chkLoop.Checked);
-                    _nebpVals.SetValue("master", "sequence", chkSequence.Checked);
+                    _nebpVals.SetValue("master", "sequence", chkSeq.Checked);
+                    _nebpVals.SetValue("master", "ui", chkUi.Checked);
 
                     DynamicElements.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
@@ -369,8 +372,8 @@ namespace Nebulator
             ///// Init other controls.
             potSpeed.Value = Convert.ToInt32(_nebpVals.GetValue("master", "speed"));
             int mv = Convert.ToInt32(_nebpVals.GetValue("master", "volume"));
-            chkLoop.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "loop"));
-            chkSequence.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "sequence"));
+            chkSeq.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "sequence"));
+            chkUi.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "ui"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
@@ -477,31 +480,24 @@ namespace Nebulator
                 DynamicElements.RuntimeSteps.DeleteSteps(_stepTime);
 
                 // Now do the compiled steps.
-                if (chkSequence.Checked)
+                if (chkSeq.Checked)
                 {
                     _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                 }
-                timeMaster.ShowProgress = chkSequence.Checked;
+                timeMaster.ShowProgress = chkSeq.Checked;
 
                 ///// Bump time.
                 _stepTime.Advance();
 
                 ////// Check for end of play.
                 // If no steps or not selected, free running mode so always keep going.
-                if(_compiledSteps.Times.Count() != 0 && chkSequence.Checked)
+                if(_compiledSteps.Times.Count() != 0 && chkSeq.Checked)
                 {
                     // Check for end and loop condition.
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
-                        if (chkLoop.Checked) // keep going
-                        {
-                            SetPlayStatus(PlayCommand.Rewind);
-                        }
-                        else // stop now
-                        {
-                            SetPlayStatus(PlayCommand.StopRewind);
-                            MidiInterface.TheInterface.KillAll(); // just in case
-                        }
+                        SetPlayStatus(PlayCommand.StopRewind);
+                        MidiInterface.TheInterface.KillAll(); // just in case
                     }
                 }
                 // else keep going
@@ -510,7 +506,7 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            if (e.ElapsedTimers.Contains("UI") && !_needCompile) // && chkPlay.Checked?
+            if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && chkUi.Checked && !_needCompile) // TODO && chkPlay.Checked? A flag or pref or prop to start/stop UI with the play button?
             {
                 // Measure and alert if too slow, or throttle.
                 //_tanTimer.Arm();
@@ -1202,17 +1198,15 @@ namespace Nebulator
 
             btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
 
-            chkLoop.Image = Utils.ColorizeBitmap(chkLoop.Image, UserSettings.TheSettings.IconColor);
-            chkLoop.BackColor = UserSettings.TheSettings.BackColor;
-            chkLoop.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-
             chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            chkSequence.Image = Utils.ColorizeBitmap(chkSequence.Image, UserSettings.TheSettings.IconColor);
-            chkSequence.BackColor = UserSettings.TheSettings.BackColor;
-            chkSequence.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+            chkSeq.BackColor = UserSettings.TheSettings.BackColor;
+            chkSeq.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+
+            chkUi.BackColor = UserSettings.TheSettings.BackColor;
+            chkUi.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
             potSpeed.ControlColor = UserSettings.TheSettings.IconColor;
             potSpeed.Font = UserSettings.TheSettings.ControlFont;

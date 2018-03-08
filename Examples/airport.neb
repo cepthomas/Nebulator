@@ -43,7 +43,7 @@ List<TapeLoop> loops = new List<TapeLoop>();
 
 public override void setup()
 {
-    println("setup()");
+    print("setup()");
 
     loops.Clear();
     // Key is Ab.
@@ -80,7 +80,7 @@ public override void step()
 
 public void On_MODF()
 {
-    println("MODF changed to", MODF);
+    print("MODF changed to", MODF);
     //modulate(SOUND, MODF);
 }
 

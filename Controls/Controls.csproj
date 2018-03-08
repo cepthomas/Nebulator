@@ -117,9 +117,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Image1.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\glyphicons-114-justify.png" />
   </ItemGroup>
   <ItemGroup>

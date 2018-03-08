@@ -79,15 +79,15 @@ sequence  DRUMS_HH  8
 int[] _notesPlaying = new int[128];
 
 // Test scale.
-Scale _algerian;
+Scale _scale;
 
 public override void setup()
 {
-    _algerian = new Scale("Algerian", "C4");
+    _scale = new Scale("Algerian", "C4");
     // 1 2 b3 #4 5 b6 7
-    _algerian.SetWeight(0, 50);
-    _algerian.SetWeight(4, 50);
-    _algerian.SetWeight(2, 30);
+    _scale.SetWeight(0, 50);
+    _scale.SetWeight(4, 50);
+    _scale.SetWeight(2, 30);
 
     if(winGm)
     {
@@ -96,17 +96,12 @@ public override void setup()
         sendPatch(SYNTH, Pad3Polysynth);
     }
 
-    frameRate = 2;
+    frameRate(2);
+    background(150);
 }
 
 public override void step()
 {
-    // if(tick == 5)
-    // {
-    //     speed = 50;
-    //     volume = 50;
-    // }
-
     if(tock == 0)
     {
         algoDynamic();
@@ -118,12 +113,12 @@ void algoDynamic()
 {
     //if(random(3) == 0)
     {
-        int which = _algerian.RandomNote();
-        println(which);
+        int which = _scale.RandomNote();
+        print(which);
 
         if(_notesPlaying[which] == 0) // don't play if already playing
         {
-            //println("algoDynamic:", which);
+            //print("algoDynamic:", which);
             int dur = random(1, 4);
             _notesPlaying[which] = tick + dur;
             sendMidiNote(SYNTH, which, random(80, 100), dur);
@@ -152,15 +147,15 @@ void algoDynamic()
 
 public void On_MODN()
 {
-    println("MODN changed to", MODN);
+    print("MODN changed to", MODN);
     modulate(KEYS, MODN);
 }
 
 public override void draw()
 {
-    //println("draw");
+    //print("draw");
 
-    background(150);
+    // background(150);
 
     fill(COL1, 100, 200);
 

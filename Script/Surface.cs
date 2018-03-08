@@ -154,7 +154,7 @@ namespace Nebulator.Script
             if(_script != null)
             {
                 ProcessMouseEvent(e);
-                _script.mousePressedP = true;
+                _script.mouseIsPressed = true;
                 _script.mousePressed();
             }
             base.OnMouseDown(e);
@@ -169,7 +169,7 @@ namespace Nebulator.Script
             if (_script != null)
             {
                 ProcessMouseEvent(e);
-                _script.mousePressedP = false;
+                _script.mouseIsPressed = false;
                 _script.mouseReleased();
             }
             base.OnMouseUp(e);
@@ -184,7 +184,7 @@ namespace Nebulator.Script
             if (_script != null)
             {
                 ProcessMouseEvent(e);
-                if (_script.mousePressedP)
+                if (_script.mouseIsPressed)
                 {
                     _script.mouseDragged();
                 }
@@ -256,7 +256,7 @@ namespace Nebulator.Script
         {
             if (_script != null)
             {
-                _script.keyPressedP = false;
+                _script.keyIsPressed = false;
 
                 // Decode character, maybe.
                 var v = Utils.KeyToChar(e.KeyCode, e.Modifiers);
@@ -265,7 +265,7 @@ namespace Nebulator.Script
                 if (_script.key != 0)
                 {
                     // Valid character.
-                    _script.keyPressedP = true;
+                    _script.keyIsPressed = true;
                     // Notify client.
                     _script.keyPressed();
                 }
@@ -280,7 +280,7 @@ namespace Nebulator.Script
         {
             if (_script != null)
             {
-                _script.keyPressedP = false;
+                _script.keyIsPressed = false;
 
                 // Decode character, maybe.
                 var v = Utils.KeyToChar(e.KeyCode, e.Modifiers);
@@ -289,7 +289,7 @@ namespace Nebulator.Script
                 if (_script.key != 0)
                 {
                     // Valid character.
-                    _script.keyPressedP = false;
+                    _script.keyIsPressed = false;
                     // Notify client.
                     _script.keyReleased();
                     // Now reset keys.
