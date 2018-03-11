@@ -12,11 +12,11 @@ public override void setup()
 
     // setup_force_fail();
     // setup_bezier();
-    // setup_radial_gradient();
+    setup_radial_gradient();
     // setup_sine_cosine();
     // setup_random_gaussian();
     // setup_loadfiles1();
-    setup_pointillism();
+    // setup_pointillism();
 }
 
 public override void draw()
@@ -24,13 +24,13 @@ public override void draw()
     // draw_force_fail();
     // draw_ball();
     // draw_bezier();
-    // draw_radial_gradient();
+    draw_radial_gradient();
     // draw_regular_polygon();
     // draw_sine_cosine();
     // draw_random_gaussian();
     // draw_embedded_iteration();
     // draw_loadfiles1();
-    draw_pointillism();
+    // draw_pointillism();
 }
 
 
@@ -237,7 +237,6 @@ void draw_radial_gradient()
 
 void drawGradient(float x, float y)
 {
-    int radius = dim / 2;
 
     // Was  >>>>
     // int h = random(0, 360);
@@ -248,13 +247,23 @@ void drawGradient(float x, float y)
     //     h = (h + 1) % 360;
     // }
 
-    // Not really right, based on HSB.
-    int h = random(0, 255);
+    // // Not really right, based on HSB.
+    // int radius = dim / 2;
+    // int h = random(0, 255);
+    // for (int r = radius; r > 0; --r)
+    // {
+    //     fill((h % 255), (h + 85) % 255, (h + 170) % 255);
+    //     ellipse(x, y, r, r);
+    //     h++;
+    // }
+
+    int radius = dim / 2;
+    int h = random(0, 360);
     for (int r = radius; r > 0; --r)
     {
-        fill((h % 255), (h + 85) % 255, (h + 170) % 255);
+        fill(h, 90, 90);
         ellipse(x, y, r, r);
-        h++;
+        h = (h + 1) % 360;
     }
 }
 

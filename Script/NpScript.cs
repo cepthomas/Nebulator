@@ -59,11 +59,6 @@ namespace Nebulator.Script
         internal Graphics _gr = null;
         #endregion
 
-        #region Constants
-        /// <summary>Flag for printX() output text.</summary>
-        public const string SCRIPT_PRINT_PREFIX = "print: ";
-        #endregion
-
         #region Definitions - same values as Processing
         //---- Math
         public const float QUARTER_PI = (float)(Math.PI / 4.0);
@@ -108,9 +103,9 @@ namespace Nebulator.Script
         public const int BEVEL = 32;
         //---- Color mode
         public const int RGB = 1;
-        public const int ARGB = 2;
+        //public const int ARGB = 2;
         public const int HSB = 3;
-        public const int ALPHA = 4;
+        //public const int ALPHA = 4;
         //---- Cursor types
         public const int ARROW = 0;
         public const int CROSS = 1;
@@ -469,13 +464,13 @@ List<Point> _vertexes = new List<Point>();
         //public void println(params object[] vars) { NotImpl(nameof(print), "Use print()."); }
         public void print(params object[] vars)
         {
-            _logger.Info($"{SCRIPT_PRINT_PREFIX}{string.Join(" ", vars)}");
+            _logger.Info($"print: {string.Join(" ", vars)}");
         }
         public void printArray(Array what)
         {
             for (int i = 0; i < what.Length; i++)
             {
-                _logger.Info($"{SCRIPT_PRINT_PREFIX}[{i}] {what.GetValue(i)}");
+                _logger.Info($"array[{i}]: {what.GetValue(i)}");
             }
         }
         #endregion
@@ -571,18 +566,18 @@ List<Point> _vertexes = new List<Point>();
         public void background(int r, int g, int b) { background(r, g, b, 255); }
         public void background(int gray) { background(gray, gray, gray, 255); }
         public void background(int gray, int a) { background(gray, gray, gray, a); }
-        public void background(color pcolor) { background(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, 255); }
+        public void background(color pcolor) { background(pcolor.R, pcolor.G, pcolor.B, 255); }
         public void background(string pcolor) { background(new color(pcolor)); }
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
         public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
-        //public void clear() { NotImpl(nameof(clear)); }
-        public void colorMode(int mode, int max1, int max2 = 0, int max3 = 0, int maxA = 0) { NotImpl(nameof(colorMode), "TODO implement HSB. Assume RGB."); }
+        public void colorMode(int mode, float max = 255) { ColorModeX.ColorMode = new ColorModeX() { mode = mode, max1 = max, max2 = max, max3 = max, maxA = max }; }
+        public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { ColorModeX.ColorMode = new ColorModeX() { mode = mode, max1 = max1, max2 = max2, max3 = max3, maxA = maxA }; }
         public void fill(int r, int g, int b, int a) { _brush.Color = SafeColor(r, g, b, a); }
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }
         public void fill(int gray, int a) { fill(gray, gray, gray, a); }
         public void fill(color pcolor) { _brush.Color = pcolor.NativeColor; _pen.Color = pcolor.NativeColor; }
-        public void fill(color pcolor, int a) { fill(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, a); }
+        public void fill(color pcolor, int a) { fill(pcolor.R, pcolor.G, pcolor.B, a); }
         public void fill(string scolor) { fill(scolor); }
         public void fill(string scolor, int a) { fill(new color(scolor), a); }
         public void noFill() { _brush.Color = Color.Transparent; }
@@ -592,31 +587,31 @@ List<Point> _vertexes = new List<Point>();
         public void stroke(int gray) { stroke(gray, gray, gray, 255); }
         public void stroke(int gray, int a) { stroke(gray, gray, gray, a); }
         public void stroke(color pcolor) { _pen.Color = pcolor.NativeColor; } 
-        public void stroke(color pcolor, int a) { stroke(pcolor.NativeColor.R, pcolor.NativeColor.G, pcolor.NativeColor.B, a); }
+        public void stroke(color pcolor, int a) { stroke(pcolor.R, pcolor.G, pcolor.B, a); }
         public void stroke(string scolor) { stroke(new color(scolor)); }
         public void stroke(string scolor, int a) { stroke(new color(scolor), a); }
         #endregion
 
         #region Color - Creating & Reading
-        public color color(int r, int g, int b) { return new color(r, g, b); }
-        public color color(int gray) { return new color(gray); }
-        public int alpha(color color) { return color.NativeColor.A; }
-        public int blue(color color) { return color.NativeColor.B; }
-        public float brightness(color color) { return color.NativeColor.GetBrightness(); }
-        public int green(color color) { return color.NativeColor.G; }
-        public float hue(color color) { return color.NativeColor.GetHue(); }
-        public int red(color color) { return color.NativeColor.R; }
-        public float saturation(color color) { return color.NativeColor.GetSaturation(); }
+        public color color(float v1, float v2, float v3, float a = 255) { return new color(v1, v2, v3, a); }
+        public color color(float gray, float a = 255) { return new color(gray, a); }
+        public int alpha(color color) { return color.A; }
+        public int blue(color color) { return color.B; }
+        public float brightness(color color) { return color.Brightness; }
+        public int green(color color) { return color.G; }
+        public float hue(color color) { return color.Hue; }
+        public int red(color color) { return color.R; }
+        public float saturation(color color) { return color.Saturation; }
 
         // Calculates a color between two colors at a specific increment. The amt parameter is the amount to interpolate between the two values where 0.0 is equal to the first point, 0.1 is very near the first point, 0.5 is halfway in between, etc. 
         // An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped at 1. This is different from the behavior of lerp(), but necessary because otherwise numbers outside the range will produce strange and unexpected colors.
         public color lerpColor(color c1, color c2, float amt)
         {
             amt = constrain(amt, 0, 1);
-            int r = (int)lerp(c1.NativeColor.R, c2.NativeColor.R, amt);
-            int b = (int)lerp(c1.NativeColor.B, c2.NativeColor.B, amt);
-            int g = (int)lerp(c1.NativeColor.G, c2.NativeColor.G, amt);
-            int a = (int)lerp(c1.NativeColor.A, c2.NativeColor.A, amt);
+            float r = lerp(c1.R, c2.R, amt);
+            float b = lerp(c1.B, c2.B, amt);
+            float g = lerp(c1.G, c2.G, amt);
+            float a = lerp(c1.A, c2.A, amt);
             return new color(r, g, b, a);
         }
         #endregion
@@ -656,6 +651,7 @@ List<Point> _vertexes = new List<Point>();
         #endregion
 
         #region Image - Pixels
+        // Even though you may have drawn a shape with colorMode(HSB), the numbers returned will be in RGB format.
         // pixels[]
         //public void blend() { NotImpl(nameof(blend)); }
         //public void copy() { NotImpl(nameof(copy)); }

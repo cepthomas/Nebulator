@@ -261,46 +261,6 @@ namespace Nebulator.Common
         }
         #endregion
 
-        #region Colors
-        /// <summary>
-        /// Mix two colors.
-        /// </summary>
-        /// <param name="one"></param>
-        /// <param name="two"></param>
-        /// <returns></returns>
-        public static Color HalfMix(Color one, Color two)
-        {
-            return Color.FromArgb(
-                (one.A + two.A) >> 1,
-                (one.R + two.R) >> 1,
-                (one.G + two.G) >> 1,
-                (one.B + two.B) >> 1);
-        }
-
-        /// <summary>Helper to get next contrast color in the sequence. From http://colorbrewer2.org qualitative.</summary>
-        /// <param name="i"></param>
-        /// <param name="dark">Dark or light series, usually dark.</param>
-        /// <returns></returns>
-        public static Color GetColor(int i, bool dark = true)
-        {
-            Color col = Color.Black;
-
-            switch(i % 8)
-            {
-                case 0: col = dark ? Color.FromArgb(27, 158, 119) : Color.FromArgb(141, 211, 199); break;
-                case 1: col = dark ? Color.FromArgb(217, 95, 2) : Color.FromArgb(255, 255, 179); break;
-                case 2: col = dark ? Color.FromArgb(117, 112, 179) : Color.FromArgb(190, 186, 218); break;
-                case 3: col = dark ? Color.FromArgb(231, 41, 138) : Color.FromArgb(251, 128, 114); break;
-                case 4: col = dark ? Color.FromArgb(102, 166, 30) : Color.FromArgb(128, 177, 211); break;
-                case 5: col = dark ? Color.FromArgb(230, 171, 2) : Color.FromArgb(253, 180, 98); break;
-                case 6: col = dark ? Color.FromArgb(166, 118, 29) : Color.FromArgb(179, 222, 105); break;
-                case 7: col = dark ? Color.FromArgb(102, 102, 102) : Color.FromArgb(252, 205, 229); break;
-            }
-
-            return col;
-        }
-        #endregion
-
         #region Image processing
         /// <summary>Resize the image to the specified width and height.</summary>
         /// <param name="image">The image to resize.</param>
@@ -361,6 +321,46 @@ namespace Nebulator.Common
         }
         #endregion
 
+        #region Colors - from Utils
+        /// <summary>
+        /// Mix two colors.
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public static Color HalfMix(Color one, Color two)
+        {
+            return Color.FromArgb(
+                (one.A + two.A) >> 1,
+                (one.R + two.R) >> 1,
+                (one.G + two.G) >> 1,
+                (one.B + two.B) >> 1);
+        }
+
+        /// <summary>Helper to get next contrast color in the sequence. From http://colorbrewer2.org qualitative.</summary>
+        /// <param name="i"></param>
+        /// <param name="dark">Dark or light series, usually dark.</param>
+        /// <returns></returns>
+        public static Color GetSequenceColor(int i, bool dark = true)
+        {
+            Color col = Color.Black;
+
+            switch (i % 8)
+            {
+                case 0: col = dark ? Color.FromArgb(27, 158, 119) : Color.FromArgb(141, 211, 199); break;
+                case 1: col = dark ? Color.FromArgb(217, 95, 2) : Color.FromArgb(255, 255, 179); break;
+                case 2: col = dark ? Color.FromArgb(117, 112, 179) : Color.FromArgb(190, 186, 218); break;
+                case 3: col = dark ? Color.FromArgb(231, 41, 138) : Color.FromArgb(251, 128, 114); break;
+                case 4: col = dark ? Color.FromArgb(102, 166, 30) : Color.FromArgb(128, 177, 211); break;
+                case 5: col = dark ? Color.FromArgb(230, 171, 2) : Color.FromArgb(253, 180, 98); break;
+                case 6: col = dark ? Color.FromArgb(166, 118, 29) : Color.FromArgb(179, 222, 105); break;
+                case 7: col = dark ? Color.FromArgb(102, 102, 102) : Color.FromArgb(252, 205, 229); break;
+            }
+
+            return col;
+        }
+        #endregion
+
         #region Math helpers
         /// <summary>Conversion.</summary>
         /// <param name="angle"></param>
@@ -388,6 +388,20 @@ namespace Nebulator.Common
         /// <param name="stop2"></param>
         /// <returns></returns>
         public static double Map(double val, double start1, double stop1, double start2, double stop2)
+        {
+            return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1);
+        }
+
+        /// <summary>
+        /// Remap a value to new coordinates.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="start1"></param>
+        /// <param name="stop1"></param>
+        /// <param name="start2"></param>
+        /// <param name="stop2"></param>
+        /// <returns></returns>
+        public static int Map(int val, int start1, int stop1, int start2, int stop2)
         {
             return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1);
         }
@@ -463,6 +477,20 @@ namespace Nebulator.Common
         /// <param name="max"></param>
         /// <returns></returns>
         public static double Constrain(double val, double min, double max)
+        {
+            val = Math.Max(val, min);
+            val = Math.Min(val, max);
+            return val;
+        }
+
+        /// <summary>
+        /// Bounds limits a value.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static float Constrain(float val, float min, float max)
         {
             val = Math.Max(val, min);
             val = Math.Min(val, max);
@@ -619,7 +647,7 @@ namespace Nebulator.Common
         {
             var btn = e.Item as ToolStripButton;
 
-            if(!(btn is null) && btn.CheckOnClick && btn.Checked)
+            if (!(btn is null) && btn.CheckOnClick && btn.Checked)
             {
                 Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
                 e.Graphics.FillRectangle(new SolidBrush(UserSettings.TheSettings.SelectedColor), bounds);

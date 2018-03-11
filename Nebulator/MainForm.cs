@@ -14,7 +14,7 @@ using Nebulator.Midi;
 using Nebulator.Dynamic;
 
 
-// TODO Get rid of the s. rqmt: ScriptSyntax.md: s.print("DoIt got:", val); Needs roslyn.
+// TODO Get rid of the s. rqmt: ScriptSyntax.md: s.print("DoIt got:", val); Needs roslyn! Then use using static stmt.
 
 
 namespace Nebulator
@@ -153,6 +153,9 @@ namespace Nebulator
 
             // Intercept all keyboard events.
             KeyPreview = true;
+
+            // Catches runtime errors during drawing.
+            surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessRuntimeError(eargs); };
             #endregion
 
             #region Command line
@@ -164,9 +167,6 @@ namespace Nebulator
             }
             #endregion
 
-            // Catches runtime errors during drawing.
-            surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessRuntimeError(eargs); };
-
             #region Debug stuff
 #if _DEV
             //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
@@ -174,8 +174,8 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
             //ExportMidi("test.mid");
 
@@ -506,7 +506,7 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && chkUi.Checked && !_needCompile) // TODO && chkPlay.Checked? A flag or pref or prop to start/stop UI with the play button?
+            if (e.ElapsedTimers.Contains("UI") /*&& chkPlay.Checked*/ && chkUi.Checked && !_needCompile)
             {
                 // Measure and alert if too slow, or throttle.
                 //_tanTimer.Arm();

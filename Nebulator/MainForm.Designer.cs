@@ -215,7 +215,7 @@
             this.chkUi.Size = new System.Drawing.Size(21, 19);
             this.chkUi.TabIndex = 40;
             this.chkUi.Text = "U";
-            this.toolTip.SetToolTip(this.chkUi, "Graphics run when play is pushed");
+            this.toolTip.SetToolTip(this.chkUi, "Run graphics continuously");
             this.chkUi.UseVisualStyleBackColor = true;
             // 
             // btnCompile

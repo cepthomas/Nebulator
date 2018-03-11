@@ -114,7 +114,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>Bounds check a color definition.
-        Color SafeColor(int r, int g, int b, int a)
+        Color SafeColor(int r, int g, int b, int a) // TODO relo?
         {
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
