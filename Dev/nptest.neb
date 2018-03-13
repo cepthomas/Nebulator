@@ -212,6 +212,7 @@ void setup_radial_gradient()
     //size(640, 360);
     dim = width / 2;
     background(100);
+    //colorMode(RGB, 255, 100, 100);
     colorMode(HSB, 360, 100, 100);
     noStroke();
     ellipseMode(RADIUS);
@@ -237,8 +238,8 @@ void draw_radial_gradient()
 
 void drawGradient(float x, float y)
 {
-
     // Was  >>>>
+    // int radius = dim / 2;
     // int h = random(0, 360);
     // for (int r = radius; r > 0; --r)
     // {
@@ -259,10 +260,14 @@ void drawGradient(float x, float y)
 
     int radius = dim / 2;
     int h = random(0, 360);
-    for (int r = radius; r > 0; --r)
+
+    fill(h, 90, 90);
+    ellipse(x, y, dim, dim);
+
+    for (int r = radius; r > 0; r-=1)
     {
         fill(h, 90, 90);
-        ellipse(x, y, r, r);
+        ellipse(x, y, dim, dim);
         h = (h + 1) % 360;
     }
 }

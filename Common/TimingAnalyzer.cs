@@ -9,32 +9,32 @@ namespace Nebulator.Common
     /// <summary>Diagnostics for timing measurement.</summary>
     public class TimingAnalyzer
     {
-        public class Stats
-        {
-            #region Properties
-            /// <summary>Number of data points.</summary>
-            public long Count { get; set; } = 0;
+        //public class Stats
+        //{
+        //    #region Properties
+        //    /// <summary>Number of data points.</summary>
+        //    public long Count { get; set; } = 0;
 
-            /// <summary>Mean in msec.</summary>
-            public double Mean { get; set; } = 0;
+        //    /// <summary>Mean in msec.</summary>
+        //    public double Mean { get; set; } = 0;
 
-            /// <summary>Min in msec.</summary>
-            public double Min { get; set; } = 0;
+        //    /// <summary>Min in msec.</summary>
+        //    public double Min { get; set; } = 0;
 
-            /// <summary>Max in msec.</summary>
-            public double Max { get; set; } = 0;
+        //    /// <summary>Max in msec.</summary>
+        //    public double Max { get; set; } = 0;
 
-            /// <summary>SD in msec.</summary>
-            public double SD { get; set; } = 0;
-            #endregion
+        //    /// <summary>SD in msec.</summary>
+        //    public double SD { get; set; } = 0;
+        //    #endregion
 
-            /// <summary>Readable.</summary>
-            /// <returns></returns>
-            public override string ToString()
-            {
-                return $"Count:{Count} Mean:{Mean:F3} Max:{Max:F3} Min:{Min:F3} SD:{SD:F3}";
-            }
-        }
+        //    /// <summary>Readable.</summary>
+        //    /// <returns></returns>
+        //    public override string ToString()
+        //    {
+        //        return $"Count:{Count} Mean:{Mean:F3} Max:{Max:F3} Min:{Min:F3} SD:{SD:F3}";
+        //    }
+        //}
 
         #region Fields
         /// <summary>The internal timer.</summary>
@@ -50,7 +50,30 @@ namespace Nebulator.Common
         #region Properties
         /// <summary>Number of data points to grab for statistics.</summary>
         public long SampleSize { get; set; } = 50;
+
+        /// <summary>Number of data points.</summary>
+        public long Count { get; set; } = 0;
+
+        /// <summary>Mean in msec.</summary>
+        public double Mean { get; set; } = 0;
+
+        /// <summary>Min in msec.</summary>
+        public double Min { get; set; } = 0;
+
+        /// <summary>Max in msec.</summary>
+        public double Max { get; set; } = 0;
+
+        /// <summary>SD in msec.</summary>
+        public double SD { get; set; } = 0;
         #endregion
+
+        /// <summary>Readable.</summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Count:{Count} Mean:{Mean:F3} Max:{Max:F3} Min:{Min:F3} SD:{SD:F3}";
+        }
+
 
         /// <summary>
         /// Stop accumulator.
@@ -97,10 +120,10 @@ namespace Nebulator.Common
         /// <summary>
         /// Grab a data point. Also auto starts the timer.
         /// </summary>
-        /// <returns>Accumulated statistics if enough points collected, or null otherwise.</returns>
-        public Stats Grab()
+        /// <returns>New stats are available.</returns>
+        public bool Grab()
         {
-            Stats stats = null;
+            bool stats = false;
 
             if(!_watch.IsRunning)
             {
@@ -121,14 +144,13 @@ namespace Nebulator.Common
             if (_times.Count >= SampleSize)
             {
                 // Process the collected stuff.
-                stats = new Stats()
-                {
-                    Mean = _times.Average(),
-                    Max = _times.Max(),
-                    Min = _times.Min(),
-                    SD = Utils.StandardDeviation(_times.ConvertAll(v => v)),
-                    Count = _times.Count
-                };
+                Mean = _times.Average();
+                Max = _times.Max();
+                Min = _times.Min();
+                SD = Utils.StandardDeviation(_times.ConvertAll(v => v));
+                Count = _times.Count;
+
+                stats = true;
 
                 _times.Clear();
             }

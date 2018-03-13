@@ -301,7 +301,7 @@ namespace Nebulator.Common
             Bitmap origbmp = original as Bitmap;
             Bitmap newbmp = new Bitmap(original.Width, original.Height);
 
-            for (int y = 0; y < newbmp.Height; y++)
+            for (int y = 0; y < newbmp.Height; y++) // This is not very effecient! Use a buffer...
             {
                 for (int x = 0; x < newbmp.Width; x++)
                 {

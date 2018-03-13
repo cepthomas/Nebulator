@@ -73,7 +73,10 @@ namespace Nebulator
         Color _attentionColor = Color.Red;
 
         /// <summary>Diagnostics for timing measurement.</summary>
-        TimingAnalyzer _tanTimer = new TimingAnalyzer() { SampleSize = 100 };
+        TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 100 };
+
+        /// <summary>Diagnostics for timing measurement.</summary>
+        TimingAnalyzer _tanNeb = new TimingAnalyzer() { SampleSize = 100 };
         #endregion
 
         #region Lifecycle
@@ -472,8 +475,15 @@ namespace Nebulator
             ////// Neb steps /////
             if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB") && !_needCompile)
             {
+                _tanNeb.Arm();
+
                 // Kick it.
                 ExecuteThrowingFunction(_script.step);
+
+                if (_tanNeb.Grab())
+                {
+                    _logger.Info("NEB tan: " + _tanNeb.ToString());
+                }
 
                 // Process any sequence steps the script added.
                 DynamicElements.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
@@ -506,18 +516,16 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            if (e.ElapsedTimers.Contains("UI") /*&& chkPlay.Checked*/ && chkUi.Checked && !_needCompile)
+            if (e.ElapsedTimers.Contains("UI") && chkUi.Checked && !_needCompile) // && chkPlay.Checked
             {
-                // Measure and alert if too slow, or throttle.
-                //_tanTimer.Arm();
+                _tanUi.Arm();
 
                 ExecuteThrowingFunction(surface.UpdateSurface);
 
-                //TimingAnalyzer.Stats stats = _tanTimer.Grab();
-                //if (stats != null)
-                //{
-                //    Console.WriteLine(stats.ToString());
-                //}
+                if (_tanUi.Grab())
+                {
+                    _logger.Info("UI tan: " + _tanUi.ToString());
+                }
             }
 
             ///// Process whatever the script may have done. /////
