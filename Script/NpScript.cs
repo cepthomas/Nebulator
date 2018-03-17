@@ -230,28 +230,37 @@ namespace Nebulator.Script
             switch (style)
             {
                 case OPEN: // default is OPEN stroke with a PIE fill.
-                    _canvas.DrawPath(path, _pen);
                     if(_fill.Color != SKColors.Transparent)
                     {
                         _canvas.DrawPath(path, _fill);
+                    }
+                    if (_pen.StrokeWidth != 0)
+                    {
+                        _canvas.DrawPath(path, _pen);
                     }
                     break;
 
                 case CHORD:
                     path.Close();
-                    _canvas.DrawPath(path, _pen);
                     if (_fill.Color != SKColors.Transparent)
                     {
                         _canvas.DrawPath(path, _fill);
+                    }
+                    if (_pen.StrokeWidth != 0)
+                    {
+                        _canvas.DrawPath(path, _pen);
                     }
                     break;
 
                 case PIE:
                     path.MoveTo(rect.MidX, rect.MidY);
-                    _canvas.DrawPath(path, _pen);
                     if (_fill.Color != SKColors.Transparent)
                     {
                         _canvas.DrawPath(path, _fill);
+                    }
+                    if (_pen.StrokeWidth != 0)
+                    {
+                        _canvas.DrawPath(path, _pen);
                     }
                     break;
             }
@@ -273,7 +282,10 @@ namespace Nebulator.Script
                 _canvas.DrawOval(x1, y1, w / 2, h / 2, _fill);
             }
 
-            _canvas.DrawOval(x1, y1, w / 2, h / 2, _pen);
+            if(_pen.StrokeWidth != 0)
+            {
+                _canvas.DrawOval(x1, y1, w / 2, h / 2, _pen);
+            }
         }
 
         public void line(float x1, float y1, float x2, float y2)
@@ -295,16 +307,22 @@ namespace Nebulator.Script
                 _canvas.DrawPoints(SKPointMode.Polygon, points, _fill);
             }
 
-            _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
+            if (_pen.StrokeWidth != 0)
+            {
+                _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
+            }
         }
 
         public void rect(float x1, float y1, float w, float h)
         {
-            _canvas.DrawRect(x1, y1, w, h, _pen);
-
             if (_fill.Color != SKColors.Transparent)
             {
                 _canvas.DrawRect(x1, y1, w, h, _fill);
+            }
+
+            if (_pen.StrokeWidth != 0)
+            {
+                _canvas.DrawRect(x1, y1, w, h, _pen);
             }
         }
 
@@ -317,7 +335,10 @@ namespace Nebulator.Script
                 _canvas.DrawPoints(SKPointMode.Lines, points, _fill);
             }
 
-            _canvas.DrawPoints(SKPointMode.Lines, points, _pen);
+            if (_pen.StrokeWidth != 0)
+            {
+                _canvas.DrawPoints(SKPointMode.Lines, points, _pen);
+            }
         }
         #endregion
 
@@ -365,17 +386,9 @@ namespace Nebulator.Script
         {
             switch (style)
             {
-                case PROJECT:
-                    _pen.StrokeCap = SKStrokeCap.Square;
-                    break;
-
-                case ROUND:
-                    _pen.StrokeCap = SKStrokeCap.Round;
-                    break;
-
-                case SQUARE:
-                    _pen.StrokeCap = SKStrokeCap.Butt;
-                    break;
+                case PROJECT: _pen.StrokeCap = SKStrokeCap.Square; break;
+                case ROUND:   _pen.StrokeCap = SKStrokeCap.Round; break;
+                case SQUARE:  _pen.StrokeCap = SKStrokeCap.Butt; break;
             }
         }
 
@@ -383,17 +396,9 @@ namespace Nebulator.Script
         {
             switch (style)
             {
-                case BEVEL:
-                    _pen.StrokeJoin = SKStrokeJoin.Bevel;
-                    break;
-
-                case MITER:
-                    _pen.StrokeJoin = SKStrokeJoin.Miter;
-                    break;
-
-                case ROUND:
-                    _pen.StrokeJoin = SKStrokeJoin.Round;
-                    break;
+                case BEVEL:  _pen.StrokeJoin = SKStrokeJoin.Bevel; break;
+                case MITER:  _pen.StrokeJoin = SKStrokeJoin.Miter; break;
+                case ROUND:  _pen.StrokeJoin = SKStrokeJoin.Round; break;
             }
         }
 
@@ -422,7 +427,10 @@ namespace Nebulator.Script
                     _canvas.DrawPoints(SKPointMode.Polygon, points, _fill);
                 }
 
-                _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
+                if (_pen.StrokeWidth != 0)
+                {
+                    _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
+                }
             }
             else
             {
@@ -600,34 +608,29 @@ namespace Nebulator.Script
 
         #region Color
         #region Color - Setting
-        public void background(int r, int g, int b, int a) { _bgColor = SafeColor(r, g, b, a); _canvas.Clear(_bgColor); }
-        public void background(int r, int g, int b) { background(r, g, b, 255); }
-        public void background(int gray) { background(gray, gray, gray, 255); }
-        public void background(int gray, int a) { background(gray, gray, gray, a); }
-        public void background(color pcolor) { background(pcolor.R, pcolor.G, pcolor.B, 255); }
-        public void background(string pcolor) { background(new color(pcolor)); }
-        public void background(string pcolor, int alpha) { background(new color(pcolor)); }
+        //public void background(int rgb) { NotImpl(nameof(background)); }
+        //public void background(int rgb, float alpha) { NotImpl(nameof(background)); }
+        public void background(float gray) { _bgColor = SafeColor(gray, gray, gray, 255); _canvas.Clear(_bgColor); }
+        public void background(float gray, float alpha) { _bgColor = SafeColor(gray, gray, gray, alpha); _canvas.Clear(_bgColor); }
+        public void background(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _bgColor = c.NativeColor; _canvas.Clear(_bgColor); }
+        public void background(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _bgColor = c.NativeColor; _canvas.Clear(_bgColor); }
         public void background(PImage img) { _canvas.DrawBitmap(img.bmp, new SKRect(0, 0, width, height)); }
         public void colorMode(int mode, float max = 255) { Script.color.SetMode(mode, max, max, max, max); }
         public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { Script.color.SetMode(mode, max1, max2, max3, maxA); }
-        public void fill(int r, int g, int b, int a) { _fill.Color = SafeColor(r, g, b, a); }
-        public void fill(int r, int g, int b) { fill(r, g, b, 255); }
-        public void fill(int gray) { fill(gray, gray, gray, 255); }
-        public void fill(int gray, int a) { fill(gray, gray, gray, a); }
-        public void fill(color pcolor) { fill(pcolor, 255); }
-        public void fill(color pcolor, int a) { fill(pcolor.R, pcolor.G, pcolor.B, a); }
-        public void fill(string scolor) { fill(scolor); }
-        public void fill(string scolor, int a) { fill(new color(scolor), a); }
+        //public void fill(int rgb) { NotImpl(nameof(fill)); }
+        //public void fill(int rgb, float alpha) { NotImpl(nameof(fill)); }
+        public void fill(float gray) { _fill.Color = SafeColor(gray, gray, gray, 255); }
+        public void fill(float gray, float alpha) { _fill.Color = SafeColor(gray, gray, gray, alpha); }
+        public void fill(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _fill.Color = c.NativeColor; }
+        public void fill(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _fill.Color = c.NativeColor; }
         public void noFill() { _fill.Color = SKColors.Transparent; }
         public void noStroke() { _pen.StrokeWidth = 0; }
-        public void stroke(int r, int g, int b, int a) { _pen.Color = SafeColor(r, g, b, a); }
-        public void stroke(int r, int g, int b) { stroke(r, g, b, 255); }
-        public void stroke(int gray) { stroke(gray, gray, gray, 255); }
-        public void stroke(int gray, int a) { stroke(gray, gray, gray, a); }
-        public void stroke(color pcolor) { _pen.Color = pcolor.NativeColor; } 
-        public void stroke(color pcolor, int a) { stroke(pcolor.R, pcolor.G, pcolor.B, a); }
-        public void stroke(string scolor) { stroke(new color(scolor)); }
-        public void stroke(string scolor, int a) { stroke(new color(scolor), a); }
+        //public void stroke(int rgb) { NotImpl(nameof(stroke)); }
+        //public void stroke(int rgb, float alpha) { NotImpl(nameof(stroke)); }
+        public void stroke(float gray) { _pen.Color = SafeColor(gray, gray, gray, 255); }
+        public void stroke(float gray, float alpha) { _pen.Color = SafeColor(gray, gray, gray, alpha); }
+        public void stroke(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _pen.Color = c.NativeColor; }
+        public void stroke(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _pen.Color = c.NativeColor; }
         #endregion
 
         #region Color - Creating & Reading

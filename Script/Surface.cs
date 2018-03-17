@@ -32,9 +32,6 @@ namespace Nebulator.Script
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
 
-        /// <summary>Current graphics object the script functions draw on.</summary>
- //       SKCanvas _canvas = null;
-
         /// <summary>Rendered bitmap for display when painting.</summary>
         System.Drawing.Bitmap _bitmap = null;
 
@@ -90,6 +87,12 @@ namespace Nebulator.Script
             _script.height = Height;
             _script.focused = Focused;
 
+            if (_bitmap != null)
+            {
+                _bitmap.Dispose();
+            }
+            _bitmap = new System.Drawing.Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
             _setupRun = false;
         }
 
@@ -100,11 +103,7 @@ namespace Nebulator.Script
         {
             if (_script != null && (_script._loop || _script._redraw))
             {
-                if (_bitmap != null)
-                {
-                    _bitmap.Dispose();
-                }
-                _bitmap = Render();
+                Render();
                 Invalidate();
             }
         }
@@ -115,13 +114,12 @@ namespace Nebulator.Script
         /// Calls the script code that generates the bmp to paint later.
         /// </summary>
         /// <param name="e"></param>
-        System.Drawing.Bitmap Render()
+        void Render()
         {
             var w = Width;
             var h = Height;
 
-            var bitmap = new System.Drawing.Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            var data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, w, h), System.Drawing.Imaging.ImageLockMode.WriteOnly, bitmap.PixelFormat);
+            var data = _bitmap.LockBits(new System.Drawing.Rectangle(0, 0, w, h), System.Drawing.Imaging.ImageLockMode.WriteOnly, _bitmap.PixelFormat);
 
             using (var surface = SKSurface.Create(w, h, SKImageInfo.PlatformColorType, SKAlphaType.Premul, data.Scan0, w * 4))
             {
@@ -149,7 +147,6 @@ namespace Nebulator.Script
                     _script.frameCount++;
                     //_tanDraw.Arm();
                     _script.draw();
-
                     //if (_tanDraw.Grab())
                     //{
                     //    Console.WriteLine("UI tan: " + _tanDraw.ToString());
@@ -161,9 +158,7 @@ namespace Nebulator.Script
                 }
             }
 
-            bitmap.UnlockBits(data);
-
-            return bitmap;
+            _bitmap.UnlockBits(data);
         }
 
         /// <summary>
@@ -242,7 +237,7 @@ namespace Nebulator.Script
                 ProcessMouseEvent(e);
                 _script.mouseClicked();
             }
-            base.OnMouseClick(e); /// ???????
+            base.OnMouseClick(e);
         }
 
         /// <summary>
@@ -256,7 +251,7 @@ namespace Nebulator.Script
                 ProcessMouseEvent(e);
                 _script.mouseWheel();
             }
-            base.OnMouseWheel(e); /// ???????
+            base.OnMouseWheel(e);
         }
 
         /// <summary>

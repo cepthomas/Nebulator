@@ -172,13 +172,13 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
 
 

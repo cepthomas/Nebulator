@@ -68,11 +68,16 @@ namespace Nebulator.Script
             }
         }
 
-        public color(string hex) // like "#RRVVBB" or "0xAARRVVBB"
-        {
-            string s = hex.Replace("#", "").Replace("0x", "");
-            FromARGB(Convert.ToInt32(s, 16)); // or int.Parse("3A", NumberStyles.HexNumber)
-        }
+        //public color(string hex) // like "#RRVVBB" or "0xAARRVVBB"
+        //{
+        //    string s = hex.Replace("#", "").Replace("0x", "");
+        //    FromARGB(Convert.ToInt32(s, 16)); // or int.Parse("3A", NumberStyles.HexNumber)
+        //}
+
+        //public color(int hex) // like "0xAARRVVBB"
+        //{
+        //    FromARGB(hex);
+        //}
 
         public color(float gray, float a = 255)
         {

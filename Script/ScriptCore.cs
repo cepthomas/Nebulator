@@ -139,7 +139,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>Bounds check a color definition.
-        SKColor SafeColor(int r, int g, int b, int a)
+        SKColor SafeColor(float r, float g, float b, float a)
         {
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
