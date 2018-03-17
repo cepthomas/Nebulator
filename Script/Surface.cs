@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SkiaSharp;
+using SkiaSharp.Views.Desktop;
 using Nebulator.Common;
-
 
 
 namespace Nebulator.Script
@@ -17,7 +16,7 @@ namespace Nebulator.Script
     /// <summary>
     /// The client hosts this control in their UI. It performs the actual graphics drawing and input.
     /// </summary>
-    public partial class Surface : UserControl
+    public partial class Surface : SKControl // TODO Try SKGLControl?
     {
         #region Events
         /// <summary>Reports a runtime error to listeners.</summary>
@@ -33,11 +32,17 @@ namespace Nebulator.Script
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
 
-        /// <summary>Current working Graphics object to draw on.</summary>
-        Bitmap _bitmap;
+        /// <summary>Current graphics object the script functions draw on.</summary>
+ //       SKCanvas _canvas = null;
+
+        /// <summary>Rendered bitmap for display when painting.</summary>
+        System.Drawing.Bitmap _bitmap = null;
 
         /// <summary>Indicates if setup() needed.</summary>
         bool _setupRun = false;
+
+        /// <summary>For metrics.</summary>
+        TimingAnalyzer _tanDraw = new TimingAnalyzer() { SampleSize = 5 };
         #endregion
 
         #region Lifecycle
@@ -51,6 +56,25 @@ namespace Nebulator.Script
             UpdateStyles();
 
             ResizeRedraw = true;
+        }
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (_bitmap != null)
+            {
+                _bitmap.Dispose();
+                _bitmap = null;
+            }
+
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
         #endregion
 
@@ -66,7 +90,6 @@ namespace Nebulator.Script
             _script.height = Height;
             _script.focused = Focused;
 
-            _bitmap = new Bitmap(Width, Height);
             _setupRun = false;
         }
 
@@ -77,7 +100,11 @@ namespace Nebulator.Script
         {
             if (_script != null && (_script._loop || _script._redraw))
             {
-                Draw();
+                if (_bitmap != null)
+                {
+                    _bitmap.Dispose();
+                }
+                _bitmap = Render();
                 Invalidate();
             }
         }
@@ -85,26 +112,30 @@ namespace Nebulator.Script
 
         #region Painting
         /// <summary>
-        /// Calls the script code that generates the bmp to draw.
+        /// Calls the script code that generates the bmp to paint later.
         /// </summary>
         /// <param name="e"></param>
-        void Draw()
+        System.Drawing.Bitmap Render()
         {
-            using (Graphics graphics = Graphics.FromImage(_bitmap))
+            var w = Width;
+            var h = Height;
+
+            var bitmap = new System.Drawing.Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            var data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, w, h), System.Drawing.Imaging.ImageLockMode.WriteOnly, bitmap.PixelFormat);
+
+            using (var surface = SKSurface.Create(w, h, SKImageInfo.PlatformColorType, SKAlphaType.Premul, data.Scan0, w * 4))
             {
                 try
                 {
+                    // Hand over to the script for drawing on.
+                    _script._canvas = surface.Canvas;
+
+                    // Some housekeeping.
+                    _script.pMouseX = _script.mouseX;
+                    _script.pMouseY = _script.mouseY;
                     _script._redraw = false;
 
-                    graphics.CompositingMode = CompositingMode.SourceOver;
-                    graphics.CompositingQuality = CompositingQuality.HighQuality;
-                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    graphics.SmoothingMode = _script._smooth ? SmoothingMode.HighQuality : SmoothingMode.HighSpeed;
-
-                    // Hand over to the script for drawing on.
-                    _script._gr = graphics;
-
-                    if(!_setupRun)
+                    if (!_setupRun)
                     {
                         _script.width = Width;
                         _script.height = Height;
@@ -114,19 +145,25 @@ namespace Nebulator.Script
                         _script.frameCount = 0;
                     }
 
-                    // Some housekeeping.
-                    _script.pMouseX = _script.mouseX;
-                    _script.pMouseY = _script.mouseY;
-
                     // Execute the user script code.
                     _script.frameCount++;
+                    //_tanDraw.Arm();
                     _script.draw();
+
+                    //if (_tanDraw.Grab())
+                    //{
+                    //    Console.WriteLine("UI tan: " + _tanDraw.ToString());
+                    //}
                 }
                 catch (Exception ex)
                 {
                     RuntimeErrorEvent?.Invoke(this, new RuntimeErrorEventArgs() { Exception = ex });
                 }
             }
+
+            bitmap.UnlockBits(data);
+
+            return bitmap;
         }
 
         /// <summary>
@@ -135,9 +172,9 @@ namespace Nebulator.Script
         /// <param name="e"></param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            if(_bitmap != null)
+            if (_bitmap != null)
             {
-                e.Graphics.DrawImage(_bitmap, new Point(0, 0));
+                e.Graphics.DrawImage(_bitmap, new System.Drawing.Point(0, 0)); // , Width, Height));
             }
         }
         #endregion

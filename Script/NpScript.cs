@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using MoreLinq;
+using SkiaSharp;
+using SkiaSharp.Views.Desktop;
 using Nebulator.Common;
 using Nebulator.Dynamic;
 
@@ -21,30 +21,43 @@ namespace Nebulator.Script
     /// </summary>
     public partial class ScriptCore
     {
-        #region Internal fields
+        #region Fields - some internal so Surface can access
         /// <summary>Script randomizer.</summary>
         Random _rand = new Random();
 
         /// <summary>Current font to draw.</summary>
-        Font _font = new Font("Arial", 12f, GraphicsUnit.Pixel);
+        SKPaint _textPaint = new SKPaint()
+        {
+            TextSize = 12,
+            Color = SKColors.Black,
+            Typeface = SKTypeface.FromFamilyName("Arial"),
+            TextAlign = SKTextAlign.Left,
+            IsAntialias = true
+        };
 
         /// <summary>Current pen to draw.</summary>
-        Pen _pen = new Pen(Color.Black, 1f) { LineJoin = LineJoin.Round, EndCap = LineCap.Round, StartCap = LineCap.Round };
+        SKPaint _pen = new SKPaint()
+        {
+            Color = SKColors.Black,
+            IsStroke = true,
+            StrokeWidth = 1,
+            FilterQuality = SKFilterQuality.High
+        };
 
         /// <summary>Current brush to draw.</summary>
-        SolidBrush _brush = new SolidBrush(Color.Transparent);
+        SKPaint _fill = new SKPaint()
+        {
+            Color = SKColors.Transparent
+        };
 
-        /// <summary>Current text alignment.</summary>
-        int _xAlign = LEFT;
-
-        /// <summary>Current text alignment.</summary>
-        int _yAlign = BASELINE;
+        /// <summary>Current drawing points.</summary>
+        List<SKPoint> _vertexes = new List<SKPoint>();
 
         /// <summary>General purpose stack</summary>
-        Stack<object> _matrixStack = new Stack<object>();
+        Stack<SKMatrix> _matrixStack = new Stack<SKMatrix>();
 
-        /// <summary>Background color. Internal so Surface can access.</summary>
-        internal Color _bgColor = Color.LightGray;
+        /// <summary>Background color.</summary>
+        internal SKColor _bgColor = SKColors.LightGray;
 
         /// <summary>Smoothing option. Internal so Surface can access.</summary>
         internal bool _smooth = true;
@@ -55,8 +68,8 @@ namespace Nebulator.Script
         /// <summary>Redraw option. Internal so Surface can access.</summary>
         internal bool _redraw = false;
 
-        /// <summary>Current working Graphics object to draw on. Internal so Surface can access.</summary>
-        internal Graphics _gr = null;
+        /// <summary>Current working object to draw on. Internal so Surface can access.</summary>
+        internal SKCanvas _canvas;
         #endregion
 
         #region Definitions - same values as Processing
@@ -208,25 +221,38 @@ namespace Nebulator.Script
             y1 -= height / 2;
             angle1 = Utils.RadiansToDegrees(angle1);
             angle2 = Utils.RadiansToDegrees(angle2);
-            GraphicsPath path = new GraphicsPath();
-            path.AddArc(x1, y1, x2, y2, angle1, angle2);
+            SKPath path = new SKPath();
+            SKRect rect = new SKRect(x1, y1, x2, y2);
+            path.AddArc(rect, angle1, angle2);
+
+            //https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/curves/arcs
 
             switch (style)
             {
-                case CHORD:
-                    _gr.FillPath(_brush, path);
-                    path.CloseFigure();
-                    _gr.DrawPath(_pen, path);
+                case OPEN: // default is OPEN stroke with a PIE fill.
+                    _canvas.DrawPath(path, _pen);
+                    if(_fill.Color != SKColors.Transparent)
+                    {
+                        _canvas.DrawPath(path, _fill);
+                    }
                     break;
 
-                case OPEN:
-                    _gr.FillPath(_brush, path);
-                    _gr.DrawArc(_pen, x1, y1, x2, y2, angle1, angle2);
+                case CHORD:
+                    path.Close();
+                    _canvas.DrawPath(path, _pen);
+                    if (_fill.Color != SKColors.Transparent)
+                    {
+                        _canvas.DrawPath(path, _fill);
+                    }
                     break;
 
                 case PIE:
-                    _gr.FillPie(_brush, x1 - 0.75f, y1 - 0.75f, x2 + 0.25f, y2 + 0.25f, angle1, angle2);
-                    _gr.DrawPie(_pen, x1, y1, x2, y2, angle1, angle2);
+                    path.MoveTo(rect.MidX, rect.MidY);
+                    _canvas.DrawPath(path, _pen);
+                    if (_fill.Color != SKColors.Transparent)
+                    {
+                        _canvas.DrawPath(path, _fill);
+                    }
                     break;
             }
         }
@@ -239,66 +265,84 @@ namespace Nebulator.Script
         public void ellipse(float x1, float y1, float w, float h)
         {
             // Convert to GDI coords.
-            x1 -= w / 2;
-            y1 -= h / 2;
-            _gr.FillEllipse(_brush, x1, y1, w, h);
-            _gr.DrawEllipse(_pen, x1, y1, w, h);
+            //x1 -= w / 2;
+            //y1 -= h / 2;
+
+            if (_fill.Color != SKColors.Transparent)
+            {
+                _canvas.DrawOval(x1, y1, w / 2, h / 2, _fill);
+            }
+
+            _canvas.DrawOval(x1, y1, w / 2, h / 2, _pen);
         }
 
         public void line(float x1, float y1, float x2, float y2)
         {
-            _gr.DrawLine(_pen, x1, y1, x2, y2);
+            _canvas.DrawLine(x1, y1, x2, y2, _pen);
         }
 
         public void point(int x, int y)
         {
-            if (_pen.Width == 1)
-            {
-                SmoothingMode smoothingMode = _gr.SmoothingMode;
-                _gr.SmoothingMode = SmoothingMode.None;
-                _gr.FillRectangle(new SolidBrush(_pen.Color), x, y, 1, 1);
-                _gr.SmoothingMode = smoothingMode;
-            }
-            else
-            {
-                _gr.FillEllipse(new SolidBrush(_pen.Color), x - (_pen.Width - 1) / 2f, y - (_pen.Width - 1) / 2f, _pen.Width, _pen.Width);
-            }
+            _canvas.DrawPoint(x, y, _pen);
         }
 
         public void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
         {
-            Point[] points = new Point[4] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3), new Point(x4, y4) };
-            _gr.FillPolygon(_brush, points);
-            _gr.DrawPolygon(_pen, points);
+            SKPoint[] points = new SKPoint[4] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3), new SKPoint(x4, y4) };
+
+            if (_fill.Color != SKColors.Transparent)
+            {
+                _canvas.DrawPoints(SKPointMode.Polygon, points, _fill);
+            }
+
+            _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
         }
 
         public void rect(float x1, float y1, float w, float h)
         {
-            _gr.FillRectangle(_brush, x1, y1, w, h);
-            _gr.DrawRectangle(_pen, x1, y1, w, h);
+            _canvas.DrawRect(x1, y1, w, h, _pen);
+
+            if (_fill.Color != SKColors.Transparent)
+            {
+                _canvas.DrawRect(x1, y1, w, h, _fill);
+            }
         }
 
         public void triangle(float x1, float y1, float x2, float y2, float x3, float y3)
         {
-            PointF[] points = new PointF[3] { new PointF(x1, y1), new PointF(x2, y2), new PointF(x3, y3) };
-            _gr.FillPolygon(_brush, points);
-            _gr.DrawPolygon(_pen, points);
+            SKPoint[] points = new SKPoint[3] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3) };
+
+            if (_fill.Color != SKColors.Transparent)
+            {
+                _canvas.DrawPoints(SKPointMode.Lines, points, _fill);
+            }
+
+            _canvas.DrawPoints(SKPointMode.Lines, points, _pen);
         }
         #endregion
 
         #region Shape - Curves
         public void bezier(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
         {
-            _gr.DrawBezier(_pen, x1, y1, x2, y2, x3, y3, x4, y4);
+            // Draw path with cubic Bezier curve.
+            using (SKPath path = new SKPath())
+            {
+                path.MoveTo(x1, y1);
+                path.CubicTo(x2, y2, x3, y3, x4, y4);
+                _canvas.DrawPath(path, _pen);
+            }
         }
-
-        //public void bezierDetail() { NotImpl(nameof(bezierDetail)); }
-        //public void bezierPoint() { NotImpl(nameof(bezierPoint)); }
-        //public void bezierTangent() { NotImpl(nameof(bezierTangent)); }
 
         public void curve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
         {
-            _gr.DrawCurve(_pen, new Point[4] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3), new Point(x4, y4) }, 1, 1, 0.5f);
+            //TODO https://processing.org/reference/curve_.html
+            //Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two 
+            //parameters specify the ending control point. The middle parameters specify the start and stop of the curve. 
+            //Longer curves can be created by putting a series of curve() functions together or using curveVertex().
+            //An additional function called curveTightness() provides control for the visual quality of the curve. 
+            //The curve() function is an implementation of Catmull-Rom splines.
+
+            //_gr.DrawCurve(_pen, new SKPoint[4] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3), new SKPoint(x4, y4) }, 1, 1, 0.5f);
         }
 
         //public void curveDetail() { NotImpl(nameof(curveDetail)); }
@@ -322,18 +366,15 @@ namespace Nebulator.Script
             switch (style)
             {
                 case PROJECT:
-                    _pen.StartCap = LineCap.Square;
-                    _pen.EndCap = LineCap.Square;
+                    _pen.StrokeCap = SKStrokeCap.Square;
                     break;
 
                 case ROUND:
-                    _pen.StartCap = LineCap.Round;
-                    _pen.EndCap = LineCap.Round;
+                    _pen.StrokeCap = SKStrokeCap.Round;
                     break;
 
                 case SQUARE:
-                    _pen.StartCap = LineCap.Flat;
-                    _pen.EndCap = LineCap.Flat;
+                    _pen.StrokeCap = SKStrokeCap.Butt;
                     break;
             }
         }
@@ -343,27 +384,21 @@ namespace Nebulator.Script
             switch (style)
             {
                 case BEVEL:
-                    _pen.LineJoin = LineJoin.Bevel;
+                    _pen.StrokeJoin = SKStrokeJoin.Bevel;
                     break;
 
                 case MITER:
-                    _pen.LineJoin = LineJoin.Miter;
+                    _pen.StrokeJoin = SKStrokeJoin.Miter;
                     break;
 
                 case ROUND:
-                    _pen.LineJoin = LineJoin.Round;
+                    _pen.StrokeJoin = SKStrokeJoin.Round;
                     break;
             }
         }
 
-        public void strokeWeight(int w) { _pen.Width = w; }
+        public void strokeWeight(int w) { _pen.StrokeWidth = w; }
         #endregion
-
-
-// Current drawing points.
-List<Point> _vertexes = new List<Point>();
-
-
 
         #region Shape - Vertex
         //public void beginContour() { NotImpl(nameof(beginContour)); }
@@ -374,17 +409,20 @@ List<Point> _vertexes = new List<Point>();
         //public void endContour() { NotImpl(nameof(endContour)); }
         public void endShape(int mode = -1)
         {
+            SKPoint[] points = _vertexes.ToArray();
+
             if (mode == -1) // Not closed - draw lines.
             {
-                _gr.DrawLines(_pen, _vertexes.ToArray());
+                _canvas.DrawPoints(SKPointMode.Lines, points, _pen);
             }
             else if (mode == CLOSE)
             {
-                _gr.DrawPolygon(_pen, _vertexes.ToArray());
-                if (_brush.Color != Color.Transparent)
+                if (_fill.Color != SKColors.Transparent)
                 {
-                    _gr.FillPolygon(_brush, _vertexes.ToArray());
+                    _canvas.DrawPoints(SKPointMode.Polygon, points, _fill);
                 }
+
+                _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
             }
             else
             {
@@ -392,7 +430,7 @@ List<Point> _vertexes = new List<Point>();
             }
         }
         //public void quadraticVertex() { NotImpl(nameof(quadraticVertex)); }
-        public void vertex(int x, int y) { _vertexes.Add(new Point(x, y)); } // Just x/y.
+        public void vertex(int x, int y) { _vertexes.Add(new SKPoint(x, y)); } // Just x/y.
         #endregion
 
         #region Shape - Loading & Displaying
@@ -504,19 +542,19 @@ List<Point> _vertexes = new List<Point>();
 
         #region Transform 
         //public void applyMatrix() { NotImpl(nameof(applyMatrix)); }
-        public void popMatrix() { _gr.Transform = (Matrix)_matrixStack.Pop(); }
+        public void popMatrix() { _canvas.SetMatrix(_matrixStack.Pop()); }
         //public void printMatrix() { NotImpl(nameof(printMatrix)); }
-        public void pushMatrix() { _matrixStack.Push(_gr.Transform); }
+        public void pushMatrix() { _matrixStack.Push(_canvas.TotalMatrix); }
         //public void resetMatrix() { NotImpl(nameof(resetMatrix)); }
-        public void rotate(float angle) { _gr.RotateTransform((angle * 180.0f / PI)); }
+        public void rotate(float angle) { _canvas.RotateRadians(angle); }
         //public void rotateX() { NotImpl(nameof(rotateX)); }
         //public void rotateY() { NotImpl(nameof(rotateY)); }
         //public void rotateZ() { NotImpl(nameof(rotateZ)); }
-        public void scale(float sc) { _gr.ScaleTransform(sc, sc); }
-        public void scale(float scx, float scy) { _gr.ScaleTransform(scx, scy); }
+        public void scale(float sc) { _canvas.Scale(sc); }
+        public void scale(float scx, float scy) { _canvas.Scale(scx, scy); }
         //public void shearX() { NotImpl(nameof(shearX)); }
         //public void shearY() { NotImpl(nameof(shearY)); }
-        public void translate(float dx, float dy) { _gr.TranslateTransform(dx, dy); }
+        public void translate(float dx, float dy) { _canvas.Translate(dx, dy); }
         #endregion
 
         #region Lights & Camera
@@ -562,26 +600,26 @@ List<Point> _vertexes = new List<Point>();
 
         #region Color
         #region Color - Setting
-        public void background(int r, int g, int b, int a) { _bgColor = SafeColor(r, g, b, a); _gr.Clear(_bgColor); }
+        public void background(int r, int g, int b, int a) { _bgColor = SafeColor(r, g, b, a); _canvas.Clear(_bgColor); }
         public void background(int r, int g, int b) { background(r, g, b, 255); }
         public void background(int gray) { background(gray, gray, gray, 255); }
         public void background(int gray, int a) { background(gray, gray, gray, a); }
         public void background(color pcolor) { background(pcolor.R, pcolor.G, pcolor.B, 255); }
         public void background(string pcolor) { background(new color(pcolor)); }
         public void background(string pcolor, int alpha) { background(new color(pcolor)); }
-        public void background(PImage img) { _gr.DrawImage(img.image(), 0, 0, width, height); }
-        public void colorMode(int mode, float max = 255) { ColorModeX.ColorMode = new ColorModeX() { mode = mode, max1 = max, max2 = max, max3 = max, maxA = max }; }
-        public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { ColorModeX.ColorMode = new ColorModeX() { mode = mode, max1 = max1, max2 = max2, max3 = max3, maxA = maxA }; }
-        public void fill(int r, int g, int b, int a) { _brush.Color = SafeColor(r, g, b, a); }
+        public void background(PImage img) { _canvas.DrawBitmap(img.bmp, new SKRect(0, 0, width, height)); }
+        public void colorMode(int mode, float max = 255) { Script.color.SetMode(mode, max, max, max, max); }
+        public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { Script.color.SetMode(mode, max1, max2, max3, maxA); }
+        public void fill(int r, int g, int b, int a) { _fill.Color = SafeColor(r, g, b, a); }
         public void fill(int r, int g, int b) { fill(r, g, b, 255); }
         public void fill(int gray) { fill(gray, gray, gray, 255); }
         public void fill(int gray, int a) { fill(gray, gray, gray, a); }
-        public void fill(color pcolor) { _brush.Color = pcolor.NativeColor; _pen.Color = pcolor.NativeColor; }
+        public void fill(color pcolor) { fill(pcolor, 255); }
         public void fill(color pcolor, int a) { fill(pcolor.R, pcolor.G, pcolor.B, a); }
         public void fill(string scolor) { fill(scolor); }
         public void fill(string scolor, int a) { fill(new color(scolor), a); }
-        public void noFill() { _brush.Color = Color.Transparent; }
-        public void noStroke() { _pen.Width = 0; }
+        public void noFill() { _fill.Color = SKColors.Transparent; }
+        public void noStroke() { _pen.StrokeWidth = 0; }
         public void stroke(int r, int g, int b, int a) { _pen.Color = SafeColor(r, g, b, a); }
         public void stroke(int r, int g, int b) { stroke(r, g, b, 255); }
         public void stroke(int gray) { stroke(gray, gray, gray, 255); }
@@ -603,8 +641,6 @@ List<Point> _vertexes = new List<Point>();
         public int red(color color) { return color.R; }
         public float saturation(color color) { return color.Saturation; }
 
-        // Calculates a color between two colors at a specific increment. The amt parameter is the amount to interpolate between the two values where 0.0 is equal to the first point, 0.1 is very near the first point, 0.5 is halfway in between, etc. 
-        // An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped at 1. This is different from the behavior of lerp(), but necessary because otherwise numbers outside the range will produce strange and unexpected colors.
         public color lerpColor(color c1, color c2, float amt)
         {
             amt = constrain(amt, 0, 1);
@@ -623,13 +659,12 @@ List<Point> _vertexes = new List<Point>();
         #region Image - Loading & Displaying
         public void image(PImage img, float x, float y)
         {
-            _gr.DrawImageUnscaled(img.image(), (int)x, (int)y);
-            //_gr.DrawImage(img.image(), (int)x, (int)y, img.image().Width, img.image().Height);
+            _canvas.DrawBitmap(img.bmp, x, y); // unscaled
         }
 
         public void image(PImage img, float x1, float y1, float x2, float y2)
         {
-            _gr.DrawImage(img.image(), x1, y1, x2, y2);
+            _canvas.DrawBitmap(img.bmp, new SKRect(x1, y1, x2, y2)); // scaled
         }
 
         public void imageMode(int mode) { NotImpl(nameof(imageMode), "Assume CORNER mode."); }
@@ -689,45 +724,38 @@ List<Point> _vertexes = new List<Point>();
 
         public void text(string s, float x, float y)
         {
-            StringFormat format = new StringFormat();
-
-            switch (_yAlign)
-            {
-                case LEFT: format.Alignment = StringAlignment.Near; break;
-                case CENTER: format.Alignment = StringAlignment.Center; break;
-                case RIGHT: format.Alignment = StringAlignment.Far; break;
-            }
-
-            switch (_xAlign)
-            {
-                case TOP: format.LineAlignment = StringAlignment.Near; break;
-                case CENTER: format.LineAlignment = StringAlignment.Center; break;
-                case BOTTOM: format.LineAlignment = StringAlignment.Far; break;
-                case BASELINE: format.LineAlignment = StringAlignment.Far; break;
-            }
-
-            _gr.DrawString(s, _font, _brush, x, y, format);
+            _canvas.DrawText(s, x, y, _textPaint);
         }
 
         public void textFont(PFont font)
         {
-            _font = font.NativeFont;
+            _textPaint.TextSize = font.size;
+            _textPaint.Typeface = SKTypeface.FromFamilyName(font.name);
         }
         #endregion
 
         #region Typography - Attributes
-        //public void textAlign(int alignX) { NotImpl(nameof(textAlign)); }
-        //public void textAlign(int alignX, int alignY) { NotImpl(nameof(textAlign)); }
+        public void textAlign(int alignX)
+        {
+            switch(alignX)
+            {
+                case LEFT: _textPaint.TextAlign = SKTextAlign.Left; break;
+                case CENTER: _textPaint.TextAlign = SKTextAlign.Center; break;
+                case RIGHT: _textPaint.TextAlign = SKTextAlign.Right; break;
+            }
+            NotImpl(nameof(textAlign));
+        }
+        public void textAlign(int alignX, int alignY) { NotImpl(nameof(textAlign)); }
         //public void textLeading(int leading) { NotImpl(nameof(textLeading)); }
         //public void textMode() { NotImpl(nameof(textMode)); }
-        public void textSize(int pts) { _font = new Font(_font.Name, pts); }
-        public int textWidth(string s) { return (int)Math.Round(_gr.MeasureString(s, _font, width).Width); }
-        public int textWidth(char ch) { return textWidth(ch.ToString()); }
+        public void textSize(int pts) { _textPaint.TextSize = pts; }
+        float textWidth(string s) { return _textPaint.MeasureText(s); }
+        float textWidth(char ch) { return textWidth(ch.ToString()); }
         #endregion
 
         #region Typography - Metrics
-        public int textAscent() { return (int)Math.Round(_font.FontFamily.GetCellAscent(_font.Style) * _font.Size / _font.FontFamily.GetEmHeight(_font.Style)); }
-        public int textDescent() { return (int)Math.Round(_font.FontFamily.GetCellDescent(_font.Style) * _font.Size / _font.FontFamily.GetEmHeight(_font.Style)); }
+        //public int textAscent() { return (int)Math.Round(_font.FontFamily.GetCellAscent(_font.Style) * _font.Size / _font.FontFamily.GetEmHeight(_font.Style)); }
+        //public int textDescent() { return (int)Math.Round(_font.FontFamily.GetCellDescent(_font.Style) * _font.Size / _font.FontFamily.GetEmHeight(_font.Style)); }
         #endregion
         #endregion
 
@@ -736,7 +764,7 @@ List<Point> _vertexes = new List<Point>();
         public int abs(int val) { return Math.Abs(val); }
         public float abs(float val) { return Math.Abs(val); }
         public int ceil(float val) { return (int)Math.Ceiling(val); }
-        public float constrain(float val, float min, float max) { return (float)Utils.Constrain(val, min, max); }
+        public float constrain(float val, float min, float max) { return Utils.Constrain(val, min, max); }
         public int constrain(int val, int min, int max) { return Utils.Constrain(val, min, max); }
         public float dist(float x1, float y1, float x2, float y2) { return (float)Math.Sqrt(sq(x1 - x2) + sq(y1 - y2)); }
         public float dist(float x1, float y1, float z1, float x2, float y2, float z2) { return (float)Math.Sqrt(sq(x1 - x2) + sq(y1 - y2) + sq(z1 - z2)); }

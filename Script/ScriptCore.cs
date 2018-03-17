@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
+using SkiaSharp;
 using NLog;
 using Nebulator.Common;
 using Nebulator.Midi;
@@ -11,13 +11,17 @@ using Nebulator.Dynamic;
 
 // Internal stuff not associated with Processing or Nebulator APIs.
 
+
 namespace Nebulator.Script
 {
-    public partial class ScriptCore
+    public partial class ScriptCore : IDisposable
     {
         #region Fields
         /// <summary>My logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
+
+        /// <summary>Resource clean up.</summary>
+        bool _disposed = false;
         #endregion
 
         #region Events
@@ -104,6 +108,27 @@ namespace Nebulator.Script
         }
         #endregion
 
+        /// <summary>
+        /// Resource clean up.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Resource clean up.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                _disposed = true;
+            }
+        }
+
         #region Private functions
         /// <summary>Handle unimplemented script elements that we can safely ignore. But do tell the user.</summary>
         /// <param name="name"></param>
@@ -114,13 +139,13 @@ namespace Nebulator.Script
         }
 
         /// <summary>Bounds check a color definition.
-        Color SafeColor(int r, int g, int b, int a) // TODO relo?
+        SKColor SafeColor(int r, int g, int b, int a)
         {
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);
             b = constrain(b, 0, 255);
             a = constrain(a, 0, 255);
-            return Color.FromArgb(a, r, g, b);
+            return new SKColor((byte)r, (byte)g, (byte)b, (byte)a);
         }
         #endregion
     }

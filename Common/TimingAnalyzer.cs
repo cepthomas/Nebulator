@@ -9,33 +9,6 @@ namespace Nebulator.Common
     /// <summary>Diagnostics for timing measurement.</summary>
     public class TimingAnalyzer
     {
-        //public class Stats
-        //{
-        //    #region Properties
-        //    /// <summary>Number of data points.</summary>
-        //    public long Count { get; set; } = 0;
-
-        //    /// <summary>Mean in msec.</summary>
-        //    public double Mean { get; set; } = 0;
-
-        //    /// <summary>Min in msec.</summary>
-        //    public double Min { get; set; } = 0;
-
-        //    /// <summary>Max in msec.</summary>
-        //    public double Max { get; set; } = 0;
-
-        //    /// <summary>SD in msec.</summary>
-        //    public double SD { get; set; } = 0;
-        //    #endregion
-
-        //    /// <summary>Readable.</summary>
-        //    /// <returns></returns>
-        //    public override string ToString()
-        //    {
-        //        return $"Count:{Count} Mean:{Mean:F3} Max:{Max:F3} Min:{Min:F3} SD:{SD:F3}";
-        //    }
-        //}
-
         #region Fields
         /// <summary>The internal timer.</summary>
         Stopwatch _watch = new Stopwatch();

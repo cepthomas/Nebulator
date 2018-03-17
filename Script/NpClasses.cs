@@ -1,46 +1,45 @@
 using System;
 using System.Linq;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text;
+using SkiaSharp;
 using Nebulator.Common;
 
 // Processing API stuff.
 
 namespace Nebulator.Script
 {
-
-    public class ColorModeX
-    {
-        // colorMode(HSB, 360, 100, 100);
-        // colorMode(RGB, 100);
-        // 
-        // mode    int: Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-        // max float: range for all color elements --- if just one
-        // max1    float: range for the red or hue depending on the current color mode
-        // max2    float: range for the green or saturation depending on the current color mode
-        // max3    float: range for the blue or brightness depending on the current color mode
-
-        /// <summary>Color mode: RGB or HSB. Internal so Surface can access./summary>
-        public int mode = ScriptCore.RGB;
-        public float max1 = 0;
-        public float max2 = 0;
-        public float max3 = 0;
-        public float maxA = 0;
-
-        /// <summary>Current global color mode. Internal so Surface can access./summary>
-        internal static ColorModeX ColorMode { get; set; } = new ColorModeX();
-    }
-
-
     /// <summary>
-    /// Map Processing color to native. Processing uses a 32 bit value as color - this uses a class. TODO ???
+    /// Map Processing color to native. Processing uses a 32 bit value as color - this uses a class - ok? TODO
     /// Note that .NET calls it HSV but is actually HSL so don't use the Color.GetHue() etc functions.
     /// https://blogs.msdn.microsoft.com/cjacks/2006/04/12/converting-from-hsb-to-rgb-in-net/
     /// </summary>
     public class color
     {
+        #region Storage for some globals
+        /// <summary>Color mode: RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness./summary>
+        static int _mode = ScriptCore.RGB;
+        /// <summary>Range for the red or hue depending on the current color mode./summary>
+        static float _max1 = 255;
+        /// <summary>Range for the green or saturation depending on the current color mode./summary>
+        static float _max2 = 255;
+        /// <summary>Range for the blue or brightness depending on the current color mode./summary>
+        static float _max3 = 255;
+        /// <summary>Range for the alpha channel./summary>
+        static float _maxA = 255;
+
+        public static void SetMode(int mode, float max1, float max2, float max3, float maxA)
+        {
+            _mode = mode;
+            _max1 = max1;
+            _max2 = max2;
+            _max3 = max3;
+            _maxA = maxA;
+        }
+        #endregion
+
+        #region Properties
         public float Hue { get; private set; } = 0;
         public float Saturation { get; private set; } = 0;
         public float Brightness { get; private set; } = 0;
@@ -49,16 +48,17 @@ namespace Nebulator.Script
         public int G { get; private set; } = 0;
         public int B { get; private set; } = 0;
         public int A { get; private set; } = 0;
+        #endregion
 
-        public Color NativeColor
+        public SKColor NativeColor
         {
-            get { return Color.FromArgb(A, R, G, B); }
+            get { return new SKColor((byte)R, (byte)G, (byte)B, (byte)A); }
             set { FromNative(value); }
         }
 
         public color(float v1, float v2, float v3, float a = 255)
         {
-            if(ColorModeX.ColorMode.mode == ScriptCore.HSB)
+            if(_mode == ScriptCore.HSB)
             {
                 FromHSB(v1, v2, v3, a);
             }
@@ -79,7 +79,7 @@ namespace Nebulator.Script
             FromRGB((int)gray, (int)gray, (int)gray, (int)a);
         }
 
-        public color(Color native)
+        public color(SKColor native)
         {
             NativeColor = native;
         }
@@ -88,10 +88,10 @@ namespace Nebulator.Script
         void FromHSB(float h, float s, float b, float a)
         {
             // Normalize input values.
-            Hue = (float)Utils.Map(h, 0, ColorModeX.ColorMode.max1, 0, 1.0);
-            Saturation = (float)Utils.Map(s, 0, ColorModeX.ColorMode.max2, 0, 1.0);
-            Brightness = (float)Utils.Map(b, 0, ColorModeX.ColorMode.max3, 0, 1.0);
-            A = (int)Utils.Map(a, 0, ColorModeX.ColorMode.maxA, 0, 255);
+            Hue = (float)Utils.Map(h, 0, _max1, 0, 1.0);
+            Saturation = (float)Utils.Map(s, 0, _max2, 0, 1.0);
+            Brightness = (float)Utils.Map(b, 0, _max3, 0, 1.0);
+            A = (int)Utils.Map(a, 0, _maxA, 0, 255);
 
             // Convert them.
             R = G = B = (int)(Brightness * 255.0f + 0.5f);
@@ -137,10 +137,10 @@ namespace Nebulator.Script
         void FromRGB(int r, int g, int b, int a)
         {
             // Normalize input values.
-            R = Utils.Map(r, 0, (int)ColorModeX.ColorMode.max1, 0, 255);
-            G = Utils.Map(g, 0, (int)ColorModeX.ColorMode.max2, 0, 255);
-            B = Utils.Map(b, 0, (int)ColorModeX.ColorMode.max3, 0, 255);
-            A = (int)Utils.Map(a, 0, ColorModeX.ColorMode.maxA, 0, 255);
+            R = Utils.Map(r, 0, (int)_max1, 0, 255);
+            G = Utils.Map(g, 0, (int)_max2, 0, 255);
+            B = Utils.Map(b, 0, (int)_max3, 0, 255);
+            A = (int)Utils.Map(a, 0, _maxA, 0, 255);
 
             // Calc corresponding values.
             float cmax = (R > G) ? R : G;
@@ -198,9 +198,9 @@ namespace Nebulator.Script
             FromRGB(r, g, b, a);
         }
 
-        void FromNative(Color col)
+        void FromNative(SKColor col)
         {
-            FromRGB(col.R, col.G, col.B, col.A);
+            FromRGB(col.Red, col.Green, col.Blue, col.Alpha);
         }
         #endregion
     }
@@ -210,29 +210,37 @@ namespace Nebulator.Script
     /// </summary>
     public class PImage
     {
-        Bitmap _bmp;
-
-        //https://www.codeproject.com/Articles/1217543/The-astounding-Pickovers-biomorphs
-        //TODO Instead of using the SetPixel method of the Bitmap class, I have used an optimized way by using an array of integers
-        //containing the pixel colors. At the end of the process, this data is copied into the Bitmap using a single operation.
-
+        // Added native:
+        public SKBitmap bmp { get; private set; } = new SKBitmap();
 
         public color[] pixels { get; private set; }
-        public int width { get { return _bmp.Width; } }
-        public int height { get { return _bmp.Height; } }
-        public PImage(string fname) { _bmp = new Bitmap(fname); }
-        public PImage(Bitmap bm) { _bmp = bm; }
-        public color get(int x, int y) { return new color(_bmp.GetPixel(x, y)); }
-        public PImage get(int x, int y, int width, int height) { return new PImage(_bmp.Clone(new Rectangle(x, y, width, height), _bmp.PixelFormat)); }
-        public void set(int x, int y, color color) { _bmp.SetPixel(x, y, color.NativeColor); }
-        public void set(int x, int y, PImage img) { Graphics.FromImage(_bmp).DrawImageUnscaled(img.image(), x, y); }
+        public int width { get { return bmp.Width; } }
+        public int height { get { return bmp.Height; } }
+        public PImage(string fname) { bmp = SKBitmap.Decode(fname); }
+        public PImage(SKBitmap bm) { bmp = bm; }
+        public color get(int x, int y)
+        {
+            return new color(bmp.GetPixel(x, y));
+        }
+        public PImage get(int x, int y, int width, int height)
+        {
+            SKBitmap dest = new SKBitmap();
+            bmp.ExtractSubset(dest, new SKRectI(x, y, width, height));
+            return new PImage(dest);
+        }
+        public void set(int x, int y, color color)
+        {
+            bmp.SetPixel(x, y, color.NativeColor);
+        }
+        public void set(int x, int y, PImage img)
+        {
+            // TODO pixel by pixel? Graphics.FromImage(bmp).DrawImageUnscaled(img.image(), x, y);
+        }
+
         //public bool save(string filename) { NotImpl(nameof(save)); }
         //public void loadPixels() { NotImpl(nameof(loadPixels)); }
         //public void updatePixels() { NotImpl(nameof(updatePixels)); }
         //public void updatePixels(int x, int y, int w, int h) { NotImpl(nameof(updatePixels)); }
-
-        // Added native:
-        public Bitmap image() { return _bmp; }
 
         public void resize(int width, int height)
         {
@@ -244,9 +252,9 @@ namespace Nebulator.Script
             {
                 height = this.height * width / this.width;
             }
-            Bitmap bmap = new Bitmap(width, height);
-            Graphics.FromImage(bmap).DrawImage(_bmp, 0, 0, width, height);
-            _bmp = bmap;
+
+            var scaled = bmp.Resize(new SKImageInfo(width, height), SKBitmapResizeMethod.Lanczos3);
+            bmp = scaled;
         }
     }
 
@@ -255,8 +263,14 @@ namespace Nebulator.Script
     /// </summary>
     public class PFont
     {
-        public Font NativeFont { get; } = null;
-        public PFont(string name, int size) { NativeFont = new Font(name, size, GraphicsUnit.Pixel); }
+        public string name { get; set; } = "Arial";
+        public float size { get; set; } = 12f;
+
+        public PFont(string name, int size)
+        {
+            this.name = name;
+            this.size = size;
+        }
     }
 
     /// <summary>

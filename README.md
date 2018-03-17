@@ -36,6 +36,7 @@ This project contains a bunch of components that are either recycled or created 
 # Third Party
 This application uses these excellent FOSS components:
 - NAudio DLL and modified controls, midi file: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License)
+- SkiaSharp for graphics: [SkiaSharp](https://github.com/mono/SkiaSharp) (MIT)
 - Modified multimedia timer and piano control: [Leslie Sanford's Midi Toolkit](https://github.com/tebjan/Sanford.Multimedia.Midi) (MIT)
 - Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause)
 - [MoreLinq](https://morelinq.github.io) (MIT)

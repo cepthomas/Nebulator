@@ -172,13 +172,15 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+
+
 
             //ExportMidi("test.mid");
 
@@ -414,10 +416,9 @@ namespace Nebulator
         void TimerElapsedEvent(object sender, NebTimer.TimerEventArgs e)
         {
             //// Do some stats gathering for measuring jitter.
-            //TimingAnalyzer.Stats stats = _tanTimer.Grab();
-            //if (stats != null)
+            //if ( _tanTimer.Grab())
             //{
-            //    _logger.Info($"Midi timiing: {stats}");
+            //    _logger.Info($"Midi timing: {stats}");
             //}
 
             // Kick over to main UI thread.
@@ -475,15 +476,15 @@ namespace Nebulator
             ////// Neb steps /////
             if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB") && !_needCompile)
             {
-                _tanNeb.Arm();
+                //_tanNeb.Arm();
 
                 // Kick it.
                 ExecuteThrowingFunction(_script.step);
 
-                if (_tanNeb.Grab())
-                {
-                    _logger.Info("NEB tan: " + _tanNeb.ToString());
-                }
+                //if (_tanNeb.Grab())
+                //{
+                //    _logger.Info("NEB tan: " + _tanNeb.ToString());
+                //}
 
                 // Process any sequence steps the script added.
                 DynamicElements.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
@@ -518,14 +519,14 @@ namespace Nebulator
             ///// UI updates /////
             if (e.ElapsedTimers.Contains("UI") && chkUi.Checked && !_needCompile) // && chkPlay.Checked
             {
-                _tanUi.Arm();
+                //_tanUi.Arm();
 
                 ExecuteThrowingFunction(surface.UpdateSurface);
 
-                if (_tanUi.Grab())
-                {
-                    _logger.Info("UI tan: " + _tanUi.ToString());
-                }
+                //if (_tanUi.Grab())
+                //{
+                //    _logger.Info("UI tan: " + _tanUi.ToString());
+                //}
             }
 
             ///// Process whatever the script may have done. /////
@@ -629,14 +630,6 @@ namespace Nebulator
                 // Route all midi events through log.
                 string s = $"Midi{e.Category} {_stepTime} {e.Message}";
                 _logger.Info(s);
-
-                // the old way:
-                //string s = $"Midi{e.Category} {_stepTime} {e.Message}{Environment.NewLine}";
-                //infoDisplay.AddInfo(s);
-                //if(UserSettings.TheSettings.LogMidi)
-                //{
-                //    _logger.Info(s);
-                //}
             });
         }
 

@@ -100,14 +100,7 @@ namespace Nebulator.Script
         /// <summary>The midi controller definitions from ScriptDefinitions.md.</summary>
         Dictionary<string, string> _midiControllerDefs = new Dictionary<string, string>();
         #endregion
-
-
-
-
-
-
-
-
+        
         #region Main function
         /// <summary>
         /// Run the Compiler.
@@ -588,8 +581,8 @@ namespace Nebulator.Script
                 "using System.Collections.Generic;",
                 "using System.Text;",
                 "using System.Linq;",
-                "using System.Drawing;",
-                "using System.Drawing.Drawing2D;",
+                //"using System.Drawing;",
+                //"using System.Drawing.Drawing2D;",
                 "using System.Windows.Forms;",
                 "using Nebulator.Common;",
                 "using Nebulator.Dynamic;",
