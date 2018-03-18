@@ -166,7 +166,7 @@ namespace Nebulator.Midi
                             // Indicates start of a new midi part. Bin per channel.
                             _currentPart = (me as TextEvent).Text;
                             absoluteTime = 0;
-                            Console.WriteLine($">>>> part:{_currentPart}");
+                            //Console.WriteLine($">>>> part:{_currentPart}");
                         }
                         break;
 

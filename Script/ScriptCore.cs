@@ -33,6 +33,36 @@ namespace Nebulator.Script
         public delegate void ScriptFunction();
         #endregion
 
+        #region Lifecycle
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public ScriptCore()
+        {
+        }
+
+        /// <summary>
+        /// Resource clean up.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Resource clean up.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                _disposed = true;
+            }
+        }
+        #endregion
+
         #region Public functions
         /// <summary>
         /// Execute a script function. Minimal error checking, presumably the compiler did that.
@@ -107,27 +137,6 @@ namespace Nebulator.Script
             return steps;
         }
         #endregion
-
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing)
-            {
-                _disposed = true;
-            }
-        }
 
         #region Private functions
         /// <summary>Handle unimplemented script elements that we can safely ignore. But do tell the user.</summary>

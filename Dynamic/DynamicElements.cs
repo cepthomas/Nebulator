@@ -10,7 +10,7 @@ using Nebulator.Midi;
 namespace Nebulator.Dynamic
 {
     /// <summary>
-    /// All the dynamic script stuff we might want at runtime. Essentially globals. TODO don't let this get too big.
+    /// All the dynamic script stuff we might want at runtime. Essentially globals - don't let this get too big!
     /// </summary>
     public class DynamicElements
     {

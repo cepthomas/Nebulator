@@ -178,7 +178,8 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\boids.neb");
 
 
 

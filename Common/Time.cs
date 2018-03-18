@@ -111,9 +111,9 @@ namespace Nebulator.Common
                 throw new Exception("Negative value is invalid");
             }
 
-            var v = Utils.SplitDouble(tts);
-            Tick = (int)v.integral;
-            Tock = (int)(v.fractional * 100);
+            var (integral, fractional) = Utils.SplitDouble(tts);
+            Tick = (int)integral;
+            Tock = (int)(fractional * 100);
         }
         #endregion
 

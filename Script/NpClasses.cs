@@ -11,8 +11,8 @@ using Nebulator.Common;
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Map Processing color to native. Processing uses a 32 bit value as color - this uses a class - ok? TODO
-    /// Note that .NET calls it HSV but is actually HSL so don't use the Color.GetHue() etc functions.
+    /// Map Processing color to native. Processing uses a 32 bit value as color - this uses a class.
+    /// Note that .NET calls it HSV but is actually HSL so you shouldn't use the Color.GetXXX() functions.
     /// https://blogs.msdn.microsoft.com/cjacks/2006/04/12/converting-from-hsb-to-rgb-in-net/
     /// </summary>
     public class color
@@ -237,10 +237,10 @@ namespace Nebulator.Script
         {
             bmp.SetPixel(x, y, color.NativeColor);
         }
-        public void set(int x, int y, PImage img)
-        {
-            // TODO pixel by pixel? Graphics.FromImage(bmp).DrawImageUnscaled(img.image(), x, y);
-        }
+        //public void set(int x, int y, PImage img)
+        //{
+        //    //  pixel by pixel? Graphics.FromImage(bmp).DrawImageUnscaled(img.image(), x, y);
+        //}
 
         //public bool save(string filename) { NotImpl(nameof(save)); }
         //public void loadPixels() { NotImpl(nameof(loadPixels)); }

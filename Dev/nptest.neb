@@ -12,9 +12,9 @@ public override void setup()
 
     // setup_force_fail();
     // setup_bezier();
-    // setup_radial_gradient();
+    setup_radial_gradient();
     // setup_sine_cosine();
-    setup_random_gaussian();
+    // setup_random_gaussian();
     // setup_loadfiles1();
     // setup_pointillism();
 }
@@ -24,10 +24,10 @@ public override void draw()
     // draw_force_fail();
     // draw_ball();
     // draw_bezier();
-    // draw_radial_gradient();
+    draw_radial_gradient();
     // draw_regular_polygon();
     // draw_sine_cosine();
-    draw_random_gaussian();
+    // draw_random_gaussian();
     // draw_embedded_iteration();
     // draw_loadfiles1();
     // draw_pointillism();
@@ -204,12 +204,10 @@ void polygon(float x, float y, float radius, int npoints)
 //////////////// radial gradient ///////////////////
 //https://processing.org/examples/radialgradient.html
 
-int dim;
 
 void setup_radial_gradient()
 {
     //size(640, 360);
-    dim = width / 2;
     background(100);
     //colorMode(RGB, 255, 100, 100); // RGB=1
     colorMode(HSB, 360, 100, 100); // HSB=3
@@ -220,6 +218,7 @@ void setup_radial_gradient()
 
 void draw_radial_gradient()
 {
+    int dim = width / 2;
     background(100);
 
     // int y = random(0, height);
@@ -249,16 +248,6 @@ void draw_radial_gradient()
 //         //     fill(h, 90, 90);
 //         //     ellipse(x, y, r, r);
 //         //     h = (h + 1) % 360;
-//         // }
-
-//         // // Not really right, based on HSB.
-//         // int radius = dim / 2;
-//         // int h = random(0, 255);
-//         // for (int r = radius; r > 0; --r)
-//         // {
-//         //     fill((h % 255), (h + 85) % 255, (h + 170) % 255);
-//         //     ellipse(x, y, r, r);
-//         //     h++;
 //         // }
 
 //         int radius = dim / 2;

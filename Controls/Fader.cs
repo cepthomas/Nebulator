@@ -120,7 +120,7 @@ namespace Nebulator.Controls
                 {
                     _value = (double)sliderTop / (Height - SLIDER_HEIGHT);
                 }
-                Console.WriteLine(_value);
+                //Console.WriteLine(_value);
                 Invalidate();
             }
             base.OnMouseMove(e);

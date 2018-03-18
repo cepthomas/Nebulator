@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NLog;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using Nebulator.Common;
@@ -16,7 +17,7 @@ namespace Nebulator.Script
     /// <summary>
     /// The client hosts this control in their UI. It performs the actual graphics drawing and input.
     /// </summary>
-    public partial class Surface : SKControl // TODO Try SKGLControl?
+    public partial class Surface : SKControl
     {
         #region Events
         /// <summary>Reports a runtime error to listeners.</summary>
@@ -29,6 +30,9 @@ namespace Nebulator.Script
         #endregion
 
         #region Fields
+        /// <summary>My logger.</summary>
+        Logger _logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
 
@@ -39,7 +43,7 @@ namespace Nebulator.Script
         bool _setupRun = false;
 
         /// <summary>For metrics.</summary>
-        TimingAnalyzer _tanDraw = new TimingAnalyzer() { SampleSize = 5 };
+        TimingAnalyzer _tanDraw = new TimingAnalyzer() { SampleSize = 10 };
         #endregion
 
         #region Lifecycle
@@ -145,12 +149,13 @@ namespace Nebulator.Script
 
                     // Execute the user script code.
                     _script.frameCount++;
-                    //_tanDraw.Arm();
+                    _tanDraw.Arm();
                     _script.draw();
-                    //if (_tanDraw.Grab())
-                    //{
-                    //    Console.WriteLine("UI tan: " + _tanDraw.ToString());
-                    //}
+                    if (_tanDraw.Grab())
+                    {
+                        //_logger.Info("UI tan: " + _tanDraw.ToString());
+                        //_logger.Info(string.Join(" ", _tanDraw.Times.ConvertAll(t => t.ToString("0.00"))));
+                    }
                 }
                 catch (Exception ex)
                 {
