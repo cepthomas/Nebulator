@@ -40,7 +40,7 @@ track DRUMS 10 4 0 0
 
 ////////// Sections //////////
 section PART1 0 WHEN1 // section name start length
-KEYS    SEQ1           ALGO1       SEQ1          SEQ2
+KEYS    SEQ1           ALGO1       SEQ1          SEQ2  // trackname sequence sequence ...
 DRUMS   DRUMS_SIMPLE   DRUMS_HH    DRUMS_SIMPLE  DRUMS_HH
 
 section PART2 WHEN1 60

@@ -15,6 +15,43 @@ using Nebulator.Dynamic;
 
 
 // TODO Get rid of the s. rqmt: ScriptSyntax.md: s.print("DoIt got:", val); Needs roslyn! Then use using static stmt.
+/*
+boids.neb:
+   88:         // float angle = s.random(TWO_PI);
+   89:         // velocity = new PVector(s.cos(angle), s.sin(angle));
+  161:         float theta = velocity.heading() + s.radians(90);
+  165:         s.fill(200, 100, 50);
+  166:         //s.fill(200, 100);
+  167:         s.stroke(255);
+  168:         s.pushMatrix();
+  169:         s.translate(position.x, position.y);
+  170:         s.rotate(theta);
+  171:         s.beginShape();  // was: beginShape(TRIANGLES);
+  172:         s.vertex(0, -r * 2);
+  173:         s.vertex(-r, r * 2);
+  174:         s.vertex(r, r * 2);
+  175:         s.endShape(CLOSE);
+  176:         s.popMatrix();
+  182:         if (position.x < -r) position.x = s.width + r;
+  183:         if (position.y < -r) position.y = s.height + r;
+  184:         if (position.x > s.width + r) position.x = -r;
+  185:         if (position.y > s.height + r) position.y = -r;
+
+C:\Dev\Nebulator\Dev\nputils.neb:
+   22:         return _thing * s.random(value); // s. notation!
+
+C:\Dev\Nebulator\Dev\scale.neb:
+   13:         scaleNotes = s.getScaleNotes(scale, root);
+   42:         int r = s.random(totalWeight);
+   43:         s.print(">>>", r);
+
+C:\Dev\Nebulator.wiki\ScriptSyntax.md:
+   16:         s.print("DoIt got:", val);
+
+"Nested types can access private and protected members of the containing type, including any inherited private or protected members." Nested types are within the definition scope of outer private members, therefore can access them. See this MSDN article – Dave T. May 30 '13 at 13:06 
+However @AndrewAnderson, you are right about passing outer to inner as a constructor argument. – Dave T. May 30 '13 at 13:07
+dbkk and Dave T. are right. Private properties can also be accessed by the inner class. The only condition is passing the outer object to the inner object.
+*/
 
 
 namespace Nebulator
@@ -179,9 +216,7 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\boids.neb");
-
-
+            OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
 
             //ExportMidi("test.mid");
 

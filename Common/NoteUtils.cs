@@ -184,20 +184,21 @@ namespace Nebulator.Common
             if (keyNotes.Count > 0)
             {
                 // Start with the stock collection then try user defs.
-                var scaleParts = _stockScaleDefs[scale];
+                var scaleDef = _stockScaleDefs[scale];
 
-                if (scaleParts == null)
+                if (scaleDef == null)
                 {
-                    scaleParts = scriptNoteDefs[scale];
+                    scaleDef = scriptNoteDefs[scale];
                 }
 
-                if (scaleParts != null)
+                if (scaleDef != null && scaleDef.Count >= 1)
                 {
                     // "1 2 b3 #4 5 b6 7"
+                   var scaleNotes = scaleDef[0].SplitByToken(" ");
 
-                    scaleParts.ForEach(si =>
+                    scaleNotes.ForEach(sn =>
                     {
-                        int? intNum = GetInterval(si);
+                        int? intNum = GetInterval(sn);
                         if (intNum != null)
                         {
                             //noteNum = down ? noteNum - NOTES_PER_OCTAVE : noteNum;

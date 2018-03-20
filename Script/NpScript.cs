@@ -39,15 +39,21 @@ namespace Nebulator.Script
         SKPaint _pen = new SKPaint()
         {
             Color = SKColors.Black,
+            Style = SKPaintStyle.Stroke,
             IsStroke = true,
             StrokeWidth = 1,
-            FilterQuality = SKFilterQuality.High
+            FilterQuality = SKFilterQuality.High,
+            IsAntialias = true
         };
 
         /// <summary>Current brush to draw.</summary>
         SKPaint _fill = new SKPaint()
         {
-            Color = SKColors.Transparent
+            Color = SKColors.Transparent,
+            Style = SKPaintStyle.Fill,
+            IsStroke = false,
+            FilterQuality = SKFilterQuality.High,
+            IsAntialias = true
         };
 
         /// <summary>Current drawing points.</summary>
@@ -273,10 +279,6 @@ namespace Nebulator.Script
 
         public void ellipse(float x1, float y1, float w, float h)
         {
-            // Convert to GDI coords.
-            //x1 -= w / 2;
-            //y1 -= h / 2;
-
             if (_fill.Color != SKColors.Transparent)
             {
                 _canvas.DrawOval(x1, y1, w / 2, h / 2, _fill);
@@ -293,12 +295,12 @@ namespace Nebulator.Script
             _canvas.DrawLine(x1, y1, x2, y2, _pen);
         }
 
-        public void point(int x, int y)
+        public void point(float x, float y)
         {
             _canvas.DrawPoint(x, y, _pen);
         }
 
-        public void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+        public void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
         {
             SKPoint[] points = new SKPoint[4] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3), new SKPoint(x4, y4) };
 
@@ -343,7 +345,7 @@ namespace Nebulator.Script
         #endregion
 
         #region Shape - Curves
-        public void bezier(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+        public void bezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
         {
             // Draw path with cubic Bezier curve.
             using (SKPath path = new SKPath())
@@ -354,7 +356,7 @@ namespace Nebulator.Script
             }
         }
 
-        public void curve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) { NotImpl(nameof(curve)); }
+        public void curve(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) { NotImpl(nameof(curve)); }
         //{
         //    //Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two 
         //    //parameters specify the ending control point. The middle parameters specify the start and stop of the curve. 
@@ -422,14 +424,30 @@ namespace Nebulator.Script
             }
             else if (mode == CLOSE)
             {
-                if (_fill.Color != SKColors.Transparent)
+                using (var path = new SKPath())
                 {
-                    _canvas.DrawPoints(SKPointMode.Polygon, points, _fill);
-                }
+                    for (int i = 0; i < _vertexes.Count; i++)
+                    {
+                        if(i == 0)
+                        {
+                            path.MoveTo(_vertexes[i]);
+                        }
+                        else
+                        {
+                            path.LineTo(_vertexes[i]);
+                        }
+                    }
+                    path.Close();
 
-                if (_pen.StrokeWidth != 0)
-                {
-                    _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
+                    if (_fill.Color != SKColors.Transparent)
+                    {
+                        _canvas.DrawPath(path, _fill);
+                    }
+
+                    if (_pen.StrokeWidth != 0)
+                    {
+                        _canvas.DrawPath(path, _pen);
+                    }
                 }
             }
             else
@@ -437,8 +455,9 @@ namespace Nebulator.Script
                 NotImpl(nameof(endShape));
             }
         }
+
         //public void quadraticVertex() { NotImpl(nameof(quadraticVertex)); }
-        public void vertex(int x, int y) { _vertexes.Add(new SKPoint(x, y)); } // Just x/y.
+        public void vertex(float x, float y) { _vertexes.Add(new SKPoint(x, y)); } // Just x/y.
         #endregion
 
         #region Shape - Loading & Displaying
@@ -636,12 +655,12 @@ namespace Nebulator.Script
         #region Color - Creating & Reading
         public color color(float v1, float v2, float v3, float a = 255) { return new color(v1, v2, v3, a); }
         public color color(float gray, float a = 255) { return new color(gray, a); }
-        public int alpha(color color) { return color.A; }
-        public int blue(color color) { return color.B; }
+        public float alpha(color color) { return color.A; }
+        public float blue(color color) { return color.B; }
         public float brightness(color color) { return color.Brightness; }
-        public int green(color color) { return color.G; }
+        public float green(color color) { return color.G; }
         public float hue(color color) { return color.Hue; }
-        public int red(color color) { return color.R; }
+        public float red(color color) { return color.R; }
         public float saturation(color color) { return color.Saturation; }
 
         public color lerpColor(color c1, color c2, float amt)

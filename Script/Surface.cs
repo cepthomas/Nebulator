@@ -65,17 +65,31 @@ namespace Nebulator.Script
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (_bitmap != null)
-            {
-                _bitmap.Dispose();
-                _bitmap = null;
-            }
+            CleanupBitmap();
 
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// General purpose bitmap utility.
+        /// </summary>
+        /// <param name="regen">True to recreate.</param>
+        void CleanupBitmap(bool regen = false)
+        {
+            if (_bitmap != null)
+            {
+                _bitmap.Dispose();
+                _bitmap = null;
+            }
+
+            if (regen)
+            {
+                _bitmap = new System.Drawing.Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            }
         }
         #endregion
 
@@ -90,14 +104,9 @@ namespace Nebulator.Script
             _script.width = Width;
             _script.height = Height;
             _script.focused = Focused;
-
-            if (_bitmap != null)
-            {
-                _bitmap.Dispose();
-            }
-            _bitmap = new System.Drawing.Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-
             _setupRun = false;
+
+            CleanupBitmap(true);
         }
 
         /// <summary>
@@ -406,6 +415,8 @@ namespace Nebulator.Script
                 _script.width = Width;
                 _script.height = Height;
             }
+
+            CleanupBitmap(true);
 
             // Force a re-init.
             _setupRun = false;

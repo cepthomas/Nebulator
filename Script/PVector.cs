@@ -210,7 +210,7 @@ namespace Nebulator.Script
             return new PVector(x, y, z);
         }
 
-        [Obsolete("...")]
+        [Obsolete()]
         public PVector get()
         {
             return copy();
@@ -515,77 +515,82 @@ namespace Nebulator.Script
             return angle;
         }
 
-        [Obsolete("...")]
+        [Obsolete("Use heading().")]
         public float heading2D()
         {
             return heading();
         }
 
-        // TODO? these as needed:
-        //public PVector rotate(float theta)
-        //{
-        //    float temp = x;
-        //    // Might need to check for rounding errors like with angleBetween function?
-        //    x = x * PApplet.cos(theta) - y * PApplet.sin(theta);
-        //    y = temp * PApplet.sin(theta) + y * PApplet.cos(theta);
+        public PVector rotate(float theta)
+        {
+           float temp = x;
+           // Might need to check for rounding errors like with angleBetween function?
+           x = x * (float)(Math.Cos(theta) - y * Math.Sin(theta));
+           y = temp * (float)(Math.Sin(theta) + y * Math.Cos(theta));
 
-        //    return this;
-        //}
+           return this;
+        }
 
-        //public PVector lerp(PVector v, float amt)
-        //{
-        //    x = PApplet.lerp(x, v.x, amt);
-        //    y = PApplet.lerp(y, v.y, amt);
-        //    z = PApplet.lerp(z, v.z, amt);
-        //    return this;
-        //}
+        float lerp(float start, float stop, float amt)
+        {
+            return start + (stop - start) * amt;
+        }
 
-        //public static PVector lerp(PVector v1, PVector v2, float amt)
-        //{
-        //    PVector v = v1.copy();
-        //    v.lerp(v2, amt);
-        //    return v;
-        //}
+        public PVector lerp(PVector v, float amt)
+        {
+           x = lerp(x, v.x, amt);
+           y = lerp(y, v.y, amt);
+           z = lerp(z, v.z, amt);
+           return this;
+        }
 
-        //public PVector lerp(float x, float y, float z, float amt)
-        //{
-        //    this.x = PApplet.lerp(this.x, x, amt);
-        //    this.y = PApplet.lerp(this.y, y, amt);
-        //    this.z = PApplet.lerp(this.z, z, amt);
-        //    return this;
-        //}
+        public static PVector lerp(PVector v1, PVector v2, float amt)
+        {
+           PVector v = v1.copy();
+           v.lerp(v2, amt);
+           return v;
+        }
 
-        //static public float angleBetween(PVector v1, PVector v2)
-        //{
-        //    // We get NaN if we pass in a zero vector which can cause problems
-        //    // Zero seems like a reasonable angle between a (0,0,0) vector and something else
-        //    if (v1.x == 0 && v1.y == 0 && v1.z == 0 ) return 0.0f;
-        //    if (v2.x == 0 && v2.y == 0 && v2.z == 0 ) return 0.0f;
+        public PVector lerp(float x, float y, float z, float amt)
+        {
+           this.x = lerp(this.x, x, amt);
+           this.y = lerp(this.y, y, amt);
+           this.z = lerp(this.z, z, amt);
+           return this;
+        }
 
-        //    double dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
-        //    double v1mag = Math.Sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
-        //    double v2mag = Math.Sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
-        //    // This should be a number between -1 and 1, since it's "normalized"
-        //    double amt = dot / (v1mag * v2mag);
-        //    // But if it's not due to rounding error, then we need to fix it
-        //    // http://code.google.com/p/processing/issues/detail?id=340
-        //    // Otherwise if outside the range, acos() will return NaN
-        //    // http://www.cppreference.com/wiki/c/math/acos
-        //    if (amt <= -1)
-        //    {
-        //        return PConstants.PI;
-        //    }
-        //    else if (amt >= 1)
-        //    {
-        //        // http://code.google.com/p/processing/issues/detail?id=435
-        //        return 0;
-        //    }
-        //    return (float) Math.Acos(amt);
-        //}
+        static public float angleBetween(PVector v1, PVector v2)
+        {
+           // We get NaN if we pass in a zero vector which can cause problems
+           // Zero seems like a reasonable angle between a (0, 0, 0) vector and something else.
+           if (v1.x == 0 && v1.y == 0 && v1.z == 0 ) return 0.0f;
+           if (v2.x == 0 && v2.y == 0 && v2.z == 0 ) return 0.0f;
+
+           double dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+           double v1mag = Math.Sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
+           double v2mag = Math.Sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
+           // This should be a number between -1 and 1, since it's "normalized"
+           double amt = dot / (v1mag * v2mag);
+           // But if it's not due to rounding error, then we need to fix it
+           // http://code.google.com/p/processing/issues/detail?id=340
+           // Otherwise if outside the range, acos() will return NaN
+           // http://www.cppreference.com/wiki/c/math/acos
+           if (amt <= -1)
+           {
+               return ScriptCore.PI;
+           }
+           else if (amt >= 1)
+           {
+               // http://code.google.com/p/processing/issues/detail?id=435
+               return 0;
+           }
+
+           return (float) Math.Acos(amt);
+        }
 
         public override string ToString()
         {
-            return "[ " + x + ", " + y + ", " + z + " ]";
+            return $"x:{x} y:{y} z:{z}";
         }
 
         public float[] array()
@@ -597,42 +602,45 @@ namespace Nebulator.Script
             _array[0] = x;
             _array[1] = y;
             _array[2] = z;
+
             return _array;
         }
 
-        // TODO? these:
-        //public override bool Equals(object obj)
+        public override bool Equals(object obj)
+        {
+            bool ret = false;
+            if (obj is PVector)
+            {
+                PVector p = obj as PVector;
+                ret = x == p.x && y == p.y && z == p.z;
+            }
+            return ret;
+        }
+
+        //public static bool operator ==(PVector v1, PVector v2)
         //{
-        //    if (!(obj is PVector))
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        PVector p = obj as PVector;
-        //        return x == p.x && y == p.y && z == p.z;
-        //    }
+        //    return (object)v1 != null && (object)v2 != null && v1.Equals(v2);
         //}
 
-        //public override int GetHashCode()
+        //public static bool operator !=(PVector v1, PVector v2)
         //{
-        //    int result = 1;
-        //    result = 31 * result + Float.floatToIntBits(x);
-        //    result = 31 * result + Float.floatToIntBits(y);
-        //    result = 31 * result + Float.floatToIntBits(z);
-        //    return result;
-
-        //    //Returns a representation of the specified floating - point value according to the IEEE 754 floating - point "single format" bit layout.
-        //    //Bit 31(the bit that is selected by the mask 0x80000000) represents the sign of the floating-point number.Bits 30 - 23(the bits that
-        //    //are selected by the mask 0x7f800000) represent the exponent.Bits 22 - 0(the bits that are selected by the mask 0x007fffff)
-        //    //represent the significand(sometimes called the mantissa) of the floating - point number.
-
-        //    //If the argument is positive infinity, the result is 0x7f800000.
-        //    //If the argument is negative infinity, the result is 0xff800000.
-        //    //If the argument is NaN, the result is 0x7fc00000.
-
-        //    //In all cases, the result is an integer that, when given to the intBitsToFloat(int) method, will produce a floating-point value 
-        //    //the same as the argument to floatToIntBits(except all NaN values are collapsed to a single "canonical" NaN value).
+        //    return (object)v1 == null || (object)v2 == null || !v1.Equals(v2);
         //}
+
+        public override int GetHashCode()
+        {
+            int hash = 0;
+
+            foreach (float f in new float[]{ x, y, z})
+            {
+                foreach( byte b in BitConverter.GetBytes(f))
+                {
+                    hash <<= 4;
+                    hash &= b;
+                }
+            }
+
+            return hash;
+        }
     }
 }
