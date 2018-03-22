@@ -23,7 +23,6 @@
             this.Size = new System.Drawing.Size(237, 204);
             this.Enter += new System.EventHandler(this.Surface_Enter);
             this.Leave += new System.EventHandler(this.Surface_Leave);
-            this.Resize += new System.EventHandler(this.Surface_Resize);
             this.ResumeLayout(false);
         }
 

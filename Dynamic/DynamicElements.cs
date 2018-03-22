@@ -14,17 +14,6 @@ namespace Nebulator.Dynamic
     /// </summary>
     public class DynamicElements
     {
-        // DynamicElements refs
-        //     Vars - Compiler
-        //     InputMidis / OutputMidis / Levers / Sections / Sequences - Compiler, MainForm
-        //     Tracks - Compiler, MainForm, NebScript
-        //     NoteDefs - Compiler, Sequence, NebScript
-        //     MainForm, NebScript, NpScript:
-        //         StepTime, Playing, RealTime - Main -> Script
-        //         Speed, Volume, FrameRate - Main -> Script -> Main
-        //         RuntimeSteps - Script -> Main
-
-
         #region Things defined in the script
         /// <summary>Declared variables.</summary>
         public static LazyCollection<Variable> Vars { get; set; } = new LazyCollection<Variable>();

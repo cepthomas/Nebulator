@@ -7,12 +7,16 @@ public class Scale
     int[] scaleNotes;
     int[] noteWeights;
     int totalWeight = 100;
+    int down = 0;
+    int up = 0;
 
-    public Scale(string scale, string root)
+    public Scale(string scale, string root, int octDown, int octUp)
     {
         scaleNotes = s.getScaleNotes(scale, root);
         count = scaleNotes.Count();
         noteWeights = new int[count];
+        down = octDown;
+        up = octUp;
 
         // Set default weights.
         for(int i = 0; i < count; i++)
@@ -40,7 +44,7 @@ public class Scale
     {
         int note = 0;
         int r = s.random(totalWeight);
-        s.print(">>>", r);
+        //s.print(">>>", r);
         int offset = 0;
 
         for(int i = 0; i < count; i++)
@@ -52,6 +56,10 @@ public class Scale
                 break;
             }
         }
+
+        // Which octave?
+        int oct = s.random(0, 3) - 1;
+        note += oct * 12;
 
         return note;
     }

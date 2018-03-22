@@ -39,9 +39,6 @@ namespace Nebulator.Script
         /// <summary>Rendered bitmap for display when painting.</summary>
         System.Drawing.Bitmap _bitmap = null;
 
-        /// <summary>Indicates if setup() needed.</summary>
-        bool _setupRun = false;
-
         /// <summary>For metrics.</summary>
         TimingAnalyzer _tanDraw = new TimingAnalyzer() { SampleSize = 10 };
         #endregion
@@ -104,7 +101,8 @@ namespace Nebulator.Script
             _script.width = Width;
             _script.height = Height;
             _script.focused = Focused;
-            _setupRun = false;
+            _script.frameCount = 0;
+            _script.setup();
 
             CleanupBitmap(true);
         }
@@ -145,16 +143,6 @@ namespace Nebulator.Script
                     _script.pMouseX = _script.mouseX;
                     _script.pMouseY = _script.mouseY;
                     _script._redraw = false;
-
-                    if (!_setupRun)
-                    {
-                        _script.width = Width;
-                        _script.height = Height;
-                        _script.focused = Focused;
-                        _script.setup();
-                        _setupRun = true;
-                        _script.frameCount = 0;
-                    }
 
                     // Execute the user script code.
                     _script.frameCount++;
@@ -408,20 +396,6 @@ namespace Nebulator.Script
         #endregion
 
         #region Window status updates
-        private void Surface_Resize(object sender, EventArgs e)
-        {
-            if (_script != null)
-            {
-                _script.width = Width;
-                _script.height = Height;
-            }
-
-            CleanupBitmap(true);
-
-            // Force a re-init.
-            _setupRun = false;
-        }
-
         private void Surface_Enter(object sender, EventArgs e)
         {
             if (_script != null)

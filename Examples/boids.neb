@@ -1,5 +1,5 @@
 
-//////////// port of https://processing.org/examples/flocking.html /////////  TODO add some sound.
+//////////// port of https://processing.org/examples/flocking.html /////////
 
 // Changes made:
 // - ArrayList<> >>> List<>
@@ -7,6 +7,7 @@
 // - .add >>> .Add
 // - Flock and Boid classes needed some publics.
 // - Updated per a bunch of "until Processing.js catches up" notes.
+// - Added some sound generating code.
 
 
 /////////////////// original ///////////////////////
@@ -15,6 +16,13 @@
 // An implementation of Craig Reynold's Boids program to simulate the flocking behavior of birds. Each boid steers itself based on rules of avoidance, alignment, and coherence.
 
 // Click the mouse to add a new boid.
+
+include C:\Dev\Nebulator\Dev\scale.neb
+
+// Tracks
+track KEYS   1 5 0 0
+track BASS   2 2 0 0
+track SYNTH  3 0
 
 
 Flock flock;
@@ -27,6 +35,20 @@ public override void setup()
     for (int i = 0; i < 150; i++)
     {
         flock.addBoid(new Boid(width / 2, height / 2));
+    }
+
+    // Neb stuff
+    _scale = new Scale("Algerian", "C4", 1, 1);
+    // 1 2 b3 #4 5 b6 7
+    _scale.SetWeight(0, 50);
+    _scale.SetWeight(4, 40);
+    _scale.SetWeight(2, 30);
+
+    if(winGm)
+    {
+        sendPatch(KEYS, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Pad3Polysynth);
     }
 }
 
@@ -41,6 +63,52 @@ public override void mousePressed()
 {
     flock.addBoid(new Boid(mouseX,mouseY));
 }
+
+
+////////////////// Added ////////////////////
+// Index is note number, value is when to stop it.
+int[] _notesPlaying = new int[128];
+
+// Test scale.
+Scale _scale;
+
+public override void step()
+{
+    if(tock == 0)
+    {
+        algoDynamic();
+    }
+}
+
+void algoDynamic()
+{
+    //if(random(3) == 0)
+    {
+        int which = _scale.RandomNote();
+
+        if(_notesPlaying[which] == 0) // don't play if already playing
+        {
+            //print("algoDynamic:", which);
+            int dur = random(1, 8);
+            _notesPlaying[which] = tick + dur;
+            sendMidiNote(SYNTH, which, random(80, 100), dur);
+        }
+    }
+
+    // Remove any scheduled to stop now.
+    for(int i = 0;i < _notesPlaying.Length;i++)
+    {
+        if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
+        {
+            //sendMidiNote(SYNTH, _notesPlaying[i], 0, 0.00);
+            _notesPlaying[i] = 0;
+        }
+    }
+}
+
+/////////////////////////////////////////////
+
+
 
 
 // The Flock (a list of Boid objects)
@@ -108,10 +176,12 @@ public class Boid
         PVector sep = separate(boids);   // Separation
         PVector ali = align(boids);      // Alignment
         PVector coh = cohesion(boids);   // Cohesion
+
         // Arbitrarily weight these forces
         sep.mult(1.5f);
         ali.mult(1.0f);
         coh.mult(1.0f);
+        
         // Add the force vectors to acceleration
         applyForce(sep);
         applyForce(ali);
@@ -126,7 +196,7 @@ public class Boid
         // Limit speed
         velocity.limit(maxspeed);
         position.add(velocity);
-        // Reset accelertion to 0 each cycle
+        // Reset acceleration to 0 each cycle
         acceleration.mult(0);
     }
 

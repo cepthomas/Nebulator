@@ -83,7 +83,7 @@ Scale _scale;
 
 public override void setup()
 {
-    _scale = new Scale("Algerian", "C4");
+    _scale = new Scale("Algerian", "C4", 1, 1);
     // 1 2 b3 #4 5 b6 7
     _scale.SetWeight(0, 50);
     _scale.SetWeight(4, 50);
