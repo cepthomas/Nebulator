@@ -74,7 +74,7 @@ Scale _scale;
 
 public override void step()
 {
-    if(tock == 0)
+    if(tock % 24 == 0 && random(3) == 0)
     {
         algoDynamic();
     }
@@ -82,17 +82,14 @@ public override void step()
 
 void algoDynamic()
 {
-    //if(random(3) == 0)
-    {
-        int which = _scale.RandomNote();
+    int which = _scale.RandomNote();
 
-        if(_notesPlaying[which] == 0) // don't play if already playing
-        {
-            //print("algoDynamic:", which);
-            int dur = random(1, 8);
-            _notesPlaying[which] = tick + dur;
-            sendMidiNote(SYNTH, which, random(80, 100), dur);
-        }
+    if(_notesPlaying[which] == 0) // don't play if already playing
+    {
+        //print("algoDynamic:", which);
+        int dur = random(1, 8);
+        _notesPlaying[which] = tick + dur;
+        sendMidiNote(SYNTH, which, random(80, 100), dur);
     }
 
     // Remove any scheduled to stop now.
@@ -105,6 +102,7 @@ void algoDynamic()
         }
     }
 }
+
 
 /////////////////////////////////////////////
 

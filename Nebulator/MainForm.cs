@@ -178,10 +178,10 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
+            OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
 
             //ExportMidi("test.mid");
 
