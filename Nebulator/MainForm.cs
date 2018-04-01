@@ -12,6 +12,8 @@ using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
+using Nebulator.Server;
+using System.Threading.Tasks;
 
 
 // TODO Get rid of the s. rqmt like: ScriptSyntax.md: s.print("DoIt got:", val);
@@ -77,6 +79,9 @@ namespace Nebulator
 
         /// <summary>Diagnostics for timing measurement.</summary>
         TimingAnalyzer _tanNeb = new TimingAnalyzer() { SampleSize = 100 };
+
+        /// <summary>Server host.</summary>
+        SelfHost _selfHost = null;
         #endregion
 
         #region Lifecycle
@@ -181,7 +186,14 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
-            OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
+
+
+            _selfHost = new SelfHost();
+            TestClient client = new TestClient();
+            Task th = Task.Run(() => { _selfHost.Start(); });
+            Task tc = Task.Run(() => { client.Go(); });
+
 
             //ExportMidi("test.mid");
 
@@ -235,6 +247,8 @@ namespace Nebulator
                 _nebTimer?.Stop();
                 _nebTimer?.Dispose();
                 _nebTimer = null;
+
+                _selfHost?.Dispose();
 
                 MidiInterface.TheInterface?.Stop();
                 MidiInterface.TheInterface?.Dispose();

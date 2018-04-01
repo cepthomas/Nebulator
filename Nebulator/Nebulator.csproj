@@ -315,6 +315,10 @@
       <Project>{1202e3e2-7ff4-4132-9041-aade2aa9a584}</Project>
       <Name>Script</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Server\Server.csproj">
+      <Project>{8b7e58a4-4477-4223-a0c3-8be403ee5737}</Project>
+      <Name>Server</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
