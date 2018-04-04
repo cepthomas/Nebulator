@@ -5,18 +5,23 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Threading.Tasks;
+
 using NLog;
 using MoreLinq;
+//using Nancy;
+//using Nancy.Hosting.Self;
+//using Nancy.Conventions;
+
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 using Nebulator.Server;
-using System.Threading.Tasks;
 
 
-// TODO Get rid of the s. rqmt like: ScriptSyntax.md: s.print("DoIt got:", val);
+// TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val);
 
 
 namespace Nebulator
@@ -188,11 +193,13 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
 
-
+            // Server debug stuff
+            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             _selfHost = new SelfHost();
+            Task.Run(() => { _selfHost.Run(); });
+
             TestClient client = new TestClient();
-            Task th = Task.Run(() => { _selfHost.Start(); });
-            Task tc = Task.Run(() => { client.Go(); });
+            Task.Run(async () => { await client.Run(); });
 
 
             //ExportMidi("test.mid");

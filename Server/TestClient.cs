@@ -14,16 +14,16 @@ using Nebulator.Common;
 
 // Test client for the server.
 
+
 namespace Nebulator.Server
 {
     public class TestClient
-    { 
-        public void Go()
-        {
-            RunAsync().GetAwaiter().GetResult();
-        }
-
-        public async Task RunAsync()
+    {
+        /// <summary>
+        /// Run the test cases.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Run()
         {
             using (var client = new HttpClient())
             {
@@ -31,19 +31,31 @@ namespace Nebulator.Server
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                Task<string> post = PostCommandAsync(client, "start");
-                Task<List<string>> errors = GetErrorsAsync(client);
+                //// GET
+                //Task ti = GetIndex(client);
+                //await Task.WhenAll(ti);
 
-                await Task.WhenAll(post, errors);
+                // POST
+                Task<string> cmdTask = PostCommandAsync(client, "start");
+                await Task.WhenAll(cmdTask);
+                Console.WriteLine(cmdTask.Result);
 
-                Console.WriteLine(post.Result);
-                errors.Result.ForEach(s => Console.WriteLine(s));
+                //// GET
+                //Task<List<string>> errorsTask = GetErrorsAsync(client);
+                //await Task.WhenAll(errorsTask);
+                //errorsTask.Result.ForEach(s => Console.WriteLine(s));
             }
         }
 
+        /// <summary>
+        /// Send a command via POST.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="which"></param>
+        /// <returns></returns>
         async Task<string> PostCommandAsync(HttpClient client, string which)
         {
-            HttpResponseMessage response = await client.PostAsync(which, null);
+            HttpResponseMessage response = await client.PostAsync("command/" + which, null);
 
             string resultContent = await response.Content.ReadAsStringAsync();
 
@@ -53,6 +65,11 @@ namespace Nebulator.Server
             return resultContent;
         }
 
+        /// <summary>
+        /// Send a GET.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         async Task<List<string>> GetErrorsAsync(HttpClient client)
         {
             List<string> errors = new List<string>();
@@ -65,13 +82,43 @@ namespace Nebulator.Server
                 string sresp = await response.Content.ReadAsStringAsync();
                 var json = (JObject)JsonConvert.DeserializeObject(sresp);
 
-                foreach (dynamic jerr in json["errors"])
+                if(json != null)
                 {
-                    errors.Add($"{jerr.type},{jerr.file},{jerr.line},{jerr.message}");
+                    foreach (dynamic jerr in json["errors"])
+                    {
+                        errors.Add($"{jerr.type},{jerr.file},{jerr.line},{jerr.message}");
+                    }
+                }
+                else
+                {
+                    errors.Add("?,?,?,?");
                 }
             }
 
             return errors;
+        }
+
+        /// <summary>
+        /// Send a GET.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        async Task GetIndex(HttpClient client)
+        {
+            HttpResponseMessage response = await client.GetAsync("/");
+
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    string sresp = await response.Content.ReadAsStringAsync();
+            //    var json = (JObject)JsonConvert.DeserializeObject(sresp);
+
+            //    foreach (dynamic jerr in json["errors"])
+            //    {
+            //        errors.Add($"{jerr.type},{jerr.file},{jerr.line},{jerr.message}");
+            //    }
+            //}
+
+            //return errors;
         }
     }
 }
