@@ -6,19 +6,15 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
 using NLog;
 using MoreLinq;
-//using Nancy;
-//using Nancy.Hosting.Self;
-//using Nancy.Conventions;
-
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.Dynamic;
 using Nebulator.Server;
+using Newtonsoft.Json;
 
 
 // TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val);
@@ -57,6 +53,9 @@ namespace Nebulator
 
         /// <summary>The compiled midi event sequence.</summary>
         StepCollection _compiledSteps = new StepCollection();
+
+        /// <summary>Script compile errors and warnings.</summary>
+        List<ScriptError> _compileResults = new List<ScriptError>();
 
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
         LazyCollection<Variable> _ctrlChanges = new LazyCollection<Variable>() { AllowOverwrite = true };
@@ -171,6 +170,11 @@ namespace Nebulator
 
             // Catches runtime errors during drawing.
             surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessRuntimeError(eargs); };
+
+            // Init server.
+            _selfHost = new SelfHost();
+            SelfHost.RequestEvent += SelfHost_RequestEvent;
+            Task.Run(() => { _selfHost.Run(); });
             #endregion
 
             #region Command line
@@ -194,10 +198,7 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
 
             // Server debug stuff
-            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
-            _selfHost = new SelfHost();
-            Task.Run(() => { _selfHost.Run(); });
-
+            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             TestClient client = new TestClient();
             Task.Run(async () => { await client.Run(); });
 
@@ -218,6 +219,8 @@ namespace Nebulator
         {
             try
             {
+                ProcessPlay(PlayCommand.Stop);
+
                 // Just in case.
                 MidiInterface.TheInterface.KillAll();
 
@@ -268,6 +271,66 @@ namespace Nebulator
         }
         #endregion
 
+        #region Server processing
+        /// <summary>
+        /// Process a request from the web api.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void SelfHost_RequestEvent(object sender, SelfHost.RequestEventArgs e)
+        {
+            switch (e.Request)
+            {
+                case "start":
+                    bool playok = true;
+                    BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        playok = ProcessPlay(PlayCommand.Start);
+                    });
+                    e.Result = playok ? SelfHost.OK_NO_DATA : null;
+                    break;
+
+                case "stop":
+                    BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        ProcessPlay(PlayCommand.Stop);
+                    });
+                    e.Result = SelfHost.OK_NO_DATA;
+                    break;
+
+                case "rewind":
+                    BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        ProcessPlay(PlayCommand.Rewind);
+                    });
+                    e.Result = SelfHost.OK_NO_DATA;
+                    break;
+
+                case "compile":
+                    bool compok = false;
+                    BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        compok = Compile();
+                    });
+
+                    if (compok)
+                    {
+                        e.Result = SelfHost.OK_NO_DATA;
+                    }
+                    else
+                    {
+                        e.Result = JsonConvert.SerializeObject(_compileResults);//, Formatting.Indented);
+                    }
+                    break;
+
+                default:
+                    // Invalid.
+                    e.Result = null;
+                    break;
+            }
+        }
+        #endregion
+
         #region Compile
         /// <summary>
         /// Master compiler function.
@@ -298,12 +361,11 @@ namespace Nebulator
                 // Time points.
                 timeMaster.TimeDefs.Clear();
 
-                // Process errors. Some are warnings.
-                List<ScriptError> realErrors = new List<ScriptError>();
-                List<ScriptError> warnings = new List<ScriptError>();
-                compiler.Errors.ForEach(e => { if (e.ErrorType == ScriptError.ScriptErrorType.CompileWarning) warnings.Add(e); else realErrors.Add(e); } );
+                // Process errors. Some may be warnings.
+                _compileResults = compiler.Errors;
+                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptError.ScriptErrorType.Error || w.ErrorType == ScriptError.ScriptErrorType.Parse);
 
-                if (realErrors.Count == 0 && _script != null)
+                if (errorCount == 0 && _script != null)
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
@@ -349,12 +411,17 @@ namespace Nebulator
                 {
                     _logger.Warn("Compile failed.");
                     ok = false;
-                    SetPlayStatus(PlayCommand.StopRewind);
+                    ProcessPlay(PlayCommand.StopRewind);
                     SetCompileStatus(false);
                 }
 
-                warnings.ForEach(e => _logger.Warn(e.ToString()));
-                realErrors.ForEach(e => _logger.Error(e.ToString()));
+                _compileResults.ForEach(r =>
+                {
+                    if (r.ErrorType == ScriptError.ScriptErrorType.Warning)
+                        _logger.Warn(r.ToString());
+                    else
+                        _logger.Error(r.ToString());
+                });
             }
 
             return ok;
@@ -406,7 +473,7 @@ namespace Nebulator
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
-            SetPlayStatus(PlayCommand.StopRewind);
+            ProcessPlay(PlayCommand.StopRewind);
 
             ///// Init the user input area.
             // Levers.
@@ -448,7 +515,7 @@ namespace Nebulator
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if(_script != null)
+                if (_script != null)
                 {
                     NextStep(e);
                 }
@@ -524,13 +591,13 @@ namespace Nebulator
                     // Check for end and loop condition.
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
-                        SetPlayStatus(PlayCommand.StopRewind);
+                        ProcessPlay(PlayCommand.StopRewind);
                         MidiInterface.TheInterface.KillAll(); // just in case
                     }
                 }
                 // else keep going
 
-                SetPlayStatus(PlayCommand.UpdateUiTime);
+                ProcessPlay(PlayCommand.UpdateUiTime);
             }
 
             ///// UI updates /////
@@ -705,7 +772,7 @@ namespace Nebulator
         /// <param name="args"></param>
         void ProcessRuntimeError(Surface.RuntimeErrorEventArgs args)
         {
-            SetPlayStatus(PlayCommand.Stop);
+            ProcessPlay(PlayCommand.Stop);
             SetCompileStatus(false);
 
             // Locate the offending frame.
@@ -870,7 +937,7 @@ namespace Nebulator
         /// </summary>
         void Play_Click(object sender, EventArgs e)
         {
-            Play();
+            ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop, true);
         }
 
         /// <summary>
@@ -886,7 +953,7 @@ namespace Nebulator
         /// </summary>
         void Rewind_Click(object sender, EventArgs e)
         {
-            SetPlayStatus(PlayCommand.Rewind);
+            ProcessPlay(PlayCommand.Rewind);
         }
 
         /// <summary>
@@ -902,7 +969,7 @@ namespace Nebulator
         void Compile_Click(object sender, EventArgs e)
         {
             Compile();
-            SetPlayStatus(PlayCommand.StopRewind);
+            ProcessPlay(PlayCommand.StopRewind);
         }
 
         /// <summary>
@@ -911,7 +978,7 @@ namespace Nebulator
         void Time_ValueChanged(object sender, EventArgs e)
         {
             _stepTime = timeMaster.CurrentTime;
-            SetPlayStatus(PlayCommand.UpdateUiTime);
+            ProcessPlay(PlayCommand.UpdateUiTime);
         }
         #endregion
 
@@ -1111,47 +1178,74 @@ namespace Nebulator
 
         #region Play control
         /// <summary>
-        /// Start or stop depending on current status.
-        /// </summary>
-        void Play()
-        {
-            if (chkPlay.Checked)
-            {
-                // Start!
-                bool ok = _needCompile ? Compile() : true;
-
-                if (ok)
-                {
-                    SetSpeedTimerPeriod();
-                }
-
-                SetPlayStatus(ok ? PlayCommand.Start : PlayCommand.Stop);
-            }
-            else
-            {
-                // Stop!
-                SetPlayStatus(PlayCommand.Stop);
-
-                // Send midi stop all notes just in case.
-                MidiInterface.TheInterface.KillAll();
-            }
-        }
-
-        /// <summary>
         /// Update everything per param.
         /// </summary>
-        /// <param name="cmd"></param>
-        void SetPlayStatus(PlayCommand cmd)
+        /// <param name="cmd">The command.</param>
+        /// <param name="fromUi">From user clicking.</param>
+        /// <returns>Indication of success.</returns>
+        bool ProcessPlay(PlayCommand cmd, bool fromUi = false)
         {
+            bool ret = true;
+
             switch (cmd)
             {
                 case PlayCommand.Start:
-                    chkPlay.Checked = true;
-                    _startTime = DateTime.Now;
+                    if (fromUi)
+                    {
+                        bool ok = _needCompile ? Compile() : true;
+                        if (ok)
+                        {
+                            _startTime = DateTime.Now;
+                            SetSpeedTimerPeriod();
+                        }
+                        else
+                        {
+                            chkPlay.Checked = false;
+                            ret = false;
+                        }
+                    }
+                    else // from server
+                    {
+                        if(_needCompile)
+                        {
+                            ret = false; // not yet
+                        }
+                        else
+                        {
+                            chkPlay.Checked = true;
+                            _startTime = DateTime.Now;
+                            SetSpeedTimerPeriod();
+                        }
+                    }
+
+
+                    //// Start!
+                    //_startTime = DateTime.Now;
+                    //bool ok = _needCompile ? Compile() : true;
+
+                    //if (ok)
+                    //{
+                    //    SetSpeedTimerPeriod();
+                    //    if (!fromUi)
+                    //    {
+                    //        chkPlay.Checked = true;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    chkPlay.Checked = false;
+                    //    ret = false;
+                    //}
                     break;
 
                 case PlayCommand.Stop:
-                    chkPlay.Checked = false;
+                    if (!fromUi)
+                    {
+                        chkPlay.Checked = false;
+                    }
+                    
+                    // Send midi stop all notes just in case.
+                    MidiInterface.TheInterface.KillAll();
                     break;
 
                 case PlayCommand.Rewind:
@@ -1159,15 +1253,22 @@ namespace Nebulator
                     break;
 
                 case PlayCommand.StopRewind:
-                    chkPlay.Checked = false;
+                    if (!fromUi)
+                    {
+                        chkPlay.Checked = true;
+                    }
                     _stepTime.Reset();
                     break;
 
                 case PlayCommand.UpdateUiTime:
+                    // See below.
                     break;
             }
 
+            // Always do this.
             timeMaster.CurrentTime = _stepTime;
+
+            return ret;
         }
         #endregion
 
@@ -1182,8 +1283,7 @@ namespace Nebulator
             if(e.KeyCode == Keys.Space)
             {
                 // Handle start/stop toggle.
-                chkPlay.Checked = !chkPlay.Checked;
-                Play();
+                ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start);
                 e.Handled = true;
             }
         }

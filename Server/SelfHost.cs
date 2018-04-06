@@ -21,27 +21,55 @@ namespace Nebulator.Server
         bool _disposed = false;
         #endregion
 
+        #region Definitions
+        /// <summary>Base URI.</summary>
+        public const string BASE_URI = "http://localhost:8888" + RELATIVE_PATH;
+
+        /// <summary>Where our app lives.</summary>
+        public const string RELATIVE_PATH = "/nebulator/";
+
+        /// <summary>Indicates success.</summary>
+        public const string OK_NO_DATA = "";
+        #endregion
+
+        #region Events
+        /// <summary>Incoming request.</summary>
+        public static event EventHandler<RequestEventArgs> RequestEvent;
+
+        /// <summary>Host request event args.</summary>
+        public class RequestEventArgs : EventArgs
+        {
+            /// <summary>What do you want.</summary>
+            public string Request { get; set; } = "";
+
+            /// <summary>Optional parameter(s).</summary>
+            public string Param { get; set; } = "";
+
+            /// <summary>Returned from processing for digestion by client. Null means failed, otherwise a json string with optional data.</summary>
+            public object Result { get; set; } = null;
+        }
+
+        /// <summary>
+        /// Helper for generating events from controller modules.
+        /// </summary>
+        /// <param name="args"></param>
+        public static void FireEvent(RequestEventArgs args)
+        {
+            RequestEvent?.Invoke(null, args);
+        }
+        #endregion
+
         #region Lifecycle
         /// <summary>
         /// Start the server running.
         /// </summary>
         public void Run()
         {
-            string uri = "http://localhost:8888/nebulator/";
-            _server = new WebServer(uri, RoutingStrategy.Regex);
+            _server = new WebServer(BASE_URI, RoutingStrategy.Regex);
 
-            // First, we will configure our web server by adding Modules.
-            // Please note that order DOES matter.
-            // ================================================================================================
-            // If we want to enable sessions, we simply register the LocalSessionModule
-            // Beware that this is an in-memory session storage mechanism so, avoid storing very large objects.
-            // You can use the server.GetSession() method to get the SessionInfo object and manupulate it.
-            // You could potentially implement a distributed session module using something like Redis
-            //_server.RegisterModule(new LocalSessionModule());
+            // First, we will configure our web server by adding Modules. Please note that order DOES matter.
 
-
-            // TODO add static file serving, web sockets? https://github.com/unosquare/embedio
-
+            // Later add sessions (LocalSessionModule), static file serving (StaticFilesSample)? See https://github.com/unosquare/embedio.
 
             // My app controller.
             _server.RegisterModule(new WebApiModule());
@@ -49,9 +77,6 @@ namespace Nebulator.Server
 
             // Once we've registered our modules and configured them, we call the RunAsync() method.
             _server.RunAsync();
-
-            // Fire up the browser to show the content if we are debugging!
-            Process.Start(uri);
 
             //Console.ReadKey(true);
         }

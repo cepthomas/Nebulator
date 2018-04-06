@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="AssemblyInfoTool.cs" />
     <Compile Include="Bag.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="LazyCollection.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="MultiFileWatcher.cs" />

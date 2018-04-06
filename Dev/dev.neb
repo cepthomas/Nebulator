@@ -13,6 +13,7 @@ constant WHEN1         32
 constant KEYS_DEF_VOL 100
 constant DRUM_DEF_VOL 100
 
+
 ////////// Variables //////////
 variable COL1   200 // change color
 variable MODN     0 // modulate notes
