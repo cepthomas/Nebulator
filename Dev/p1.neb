@@ -74,6 +74,7 @@ sequence  DRUMS_HH  8
 
 
 ///// Functions /////
+!script
 
 // Index is note number, value is when to stop it.
 int[] _notesPlaying = new int[128];

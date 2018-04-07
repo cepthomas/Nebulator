@@ -5,6 +5,8 @@
 // Try "import".
 include nputils.neb
 
+///// Functions /////
+!script
 
 public override void setup()
 {

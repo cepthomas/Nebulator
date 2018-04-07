@@ -344,8 +344,9 @@ namespace Nebulator.Script
                     new Transition("midictlout", "", ParseMidiController),
                     new Transition("section", "do_section", ParseSection),
                     new Transition("sequence", "do_sequence", ParseSequence),
+                    new Transition("!script", "do_script"), // script lines from here on out
                     new Transition("empty"), // just swallow these
-                    new Transition("", "", ParseScriptLine)), // everything else is assumed part of a script
+                    new Transition("", "", ParseInvalidLine)), // invalid parse line
 
                 new State("do_section", null, null,
                     new Transition("empty", "idle"), // done section
@@ -354,6 +355,9 @@ namespace Nebulator.Script
                 new State("do_sequence", null, null,
                     new Transition("empty", "idle"), // done sequence
                     new Transition("", "", ParseSequenceElement)), // element of sequence
+
+                new State("do_script", null, null,
+                    new Transition("", "", ParseScriptLine)), // script line
             };
 
             bool valid = _sm.Init(states, "idle");
@@ -988,8 +992,15 @@ namespace Nebulator.Script
             }
             catch (Exception)
             {
-                AddParseError(farg.Context, "Invalid function line");
+                AddParseError(farg.Context, "Invalid script line");
             }
+        }
+
+        private void ParseInvalidLine(object o)
+        {
+            SmFuncArg farg = o as SmFuncArg;
+
+            AddParseError(farg.Context, "Invalid parse line");
         }
         #endregion
 

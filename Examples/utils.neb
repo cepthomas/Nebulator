@@ -4,6 +4,7 @@ constant VEL 95
 variable MAX 60
 
 ///// Functions /////
+!script
 
 int notavar = 911;
 

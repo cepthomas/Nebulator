@@ -31,11 +31,11 @@ namespace Nebulator.Server
 {
     public class NebController : WebApiController
     {
-        [WebApiHandler(HttpVerbs.Get, SelfHost.RELATIVE_PATH)]
+        [WebApiHandler(HttpVerbs.Get, SelfHost.RELATIVE_PATH + "")]
         public bool GetIndex(WebServer server, HttpListenerContext context)
         {
             bool ret = true;
-            ret = context.JsonResponse("At the bottom");
+            ret = context.JsonResponse("I am the root!");
             return ret;
         }
 

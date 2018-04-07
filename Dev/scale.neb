@@ -1,5 +1,6 @@
 
 ///// Scale helper class and utilities /////
+!script
 
 public class Scale
 {

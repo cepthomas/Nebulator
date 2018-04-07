@@ -24,6 +24,8 @@ lever L3 0 255   MODF
 track SOUND 1 5 0 0
 
 ///// Functions /////
+!script
+
 class TapeLoop
 {
     public string snote;

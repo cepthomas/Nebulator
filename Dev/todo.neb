@@ -3,8 +3,27 @@ TODO Stuff to implement (probably) in neb files. Make some "library" files.
 
 
 -------------------------
-
 // gibber.js example:
+
+// MIDI: sequence four notes with alternating rhythms
+a = Seq( [0,1,2,3], [1/4,1/2], 'note', channels[0] ).start()
+// ALL: sequence anonymous function that repeats every two measures
+let count = 0
+d = Seq( ()=> { Gibber.log( count++ ) }, 2 ).start()
+s = Steps({
+  36:'ffff',     // quarter notes at max velocity, midinote 36
+  38:'.c.c',     // alternating quarter notes, midinote 38
+  40:'9.69.69.', // eighth notes, midinote 40
+  42:'b9b3f',    // fifth notes, midinote 42
+}, target )
+
+// rotate midinote 38 only by 1 position each measure
+s[38].rotate.seq( 1,1 )
+
+// reverse all patterns every 4 measures
+s.reverse.seq( 1,4 )
+
+
 
 // music
 b = EDrums('x*o*x*o-')

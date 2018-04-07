@@ -25,6 +25,9 @@ track BASS   2 2 0 0
 track SYNTH  3 0
 
 
+///// Functions /////
+!script
+
 Flock flock;
 
 public override void setup()

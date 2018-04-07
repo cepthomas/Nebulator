@@ -12,6 +12,7 @@ lever L2 -5000 0 INITANG
 
 
 ///// Functions /////
+!script
 
 // The lines to draw.
 List<Point> lines = new List<Point>();

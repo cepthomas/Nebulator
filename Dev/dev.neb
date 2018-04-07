@@ -7,7 +7,6 @@
 include ..\Examples\utils.neb
 include scale.neb
 
-
 ////////// Constants //////////
 constant WHEN1         32
 constant KEYS_DEF_VOL 100
@@ -45,8 +44,8 @@ KEYS    SEQ1           ALGO1       SEQ1          SEQ2  // trackname sequence seq
 DRUMS   DRUMS_SIMPLE   DRUMS_HH    DRUMS_SIMPLE  DRUMS_HH
 
 section PART2 WHEN1 60
-KEYS    SEQ1      SEQ2 
-DRUMS   DRUMS_HH  DRUMS_HH   
+KEYS    SEQ1      SEQ2
+DRUMS   DRUMS_HH  DRUMS_HH
 
 ////////// Sequences //////////
 
@@ -74,8 +73,10 @@ x-------x-------x-------x-------  AcousticBassDrum  90
 sequence  DRUMS_HH  8
 ------xx------xx------xx------xx  ClosedHiHat  100
 
+rrrrrrrrrrrrrr
 
-///// Functions /////
+///// Script Functions /////
+!script
 
 
 // Index is note number, value is which tick to stop it.
