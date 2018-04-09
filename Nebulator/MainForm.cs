@@ -272,22 +272,30 @@ namespace Nebulator
         #endregion
 
         #region Server processing
+        class ServerResult
+        {
+            public string Request { get; set; } = "";
+            public object Result { get; set; } = null;
+        }
+
         /// <summary>
-        /// Process a request from the web api.
+        /// Process a request from the web api. Set the e.Result to a json string. 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void SelfHost_RequestEvent(object sender, SelfHost.RequestEventArgs e)
         {
+            ServerResult srvres = new ServerResult() { Request = e.Request };
+
             switch (e.Request)
             {
                 case "start":
-                    bool playok = true;
+                    bool playok = false;
                     BeginInvoke((MethodInvoker)delegate ()
                     {
                         playok = ProcessPlay(PlayCommand.Start);
                     });
-                    e.Result = playok ? SelfHost.OK_NO_DATA : null;
+                    srvres.Result = playok ? SelfHost.OK_NO_DATA : SelfHost.FAIL;
                     break;
 
                 case "stop":
@@ -295,7 +303,7 @@ namespace Nebulator
                     {
                         ProcessPlay(PlayCommand.Stop);
                     });
-                    e.Result = SelfHost.OK_NO_DATA;
+                    srvres.Result = SelfHost.OK_NO_DATA;
                     break;
 
                 case "rewind":
@@ -303,7 +311,7 @@ namespace Nebulator
                     {
                         ProcessPlay(PlayCommand.Rewind);
                     });
-                    e.Result = SelfHost.OK_NO_DATA;
+                    srvres.Result = SelfHost.OK_NO_DATA;
                     break;
 
                 case "compile":
@@ -315,11 +323,11 @@ namespace Nebulator
 
                     if (compok)
                     {
-                        e.Result = SelfHost.OK_NO_DATA;
+                        srvres.Result = SelfHost.OK_NO_DATA;
                     }
                     else
                     {
-                        e.Result = JsonConvert.SerializeObject(_compileResults);//, Formatting.Indented);
+                        srvres.Result = _compileResults;
                     }
                     break;
 
@@ -328,6 +336,8 @@ namespace Nebulator
                     e.Result = null;
                     break;
             }
+
+            e.Result = JsonConvert.SerializeObject(srvres, Formatting.Indented);
         }
         #endregion
 
@@ -1217,25 +1227,6 @@ namespace Nebulator
                             SetSpeedTimerPeriod();
                         }
                     }
-
-
-                    //// Start!
-                    //_startTime = DateTime.Now;
-                    //bool ok = _needCompile ? Compile() : true;
-
-                    //if (ok)
-                    //{
-                    //    SetSpeedTimerPeriod();
-                    //    if (!fromUi)
-                    //    {
-                    //        chkPlay.Checked = true;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    chkPlay.Checked = false;
-                    //    ret = false;
-                    //}
                     break;
 
                 case PlayCommand.Stop:

@@ -1,0 +1,131 @@
+
+
+////////////////// More grandiose ///////////////////////
+
+//using, namespace, class PPPPPPPPP
+
+
+// // current genned:
+// public partial class dev : ScriptCore
+// {
+//     const int WHEN1 = 32;
+//     int COL1 { get { return DynamicElements.Vars["COL1"].Value; } set { DynamicElements.Vars["COL1"].Value = value; } }
+//     Track KEYS { get { return DynamicElements.Tracks["KEYS"]; } }
+//     Sequence SEQ1 { get { return DynamicElements.Sequences["SEQ1"]; } }
+//     public dev() : base()
+//     {
+//         s = this;
+//         _scriptFunctions.Add("algoSequences", algoSequences);
+//         _scriptFunctions.Add("MODN", On_MODN);
+//     }
+// }
+
+
+// A closure in C# takes the form of an in-line delegate/anonymous method. A closure is attached to its parent method meaning that variables defined in parent's method body can be referenced from within the anonymous method. There is a great Blog Post here about it.
+// public Person FindById(int id)
+// {
+//     return this.Find(delegate(Person p)
+//     {
+//         return (p.Id == id);
+//     });
+// }
+
+// When you make a lambda expression that uses variables defined outside of the method, then the lambda must be implemented using a closure. For example:
+
+// int i = 42;
+
+// Action lambda = () => { Console.WriteLine(i); }; 
+// In this case, the compiler generated method must have access to the variable (i) defined in a completely different scope. In order for this to work, the method it generates is a "function together with the referencing environment" - basically, it's creating a "closure" to retrieve access to the variable.
+
+
+
+
+void setupNeb()
+{
+    // import "..\Examples\utils.neb";
+    // import "scale.neb";
+    import("scale.neb"); // PPPPPPPPP
+
+
+    WHEN1 = constant(32);
+    constant(WHEN1, 32);
+    // >>> const int WHEN1 = 32;
+
+
+
+    // var COL1 = variable(200);
+    var COL1 = dynvar(200); // variable -> dynamic, dynvar?
+    // private func:
+    PVar dynvar(int initvalue)
+    {
+        PVar pv = new PVar() { Val = initvalue };
+        DynamicElements.Vars.Add(v.NameOrHashOr???, pv);
+        return pv;
+    }
+
+
+
+    var CHORD1 = notes(1, 2, 3);
+    var MI1 = midictlin(1, 4, COL1);
+    // ditto for:
+    // midictlout MO1 1 Pitch PITCH
+    // lever L1   0  255   COL1
+
+    var KEYS = track(1, 5, 0, 0);
+
+    var WHEN1 = section(PART1, 0);
+    //WHEN1 += KEYS, SEQ1, ALGO1, SEQ1, SEQ2;
+    WHEN1.Add(KEYS, SEQ1, ALGO1, SEQ1, SEQ2);
+
+    var SEQ1 = sequence(8);
+    SEQ1.Add(00.00, G3, 90, 0.60);
+    SEQ1.Add(01.00, algoDynamic(), 90);
+    SEQ1.Add(02.00, A3.m7, 90, 0.60);
+
+    var DRUMS_SIMPLE = sequence(8);
+    DRUMS_SIMPLE.Add(x-------x-------x-------x-------, AcousticBassDrum, 90);
+    DRUMS_SIMPLE.Add(----x-------x-x-----x-------x-x-, AcousticSnare, 80);
+}
+
+
+!script
+
+int[] _notesPlaying = new int[128];
+Scale _scale;
+
+var tileCountX = 10;
+var tileCountY = 10;
+var tileWidth  = 0;
+var tileHeight = 0;
+
+public override void setup()
+{
+    _scale = new Scale("Algerian", "C4");
+    // 1 2 b3 #4 5 b6 7
+    _scale.SetWeight(0, 50);
+    _scale.SetWeight(4, 50);
+    _scale.SetWeight(2, 30);
+
+    createCanvas(800, 800);
+    tileWidth = width / tileCountX;
+    tileHeight = height / tileCountY;
+    noFill();
+    stroke(0, 128);
+}
+
+public class Scale
+{
+    public int count = 0;
+    int[] scaleNotes;
+
+    public Scale(string scale, string root, int octDown, int octUp)
+    {
+        scaleNotes = s.getScaleNotes(scale, root);  //<<<<<<< s. notation! make all script funcs static then derive all new classes from ScriptCore?
+        count = scaleNotes.Count();
+    }
+    
+    public void SetWeight(int index, int weight)
+    {
+        noteWeights[index] = weight;
+    }
+}

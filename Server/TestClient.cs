@@ -41,11 +41,13 @@ namespace Nebulator.Server
                 // POST
                 Task<string> startTask = PostCommandAsync(client, "start");
                 await Task.WhenAll(startTask);
+                Console.WriteLine("==== start");
                 Console.WriteLine(startTask.Result);
 
                 // POST
                 Task<string> compileTask = PostCommandAsync(client, "compile");
                 await Task.WhenAll(compileTask);
+                Console.WriteLine("==== compile");
                 Console.WriteLine(compileTask.Result);
             }
         }

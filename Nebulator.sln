@@ -16,10 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{20180D64-A
 	ProjectSection(SolutionItems) = preProject
 		..\Nebulator.wiki\_Sidebar.md = ..\Nebulator.wiki\_Sidebar.md
 		..\Nebulator.wiki\Home.md = ..\Nebulator.wiki\Home.md
+		..\Nebulator.wiki\Notes.md = ..\Nebulator.wiki\Notes.md
+		..\Nebulator.wiki\Porting.md = ..\Nebulator.wiki\Porting.md
 		..\Nebulator.wiki\ScriptApiNeb.md = ..\Nebulator.wiki\ScriptApiNeb.md
-		..\Nebulator.wiki\ScriptApiUi.md = ..\Nebulator.wiki\ScriptApiUi.md
+		..\Nebulator.wiki\ScriptApiProcessing.md = ..\Nebulator.wiki\ScriptApiProcessing.md
 		..\Nebulator.wiki\ScriptDefinitions.md = ..\Nebulator.wiki\ScriptDefinitions.md
 		..\Nebulator.wiki\ScriptSyntax.md = ..\Nebulator.wiki\ScriptSyntax.md
+		..\Nebulator.wiki\WebApi.md = ..\Nebulator.wiki\WebApi.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{6C3C3132-1765-473F-84F9-163CCD69FB68}"

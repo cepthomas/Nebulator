@@ -149,7 +149,7 @@ namespace Nebulator.Script
                 _logger.Error($"Invalid file {nebfn}.");
             }
 
-            return script;
+            return Errors.Count == 0 ? script : null;
         }
 
         /// <summary>

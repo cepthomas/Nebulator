@@ -29,7 +29,10 @@ namespace Nebulator.Server
         public const string RELATIVE_PATH = "/nebulator/";
 
         /// <summary>Indicates success.</summary>
-        public const string OK_NO_DATA = "";
+        public const string OK_NO_DATA = "OK";
+
+        /// <summary>Indicates failure.</summary>
+        public const string FAIL = "Fail";
         #endregion
 
         #region Events
