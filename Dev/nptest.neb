@@ -3,7 +3,8 @@
 
 
 // Try "import".
-include nputils.neb
+#load nputils.neb
+
 
 ///// Functions /////
 !script

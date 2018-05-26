@@ -12,12 +12,24 @@ using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Midi;
-using Nebulator.Dynamic;
 using Nebulator.Server;
 using Newtonsoft.Json;
 
 
-// TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val);
+// TODO0 Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures?:
+// A closure in C# takes the form of an in-line delegate/anonymous method. A closure is attached to its parent method meaning that variables defined in parent's method body can be referenced from within the anonymous method. There is a great Blog Post here about it.
+// public Person FindById(int id)
+// {
+//     return this.Find(delegate(Person p)
+//     {
+//         return (p.Id == id);
+//     });
+// }
+
+// When you make a lambda expression that uses variables defined outside of the method, then the lambda must be implemented using a closure. For example:
+// int i = 42;
+// Action lambda = () => { Console.WriteLine(i); }; 
+// In this case, the compiler generated method must have access to the variable (i) defined in a completely different scope. In order for this to work, the method it generates is a "function together with the referencing environment" - basically, it's creating a "closure" to retrieve access to the variable.
 
 
 namespace Nebulator
@@ -58,7 +70,7 @@ namespace Nebulator
         List<ScriptError> _compileResults = new List<ScriptError>();
 
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
-        LazyCollection<Variable> _ctrlChanges = new LazyCollection<Variable>() { AllowOverwrite = true };
+        LazyCollection<NVariable> _ctrlChanges = new LazyCollection<NVariable>() { AllowOverwrite = true };
 
         /// <summary>Current neb file name.</summary>
         string _fn = Utils.UNKNOWN_STRING;
@@ -197,10 +209,12 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
 
-            // Server debug stuff
             OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            TestClient client = new TestClient();
-            Task.Run(async () => { await client.Run(); });
+
+            // Server debug stuff
+            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            //TestClient client = new TestClient();
+            //Task.Run(async () => { await client.Run(); });
 
 
             //ExportMidi("test.mid");
@@ -219,7 +233,7 @@ namespace Nebulator
         {
             try
             {
-                ProcessPlay(PlayCommand.Stop);
+                ProcessPlay(PlayCommand.Stop, false);
 
                 // Just in case.
                 MidiInterface.TheInterface.KillAll();
@@ -233,7 +247,7 @@ namespace Nebulator
                     _nebpVals.SetValue("master", "sequence", chkSeq.Checked);
                     _nebpVals.SetValue("master", "ui", chkUi.Checked);
 
-                    DynamicElements.Tracks.Values.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
+                    DynamicElements.Tracks.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
 
@@ -293,7 +307,7 @@ namespace Nebulator
                     bool playok = false;
                     BeginInvoke((MethodInvoker)delegate ()
                     {
-                        playok = ProcessPlay(PlayCommand.Start);
+                        playok = ProcessPlay(PlayCommand.Start, false);
                     });
                     srvres.Result = playok ? SelfHost.OK_NO_DATA : SelfHost.FAIL;
                     break;
@@ -301,7 +315,7 @@ namespace Nebulator
                 case "stop":
                     BeginInvoke((MethodInvoker)delegate ()
                     {
-                        ProcessPlay(PlayCommand.Stop);
+                        ProcessPlay(PlayCommand.Stop, false);
                     });
                     srvres.Result = SelfHost.OK_NO_DATA;
                     break;
@@ -309,7 +323,7 @@ namespace Nebulator
                 case "rewind":
                     BeginInvoke((MethodInvoker)delegate ()
                     {
-                        ProcessPlay(PlayCommand.Rewind);
+                        ProcessPlay(PlayCommand.Rewind, false);
                     });
                     srvres.Result = SelfHost.OK_NO_DATA;
                     break;
@@ -373,47 +387,35 @@ namespace Nebulator
 
                 // Process errors. Some may be warnings.
                 _compileResults = compiler.Errors;
-                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptError.ScriptErrorType.Error || w.ErrorType == ScriptError.ScriptErrorType.Parse);
+                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptError.ScriptErrorType.Error);
 
                 if (errorCount == 0 && _script != null)
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 
-                    // Collect important times.
-                    DynamicElements.Sections.Values.ForEach(s => timeMaster.TimeDefs.Add(new Time(s.Start, 0), s.Name));
 
-                    // Convert compiled stuff to step collection.
-                    _compiledSteps.Clear();
-                    foreach (Section sect in DynamicElements.Sections.Values)
-                    {
-                        // Iterate through the sections tracks.
-                        foreach (SectionTrack strack in sect.SectionTracks)
-                        {
-                            // Get the pertinent Track object.
-                            Track track = DynamicElements.Tracks[strack.TrackName];
 
-                            // For processing current Sequence.
-                            int seqOffset = sect.Start;
 
-                            // Gen steps for each sequence.
-                            foreach (string sseq in strack.SequenceNames)
-                            {
-                                Sequence seq = DynamicElements.Sequences[sseq];
-                                StepCollection stepsToAdd = ScriptCore.ConvertToSteps(track, seq, seqOffset);
-                                _compiledSteps.Add(stepsToAdd);
-                                seqOffset += seq.Length;
-                            }
-                        }
-                    }
+ //                   ConvertToSteps();
+                     // Show everything.
+ //                   InitUi();
+ //xxx
 
-                    // Show everything.
-                    InitUi();
 
                     // Surface area.
                     InitRuntime();
-                    surface.InitScript(_script);
+                    _script.setupNeb();
+                    surface.InitSurface(_script);
                     ProcessRuntime();
+
+
+
+                    ConvertToSteps();
+                    // Show everything.
+                    InitScriptUi();
+
+
 
                     SetCompileStatus(true);
                 }
@@ -421,16 +423,20 @@ namespace Nebulator
                 {
                     _logger.Warn("Compile failed.");
                     ok = false;
-                    ProcessPlay(PlayCommand.StopRewind);
+                    ProcessPlay(PlayCommand.StopRewind, false);
                     SetCompileStatus(false);
                 }
 
                 _compileResults.ForEach(r =>
                 {
                     if (r.ErrorType == ScriptError.ScriptErrorType.Warning)
+                    {
                         _logger.Warn(r.ToString());
+                    }
                     else
+                    {
                         _logger.Error(r.ToString());
+                    }
                 });
             }
 
@@ -438,9 +444,38 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Create the main UI parts from the composition.
+        /// Convert the script output into steps for feeding midi.
         /// </summary>
-        void InitUi()
+        void ConvertToSteps()
+        {
+            // Convert compiled stuff to step collection.
+            _compiledSteps.Clear();
+            foreach (NSection sect in DynamicElements.Sections)
+            {
+                // Collect important times.
+                timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
+
+                // Iterate through the sections tracks.
+                foreach (NSectionTrack strack in sect.SectionTracks)
+                {
+                    // For processing current Sequence.
+                    int seqOffset = sect.Start;
+
+                    // Gen steps for each sequence.
+                    foreach (NSequence seq in strack.Sequences)
+                    {
+                        StepCollection stepsToAdd = ScriptCore.ConvertToSteps(strack.ParentTrack, seq, seqOffset);
+                        _compiledSteps.Add(stepsToAdd);
+                        seqOffset += seq.Length;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create the main UI parts from the script.
+        /// </summary>
+        void InitScriptUi()
         {
             ///// Set up UI.
             const int CONTROL_SPACING = 10;
@@ -459,7 +494,7 @@ namespace Nebulator
                 }
             }
 
-            foreach (Track t in DynamicElements.Tracks.Values)
+            foreach (NTrack t in DynamicElements.Tracks)
             {
                 // Init from persistence.
                 int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
@@ -483,11 +518,11 @@ namespace Nebulator
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
-            ProcessPlay(PlayCommand.StopRewind);
+            ProcessPlay(PlayCommand.StopRewind, false);
 
             ///// Init the user input area.
             // Levers.
-            levers.Init(DynamicElements.Levers.Values);
+            levers.Init(DynamicElements.Levers);
         }
 
         /// <summary>
@@ -539,13 +574,10 @@ namespace Nebulator
         void NextStep(NebTimer.TimerEventArgs e)
         {
             ////// Process changed vars regardless of any other status //////
-            foreach (Variable var in _ctrlChanges.Values)
+            foreach (NVariable var in _ctrlChanges.Values)
             {
-                // Execute any script handlers.
-                ExecuteThrowingFunction(_script.ExecScriptFunction, var.Name);
-
                 // Output any midictlout controllers.
-                IEnumerable<MidiControlPoint> ctlpts = DynamicElements.OutputMidis.Values.Where(c => c.RefVar.Name == var.Name);
+                IEnumerable<NMidiControlPoint> ctlpts = DynamicElements.OutputMidis.Where(c => c.BoundVar.Name == var.Name);
 
                 if (ctlpts != null && ctlpts.Count() > 0)
                 {
@@ -555,7 +587,7 @@ namespace Nebulator
                         {
                             Channel = c.Channel,
                             MidiController = c.MidiController,
-                            ControllerValue = c.RefVar.Value
+                            ControllerValue = c.BoundVar.Value
                         };
                         MidiInterface.TheInterface.Send(step);
                     });
@@ -573,7 +605,14 @@ namespace Nebulator
                 //_tanNeb.Arm();
 
                 // Kick it.
-                ExecuteThrowingFunction(_script.step);
+                try
+                {
+                    _script.step();
+                }
+                catch (Exception ex)
+                {
+                    ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                }
 
                 //if (_tanNeb.Grab())
                 //{
@@ -581,8 +620,8 @@ namespace Nebulator
                 //}
 
                 // Process any sequence steps the script added.
-                DynamicElements.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                DynamicElements.RuntimeSteps.DeleteSteps(_stepTime);
+                RuntimeContext.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                RuntimeContext.RuntimeSteps.DeleteSteps(_stepTime);
 
                 // Now do the compiled steps.
                 if (chkSeq.Checked)
@@ -601,13 +640,13 @@ namespace Nebulator
                     // Check for end and loop condition.
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
-                        ProcessPlay(PlayCommand.StopRewind);
+                        ProcessPlay(PlayCommand.StopRewind, false);
                         MidiInterface.TheInterface.KillAll(); // just in case
                     }
                 }
                 // else keep going
 
-                ProcessPlay(PlayCommand.UpdateUiTime);
+                ProcessPlay(PlayCommand.UpdateUiTime, false);
             }
 
             ///// UI updates /////
@@ -615,7 +654,14 @@ namespace Nebulator
             {
                 //_tanUi.Arm();
 
-                ExecuteThrowingFunction(surface.UpdateSurface);
+                try
+                {
+                    surface.UpdateSurface();
+                }
+                catch (Exception ex)
+                {
+                    ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                }
 
                 //if (_tanUi.Grab())
                 //{
@@ -631,23 +677,33 @@ namespace Nebulator
             ///// Local common function /////
             void PlayStep(Step step)
             {
-                Track track = DynamicElements.Tracks[step.TrackName];
-
-                // Is it ok to play now?
-                bool _anySolo = DynamicElements.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
-                bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
-
-                if (play)
+                if(DynamicElements.Tracks.Count > 0)
                 {
-                    if (step is StepInternal)
+                    NTrack track = DynamicElements.Tracks.Where(t => t.Channel == step.Channel).First();
+
+                    // Is it ok to play now?
+                    bool _anySolo = DynamicElements.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
+                    bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
+
+                    if (play)
                     {
-                        ExecuteThrowingFunction(_script.ExecScriptFunction, (step as StepInternal).Function);
-                    }
-                    else
-                    {
-                        // Maybe tweak values.
-                        step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
-                        MidiInterface.TheInterface.Send(step);
+                        if (step is StepInternal)
+                        {
+                            try
+                            {
+                                (step as StepInternal).ScriptFunction();
+                            }
+                            catch (Exception ex)
+                            {
+                                ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                            }
+                        }
+                        else
+                        {
+                            // Maybe tweak values.
+                            step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
+                            MidiInterface.TheInterface.Send(step);
+                        }
                     }
                 }
             }
@@ -672,7 +728,7 @@ namespace Nebulator
                     // Process through our list.
                     if(_script != null)
                     {
-                        IEnumerable<MidiControlPoint> ctlpts = DynamicElements.InputMidis.Values.Where((c, m) => (
+                        IEnumerable<NMidiControlPoint> ctlpts = DynamicElements.InputMidis.Where((c, m) => (
                             c.MidiController == scc.MidiController &&
                             c.Channel == scc.Channel));
 
@@ -681,8 +737,8 @@ namespace Nebulator
                             ctlpts.ForEach(c =>
                             {
                                 // Add to our list for processing at the next tock.
-                                c.RefVar.Value = scc.ControllerValue;
-                                _ctrlChanges.Add(c.RefVar.Name, c.RefVar);
+                                c.BoundVar.Value = scc.ControllerValue;
+                                _ctrlChanges.Add(c.BoundVar.Name, c.BoundVar);
                             });
 
                             handled = true;
@@ -719,12 +775,12 @@ namespace Nebulator
             if (sender is TrackControl)
             {
                 // Check for solos.
-                bool _anySolo = DynamicElements.Tracks.Values.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = DynamicElements.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    DynamicElements.Tracks.Values.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
+                    DynamicElements.Tracks.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -736,7 +792,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Levers_Changed(object sender, Levers.LeverChangeEventArgs e)
         {
-            _ctrlChanges.Add(e.RefVar.Name, e.RefVar);
+            _ctrlChanges.Add(e.BoundVar.Name, e.BoundVar);
         }
 
         /// <summary>
@@ -744,13 +800,13 @@ namespace Nebulator
         /// </summary>
         void InitRuntime()
         {
-            DynamicElements.Playing = chkPlay.Checked;
-            DynamicElements.StepTime = _stepTime;
-            DynamicElements.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
-            DynamicElements.Speed = (float)potSpeed.Value;
-            DynamicElements.Volume = sldVolume.Value;
-            DynamicElements.FrameRate = _frameRate;
-            DynamicElements.RuntimeSteps.Clear();
+            RuntimeContext.Playing = chkPlay.Checked;
+            RuntimeContext.StepTime = _stepTime;
+            RuntimeContext.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
+            RuntimeContext.Speed = (float)potSpeed.Value;
+            RuntimeContext.Volume = sldVolume.Value;
+            RuntimeContext.FrameRate = _frameRate;
+            RuntimeContext.RuntimeSteps.Clear();
         }
 
         /// <summary>
@@ -758,20 +814,20 @@ namespace Nebulator
         /// </summary>
         void ProcessRuntime()
         {
-            if (DynamicElements.Speed != potSpeed.Value)
+            if (RuntimeContext.Speed != potSpeed.Value)
             {
-                potSpeed.Value = DynamicElements.Speed;
+                potSpeed.Value = RuntimeContext.Speed;
                 SetSpeedTimerPeriod();
             }
 
-            if (DynamicElements.Volume != sldVolume.Value)
+            if (RuntimeContext.Volume != sldVolume.Value)
             {
-                sldVolume.Value = DynamicElements.Volume;
+                sldVolume.Value = RuntimeContext.Volume;
             }
 
-            if (DynamicElements.FrameRate != _frameRate)
+            if (RuntimeContext.FrameRate != _frameRate)
             {
-                _frameRate = DynamicElements.FrameRate;
+                _frameRate = RuntimeContext.FrameRate;
                 SetUiTimerPeriod();
             }
         }
@@ -782,7 +838,7 @@ namespace Nebulator
         /// <param name="args"></param>
         void ProcessRuntimeError(Surface.RuntimeErrorEventArgs args)
         {
-            ProcessPlay(PlayCommand.Stop);
+            ProcessPlay(PlayCommand.Stop, false);
             SetCompileStatus(false);
 
             // Locate the offending frame.
@@ -963,7 +1019,7 @@ namespace Nebulator
         /// </summary>
         void Rewind_Click(object sender, EventArgs e)
         {
-            ProcessPlay(PlayCommand.Rewind);
+            ProcessPlay(PlayCommand.Rewind, true);
         }
 
         /// <summary>
@@ -979,7 +1035,7 @@ namespace Nebulator
         void Compile_Click(object sender, EventArgs e)
         {
             Compile();
-            ProcessPlay(PlayCommand.StopRewind);
+            ProcessPlay(PlayCommand.StopRewind, true);
         }
 
         /// <summary>
@@ -988,7 +1044,7 @@ namespace Nebulator
         void Time_ValueChanged(object sender, EventArgs e)
         {
             _stepTime = timeMaster.CurrentTime;
-            ProcessPlay(PlayCommand.UpdateUiTime);
+            ProcessPlay(PlayCommand.UpdateUiTime, true);
         }
         #endregion
 
@@ -1191,16 +1247,16 @@ namespace Nebulator
         /// Update everything per param.
         /// </summary>
         /// <param name="cmd">The command.</param>
-        /// <param name="fromUi">From user clicking.</param>
+        /// <param name="userAction">Something the user did.</param>
         /// <returns>Indication of success.</returns>
-        bool ProcessPlay(PlayCommand cmd, bool fromUi = false)
+        bool ProcessPlay(PlayCommand cmd, bool userAction)
         {
             bool ret = true;
 
             switch (cmd)
             {
                 case PlayCommand.Start:
-                    if (fromUi)
+                    if(userAction)
                     {
                         bool ok = _needCompile ? Compile() : true;
                         if (ok)
@@ -1214,9 +1270,9 @@ namespace Nebulator
                             ret = false;
                         }
                     }
-                    else // from server
+                    else
                     {
-                        if(_needCompile)
+                        if (_needCompile)
                         {
                             ret = false; // not yet
                         }
@@ -1230,7 +1286,7 @@ namespace Nebulator
                     break;
 
                 case PlayCommand.Stop:
-                    if (!fromUi)
+                    if (!userAction)
                     {
                         chkPlay.Checked = false;
                     }
@@ -1244,10 +1300,11 @@ namespace Nebulator
                     break;
 
                 case PlayCommand.StopRewind:
-                    if (!fromUi)
+                    if (!userAction)
                     {
-                        chkPlay.Checked = true;
+                        chkPlay.Checked = false;
                     }
+
                     _stepTime.Reset();
                     break;
 
@@ -1274,7 +1331,7 @@ namespace Nebulator
             if(e.KeyCode == Keys.Space)
             {
                 // Handle start/stop toggle.
-                ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start);
+                ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start, true);
                 e.Handled = true;
             }
         }
@@ -1354,27 +1411,6 @@ namespace Nebulator
             splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
             splitContainerControl.SplitterDistance = UserSettings.TheSettings.ControlSplitterPos;
         }
-        
-        /// <summary>
-        /// Helper to handle runtime script errors.
-        /// </summary>
-        /// <param name="func">The function to execute.</param>
-        void ExecuteThrowingFunction(Action func)
-        {
-            try { func(); }
-            catch (Exception e) { ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = e } ); }
-        }
-
-        /// <summary>
-        /// Helper to handle runtime script errors.
-        /// </summary>
-        /// <param name="func">The function to execute.</param>
-        /// <param name="arg">{Arg for func.</param>
-        void ExecuteThrowingFunction(Action<string> func, string arg)
-        {
-            try { func(arg); }
-            catch (Exception e) { ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = e }); }
-        }
 
         /// <summary>
         /// 
@@ -1386,7 +1422,7 @@ namespace Nebulator
             if (_script != null)
             {
                 InitRuntime();
-                surface.InitScript(_script);
+                surface.InitSurface(_script);
                 ProcessRuntime();
             }
         }
@@ -1420,7 +1456,7 @@ namespace Nebulator
         void ExportMidi(string fn)
         {
             Dictionary<int, string> tracks = new Dictionary<int, string>();
-            DynamicElements.Tracks.Values.ForEach(t => tracks.Add(t.Channel, t.Name));
+            DynamicElements.Tracks.ForEach(t => tracks.Add(t.Channel, t.Name));
 
             // Convert speed/bpm to sec per tick.
             double ticksPerMinute = potSpeed.Value; // bpm

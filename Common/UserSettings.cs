@@ -34,9 +34,6 @@ namespace Nebulator.Common
         [DisplayName("Background Color"), Description("The color used for overall background."), Browsable(true)]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
-        [DisplayName("Loop Color"), Description("The color used for loop block display."), Browsable(true)]
-        public Color LoopColor { get; set; } = Color.Salmon;
-
         [DisplayName("UI Orientation"), Description("Set UI pane orientation."), Browsable(true)]
         public Orientation UiOrientation { get; set; } = Orientation.Horizontal;
 

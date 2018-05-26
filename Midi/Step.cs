@@ -12,8 +12,8 @@ namespace Nebulator.Midi
     /// </summary>
     public abstract class Step
     {
-        /// <summary>Name of the parent/owner track.</summary>
-        public string TrackName { get; set; } = null;
+        ///// <summary>Name of the parent/owner track.</summary>
+        //public string TrackName { get; set; } = null;
 
         /// <summary>Channel.</summary>
         public int Channel { get; set; } = 1;
@@ -85,7 +85,6 @@ namespace Nebulator.Midi
         /// <param name="step"></param>
         public StepNoteOff(StepNoteOn step)
         {
-            TrackName = step.TrackName;
             Channel = step.Channel;
             NoteNumber = Utils.Constrain(step.NoteNumber, 0, MidiInterface.MAX_MIDI_NOTE);
             NoteNumberToPlay = step.NoteNumberToPlay;
@@ -144,12 +143,12 @@ namespace Nebulator.Midi
     public class StepInternal : Step
     {
         /// <summary>A function to call.</summary>
-        public string Function { get; set; } = "";
+        public Action ScriptFunction { get; set; } = null;
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepSpecial: {base.ToString()} Function:{Function}";
+            return $"StepSpecial: {base.ToString()} Function:{ScriptFunction}";
         }
     }
 }

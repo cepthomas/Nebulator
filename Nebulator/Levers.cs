@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Controls;
-using Nebulator.Dynamic;
+using Nebulator.Script;
 
 
 namespace Nebulator
@@ -23,7 +23,7 @@ namespace Nebulator
 
         public class LeverChangeEventArgs : EventArgs
         {
-            public Variable RefVar { get; set; } = null;
+            public NVariable BoundVar { get; set; } = null;
         }
         #endregion
 
@@ -53,7 +53,7 @@ namespace Nebulator
         /// Initialize the script specific stuff.
         /// </summary>
         /// <param name="levers">Specs for levers from script.</param>
-        public void Init(IEnumerable<LeverControlPoint> levers)
+        public void Init(IEnumerable<NLeverControlPoint> levers)
         {
             _init = true;
 
@@ -79,15 +79,15 @@ namespace Nebulator
                 Slider sl = new Slider()
                 {
                     Location = new Point(x, y),
-                    Label = l.RefVar.Name,
+                    Label = l.BoundVar.Name,
                     ControlColor = UserSettings.TheSettings.ControlColor,
                     Font = UserSettings.TheSettings.ControlFont,
                     Height = ClientSize.Height - SPACING * 2,
                     Maximum = l.Max,
                     Minimum = l.Min,
-                    ResetValue = l.RefVar.Value,
-                    Value = l.RefVar.Value,
-                    Tag = l.RefVar
+                    ResetValue = l.BoundVar.Value,
+                    Value = l.BoundVar.Value,
+                    Tag = l.BoundVar
                 };
 
                 sl.ValueChanged += Lever_ValueChanged;
@@ -110,10 +110,10 @@ namespace Nebulator
             {
                 // Update the bound var and report to the master.
                 Slider sl = sender as Slider;
-                Variable refVar = sl.Tag as Variable;
+                NVariable refVar = sl.Tag as NVariable;
                 refVar.Value = sl.Value;
 
-                LeverChangeEvent?.Invoke(this, new LeverChangeEventArgs() { RefVar = refVar });
+                LeverChangeEvent?.Invoke(this, new LeverChangeEventArgs() { BoundVar = refVar });
             }
         }
     }

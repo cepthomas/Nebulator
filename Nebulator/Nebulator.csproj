@@ -300,10 +300,6 @@
       <Project>{433a6140-96c9-4fc8-9f3b-e937a4cf71e1}</Project>
       <Name>Controls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Dynamic\Dynamic.csproj">
-      <Project>{f3aaa729-b1a5-41e4-b6b1-e5240777a1ca}</Project>
-      <Name>Dynamic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Midi\Midi.csproj">
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>

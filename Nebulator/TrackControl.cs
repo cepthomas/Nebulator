@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Nebulator.Common;
-using Nebulator.Dynamic;
+using Nebulator.Script;
 
 
 namespace Nebulator
@@ -16,7 +16,7 @@ namespace Nebulator
         /// <summary>
         /// Corresponding track object.
         /// </summary>
-        public Track BoundTrack { get; set; }
+        public NTrack BoundTrack { get; set; }
         #endregion
 
         #region Events

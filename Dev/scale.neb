@@ -1,6 +1,5 @@
 
 ///// Scale helper class and utilities /////
-!script
 
 public class Scale
 {
@@ -26,7 +25,7 @@ public class Scale
         }        
     }
 
-    public void SetWeight(int index, int weight)
+    public void setWeight(int index, int weight)
     {
         if(index < count)
         {
@@ -41,11 +40,11 @@ public class Scale
         }        
     }
 
-    public int RandomNote()
+    public int randomNote()
     {
         int note = 0;
         int r = s.random(totalWeight);
-        //s.print(">>>", r);
+        
         int offset = 0;
 
         for(int i = 0; i < count; i++)

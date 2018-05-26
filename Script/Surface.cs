@@ -95,7 +95,7 @@ namespace Nebulator.Script
         /// Update per new script object.
         /// </summary>
         /// <param name="script"></param>
-        public void InitScript(ScriptCore script)
+        public void InitSurface(ScriptCore script)
         {
             _script = script;
             _script.width = Width;
@@ -284,7 +284,7 @@ namespace Nebulator.Script
         /// Event handler for keys.
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnKeyDown(KeyEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e) //TODO1 Keys are not working with SKControl.
         {
             if (_script != null)
             {

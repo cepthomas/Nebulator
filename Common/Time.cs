@@ -115,6 +115,12 @@ namespace Nebulator.Common
             Tick = (int)integral;
             Tock = (int)(fractional * 100);
         }
+
+        /// <summary>
+        /// Constructor from Tick.Tock representation as a double.
+        /// </summary>
+        /// <param name="tts"></param>
+        public Time(float tts) : this((double)tts) { }
         #endregion
 
         #region Overrides and operators for custom classess

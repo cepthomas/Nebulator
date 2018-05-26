@@ -25,6 +25,11 @@ namespace Nebulator.Common
         static LazyCollection<List<string>> _stockDrumDefs = new LazyCollection<List<string>>();
         #endregion
 
+        #region Properties
+        /// <summary>Chord and scale definitions from the script. Value is list of constituent notes.</summary>
+        public static LazyCollection<List<string>> ScriptNoteDefs { get; set; } = new LazyCollection<List<string>>();
+        #endregion
+
         #region Public functions
         /// <summary>
         /// Initialize the note and chord helpers.
@@ -34,6 +39,7 @@ namespace Nebulator.Common
             _stockChordDefs.Clear();
             _stockScaleDefs.Clear();
             _stockDrumDefs.Clear();
+            ScriptNoteDefs.Clear();
 
             ///// Read the defs file.
             LazyCollection<List<string>> section = null;
@@ -81,9 +87,9 @@ namespace Nebulator.Common
         /// Parse note or notes from input value. Checks both stock items and those defined in the script.
         /// </summary>
         /// <param name="s">String to parse.</param>
-        /// <param name="scriptNoteDefs">Scales defined in the script.</param>
+        ///// <param name="scriptNoteDefs">Scales defined in the script.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
-        public static List<int> ParseNoteString(string s, LazyCollection<List<string>> scriptNoteDefs)
+        public static List<int> ParseNoteString(string s) // , LazyCollection<List<string>> scriptNoteDefs)
         {
             List<int> notes = new List<int>();
 
@@ -128,7 +134,7 @@ namespace Nebulator.Common
 
                     if(chordParts == null)
                     {
-                        chordParts = scriptNoteDefs[parts[1]];
+                        chordParts = ScriptNoteDefs[parts[1]];
                     }
 
                     var chordNotes = chordParts[0].SplitByToken(" ");
@@ -172,14 +178,14 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="scale">Name of the scale.</param>
         /// <param name="key">Key.octave</param>
-        /// <param name="scriptNoteDefs">Scales defined in the script.</param>
+        ///// <param name="scriptNoteDefs">Scales defined in the script.</param>
         /// <returns>List of scale notes - empty if invalid.</returns>
-        public static List<int> GetScaleNotes(string scale, string key, LazyCollection<List<string>> scriptNoteDefs)
+        public static List<int> GetScaleNotes(string scale, string key) //, LazyCollection<List<string>> scriptNoteDefs)
         {
             var notes = new List<int>();
 
             // Dig out the root note.
-            List<int> keyNotes = ParseNoteString(key, scriptNoteDefs);
+            List<int> keyNotes = ParseNoteString(key); //, scriptNoteDefs);
 
             if (keyNotes.Count > 0)
             {
@@ -188,7 +194,7 @@ namespace Nebulator.Common
 
                 if (scaleDef == null)
                 {
-                    scaleDef = scriptNoteDefs[scale];
+                    scaleDef = ScriptNoteDefs[scale];
                 }
 
                 if (scaleDef != null && scaleDef.Count >= 1)

@@ -7,13 +7,46 @@ using SkiaSharp;
 using NLog;
 using Nebulator.Common;
 using Nebulator.Midi;
-using Nebulator.Dynamic;
-
-// Internal stuff not associated with Processing or Nebulator APIs.
 
 
 namespace Nebulator.Script
 {
+    /// <summary>
+    /// Things shared between host and script at runtime.
+    /// </summary>
+    public class RuntimeContext
+    {
+        /// <summary>Main -> Script</summary>
+        public static Time StepTime { get; set; } = new Time();
+
+        /// <summary>Main -> Script</summary>
+        public static bool Playing { get; set; } = false;
+
+        /// <summary>Main -> Script</summary>
+        public static float RealTime { get; set; } = 0.0f;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public static float Speed { get; set; } = 0.0f;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public static int Volume { get; set; } = 0;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public static int FrameRate { get; set; } = 0;
+
+        /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
+        public static StepCollection RuntimeSteps { get; private set; } = new StepCollection();
+
+        /// <summary>Don't even try to do this.</summary>
+        RuntimeContext() { }
+
+        /// <summary>Reset everything.</summary>
+        public static void Clear()
+        {
+            RuntimeSteps.Clear();
+        }
+    }
+
     public partial class ScriptCore : IDisposable
     {
         #region Fields
@@ -22,25 +55,12 @@ namespace Nebulator.Script
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
-        #endregion
 
-        #region Events
-        /// <summary>
-        /// Script functions that are called from the main nebulator. They are identified by name/key.
-        /// Typically they are controller input handlers such that the key is the name of the input.
-        /// </summary>
-        protected Dictionary<string, ScriptFunction> _scriptFunctions = new Dictionary<string, ScriptFunction>();
-        public delegate void ScriptFunction();
+        /// <summary>A minor visibility hack.</summary>
+        protected const int CTRL_PITCH = Midi.MidiInterface.CTRL_PITCH;
         #endregion
 
         #region Lifecycle
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public ScriptCore()
-        {
-        }
-
         /// <summary>
         /// Resource clean up.
         /// </summary>
@@ -65,29 +85,16 @@ namespace Nebulator.Script
 
         #region Public functions
         /// <summary>
-        /// Execute a script function. Minimal error checking, presumably the compiler did that.
-        /// Caller will have to deal with any runtime exceptions.
-        /// </summary>
-        /// <param name="funcName"></param>
-        public void ExecScriptFunction(string funcName)
-        {
-            if (_scriptFunctions.ContainsKey(funcName))
-            {
-                _scriptFunctions[funcName].Invoke();
-            }
-        }
-
-        /// <summary>
         /// Generate steps from sequence notes.
         /// </summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(Track track, Sequence seq, int startTick)
+        public static StepCollection ConvertToSteps(NTrack track, NSequence seq, int startTick)
         {
             StepCollection steps = new StepCollection();
 
-            foreach (SequenceElement seqel in seq.Elements)
+            foreach (NSequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
                 int toffset = startTick == -1 ? 0 : track.NextTime();
@@ -95,13 +102,13 @@ namespace Nebulator.Script
                 Time startNoteTime = new Time(startTick, toffset) + seqel.When;
                 Time stopNoteTime = startNoteTime + seqel.Duration;
 
-                if (seqel.Function != "")
+                // Is it a function?
+                if (seqel.ScriptFunction != null)
                 {
                     StepInternal step = new StepInternal()
                     {
-                        TrackName = track.Name,
                         Channel = track.Channel,
-                        Function = seqel.Function
+                        ScriptFunction = seqel.ScriptFunction
                     };
                     steps.AddStep(startNoteTime, step);
                 }
@@ -114,7 +121,6 @@ namespace Nebulator.Script
                         int vel = track.NextVol(seqel.Volume);
                         StepNoteOn step = new StepNoteOn()
                         {
-                            TrackName = track.Name,
                             Channel = track.Channel,
                             NoteNumber = noteNum,
                             NoteNumberToPlay = noteNum,
