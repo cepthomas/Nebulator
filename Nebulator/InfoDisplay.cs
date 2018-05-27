@@ -42,7 +42,7 @@ namespace Nebulator
         {
             txtView.Font = UserSettings.TheSettings.EditorFont;
             txtView.BackColor = UserSettings.TheSettings.BackColor;
-            txtView.WordWrap = false;
+            txtView.WordWrap = UserSettings.TheSettings.WordWrap;
 
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
 
@@ -118,6 +118,7 @@ namespace Nebulator
         /// <param name="e"></param>
         private void Wrap_Click(object sender, EventArgs e)
         {
+            UserSettings.TheSettings.WordWrap = btnWrap.Checked;
             txtView.WordWrap = btnWrap.Checked;
         }
         #endregion

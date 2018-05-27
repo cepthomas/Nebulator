@@ -33,8 +33,6 @@ public override void setupNeb()
 {
     const int WHEN1 = 8;
 
-// test me broken TODO1
-
     // All the neb variables.
     COL1 = variable("color", 200);
     PITCH = variable("pitch", 8192); // center is 8192
@@ -73,7 +71,7 @@ public override void setupNeb()
 // ------xx------xx------xx------xx  ClosedHiHat  100
 
     // section
-    NSection PART1 = section(WHEN1, 0);
+    NSection PART1 = section("section", WHEN1, 0);
     PART1.Add(KEYS, SEQ1, SEQ1);
     PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 
@@ -93,9 +91,6 @@ public override void setupNeb()
         //sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Pad3Polysynth);
     }
-
-    // frameRate(2);
-    // background(150);
 }
 
 /////////////////////////////////////////////////////////////////
@@ -117,7 +112,7 @@ public override void setup()
     noStroke();
     frameRate(1);
 
-    COL1.Value = 999;  // COL1 = 999; TODO0 prefer this to .Value
+    COL1.Value = 999;  // COL1 = 999; TODOX prefer this to .Value
 
     ////createCanvas(800, 800);
     tileWidth = width / tileCountX;
@@ -160,7 +155,7 @@ void algoSequences()
     // }
 }
 
-public void On_COL1(object o, EventArgs a)
+public void On_COL1()
 {
     print("COL1 changed to", COL1);
     //modulate(KEYS, COL1);
@@ -169,7 +164,7 @@ public void On_COL1(object o, EventArgs a)
 public override void draw()
 {
     //print("draw");
-    background(COL1.Value, 100, 200); // TODO0 too many .Value!!
+    background(COL1.Value, 100, 200); // TODOX too many .Value!!
 
     // Recursive:
     // strokeWeight(1);

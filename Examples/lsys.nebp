@@ -2,7 +2,7 @@
   "Values": {
     "master.volume": 90,
     "master.speed": 69.0,
-    "master.loop": false,
-    "master.sequence": false
+    "master.sequence": false,
+    "master.ui": true
   }
 }

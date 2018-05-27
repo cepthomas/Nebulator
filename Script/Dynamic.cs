@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Nebulator.Common;
 using Nebulator.Midi;
 
-// This could be cut up into a bunch of files later. Or not.
+// TODO This could be cut up into a bunch of files later. Or not.
 
 namespace Nebulator.Script
 {
@@ -127,29 +127,18 @@ namespace Nebulator.Script
         #endregion
 
         /// <summary>
-        /// Normal constructor.
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="length"></param>
-        public NSection(int start, int length)
-        {
-            Start = start;
-            Length = length;
-        }
-
-        /// <summary>
         /// Script callable function.
         /// </summary>
         /// <param name="track"></param>
         /// <param name="seqs"></param>
         public void Add(NTrack track, params NSequence[] seqs)
         {
-            SectionTracks.Add(new NSectionTrack(track, seqs.ToList()));
+            SectionTracks.Add(new NSectionTrack() { ParentTrack = track, Sequences = seqs.ToList() });
         }
     }
 
     /// <summary>
-    /// One track/row in the Section.
+    /// One row in the Section. Describes the sequences associated with a track in the section.
     /// </summary>
     public class NSectionTrack
     {
@@ -160,17 +149,6 @@ namespace Nebulator.Script
         /// <summary>The associated Sequences.</summary>
         public List<NSequence> Sequences { get; set; } = null;
         #endregion
-
-        /// <summary>
-        /// Normal constructor.
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="sequences"></param>
-        public NSectionTrack(NTrack parent, List<NSequence> sequences)
-        {
-            ParentTrack = parent;
-            Sequences = sequences;
-        }
     }
 
     /// <summary>
@@ -179,24 +157,12 @@ namespace Nebulator.Script
     public class NSequence
     {
         #region Properties
-        /// <summary>Name used for instantiation.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
         /// <summary>List of notes or other elements.</summary>
         public List<NSequenceElement> Elements { get; set; } = new List<NSequenceElement>();
 
         /// <summary>Length in ticks.</summary>
         public int Length { get; set; } = 1;
         #endregion
-
-        /// <summary>
-        /// Normal constructor.
-        /// </summary>
-        /// <param name="length"></param>
-        public NSequence(int length)
-        {
-            Length = length;
-        }
 
         /// <summary>
         /// Z.Add(00.00, "G3", 90, 0.60);
@@ -276,17 +242,12 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            List<string> ls = new List<string>
-            {
-                $"Name:{Name} Length:{Length}"
-            };
-
-            return string.Join(Environment.NewLine, ls);
+            return $"Length:{Length}";
         }
     }
 
     /// <summary>
-    /// One note or chord or script function or etc in the sequence. Essentially something that gets played.
+    /// One note or chord or script function etc in the sequence. Essentially something that gets played.
     /// </summary>
     public class NSequenceElement
     {
@@ -355,7 +316,7 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// One melody/chord track - instrument.
+    /// One instrument.
     /// </summary>
     public class NTrack
     {
@@ -406,22 +367,6 @@ namespace Nebulator.Script
         #endregion
 
         /// <summary>
-        /// Normal constructor.
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="wobvol"></param>
-        /// <param name="wobbefore"></param>
-        /// <param name="wobafter"></param>
-        public NTrack(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
-        {
-            Name = name;
-            Channel = channel;
-            WobbleVolume = wobvol;
-            WobbleTimeBefore = wobbefore;
-            WobbleTimeAfter = wobafter;
-        }
-
-        /// <summary>
         /// Get the next time.
         /// </summary>
         /// <returns></returns>
@@ -459,24 +404,14 @@ namespace Nebulator.Script
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Value as int. It is initialized from the script supplied value.</summary>
-        public int Value { get { return _value; } set { _value = value; Changed?.Invoke(this, null); } }
+        public int Value { get { return _value; } set { _value = value; Changed?.Invoke(); } }
         int _value;
         #endregion
 
         #region Events
-        /// <summary>Notify.</summary>
-        public event EventHandler Changed;
+        /// <summary>Notify with argless call.</summary>
+        public event Action Changed;
         #endregion
-
-        /// <summary>
-        /// Normal constructor.
-        /// </summary>
-        /// <param name="val">Initial value</param>
-        public NVariable(string name, int val)
-        {
-            Name = name;
-            Value = val;
-        }
 
         /// <summary>
         /// For viewing pleasure.

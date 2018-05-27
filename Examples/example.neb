@@ -1,146 +1,51 @@
 
 // Example Nebulator composition file with some UI demo.
-// Has declarative and algorithmic components.
 // Warning: this is not actual music!
 
 ///// Include other lib files. /////
-include utils.neb
+#load "utils.neb"
 
 
 ///// Constants /////
 // When to play.
-constant WHEN1 0
-constant WHEN2 32
-constant WHEN3 48
-constant WHEN4 80
+const int WHEN1 = 0;
+const int WHEN2 = 32;
+const int WHEN3 = 48;
+const int WHEN4 = 80;
 // Total length.
-constant TLEN 128
+const int TLEN = 128;
 // Volumes.
-constant KEYS_DEF_VOL 100
-constant DRUM_DEF_VOL 100
+const int KEYS_DEF_VOL = 100;
+const int DRUM_DEF_VOL = 100;
 
 ///// Variables /////
-variable COL1 200 // change color
-variable MODN 0 // modulate notes
-variable PITCH 8192 // center is 8192
-
-///// Realtime Controllers /////
-midictlin MI1 1 4 MODN
-midictlout MO1 1 Pitch PITCH
-
-////// Levers //////
-lever L1 0 255 COL1
-lever L2 0 16383 PITCH // max range
-lever L3 -10 10 MODN
-
+NVariable COL1;
+NVariable MODN;
+NVariable PITCH;
 
 ///// Tracks /////
-track KEYS 1 5 0 0
-track BASS 2 2 0 0
-track DRUMS 10 4 0 0
-track SYNTH 3 0
+NTrack KEYS;
+NTrack BASS;
+NTrack DRUMS;
+NTrack SYNTH;
 
 ////////// Sections //////////
-section PART1 WHEN1 WHEN2 // 32
-KEYS    KEYS_VERSE1   KEYS_VERSE1
-DRUMS   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE 
-BASS    BASS_VERSE    BASS_VERSE    BASS_VERSE    BASS_VERSE
-
-section PART2 WHEN2 WHEN3 // 16
-KEYS    KEYS_VERSE2   KEYS_VERSE2
-DRUMS   DRUMS_SIMPLE  DRUMS_SIMPLE 
-BASS    BASS_VERSE    BASS_VERSE
-SYNTH   NULL          ALGO1
-
-section PART3 WHEN3 WHEN4 // 32
-KEYS    KEYS_VERSE1   KEYS_VERSE1
-DRUMS   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE   DRUMS_VERSE 
-BASS    BASS_VERSE    BASS_VERSE    BASS_VERSE    BASS_VERSE
+NSection PART1;
+NSection PART2;
+NSection PART3;
 
 ///// Sequences /////
-
-sequence KEYS_VERSE1 16
-0.00   G4.m7  90  1.32
-1.60   G4.m7  90  0.20
-2.00   G4.m7  90  0.20
-4.00   G4.m7  90  1.32
-5.60   G4.m7  90  0.20
-6.00   G4.m7  90  0.20
-8.00   G4.m6  90  1.32
-9.60   G4.m6  90  0.20
-10.00  G4.m6  90  0.20
-12.00  G4.m6  90  1.32
-13.60  G4.m6  90  0.20
-14.00  G4.m6  90  0.20
-
-sequence KEYS_VERSE2 8
-0.00  F4     90  0.32
-0.32  D#4    KEYS_DEF_VOL  0.32
-1.00  C4     90  0.32
-1.32  B4.m7  90  0.32
-2.00  F5     90  0.32
-2.32  D#5    KEYS_DEF_VOL  0.32
-3.00  C5     90  0.32
-3.32  B5.m7  90  0.32
-4.00  F3     90  0.32
-4.32  D#3    KEYS_DEF_VOL  0.32
-5.00  C3     90  0.32
-5.32  B3.m7  90  0.32
-6.00  F2     90  0.32
-6.32  D#2    KEYS_DEF_VOL  0.32
-7.00  C2     90  0.32
-7.32  B2.m7  90  0.32
-
-////// Bass //////
-sequence BASS_VERSE 8
-0.00  C2   70  0.25
-0.48  C2   70  0.1/8
-3.32  E2   70  0.25
-4.00  C2   70  1.00
-7.48  A#2  70  0.10
-
-////// Drums //////
-
-// "musical"
-sequence DRUMS_VERSE 8
-0.00  AcousticBassDrum  DRUM_DEF_VOL
-1.00  RideCymbal1       DRUM_DEF_VOL
-1.10  RideCymbal1       DRUM_DEF_VOL
-1.60  HiMidTom          DRUM_DEF_VOL
-2.00  AcousticBassDrum  DRUM_DEF_VOL
-3.00  RideCymbal1       DRUM_DEF_VOL
-3.10  RideCymbal1       DRUM_DEF_VOL
-4.00  AcousticBassDrum  DRUM_DEF_VOL
-5.00  RideCymbal1       DRUM_DEF_VOL
-5.10  RideCymbal1       DRUM_DEF_VOL
-5.60  HiMidTom          DRUM_DEF_VOL
-6.00  AcousticBassDrum  DRUM_DEF_VOL
-7.00  CrashCymbal2      DRUM_DEF_VOL
-
-// Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
-sequence DRUMS_SIMPLE 8
-x-------x-------x-------x-------  AcousticBassDrum  90
-----x-------x-x-----x-------x-x-  AcousticSnare     80
-
-// Sequenced triggered in script
-sequence DYNAMIC_SEQ 8
-0.00  G3   90  0.60
-1.00  A3   90  0.60
-2.00  Bb3  90  0.60
-3.00  C4   90  0.60
-
-// Sequence that calls a script function.
-sequence ALGO1 8
-00.00    algoDynamic()  90
-
-sequence NULL 8
-00.00    algoNull()  90
+NSequence KEYS_VERSE1;
+NSequence KEYS_VERSE2;
+NSequence BASS_VERSE;
+NSequence DRUMS_VERSE;
+NSequence DRUMS_SIMPLE;
+NSequence DYNAMIC_SEQ;
+NSequence ALGO_SEQ;
+NSequence NULL_SEQ;
 
 
-///// Functions /////
-!script
-
-// Simple variables for functions.
+////// Simple variables for functions. ///////
 float posX = 50;
 float posY = 50;
 int velX = 3;
@@ -150,6 +55,139 @@ int[] scaleNotes;
 
 
 ////// Nebulator midi stuff //////
+public override void setupNeb()
+{
+    // All the neb variables.
+    COL1 = variable("color", 200); // change color
+    MODN = variable("modn", 0); // modulate notes
+    PITCH = variable("pitch", 8192); // center is 8192
+
+    // Handle a change.
+    MODN.Changed += On_MODN;
+
+    // All the tracks.
+    KEYS = track("keys", 1, 5, 0, 0);
+    BASS = track("bass", 2, 2, 0, 0);
+    SYNTH = track("synth", 3, 0);
+    DRUMS = track("drums", 10, 4, 0, 0);
+
+    // create set of notes (chord)
+    notes("MY_CHORD", "1 4 6 b13");
+    notes("MY_SCALE", "1 3 4 b7");
+
+    // devices
+    midiIn(1, 4, MODN);
+    midiOut(1, CTRL_PITCH, PITCH);
+    lever(0, 255, COL1);
+    lever(0, 16383, PITCH); // max range
+    lever(-10, 10, MODN);
+
+    ///// Sequences /////
+    KEYS_VERSE1 = sequence(16);
+    KEYS_VERSE1.Add(0.00,  "G4.m7", 90, 1.32);
+    KEYS_VERSE1.Add(1.60,  "G4.m7", 90, 0.20);
+    KEYS_VERSE1.Add(2.00,  "G4.m7", 90, 0.20);
+    KEYS_VERSE1.Add(4.00,  "G4.m7", 90, 1.32);
+    KEYS_VERSE1.Add(5.60,  "G4.m7", 90, 0.20);
+    KEYS_VERSE1.Add(6.00,  "G4.m7", 90, 0.20);
+    KEYS_VERSE1.Add(8.00,  "G4.m6", 90, 1.32);
+    KEYS_VERSE1.Add(9.60,  "G4.m6", 90, 0.20);
+    KEYS_VERSE1.Add(10.00, "G4.m6", 90, 0.20);
+    KEYS_VERSE1.Add(12.00, "G4.m6", 90, 1.32);
+    KEYS_VERSE1.Add(13.60, "G4.m6", 90, 0.20);
+    KEYS_VERSE1.Add(14.00, "G4.m6", 90, 0.20);
+
+    KEYS_VERSE2 = sequence(8);
+    KEYS_VERSE2.Add(0.00, "F4",    90, 0.32);
+    KEYS_VERSE2.Add(0.32, "D#4",   KEYS_DEF_VOL, 0.32);
+    KEYS_VERSE2.Add(1.00, "C4",    90, 0.32);
+    KEYS_VERSE2.Add(1.32, "B4.m7", 90, 0.32);
+    KEYS_VERSE2.Add(2.00, "F5",    90, 0.32);
+    KEYS_VERSE2.Add(2.32, "D#5",   KEYS_DEF_VOL, 0.32);
+    KEYS_VERSE2.Add(3.00, "C5",    90, 0.32);
+    KEYS_VERSE2.Add(3.32, "B5.m7", 90, 0.32);
+    KEYS_VERSE2.Add(4.00, "F3",    90, 0.32);
+    KEYS_VERSE2.Add(4.32, "D#3",   KEYS_DEF_VOL, 0.32);
+    KEYS_VERSE2.Add(5.00, "C3",    90, 0.32);
+    KEYS_VERSE2.Add(5.32, "B3.m7", 90, 0.32);
+    KEYS_VERSE2.Add(6.00, "F2",    90, 0.32);
+    KEYS_VERSE2.Add(6.32, "D#2",   KEYS_DEF_VOL, 0.32);
+    KEYS_VERSE2.Add(7.00, "C2",    90, 0.32);
+    KEYS_VERSE2.Add(7.32, "B2.m7", 90, 0.32);
+
+    ////// Bass //////
+    BASS_VERSE = sequence(8);
+    BASS_VERSE.Add(0.00, "C2",  70, 0.25);
+    BASS_VERSE.Add(0.48, "C2",  70, 0.125);
+    BASS_VERSE.Add(3.32, "E2",  70, 0.25);
+    BASS_VERSE.Add(4.00, "C2",  70, 1.00);
+    BASS_VERSE.Add(7.48, "A#2", 70, 0.10);
+
+    ////// Drums //////
+
+    // "musical"
+    DRUMS_VERSE = sequence(8);
+    DRUMS_VERSE.Add(0.00, AcousticBassDrum, DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(1.00, RideCymbal1,      DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(1.10, RideCymbal1,      DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(1.60, HiMidTom,         DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(2.00, AcousticBassDrum, DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(3.00, RideCymbal1,      DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(3.10, RideCymbal1,      DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(4.00, AcousticBassDrum, DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(5.00, RideCymbal1,      DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(5.10, RideCymbal1,      DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(5.60, HiMidTom,         DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
+    DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
+
+    // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
+    DRUMS_SIMPLE = sequence(8);
+    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
+    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    80);
+
+    // Sequence triggered in script
+    DYNAMIC_SEQ = sequence(8);
+    DYNAMIC_SEQ.Add(0.00, "G3 ", 90, 0.60);
+    DYNAMIC_SEQ.Add(1.00, "A3 ", 90, 0.60);
+    DYNAMIC_SEQ.Add(2.00, "Bb3", 90, 0.60);
+    DYNAMIC_SEQ.Add(3.00, "C4 ", 90, 0.60);
+
+    // Sequence that calls a script function.
+    ALGO_SEQ = sequence(8);
+    ALGO_SEQ.Add(00.00, algoDynamic, 90);
+
+    NULL_SEQ = sequence(8);
+    NULL_SEQ.Add(00.00, algoNull, 90);
+
+    // Sections
+    NSection PART1 = section("part1", WHEN1, WHEN2 - WHEN1);
+    PART1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
+    PART1.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
+    PART1.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
+
+    NSection PART2 = section("part2", WHEN2, WHEN3 - WHEN2);
+    PART2.Add(KEYS, KEYS_VERSE2, KEYS_VERSE2);
+    PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
+    PART2.Add(BASS, BASS_VERSE, BASS_VERSE);
+    PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
+
+    NSection PART3 = section("part3", WHEN3, WHEN4 - WHEN3);
+    PART3.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
+    PART3.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
+    PART3.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
+
+    // Get some stock chords and scales
+    scaleNotes = getScaleNotes("Algerian", "A3");
+
+    if(winGm)
+    {
+        sendPatch(KEYS, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Pad3Polysynth);
+    }
+}
+
 public override void step()
 {
     // Play a sequence periodically.
@@ -185,40 +223,29 @@ public override void step()
 public void On_MODN()
 {
     //print("MODN changed to", MODN);
-    modulate(KEYS, MODN);
+    modulate(KEYS, MODN.Value);
 }
 
 void algoDynamic()
 {
-    //print("!!!! algoDynamic");
+    print("!!!! algoDynamic");
     sendMidiNote(SYNTH, 70, 0, 0.00);
 }
 
 void algoNull()
 {
-    //print("!!!! algoNull");
+    print("!!!! algoNull");
 }
 
-////// Nebulator graphics stuff //////
+////// Processing graphics stuff //////
 public override void setup()
 {
     //print("setup()");
-
-    // Load up a scale.
-    scaleNotes = getScaleNotes("Algerian", "C4");
-
-    // Patches - only needed if using the Windows GM.
-    if(winGm)
-    {
-        sendPatch(KEYS, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Pad3Polysynth);
-    }
 }
 
 public override void draw()
 {
-    background(COL1, COL1, COL1);
+    background(COL1.Value, COL1.Value, COL1.Value);
 
     if(playing && moveBall())
     {

@@ -9,15 +9,12 @@ using SkiaSharp.Views.Desktop;
 using Nebulator.Common;
 
 
-// Processing API stuff.
+/// Processing emulation script stuff.
+/// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
 
 
 namespace Nebulator.Script
 {
-    /// <summary>
-    /// Processing emulation script stuff.
-    /// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
-    /// </summary>
     public partial class ScriptCore
     {
         #region Fields - some internal so Surface can access
@@ -637,6 +634,7 @@ namespace Nebulator.Script
         public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { Script.color.SetMode(mode, max1, max2, max3, maxA); }
         //public void fill(int rgb) { NotImpl(nameof(fill)); }
         //public void fill(int rgb, float alpha) { NotImpl(nameof(fill)); }
+        public void fill(color clr) { _fill.Color = SafeColor(clr.R, clr.G, clr.B, clr.A); }
         public void fill(float gray) { _fill.Color = SafeColor(gray, gray, gray, 255); }
         public void fill(float gray, float alpha) { _fill.Color = SafeColor(gray, gray, gray, alpha); }
         public void fill(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _fill.Color = c.NativeColor; }

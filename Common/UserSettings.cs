@@ -37,6 +37,9 @@ namespace Nebulator.Common
         [DisplayName("UI Orientation"), Description("Set UI pane orientation."), Browsable(true)]
         public Orientation UiOrientation { get; set; } = Orientation.Horizontal;
 
+        [DisplayName("Word Wrap"), Description("Set UI preference."), Browsable(true)]
+        public bool WordWrap { get; set; } = false;
+
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
         [Editor(typeof(ListSelector), typeof(UITypeEditor))]
         public string MidiIn { get; set; } = Utils.UNKNOWN_STRING;

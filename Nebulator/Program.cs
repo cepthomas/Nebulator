@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using NLog;
+using Nebulator.Script;
 
 namespace Nebulator
 {
@@ -13,7 +14,7 @@ namespace Nebulator
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -30,6 +31,34 @@ namespace Nebulator
             // Go!
             MainForm f = new MainForm();
             Application.Run(f);
+        }
+
+        /// <summary>
+        /// Compile one file.
+        /// </summary>
+        /// <param name="fn"></param>
+        private static void Compile(string fn)
+        {
+            Console.WriteLine($"FILE: {fn}");
+
+            NebCompiler compiler = new NebCompiler();
+
+            // Compile now.
+            ScriptCore _script = compiler.Execute(fn);
+
+            int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptError.ScriptErrorType.Error);
+
+            compiler.Errors.ForEach(r =>
+            {
+                if (r.ErrorType == ScriptError.ScriptErrorType.Warning)
+                {
+                    Console.WriteLine($"WRN: {r}");
+                }
+                else
+                {
+                    Console.WriteLine($"ERR: {r}");
+                }
+            });
         }
 
         /// <summary>

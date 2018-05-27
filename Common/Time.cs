@@ -23,6 +23,9 @@ namespace Nebulator.Common
 
         /// <summary>Total Tocks for the unit of time.</summary>
         public int TotalTocks { get { return Tick * TOCKS_PER_TICK + Tock; } }
+
+        /// <summary>Convert to double representation.</summary>
+        public double AsDouble { get { return Tick + Tock / 100.0; } }
         #endregion
 
         #region Constructors

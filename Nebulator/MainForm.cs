@@ -16,7 +16,7 @@ using Nebulator.Server;
 using Newtonsoft.Json;
 
 
-// TODO0 Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures?:
+// TODOX Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures?:
 // A closure in C# takes the form of an in-line delegate/anonymous method. A closure is attached to its parent method meaning that variables defined in parent's method body can be referenced from within the anonymous method. There is a great Blog Post here about it.
 // public Person FindById(int id)
 // {
@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 //         return (p.Id == id);
 //     });
 // }
-
+//
 // When you make a lambda expression that uses variables defined outside of the method, then the lambda must be implemented using a closure. For example:
 // int i = 42;
 // Action lambda = () => { Console.WriteLine(i); }; 
@@ -181,7 +181,7 @@ namespace Nebulator
             surface.Resize += Surface_Resize;
 
             // Catches runtime errors during drawing.
-            surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessRuntimeError(eargs); };
+            surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessScriptRuntimeError(eargs); };
 
             // Init server.
             _selfHost = new SelfHost();
@@ -200,18 +200,15 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+            // OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\p1.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
-
             OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
-            // Server debug stuff
+            // Server debug stuff TODO
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //TestClient client = new TestClient();
             //Task.Run(async () => { await client.Run(); });
@@ -394,30 +391,29 @@ namespace Nebulator
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 
+                    try
+                    {
+                        // Surface area.
+                        InitRuntime();
 
+                        _script.setupNeb();
 
+                        surface.InitSurface(_script);
 
- //                   ConvertToSteps();
-                     // Show everything.
- //                   InitUi();
- //xxx
+                        ProcessRuntime();
 
+                        ConvertToSteps();
 
-                    // Surface area.
-                    InitRuntime();
-                    _script.setupNeb();
-                    surface.InitSurface(_script);
-                    ProcessRuntime();
+                        // Show everything.
+                        InitScriptUi();
+                    }
+                    catch (Exception ex)
+                    {
+                        ProcessScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                        ok = false;
+                    }
 
-
-
-                    ConvertToSteps();
-                    // Show everything.
-                    InitScriptUi();
-
-
-
-                    SetCompileStatus(true);
+                    SetCompileStatus(ok);
                 }
                 else
                 {
@@ -450,6 +446,7 @@ namespace Nebulator
         {
             // Convert compiled stuff to step collection.
             _compiledSteps.Clear();
+
             foreach (NSection sect in DynamicElements.Sections)
             {
                 // Collect important times.
@@ -464,9 +461,17 @@ namespace Nebulator
                     // Gen steps for each sequence.
                     foreach (NSequence seq in strack.Sequences)
                     {
-                        StepCollection stepsToAdd = ScriptCore.ConvertToSteps(strack.ParentTrack, seq, seqOffset);
-                        _compiledSteps.Add(stepsToAdd);
-                        seqOffset += seq.Length;
+                        try
+                        {
+                            StepCollection stepsToAdd = ScriptCore.ConvertToSteps(strack.ParentTrack, seq, seqOffset);
+                            _compiledSteps.Add(stepsToAdd);
+                            seqOffset += seq.Length;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception($"Error in the sequences for NTrack {strack.ParentTrack.Name} : {ex.Message}");
+                        }
                     }
                 }
             }
@@ -611,7 +616,7 @@ namespace Nebulator
                 }
                 catch (Exception ex)
                 {
-                    ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                    ProcessScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
                 }
 
                 //if (_tanNeb.Grab())
@@ -660,7 +665,7 @@ namespace Nebulator
                 }
                 catch (Exception ex)
                 {
-                    ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                    ProcessScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
                 }
 
                 //if (_tanUi.Grab())
@@ -695,7 +700,7 @@ namespace Nebulator
                             }
                             catch (Exception ex)
                             {
-                                ProcessRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                                ProcessScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
                             }
                         }
                         else
@@ -836,7 +841,7 @@ namespace Nebulator
         /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
         /// </summary>
         /// <param name="args"></param>
-        void ProcessRuntimeError(Surface.RuntimeErrorEventArgs args)
+        void ProcessScriptRuntimeError(Surface.RuntimeErrorEventArgs args)
         {
             ProcessPlay(PlayCommand.Stop, false);
             SetCompileStatus(false);

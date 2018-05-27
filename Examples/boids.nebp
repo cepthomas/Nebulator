@@ -4,8 +4,8 @@
     "master.speed": 93.0,
     "master.sequence": false,
     "master.ui": true,
-    "KEYS.volume": 90,
-    "BASS.volume": 90,
-    "SYNTH.volume": 90
+    "keys.volume": 90,
+    "bass.volume": 90,
+    "synth.volume": 90
   }
 }

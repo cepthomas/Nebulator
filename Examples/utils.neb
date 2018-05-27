@@ -1,10 +1,10 @@
 
+
 // Define some Neb style vars.
-constant VEL 95
-variable MAX 60
+const int VEL = 95;
+NVariable MAX;
 
 ///// Functions /////
-!script
 
 int notavar = 911;
 
@@ -15,7 +15,7 @@ bool boing(int notenum = 0)
     // print("boing");
     if(notenum == 0)
     {
-        notenum = (int)random(30, MAX);
+        notenum = (int)random(30, MAX.Value);
         boinged = true;
     }
 

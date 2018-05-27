@@ -102,6 +102,7 @@ namespace Nebulator.Script
             _script.height = Height;
             _script.focused = Focused;
             _script.frameCount = 0;
+
             _script.setup();
 
             CleanupBitmap(true);
@@ -144,15 +145,17 @@ namespace Nebulator.Script
                     _script.pMouseY = _script.mouseY;
                     _script._redraw = false;
 
+                    //_tanDraw.Arm();
+
                     // Execute the user script code.
                     _script.frameCount++;
-                    _tanDraw.Arm();
                     _script.draw();
-                    if (_tanDraw.Grab())
-                    {
-                        //_logger.Info("UI tan: " + _tanDraw.ToString());
-                        //_logger.Info(string.Join(" ", _tanDraw.Times.ConvertAll(t => t.ToString("0.00"))));
-                    }
+
+                    //if (_tanDraw.Grab())
+                    //{
+                    //    _logger.Info("UI tan: " + _tanDraw.ToString());
+                    //    _logger.Info(string.Join(" ", _tanDraw.Times.ConvertAll(t => t.ToString("0.00"))));
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -284,7 +287,7 @@ namespace Nebulator.Script
         /// Event handler for keys.
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnKeyDown(KeyEventArgs e) //TODO1 Keys are not working with SKControl.
+        protected override void OnKeyDown(KeyEventArgs e) //TODOX Keys are not working with SKControl.
         {
             if (_script != null)
             {

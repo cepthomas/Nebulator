@@ -1,6 +1,5 @@
 
 // Game of life from https://processing.org/examples/gameoflife.html
-!script
 
 // Size of cells
 int cellSize = 5;
@@ -55,12 +54,13 @@ public override void setup()
             cells[x, y] = @int(state); // Save state of each cell
         }
     }
-    background(0); // Fill in black in case cells don't cover all the windows
+    // Don't! background(0); // Fill in black in case cells don't cover all the windows
 }
 
 
 public override void draw()
 {
+    background(0); // Fill in black in case cells don't cover all the windows
 
     //Draw grid
     for (int x = 0; x < width / cellSize; x++)

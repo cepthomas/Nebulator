@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-// old parser stuff for future utility to parse text files?
+// TODO import a declarative neb file/spec? Could be text or graphics or .... Use this old compile/parse stuff.
 
 
 namespace Nebulator.Script

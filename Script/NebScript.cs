@@ -105,7 +105,7 @@ namespace Nebulator.Script
         /// <param name="val">Initial value</param>
         protected NVariable variable(string name, int val)
         {
-            NVariable nv = new NVariable(name, val);
+            NVariable nv = new NVariable() { Name = name, Value = val };
             DynamicElements.Variables.Add(nv);
             return nv;
         }
@@ -116,7 +116,7 @@ namespace Nebulator.Script
         /// <param name="length"></param>
         protected NSequence sequence(int length)
         {
-            NSequence nseq = new NSequence(length);
+            NSequence nseq = new NSequence() { Length = length };
             DynamicElements.Sequences.Add(nseq);
             return nseq;
         }
@@ -124,11 +124,12 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal factory.
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="start"></param>
         /// <param name="length"></param>
-        protected NSection section(int start, int length)
+        protected NSection section(string name, int start, int length)
         {
-            NSection nsec = new NSection(start, length);
+            NSection nsec = new NSection() { Name = name, Start = start, Length = length };
             DynamicElements.Sections.Add(nsec);
             return nsec;
         }
@@ -142,7 +143,7 @@ namespace Nebulator.Script
         /// <param name="wobafter"></param>
         protected NTrack track(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
-            NTrack nt = new NTrack(name, channel, wobvol, wobbefore, wobafter);
+            NTrack nt = new NTrack() { Name = name, Channel = channel, WobbleVolume = wobvol, WobbleTimeBefore = wobbefore, WobbleTimeAfter = wobafter };
             DynamicElements.Tracks.Add(nt);
             return nt;
         }
@@ -176,7 +177,7 @@ namespace Nebulator.Script
                     };
 
                     step.Adjust(volume, track.Volume, track.Modulate);
-                    MidiInterface.TheInterface.Send(step);//, dur.TotalTocks > 0);
+                    MidiInterface.TheInterface.Send(step);
                 }
                 else
                 {
@@ -209,6 +210,16 @@ namespace Nebulator.Script
             {
                 note.Notes.ForEach(n => sendMidiNote(track, n, vol, dur));
             }
+        }
+
+        /// <summary>Send a midi note immediately. Respects solo/mute.</summary>
+        /// <param name="track">Which track to send it on.</param>
+        /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
+        /// <param name="vol">Note volume.</param>
+        /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
+        public void sendMidiNote(NTrack track, string snote, int vol, Time dur)
+        {
+            sendMidiNote(track, snote, vol, dur.AsDouble);
         }
 
         /// <summary>Send a midi controller immediately.</summary>

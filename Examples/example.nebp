@@ -1,12 +1,12 @@
 {
   "Values": {
-    "master.volume": 154,
-    "master.speed": 91.0,
+    "master.volume": 90,
+    "master.speed": 100.0,
     "master.sequence": true,
     "master.ui": true,
-    "KEYS.volume": 169,
-    "BASS.volume": 112,
-    "DRUMS.volume": 112,
-    "SYNTH.volume": 163
+    "keys.volume": 90,
+    "bass.volume": 90,
+    "synth.volume": 90,
+    "drums.volume": 90
   }
 }

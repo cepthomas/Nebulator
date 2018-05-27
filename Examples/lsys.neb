@@ -1,32 +1,38 @@
 
+
 // Partial implementation of https://en.wikipedia.org/wiki/L-system and http://benvan.co.uk/lsys/
 // Graphics only, audio to come later.
 
 // Variables
-variable COL1 200
-variable INITANG -3963
+NVariable COL1;
+NVariable INITANG;
 
-// Levers
-lever L1 0 255 COL1
-lever L2 -5000 0 INITANG
-
-
-///// Functions /////
-!script
 
 // The lines to draw.
 List<Point> lines = new List<Point>();
 
 public override void setup()
 {
-    genLSys(-1.359672, -0.138235, INITANG, 14.11);
+    // Variables
+    COL1 = variable("color", 200);
+    INITANG = variable("iang", -3963);
+
+    INITANG.Changed += On_INITANG;
+
+    // Levers
+    lever(0, 255, COL1);
+    lever(-5000, 0, INITANG);
+
+    genLSys(-1.359672, -0.138235, INITANG.Value, 14.11);
     print("setup()");
     noLoop();
+
+    redraw();
 }
 
 public override void draw()
 {
-    background(COL1, 100, 200);
+    background(COL1.Value, 100, 200);
 
     for (var i = 0; i < lines.Count; i += 2)
     {
@@ -38,10 +44,9 @@ public override void draw()
 
 public void On_INITANG()
 {
-    print("On_INITANG", INITANG);
-    genLSys(-1.359672, -0.138235, INITANG, 14.11);
+    //print("On_INITANG", INITANG.Value);
+    genLSys(-1.359672, -0.138235, INITANG.Value, 14.11);
     redraw();
-    //print("On_INITANG()", _loop);
 }
 
 public override void mouseClicked()

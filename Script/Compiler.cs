@@ -14,10 +14,6 @@ using Nebulator.Common;
 using Nebulator.Midi;
 
 
-//TODO import a declarative neb file/spec? Could be text or graphics or .... Use old compile/parse stuff. See parse.cs.
-
-
-
 namespace Nebulator.Script
 {
     /// <summary>General script error container.</summary>
@@ -148,9 +144,9 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Load chord and midi definitions.
+        /// Load chord and midi definitions from md doc file.
         /// </summary>
-        void LoadDefinitions() // TODO1 eliminate the parse step for defs?
+        void LoadDefinitions()
         {
             try
             {
@@ -207,28 +203,6 @@ namespace Nebulator.Script
                 LineNumber = 1
             };
             ParseOneFile(pcont);
-
-            //// Finished. Patch up some forward refs. Probably should be a two pass compile.
-            //foreach (Section sect in DynamicElements.Sections.Values)
-            //{
-            //    foreach (SectionTrack st in sect.SectionTracks)
-            //    {
-            //        if (DynamicElements.Tracks[st.TrackName] == null)
-            //        {
-            //            pcont.LineNumber = 0; // Don't know the real line number.
-            //            AddParseError(pcont, $"Invalid track name: {st.TrackName}");
-            //        }
-
-            //        foreach (string sseq in st.SequenceNames)
-            //        {
-            //            if (DynamicElements.Sequences[sseq] == null)
-            //            {
-            //                pcont.LineNumber = 0; // Don't know the real line number.
-            //                AddParseError(pcont, $"Invalid sequence name: {sseq}");
-            //            }
-            //        }
-            //    }
-            //}
 
             // Add the generated internal code files.
             _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileContext()
@@ -356,6 +330,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("System.Drawing.dll");
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
+                cp.ReferencedAssemblies.Add("SkiaSharp.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.exe");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
@@ -478,18 +453,6 @@ namespace Nebulator.Script
             // Create the main/generated file. Indicated by empty source file name.
             List<string> codeLines = GenTopOfFile("");
 
-            //// The constants.
-            //_consts.Keys.ForEach(v => codeLines.Add($"const int {v} = {_consts[v]};"));
-
-            //// The declared vars with the system hooks.
-            //DynamicElements.Vars.Values.ForEach(v => codeLines.Add($"int {v.Name} {{ get {{ return DynamicElements.Vars[\"{v.Name}\"].Value; }} set {{ DynamicElements.Vars[\"{v.Name}\"].Value = value; }} }}"));
-
-            //// Needed for runtime script statuses.
-            //DynamicElements.Tracks.Values.ForEach(t => codeLines.Add($"Track {t.Name} {{ get {{ return DynamicElements.Tracks[\"{t.Name}\"]; }} }}"));
-
-            //// Used for manual/trigger inputs.
-            //DynamicElements.Sequences.Values.ForEach(s => codeLines.Add($"Sequence {s.Name} {{ get {{ return DynamicElements.Sequences[\"{s.Name}\"]; }} }}"));
-
             // Collected init stuff goes in a constructor.
             // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack.
             codeLines.Add("protected static ScriptCore s;");
@@ -541,9 +504,9 @@ namespace Nebulator.Script
                 "using System.Collections.Generic;",
                 "using System.Text;",
                 "using System.Linq;",
-                //"using System.Drawing;",
-                //"using System.Drawing.Drawing2D;",
+                "using System.Drawing;",
                 "using System.Windows.Forms;",
+                "using SkiaSharp;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "namespace Nebulator.UserScript",
