@@ -9,8 +9,8 @@ using SkiaSharp.Views.Desktop;
 using Nebulator.Common;
 
 
-/// Processing emulation script stuff.
-/// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
+// Processing emulation script stuff.
+// The properties and functions are organized similarly to the API specified in https://processing.org/reference/.
 
 
 namespace Nebulator.Script
@@ -625,11 +625,11 @@ namespace Nebulator.Script
         #region Color - Setting
         //public void background(int rgb) { NotImpl(nameof(background)); }
         //public void background(int rgb, float alpha) { NotImpl(nameof(background)); }
-        public void background(float gray) { _bgColor = SafeColor(gray, gray, gray, 255); _canvas.Clear(_bgColor); }
-        public void background(float gray, float alpha) { _bgColor = SafeColor(gray, gray, gray, alpha); _canvas.Clear(_bgColor); }
-        public void background(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _bgColor = c.NativeColor; _canvas.Clear(_bgColor); }
-        public void background(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _bgColor = c.NativeColor; _canvas.Clear(_bgColor); }
-        public void background(PImage img) { _canvas.DrawBitmap(img.bmp, new SKRect(0, 0, width, height)); }
+        public void background(float gray) { _bgColor = SafeColor(gray, gray, gray, 255); if(_canvas != null) _canvas.Clear(_bgColor); }
+        public void background(float gray, float alpha) { _bgColor = SafeColor(gray, gray, gray, alpha); if (_canvas != null) _canvas.Clear(_bgColor); }
+        public void background(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
+        public void background(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
+        public void background(PImage img) { if (_canvas != null) _canvas.DrawBitmap(img.bmp, new SKRect(0, 0, width, height)); }
         public void colorMode(int mode, float max = 255) { Script.color.SetMode(mode, max, max, max, max); }
         public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { Script.color.SetMode(mode, max1, max2, max3, maxA); }
         //public void fill(int rgb) { NotImpl(nameof(fill)); }

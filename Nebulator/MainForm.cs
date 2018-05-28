@@ -16,20 +16,7 @@ using Nebulator.Server;
 using Newtonsoft.Json;
 
 
-// TODOX Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures?:
-// A closure in C# takes the form of an in-line delegate/anonymous method. A closure is attached to its parent method meaning that variables defined in parent's method body can be referenced from within the anonymous method. There is a great Blog Post here about it.
-// public Person FindById(int id)
-// {
-//     return this.Find(delegate(Person p)
-//     {
-//         return (p.Id == id);
-//     });
-// }
-//
-// When you make a lambda expression that uses variables defined outside of the method, then the lambda must be implemented using a closure. For example:
-// int i = 42;
-// Action lambda = () => { Console.WriteLine(i); }; 
-// In this case, the compiler generated method must have access to the variable (i) defined in a completely different scope. In order for this to work, the method it generates is a "function together with the referencing environment" - basically, it's creating a "closure" to retrieve access to the variable.
+// TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures? Or make everything static?
 
 
 namespace Nebulator
@@ -184,7 +171,7 @@ namespace Nebulator
             surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessScriptRuntimeError(eargs); };
 
             // Init server.
-            _selfHost = new SelfHost();
+            _selfHost = new SelfHost(); //TODOX test this
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
             #endregion
@@ -1333,6 +1320,8 @@ namespace Nebulator
         /// <param name="e"></param>
         void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
+
+
             if(e.KeyCode == Keys.Space)
             {
                 // Handle start/stop toggle.

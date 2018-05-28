@@ -153,7 +153,12 @@ namespace Nebulator.Script
             _logger.Warn($"{name} not implemented. {desc}");
         }
 
-        /// <summary>Bounds check a color definition.
+        /// <summary>Bounds check a color definition./// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
         SKColor SafeColor(float r, float g, float b, float a)
         {
             r = constrain(r, 0, 255);

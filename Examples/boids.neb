@@ -1,5 +1,14 @@
 
 //////////// port of https://processing.org/examples/flocking.html /////////
+
+// Changes I made:
+// - ArrayList<> >>> List<>
+// - e.g. for (Boid b : boids) >>> foreach (Boid b in boids)
+// - .add >>> .Add
+// - Flock and Boid classes needed some publics.
+// - Updated per a bunch of "until Processing.js catches up" notes.
+// - Added some sound generating code.
+
 // Flocking by Daniel Shiffman.
 
 // An implementation of Craig Reynold's Boids program to simulate the flocking behavior of birds. Each boid steers itself based on rules of avoidance, alignment, and coherence.

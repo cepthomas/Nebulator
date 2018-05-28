@@ -50,6 +50,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>IDE1006, CS1591</NoWarn>
+    <DocumentationFile>bin\Nebulator.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Markdig, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">

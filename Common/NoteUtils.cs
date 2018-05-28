@@ -87,9 +87,8 @@ namespace Nebulator.Common
         /// Parse note or notes from input value. Checks both stock items and those defined in the script.
         /// </summary>
         /// <param name="s">String to parse.</param>
-        ///// <param name="scriptNoteDefs">Scales defined in the script.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
-        public static List<int> ParseNoteString(string s) // , LazyCollection<List<string>> scriptNoteDefs)
+        public static List<int> ParseNoteString(string s)
         {
             List<int> notes = new List<int>();
 
@@ -178,9 +177,8 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="scale">Name of the scale.</param>
         /// <param name="key">Key.octave</param>
-        ///// <param name="scriptNoteDefs">Scales defined in the script.</param>
         /// <returns>List of scale notes - empty if invalid.</returns>
-        public static List<int> GetScaleNotes(string scale, string key) //, LazyCollection<List<string>> scriptNoteDefs)
+        public static List<int> GetScaleNotes(string scale, string key)
         {
             var notes = new List<int>();
 

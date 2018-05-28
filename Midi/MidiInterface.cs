@@ -173,8 +173,7 @@ namespace Nebulator.Midi
         /// Midi out processor.
         /// </summary>
         /// <param name="step"></param>
-        /// <param name="chase">Let midi output generate the note off.</param>
-        public void Send(Step step) //, bool chase = false)
+        public void Send(Step step)
         {
             // Critical code section
             lock (_midiLock)

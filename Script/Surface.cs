@@ -125,7 +125,6 @@ namespace Nebulator.Script
         /// <summary>
         /// Calls the script code that generates the bmp to paint later.
         /// </summary>
-        /// <param name="e"></param>
         void Render()
         {
             var w = Width;
@@ -283,11 +282,41 @@ namespace Nebulator.Script
         #endregion
 
         #region Keyboard handling
+
+
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                //this.Visible = false;
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+        //TODOX Keys are not working with SKControl. Or Enter/Leave!
+        //_script.keyPressed();
+        //_script.keyIsPressed = false;
+        //_script.keyReleased();
+        //_script.key = (char)0;
+        //_script.keyCode = 0;
+        //_script.keyTyped();
+
+// How windows handles key presses. For example Shift+A produces:
+// - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
+// - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
+// - KeyPress: KeyChar='A'
+// - KeyUp: KeyCode=Keys.A
+// - KeyUp: KeyCode=Keys.ShiftKey
+// Also note that Windows steals TAB, RETURN, ESC, and arrow keys so they are not currently implemented.
+
         /// <summary>
         /// Event handler for keys.
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnKeyDown(KeyEventArgs e) //TODOX Keys are not working with SKControl.
+        protected override void OnKeyDown(KeyEventArgs e)
         {
             if (_script != null)
             {

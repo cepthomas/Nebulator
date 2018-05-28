@@ -18,15 +18,15 @@ namespace Nebulator.Script
     public class color
     {
         #region Storage for some globals
-        /// <summary>Color mode: RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness./summary>
+        /// <summary>Color mode: RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness.</summary>
         static int _mode = ScriptCore.RGB;
-        /// <summary>Range for the red or hue depending on the current color mode./summary>
+        /// <summary>Range for the red or hue depending on the current color mode.</summary>
         static float _max1 = 255;
-        /// <summary>Range for the green or saturation depending on the current color mode./summary>
+        /// <summary>Range for the green or saturation depending on the current color mode.</summary>
         static float _max2 = 255;
-        /// <summary>Range for the blue or brightness depending on the current color mode./summary>
+        /// <summary>Range for the blue or brightness depending on the current color mode.</summary>
         static float _max3 = 255;
-        /// <summary>Range for the alpha channel./summary>
+        /// <summary>Range for the alpha channel.</summary>
         static float _maxA = 255;
 
         public static void SetMode(int mode, float max1, float max2, float max3, float maxA)

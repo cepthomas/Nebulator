@@ -1,6 +1,6 @@
 {
   "Values": {
-    "master.volume": 90,
+    "master.volume": 145,
     "master.speed": 100.0,
     "master.sequence": false,
     "master.ui": true,

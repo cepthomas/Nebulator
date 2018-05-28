@@ -13,10 +13,6 @@ namespace Nebulator.Script
 {
     public partial class ScriptCore
     {
-        #region Script function overrides.
-        public virtual void setupNeb() { }
-        #endregion
-
         #region User script properties
         /// <summary>Sound is playing.</summary>
         public bool playing { get { return RuntimeContext.Playing; } }
@@ -47,21 +43,14 @@ namespace Nebulator.Script
         #endregion
 
         #region Functions that can be overridden in the user script
+        /// <summary>Called to iniialize Nebulator stuff.</summary>
+        public virtual void setupNeb() { }
+
         /// <summary>Called every Nebulator Tock.</summary>
         public virtual void step() { }
         #endregion
 
         #region Script callable functions
-        /// <summary>
-        /// Add a chord or scale definition.
-        /// </summary>
-        /// <param name="name">"MY_CHORD"</param>
-        /// <param name="parts">"1 4 6 b13"</param>
-        protected void notes(string name, string parts)
-        {
-            NoteUtils.ScriptNoteDefs.Add(name, parts.SplitByToken(" "));
-        }
-
         /// <summary>
         /// Create a midi input.
         /// </summary>
@@ -137,6 +126,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal factory.
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="channel"></param>
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
@@ -267,6 +257,16 @@ namespace Nebulator.Script
         {
             StepCollection scoll = ConvertToSteps(track, seq, RuntimeContext.StepTime.Tick);
             RuntimeContext.RuntimeSteps.Add(scoll);
+        }
+
+        /// <summary>
+        /// Add a chord or scale definition.
+        /// </summary>
+        /// <param name="name">"MY_CHORD"</param>
+        /// <param name="parts">"1 4 6 b13"</param>
+        protected void notes(string name, string parts)
+        {
+            NoteUtils.ScriptNoteDefs.Add(name, parts.SplitByToken(" "));
         }
 
         /// <summary>Convert the argument into numbered notes.</summary>
