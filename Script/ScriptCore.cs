@@ -55,9 +55,6 @@ namespace Nebulator.Script
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
-
-        /// <summary>A minor visibility hack.</summary>
-        protected const int CTRL_PITCH = Midi.MidiInterface.CTRL_PITCH;
         #endregion
 
         #region Lifecycle

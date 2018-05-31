@@ -68,7 +68,7 @@ namespace Nebulator.Script
         #region Properties - Nebulator not processing!
 
         /// <summary>Loop option.</summary>
-        public bool Loop { get; internal set; } = true;
+        public bool Loop { get; private set; } = true;
 
         /// <summary>Redraw option.</summary>
         public bool Redraw { get; internal set; } = false;
