@@ -17,7 +17,7 @@ namespace Nebulator.Script
 {
     public partial class ScriptCore
     {
-        #region Fields - some internal so Surface can access
+        #region Fields
         /// <summary>Script randomizer.</summary>
         Random _rand = new Random();
 
@@ -59,19 +59,22 @@ namespace Nebulator.Script
         Stack<SKMatrix> _matrixStack = new Stack<SKMatrix>();
 
         /// <summary>Background color.</summary>
-        internal SKColor _bgColor = SKColors.LightGray;
+        SKColor _bgColor = SKColors.LightGray;
 
-        /// <summary>Smoothing option. Internal so Surface can access.</summary>
-        internal bool _smooth = true;
+        /// <summary>Smoothing option.</summary>
+        bool _smooth = true;
+        #endregion
 
-        /// <summary>Loop option. Internal so Surface can access.</summary>
-        internal bool _loop = true;
+        #region Properties - Nebulator not processing!
 
-        /// <summary>Redraw option. Internal so Surface can access.</summary>
-        internal bool _redraw = false;
+        /// <summary>Loop option.</summary>
+        public bool Loop { get; internal set; } = true;
 
-        /// <summary>Current working object to draw on. Internal so Surface can access.</summary>
-        internal SKCanvas _canvas;
+        /// <summary>Redraw option.</summary>
+        public bool Redraw { get; internal set; } = false;
+
+        /// <summary>Current working object to draw on.</summary>
+        public SKCanvas Canvas { get; internal set; } = null;
         #endregion
 
         #region Definitions - same values as Processing
@@ -139,11 +142,11 @@ namespace Nebulator.Script
 
         //---- Script functions
         protected void exit() { NotImpl(nameof(exit), "This is probably not what you want to do."); exit(); }
-        protected void loop() { _loop = true; }
-        protected void noLoop() { _loop = false; }
+        protected void loop() { Loop = true; }
+        protected void noLoop() { Loop = false; }
         //protected void popStyle() { NotImpl(nameof(popStyle)); }
         //protected void pushStyle() { NotImpl(nameof(pushStyle)); }
-        protected void redraw() { _redraw = true; }
+        protected void redraw() { Redraw = true; }
         //protected void thread() { NotImpl(nameof(thread)); }
         #endregion
 
@@ -234,11 +237,11 @@ namespace Nebulator.Script
                 case OPEN: // default is OPEN stroke with a PIE fill.
                     if(_fill.Color != SKColors.Transparent)
                     {
-                        _canvas.DrawPath(path, _fill);
+                        Canvas.DrawPath(path, _fill);
                     }
                     if (_pen.StrokeWidth != 0)
                     {
-                        _canvas.DrawPath(path, _pen);
+                        Canvas.DrawPath(path, _pen);
                     }
                     break;
 
@@ -246,11 +249,11 @@ namespace Nebulator.Script
                     path.Close();
                     if (_fill.Color != SKColors.Transparent)
                     {
-                        _canvas.DrawPath(path, _fill);
+                        Canvas.DrawPath(path, _fill);
                     }
                     if (_pen.StrokeWidth != 0)
                     {
-                        _canvas.DrawPath(path, _pen);
+                        Canvas.DrawPath(path, _pen);
                     }
                     break;
 
@@ -258,11 +261,11 @@ namespace Nebulator.Script
                     path.MoveTo(rect.MidX, rect.MidY);
                     if (_fill.Color != SKColors.Transparent)
                     {
-                        _canvas.DrawPath(path, _fill);
+                        Canvas.DrawPath(path, _fill);
                     }
                     if (_pen.StrokeWidth != 0)
                     {
-                        _canvas.DrawPath(path, _pen);
+                        Canvas.DrawPath(path, _pen);
                     }
                     break;
             }
@@ -277,23 +280,23 @@ namespace Nebulator.Script
         {
             if (_fill.Color != SKColors.Transparent)
             {
-                _canvas.DrawOval(x1, y1, w / 2, h / 2, _fill);
+                Canvas.DrawOval(x1, y1, w / 2, h / 2, _fill);
             }
 
             if(_pen.StrokeWidth != 0)
             {
-                _canvas.DrawOval(x1, y1, w / 2, h / 2, _pen);
+                Canvas.DrawOval(x1, y1, w / 2, h / 2, _pen);
             }
         }
 
         public void line(float x1, float y1, float x2, float y2)
         {
-            _canvas.DrawLine(x1, y1, x2, y2, _pen);
+            Canvas.DrawLine(x1, y1, x2, y2, _pen);
         }
 
         public void point(float x, float y)
         {
-            _canvas.DrawPoint(x, y, _pen);
+            Canvas.DrawPoint(x, y, _pen);
         }
 
         public void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
@@ -302,12 +305,12 @@ namespace Nebulator.Script
 
             if (_fill.Color != SKColors.Transparent)
             {
-                _canvas.DrawPoints(SKPointMode.Polygon, points, _fill);
+                Canvas.DrawPoints(SKPointMode.Polygon, points, _fill);
             }
 
             if (_pen.StrokeWidth != 0)
             {
-                _canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
+                Canvas.DrawPoints(SKPointMode.Polygon, points, _pen);
             }
         }
 
@@ -315,12 +318,12 @@ namespace Nebulator.Script
         {
             if (_fill.Color != SKColors.Transparent)
             {
-                _canvas.DrawRect(x1, y1, w, h, _fill);
+                Canvas.DrawRect(x1, y1, w, h, _fill);
             }
 
             if (_pen.StrokeWidth != 0)
             {
-                _canvas.DrawRect(x1, y1, w, h, _pen);
+                Canvas.DrawRect(x1, y1, w, h, _pen);
             }
         }
 
@@ -330,12 +333,12 @@ namespace Nebulator.Script
 
             if (_fill.Color != SKColors.Transparent)
             {
-                _canvas.DrawPoints(SKPointMode.Lines, points, _fill);
+                Canvas.DrawPoints(SKPointMode.Lines, points, _fill);
             }
 
             if (_pen.StrokeWidth != 0)
             {
-                _canvas.DrawPoints(SKPointMode.Lines, points, _pen);
+                Canvas.DrawPoints(SKPointMode.Lines, points, _pen);
             }
         }
         #endregion
@@ -348,7 +351,7 @@ namespace Nebulator.Script
             {
                 path.MoveTo(x1, y1);
                 path.CubicTo(x2, y2, x3, y3, x4, y4);
-                _canvas.DrawPath(path, _pen);
+                Canvas.DrawPath(path, _pen);
             }
         }
 
@@ -416,7 +419,7 @@ namespace Nebulator.Script
 
             if (mode == -1) // Not closed - draw lines.
             {
-                _canvas.DrawPoints(SKPointMode.Lines, points, _pen);
+                Canvas.DrawPoints(SKPointMode.Lines, points, _pen);
             }
             else if (mode == CLOSE)
             {
@@ -437,12 +440,12 @@ namespace Nebulator.Script
 
                     if (_fill.Color != SKColors.Transparent)
                     {
-                        _canvas.DrawPath(path, _fill);
+                        Canvas.DrawPath(path, _fill);
                     }
 
                     if (_pen.StrokeWidth != 0)
                     {
-                        _canvas.DrawPath(path, _pen);
+                        Canvas.DrawPath(path, _pen);
                     }
                 }
             }
@@ -565,19 +568,19 @@ namespace Nebulator.Script
 
         #region Transform 
         //public void applyMatrix() { NotImpl(nameof(applyMatrix)); }
-        public void popMatrix() { _canvas.SetMatrix(_matrixStack.Pop()); }
+        public void popMatrix() { Canvas.SetMatrix(_matrixStack.Pop()); }
         //public void printMatrix() { NotImpl(nameof(printMatrix)); }
-        public void pushMatrix() { _matrixStack.Push(_canvas.TotalMatrix); }
+        public void pushMatrix() { _matrixStack.Push(Canvas.TotalMatrix); }
         //public void resetMatrix() { NotImpl(nameof(resetMatrix)); }
-        public void rotate(float angle) { _canvas.RotateRadians(angle); }
+        public void rotate(float angle) { Canvas.RotateRadians(angle); }
         //public void rotateX() { NotImpl(nameof(rotateX)); }
         //public void rotateY() { NotImpl(nameof(rotateY)); }
         //public void rotateZ() { NotImpl(nameof(rotateZ)); }
-        public void scale(float sc) { _canvas.Scale(sc); }
-        public void scale(float scx, float scy) { _canvas.Scale(scx, scy); }
+        public void scale(float sc) { Canvas.Scale(sc); }
+        public void scale(float scx, float scy) { Canvas.Scale(scx, scy); }
         //public void shearX() { NotImpl(nameof(shearX)); }
         //public void shearY() { NotImpl(nameof(shearY)); }
-        public void translate(float dx, float dy) { _canvas.Translate(dx, dy); }
+        public void translate(float dx, float dy) { Canvas.Translate(dx, dy); }
         #endregion
 
         #region Lights & Camera
@@ -625,11 +628,11 @@ namespace Nebulator.Script
         #region Color - Setting
         //public void background(int rgb) { NotImpl(nameof(background)); }
         //public void background(int rgb, float alpha) { NotImpl(nameof(background)); }
-        public void background(float gray) { _bgColor = SafeColor(gray, gray, gray, 255); if(_canvas != null) _canvas.Clear(_bgColor); }
-        public void background(float gray, float alpha) { _bgColor = SafeColor(gray, gray, gray, alpha); if (_canvas != null) _canvas.Clear(_bgColor); }
-        public void background(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
-        public void background(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
-        public void background(PImage img) { if (_canvas != null) _canvas.DrawBitmap(img.bmp, new SKRect(0, 0, width, height)); }
+        public void background(float gray) { _bgColor = SafeColor(gray, gray, gray, 255); if(Canvas != null) Canvas.Clear(_bgColor); }
+        public void background(float gray, float alpha) { _bgColor = SafeColor(gray, gray, gray, alpha); if (Canvas != null) Canvas.Clear(_bgColor); }
+        public void background(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _bgColor = c.NativeColor; if (Canvas != null) Canvas.Clear(_bgColor); }
+        public void background(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _bgColor = c.NativeColor; if (Canvas != null) Canvas.Clear(_bgColor); }
+        public void background(PImage img) { if (Canvas != null) Canvas.DrawBitmap(img.bmp, new SKRect(0, 0, width, height)); }
         public void colorMode(int mode, float max = 255) { Script.color.SetMode(mode, max, max, max, max); }
         public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { Script.color.SetMode(mode, max1, max2, max3, maxA); }
         //public void fill(int rgb) { NotImpl(nameof(fill)); }
@@ -678,12 +681,12 @@ namespace Nebulator.Script
         #region Image - Loading & Displaying
         public void image(PImage img, float x, float y)
         {
-            _canvas.DrawBitmap(img.bmp, x, y); // unscaled
+            Canvas.DrawBitmap(img.bmp, x, y); // unscaled
         }
 
         public void image(PImage img, float x1, float y1, float x2, float y2)
         {
-            _canvas.DrawBitmap(img.bmp, new SKRect(x1, y1, x2, y2)); // scaled
+            Canvas.DrawBitmap(img.bmp, new SKRect(x1, y1, x2, y2)); // scaled
         }
 
         public void imageMode(int mode) { NotImpl(nameof(imageMode), "Assume CORNER mode."); }
@@ -743,7 +746,7 @@ namespace Nebulator.Script
 
         public void text(string s, float x, float y)
         {
-            _canvas.DrawText(s, x, y, _textPaint);
+            Canvas.DrawText(s, x, y, _textPaint);
         }
 
         public void textFont(PFont font)

@@ -163,7 +163,7 @@ namespace Nebulator
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
 
             // Intercept all keyboard events.
-            KeyPreview = true;
+            KeyPreview = true; //TODOX
 
             surface.Resize += Surface_Resize;
 
@@ -187,12 +187,12 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            // OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
             // Server debug stuff TODO
@@ -1313,6 +1313,38 @@ namespace Nebulator
         #endregion
 
         #region Keyboard handling
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            //this.prev
+            //You can receive the event in the form. See Form.KeyPreview.
+            //When this property is set to true, the form will receive all KeyPress, KeyDown, and KeyUp events. After the form's event handlers have completed processing the keystroke, the keystroke is then assigned to the control with focus
+
+    //        public Form1()
+    //        {
+    //            InitializeComponent();
+    //            this.PreviewKeyDown += Form1_OnPreviewKeyDown;
+    //            textBox1.Visible = false;
+    //        }
+
+    //private bool _textboxEnable = false;
+    //    private void Form1_OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs previewKeyDownEventArgs)
+    //    {
+    //        if (!_textboxEnable) textBox1.Visible = true;
+    //        if (!textBox1.Focused) textBox1.Focus();
+    //    }
+
+
+            if (keyData == Keys.Escape)
+            {
+                //this.Visible = false;
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+
+
         /// <summary>
         /// Do some global key handling. Space bar is used for stop/start playing.
         /// </summary>
@@ -1320,7 +1352,11 @@ namespace Nebulator
         /// <param name="e"></param>
         void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
+            if(surface.Focused)
+            {
+                //surface.
 
+            }
 
             if(e.KeyCode == Keys.Space)
             {
@@ -1491,5 +1527,10 @@ namespace Nebulator
             MidiInterface.TheInterface.KillAll();
         }
         #endregion
+
+        private void surface_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
     }
 }

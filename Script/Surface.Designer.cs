@@ -21,8 +21,6 @@
             // 
             this.Name = "Surface";
             this.Size = new System.Drawing.Size(237, 204);
-            this.Enter += new System.EventHandler(this.Surface_Enter);
-            this.Leave += new System.EventHandler(this.Surface_Leave);
             this.ResumeLayout(false);
         }
 

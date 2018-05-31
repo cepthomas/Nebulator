@@ -66,9 +66,8 @@ public override void setupNeb()
     DRUMS_SIMPLE = sequence(8);
     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
-
-// sequence  DRUMS_HH  8
-// ------xx------xx------xx------xx  ClosedHiHat  100
+    // sequence  DRUMS_HH  8
+    // ------xx------xx------xx------xx  ClosedHiHat  100
 
     // section
     NSection PART1 = section("section", WHEN1, 0);
@@ -108,13 +107,11 @@ int tileHeight = 0;
 
 public override void setup()
 {
-    setupNeb();
-    
     colorMode(HSB, 360, 100, 100);
     noStroke();
     frameRate(1);
 
-    COL1.Value = 999;  // COL1 = 999; TODOX prefer this to .Value
+    COL1.Value = 999;  // COL1 = 999; TODO Prefer this to .Value but would be difficult or impossible.
 
     ////createCanvas(800, 800);
     tileWidth = width / tileCountX;

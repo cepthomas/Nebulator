@@ -34,17 +34,17 @@
             this.chkSeq = new System.Windows.Forms.CheckBox();
             this.chkUi = new System.Windows.Forms.CheckBox();
             this.btnCompile = new System.Windows.Forms.Button();
-            this.timeMaster = new Nebulator.Controls.TimeControl();
             this.sldVolume = new Nebulator.Controls.Slider();
             this.chkPlay = new System.Windows.Forms.CheckBox();
             this.potSpeed = new Nebulator.Controls.Pot();
             this.btnRewind = new System.Windows.Forms.Button();
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.splitContainerInput = new System.Windows.Forms.SplitContainer();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.timeMaster = new Nebulator.Controls.TimeControl();
             this.levers = new Nebulator.Levers();
             this.surface = new Nebulator.Script.Surface();
             this.infoDisplay = new Nebulator.InfoDisplay();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -231,22 +231,6 @@
             this.btnCompile.UseVisualStyleBackColor = false;
             this.btnCompile.Click += new System.EventHandler(this.Compile_Click);
             // 
-            // timeMaster
-            // 
-            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
-            time1.Tick = 0;
-            time1.Tock = 0;
-            this.timeMaster.CurrentTime = time1;
-            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(269, 7);
-            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
-            this.timeMaster.MaxTick = 0;
-            this.timeMaster.Name = "timeMaster";
-            this.timeMaster.ShowProgress = true;
-            this.timeMaster.Size = new System.Drawing.Size(175, 34);
-            this.timeMaster.TabIndex = 37;
-            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
-            // 
             // sldVolume
             // 
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
@@ -344,6 +328,31 @@
             this.splitContainerInput.SplitterDistance = 46;
             this.splitContainerInput.TabIndex = 0;
             // 
+            // toolTip
+            // 
+            this.toolTip.AutomaticDelay = 0;
+            this.toolTip.AutoPopDelay = 0;
+            this.toolTip.InitialDelay = 300;
+            this.toolTip.ReshowDelay = 0;
+            this.toolTip.UseAnimation = false;
+            this.toolTip.UseFading = false;
+            // 
+            // timeMaster
+            // 
+            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
+            time1.Tick = 0;
+            time1.Tock = 0;
+            this.timeMaster.CurrentTime = time1;
+            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeMaster.Location = new System.Drawing.Point(269, 7);
+            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
+            this.timeMaster.MaxTick = 0;
+            this.timeMaster.Name = "timeMaster";
+            this.timeMaster.ShowProgress = true;
+            this.timeMaster.Size = new System.Drawing.Size(175, 34);
+            this.timeMaster.TabIndex = 37;
+            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
+            // 
             // levers
             // 
             this.levers.BackColor = System.Drawing.Color.AliceBlue;
@@ -361,6 +370,7 @@
             this.surface.Name = "surface";
             this.surface.Size = new System.Drawing.Size(404, 452);
             this.surface.TabIndex = 2;
+            this.surface.KeyDown += new System.Windows.Forms.KeyEventHandler(this.surface_KeyDown);
             // 
             // infoDisplay
             // 
@@ -370,15 +380,6 @@
             this.infoDisplay.Name = "infoDisplay";
             this.infoDisplay.Size = new System.Drawing.Size(418, 502);
             this.infoDisplay.TabIndex = 0;
-            // 
-            // toolTip
-            // 
-            this.toolTip.AutomaticDelay = 0;
-            this.toolTip.AutoPopDelay = 0;
-            this.toolTip.InitialDelay = 300;
-            this.toolTip.ReshowDelay = 0;
-            this.toolTip.UseAnimation = false;
-            this.toolTip.UseFading = false;
             // 
             // MainForm
             // 

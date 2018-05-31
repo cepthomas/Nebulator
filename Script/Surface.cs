@@ -113,7 +113,7 @@ namespace Nebulator.Script
         /// </summary>
         public void UpdateSurface()
         {
-            if (_script != null && (_script._loop || _script._redraw))
+            if (_script != null && (_script.Loop || _script.Redraw))
             {
                 Render();
                 Invalidate();
@@ -132,17 +132,17 @@ namespace Nebulator.Script
 
             var data = _bitmap.LockBits(new System.Drawing.Rectangle(0, 0, w, h), System.Drawing.Imaging.ImageLockMode.WriteOnly, _bitmap.PixelFormat);
 
-            using (var surface = SKSurface.Create(w, h, SKImageInfo.PlatformColorType, SKAlphaType.Premul, data.Scan0, w * 4))
+            using (var skSurface = SKSurface.Create(w, h, SKImageInfo.PlatformColorType, SKAlphaType.Premul, data.Scan0, w * 4))
             {
                 try
                 {
                     // Hand over to the script for drawing on.
-                    _script._canvas = surface.Canvas;
+                    _script.Canvas = skSurface.Canvas;
 
                     // Some housekeeping.
                     _script.pMouseX = _script.mouseX;
                     _script.pMouseY = _script.mouseY;
-                    _script._redraw = false;
+                    _script.Redraw = false;
 
                     //_tanDraw.Arm();
 
@@ -173,7 +173,7 @@ namespace Nebulator.Script
         {
             if (_bitmap != null)
             {
-                e.Graphics.DrawImage(_bitmap, new System.Drawing.Point(0, 0)); // , Width, Height));
+                e.Graphics.DrawImage(_bitmap, new System.Drawing.Point(0, 0));
             }
         }
         #endregion
@@ -259,6 +259,30 @@ namespace Nebulator.Script
         }
 
         /// <summary>
+        /// Event handler.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            if (_script != null)
+            {
+                _script.focused = Focused;
+            }
+        }
+
+        /// <summary>
+        /// Event handler.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            if (_script != null)
+            {
+                _script.focused = Focused;
+            }
+        }
+
+        /// <summary>
         /// Common routine to update mouse stuff.
         /// </summary>
         /// <param name="e"></param>
@@ -284,7 +308,7 @@ namespace Nebulator.Script
         #region Keyboard handling
 
 
-
+        // ///////////////////////// xxxxxxx 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
@@ -296,7 +320,7 @@ namespace Nebulator.Script
         }
 
 
-        //TODOX Keys are not working with SKControl. Or Enter/Leave!
+        //TODOX Keys are not working with SKControl.
         //_script.keyPressed();
         //_script.keyIsPressed = false;
         //_script.keyReleased();
@@ -304,13 +328,20 @@ namespace Nebulator.Script
         //_script.keyCode = 0;
         //_script.keyTyped();
 
-// How windows handles key presses. For example Shift+A produces:
-// - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
-// - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
-// - KeyPress: KeyChar='A'
-// - KeyUp: KeyCode=Keys.A
-// - KeyUp: KeyCode=Keys.ShiftKey
-// Also note that Windows steals TAB, RETURN, ESC, and arrow keys so they are not currently implemented.
+
+        // protected override void OnKeyDown(KeyEventArgs e)
+        // protected override void OnKeyUp(KeyEventArgs e)
+        // protected override void OnKeyPress(KeyPressEventArgs e)
+        // void ProcessKeys((char ch, List<Keys> keyCodes) keys)
+
+        // How windows handles key presses. For example Shift+A produces:
+        // - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
+        // - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
+        // - KeyPress: KeyChar='A'
+        // - KeyUp: KeyCode=Keys.A
+        // - KeyUp: KeyCode=Keys.ShiftKey
+        // Also note that Windows steals TAB, RETURN, ESC, and arrow keys so they are not currently implemented.
+
 
         /// <summary>
         /// Event handler for keys.
@@ -423,24 +454,6 @@ namespace Nebulator.Script
             {
                 _script.keyCode |= ScriptCore.DOWN;
                 _script.key = (char)ScriptCore.CODED;
-            }
-        }
-        #endregion
-
-        #region Window status updates
-        private void Surface_Enter(object sender, EventArgs e)
-        {
-            if (_script != null)
-            {
-                _script.focused = Focused;
-            }
-        }
-
-        private void Surface_Leave(object sender, EventArgs e)
-        {
-            if (_script != null)
-            {
-                _script.focused = Focused;
             }
         }
         #endregion

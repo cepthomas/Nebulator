@@ -228,13 +228,13 @@ public void On_MODN()
 
 void algoDynamic()
 {
-    print("!!!! algoDynamic");
+    // print("!!!! algoDynamic");
     sendMidiNote(SYNTH, 70, 0, 0.00);
 }
 
 void algoNull()
 {
-    print("!!!! algoNull");
+    // print("!!!! algoNull");
 }
 
 ////// Processing graphics stuff //////
