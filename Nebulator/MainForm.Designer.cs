@@ -34,17 +34,15 @@
             this.chkSeq = new System.Windows.Forms.CheckBox();
             this.chkUi = new System.Windows.Forms.CheckBox();
             this.btnCompile = new System.Windows.Forms.Button();
+            this.timeMaster = new Nebulator.Controls.TimeControl();
             this.sldVolume = new Nebulator.Controls.Slider();
             this.chkPlay = new System.Windows.Forms.CheckBox();
             this.potSpeed = new Nebulator.Controls.Pot();
             this.btnRewind = new System.Windows.Forms.Button();
             this.splitContainerControl = new System.Windows.Forms.SplitContainer();
-            this.splitContainerInput = new System.Windows.Forms.SplitContainer();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.timeMaster = new Nebulator.Controls.TimeControl();
             this.levers = new Nebulator.Levers();
-            this.surface = new Nebulator.Script.Surface();
             this.infoDisplay = new Nebulator.InfoDisplay();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -54,10 +52,6 @@
             this.splitContainerControl.Panel1.SuspendLayout();
             this.splitContainerControl.Panel2.SuspendLayout();
             this.splitContainerControl.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerInput)).BeginInit();
-            this.splitContainerInput.Panel1.SuspendLayout();
-            this.splitContainerInput.Panel2.SuspendLayout();
-            this.splitContainerInput.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -231,6 +225,22 @@
             this.btnCompile.UseVisualStyleBackColor = false;
             this.btnCompile.Click += new System.EventHandler(this.Compile_Click);
             // 
+            // timeMaster
+            // 
+            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
+            time1.Tick = 0;
+            time1.Tock = 0;
+            this.timeMaster.CurrentTime = time1;
+            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeMaster.Location = new System.Drawing.Point(269, 7);
+            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
+            this.timeMaster.MaxTick = 0;
+            this.timeMaster.Name = "timeMaster";
+            this.timeMaster.ShowProgress = true;
+            this.timeMaster.Size = new System.Drawing.Size(175, 34);
+            this.timeMaster.TabIndex = 37;
+            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
+            // 
             // sldVolume
             // 
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
@@ -296,37 +306,36 @@
             this.splitContainerControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerControl.Location = new System.Drawing.Point(0, 0);
             this.splitContainerControl.Name = "splitContainerControl";
+            this.splitContainerControl.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainerControl.Panel1
             // 
-            this.splitContainerControl.Panel1.Controls.Add(this.splitContainerInput);
+            this.splitContainerControl.Panel1.Controls.Add(this.levers);
             // 
             // splitContainerControl.Panel2
             // 
             this.splitContainerControl.Panel2.Controls.Add(this.infoDisplay);
             this.splitContainerControl.Size = new System.Drawing.Size(826, 502);
-            this.splitContainerControl.SplitterDistance = 404;
+            this.splitContainerControl.SplitterDistance = 49;
             this.splitContainerControl.TabIndex = 2;
             // 
-            // splitContainerInput
+            // levers
             // 
-            this.splitContainerInput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerInput.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainerInput.IsSplitterFixed = true;
-            this.splitContainerInput.Location = new System.Drawing.Point(0, 0);
-            this.splitContainerInput.Name = "splitContainerInput";
-            this.splitContainerInput.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.levers.BackColor = System.Drawing.Color.AliceBlue;
+            this.levers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.levers.Location = new System.Drawing.Point(0, 0);
+            this.levers.Name = "levers";
+            this.levers.Size = new System.Drawing.Size(826, 49);
+            this.levers.TabIndex = 0;
             // 
-            // splitContainerInput.Panel1
+            // infoDisplay
             // 
-            this.splitContainerInput.Panel1.Controls.Add(this.levers);
-            // 
-            // splitContainerInput.Panel2
-            // 
-            this.splitContainerInput.Panel2.Controls.Add(this.surface);
-            this.splitContainerInput.Size = new System.Drawing.Size(404, 502);
-            this.splitContainerInput.SplitterDistance = 46;
-            this.splitContainerInput.TabIndex = 0;
+            this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.infoDisplay.Location = new System.Drawing.Point(0, 0);
+            this.infoDisplay.MaxLength = 5000;
+            this.infoDisplay.Name = "infoDisplay";
+            this.infoDisplay.Size = new System.Drawing.Size(826, 449);
+            this.infoDisplay.TabIndex = 0;
             // 
             // toolTip
             // 
@@ -336,50 +345,6 @@
             this.toolTip.ReshowDelay = 0;
             this.toolTip.UseAnimation = false;
             this.toolTip.UseFading = false;
-            // 
-            // timeMaster
-            // 
-            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
-            time1.Tick = 0;
-            time1.Tock = 0;
-            this.timeMaster.CurrentTime = time1;
-            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(269, 7);
-            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
-            this.timeMaster.MaxTick = 0;
-            this.timeMaster.Name = "timeMaster";
-            this.timeMaster.ShowProgress = true;
-            this.timeMaster.Size = new System.Drawing.Size(175, 34);
-            this.timeMaster.TabIndex = 37;
-            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
-            // 
-            // levers
-            // 
-            this.levers.BackColor = System.Drawing.Color.AliceBlue;
-            this.levers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.levers.Location = new System.Drawing.Point(0, 0);
-            this.levers.Name = "levers";
-            this.levers.Size = new System.Drawing.Size(404, 46);
-            this.levers.TabIndex = 0;
-            // 
-            // surface
-            // 
-            this.surface.BackColor = System.Drawing.Color.AliceBlue;
-            this.surface.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.surface.Location = new System.Drawing.Point(0, 0);
-            this.surface.Name = "surface";
-            this.surface.Size = new System.Drawing.Size(404, 452);
-            this.surface.TabIndex = 2;
-            this.surface.KeyDown += new System.Windows.Forms.KeyEventHandler(this.surface_KeyDown);
-            // 
-            // infoDisplay
-            // 
-            this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoDisplay.Location = new System.Drawing.Point(0, 0);
-            this.infoDisplay.MaxLength = 5000;
-            this.infoDisplay.Name = "infoDisplay";
-            this.infoDisplay.Size = new System.Drawing.Size(418, 502);
-            this.infoDisplay.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -407,10 +372,6 @@
             this.splitContainerControl.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerControl)).EndInit();
             this.splitContainerControl.ResumeLayout(false);
-            this.splitContainerInput.Panel1.ResumeLayout(false);
-            this.splitContainerInput.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerInput)).EndInit();
-            this.splitContainerInput.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -440,8 +401,6 @@
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
         private InfoDisplay infoDisplay;
         private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
-        private System.Windows.Forms.SplitContainer splitContainerInput;
-        private Script.Surface surface;
         private System.Windows.Forms.CheckBox chkSeq;
         private System.Windows.Forms.CheckBox chkUi;
     }

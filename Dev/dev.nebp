@@ -3,7 +3,7 @@
     "master.volume": 90,
     "master.speed": 100.0,
     "master.sequence": false,
-    "master.ui": false,
+    "master.ui": true,
     "keys.volume": 90,
     "synth.volume": 90,
     "drums.volume": 90

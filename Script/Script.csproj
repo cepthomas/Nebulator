@@ -84,7 +84,7 @@
     <Compile Include="PVector.cs" />
     <Compile Include="ScriptCore.cs" />
     <Compile Include="Surface.cs">
-      <SubType>Component</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Surface.Designer.cs">
       <DependentUpon>Surface.cs</DependentUpon>

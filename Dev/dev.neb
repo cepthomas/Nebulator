@@ -113,7 +113,6 @@ public override void setup()
 
     COL1.Value = 999;  // COL1 = 999; TODO Prefer this to .Value but would be difficult or impossible.
 
-    ////createCanvas(800, 800);
     tileWidth = width / tileCountX;
     tileHeight = height / tileCountY;
     noFill();
@@ -152,6 +151,11 @@ void algoSequences()
     // {
     //     playSequence(KEYS, SEQ2);
     // }
+}
+
+public override void keyPressed()
+{
+    print("keyPressed:", key);
 }
 
 public void On_COL1()

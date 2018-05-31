@@ -11,13 +11,9 @@ using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using Nebulator.Common;
 
-
 namespace Nebulator.Script
 {
-    /// <summary>
-    /// The client hosts this control in their UI. It performs the actual graphics drawing and input.
-    /// </summary>
-    public partial class Surface : SKControl
+    public partial class Surface : Form
     {
         #region Events
         /// <summary>Reports a runtime error to listeners.</summary>
@@ -32,6 +28,9 @@ namespace Nebulator.Script
         #region Fields
         /// <summary>My logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
+
+        /// <summary>The embedded drawing control.</summary>
+        SKControl _skcontrol;
 
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
@@ -53,22 +52,31 @@ namespace Nebulator.Script
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             UpdateStyles();
 
+            // Create the control.
+            _skcontrol = new SKControl();
+            Controls.Add(_skcontrol);
+
             ResizeRedraw = true;
         }
 
-        /// <summary> 
-        /// Clean up any resources being used.
+        /// <summary>
+        /// Initialize form controls.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        private void Surface_Load(object sender, EventArgs e)
         {
-            CleanupBitmap();
+            // Intercept all keyboard events.
+            KeyPreview = true;
+        }
 
-            if (disposing && (components != null))
+        /// <summary>
+        /// Handle resize event.
+        /// </summary>
+        private void Surface_Resize(object sender, EventArgs e)
+        {
+            if (_script != null)
             {
-                components.Dispose();
+                InitSurface(_script);
             }
-            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -306,43 +314,6 @@ namespace Nebulator.Script
         #endregion
 
         #region Keyboard handling
-
-
-        // ///////////////////////// xxxxxxx 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Escape)
-            {
-                //this.Visible = false;
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-
-        //TODOX Keys are not working with SKControl.
-        //_script.keyPressed();
-        //_script.keyIsPressed = false;
-        //_script.keyReleased();
-        //_script.key = (char)0;
-        //_script.keyCode = 0;
-        //_script.keyTyped();
-
-
-        // protected override void OnKeyDown(KeyEventArgs e)
-        // protected override void OnKeyUp(KeyEventArgs e)
-        // protected override void OnKeyPress(KeyPressEventArgs e)
-        // void ProcessKeys((char ch, List<Keys> keyCodes) keys)
-
-        // How windows handles key presses. For example Shift+A produces:
-        // - KeyDown: KeyCode=Keys.ShiftKey, KeyData=Keys.ShiftKey | Keys.Shift, Modifiers=Keys.Shift
-        // - KeyDown: KeyCode=Keys.A, KeyData=Keys.A | Keys.Shift, Modifiers=Keys.Shift
-        // - KeyPress: KeyChar='A'
-        // - KeyUp: KeyCode=Keys.A
-        // - KeyUp: KeyCode=Keys.ShiftKey
-        // Also note that Windows steals TAB, RETURN, ESC, and arrow keys so they are not currently implemented.
-
-
         /// <summary>
         /// Event handler for keys.
         /// </summary>

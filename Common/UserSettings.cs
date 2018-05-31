@@ -34,11 +34,11 @@ namespace Nebulator.Common
         [DisplayName("Background Color"), Description("The color used for overall background."), Browsable(true)]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
-        [DisplayName("UI Orientation"), Description("Set UI pane orientation."), Browsable(true)]
-        public Orientation UiOrientation { get; set; } = Orientation.Horizontal;
-
         [DisplayName("Word Wrap"), Description("Set UI preference."), Browsable(true)]
         public bool WordWrap { get; set; } = false;
+
+        [DisplayName("Lock UI"), Description("Forces UI to always topmost."), Browsable(true)]
+        public bool LockUi { get; set; } = false;
 
         [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
         [Editor(typeof(ListSelector), typeof(UITypeEditor))]
@@ -54,6 +54,9 @@ namespace Nebulator.Common
         public FormInfo MainFormInfo { get; set; } = new FormInfo();
 
         [Browsable(false)]
+        public FormInfo SurfaceFormInfo { get; set; } = new FormInfo();
+
+        [Browsable(false)]
         public FormInfo PianoFormInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000, Visible = true };
 
         [Browsable(false)]
@@ -64,9 +67,6 @@ namespace Nebulator.Common
 
         [Browsable(false)]
         public List<string> RecentFiles { get; set; } = new List<string>();
-
-        [Browsable(false)]
-        public int ControlSplitterPos { get; set; } = 800;
         #endregion
 
         #region Fields

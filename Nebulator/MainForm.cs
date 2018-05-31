@@ -35,6 +35,9 @@ namespace Nebulator
         /// <summary>Fast timer.</summary>
         NebTimer _nebTimer = new NebTimer();
 
+        /// <summary>Surface child form.</summary>
+        Surface _surface = new Surface();
+
         /// <summary>Piano child form.</summary>
         Piano _piano = new Piano();
 
@@ -118,10 +121,17 @@ namespace Nebulator
                 WindowState = FormWindowState.Normal;
             }
 
+            _surface.Size = new Size(UserSettings.TheSettings.SurfaceFormInfo.Width, UserSettings.TheSettings.SurfaceFormInfo.Height);
+            _surface.Visible = true;
+            _surface.TopMost = UserSettings.TheSettings.LockUi;
+            _surface.Location = new Point(UserSettings.TheSettings.SurfaceFormInfo.X, UserSettings.TheSettings.SurfaceFormInfo.Y);
+
             _piano.Size = new Size(UserSettings.TheSettings.PianoFormInfo.Width, UserSettings.TheSettings.PianoFormInfo.Height);
             _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
             _piano.TopMost = false;
             _piano.Location = new Point(UserSettings.TheSettings.PianoFormInfo.X, UserSettings.TheSettings.PianoFormInfo.Y);
+            pianoToolStripMenuItem.Checked = UserSettings.TheSettings.PianoFormInfo.Visible;
+            _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
             #region App innards
@@ -145,12 +155,6 @@ namespace Nebulator
             _nebTimer.Start();
             #endregion
 
-            #region Piano
-            pianoToolStripMenuItem.Checked = UserSettings.TheSettings.PianoFormInfo.Visible;
-            _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
-            _piano.PianoKeyEvent += Piano_PianoKeyEvent;
-            #endregion
-
             #region Misc setups
             InitControls();
 
@@ -162,13 +166,8 @@ namespace Nebulator
 
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
 
-            // Intercept all keyboard events.
-            KeyPreview = true; //TODOX
-
-            surface.Resize += Surface_Resize;
-
             // Catches runtime errors during drawing.
-            surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessScriptRuntimeError(eargs); };
+            _surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessScriptRuntimeError(eargs); };
 
             // Init server.
             _selfHost = new SelfHost(); //TODOX test this
@@ -187,15 +186,15 @@ namespace Nebulator
 
             #region Debug stuff
 #if _DEV
-            OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
-            // Server debug stuff TODO
+            // Server debug stuff TODOX
             //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //TestClient client = new TestClient();
             //Task.Run(async () => { await client.Run(); });
@@ -385,7 +384,7 @@ namespace Nebulator
 
                         _script.setupNeb();
 
-                        surface.InitSurface(_script);
+                        _surface.InitSurface(_script);
 
                         ProcessRuntime();
 
@@ -648,7 +647,7 @@ namespace Nebulator
 
                 try
                 {
-                    surface.UpdateSurface();
+                    _surface.UpdateSurface();
                 }
                 catch (Exception ex)
                 {
@@ -1114,6 +1113,7 @@ namespace Nebulator
         /// </summary>
         void SaveSettings()
         {
+            UserSettings.TheSettings.SurfaceFormInfo.FromForm(_surface);
             UserSettings.TheSettings.PianoFormInfo.FromForm(_piano);
 
             if (WindowState == FormWindowState.Maximized)
@@ -1125,9 +1125,6 @@ namespace Nebulator
             {
                 UserSettings.TheSettings.MainFormInfo.FromForm(this);
             }
-
-            UserSettings.TheSettings.UiOrientation = splitContainerControl.Orientation;
-            UserSettings.TheSettings.ControlSplitterPos = splitContainerControl.SplitterDistance;
 
             UserSettings.TheSettings.Save();
         }
@@ -1185,7 +1182,7 @@ namespace Nebulator
 
                 // Always safe to update these.
                 SetUiTimerPeriod();
-                splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
+                _surface.TopMost = UserSettings.TheSettings.LockUi;
 
                 SaveSettings();
             }
@@ -1313,38 +1310,6 @@ namespace Nebulator
         #endregion
 
         #region Keyboard handling
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            //this.prev
-            //You can receive the event in the form. See Form.KeyPreview.
-            //When this property is set to true, the form will receive all KeyPress, KeyDown, and KeyUp events. After the form's event handlers have completed processing the keystroke, the keystroke is then assigned to the control with focus
-
-    //        public Form1()
-    //        {
-    //            InitializeComponent();
-    //            this.PreviewKeyDown += Form1_OnPreviewKeyDown;
-    //            textBox1.Visible = false;
-    //        }
-
-    //private bool _textboxEnable = false;
-    //    private void Form1_OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs previewKeyDownEventArgs)
-    //    {
-    //        if (!_textboxEnable) textBox1.Visible = true;
-    //        if (!textBox1.Focused) textBox1.Focus();
-    //    }
-
-
-            if (keyData == Keys.Escape)
-            {
-                //this.Visible = false;
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-
-
-
         /// <summary>
         /// Do some global key handling. Space bar is used for stop/start playing.
         /// </summary>
@@ -1352,12 +1317,6 @@ namespace Nebulator
         /// <param name="e"></param>
         void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if(surface.Focused)
-            {
-                //surface.
-
-            }
-
             if(e.KeyCode == Keys.Space)
             {
                 // Handle start/stop toggle.
@@ -1437,9 +1396,6 @@ namespace Nebulator
             timeMaster.Invalidate();
 
             infoDisplay.BackColor = UserSettings.TheSettings.BackColor;
-
-            splitContainerControl.Orientation = UserSettings.TheSettings.UiOrientation;
-            splitContainerControl.SplitterDistance = UserSettings.TheSettings.ControlSplitterPos;
         }
 
         /// <summary>
@@ -1452,7 +1408,7 @@ namespace Nebulator
             if (_script != null)
             {
                 InitRuntime();
-                surface.InitSurface(_script);
+                _surface.InitSurface(_script);
                 ProcessRuntime();
             }
         }
@@ -1527,10 +1483,5 @@ namespace Nebulator
             MidiInterface.TheInterface.KillAll();
         }
         #endregion
-
-        private void surface_KeyDown(object sender, KeyEventArgs e)
-        {
-
-        }
     }
 }

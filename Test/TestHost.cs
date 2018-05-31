@@ -25,7 +25,7 @@ namespace Nebulator.Test
         {
             // TopMost = true;
 
-            splitContainer1.Panel1.Controls.Add(new Script.Surface());
+//            splitContainer1.Panel1.Controls.Add(new Script.Surface());
 
 
             Go_Click(null, null);

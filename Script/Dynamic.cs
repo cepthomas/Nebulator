@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Nebulator.Common;
 using Nebulator.Midi;
 
-// TODO This could be cut up into a bunch of files later. Or not.
+// A bunch of lightweight classes for runtime elements.
 
 namespace Nebulator.Script
 {
@@ -404,7 +404,21 @@ namespace Nebulator.Script
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Value as int. It is initialized from the script supplied value.</summary>
-        public int Value { get { return _value; } set { _value = value; Changed?.Invoke(); } }
+        public int Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                if(value != _value)
+                {
+                    _value = value;
+                    Changed?.Invoke();
+                }
+            }
+        }
         int _value;
         #endregion
 
