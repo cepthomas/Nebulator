@@ -170,7 +170,7 @@ namespace Nebulator
             _surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ProcessScriptRuntimeError(eargs); };
 
             // Init server.
-            _selfHost = new SelfHost(); //TODOX test this
+            _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
             #endregion
@@ -194,10 +194,9 @@ namespace Nebulator
             OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
-            // Server debug stuff TODOX
-            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            //TestClient client = new TestClient();
-            //Task.Run(async () => { await client.Run(); });
+            // Server debug stuff
+            // TestClient client = new TestClient();
+            // Task.Run(async () => { await client.Run(); });
 
 
             //ExportMidi("test.mid");
@@ -275,6 +274,33 @@ namespace Nebulator
             public object Result { get; set; } = null;
         }
 
+
+
+
+        public delegate void StatusUpdateHandler(string updateMsg);
+
+        public class ProcessWithEvents
+        {
+            public event StatusUpdateHandler StatusUpdate;
+
+            public async Task Run()
+            {
+                await Task.Run(() =>
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        StatusUpdate?.Invoke(string.Format("Update {0}", i));
+                        //Thread.Sleep(500);
+                    }
+                });
+
+            }
+        }
+
+
+
+
+
         /// <summary>
         /// Process a request from the web api. Set the e.Result to a json string. 
         /// </summary>
@@ -282,59 +308,107 @@ namespace Nebulator
         /// <param name="e"></param>
         void SelfHost_RequestEvent(object sender, SelfHost.RequestEventArgs e)
         {
-            ServerResult srvres = new ServerResult() { Request = e.Request };
+            Console.WriteLine($"MainForm Web request:{e.Request}");
 
-            switch (e.Request)
+            // What is wanted?
+            List<string> parts = e.Request.SplitByToken("/");
+            string[] validCmds = { "open", "compile", "start", "stop", "rewind" };
+
+            switch (parts[0])
             {
-                case "start":
-                    bool playok = false;
-                    BeginInvoke((MethodInvoker)delegate ()
-                    {
-                        playok = ProcessPlay(PlayCommand.Start, false);
-                    });
-                    srvres.Result = playok ? SelfHost.OK_NO_DATA : SelfHost.FAIL;
-                    break;
+                case "open":
+                    string fn = string.Join("/", parts.GetRange(1, parts.Count - 1));
+                    string res = "";
 
-                case "stop":
-                    BeginInvoke((MethodInvoker)delegate ()
-                    {
-                        ProcessPlay(PlayCommand.Stop, false);
-                    });
-                    srvres.Result = SelfHost.OK_NO_DATA;
-                    break;
 
-                case "rewind":
-                    BeginInvoke((MethodInvoker)delegate ()
+                    res = OpenFile(fn);
+
+
+                    //Task openTask = (() =>
+                    //{
+                    //res = OpenFile(fn);
+
+                    //});
+
+                    ////async Task<string> PostCommandAsync(HttpClient client, string which, string arg = "")
+                    ////HttpResponseMessage response = await client.PostAsync(cmd, null);
+                    ////return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : "Response failed";
+
+                    //await Task.WhenAll(openTask);
+                    //Console.WriteLine($"TestClient result: {openTask.Result}");
+
+
+
+
+                    e.Result = JsonConvert.SerializeObject(new ServerResult()
                     {
-                        ProcessPlay(PlayCommand.Rewind, false);
-                    });
-                    srvres.Result = SelfHost.OK_NO_DATA;
+                        Request = e.Request,
+                        Result = res == "" ? SelfHost.OK_NO_DATA : res
+                    }, Formatting.Indented);
                     break;
 
                 case "compile":
-                    bool compok = false;
-                    BeginInvoke((MethodInvoker)delegate ()
+                    bool compok = Compile();
+                    e.Result = JsonConvert.SerializeObject(new ServerResult()
                     {
-                        compok = Compile();
-                    });
-
-                    if (compok)
-                    {
-                        srvres.Result = SelfHost.OK_NO_DATA;
-                    }
-                    else
-                    {
-                        srvres.Result = _compileResults;
-                    }
+                        Request = e.Request,
+                        Result = _compileResults
+                    }, Formatting.Indented);
                     break;
+
+
+                case "start":
+                    bool playok = false;
+                    playok = ProcessPlay(PlayCommand.Start, false);
+                    e.Result = JsonConvert.SerializeObject(new ServerResult()
+                    {
+                        Request = e.Request,
+                        Result = playok ? SelfHost.OK_NO_DATA : SelfHost.FAIL
+                    }, Formatting.Indented);
+                    break;
+
+                case "stop":
+                    ProcessPlay(PlayCommand.Stop, false);
+                    e.Result = JsonConvert.SerializeObject(new ServerResult()
+                    {
+                        Request = e.Request,
+                        Result = SelfHost.OK_NO_DATA
+                    }, Formatting.Indented);
+                    break;
+
+                case "rewind":
+                    ProcessPlay(PlayCommand.Rewind, false);
+                    e.Result = JsonConvert.SerializeObject(new ServerResult()
+                    {
+                        Request = e.Request,
+                        Result = SelfHost.OK_NO_DATA
+                    }, Formatting.Indented);
+                    break;
+
+
+
+
+
+                //case "start":
+                //    bool playok = false;
+                //    BeginInvoke((MethodInvoker)delegate ()
+                //    {
+                //        ... the code
+                //    });
+                //    break;
 
                 default:
                     // Invalid.
-                    e.Result = null;
+                    e.Result = JsonConvert.SerializeObject(new ServerResult()
+                    {
+                        Request = e.Request,
+                        Result = null
+                    },
+                    Formatting.Indented);
                     break;
             }
 
-            e.Result = JsonConvert.SerializeObject(srvres, Formatting.Indented);
+            Console.WriteLine($"MainForm Result:{e.Result}");
         }
         #endregion
 
@@ -923,26 +997,48 @@ namespace Nebulator
         /// Common neb file opener.
         /// </summary>
         /// <param name="fn">The neb file to open.</param>
-        public void OpenFile(string fn)
+        /// <returns>Error string or empty if ok.</returns>
+        public string OpenFile(string fn)
         {
+            string ret = "";
+
             using (new WaitCursor())
             {
                 try
                 {
-                    _logger.Info($"Reading neb file: {fn}");
-                    _nebpVals = Bag.Load(fn.Replace(".neb", ".nebp"));
-                    _fn = fn;
-                    SetCompileStatus(true);
-                    AddToRecentDefs(fn);
-                    Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
+                    if(File.Exists(fn))
+                    {
+                        _logger.Info($"Reading neb file: {fn}");
+                        _nebpVals = Bag.Load(fn.Replace(".neb", ".nebp"));
+                        _fn = fn;
 
-                    Compile();
+                        // This may be coming from the web service...
+                        if(InvokeRequired)
+                        {
+                            Invoke((MethodInvoker)delegate
+                            {
+                                // Running on the UI thread
+                                SetCompileStatus(true);
+                                AddToRecentDefs(fn);
+                                Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
+
+                                Compile();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        ret = $"Invalid file: {fn}";
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Couldn't open the neb file: {fn} because: {ex.Message}");
+                    ret = $"Couldn't open the neb file: {fn} because: {ex.Message}";
+                    _logger.Error(ret);
                 }
             }
+
+            return ret;
         }
 
         /// <summary>

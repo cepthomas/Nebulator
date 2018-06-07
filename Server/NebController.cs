@@ -54,25 +54,16 @@ namespace Nebulator.Server
 
             try
             {
-                string[] validCmds = { "start", "stop", "rewind", "compile" };
+                var args = new SelfHost.RequestEventArgs() { Request = which, Param = "" };
+                SelfHost.FireEvent(args);
 
-                if (validCmds.Contains(which))
+                if (args.Result == null)
                 {
-                    var args = new SelfHost.RequestEventArgs() { Request = which, Param = "" };
-                    SelfHost.FireEvent(args);
-
-                    if (args.Result == null)
-                    {
-                        throw new Exception($"Error for command: {which}");
-                    }
-                    else
-                    {
-                        ret = context.JsonResponse(args.Result);
-                    }
+                    throw new Exception($"Error for command: {which}");
                 }
                 else
                 {
-                    throw new Exception($"Invalid command: {which}");
+                    ret = context.JsonResponse(args.Result);
                 }
             }
             catch (Exception ex)

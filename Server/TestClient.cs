@@ -13,11 +13,11 @@ using Nebulator.Common;
 using System.Diagnostics;
 
 
-// Test client for the server.
-
-
 namespace Nebulator.Server
 {
+    /// <summary>
+    /// Test client for the server.
+    /// </summary>
     public class TestClient
     {
         /// <summary>
@@ -35,20 +35,28 @@ namespace Nebulator.Server
                 // GET - simple
                 //Task ti = GetIndex(client);
                 //await Task.WhenAll(ti);
-                // Fire up the browser to show the content.
-                Process.Start(SelfHost.BASE_URI);
+                // Fire up the browser to show the default content.
+                //Process.Start(SelfHost.BASE_URI);
+
+                System.Threading.Thread.Sleep(100);
 
                 // POST
-                Task<string> startTask = PostCommandAsync(client, "start");
-                await Task.WhenAll(startTask);
-                Console.WriteLine("==== start");
-                Console.WriteLine(startTask.Result);
+                Console.WriteLine("TestClient POST open");
+                Task<string> openTask = PostCommandAsync(client, "open", @"C:\Dev\Nebulator\Dev\dev.neb");
+                await Task.WhenAll(openTask);
+                Console.WriteLine($"TestClient result: {openTask.Result}");
 
                 // POST
+                Console.WriteLine("TestClient POST compile");
                 Task<string> compileTask = PostCommandAsync(client, "compile");
                 await Task.WhenAll(compileTask);
-                Console.WriteLine("==== compile");
-                Console.WriteLine(compileTask.Result);
+                Console.WriteLine($"TestClient result: {compileTask.Result}");
+
+                // POST
+                Console.WriteLine("TestClient POST start");
+                Task<string> startTask = PostCommandAsync(client, "start");
+                await Task.WhenAll(startTask);
+                Console.WriteLine($"TestClient result: {startTask.Result}");
             }
         }
 
@@ -56,11 +64,17 @@ namespace Nebulator.Server
         /// Send a command via POST.
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="which"></param>
+        /// <param name="which">Specific command</param>
+        /// <param name="arg">Optional argument</param>
         /// <returns></returns>
-        async Task<string> PostCommandAsync(HttpClient client, string which)
+        async Task<string> PostCommandAsync(HttpClient client, string which, string arg = "")
         {
-            HttpResponseMessage response = await client.PostAsync("command/" + which, null);
+            string cmd = "command/" + which;
+            if(arg != "")
+            {
+                cmd += "/" + arg;
+            }
+            HttpResponseMessage response = await client.PostAsync(cmd, null);
             return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : "Response failed";
         }
 

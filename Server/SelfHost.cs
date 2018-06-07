@@ -68,13 +68,12 @@ namespace Nebulator.Server
         /// </summary>
         public void Run()
         {
+            // See https://github.com/unosquare/embedio.
+            // Later add sessions (LocalSessionModule), static file serving (StaticFilesSample)? 
+
             _server = new WebServer(BASE_URI, RoutingStrategy.Regex);
 
             // First, we will configure our web server by adding Modules. Please note that order DOES matter.
-
-            // Later add sessions (LocalSessionModule), static file serving (StaticFilesSample)? See https://github.com/unosquare/embedio.
-
-            // My app controller.
             _server.RegisterModule(new WebApiModule());
             _server.Module<WebApiModule>().RegisterController<NebController>();
 

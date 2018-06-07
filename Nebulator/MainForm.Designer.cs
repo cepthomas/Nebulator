@@ -316,7 +316,7 @@
             // 
             this.splitContainerControl.Panel2.Controls.Add(this.infoDisplay);
             this.splitContainerControl.Size = new System.Drawing.Size(826, 502);
-            this.splitContainerControl.SplitterDistance = 49;
+            this.splitContainerControl.SplitterDistance = 43;
             this.splitContainerControl.TabIndex = 2;
             // 
             // levers
@@ -325,7 +325,7 @@
             this.levers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.levers.Location = new System.Drawing.Point(0, 0);
             this.levers.Name = "levers";
-            this.levers.Size = new System.Drawing.Size(826, 49);
+            this.levers.Size = new System.Drawing.Size(826, 43);
             this.levers.TabIndex = 0;
             // 
             // infoDisplay
@@ -334,7 +334,7 @@
             this.infoDisplay.Location = new System.Drawing.Point(0, 0);
             this.infoDisplay.MaxLength = 5000;
             this.infoDisplay.Name = "infoDisplay";
-            this.infoDisplay.Size = new System.Drawing.Size(826, 449);
+            this.infoDisplay.Size = new System.Drawing.Size(826, 455);
             this.infoDisplay.TabIndex = 0;
             // 
             // toolTip
