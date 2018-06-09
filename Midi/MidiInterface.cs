@@ -338,7 +338,7 @@ namespace Nebulator.Midi
             {
                 if(step is StepNoteOn || step is StepNoteOff)
                 {
-                    // Pass through. TODO or do something useful with it: change note, map to controller, etc.
+                    // Pass through. TODOX or do something useful with it: change note, map to controller, etc.
                     Send(step);
                 }
                 else

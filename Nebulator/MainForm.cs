@@ -191,8 +191,12 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Dev\t1.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\t2.neb");
+
+
 
             // Server debug stuff
             // TestClient client = new TestClient();

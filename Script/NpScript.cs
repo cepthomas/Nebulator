@@ -797,9 +797,13 @@ namespace Nebulator.Script
         public float mag(float x, float y) { return (float)Math.Sqrt(sq(x) + sq(y)); }
         public float mag(float x, float y, float z) { return (float)Math.Sqrt(sq(x) + sq(y) + sq(z)); }
         public float map(float val, float start1, float stop1, float start2, float stop2) { return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1); }
+        public float max(float val1, float val2) { return Math.Max(val1, val2); }
         public float max(float[] vals) { return vals.Max(); }
+        public int max(int val1, int val2) { return Math.Max(val1, val2); }
         public int max(int[] vals) { return vals.Max(); }
+        public float min(float val1, float val2) { return Math.Min(val1, val2); }
         public float min(float[] vals) { return vals.Min(); }
+        public int min(int val1, int val2) { return Math.Min(val1, val2); }
         public int min(int[] vals) { return vals.Min(); }
         public float norm(float val, float start, float stop) { return (val - start) / (stop - start); }
         public float pow(float val, float exponent) { return (float)Math.Pow(val, exponent); }

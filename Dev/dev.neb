@@ -3,6 +3,9 @@
 
 // My akai kbd midi: Pad1-8 = 44-51, knob1-8 = ctlr1-8
 
+// Support microtonal notes with Pitch changes.
+// Modulate to a specified key. Requires specifying current key too.
+
 
 // Import other stuff.
 #load "scale.neb";
@@ -10,6 +13,7 @@
 // All the neb variables.
 NVariable COL1;
 NVariable PITCH;
+NVariable MOD1; // TODOX something to generate param modulation.
 
 // All the tracks.
 NTrack KEYS;
@@ -24,8 +28,8 @@ NSequence DRUMS_SIMPLE;
 NSection PART1;
 
 // Neb script stuff.
-int[] chordNotes;
-int[] scaleNotes;
+int[] _chordNotes;
+int[] _scaleNotes;
 int[] _notesPlaying = new int[128];
 Scale _scale;
 
@@ -75,8 +79,8 @@ public override void setupNeb()
     PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 
     // Get some stock chords and scales
-    chordNotes = getNotes("C4.o7");
-    scaleNotes = getScaleNotes("Algerian", "A3");
+    _chordNotes = getNotes("C4.o7");
+    _scaleNotes = getScaleNotes("Algerian", "A3");
 
     _scale = new Scale("Algerian", "C4", 0, 0);
     // 1 2 b3 #4 5 b6 7
