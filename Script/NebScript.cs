@@ -57,7 +57,7 @@ namespace Nebulator.Script
         /// <param name="channel">1</param>
         /// <param name="controller">4</param>
         /// <param name="bound">COL1</param>
-        protected void midiIn(int channel, int controller, NVariable bound)
+        protected void createMidiIn(int channel, int controller, NVariable bound)
         {
             NMidiControlPoint mp = new NMidiControlPoint() { Channel = channel, MidiController = controller, BoundVar = bound };
             DynamicElements.InputMidis.Add(mp);
@@ -69,7 +69,7 @@ namespace Nebulator.Script
         /// <param name="channel">1</param>
         /// <param name="controller">4</param>
         /// <param name="bound">COL1</param>
-        protected void midiOut(int channel, int controller, NVariable bound)
+        protected void createMidiOut(int channel, int controller, NVariable bound)
         {
             NMidiControlPoint mp = new NMidiControlPoint() { Channel = channel, MidiController = controller, BoundVar = bound };
             DynamicElements.OutputMidis.Add(mp);
@@ -81,7 +81,7 @@ namespace Nebulator.Script
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <param name="bound"></param>
-        protected void lever(int min, int max, NVariable bound)
+        protected void createLever(int min, int max, NVariable bound)
         {
             NLeverControlPoint lp = new NLeverControlPoint() { Min = min, Max = max, BoundVar = bound };
             DynamicElements.Levers.Add(lp);
@@ -92,7 +92,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="name">UI name</param>
         /// <param name="val">Initial value</param>
-        protected NVariable variable(string name, int val)
+        protected NVariable createVariable(string name, int val)
         {
             NVariable nv = new NVariable() { Name = name, Value = val };
             DynamicElements.Variables.Add(nv);
@@ -103,7 +103,7 @@ namespace Nebulator.Script
         /// Normal constructor.
         /// </summary>
         /// <param name="length"></param>
-        protected NSequence sequence(int length)
+        protected NSequence createSequence(int length)
         {
             NSequence nseq = new NSequence() { Length = length };
             DynamicElements.Sequences.Add(nseq);
@@ -116,7 +116,7 @@ namespace Nebulator.Script
         /// <param name="name"></param>
         /// <param name="start"></param>
         /// <param name="length"></param>
-        protected NSection section(string name, int start, int length)
+        protected NSection ceateSection(string name, int start, int length)
         {
             NSection nsec = new NSection() { Name = name, Start = start, Length = length };
             DynamicElements.Sections.Add(nsec);
@@ -131,7 +131,7 @@ namespace Nebulator.Script
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NTrack track(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NTrack createTrack(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
             NTrack nt = new NTrack() { Name = name, Channel = channel, WobbleVolume = wobvol, WobbleTimeBefore = wobbefore, WobbleTimeAfter = wobafter };
             DynamicElements.Tracks.Add(nt);
@@ -264,7 +264,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="name">"MY_CHORD"</param>
         /// <param name="parts">"1 4 6 b13"</param>
-        protected void notes(string name, string parts)
+        protected void createNotes(string name, string parts)
         {
             NoteUtils.ScriptNoteDefs.Add(name, parts.SplitByToken(" "));
         }

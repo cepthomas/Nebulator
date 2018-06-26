@@ -42,15 +42,15 @@ public override void setupNeb()
     MODF.Changed += On_MODF;
 
     ///// Tracks /////
-    SOUND = track("sound", 1, 5, 0, 0);
+    SOUND = createTrack("sound", 1, 5, 0, 0);
 
     // devices
-    midiIn(1, 4, MODF);
-    midiOut(1, CTRL_PITCH, PITCH);
-    midiOut(1, 4, MODF);
-    lever(0, 255, COLOR);
-    lever(0, 16383, PITCH); // max range
-    lever(0, 255, MODF);
+    createMidiIn(1, 4, MODF);
+    createMidiOut(1, CTRL_PITCH, PITCH);
+    createMidiOut(1, 4, MODF);
+    createLever(0, 255, COLOR);
+    createLever(0, 16383, PITCH); // max range
+    createLever(0, 255, MODF);
 
     // Set up the loops.
     loops.Clear();

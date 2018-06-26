@@ -1,11 +1,11 @@
 
-
 //////////////// http://alpha.editor.p5js.org/generative-design/sketches/P_2_1_3_01
+// This doesn't work quite like the original since it used a fixed window size.
 
 
 int count = 0;
 int tileCountX = 10;
-int tileCountY = 10;
+int tileCountY = 8;
 float tileWidth  = 0;
 float tileHeight = 0;
 

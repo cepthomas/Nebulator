@@ -56,9 +56,9 @@ public override void mousePressed()
 public override void setupNeb()
 {
     // Tracks
-    KEYS = track("keys", 1, 5, 0, 0);
-    BASS = track("bass", 2, 2, 0, 0);
-    SYNTH = track("synth", 3, 0);
+    KEYS = createTrack("keys", 1, 5, 0, 0);
+    BASS = createTrack("bass", 2, 2, 0, 0);
+    SYNTH = createTrack("synth", 3, 0);
 
     if(winGm)
     {

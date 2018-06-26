@@ -20,8 +20,8 @@ public override void setup()
     INITANG.Changed += On_INITANG;
 
     // Levers
-    lever(0, 255, COL1);
-    lever(-5000, 0, INITANG);
+    createLever(0, 255, COL1);
+    createLever(-5000, 0, INITANG);
 
     genLSys(-1.359672, -0.138235, INITANG.Value, 14.11);
     print("setup()");

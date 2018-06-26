@@ -45,36 +45,35 @@ public override void setupNeb()
     COL1.Changed += On_COL1;
 
     // All the tracks.
-    KEYS = track("keys", 1, 5, 0, 0);
-    SYNTH = track("synth", 3, 0);
-    DRUMS = track("drums", 10, 4, 0, 0);
+    KEYS = createTrack("keys", 1, 5, 0, 0);
+    SYNTH = createTrack("synth", 3, 0);
+    DRUMS = createTrack("drums", 10, 4, 0, 0);
 
     // create set of notes (chord)
-    notes("MY_CHORD", "1 4 6 b13");
-    notes("MY_SCALE", "1 3 4 b7");
+    createNotes("MY_CHORD", "1 4 6 b13");
+    createNotes("MY_SCALE", "1 3 4 b7");
 
     // devices
-    midiIn(1, 4, COL1);
-    midiOut(1, CTRL_PITCH, PITCH);
-    lever(0, 255, COL1);
-    lever(0, 16383, PITCH); // max range
+    createMidiIn(1, 4, COL1);
+    createMidiOut(1, CTRL_PITCH, PITCH);
+    createLever(0, 255, COL1);
+    createLever(0, 16383, PITCH); // max range
 
     // Create sequences, add notes/chords/funcs.
-    SEQ1 = sequence(8);
+    SEQ1 = createSequence(8);
     SEQ1.Add(00.00, "G3", 90, 0.60);
     SEQ1.Add(01.00, algoDynamic, 90);
     SEQ1.Add(02.00, "A3.m7", 90, 0.60);
     SEQ1.Add(03.00, 66, 90, 0.60);
     SEQ1.Add(03.48, CrashCymbal1, 90, 0.60);
 
-    DRUMS_SIMPLE = sequence(8);
+    DRUMS_SIMPLE = createSequence(8);
     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
-    // sequence  DRUMS_HH  8
-    // ------xx------xx------xx------xx  ClosedHiHat  100
+    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
 
     // section
-    NSection PART1 = section("section", WHEN1, 0);
+    NSection PART1 = ceateSection("section", WHEN1, 0);
     PART1.Add(KEYS, SEQ1, SEQ1);
     PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 
