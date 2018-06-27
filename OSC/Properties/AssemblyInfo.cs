@@ -2,8 +2,8 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Nebulator.Controls")]
-[assembly: AssemblyDescription("Nebulator Controls")]
+[assembly: AssemblyTitle("Nebulator.OSC")]
+[assembly: AssemblyDescription("Nebulator OSC")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("Nebulator")]
 

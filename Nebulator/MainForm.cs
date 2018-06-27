@@ -11,12 +11,13 @@ using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
-using Nebulator.Midi;
+//using Nebulator.Midi;
+using Nebulator.Protocol;
 using Nebulator.Server;
 using Newtonsoft.Json;
 
 
-// TODOX Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures? Or make everything static?
+// TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures? Or make everything static?
 
 
 namespace Nebulator
@@ -88,6 +89,9 @@ namespace Nebulator
 
         /// <summary>Server host.</summary>
         SelfHost _selfHost = null;
+
+        /// <summary>The midi in/out device. TODO support multiple and OSC.</summary>
+        IProtocol _midiInterface = new Midi.MidiInterface();
         #endregion
 
         #region Lifecycle
@@ -142,10 +146,10 @@ namespace Nebulator
 
             #region Set up midi
             // Input midi events.
-            MidiInterface.TheInterface.NebMidiInputEvent += Midi_InputEvent;
-            MidiInterface.TheInterface.NebMidiLogEvent += Midi_LogEvent;
+            _midiInterface.ProtocolInputEvent += Midi_InputEvent;
+            _midiInterface.ProtocolLogEvent += Midi_LogEvent;
 
-            MidiInterface.TheInterface.Init();
+            _midiInterface.Init();
 
             // Midi timer.
             _nebTimer = new NebTimer();
@@ -191,16 +195,15 @@ namespace Nebulator
             //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
-            OpenFile(@"C:\Dev\Nebulator\Examples\generative1.neb");
+            //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.neb");
             //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
             //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
 
-
-            // Server debug stuff
-            // TestClient client = new TestClient();
-            // Task.Run(async () => { await client.Run(); });
+            //// Server debug stuff
+            //TestClient client = new TestClient();
+            //Task.Run(async () => { await client.Run(); });
 
 
             //ExportMidi("test.mid");
@@ -222,7 +225,7 @@ namespace Nebulator
                 ProcessPlay(PlayCommand.Stop, false);
 
                 // Just in case.
-                MidiInterface.TheInterface.KillAll();
+                _midiInterface.KillAll();
 
                 if(_script != null)
                 {
@@ -232,7 +235,7 @@ namespace Nebulator
                     _nebpVals.SetValue("master", "speed", potSpeed.Value);
                     _nebpVals.SetValue("master", "sequence", chkSeq.Checked);
                     _nebpVals.SetValue("master", "ui", chkUi.Checked);
-
+                    _nebpVals.SetValue("master", "seq", chkSeq.Checked);
                     DynamicElements.Tracks.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
@@ -260,9 +263,9 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                MidiInterface.TheInterface?.Stop();
-                MidiInterface.TheInterface?.Dispose();
-                MidiInterface.TheInterface = null;
+                _midiInterface?.Stop();
+                _midiInterface?.Dispose();
+                _midiInterface = null;
 
                 components?.Dispose();
             }
@@ -272,39 +275,6 @@ namespace Nebulator
         #endregion
 
         #region Server processing
-        class ServerResult
-        {
-            public string Request { get; set; } = "";
-            public object Result { get; set; } = null;
-        }
-
-
-
-
-        public delegate void StatusUpdateHandler(string updateMsg);
-
-        public class ProcessWithEvents
-        {
-            public event StatusUpdateHandler StatusUpdate;
-
-            public async Task Run()
-            {
-                await Task.Run(() =>
-                {
-                    for (int i = 0; i < 10; i++)
-                    {
-                        StatusUpdate?.Invoke(string.Format("Update {0}", i));
-                        //Thread.Sleep(500);
-                    }
-                });
-
-            }
-        }
-
-
-
-
-
         /// <summary>
         /// Process a request from the web api. Set the e.Result to a json string. 
         /// </summary>
@@ -322,93 +292,34 @@ namespace Nebulator
             {
                 case "open":
                     string fn = string.Join("/", parts.GetRange(1, parts.Count - 1));
-                    string res = "";
-
-
-                    res = OpenFile(fn);
-
-
-                    //Task openTask = (() =>
-                    //{
-                    //res = OpenFile(fn);
-
-                    //});
-
-                    ////async Task<string> PostCommandAsync(HttpClient client, string which, string arg = "")
-                    ////HttpResponseMessage response = await client.PostAsync(cmd, null);
-                    ////return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : "Response failed";
-
-                    //await Task.WhenAll(openTask);
-                    //Console.WriteLine($"TestClient result: {openTask.Result}");
-
-
-
-
-                    e.Result = JsonConvert.SerializeObject(new ServerResult()
-                    {
-                        Request = e.Request,
-                        Result = res == "" ? SelfHost.OK_NO_DATA : res
-                    }, Formatting.Indented);
+                    string res = OpenFile(fn);
+                    e.Result = JsonConvert.SerializeObject(res == "" ? SelfHost.OK_NO_DATA : res, Formatting.Indented);
                     break;
 
                 case "compile":
                     bool compok = Compile();
-                    e.Result = JsonConvert.SerializeObject(new ServerResult()
-                    {
-                        Request = e.Request,
-                        Result = _compileResults
-                    }, Formatting.Indented);
+                    e.Result = JsonConvert.SerializeObject(_compileResults, Formatting.Indented);
                     break;
-
 
                 case "start":
                     bool playok = false;
                     playok = ProcessPlay(PlayCommand.Start, false);
-                    e.Result = JsonConvert.SerializeObject(new ServerResult()
-                    {
-                        Request = e.Request,
-                        Result = playok ? SelfHost.OK_NO_DATA : SelfHost.FAIL
-                    }, Formatting.Indented);
+                    e.Result = JsonConvert.SerializeObject(playok ? SelfHost.OK_NO_DATA : SelfHost.FAIL, Formatting.Indented);
                     break;
 
                 case "stop":
                     ProcessPlay(PlayCommand.Stop, false);
-                    e.Result = JsonConvert.SerializeObject(new ServerResult()
-                    {
-                        Request = e.Request,
-                        Result = SelfHost.OK_NO_DATA
-                    }, Formatting.Indented);
+                    e.Result = JsonConvert.SerializeObject(SelfHost.OK_NO_DATA, Formatting.Indented);
                     break;
 
                 case "rewind":
                     ProcessPlay(PlayCommand.Rewind, false);
-                    e.Result = JsonConvert.SerializeObject(new ServerResult()
-                    {
-                        Request = e.Request,
-                        Result = SelfHost.OK_NO_DATA
-                    }, Formatting.Indented);
+                    e.Result = JsonConvert.SerializeObject(SelfHost.OK_NO_DATA, Formatting.Indented);
                     break;
-
-
-
-
-
-                //case "start":
-                //    bool playok = false;
-                //    BeginInvoke((MethodInvoker)delegate ()
-                //    {
-                //        ... the code
-                //    });
-                //    break;
 
                 default:
                     // Invalid.
-                    e.Result = JsonConvert.SerializeObject(new ServerResult()
-                    {
-                        Request = e.Request,
-                        Result = null
-                    },
-                    Formatting.Indented);
+                    e.Result = JsonConvert.SerializeObject(null, Formatting.Indented);
                     break;
             }
 
@@ -587,7 +498,7 @@ namespace Nebulator
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
-            ProcessPlay(PlayCommand.StopRewind, false);
+            //ProcessPlay(PlayCommand.StopRewind, false);
 
             ///// Init the user input area.
             // Levers.
@@ -646,7 +557,7 @@ namespace Nebulator
             foreach (NVariable var in _ctrlChanges.Values)
             {
                 // Output any midictlout controllers.
-                IEnumerable<NMidiControlPoint> ctlpts = DynamicElements.OutputMidis.Where(c => c.BoundVar.Name == var.Name);
+                IEnumerable<NControlPoint> ctlpts = DynamicElements.OutputControls.Where(c => c.BoundVar.Name == var.Name);
 
                 if (ctlpts != null && ctlpts.Count() > 0)
                 {
@@ -654,11 +565,11 @@ namespace Nebulator
                     {
                         StepControllerChange step = new StepControllerChange()
                         {
-                            Channel = c.Channel,
-                            MidiController = c.MidiController,
-                            ControllerValue = c.BoundVar.Value
+                            Channel = c.Track.Channel,
+                            ControllerId = c.ControllerId,
+                            Value = c.BoundVar.Value
                         };
-                        MidiInterface.TheInterface.Send(step);
+                        _midiInterface.Send(step);
                     });
                 }
             }
@@ -710,7 +621,7 @@ namespace Nebulator
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
-                        MidiInterface.TheInterface.KillAll(); // just in case
+                        _midiInterface.KillAll(); // just in case
                     }
                 }
                 // else keep going
@@ -741,7 +652,7 @@ namespace Nebulator
             ProcessRuntime();
 
             ///// Process any lingering noteoffs. /////
-            MidiInterface.TheInterface.Housekeep();
+            _midiInterface.Housekeep();
 
             ///// Local common function /////
             void PlayStep(Step step)
@@ -770,8 +681,8 @@ namespace Nebulator
                         else
                         {
                             // Maybe tweak values.
-                            step.Adjust(sldVolume.Value, track.Volume, track.Modulate);
-                            MidiInterface.TheInterface.Send(step);
+                            step.Adjust(_midiInterface.Caps, sldVolume.Value, track.Volume, track.Modulate);
+                            _midiInterface.Send(step);
                         }
                     }
                 }
@@ -783,7 +694,7 @@ namespace Nebulator
         /// Is it a midi controller? Look it up in the inputs.
         /// If not a ctlr or not found, send to the midi output, otherwise trigger listeners.
         /// </summary>
-        void Midi_InputEvent(object sender, MidiInterface.NebMidiInputEventArgs e)
+        void Midi_InputEvent(object sender, ProtocolInputEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -797,16 +708,16 @@ namespace Nebulator
                     // Process through our list.
                     if(_script != null)
                     {
-                        IEnumerable<NMidiControlPoint> ctlpts = DynamicElements.InputMidis.Where((c, m) => (
-                            c.MidiController == scc.MidiController &&
-                            c.Channel == scc.Channel));
+                        IEnumerable<NControlPoint> ctlpts = DynamicElements.InputControls.Where((c, m) => (
+                            c.ControllerId == scc.ControllerId && //TODOX support Pitch also
+                            c.Track.Channel == scc.Channel));
 
                         if (ctlpts != null && ctlpts.Count() > 0)
                         {
                             ctlpts.ForEach(c =>
                             {
                                 // Add to our list for processing at the next tock.
-                                c.BoundVar.Value = scc.ControllerValue;
+                                c.BoundVar.Value = scc.Value;
                                 _ctrlChanges.Add(c.BoundVar.Name, c.BoundVar);
                             });
 
@@ -817,7 +728,7 @@ namespace Nebulator
                     if(!handled)
                     {
                         // Not one we are interested in so pass through.
-                        MidiInterface.TheInterface.Send(e.Step);
+                        _midiInterface.Send(e.Step);
                     }
                 }
             });
@@ -826,7 +737,7 @@ namespace Nebulator
         /// <summary>
         /// Process midi log event.
         /// </summary>
-        void Midi_LogEvent(object sender, MidiInterface.NebMidiLogEventArgs e)
+        void Midi_LogEvent(object sender, ProtocolLogEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -849,7 +760,7 @@ namespace Nebulator
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    DynamicElements.Tracks.ForEach(t => { if (t.State != TrackState.Solo) MidiInterface.TheInterface.Kill(t.Channel); });
+                    DynamicElements.Tracks.ForEach(t => { if (t.State != TrackState.Solo) _midiInterface.Kill(t.Channel); });
                 }
             }
         }
@@ -1040,6 +951,9 @@ namespace Nebulator
                     ret = $"Couldn't open the neb file: {fn} because: {ex.Message}";
                     _logger.Error(ret);
                 }
+
+                SetCompileStatus(false);
+                InitScriptUi();
             }
 
             return ret;
@@ -1094,7 +1008,12 @@ namespace Nebulator
         /// </summary>
         void Play_Click(object sender, EventArgs e)
         {
-            ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop, true);
+            bool ok = _needCompile ? Compile() : true;
+
+            if(ok)
+            {
+                ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop, true);
+            }
         }
 
         /// <summary>
@@ -1253,8 +1172,8 @@ namespace Nebulator
                 };
 
                 // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
-                ListSelector.Options.Add("MidiIn", MidiInterface.TheInterface.MidiInputs);
-                ListSelector.Options.Add("MidiOut", MidiInterface.TheInterface.MidiOutputs);
+                ListSelector.Options.Add("MidiIn", _midiInterface.ProtocolInputs);
+                ListSelector.Options.Add("MidiOut", _midiInterface.ProtocolOutputs);
 
                 // Detect changes of interest.
                 bool midi = false;
@@ -1272,7 +1191,7 @@ namespace Nebulator
                 // Figure out what changed - each handled differently.
                 if (midi)
                 {
-                    MidiInterface.TheInterface.Init();
+                    _midiInterface.Init();
                 }
 
                 if (ctrls)
@@ -1302,23 +1221,23 @@ namespace Nebulator
                 StepNoteOn step = new StepNoteOn()
                 {
                     Channel = 2,
-                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
+                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
                     Velocity = 90,
                     VelocityToPlay = 90,
                     Duration = new Time(0)
                 };
-                MidiInterface.TheInterface.Send(step);
+                _midiInterface.Send(step);
             }
             else
             {
                 StepNoteOff step = new StepNoteOff()
                 {
                     Channel = 2,
-                    NoteNumber = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
-                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, MidiInterface.MAX_MIDI_NOTE),
+                    NoteNumber = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
+                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
                     Velocity = 64
                 };
-                MidiInterface.TheInterface.Send(step);
+                _midiInterface.Send(step);
             }
         }
 
@@ -1381,7 +1300,7 @@ namespace Nebulator
                     }
                     
                     // Send midi stop all notes just in case.
-                    MidiInterface.TheInterface.KillAll();
+                    _midiInterface.KillAll();
                     break;
 
                 case PlayCommand.Rewind:
@@ -1549,7 +1468,7 @@ namespace Nebulator
             double ticksPerSec = ticksPerMinute / 60;
             double secPerTick = 1 / ticksPerSec;
 
-            MidiUtils.ExportMidi(_compiledSteps, fn, tracks, secPerTick, "Converted from " + _fn);
+            Midi.MidiUtils.ExportMidi(_compiledSteps, fn, tracks, secPerTick, "Converted from " + _fn);
         }
 
         /// <summary>
@@ -1567,7 +1486,7 @@ namespace Nebulator
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
-                var v = MidiUtils.ImportStyle(openDlg.FileName);
+                var v = Midi.MidiUtils.ImportStyle(openDlg.FileName);
                 Clipboard.SetText(string.Join(Environment.NewLine, v));
                 MessageBox.Show("Style file content is in the clipboard");
             }
@@ -1580,7 +1499,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void KillMidi_Click(object sender, EventArgs e)
         {
-            MidiInterface.TheInterface.KillAll();
+            _midiInterface.KillAll();
         }
         #endregion
     }

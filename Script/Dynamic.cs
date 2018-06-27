@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Nebulator.Common;
-using Nebulator.Midi;
+using Nebulator.Protocol;
+
 
 // A bunch of lightweight classes for runtime elements.
 
@@ -19,14 +20,14 @@ namespace Nebulator.Script
     public class DynamicElements
     {
         #region Properties - things defined in the script that MainForm needs
-        /// <summary>Midi inputs.</summary>
-        public static List<NMidiControlPoint> InputMidis { get; set; } = new List<NMidiControlPoint>();
+        /// <summary>Control inputs.</summary>
+        public static List<NControlPoint> InputControls { get; set; } = new List<NControlPoint>();
 
-        /// <summary>Midi outputs.</summary>
-        public static List<NMidiControlPoint> OutputMidis { get; set; } = new List<NMidiControlPoint>();
+        /// <summary>Control outputs.</summary>
+        public static List<NControlPoint> OutputControls { get; set; } = new List<NControlPoint>();
 
         /// <summary>Levers.</summary>
-        public static List<NLeverControlPoint> Levers { get; set; } = new List<NLeverControlPoint>();
+        public static List<NControlPoint> Levers { get; set; } = new List<NControlPoint>();
 
         /// <summary>Levers.</summary>
         public static List<NVariable> Variables { get; set; } = new List<NVariable>();
@@ -47,8 +48,8 @@ namespace Nebulator.Script
         /// <summary>Reset everything.</summary>
         public static void Clear()
         {
-            InputMidis.Clear();
-            OutputMidis.Clear();
+            InputControls.Clear();
+            OutputControls.Clear();
             Levers.Clear();
             Variables.Clear();
             Sequences.Clear();
@@ -58,44 +59,115 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// Defines an input or output midi control. TODO Support multiple midis, OSC.
+    /// One instrument.
     /// </summary>
-    public class NMidiControlPoint
+    public class NTrack
     {
         #region Properties
-        /// <summary>The bound var.</summary>
-        public NVariable BoundVar { get; set; } = null;
+        /// <summary>The UI name for this track.</summary>
+        public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
-        /// <summary>Midi channel.</summary>
-        public int Channel { get; set; } = -1;
+        /// <summary>The numerical (midi) channel to use: 1 - 16.</summary>
+        public int Channel { get; set; } = 1;
 
-        /// <summary>The midi controller type.</summary>
-        public int MidiController { get; set; } = -1;
+        /// <summary>Current volume.</summary>
+        public int Volume { get; set; } = 90;
+
+        /// <summary>Humanize factor for volume.</summary>
+        public int WobbleVolume
+        {
+            get { return _volWobbler.RangeHigh; }
+            set { _volWobbler.RangeHigh = value; }
+        }
+
+        /// <summary>Humanize factor for time - before the tock.</summary>
+        public int WobbleTimeBefore
+        {
+            get { return _timeWobbler.RangeLow; }
+            set { _timeWobbler.RangeLow = value; }
+        }
+
+        /// <summary>Humanize factor for time - after the tock.</summary>
+        public int WobbleTimeAfter
+        {
+            get { return _timeWobbler.RangeHigh; }
+            set { _timeWobbler.RangeHigh = value; }
+        }
+
+        /// <summary>Modulate track notes by +- value.</summary>
+        public int Modulate { get; set; } = 0;
+
+        /// <summary>Current state for this track.</summary>
+        public TrackState State { get; set; } = TrackState.Normal;
         #endregion
+
+        #region Fields
+        /// <summary>Wobbler for time.</summary>
+        Wobbler _timeWobbler = new Wobbler();
+
+        /// <summary>Wobbler for volume.</summary>
+        Wobbler _volWobbler = new Wobbler();
+        #endregion
+
+        /// <summary>
+        /// Get the next time.
+        /// </summary>
+        /// <returns></returns>
+        public int NextTime()
+        {
+            return _timeWobbler.Next(0);
+        }
+
+        /// <summary>
+        /// Get the next volume.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns></returns>
+        public int NextVol(int def)
+        {
+            return _volWobbler.Next(def);
+        }
 
         /// <summary>
         /// For viewing pleasure.
         /// </summary>
         public override string ToString()
         {
-            return $"MidiControlPoint: BoundVar:{BoundVar} Channel:{Channel} MidiController:{MidiController}";
+            return $"NTrack: Name:{Name} Channel:{Channel}";
         }
     }
 
     /// <summary>
-    /// Defines an input lever.
+    /// One bound variable.
     /// </summary>
-    public class NLeverControlPoint
+    public class NVariable
     {
         #region Properties
-        /// <summary>The bound var.</summary>
-        public NVariable BoundVar { get; set; } = null;
+        /// <summary>Var name.</summary>
+        public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
-        /// <summary>Min value.</summary>
-        public int Min { get; set; } = 0;
+        /// <summary>Value as int. It is initialized from the script supplied value.</summary>
+        public int Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                if(value != _value)
+                {
+                    _value = value;
+                    Changed?.Invoke();
+                }
+            }
+        }
+        int _value;
+        #endregion
 
-        /// <summary>Max value.</summary>
-        public int Max { get; set; } = 0;
+        #region Events
+        /// <summary>Notify with argless call.</summary>
+        public event Action Changed;
         #endregion
 
         /// <summary>
@@ -103,7 +175,72 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"LeverControlPoint: BoundVar:{BoundVar}";
+            return $"NVariable: {Name} = {Value}";
+        }
+    }
+
+    /// <summary>
+    /// Defines an input/output/pitch/ui/etc control. TODO Support multiple midis and OSC.
+    /// </summary>
+    public class NControlPoint
+    {
+        #region Properties
+        /// <summary>The bound var.</summary>
+        public NVariable BoundVar { get; set; } = null;
+
+        /// <summary>Associated track.</summary>
+        public NTrack Track { get; set; } = null;
+
+        /// <summary>Flag for special operation.</summary>
+        public ControllerTypes ControllerType { get; set; }
+
+        /// <summary>The numerical (midi) controller type - optional.</summary>
+        public int ControllerId { get; set; } = -1;
+
+        /// <summary>Min value - optional.</summary>
+        public int Min { get; set; } = -1;
+
+        /// <summary>Max value - optional.</summary>
+        public int Max { get; set; } = -1;
+        #endregion
+
+        /// <summary>
+        /// For viewing pleasure.
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder($"NControlPoint: BoundVar:{BoundVar} Track:{Track}");
+
+            if (ControllerId != -1)
+            {
+                sb.Append($" ControllerId:{ControllerId}");
+            }
+
+            if (Min != -1)
+            {
+                sb.Append($" Min:{Min}");
+            }
+
+            if (Max != -1)
+            {
+                sb.Append($" Max:{Max}");
+            }
+
+            switch (ControllerType)
+            {
+                case ControllerTypes.Normal:
+                    break;
+
+                case ControllerTypes.Pitch:
+                    sb.Append($" IsPitch:true");
+                    break;
+
+                case ControllerTypes.Note:
+                    sb.Append($" Note:true");
+                    break;
+            }
+
+            return sb.ToString();
         }
     }
 
@@ -242,7 +379,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"Length:{Length}";
+            return $"NSequence: Length:{Length}";
         }
     }
 
@@ -311,128 +448,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"When:{When} NoteNum:{Notes[0]} Volume:{Volume} Duration:{Duration}";
-        }
-    }
-
-    /// <summary>
-    /// One instrument.
-    /// </summary>
-    public class NTrack
-    {
-        #region Properties
-        /// <summary>The UI name for this track.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>The midi channel to use: 1 - 16.</summary>
-        public int Channel { get; set; } = 1;
-
-        /// <summary>Current volume.</summary>
-        public int Volume { get; set; } = 90;
-
-        /// <summary>Humanize factor for volume.</summary>
-        public int WobbleVolume
-        {
-            get { return _volWobbler.RangeHigh; }
-            set { _volWobbler.RangeHigh = value; }
-        }
-
-        /// <summary>Humanize factor for time - before the tock.</summary>
-        public int WobbleTimeBefore
-        {
-            get { return _timeWobbler.RangeLow; }
-            set { _timeWobbler.RangeLow = value; }
-        }
-
-        /// <summary>Humanize factor for time - after the tock.</summary>
-        public int WobbleTimeAfter
-        {
-            get { return _timeWobbler.RangeHigh; }
-            set { _timeWobbler.RangeHigh = value; }
-        }
-
-        /// <summary>Modulate track notes by +- value.</summary>
-        public int Modulate { get; set; } = 0;
-
-        /// <summary>Current state for this track.</summary>
-        public TrackState State { get; set; } = TrackState.Normal;
-        #endregion
-
-        #region Fields
-        /// <summary>Wobbler for time.</summary>
-        Wobbler _timeWobbler = new Wobbler();
-
-        /// <summary>Wobbler for volume.</summary>
-        Wobbler _volWobbler = new Wobbler();
-        #endregion
-
-        /// <summary>
-        /// Get the next time.
-        /// </summary>
-        /// <returns></returns>
-        public int NextTime()
-        {
-            return _timeWobbler.Next(0);
-        }
-
-        /// <summary>
-        /// Get the next volume.
-        /// </summary>
-        /// <param name="def"></param>
-        /// <returns></returns>
-        public int NextVol(int def)
-        {
-            return _volWobbler.Next(def);
-        }
-
-        /// <summary>
-        /// For viewing pleasure.
-        /// </summary>
-        public override string ToString()
-        {
-            return $"Name:{Name} Channel:{Channel}";
-        }
-    }
-
-    /// <summary>
-    /// One bound variable.
-    /// </summary>
-    public class NVariable
-    {
-        #region Properties
-        /// <summary>Var name.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>Value as int. It is initialized from the script supplied value.</summary>
-        public int Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                if(value != _value)
-                {
-                    _value = value;
-                    Changed?.Invoke();
-                }
-            }
-        }
-        int _value;
-        #endregion
-
-        #region Events
-        /// <summary>Notify with argless call.</summary>
-        public event Action Changed;
-        #endregion
-
-        /// <summary>
-        /// For viewing pleasure.
-        /// </summary>
-        public override string ToString()
-        {
-            return $"Name:{Name} Value:{Value}";
+            return $"NSequenceElement: When:{When} NoteNum:{Notes[0]} Volume:{Volume} Duration:{Duration}";
         }
     }
 }

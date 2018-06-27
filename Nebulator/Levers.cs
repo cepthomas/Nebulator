@@ -53,7 +53,7 @@ namespace Nebulator
         /// Initialize the script specific stuff.
         /// </summary>
         /// <param name="levers">Specs for levers from script.</param>
-        public void Init(IEnumerable<NLeverControlPoint> levers)
+        public void Init(IEnumerable<NControlPoint> levers)
         {
             _init = true;
 

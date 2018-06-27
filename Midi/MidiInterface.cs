@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NAudio.Midi;
 using Nebulator.Common;
+using Nebulator.Protocol;
 
 
 namespace Nebulator.Midi
@@ -9,28 +10,8 @@ namespace Nebulator.Midi
     /// <summary>
     /// Abstraction layer between NAudio midi and Nebulator steps.
     /// </summary>
-    public class MidiInterface : IDisposable
+    public class MidiInterface : IProtocol, IDisposable
     {
-        #region Singleton
-        /// <summary>The one and only midi in/out devices.</summary>
-        public static MidiInterface TheInterface { get; set; } = new MidiInterface();
-        #endregion
-        
-        #region Definitions
-        // We borrow a few unused midi controller numbers for internal use.
-        // Currently undefined: 3, 9, 14, 15, 20-31, 35, 41, 46, 47, 52-63, 85-87, 89, 90 and 102-119.
-        public const int CTRL_NONE = 3;
-        public const int CTRL_PITCH = 9; // We shoehorn pitch in as a mod value.
-
-        public const int NUM_MIDI_CHANNELS = 16;
-        public const int MAX_MIDI_NOTE = 127;
-        public const int MAX_MIDI_VOLUME = 127;
-        public const int MAX_MIDI_CTRL_VALUE = 127;
-        public const int MAX_MIDI_PITCH_VALUE = 16383;
-
-        public const int MIDDLE_C = 60;
-        #endregion
-
         #region Fields
         /// <summary>Midi input device.</summary>
         MidiIn _midiIn = null;
@@ -49,36 +30,22 @@ namespace Nebulator.Midi
         #endregion
 
         #region Events
-        /// <summary>Reporting a change to listeners.</summary>
-        public event EventHandler<NebMidiInputEventArgs> NebMidiInputEvent;
+        /// <inheritdoc />
+        public event EventHandler<ProtocolInputEventArgs> ProtocolInputEvent;
 
-        public class NebMidiInputEventArgs : EventArgs
-        {
-            /// <summary>Received data.</summary>
-            public Step Step { get; set; } = null;
-        }
-
-        /// <summary>Request for logging service.</summary>
-        public event EventHandler<NebMidiLogEventArgs> NebMidiLogEvent;
-
-        public class NebMidiLogEventArgs : EventArgs
-        {
-            public enum LogCategory { Info, Send, Recv, Error }
-
-            /// <summary>Log Category.</summary>
-            public LogCategory Category { get; set; } = LogCategory.Info;
-
-            /// <summary>Text to log.</summary>
-            public string Message { get; set; } = null;
-        }
+        /// <inheritdoc />
+        public event EventHandler<ProtocolLogEventArgs> ProtocolLogEvent;
         #endregion
 
         #region Properties
-        /// <summary>All available midi inputs for UI selection.</summary>
-        public List<string> MidiInputs { get; set; } = new List<string>();
+        /// <inheritdoc />
+        public List<string> ProtocolInputs { get; set; } = new List<string>();
 
-        /// <summary>All available midi outputs for UI selection.</summary>
-        public List<string> MidiOutputs { get; set; } = new List<string>();
+        /// <inheritdoc />
+        public List<string> ProtocolOutputs { get; set; } = new List<string>();
+
+        /// <inheritdoc />
+        public ProtocolCaps Caps { get; set; } = null;
         #endregion
 
         #region Lifecycle
@@ -87,36 +54,38 @@ namespace Nebulator.Midi
         /// </summary>
         public MidiInterface()
         {
+            Caps = new ProtocolCaps()
+            {
+                MaxChannels = 16,
+                MinVolume = 0,
+                MaxVolume = 127,
+                MinNote = 0,
+                MaxNote = 127,
+                MaxControllerValue = 127,
+                MaxPitchValue = 16383
+            };
         }
 
-        /// <summary>
-        /// Initialize everything.
-        /// </summary>
+        /// <inheritdoc />
         public void Init()
         {
             InitMidiIn();
             InitMidiOut();
         }
 
-        /// <summary>
-        /// Start listening for midi inputs.
-        /// </summary>
+        /// <inheritdoc />
         public void Start()
         {
             _midiIn?.Start();
         }
 
-        /// <summary>
-        /// Stop listening for midi inputs.
-        /// </summary>
+        /// <inheritdoc />
         public void Stop()
         {
             _midiIn?.Stop();
         }
 
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
+        /// <inheritdoc />
         public void Dispose()
         {
             Dispose(true);
@@ -144,10 +113,8 @@ namespace Nebulator.Midi
         #endregion
 
         #region Public methods
-        /// <summary>
-        /// Process any stop notes.
-        /// </summary>
-        public void Housekeep()
+        /// <inheritdoc />
+        public void Housekeep() // TODO make this common?
         {
             // Send any stops due.
             _stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
@@ -156,23 +123,20 @@ namespace Nebulator.Midi
             _stops.RemoveAll(s => s.Expiry < 0);
         }
 
-        /// <summary>
-        /// Convert from NAudio def to Neb.
-        /// </summary>
-        /// <param name="sctlr"></param>
-        /// <returns></returns>
-        public static int TranslateController(string sctlr)
-        {
-            MidiController ctlr = (MidiController)Enum.Parse(typeof(MidiController), sctlr);
-            return (int)ctlr;
-        }
+        // /// <summary>
+        // /// Convert from NAudio def to Neb.
+        // /// </summary>
+        // /// <param name="sctlr"></param>
+        // /// <returns></returns>
+        // public static int TranslateController(string sctlr)
+        // {
+        //     MidiController ctlr = (MidiController)Enum.Parse(typeof(MidiController), sctlr);
+        //     return (int)ctlr;
+        // }
         #endregion
 
         #region Midi I/O
-        /// <summary>
-        /// Midi out processor.
-        /// </summary>
-        /// <param name="step"></param>
+        /// <inheritdoc />
         public void Send(Step step)
         {
             // Critical code section
@@ -187,15 +151,22 @@ namespace Nebulator.Midi
                         case StepNoteOn stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.Channel, MidiCommandCode.NoteOn, 
-                                    Utils.Constrain(stt.NoteNumberToPlay, 0, MAX_MIDI_NOTE),
-                                    Utils.Constrain(stt.VelocityToPlay, 0, MAX_MIDI_VOLUME));
+                                    Utils.Constrain(stt.NoteNumberToPlay, Caps.MinNote, Caps.MaxNote),
+                                    Utils.Constrain(stt.VelocityToPlay, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
 
                                 if(stt.Duration.TotalTocks > 0)
                                 {
                                     // Remove any lingering note offs and add a fresh one.
                                     _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber);
-                                    _stops.Add(new StepNoteOff(stt));
+
+                                    _stops.Add(new StepNoteOff()
+                                    {
+                                        Channel = stt.Channel,
+                                        NoteNumber = Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                                        NoteNumberToPlay = stt.NoteNumberToPlay,
+                                        Expiry = stt.Duration.TotalTocks
+                                    });
                                 }
                             }
                             break;
@@ -203,26 +174,33 @@ namespace Nebulator.Midi
                         case StepNoteOff stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.Channel, MidiCommandCode.NoteOff,
-                                    Utils.Constrain(stt.NoteNumberToPlay, 0, MAX_MIDI_NOTE),
-                                    Utils.Constrain(stt.Velocity, 0, MAX_MIDI_VOLUME));
+                                    Utils.Constrain(stt.NoteNumberToPlay, Caps.MinNote, Caps.MaxNote),
+                                    Utils.Constrain(stt.Velocity, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
                             }
                             break;
 
                         case StepControllerChange stt:
                             {
-                                if (stt.MidiController == CTRL_PITCH) // hacked in pitch support
+                                switch (stt.ControllerType)
                                 {
-                                    PitchWheelChangeEvent evt = new PitchWheelChangeEvent(0, stt.Channel,
-                                        Utils.Constrain(stt.ControllerValue, 0, MAX_MIDI_PITCH_VALUE));
-                                    msg = evt.GetAsShortMessage();
+                                    case ControllerTypes.Normal:
+                                        ControlChangeEvent nevt = new ControlChangeEvent(0, stt.Channel, (MidiController)stt.ControllerId,
+                                            Utils.Constrain(stt.Value, 0, Caps.MaxControllerValue));
+                                        msg = nevt.GetAsShortMessage();
+                                        break;
+
+                                    case ControllerTypes.Pitch:
+                                        PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.Channel,
+                                            Utils.Constrain(stt.Value, 0, Caps.MaxPitchValue));
+                                        msg = pevt.GetAsShortMessage();
+                                        break;
+
+                                    case ControllerTypes.Note:
+                                        // Don't care.
+                                        break;
                                 }
-                                else // plain controller
-                                {
-                                    ControlChangeEvent evt = new ControlChangeEvent(0, stt.Channel, (MidiController)stt.MidiController,
-                                        Utils.Constrain(stt.ControllerValue, 0, MAX_MIDI_CTRL_VALUE));
-                                    msg = evt.GetAsShortMessage();
-                                }
+                                break;
                             }
                             break;
 
@@ -270,6 +248,9 @@ namespace Nebulator.Midi
             {
                 case MidiCommandCode.NoteOn:
                     {
+                        // TODOX test if it's in our controller list - see below.
+
+
                         NoteOnEvent evt = me as NoteOnEvent;
 
                         if(evt.Velocity == 0)
@@ -277,7 +258,7 @@ namespace Nebulator.Midi
                             step = new StepNoteOff()
                             {
                                 Channel = evt.Channel,
-                                NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MAX_MIDI_NOTE),
+                                NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                                 Velocity = 0
                             };
 
@@ -303,7 +284,7 @@ namespace Nebulator.Midi
                         step = new StepNoteOff()
                         {
                             Channel = evt.Channel,
-                            NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MAX_MIDI_NOTE),
+                            NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                             Velocity = evt.Velocity
                         };
                     }
@@ -315,8 +296,9 @@ namespace Nebulator.Midi
                         step = new StepControllerChange()
                         {
                             Channel = evt.Channel,
-                            MidiController = (int)evt.Controller,
-                            ControllerValue = (byte)evt.ControllerValue
+                            ControllerType = ControllerTypes.Normal,
+                            ControllerId = (int)evt.Controller,
+                            Value = (byte)evt.ControllerValue
                         };
                     }
                     break;
@@ -327,8 +309,9 @@ namespace Nebulator.Midi
                         step = new StepControllerChange()
                         {
                             Channel = evt.Channel,
-                            MidiController = CTRL_PITCH,
-                            ControllerValue = evt.Pitch
+                            ControllerType = ControllerTypes.Pitch,
+                            ControllerId = -1,
+                            Value = evt.Pitch
                         };
                     }
                     break;
@@ -338,14 +321,33 @@ namespace Nebulator.Midi
             {
                 if(step is StepNoteOn || step is StepNoteOff)
                 {
-                    // Pass through. TODOX or do something useful with it: change note, map to controller, etc.
-                    Send(step);
+                    //if(channel is in midi note in list) // TODOX
+                    //{
+                    //    NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
+                    //}
+                    //else
+                    {
+                        // Pass through.
+                        Send(step);
+                    }
                 }
                 else
                 {
                     // Pass it up for handling.
-                    NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
+                    ProtocolInputEvent?.Invoke(this, new ProtocolInputEventArgs() { Step = step });
                 }
+
+                // original
+                // if(step is StepNoteOn || step is StepNoteOff)
+                // {
+                //     // Pass through. or do something useful with it: change note, map to controller, etc.
+                //     Send(step);
+                // }
+                // else
+                // {
+                //     // Pass it up for handling.
+                //     NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
+                // }
 
                 if (UserSettings.TheSettings.MidiMonitorIn)
                 {
@@ -379,15 +381,15 @@ namespace Nebulator.Midi
                     _midiIn = null;
                 }
 
-                MidiInputs.Clear();
+                ProtocolInputs.Clear();
                 for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                 {
-                    MidiInputs.Add(MidiIn.DeviceInfo(device).ProductName);
+                    ProtocolInputs.Add(MidiIn.DeviceInfo(device).ProductName);
                 }
 
-                if (MidiInputs.Count > 0 && MidiInputs.Contains(UserSettings.TheSettings.MidiIn))
+                if (ProtocolInputs.Count > 0 && ProtocolInputs.Contains(UserSettings.TheSettings.MidiIn))
                 {
-                    _midiIn = new MidiIn(MidiInputs.IndexOf(UserSettings.TheSettings.MidiIn));
+                    _midiIn = new MidiIn(ProtocolInputs.IndexOf(UserSettings.TheSettings.MidiIn));
                     _midiIn.MessageReceived += MidiIn_MessageReceived;
                     _midiIn.ErrorReceived += MidiIn_ErrorReceived;
                     _midiIn.Start();
@@ -416,15 +418,15 @@ namespace Nebulator.Midi
                     _midiOut = null;
                 }
 
-                MidiOutputs.Clear();
+                ProtocolOutputs.Clear();
                 for (int device = 0; device < MidiOut.NumberOfDevices; device++)
                 {
-                    MidiOutputs.Add(MidiOut.DeviceInfo(device).ProductName);
+                    ProtocolOutputs.Add(MidiOut.DeviceInfo(device).ProductName);
                 }
 
-                if (MidiOutputs.Count > 0 && MidiOutputs.Contains(UserSettings.TheSettings.MidiOut))
+                if (ProtocolOutputs.Count > 0 && ProtocolOutputs.Contains(UserSettings.TheSettings.MidiOut))
                 {
-                    int mi = MidiOutputs.IndexOf(UserSettings.TheSettings.MidiOut);
+                    int mi = ProtocolOutputs.IndexOf(UserSettings.TheSettings.MidiOut);
                     _midiOut = new MidiOut(mi);
                     //_midiOut.Volume = -1; needs to be this
                 }
@@ -439,26 +441,22 @@ namespace Nebulator.Midi
             }
         }
 
-        /// <summary>
-        /// Kill all midi channels.
-        /// </summary>
+        /// <inheritdoc />
         public void KillAll()
         {
-            for (int i = 0; i < NUM_MIDI_CHANNELS; i++)
+            for (int i = 0; i < Caps.MaxChannels; i++)
             {
                 Kill(i + 1);
             }
         }
 
-        /// <summary>
-        /// Kill one midi channel.
-        /// </summary>
+        /// <inheritdoc />
         public void Kill(int channel)
         {
             StepControllerChange step = new StepControllerChange()
             {
                 Channel = channel,
-                MidiController = (int)MidiController.AllNotesOff
+                ControllerId = (int)MidiController.AllNotesOff
             };
             Send(step);
         }
@@ -467,22 +465,22 @@ namespace Nebulator.Midi
         #region Log message helpers
         void LogInfoMsg(string msg)
         {
-            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Info, Message = msg });
+            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Info, Message = msg });
         }
 
         void LogSendMsg(string msg)
         {
-            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Send, Message = msg });
+            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Send, Message = msg });
         }
 
         void LogRcvMsg(string msg)
         {
-            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Recv, Message = msg });
+            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Recv, Message = msg });
         }
 
         void LogErrMsg(string msg)
         {
-            NebMidiLogEvent?.Invoke(this, new NebMidiLogEventArgs() { Category = NebMidiLogEventArgs.LogCategory.Error, Message = msg });
+            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Error, Message = msg });
         }
         #endregion
     }

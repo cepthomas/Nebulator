@@ -76,8 +76,8 @@ public override void setupNeb()
     createNotes("MY_SCALE", "1 3 4 b7");
 
     // devices
-    createMidiIn(1, 4, MODN);
-    createMidiOut(1, CTRL_PITCH, PITCH);
+    createControllerIn(KEYS, 4, MODN);
+    createPitchOut(KEYS, PITCH);
     createLever(0, 255, COL1);
     createLever(0, 16383, PITCH); // max range
     createLever(-10, 10, MODN);
@@ -202,11 +202,11 @@ public override void step()
                 break;
 
             case 8:
-                sendMidiNote(SYNTH, "D4", 95, 0.00); // named note on, no chase
+                sendNote(SYNTH, "D4", 95, 0.00); // named note on, no chase
                 break;
 
             case 12:
-                sendMidiNote(SYNTH, 62, 0, 0.00); // numbered note (D4 above) off
+                sendNote(SYNTH, 62, 0, 0.00); // numbered note (D4 above) off
                 break;
 
             case 24:
@@ -214,7 +214,7 @@ public override void step()
             case 26:
             case 27:
                 int notenum = random(40, 70);
-                sendMidiNote(SYNTH, notenum, 95, 1.09);
+                sendNote(SYNTH, notenum, 95, 1.09);
                 break;
         }
     }
@@ -229,7 +229,7 @@ public void On_MODN()
 void algoDynamic()
 {
     // print("!!!! algoDynamic");
-    sendMidiNote(SYNTH, 70, 0, 0.00);
+    sendNote(SYNTH, 70, 0, 0.00);
 }
 
 void algoNull()
@@ -250,7 +250,7 @@ public override void draw()
     if(playing && moveBall())
     {
         int notenum = random(40, 70);
-        // sendMidiNote(SYNTH, notenum, 95, 1.09);
+        // sendNote(SYNTH, notenum, 95, 1.09);
     }
 
     // Draw the ball.
@@ -273,7 +273,7 @@ public override void mouseClicked()
 {
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    sendMidiNote(SYNTH, sn, 90, 0.32);
+    sendNote(SYNTH, sn, 90, 0.32);
 }
 
 public override void keyPressed()
@@ -281,7 +281,7 @@ public override void keyPressed()
     //print("keyPressed:", key);
 
     int v = key == 'c' ? 60 : 70;
-    sendMidiNote(KEYS, v, KEYS_DEF_VOL, 1.32);
+    sendNote(KEYS, v, KEYS_DEF_VOL, 1.32);
 }
 
 bool moveBall()

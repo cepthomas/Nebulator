@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using NAudio.Midi;
 using Nebulator.Common;
-
+using Nebulator.Protocol;
 
 namespace Nebulator.Midi
 {
@@ -80,13 +80,18 @@ namespace Nebulator.Midi
                             break;
 
                         case StepControllerChange stt:
-                            if (stt.MidiController == MidiInterface.CTRL_PITCH) // hacked in pitch support
+                            switch (stt.ControllerType)
                             {
-                                evt = new PitchWheelChangeEvent(midiTime, stt.Channel, stt.ControllerValue);
-                            }
-                            else // normal controller
-                            {
-                                evt = new ControlChangeEvent(midiTime, stt.Channel, (MidiController)stt.MidiController, stt.ControllerValue);
+                                case ControllerTypes.Normal:
+                                    evt = new ControlChangeEvent(midiTime, stt.Channel, (MidiController)stt.ControllerId, stt.Value);
+                                    break;
+
+                                case ControllerTypes.Pitch:
+                                    evt = new PitchWheelChangeEvent(midiTime, stt.Channel, stt.Value);
+                                    break;
+
+                                case ControllerTypes.Note:
+                                    break;
                             }
                             break;
 

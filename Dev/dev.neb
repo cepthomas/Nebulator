@@ -1,7 +1,7 @@
 
 ///// Tester for development features.
 
-// My akai kbd midi: Pad1-8 = 44-51, knob1-8 = ctlr1-8
+// My akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
 // Support microtonal notes with Pitch changes.
 // Modulate to a specified key. Requires specifying current key too.
@@ -13,7 +13,7 @@
 // All the neb variables.
 NVariable COL1;
 NVariable PITCH;
-NVariable MOD1; // TODOX something to generate param modulation.
+NVariable MOD1;
 
 // All the tracks.
 NTrack KEYS;
@@ -33,16 +33,27 @@ int[] _scaleNotes;
 int[] _notesPlaying = new int[128];
 Scale _scale;
 
+float _ypos = 0;
+int _c = 0;
+int tileCountX = 10;
+int tileCountY = 10;
+int tileWidth = 0;
+int tileHeight = 0;
+
 public override void setupNeb()
 {
     const int WHEN1 = 8;
 
     // All the neb variables.
-    COL1 = variable("color", 200);
-    PITCH = variable("pitch", 8192); // center is 8192
+    COL1 = createVariable("color", 200);
+    PITCH = createVariable("pitch", 8192); // center is 8192
+    MOD1 = createVariable("mod", 127);
+    NOTE = createVariable("note", 127);
 
     // Handle a change.
     COL1.Changed += On_COL1;
+    MOD1.Changed += On_MOD1;
+    NOTE.Changed += On_NOTE;
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -54,10 +65,12 @@ public override void setupNeb()
     createNotes("MY_SCALE", "1 3 4 b7");
 
     // devices
-    createMidiIn(1, 4, COL1);
-    createMidiOut(1, CTRL_PITCH, PITCH);
+    createControllerIn(KEYS, 4, COL1);
+    createPitchIn(KEYS, PITCH);
+    createNoteIn(KEYS, NOTE);
     createLever(0, 255, COL1);
     createLever(0, 16383, PITCH); // max range
+    createLever(0, 255, MOD1);
 
     // Create sequences, add notes/chords/funcs.
     SEQ1 = createSequence(8);
@@ -95,26 +108,13 @@ public override void setupNeb()
     }
 }
 
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-
-
-
-float _ypos = 0;
-int _c = 0;
-int tileCountX = 10;
-int tileCountY = 10;
-int tileWidth = 0;
-int tileHeight = 0;
-
 public override void setup()
 {
     colorMode(HSB, 360, 100, 100);
     noStroke();
     frameRate(1);
 
-    COL1.Value = 999;  // COL1 = 999; TODO Prefer this to .Value but would be difficult or impossible.
+    COL1.Value = 999;
 
     tileWidth = width / tileCountX;
     tileHeight = height / tileCountY;
@@ -140,7 +140,7 @@ public override void step()
 void algoDynamic()
 {
     int n = _scale.randomNote();
-    sendMidiNote(SYNTH, n, 90, 0.48);
+    sendNote(SYNTH, n, 90, 0.48);
 }
 
 void algoSequences()
@@ -165,6 +165,15 @@ public void On_COL1()
 {
     print("COL1 changed to", COL1);
     //modulate(KEYS, COL1);
+}
+
+public void On_MOD1()
+{
+    print("MOD1 changed to", MOD1);
+
+    // Send a control change.
+    // public void sendController(NTrack track, int ctlnum, int val)
+    sendController(KEYS, 1, MOD1.Value);
 }
 
 public override void draw()
@@ -219,10 +228,10 @@ public override void mouseClicked()
 {
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, 55, 70);
-    sendMidiNote(SYNTH, sn, 90, 0.48);
+    sendNote(SYNTH, sn, 90, 0.48);
 }
 
-// Recursive rendering. CPU intensive.
+// Recursive rendering.
 void drawRecursive(float x, float y, float squareSize, float minSize)
 {
     rect(x, y, squareSize, squareSize);

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.IO;
 using Nebulator.Common;
-using Nebulator.Midi;
+//using Nebulator.Midi;
 
 
 namespace Nebulator
@@ -18,6 +18,7 @@ namespace Nebulator
         #region Fields
         const int LOW_NOTE = 21;
         const int HIGH_NOTE = 109;
+        const int MIDDLE_C = 60;
 
         /// <summary>All the created piano keys.</summary>
         List<PianoKey> _keys = new List<PianoKey>();
@@ -58,7 +59,7 @@ namespace Nebulator
             // Load the midi kbd mapping.
             try
             {
-                int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MidiInterface.MIDDLE_C).First());
+                int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MIDDLE_C).First());
 
                 foreach (string l in File.ReadLines(@"Resources\reaper-vkbmap.txt"))
                 {
@@ -223,7 +224,7 @@ namespace Nebulator
         #region Properties
         public bool IsPressed { get; private set; } = false;
         public bool IsNatural { get; set; } = false;
-        public int NoteId { get; set; } = MidiInterface.MIDDLE_C;
+        public int NoteId { get; set; } = 0;
         #endregion
 
         #region Events

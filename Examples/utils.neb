@@ -19,7 +19,7 @@ bool boing(int notenum = 0)
         boinged = true;
     }
 
-    sendMidiNote(SYNTH, notenum, VEL, 1.09);
+    sendNote(SYNTH, notenum, VEL, 1.09);
     return boinged;
 }
 
@@ -36,6 +36,6 @@ public class Dummy
 
     public int GetThing(int value)
     {
-        return _thing * s.random(value); // s. notation!
+        return _thing * s.random(value);
     }
 }

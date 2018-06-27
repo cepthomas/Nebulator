@@ -7,19 +7,3 @@ bool plainFunc(int num)
 {
     return num > 0;
 }
-
-
-public class Dummy
-{
-    int _thing = 0;
-
-    public Dummy(int thing)
-    {
-        _thing = thing;
-    }
-
-    public int GetThing(int value)
-    {
-        return _thing * s.random(value); // s. notation!
-    }
-}

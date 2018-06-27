@@ -528,7 +528,7 @@ namespace Nebulator.Script
         //public void println(params object[] vars) { NotImpl(nameof(print), "Use print()."); }
         public void print(params object[] vars)
         {
-            _logger.Info($"print: {string.Join(" ", vars)}");
+            _logger.Info(string.Join(" ", vars));
         }
         public void printArray(Array what)
         {

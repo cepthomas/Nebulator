@@ -96,7 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <None Include="..\..\Nebulator.wiki\ScriptDefinitions.md">
       <Link>Resources\ScriptDefinitions.md</Link>
@@ -305,6 +305,10 @@
     <ProjectReference Include="..\Midi\Midi.csproj">
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Protocol\Protocol.csproj">
+      <Project>{dfb8fd27-c870-4bf6-97d5-f44c13049fee}</Project>
+      <Name>Protocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\Script\Script.csproj">
       <Project>{1202e3e2-7ff4-4132-9041-aade2aa9a584}</Project>

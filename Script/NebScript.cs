@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MoreLinq;
 using Nebulator.Common;
-using Nebulator.Midi;
+using Nebulator.Protocol;
+//using Nebulator.Midi;
 
 // Nebulator API stuff.
 
@@ -52,27 +53,60 @@ namespace Nebulator.Script
 
         #region Script callable functions
         /// <summary>
-        /// Create a midi input.
+        /// Create a controller input.
         /// </summary>
-        /// <param name="channel">1</param>
-        /// <param name="controller">4</param>
-        /// <param name="bound">COL1</param>
-        protected void createMidiIn(int channel, int controller, NVariable bound)
+        /// <param name="track">Associated track.</param>
+        /// <param name="controlId">Which</param>
+        /// <param name="bound">NVariable</param>
+        protected void createControllerIn(NTrack track, int controlId, NVariable bound)
         {
-            NMidiControlPoint mp = new NMidiControlPoint() { Channel = channel, MidiController = controller, BoundVar = bound };
-            DynamicElements.InputMidis.Add(mp);
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Normal, ControllerId = controlId, BoundVar = bound };
+            DynamicElements.InputControls.Add(mp);
         }
 
         /// <summary>
-        /// Create a midi output.
+        /// Create a controller output.
         /// </summary>
-        /// <param name="channel">1</param>
-        /// <param name="controller">4</param>
-        /// <param name="bound">COL1</param>
-        protected void createMidiOut(int channel, int controller, NVariable bound)
+        /// <param name="track">Associated track.</param>
+        /// <param name="controlId">Which</param>
+        /// <param name="bound">NVariable</param>
+        protected void createControllerOut(NTrack track, int controlId, NVariable bound)
         {
-            NMidiControlPoint mp = new NMidiControlPoint() { Channel = channel, MidiController = controller, BoundVar = bound };
-            DynamicElements.OutputMidis.Add(mp);
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Normal, ControllerId = controlId, BoundVar = bound };
+            DynamicElements.OutputControls.Add(mp);
+        }
+
+        /// <summary>
+        /// Create a pitch input.
+        /// </summary>
+        /// <param name="track">Associated track.</param>
+        /// <param name="bound">NVariable</param>
+        protected void createPitchIn(NTrack track, NVariable bound)
+        {
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Pitch, BoundVar = bound };
+            DynamicElements.OutputControls.Add(mp);
+        }
+
+        /// <summary>
+        /// Create a pitch output.
+        /// </summary>
+        /// <param name="track">Associated track.</param>
+        /// <param name="bound">NVariable</param>
+        protected void createPitchOut(NTrack track, NVariable bound)
+        {
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Pitch, BoundVar = bound };
+            DynamicElements.OutputControls.Add(mp);
+        }
+
+        /// <summary>
+        /// Create a note input.
+        /// </summary>
+        /// <param name="track">Associated track.</param>
+        /// <param name="bound">NVariable</param>
+        protected void createNoteIn(NTrack track, NVariable bound) // TODOX also needs on/off
+        {
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Note, BoundVar = bound };
+            DynamicElements.OutputControls.Add(mp);
         }
 
         /// <summary>
@@ -83,7 +117,7 @@ namespace Nebulator.Script
         /// <param name="bound"></param>
         protected void createLever(int min, int max, NVariable bound)
         {
-            NLeverControlPoint lp = new NLeverControlPoint() { Min = min, Max = max, BoundVar = bound };
+            NControlPoint lp = new NControlPoint() { Min = min, Max = max, BoundVar = bound };
             DynamicElements.Levers.Add(lp);
         }
 
@@ -138,12 +172,12 @@ namespace Nebulator.Script
             return nt;
         }
 
-        /// <summary>Send a midi note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
+        /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
-        public void sendMidiNote(NTrack track, int inote, int vol, double dur)
+        public void sendNote(NTrack track, int inote, int vol, double dur)
         {
             bool _anySolo = DynamicElements.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
 
@@ -152,7 +186,7 @@ namespace Nebulator.Script
             if (play)
             {
                 int vel = track.NextVol(vol);
-                int notenum = Utils.Constrain(inote, 0, MidiInterface.MAX_MIDI_NOTE);
+                int notenum = Utils.Constrain(inote, Protocol.Caps.MinNote, Protocol.Caps.MaxNote);
 
                 if (vol > 0)
                 {
@@ -166,8 +200,8 @@ namespace Nebulator.Script
                         Duration = new Time(dur)
                     };
 
-                    step.Adjust(volume, track.Volume, track.Modulate);
-                    MidiInterface.TheInterface.Send(step);
+                    step.Adjust(Protocol.Caps, volume, track.Volume, track.Modulate);
+                    Protocol.Send(step);
                 }
                 else
                 {
@@ -178,17 +212,17 @@ namespace Nebulator.Script
                         NoteNumberToPlay = notenum
                     };
 
-                    MidiInterface.TheInterface.Send(step);
+                    Protocol.Send(step);
                 }
             }
         }
 
-        /// <summary>Send a midi note immediately. Respects solo/mute.</summary>
+        /// <summary>Send a note immediately. Respects solo/mute.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void sendMidiNote(NTrack track, string snote, int vol, double dur)
+        public void sendNote(NTrack track, string snote, int vol, double dur)
         {
             NSequenceElement note = new NSequenceElement(snote);
 
@@ -198,34 +232,34 @@ namespace Nebulator.Script
             }
             else
             {
-                note.Notes.ForEach(n => sendMidiNote(track, n, vol, dur));
+                note.Notes.ForEach(n => sendNote(track, n, vol, dur));
             }
         }
 
-        /// <summary>Send a midi note immediately. Respects solo/mute.</summary>
+        /// <summary>Send a note immediately. Respects solo/mute.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void sendMidiNote(NTrack track, string snote, int vol, Time dur)
+        public void sendNote(NTrack track, string snote, int vol, Time dur)
         {
-            sendMidiNote(track, snote, vol, dur.AsDouble);
+            sendNote(track, snote, vol, dur.AsDouble);
         }
 
-        /// <summary>Send a midi controller immediately.</summary>
+        /// <summary>Send a controller immediately.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>
-        public void sendMidiController(NTrack track, int ctlnum, int val)
+        public void sendController(NTrack track, int ctlnum, int val)
         {
             StepControllerChange step = new StepControllerChange()
             {
                 Channel = track.Channel,
-                MidiController = ctlnum,
-                ControllerValue = val
+                ControllerId = ctlnum,
+                Value = val
             };
 
-            MidiInterface.TheInterface.Send(step);
+            Protocol.Send(step);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -239,7 +273,7 @@ namespace Nebulator.Script
                 PatchNumber = patch
             };
 
-            MidiInterface.TheInterface.Send(step);
+            Protocol.Send(step);
         }
 
         /// <summary>Modulate all notes on the track by number of notes. Can be changed on the fly altering all subsequent notes.</summary>

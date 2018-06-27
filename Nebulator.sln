@@ -37,6 +37,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controls", "Controls\Contro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{8B7E58A4-4477-4223-A0C3-8BE403EE5737}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol", "Protocol\Protocol.csproj", "{DFB8FD27-C870-4BF6-97D5-F44C13049FEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSC", "OSC\OSC.csproj", "{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,14 @@ Global
 		{8B7E58A4-4477-4223-A0C3-8BE403EE5737}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B7E58A4-4477-4223-A0C3-8BE403EE5737}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B7E58A4-4477-4223-A0C3-8BE403EE5737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB8FD27-C870-4BF6-97D5-F44C13049FEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB8FD27-C870-4BF6-97D5-F44C13049FEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB8FD27-C870-4BF6-97D5-F44C13049FEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB8FD27-C870-4BF6-97D5-F44C13049FEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

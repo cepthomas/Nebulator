@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using SkiaSharp;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Midi;
+using Nebulator.Protocol;
 
 
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Things shared between host and script at runtime.
+    /// Things shared between host and script at runtime. TODO make not static?
     /// </summary>
     public class RuntimeContext
     {
@@ -55,9 +55,11 @@ namespace Nebulator.Script
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
+        #endregion
 
-        /// <summary>A minor visibility hack.</summary>
-        protected const int CTRL_PITCH = Midi.MidiInterface.CTRL_PITCH;
+        #region Properties
+        /// <summary>Protocol to use.</summary>
+        public IProtocol Protocol { get; set; }
         #endregion
 
         #region Lifecycle

@@ -45,9 +45,9 @@ public override void setupNeb()
     SOUND = createTrack("sound", 1, 5, 0, 0);
 
     // devices
-    createMidiIn(1, 4, MODF);
-    createMidiOut(1, CTRL_PITCH, PITCH);
-    createMidiOut(1, 4, MODF);
+    createControllerIn(SOUND, 4, MODF);
+    createControllerOut(SOUND, 4, MODF);
+    createPitchOut(SOUND, PITCH);
     createLever(0, 255, COLOR);
     createLever(0, 16383, PITCH); // max range
     createLever(0, 255, MODF);
@@ -84,7 +84,7 @@ public override void step()
     {
         if(stepTime >= l.nextStart)
         {
-            sendMidiNote(SOUND, l.snote, SOUND_DEF_VOL, l.duration);
+            sendNote(SOUND, l.snote, SOUND_DEF_VOL, l.duration);
             // Calc next time.
             l.nextStart = stepTime + l.delay + l.duration;
         }
@@ -146,5 +146,5 @@ public override void mouseClicked()
 {
     // Maybe do something?
     //int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    //sendMidiNote(SOUND, sn, 90, 0.48);
+    //sendNote(SOUND, sn, 90, 0.48);
 }
