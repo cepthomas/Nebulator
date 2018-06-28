@@ -11,7 +11,6 @@ using MoreLinq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Nebulator.Common;
-using Nebulator.Midi;
 
 
 namespace Nebulator.Script

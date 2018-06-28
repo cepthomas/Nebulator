@@ -61,7 +61,7 @@ namespace Nebulator
         List<ScriptError> _compileResults = new List<ScriptError>();
 
         /// <summary>Accumulated control input var changes to be processed at next step.</summary>
-        LazyCollection<NVariable> _ctrlChanges = new LazyCollection<NVariable>() { AllowOverwrite = true };
+        Dictionary<string, NVariable> _ctrlChanges = new Dictionary<string, NVariable>();
 
         /// <summary>Current neb file name.</summary>
         string _fn = Utils.UNKNOWN_STRING;
@@ -365,6 +365,7 @@ namespace Nebulator
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
+                    _script.Protocol = _midiInterface;
 
                     try
                     {
@@ -703,13 +704,13 @@ namespace Nebulator
                     /////// Control change
                     StepControllerChange scc = e.Step as StepControllerChange;
 
-                    bool handled = false;
+                    e.Handled = false;
 
-                    // Process through our list.
+                    // Process through our list of inputs of interest. TODOX also hoteon/off.
                     if(_script != null)
                     {
                         IEnumerable<NControlPoint> ctlpts = DynamicElements.InputControls.Where((c, m) => (
-                            c.ControllerId == scc.ControllerId && //TODOX support Pitch also
+                            c.ControllerId == scc.ControllerId &&
                             c.Track.Channel == scc.Channel));
 
                         if (ctlpts != null && ctlpts.Count() > 0)
@@ -718,17 +719,11 @@ namespace Nebulator
                             {
                                 // Add to our list for processing at the next tock.
                                 c.BoundVar.Value = scc.Value;
-                                _ctrlChanges.Add(c.BoundVar.Name, c.BoundVar);
+                                _ctrlChanges[c.BoundVar.Name] = c.BoundVar;
                             });
 
-                            handled = true;
+                            e.Handled = true;
                         }
-                    }
-
-                    if(!handled)
-                    {
-                        // Not one we are interested in so pass through.
-                        _midiInterface.Send(e.Step);
                     }
                 }
             });

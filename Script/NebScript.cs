@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using MoreLinq;
 using Nebulator.Common;
 using Nebulator.Protocol;
-//using Nebulator.Midi;
 
 // Nebulator API stuff.
 
@@ -60,7 +59,8 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createControllerIn(NTrack track, int controlId, NVariable bound)
         {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Normal, ControllerId = controlId, BoundVar = bound };
+            controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
             DynamicElements.InputControls.Add(mp);
         }
 
@@ -72,7 +72,8 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createControllerOut(NTrack track, int controlId, NVariable bound)
         {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Normal, ControllerId = controlId, BoundVar = bound };
+            controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
             DynamicElements.OutputControls.Add(mp);
         }
 
@@ -83,7 +84,7 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createPitchIn(NTrack track, NVariable bound)
         {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Pitch, BoundVar = bound };
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = ControllerType.PITCH, BoundVar = bound };
             DynamicElements.OutputControls.Add(mp);
         }
 
@@ -94,7 +95,7 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createPitchOut(NTrack track, NVariable bound)
         {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Pitch, BoundVar = bound };
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = ControllerType.PITCH, BoundVar = bound };
             DynamicElements.OutputControls.Add(mp);
         }
 
@@ -103,9 +104,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="track">Associated track.</param>
         /// <param name="bound">NVariable</param>
-        protected void createNoteIn(NTrack track, NVariable bound) // TODOX also needs on/off
+        protected void createNoteIn(NTrack track, NVariable bound)
         {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerType = ControllerTypes.Note, BoundVar = bound };
+            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = ControllerType.NOTE, BoundVar = bound };
             DynamicElements.OutputControls.Add(mp);
         }
 

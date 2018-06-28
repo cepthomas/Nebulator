@@ -14,6 +14,7 @@
 NVariable COL1;
 NVariable PITCH;
 NVariable MOD1;
+NVariable NOTECTL;
 
 // All the tracks.
 NTrack KEYS;
@@ -48,12 +49,12 @@ public override void setupNeb()
     COL1 = createVariable("color", 200);
     PITCH = createVariable("pitch", 8192); // center is 8192
     MOD1 = createVariable("mod", 127);
-    NOTE = createVariable("note", 127);
+    NOTECTL = createVariable("note", 127);
 
     // Handle a change.
     COL1.Changed += On_COL1;
     MOD1.Changed += On_MOD1;
-    NOTE.Changed += On_NOTE;
+    NOTECTL.Changed += On_NOTECTL;
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -67,7 +68,7 @@ public override void setupNeb()
     // devices
     createControllerIn(KEYS, 4, COL1);
     createPitchIn(KEYS, PITCH);
-    createNoteIn(KEYS, NOTE);
+    createNoteIn(KEYS, NOTECTL);
     createLever(0, 255, COL1);
     createLever(0, 16383, PITCH); // max range
     createLever(0, 255, MOD1);
@@ -174,6 +175,11 @@ public void On_MOD1()
     // Send a control change.
     // public void sendController(NTrack track, int ctlnum, int val)
     sendController(KEYS, 1, MOD1.Value);
+}
+
+public void On_NOTECTL()
+{
+    print("NOTECTL = ", NOTECTL);
 }
 
 public override void draw()

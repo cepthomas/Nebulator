@@ -80,17 +80,17 @@ namespace Nebulator.Midi
                             break;
 
                         case StepControllerChange stt:
-                            switch (stt.ControllerType)
+                            switch (stt.ControllerId)
                             {
-                                case ControllerTypes.Normal:
+                                default:
                                     evt = new ControlChangeEvent(midiTime, stt.Channel, (MidiController)stt.ControllerId, stt.Value);
                                     break;
 
-                                case ControllerTypes.Pitch:
+                                case ControllerType.PITCH:
                                     evt = new PitchWheelChangeEvent(midiTime, stt.Channel, stt.Value);
                                     break;
 
-                                case ControllerTypes.Note:
+                                case ControllerType.NOTE:
                                     break;
                             }
                             break;

@@ -5,19 +5,27 @@ using Nebulator.Common;
 
 namespace Nebulator.Protocol
 {
-    public enum ControllerTypes { Normal, Pitch, Note } // TODOX better place for this def... needed by Protocol, Midi, Script
+    /// <summary>Container for special controller types encoded in ControllerId. TODO Better place for this def?</summary>
+    public class ControllerType
+    {
+        public const int PITCH = -1;
+        public const int NOTE = -2;
+    }
 
     public class ProtocolInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
         public Step Step { get; set; } = null;
+
+        /// <summary>Was it processed.</summary>
+        public bool Handled { get; set; } = false;
     }
 
     public class ProtocolLogEventArgs : EventArgs
     {
         public enum LogCategory { Info, Send, Recv, Error }
 
-        /// <summary>Log Category.</summary>
+        /// <summary>Category.</summary>
         public LogCategory Category { get; set; } = LogCategory.Info;
 
         /// <summary>Text to log.</summary>

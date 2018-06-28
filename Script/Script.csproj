@@ -104,10 +104,6 @@
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Midi\Midi.csproj">
-      <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
-      <Name>Midi</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Protocol\Protocol.csproj">
       <Project>{dfb8fd27-c870-4bf6-97d5-f44c13049fee}</Project>
       <Name>Protocol</Name>

@@ -185,17 +185,14 @@ namespace Nebulator.Script
     public class NControlPoint
     {
         #region Properties
-        /// <summary>The bound var.</summary>
+        /// <summary>The bound var - required.</summary>
         public NVariable BoundVar { get; set; } = null;
 
-        /// <summary>Associated track.</summary>
+        /// <summary>Associated track - required.</summary>
         public NTrack Track { get; set; } = null;
 
-        /// <summary>Flag for special operation.</summary>
-        public ControllerTypes ControllerType { get; set; }
-
-        /// <summary>The numerical (midi) controller type - optional.</summary>
-        public int ControllerId { get; set; } = -1;
+        /// <summary>The numerical (midi) controller type - required.</summary>
+        public int ControllerId { get; set; } = 0;
 
         /// <summary>Min value - optional.</summary>
         public int Min { get; set; } = -1;
@@ -209,12 +206,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"NControlPoint: BoundVar:{BoundVar} Track:{Track}");
-
-            if (ControllerId != -1)
-            {
-                sb.Append($" ControllerId:{ControllerId}");
-            }
+            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar} Track:{Track}");
 
             if (Min != -1)
             {
@@ -224,20 +216,6 @@ namespace Nebulator.Script
             if (Max != -1)
             {
                 sb.Append($" Max:{Max}");
-            }
-
-            switch (ControllerType)
-            {
-                case ControllerTypes.Normal:
-                    break;
-
-                case ControllerTypes.Pitch:
-                    sb.Append($" IsPitch:true");
-                    break;
-
-                case ControllerTypes.Note:
-                    sb.Append($" Note:true");
-                    break;
             }
 
             return sb.ToString();

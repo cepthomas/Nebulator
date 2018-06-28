@@ -8,7 +8,7 @@ using Nebulator.Common;
 namespace Nebulator.Protocol
 {
     /// <summary>
-    /// Base class for internal interface representation of a compiled event to be sent.
+    /// Base class for internal interface representation of a compiled event to be sent or received.
     /// </summary>
     public abstract class Step
     {
@@ -29,6 +29,9 @@ namespace Nebulator.Protocol
         }
     }
 
+    /// <summary>
+    /// One note on.
+    /// </summary>
     public class StepNoteOn : Step
     {
         /// <summary>The default note.</summary>
@@ -64,6 +67,9 @@ namespace Nebulator.Protocol
         }
     }
 
+    /// <summary>
+    /// One note off.
+    /// </summary>
     public class StepNoteOff : Step
     {
         /// <summary>The default note.</summary>
@@ -92,11 +98,14 @@ namespace Nebulator.Protocol
         }
     }
 
+    /// <summary>
+    /// One control change event. This supports
+    ///   - standard CC messages
+    ///   - pitch (rather than have a separate type)
+    ///   - notes used as control inputs
+    /// </summary>
     public class StepControllerChange : Step
     {
-        /// <summary>Flag for special operation.</summary>
-        public ControllerTypes ControllerType { get; set; }
-
         /// <summary>Specific controller.</summary>
         public int ControllerId { get; set; } = 0;
 
@@ -108,17 +117,17 @@ namespace Nebulator.Protocol
         {
             StringBuilder sb = new StringBuilder($"StepControllerChange: {base.ToString()}");
 
-            switch(ControllerType)
+            switch(ControllerId)
             {
-                case ControllerTypes.Normal:
+                default: // normal
                     sb.Append($" ControllerId:{ControllerId} Value:{Value}");
                     break;
 
-                case ControllerTypes.Pitch:
+                case ControllerType.PITCH:
                     sb.Append($" Pitch:{Value}");
                     break;
 
-                case ControllerTypes.Note:
+                case ControllerType.NOTE:
                     sb.Append($" Note:{Value}");
                     break;
             }

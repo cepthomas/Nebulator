@@ -182,25 +182,24 @@ namespace Nebulator.Midi
 
                         case StepControllerChange stt:
                             {
-                                switch (stt.ControllerType)
+                                switch (stt.ControllerId)
                                 {
-                                    case ControllerTypes.Normal:
+                                    default:
                                         ControlChangeEvent nevt = new ControlChangeEvent(0, stt.Channel, (MidiController)stt.ControllerId,
                                             Utils.Constrain(stt.Value, 0, Caps.MaxControllerValue));
                                         msg = nevt.GetAsShortMessage();
                                         break;
 
-                                    case ControllerTypes.Pitch:
+                                    case ControllerType.PITCH:
                                         PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.Channel,
                                             Utils.Constrain(stt.Value, 0, Caps.MaxPitchValue));
                                         msg = pevt.GetAsShortMessage();
                                         break;
 
-                                    case ControllerTypes.Note:
-                                        // Don't care.
+                                    case ControllerType.NOTE:
+                                        // Shouldn't happen, ignore.
                                         break;
                                 }
-                                break;
                             }
                             break;
 
@@ -223,12 +222,12 @@ namespace Nebulator.Midi
 
                             if (UserSettings.TheSettings.MidiMonitorOut)
                             {
-                                LogSendMsg(step.ToString());
+                                LogMsg(ProtocolLogEventArgs.LogCategory.Send, step.ToString());
                             }
                         }
                         catch (Exception ex)
                         {
-                            LogErrMsg($"Midi couldn't send step {step}: {ex.Message}");
+                            LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Midi couldn't send step {step}: {ex.Message}");
                         }
                     }
                 }
@@ -248,9 +247,6 @@ namespace Nebulator.Midi
             {
                 case MidiCommandCode.NoteOn:
                     {
-                        // TODOX test if it's in our controller list - see below.
-
-
                         NoteOnEvent evt = me as NoteOnEvent;
 
                         if(evt.Velocity == 0)
@@ -296,7 +292,6 @@ namespace Nebulator.Midi
                         step = new StepControllerChange()
                         {
                             Channel = evt.Channel,
-                            ControllerType = ControllerTypes.Normal,
                             ControllerId = (int)evt.Controller,
                             Value = (byte)evt.ControllerValue
                         };
@@ -309,8 +304,7 @@ namespace Nebulator.Midi
                         step = new StepControllerChange()
                         {
                             Channel = evt.Channel,
-                            ControllerType = ControllerTypes.Pitch,
-                            ControllerId = -1,
+                            ControllerId = ControllerType.PITCH,
                             Value = evt.Pitch
                         };
                     }
@@ -319,39 +313,19 @@ namespace Nebulator.Midi
 
             if (step != null)
             {
-                if(step is StepNoteOn || step is StepNoteOff)
-                {
-                    //if(channel is in midi note in list) // TODOX
-                    //{
-                    //    NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
-                    //}
-                    //else
-                    {
-                        // Pass through.
-                        Send(step);
-                    }
-                }
-                else
-                {
-                    // Pass it up for handling.
-                    ProtocolInputEvent?.Invoke(this, new ProtocolInputEventArgs() { Step = step });
-                }
+                // Pass it up for handling.
+                ProtocolInputEventArgs args = new ProtocolInputEventArgs() { Step = step };
+                ProtocolInputEvent?.Invoke(this, args);
 
-                // original
-                // if(step is StepNoteOn || step is StepNoteOff)
-                // {
-                //     // Pass through. or do something useful with it: change note, map to controller, etc.
-                //     Send(step);
-                // }
-                // else
-                // {
-                //     // Pass it up for handling.
-                //     NebMidiInputEvent?.Invoke(this, new NebMidiInputEventArgs() { Step = step });
-                // }
+                if(!args.Handled)
+                {
+                    // Pass through.
+                    Send(step);
+                }
 
                 if (UserSettings.TheSettings.MidiMonitorIn)
                 {
-                    LogRcvMsg(step.ToString());
+                    LogMsg(ProtocolLogEventArgs.LogCategory.Recv, step.ToString());
                 }
             }
         }
@@ -363,7 +337,7 @@ namespace Nebulator.Midi
         {
             if (UserSettings.TheSettings.MidiMonitorIn)
             {
-                LogErrMsg($"Message:0x{e.RawMessage:X8}");
+                LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
             }
         }
 
@@ -396,12 +370,12 @@ namespace Nebulator.Midi
                 }
                 else
                 {
-                    LogInfoMsg("No midi input device selected.");
+                    LogMsg(ProtocolLogEventArgs.LogCategory.Info, "No midi input device selected.");
                 }
             }
             catch (Exception ex)
             {
-                LogErrMsg($"Init midi in failed: {ex.Message}");
+                LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Init midi in failed: {ex.Message}");
             }
         }
 
@@ -432,12 +406,12 @@ namespace Nebulator.Midi
                 }
                 else
                 {
-                    LogErrMsg("No midi output device selected.");
+                    LogMsg(ProtocolLogEventArgs.LogCategory.Error, "No midi output device selected.");
                 }
             }
             catch (Exception ex)
             {
-                LogErrMsg($"Init midi out failed: {ex.Message}");
+                LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
             }
         }
 
@@ -460,27 +434,13 @@ namespace Nebulator.Midi
             };
             Send(step);
         }
-        #endregion
 
-        #region Log message helpers
-        void LogInfoMsg(string msg)
+        /// <summary>Ask host to do something with this.</summary>
+        /// <param name="cat"></param>
+        /// <param name="msg"></param>
+        void LogMsg(ProtocolLogEventArgs.LogCategory cat, string msg)
         {
-            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Info, Message = msg });
-        }
-
-        void LogSendMsg(string msg)
-        {
-            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Send, Message = msg });
-        }
-
-        void LogRcvMsg(string msg)
-        {
-            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Recv, Message = msg });
-        }
-
-        void LogErrMsg(string msg)
-        {
-            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = ProtocolLogEventArgs.LogCategory.Error, Message = msg });
+            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = cat, Message = msg });
         }
         #endregion
     }
