@@ -7,6 +7,13 @@ using Nebulator.Common;
 
 namespace Nebulator.Protocol
 {
+    /// <summary>Container for special controller types encoded in ControllerId. TODO consolidate with ScriptCore consts.</summary>
+    public class ControllerType
+    {
+        public const int PITCH = -1;
+        public const int NOTE = -2;
+    }
+
     /// <summary>
     /// Base class for internal interface representation of a compiled event to be sent or received.
     /// </summary>
@@ -19,8 +26,7 @@ namespace Nebulator.Protocol
         /// <param name="caps">What it can do.</param>
         /// <param name="masterVolume"></param>
         /// <param name="trackVolume"></param>
-        /// <param name="modulate"></param>
-        public virtual void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume, int modulate) { }
+        public virtual void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume) { }
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
@@ -34,11 +40,8 @@ namespace Nebulator.Protocol
     /// </summary>
     public class StepNoteOn : Step
     {
-        /// <summary>The default note.</summary>
+        /// <summary>The note to play.</summary>
         public int NoteNumber { get; set; }
-
-        /// <summary>The possibly modified NoteNumber.</summary>
-        public int NoteNumberToPlay { get; set; }
 
         /// <summary>The default volume.</summary>
         public int Velocity { get; set; } = 90;
@@ -50,20 +53,17 @@ namespace Nebulator.Protocol
         public Time Duration { get; set; } = new Time(0);
 
         /// <inheritdoc />
-        public override void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume, int modulate)
+        public override void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume)
         {
             // Maybe alter note velocity.
             int vel = Velocity * trackVolume * masterVolume / caps.MaxVolume / caps.MaxVolume;
             VelocityToPlay = Utils.Constrain(vel, 0, caps.MaxVolume);
-
-            // Maybe alter note number.
-            NoteNumberToPlay = Utils.Constrain(NoteNumber + modulate, caps.MinNote, caps.MaxNote);
         }
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepNoteOn: {base.ToString()} NoteNumberToPlay:{NoteNumberToPlay} VelocityToPlay:{VelocityToPlay} Duration:{Duration}";
+            return $"StepNoteOn: {base.ToString()} VelocityToPlay:{VelocityToPlay} Duration:{Duration}";
         }
     }
 
@@ -85,10 +85,8 @@ namespace Nebulator.Protocol
         public int Expiry { get; set; } = -1;
 
         /// <inheritdoc />
-        public override void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume, int modulate)
+        public override void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume)
         {
-            // Maybe alter note number.
-            NoteNumberToPlay = Utils.Constrain(NoteNumber + modulate, caps.MinNote, caps.MaxNote);
         }
 
         /// <summary>For viewing pleasure.</summary>
@@ -102,14 +100,14 @@ namespace Nebulator.Protocol
     /// One control change event. This supports
     ///   - standard CC messages
     ///   - pitch (rather than have a separate type)
-    ///   - notes used as control inputs
+    ///   - notes that can be used as control inputs
     /// </summary>
-    public class StepControllerChange : Step
+    public class StepControllerChange : Step // TODO also noteon/off.
     {
-        /// <summary>Specific controller.</summary>
+        /// <summary>Specific controller. See also specials in ControllerType.</summary>
         public int ControllerId { get; set; } = 0;
 
-        /// <summary>The payload.</summary>
+        /// <summary>The payload. CC value, pitch value, note number.</summary>
         public int Value { get; set; } = 0;
 
         /// <summary>For viewing pleasure.</summary>
@@ -148,7 +146,7 @@ namespace Nebulator.Protocol
         }
     }
 
-    /// <summary>Used for internal things that are not actually comm.</summary>
+    /// <summary>Used for internal things that are not actually comm protocol.</summary>
     public class StepInternal : Step
     {
         /// <summary>A function to call.</summary>

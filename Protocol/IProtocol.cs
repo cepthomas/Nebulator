@@ -5,13 +5,6 @@ using Nebulator.Common;
 
 namespace Nebulator.Protocol
 {
-    /// <summary>Container for special controller types encoded in ControllerId. TODO Better place for this def?</summary>
-    public class ControllerType
-    {
-        public const int PITCH = -1;
-        public const int NOTE = -2;
-    }
-
     public class ProtocolInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
@@ -32,7 +25,7 @@ namespace Nebulator.Protocol
         public string Message { get; set; } = null;
     }
 
-    /// <summary>What it can do. Self explanatory.</summary>
+    /// <summary>What it can do. Self explanatory. TODO all needed?</summary>
     public class ProtocolCaps
     {
         public int MaxChannels { get; set; }

@@ -557,12 +557,10 @@ namespace Nebulator
             ////// Process changed vars regardless of any other status //////
             foreach (NVariable var in _ctrlChanges.Values)
             {
-                // Output any midictlout controllers.
-                IEnumerable<NControlPoint> ctlpts = DynamicElements.OutputControls.Where(c => c.BoundVar.Name == var.Name);
-
-                if (ctlpts != null && ctlpts.Count() > 0)
+                // Output any out controllers.
+                foreach(NControlPoint c in DynamicElements.OutputControls)
                 {
-                    ctlpts.ForEach(c =>
+                    if(c.BoundVar.Name == var.Name)
                     {
                         StepControllerChange step = new StepControllerChange()
                         {
@@ -571,7 +569,7 @@ namespace Nebulator
                             Value = c.BoundVar.Value
                         };
                         _midiInterface.Send(step);
-                    });
+                    }
                 }
             }
 
@@ -682,7 +680,7 @@ namespace Nebulator
                         else
                         {
                             // Maybe tweak values.
-                            step.Adjust(_midiInterface.Caps, sldVolume.Value, track.Volume, track.Modulate);
+                            step.Adjust(_midiInterface.Caps, sldVolume.Value, track.Volume);
                             _midiInterface.Send(step);
                         }
                     }
@@ -699,31 +697,45 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (e.Step != null && e.Step is StepControllerChange)
+                e.Handled = false; // default
+
+                if (_script != null && e.Step != null)
                 {
-                    /////// Control change
-                    StepControllerChange scc = e.Step as StepControllerChange;
-
-                    e.Handled = false;
-
-                    // Process through our list of inputs of interest. TODOX also hoteon/off.
-                    if(_script != null)
+                    switch (e.Step)
                     {
-                        IEnumerable<NControlPoint> ctlpts = DynamicElements.InputControls.Where((c, m) => (
-                            c.ControllerId == scc.ControllerId &&
-                            c.Track.Channel == scc.Channel));
-
-                        if (ctlpts != null && ctlpts.Count() > 0)
-                        {
-                            ctlpts.ForEach(c =>
+                        case StepNoteOn stt: // TODO also noteon/off.
                             {
-                                // Add to our list for processing at the next tock.
-                                c.BoundVar.Value = scc.Value;
-                                _ctrlChanges[c.BoundVar.Name] = c.BoundVar;
-                            });
 
-                            e.Handled = true;
-                        }
+                            }
+                            break;
+
+                        case StepNoteOff stt:
+                            {
+
+                            }
+                            break;
+
+                        case StepControllerChange stt:
+                            {
+                                // Control change
+                                StepControllerChange scc = e.Step as StepControllerChange;
+
+                                // Process through our list of inputs of interest.
+                                foreach (NControlPoint ctlpt in DynamicElements.InputControls)
+                                {
+                                    if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
+                                    {
+                                        // Add to our list for processing at the next tock.
+                                        ctlpt.BoundVar.Value = scc.Value;
+                                        _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
+                                        e.Handled = true;
+                                    }
+                                }
+                            }
+                            break;
+
+                        default:
+                            break;
                     }
                 }
             });
@@ -1216,7 +1228,7 @@ namespace Nebulator
                 StepNoteOn step = new StepNoteOn()
                 {
                     Channel = 2,
-                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
+                    NoteNumber = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
                     Velocity = 90,
                     VelocityToPlay = 90,
                     Duration = new Time(0)

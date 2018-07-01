@@ -218,7 +218,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Parse one file. This is recursive to support nested #load.
+        /// Parse one file. This is recursive to support nested $load.
         /// </summary>
         /// <param name="pcont">The parse context.</param>
         /// <returns>True if a valid file.</returns>
@@ -261,9 +261,9 @@ namespace Nebulator.Script
                     string cline = pos >= 0 ? s.Left(pos) : s;
 
                     // Test for nested files
-                    // #load "path\name.neb"
-                    // #load "include path\split file name.neb"
-                    if(s.StartsWith("#load"))
+                    // $load "path\name.neb"
+                    // $load "include path\split file name.neb"
+                    if(s.StartsWith("$load"))
                     {
                         List<string> parts = s.SplitByTokens("\";");
                         string fn = parts.Last();
@@ -280,7 +280,7 @@ namespace Nebulator.Script
                             Errors.Add(new ScriptError()
                             {
                                 ErrorType = ScriptError.ScriptErrorType.Error,
-                                Message = $"Invalid #load: {fn}",
+                                Message = $"Invalid $load: {fn}",
                                 SourceFile = pcont.SourceFile,
                                 LineNumber = pcont.LineNumber
                             });

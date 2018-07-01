@@ -78,40 +78,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Create a pitch input.
-        /// </summary>
-        /// <param name="track">Associated track.</param>
-        /// <param name="bound">NVariable</param>
-        protected void createPitchIn(NTrack track, NVariable bound)
-        {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = ControllerType.PITCH, BoundVar = bound };
-            DynamicElements.OutputControls.Add(mp);
-        }
-
-        /// <summary>
-        /// Create a pitch output.
-        /// </summary>
-        /// <param name="track">Associated track.</param>
-        /// <param name="bound">NVariable</param>
-        protected void createPitchOut(NTrack track, NVariable bound)
-        {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = ControllerType.PITCH, BoundVar = bound };
-            DynamicElements.OutputControls.Add(mp);
-        }
-
-        /// <summary>
-        /// Create a note input.
-        /// </summary>
-        /// <param name="track">Associated track.</param>
-        /// <param name="bound">NVariable</param>
-        protected void createNoteIn(NTrack track, NVariable bound)
-        {
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = ControllerType.NOTE, BoundVar = bound };
-            DynamicElements.OutputControls.Add(mp);
-        }
-
-        /// <summary>
-        /// Create a UI leveer.
+        /// Create a UI lever.
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -127,9 +94,10 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="name">UI name</param>
         /// <param name="val">Initial value</param>
-        protected NVariable createVariable(string name, int val)
+        /// <param name="handler">Optional callback</param>
+        protected NVariable createVariable(string name, int val, Action handler = null)
         {
-            NVariable nv = new NVariable() { Name = name, Value = val };
+            NVariable nv = new NVariable() { Name = name, Value = val, Changed = handler };
             DynamicElements.Variables.Add(nv);
             return nv;
         }
@@ -195,13 +163,12 @@ namespace Nebulator.Script
                     {
                         Channel = track.Channel,
                         NoteNumber = notenum,
-                        NoteNumberToPlay = notenum,
                         Velocity = vel,
                         VelocityToPlay = vel,
                         Duration = new Time(dur)
                     };
 
-                    step.Adjust(Protocol.Caps, volume, track.Volume, track.Modulate);
+                    step.Adjust(Protocol.Caps, volume, track.Volume);
                     Protocol.Send(step);
                 }
                 else
@@ -275,14 +242,6 @@ namespace Nebulator.Script
             };
 
             Protocol.Send(step);
-        }
-
-        /// <summary>Modulate all notes on the track by number of notes. Can be changed on the fly altering all subsequent notes.</summary>
-        /// <param name="track">Track to alter notes on.</param>
-        /// <param name="val">Number of notes, +-.</param>
-        public void modulate(NTrack track, int val)
-        {
-            track.Modulate = val;
         }
 
         /// <summary>Send a named sequence.</summary>

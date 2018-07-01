@@ -91,6 +91,7 @@ namespace Nebulator.Midi
                                     break;
 
                                 case ControllerType.NOTE:
+                                    // Shouldn't happen, ignore.
                                     break;
                             }
                             break;

@@ -114,7 +114,7 @@ namespace Nebulator.Midi
 
         #region Public methods
         /// <inheritdoc />
-        public void Housekeep() // TODO make this common?
+        public void Housekeep()
         {
             // Send any stops due.
             _stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
@@ -122,17 +122,6 @@ namespace Nebulator.Midi
             // Reset.
             _stops.RemoveAll(s => s.Expiry < 0);
         }
-
-        // /// <summary>
-        // /// Convert from NAudio def to Neb.
-        // /// </summary>
-        // /// <param name="sctlr"></param>
-        // /// <returns></returns>
-        // public static int TranslateController(string sctlr)
-        // {
-        //     MidiController ctlr = (MidiController)Enum.Parse(typeof(MidiController), sctlr);
-        //     return (int)ctlr;
-        // }
         #endregion
 
         #region Midi I/O
@@ -151,7 +140,7 @@ namespace Nebulator.Midi
                         case StepNoteOn stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.Channel, MidiCommandCode.NoteOn, 
-                                    Utils.Constrain(stt.NoteNumberToPlay, Caps.MinNote, Caps.MaxNote),
+                                    Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                                     Utils.Constrain(stt.VelocityToPlay, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
 
@@ -164,7 +153,7 @@ namespace Nebulator.Midi
                                     {
                                         Channel = stt.Channel,
                                         NoteNumber = Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                                        NoteNumberToPlay = stt.NoteNumberToPlay,
+                                        NoteNumberToPlay = stt.NoteNumber,
                                         Expiry = stt.Duration.TotalTocks
                                     });
                                 }
@@ -265,7 +254,6 @@ namespace Nebulator.Midi
                             {
                                 Channel = evt.Channel,
                                 NoteNumber = evt.NoteNumber,
-                                NoteNumberToPlay = evt.NoteNumber,
                                 Velocity = evt.Velocity,
                                 VelocityToPlay = evt.Velocity,
                                 Duration = new Time(0)

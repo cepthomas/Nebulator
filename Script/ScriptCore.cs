@@ -57,6 +57,11 @@ namespace Nebulator.Script
         bool _disposed = false;
         #endregion
 
+        #region Things needed by compiled script
+        public const int PITCH_CTL = -1;
+        public const int NOTE_CTL = -2;
+        #endregion
+
         #region Properties
         /// <summary>Protocol to use.</summary>
         public IProtocol Protocol { get; set; }
@@ -125,7 +130,6 @@ namespace Nebulator.Script
                         {
                             Channel = track.Channel,
                             NoteNumber = noteNum,
-                            NoteNumberToPlay = noteNum,
                             Velocity = vel,
                             VelocityToPlay = vel,
                             Duration = seqel.Duration

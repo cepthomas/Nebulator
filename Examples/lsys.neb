@@ -14,10 +14,8 @@ List<Point> lines = new List<Point>();
 public override void setup()
 {
     // Variables
-    COL1 = variable("color", 200);
-    INITANG = variable("iang", -3963);
-
-    INITANG.Changed += On_INITANG;
+    COL1 = createVariable("color", 200);
+    INITANG = createVariable("iang", -3963, On_INITANG);
 
     // Levers
     createLever(0, 255, COL1);

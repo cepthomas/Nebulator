@@ -34,12 +34,9 @@ List<TapeLoop> loops = new List<TapeLoop>();
 public override void setupNeb()
 {
     ///// Variables /////
-    COLOR = variable("color", 240); // change color
-    MODF = variable("modf", 0); // modulate filter - linked in reaper project
-    PITCH = variable("pitch", 8192); // center is 8192
-
-    // Handle a change.
-    MODF.Changed += On_MODF;
+    COLOR = createVariable("color", 240); // change color
+    MODF = createVariable("modf", 0, On_MODF); // modulate filter - linked in reaper project
+    PITCH = createVariable("pitch", 8192); // center is 8192
 
     ///// Tracks /////
     SOUND = createTrack("sound", 1, 5, 0, 0);
@@ -47,7 +44,7 @@ public override void setupNeb()
     // devices
     createControllerIn(SOUND, 4, MODF);
     createControllerOut(SOUND, 4, MODF);
-    createPitchOut(SOUND, PITCH);
+    createControllerOut(SOUND, -1, PITCH);
     createLever(0, 255, COLOR);
     createLever(0, 16383, PITCH); // max range
     createLever(0, 255, MODF);
@@ -93,8 +90,7 @@ public override void step()
 
 public void On_MODF()
 {
-    print("MODF changed to", MODF);
-    //modulate(SOUND, MODF);
+    print("MODF changed to", MODF.Value);
 }
 
 public override void draw()

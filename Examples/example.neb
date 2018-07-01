@@ -3,7 +3,7 @@
 // Warning: this is not actual music!
 
 ///// Include other lib files. /////
-#load "utils.neb"
+$load "utils.neb"
 
 
 ///// Constants /////
@@ -58,12 +58,8 @@ int[] scaleNotes;
 public override void setupNeb()
 {
     // All the neb variables.
-    COL1 = variable("color", 200); // change color
-    MODN = variable("modn", 0); // modulate notes
-    PITCH = variable("pitch", 8192); // center is 8192
-
-    // Handle a change.
-    MODN.Changed += On_MODN;
+    COL1 = createVariable("color", 200); // change color
+    PITCH = createVariable("pitch", 8192, On_PITCH); // center is 8192
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -77,7 +73,7 @@ public override void setupNeb()
 
     // devices
     createControllerIn(KEYS, 4, MODN);
-    createPitchOut(KEYS, PITCH);
+    createControllerOut(KEYS, -1, PITCH);
     createLever(0, 255, COL1);
     createLever(0, 16383, PITCH); // max range
     createLever(-10, 10, MODN);
@@ -220,10 +216,9 @@ public override void step()
     }
 }
 
-public void On_MODN()
+public void On_PITCH()
 {
-    //print("MODN changed to", MODN);
-    modulate(KEYS, MODN.Value);
+    //print("MODN changed to", MODN.Value);
 }
 
 void algoDynamic()

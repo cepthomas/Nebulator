@@ -17,7 +17,7 @@ namespace Nebulator.Script
     /// <summary>
     /// All the dynamic stuff gleaned from the script that we might want at runtime.
     /// </summary>
-    public class DynamicElements
+    public class DynamicElements //TODO make not static?
     {
         #region Properties - things defined in the script that MainForm needs
         /// <summary>Control inputs.</summary>
@@ -94,9 +94,6 @@ namespace Nebulator.Script
             set { _timeWobbler.RangeHigh = value; }
         }
 
-        /// <summary>Modulate track notes by +- value.</summary>
-        public int Modulate { get; set; } = 0;
-
         /// <summary>Current state for this track.</summary>
         public TrackState State { get; set; } = TrackState.Normal;
         #endregion
@@ -166,8 +163,9 @@ namespace Nebulator.Script
         #endregion
 
         #region Events
-        /// <summary>Notify with argless call.</summary>
-        public event Action Changed;
+        /// <summary>Notify with new value.</summary>
+        //public event Action Changed;
+        public Action Changed;
         #endregion
 
         /// <summary>
@@ -175,26 +173,26 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NVariable: {Name} = {Value}";
+            return $"NVariable: Name:{Name} Value:{Value}";
         }
     }
 
     /// <summary>
-    /// Defines an input/output/pitch/ui/etc control. TODO Support multiple midis and OSC.
+    /// Defines a controller: input/output/pitch/ui/etc control. TODO Support multiple midis and OSC.
     /// </summary>
     public class NControlPoint
     {
         #region Properties
-        /// <summary>The bound var - required.</summary>
-        public NVariable BoundVar { get; set; } = null;
-
         /// <summary>Associated track - required.</summary>
         public NTrack Track { get; set; } = null;
 
         /// <summary>The numerical (midi) controller type - required.</summary>
         public int ControllerId { get; set; } = 0;
 
-        /// <summary>Min value - optional.</summary>
+        /// <summary>The bound var - required.</summary>
+        public NVariable BoundVar { get; set; } = null;
+
+        /// <summary>Min value - optional. TODO these?</summary>
         public int Min { get; set; } = -1;
 
         /// <summary>Max value - optional.</summary>
