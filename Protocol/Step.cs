@@ -79,7 +79,7 @@ namespace Nebulator.Protocol
         public int Velocity { get; set; } = 64; // seems to be standard default.
 
         /// <summary>When it's done in tocks - used by stop note chasing.</summary>
-        public int Expiry { get; set; } = -1;
+        public int Expiry { get; set; } = -1; //XXX
 
         /// <inheritdoc />
         public override void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume)

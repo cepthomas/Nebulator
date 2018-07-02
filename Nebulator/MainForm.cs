@@ -8,16 +8,18 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using NLog;
 using MoreLinq;
+using Newtonsoft.Json;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
-//using Nebulator.Midi;
 using Nebulator.Protocol;
 using Nebulator.Server;
-using Newtonsoft.Json;
 
 
 // TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures? Or make everything static?
+// TODO still don't like the ui/sound start/stop controls...
+// TODO test all changed midi/controller/pitch/noteonoff stuff.
+// IProtocol _device1. TODO support multiple and OSC. Need to change DynamicElements.XXXControls, UserSettings, etc too.
 
 
 namespace Nebulator
@@ -54,7 +56,7 @@ namespace Nebulator
         /// <summary>Current step time clock.</summary>
         Time _stepTime = new Time();
 
-        /// <summary>The compiled midi event sequence.</summary>
+        /// <summary>The compiled event sequence.</summary>
         StepCollection _compiledSteps = new StepCollection();
 
         /// <summary>Script compile errors and warnings.</summary>
@@ -90,8 +92,8 @@ namespace Nebulator
         /// <summary>Server host.</summary>
         SelfHost _selfHost = null;
 
-        /// <summary>The midi in/out device. TODO support multiple and OSC.</summary>
-        IProtocol _midiInterface = new Midi.MidiInterface();
+        /// <summary>The in/out device.</summary>
+        IProtocol _device1 = new Midi.MidiInterface();
         #endregion
 
         #region Lifecycle
@@ -144,12 +146,11 @@ namespace Nebulator
             PopulateRecentMenu();
             #endregion
 
-            #region Set up midi
-            // Input midi events.
-            _midiInterface.ProtocolInputEvent += Midi_InputEvent;
-            _midiInterface.ProtocolLogEvent += Midi_LogEvent;
-
-            _midiInterface.Init();
+            #region Set up devices
+            // Input events.
+            _device1.ProtocolInputEvent += Midi_InputEvent;
+            _device1.ProtocolLogEvent += Midi_LogEvent;
+            _device1.Init();
 
             // Midi timer.
             _nebTimer = new NebTimer();
@@ -225,7 +226,7 @@ namespace Nebulator
                 ProcessPlay(PlayCommand.Stop, false);
 
                 // Just in case.
-                _midiInterface.KillAll();
+                _device1.Kill();
 
                 if(_script != null)
                 {
@@ -263,9 +264,9 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                _midiInterface?.Stop();
-                _midiInterface?.Dispose();
-                _midiInterface = null;
+                _device1?.Stop();
+                _device1?.Dispose();
+                _device1 = null;
 
                 components?.Dispose();
             }
@@ -365,7 +366,7 @@ namespace Nebulator
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
-                    _script.Protocol = _midiInterface;
+                    _script.Protocol = _device1;
 
                     try
                     {
@@ -416,7 +417,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Convert the script output into steps for feeding midi.
+        /// Convert the script output into steps for feeding devices.
         /// </summary>
         void ConvertToSteps()
         {
@@ -568,7 +569,7 @@ namespace Nebulator
                             ControllerId = c.ControllerId,
                             Value = c.BoundVar.Value
                         };
-                        _midiInterface.Send(step);
+                        _device1.Send(step);
                     }
                 }
             }
@@ -620,7 +621,7 @@ namespace Nebulator
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
-                        _midiInterface.KillAll(); // just in case
+                        _device1.Kill(); // just in case
                     }
                 }
                 // else keep going
@@ -651,7 +652,7 @@ namespace Nebulator
             ProcessRuntime();
 
             ///// Process any lingering noteoffs. /////
-            _midiInterface.Housekeep();
+            _device1.Housekeep();
 
             ///// Local common function /////
             void PlayStep(Step step)
@@ -680,8 +681,8 @@ namespace Nebulator
                         else
                         {
                             // Maybe tweak values.
-                            step.Adjust(_midiInterface.Caps, sldVolume.Value, track.Volume);
-                            _midiInterface.Send(step);
+                            step.Adjust(_device1.Caps, sldVolume.Value, track.Volume);
+                            _device1.Send(step);
                         }
                     }
                 }
@@ -766,7 +767,7 @@ namespace Nebulator
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    DynamicElements.Tracks.ForEach(t => { if (t.State != TrackState.Solo) _midiInterface.Kill(t.Channel); });
+                    DynamicElements.Tracks.ForEach(t => { if (t.State != TrackState.Solo) _device1.Kill(t.Channel); });
                 }
             }
         }
@@ -829,7 +830,7 @@ namespace Nebulator
 
             // Locate the offending frame.
             string srcFile = Utils.UNKNOWN_STRING;
-            int srcLine = -1;
+            int srcLine = -1; //XXX
             StackTrace st = new StackTrace(args.Exception, true);
             StackFrame sf = null;
 
@@ -877,7 +878,7 @@ namespace Nebulator
                 {
                     ErrorType = ScriptError.ScriptErrorType.Runtime,
                     SourceFile = "",
-                    LineNumber = -1,
+                    LineNumber = -1, //XXX
                     Message = args.Exception.Message
                 };
 
@@ -1178,8 +1179,8 @@ namespace Nebulator
                 };
 
                 // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
-                ListSelector.Options.Add("MidiIn", _midiInterface.ProtocolInputs);
-                ListSelector.Options.Add("MidiOut", _midiInterface.ProtocolOutputs);
+                ListSelector.Options.Add("MidiIn", _device1.ProtocolInputs);
+                ListSelector.Options.Add("MidiOut", _device1.ProtocolOutputs);
 
                 // Detect changes of interest.
                 bool midi = false;
@@ -1197,7 +1198,7 @@ namespace Nebulator
                 // Figure out what changed - each handled differently.
                 if (midi)
                 {
-                    _midiInterface.Init();
+                    _device1.Init();
                 }
 
                 if (ctrls)
@@ -1227,22 +1228,22 @@ namespace Nebulator
                 StepNoteOn step = new StepNoteOn()
                 {
                     Channel = 2,
-                    NoteNumber = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
+                    NoteNumber = Utils.Constrain(e.NoteId, _device1.Caps.MinNote, _device1.Caps.MaxNote),
                     Velocity = 90,
                     VelocityToPlay = 90,
                     Duration = new Time(0)
                 };
-                _midiInterface.Send(step);
+                _device1.Send(step);
             }
             else
             {
                 StepNoteOff step = new StepNoteOff()
                 {
                     Channel = 2,
-                    NoteNumber = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
+                    NoteNumber = Utils.Constrain(e.NoteId, _device1.Caps.MinNote, _device1.Caps.MaxNote),
                     Velocity = 64
                 };
-                _midiInterface.Send(step);
+                _device1.Send(step);
             }
         }
 
@@ -1305,7 +1306,7 @@ namespace Nebulator
                     }
                     
                     // Send midi stop all notes just in case.
-                    _midiInterface.KillAll();
+                    _device1.Kill();
                     break;
 
                 case PlayCommand.Rewind:
@@ -1502,9 +1503,9 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void KillMidi_Click(object sender, EventArgs e)
+        void Kill_Click(object sender, EventArgs e)
         {
-            _midiInterface.KillAll();
+            _device1.Kill();
         }
         #endregion
     }

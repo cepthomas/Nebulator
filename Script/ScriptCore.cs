@@ -40,11 +40,11 @@ namespace Nebulator.Script
         /// <summary>Don't even try to do this.</summary>
         RuntimeContext() { }
 
-        /// <summary>Reset everything.</summary>
-        public static void Clear()
-        {
-            RuntimeSteps.Clear();
-        }
+        ///// <summary>Reset everything.</summary>
+        //public static void Clear()
+        //{
+        //    RuntimeSteps.Clear();
+        //}
     }
 
     public partial class ScriptCore : IDisposable

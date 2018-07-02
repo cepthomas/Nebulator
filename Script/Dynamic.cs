@@ -59,6 +59,83 @@ namespace Nebulator.Script
     }
 
     /// <summary>
+    /// One bound variable.
+    /// </summary>
+    public class NVariable
+    {
+        #region Properties
+        /// <summary>Var name.</summary>
+        public string Name { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>Value as int. It is initialized from the script supplied value.</summary>
+        public int Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                if(value != _value)
+                {
+                    _value = value;
+                    Changed?.Invoke();
+                }
+            }
+        }
+        int _value;
+
+        /// <summary>Min value - optional.</summary>
+        public int Min { get; set; } = 0;
+
+        /// <summary>Max value - optional.</summary>
+        public int Max { get; set; } = 100;
+        #endregion
+
+        #region Events
+        /// <summary>Notify with new value.</summary>
+        //public event Action Changed;
+        public Action Changed;
+        #endregion
+
+        /// <summary>
+        /// For viewing pleasure.
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder($"NVariable: Name:{Name} Value:{Value} Min:{Min} Max:{Max}");
+            return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Defines a controller: input/output/pitch/ui/etc control.
+    /// </summary>
+    public class NControlPoint
+    {
+        #region Properties
+        /// <summary>Associated track - required.</summary>
+        public NTrack Track { get; set; } = null;
+
+        /// <summary>The numerical (midi) controller type - required.</summary>
+        public int ControllerId { get; set; } = 0;
+
+        /// <summary>The bound var - required.</summary>
+        public NVariable BoundVar { get; set; } = null;
+        #endregion
+
+        /// <summary>
+        /// For viewing pleasure.
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar} Track:{Track}");
+
+            return sb.ToString();
+        }
+    }
+
+    /// <summary>
     /// One instrument.
     /// </summary>
     public class NTrack
@@ -131,92 +208,6 @@ namespace Nebulator.Script
         public override string ToString()
         {
             return $"NTrack: Name:{Name} Channel:{Channel}";
-        }
-    }
-
-    /// <summary>
-    /// One bound variable.
-    /// </summary>
-    public class NVariable
-    {
-        #region Properties
-        /// <summary>Var name.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>Value as int. It is initialized from the script supplied value.</summary>
-        public int Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                if(value != _value)
-                {
-                    _value = value;
-                    Changed?.Invoke();
-                }
-            }
-        }
-        int _value;
-        #endregion
-
-        #region Events
-        /// <summary>Notify with new value.</summary>
-        //public event Action Changed;
-        public Action Changed;
-        #endregion
-
-        /// <summary>
-        /// For viewing pleasure.
-        /// </summary>
-        public override string ToString()
-        {
-            return $"NVariable: Name:{Name} Value:{Value}";
-        }
-    }
-
-    /// <summary>
-    /// Defines a controller: input/output/pitch/ui/etc control. TODO Support multiple midis and OSC.
-    /// </summary>
-    public class NControlPoint
-    {
-        #region Properties
-        /// <summary>Associated track - required.</summary>
-        public NTrack Track { get; set; } = null;
-
-        /// <summary>The numerical (midi) controller type - required.</summary>
-        public int ControllerId { get; set; } = 0;
-
-        /// <summary>The bound var - required.</summary>
-        public NVariable BoundVar { get; set; } = null;
-
-        /// <summary>Min value - optional. TODO these?</summary>
-        public int Min { get; set; } = -1;
-
-        /// <summary>Max value - optional.</summary>
-        public int Max { get; set; } = -1;
-        #endregion
-
-        /// <summary>
-        /// For viewing pleasure.
-        /// </summary>
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar} Track:{Track}");
-
-            if (Min != -1)
-            {
-                sb.Append($" Min:{Min}");
-            }
-
-            if (Max != -1)
-            {
-                sb.Append($" Max:{Max}");
-            }
-
-            return sb.ToString();
         }
     }
 

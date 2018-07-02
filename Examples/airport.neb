@@ -34,9 +34,9 @@ List<TapeLoop> loops = new List<TapeLoop>();
 public override void setupNeb()
 {
     ///// Variables /////
-    COLOR = createVariable("color", 240); // change color
-    MODF = createVariable("modf", 0, On_MODF); // modulate filter - linked in reaper project
-    PITCH = createVariable("pitch", 8192); // center is 8192
+    COLOR = createVariable("color", 240, 0, 255); // change color
+    MODF = createVariable("modf", 0, 0, 255, On_MODF); // modulate filter - linked in reaper project
+    PITCH = createVariable("pitch", 8192, 0, 16383); // center is 8192
 
     ///// Tracks /////
     SOUND = createTrack("sound", 1, 5, 0, 0);
@@ -45,9 +45,9 @@ public override void setupNeb()
     createControllerIn(SOUND, 4, MODF);
     createControllerOut(SOUND, 4, MODF);
     createControllerOut(SOUND, -1, PITCH);
-    createLever(0, 255, COLOR);
-    createLever(0, 16383, PITCH); // max range
-    createLever(0, 255, MODF);
+    createLever(COLOR);
+    createLever(PITCH); // max range
+    createLever(MODF);
 
     // Set up the loops.
     loops.Clear();

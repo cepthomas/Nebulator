@@ -88,13 +88,13 @@ namespace Nebulator.Script
         Dictionary<string, FileContext> _filesToCompile = new Dictionary<string, FileContext>();
 
         /// <summary>The midi instrument definitions from ScriptDefinitions.md.</summary>
-        Dictionary<string, string> _midiInstrumentDefs = new Dictionary<string, string>();
+        Dictionary<string, string> _instrumentDefs = new Dictionary<string, string>();
 
         /// <summary>The midi drum definitions from ScriptDefinitions.md.</summary>
-        Dictionary<string, string> _midiDrumDefs = new Dictionary<string, string>();
+        Dictionary<string, string> _drumDefs = new Dictionary<string, string>();
 
         /// <summary>The midi controller definitions from ScriptDefinitions.md.</summary>
-        Dictionary<string, string> _midiControllerDefs = new Dictionary<string, string>();
+        Dictionary<string, string> _controllerDefs = new Dictionary<string, string>();
         #endregion
 
         /// <summary>
@@ -109,9 +109,9 @@ namespace Nebulator.Script
             // Reset everything.
             _filesToCompile.Clear();
             _initLines.Clear();
-            _midiInstrumentDefs.Clear();
-            _midiDrumDefs.Clear();
-            _midiControllerDefs.Clear();
+            _instrumentDefs.Clear();
+            _drumDefs.Clear();
+            _controllerDefs.Clear();
             NoteUtils.ScriptNoteDefs.Clear();
             DynamicElements.Clear();
             Errors.Clear();
@@ -149,9 +149,9 @@ namespace Nebulator.Script
         {
             try
             {
-                _midiInstrumentDefs.Clear();
-                _midiDrumDefs.Clear();
-                _midiControllerDefs.Clear();
+                _instrumentDefs.Clear();
+                _drumDefs.Clear();
+                _controllerDefs.Clear();
 
                 // Read the file.
                 Dictionary<string, string> section = new Dictionary<string, string>();
@@ -165,15 +165,15 @@ namespace Nebulator.Script
                         switch (parts[0])
                         {
                             case "Instrument":
-                                section = _midiInstrumentDefs;
+                                section = _instrumentDefs;
                                 break;
 
                             case "Drum":
-                                section = _midiDrumDefs;
+                                section = _drumDefs;
                                 break;
 
                             case "Controller":
-                                section = _midiControllerDefs;
+                                section = _controllerDefs;
                                 break;
 
                             case string s when !s.StartsWith("---"):
@@ -422,7 +422,7 @@ namespace Nebulator.Script
                             {
                                 ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.Warning : ScriptError.ScriptErrorType.Error,
                                 SourceFile = "None",
-                                LineNumber = -1,
+                                LineNumber = -1, //XXX
                                 Message = err.ErrorText
                             });
                         }
@@ -477,9 +477,9 @@ namespace Nebulator.Script
             List<string> codeLines = GenTopOfFile("");
 
             // The various defines.
-            _midiInstrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_midiInstrumentDefs[k]};"));
-            _midiDrumDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_midiDrumDefs[k]};"));
-            _midiControllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_midiControllerDefs[k]};"));
+            _instrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_instrumentDefs[k]};"));
+            _drumDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_drumDefs[k]};"));
+            _controllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_controllerDefs[k]};"));
 
             // Bottom stuff.
             codeLines.AddRange(GenBottomOfFile());

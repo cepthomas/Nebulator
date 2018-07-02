@@ -96,7 +96,7 @@ namespace Nebulator
 
         #region Button handlers
         /// <summary>
-        /// Monitor midi in messages. Note that monitoring slows down processing so use judiciously.
+        /// Monitor protocol in messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
         private void BtnMonIn_Click(object sender, EventArgs e)
         {
@@ -104,7 +104,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Monitor midi out messages. Note that monitoring slows down processing so use judiciously.
+        /// Monitor protocol out messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
         private void BtnMonOut_Click(object sender, EventArgs e)
         {

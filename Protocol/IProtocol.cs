@@ -25,15 +25,17 @@ namespace Nebulator.Protocol
         public string Message { get; set; } = null;
     }
 
-    /// <summary>What it can do. Self explanatory. TODO all needed now?</summary>
+    /// <summary>What it can do. Self explanatory.</summary>
     public class ProtocolCaps
     {
-        public int MaxChannels { get; set; }
+        public int NumChannels { get; set; }
         public int MinVolume { get; set; }
         public int MaxVolume { get; set; }
         public int MinNote { get; set; }
         public int MaxNote { get; set; }
+        public int MinControllerValue { get; set; }
         public int MaxControllerValue { get; set; }
+        public int MinPitchValue { get; set; }
         public int MaxPitchValue { get; set; }
     }
 
@@ -76,11 +78,9 @@ namespace Nebulator.Protocol
         /// <param name="step"></param>
         void Send(Step step);
 
-        /// <summary>Kill all channels.</summary>
-        void KillAll();
-
         /// <summary>Kill one channel.</summary>
-        void Kill(int channel);
+        /// <param name="channel">Specific channel or null for all.</param>
+        void Kill(int? channel = null);
 
         /// <summary>Clean up resources.</summary>
         void Dispose();

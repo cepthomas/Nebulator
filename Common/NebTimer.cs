@@ -53,7 +53,7 @@ namespace Nebulator.Common
         bool _running = false;
 
         /// <summary>Stopwatch support.</summary>
-        long _lastTicks = -1;
+        long _lastTicks = -1; //XXX
 
         /// <summary>Indicates whether or not the timer has been disposed.</summary>
         bool _disposed = false;
@@ -78,7 +78,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Multimedia timer identifier.
         /// </summary>
-        int _timerID = -1;
+        int _timerID = -1; //XXX
 
         /// <summary>
         /// Timer resolution in milliseconds. The resolution increases with smaller values - a resolution of 0

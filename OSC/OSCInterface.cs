@@ -8,5 +8,7 @@ namespace OSC
 {
     public class OSCInterface
     {
+        //https://github.com/vvvv/vvvv-sdk/tree/develop/common/src/core/Utils/OSC
+
     }
 }

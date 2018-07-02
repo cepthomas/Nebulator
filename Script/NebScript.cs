@@ -80,12 +80,10 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a UI lever.
         /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
         /// <param name="bound"></param>
-        protected void createLever(int min, int max, NVariable bound)
+        protected void createLever(NVariable bound)
         {
-            NControlPoint lp = new NControlPoint() { Min = min, Max = max, BoundVar = bound };
+            NControlPoint lp = new NControlPoint() { BoundVar = bound };
             DynamicElements.Levers.Add(lp);
         }
 
@@ -94,10 +92,12 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="name">UI name</param>
         /// <param name="val">Initial value</param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
         /// <param name="handler">Optional callback</param>
-        protected NVariable createVariable(string name, int val, Action handler = null)
+        protected NVariable createVariable(string name, int val, int min, int max, Action handler = null)
         {
-            NVariable nv = new NVariable() { Name = name, Value = val, Changed = handler };
+            NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
             DynamicElements.Variables.Add(nv);
             return nv;
         }

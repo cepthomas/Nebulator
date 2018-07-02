@@ -58,8 +58,9 @@ int[] scaleNotes;
 public override void setupNeb()
 {
     // All the neb variables.
-    COL1 = createVariable("color", 200); // change color
-    PITCH = createVariable("pitch", 8192, On_PITCH); // center is 8192
+    COL1 = createVariable("color", 200, 0, 255); // change color
+    PITCH = createVariable("pitch", 8192, 0, 16383, On_PITCH); // center is 8192
+    MODN = createVariable("modn", 0, -10, 10);
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -74,9 +75,9 @@ public override void setupNeb()
     // devices
     createControllerIn(KEYS, 4, MODN);
     createControllerOut(KEYS, -1, PITCH);
-    createLever(0, 255, COL1);
-    createLever(0, 16383, PITCH); // max range
-    createLever(-10, 10, MODN);
+    createLever(COL1);
+    createLever(PITCH); // max range
+    createLever(MODN);
 
     ///// Sequences /////
     KEYS_VERSE1 = createSequence(16);

@@ -56,12 +56,14 @@ namespace Nebulator.Midi
         {
             Caps = new ProtocolCaps()
             {
-                MaxChannels = 16,
+                NumChannels = 16,
                 MinVolume = 0,
                 MaxVolume = 127,
                 MinNote = 0,
                 MaxNote = 127,
+                MinControllerValue = 0,
                 MaxControllerValue = 127,
+                MinPitchValue = 0,
                 MaxPitchValue = 16383
             };
         }
@@ -174,13 +176,13 @@ namespace Nebulator.Midi
                                 {
                                     default:
                                         ControlChangeEvent nevt = new ControlChangeEvent(0, stt.Channel, (MidiController)stt.ControllerId,
-                                            Utils.Constrain(stt.Value, 0, Caps.MaxControllerValue));
+                                            Utils.Constrain(stt.Value, Caps.MinControllerValue, Caps.MaxControllerValue));
                                         msg = nevt.GetAsShortMessage();
                                         break;
 
                                     case ControllerType.PITCH:
                                         PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.Channel,
-                                            Utils.Constrain(stt.Value, 0, Caps.MaxPitchValue));
+                                            Utils.Constrain(stt.Value, Caps.MinPitchValue, Caps.MaxPitchValue));
                                         msg = pevt.GetAsShortMessage();
                                         break;
 
@@ -388,7 +390,6 @@ namespace Nebulator.Midi
                 {
                     int mi = ProtocolOutputs.IndexOf(UserSettings.TheSettings.MidiOut);
                     _midiOut = new MidiOut(mi);
-                    //_midiOut.Volume = -1; needs to be this
                 }
                 else
                 {
@@ -404,21 +405,26 @@ namespace Nebulator.Midi
         /// <inheritdoc />
         public void KillAll()
         {
-            for (int i = 0; i < Caps.MaxChannels; i++)
+            for (int i = 0; i < Caps.NumChannels; i++)
             {
                 Kill(i + 1);
             }
         }
 
         /// <inheritdoc />
-        public void Kill(int channel)
+        public void Kill(int? channel)
         {
-            StepControllerChange step = new StepControllerChange()
+            if(channel is null)
             {
-                Channel = channel,
-                ControllerId = (int)MidiController.AllNotesOff
-            };
-            Send(step);
+                for (int i = 0; i < Caps.NumChannels; i++)
+                {
+                    Send(new StepControllerChange() { Channel = i + 1, ControllerId = (int)MidiController.AllNotesOff });
+                }
+            }
+            else
+            {
+                Send(new StepControllerChange() { Channel = channel.Value, ControllerId = (int)MidiController.AllNotesOff });
+            }
         }
 
         /// <summary>Ask host to do something with this.</summary>

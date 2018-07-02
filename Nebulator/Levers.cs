@@ -83,8 +83,8 @@ namespace Nebulator
                     ControlColor = UserSettings.TheSettings.ControlColor,
                     Font = UserSettings.TheSettings.ControlFont,
                     Height = ClientSize.Height - SPACING * 2,
-                    Maximum = l.Max,
-                    Minimum = l.Min,
+                    Maximum = l.BoundVar.Max,
+                    Minimum = l.BoundVar.Min,
                     ResetValue = l.BoundVar.Value,
                     Value = l.BoundVar.Value,
                     Tag = l.BoundVar

@@ -9,7 +9,7 @@ using MoreLinq;
 
 namespace Nebulator.Common
 {
-    public class NoteUtils
+    public class NoteUtils //TODO make not static?
     {
         #region Fields
         const int NOTES_PER_OCTAVE = 12;
@@ -86,9 +86,9 @@ namespace Nebulator.Common
         /// <summary>
         /// Parse note or notes from input value. Checks both stock items and those defined in the script.
         /// </summary>
-        /// <param name="s">String to parse.</param>
+        /// <param name="noteString">String to parse.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
-        public static List<int> ParseNoteString(string s)
+        public static List<int> ParseNoteString(string noteString)
         {
             List<int> notes = new List<int>();
 
@@ -101,7 +101,7 @@ namespace Nebulator.Common
                 // F4.BLA - user defined chord
 
                 // Break it up.
-                var parts = s.SplitByToken(".");
+                var parts = noteString.SplitByToken(".");
                 string snote = parts[0];
 
                 // Start with octave.

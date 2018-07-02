@@ -83,7 +83,7 @@
             this.btnMonIn.Name = "btnMonIn";
             this.btnMonIn.Size = new System.Drawing.Size(23, 22);
             this.btnMonIn.Text = "toolStripButton1";
-            this.btnMonIn.ToolTipText = "Monitor midi in";
+            this.btnMonIn.ToolTipText = "Monitor messages in";
             this.btnMonIn.Click += new System.EventHandler(this.BtnMonIn_Click);
             // 
             // btnMonOut
@@ -95,7 +95,7 @@
             this.btnMonOut.Name = "btnMonOut";
             this.btnMonOut.Size = new System.Drawing.Size(23, 22);
             this.btnMonOut.Text = "toolStripButton1";
-            this.btnMonOut.ToolTipText = "Monitor midi out";
+            this.btnMonOut.ToolTipText = "Monitor messages out";
             this.btnMonOut.Click += new System.EventHandler(this.BtnMonOut_Click);
             // 
             // btnWrap

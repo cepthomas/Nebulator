@@ -14,12 +14,12 @@ List<Point> lines = new List<Point>();
 public override void setup()
 {
     // Variables
-    COL1 = createVariable("color", 200);
-    INITANG = createVariable("iang", -3963, On_INITANG);
+    COL1 = createVariable("color", 200, 0, 255);
+    INITANG = createVariable("iang", -3963, -5000, 0, On_INITANG);
 
     // Levers
-    createLever(0, 255, COL1);
-    createLever(-5000, 0, INITANG);
+    createLever(COL1);
+    createLever(INITANG);
 
     genLSys(-1.359672, -0.138235, INITANG.Value, 14.11);
     print("setup()");

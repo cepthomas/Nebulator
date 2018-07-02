@@ -45,10 +45,10 @@ public override void setupNeb()
     const int WHEN1 = 8;
 
     // All the neb variables.
-    COL1 = createVariable("color", 200, On_COL1);
-    KPITCH = createVariable("pitch", 8192); // center is 8192
-    MOD1 = createVariable("mod", 127, On_MOD1);
-    KNOTE = createVariable("note", 127, On_KNOTE);
+    COL1 = createVariable("color", 200, 0, 255, On_COL1);
+    KPITCH = createVariable("pitch", 8192, 0, 16383); // center is 8192
+    MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
+    KNOTE = createVariable("note", 60, -127, 127, On_KNOTE);
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -63,9 +63,9 @@ public override void setupNeb()
     createControllerIn(KEYS, 4, COL1);
     createControllerIn(KEYS, PITCH_CTL, KPITCH);
     createControllerIn(KEYS, NOTE_CTL, KNOTE);
-    createLever(0, 255, COL1);
-    createLever(0, 16383, KPITCH); // max range TODO or spec in var? then NControlPoint doesn't need min/max 
-    createLever(0, 255, MOD1);
+    createLever(COL1);
+    createLever(KPITCH);
+    createLever(MOD1);
 
     // Create sequences, add notes/chords/funcs.
     SEQ1 = createSequence(8);

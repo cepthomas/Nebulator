@@ -107,8 +107,8 @@
             this.killMidiToolStripMenuItem.Name = "killMidiToolStripMenuItem";
             this.killMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.killMidiToolStripMenuItem.Text = "Kill Midi";
-            this.killMidiToolStripMenuItem.ToolTipText = "Instant stop all midi";
-            this.killMidiToolStripMenuItem.Click += new System.EventHandler(this.KillMidi_Click);
+            this.killMidiToolStripMenuItem.ToolTipText = "Instant stop all devices";
+            this.killMidiToolStripMenuItem.Click += new System.EventHandler(this.Kill_Click);
             // 
             // pianoToolStripMenuItem
             // 
