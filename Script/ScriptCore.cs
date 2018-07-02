@@ -58,8 +58,8 @@ namespace Nebulator.Script
         #endregion
 
         #region Things needed by compiled script
-        public const int PITCH_CTL = -1;
-        public const int NOTE_CTL = -2;
+        public const int PITCH_CTL = ControllerType.PITCH;
+        public const int NOTE_CTL = ControllerType.NOTE;
         #endregion
 
         #region Properties

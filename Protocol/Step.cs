@@ -7,7 +7,7 @@ using Nebulator.Common;
 
 namespace Nebulator.Protocol
 {
-    /// <summary>Container for special controller types encoded in ControllerId. TODO consolidate with ScriptCore consts.</summary>
+    /// <summary>Special controller types encoded in ControllerId.</summary>
     public class ControllerType
     {
         public const int PITCH = -1;
@@ -75,9 +75,6 @@ namespace Nebulator.Protocol
         /// <summary>The default note.</summary>
         public int NoteNumber { get; set; }
 
-        /// <summary>The possibly modified NoteNumber.</summary>
-        public int NoteNumberToPlay { get; set; }
-
         /// <summary>Velocity.</summary>
         public int Velocity { get; set; } = 64; // seems to be standard default.
 
@@ -92,7 +89,7 @@ namespace Nebulator.Protocol
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepNoteOff: {base.ToString()} NoteNumberToPlay:{NoteNumberToPlay}";
+            return $"StepNoteOff: {base.ToString()} NoteNumber:{NoteNumber}";
         }
     }
 
@@ -102,7 +99,7 @@ namespace Nebulator.Protocol
     ///   - pitch (rather than have a separate type)
     ///   - notes that can be used as control inputs
     /// </summary>
-    public class StepControllerChange : Step // TODO also noteon/off.
+    public class StepControllerChange : Step
     {
         /// <summary>Specific controller. See also specials in ControllerType.</summary>
         public int ControllerId { get; set; } = 0;

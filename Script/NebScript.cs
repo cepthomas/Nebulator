@@ -176,8 +176,7 @@ namespace Nebulator.Script
                     StepNoteOff step = new StepNoteOff()
                     {
                         Channel = track.Channel,
-                        NoteNumber = notenum,
-                        NoteNumberToPlay = notenum
+                        NoteNumber = notenum
                     };
 
                     Protocol.Send(step);

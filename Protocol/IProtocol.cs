@@ -25,7 +25,7 @@ namespace Nebulator.Protocol
         public string Message { get; set; } = null;
     }
 
-    /// <summary>What it can do. Self explanatory. TODO all needed?</summary>
+    /// <summary>What it can do. Self explanatory. TODO all needed now?</summary>
     public class ProtocolCaps
     {
         public int MaxChannels { get; set; }

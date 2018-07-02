@@ -701,41 +701,40 @@ namespace Nebulator
 
                 if (_script != null && e.Step != null)
                 {
-                    switch (e.Step)
+                    if(e.Step is StepNoteOn || e.Step is StepNoteOff)
                     {
-                        case StepNoteOn stt: // TODO also noteon/off.
+                        int channel = (e.Step as Step).Channel;
+                        // Dig out the note number. Note sign change for note off.
+                        int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
+
+                        // Process through our list of inputs of interest.
+                        foreach (NControlPoint ctlpt in DynamicElements.InputControls)
+                        {
+                            if (ctlpt.ControllerId == ControllerType.NOTE && ctlpt.Track.Channel == channel)
                             {
-
+                                // Add to our list for processing at the next tock.
+                                ctlpt.BoundVar.Value = value;
+                                _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
+                                e.Handled = true;
                             }
-                            break;
+                        }
+                    }
+                    else if(e.Step is StepControllerChange)
+                    {
+                        // Control change
+                        StepControllerChange scc = e.Step as StepControllerChange;
 
-                        case StepNoteOff stt:
+                        // Process through our list of inputs of interest.
+                        foreach (NControlPoint ctlpt in DynamicElements.InputControls)
+                        {
+                            if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
                             {
-
+                                // Add to our list for processing at the next tock.
+                                ctlpt.BoundVar.Value = scc.Value;
+                                _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
+                                e.Handled = true;
                             }
-                            break;
-
-                        case StepControllerChange stt:
-                            {
-                                // Control change
-                                StepControllerChange scc = e.Step as StepControllerChange;
-
-                                // Process through our list of inputs of interest.
-                                foreach (NControlPoint ctlpt in DynamicElements.InputControls)
-                                {
-                                    if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
-                                    {
-                                        // Add to our list for processing at the next tock.
-                                        ctlpt.BoundVar.Value = scc.Value;
-                                        _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
-                                        e.Handled = true;
-                                    }
-                                }
-                            }
-                            break;
-
-                        default:
-                            break;
+                        }
                     }
                 }
             });
@@ -1241,7 +1240,6 @@ namespace Nebulator
                 {
                     Channel = 2,
                     NoteNumber = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
-                    NoteNumberToPlay = Utils.Constrain(e.NoteId, 0, _midiInterface.Caps.MaxNote),
                     Velocity = 64
                 };
                 _midiInterface.Send(step);

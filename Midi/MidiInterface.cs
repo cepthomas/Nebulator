@@ -153,7 +153,6 @@ namespace Nebulator.Midi
                                     {
                                         Channel = stt.Channel,
                                         NoteNumber = Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                                        NoteNumberToPlay = stt.NoteNumber,
                                         Expiry = stt.Duration.TotalTocks
                                     });
                                 }
@@ -163,7 +162,7 @@ namespace Nebulator.Midi
                         case StepNoteOff stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.Channel, MidiCommandCode.NoteOff,
-                                    Utils.Constrain(stt.NoteNumberToPlay, Caps.MinNote, Caps.MaxNote),
+                                    Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                                     Utils.Constrain(stt.Velocity, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
                             }
@@ -246,7 +245,6 @@ namespace Nebulator.Midi
                                 NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                                 Velocity = 0
                             };
-
                         }
                         else
                         {
