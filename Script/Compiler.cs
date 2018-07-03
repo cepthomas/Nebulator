@@ -112,7 +112,7 @@ namespace Nebulator.Script
             _instrumentDefs.Clear();
             _drumDefs.Clear();
             _controllerDefs.Clear();
-            NoteUtils.ScriptNoteDefs.Clear();
+            NoteUtils.Init();
             DynamicElements.Clear();
             Errors.Clear();
 

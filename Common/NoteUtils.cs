@@ -9,12 +9,14 @@ using MoreLinq;
 
 namespace Nebulator.Common
 {
-    public class NoteUtils //TODO make not static?
+    public class NoteUtils
     {
-        #region Fields
+        #region Constants
         const int NOTES_PER_OCTAVE = 12;
         const string UNKNOWN_CHORD = Utils.UNKNOWN_STRING;
+        #endregion
 
+        #region Fields
         /// <summary>The chord definitions from ScriptDefinitions.md. Key is chord name, Value is list of constituent notes.</summary>
         static LazyCollection<List<string>> _stockChordDefs = new LazyCollection<List<string>>();
 
@@ -23,11 +25,9 @@ namespace Nebulator.Common
 
         /// <summary>The midi drum definitions from ScriptDefinitions.md. Key is midi drum name, value is note num.</summary>
         static LazyCollection<List<string>> _stockDrumDefs = new LazyCollection<List<string>>();
-        #endregion
 
-        #region Properties
-        /// <summary>Chord and scale definitions from the script. Value is list of constituent notes.</summary>
-        public static LazyCollection<List<string>> ScriptNoteDefs { get; set; } = new LazyCollection<List<string>>();
+        /// <summary>Chord and scale definitions added from the script. Value is list of constituent notes.</summary>
+        static LazyCollection<List<string>> _scriptNoteDefs { get; set; } = new LazyCollection<List<string>>();
         #endregion
 
         #region Public functions
@@ -39,7 +39,8 @@ namespace Nebulator.Common
             _stockChordDefs.Clear();
             _stockScaleDefs.Clear();
             _stockDrumDefs.Clear();
-            ScriptNoteDefs.Clear();
+            _scriptNoteDefs.Clear();
+            _scriptNoteDefs.AllowOverwrite = true;
 
             ///// Read the defs file.
             LazyCollection<List<string>> section = null;
@@ -81,6 +82,16 @@ namespace Nebulator.Common
                     section = null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Add a chord or scale definition from the script.
+        /// </summary>
+        /// <param name="name">"MY_CHORD"</param>
+        /// <param name="parts">"1 4 6 b13"</param>
+        public static void AddScriptNoteDef(string name, string parts)
+        {
+            _scriptNoteDefs.Add(name, parts.SplitByToken(" "));
         }
 
         /// <summary>
@@ -133,7 +144,7 @@ namespace Nebulator.Common
 
                     if(chordParts == null)
                     {
-                        chordParts = ScriptNoteDefs[parts[1]];
+                        chordParts = _scriptNoteDefs[parts[1]];
                     }
 
                     var chordNotes = chordParts[0].SplitByToken(" ");
@@ -183,7 +194,7 @@ namespace Nebulator.Common
             var notes = new List<int>();
 
             // Dig out the root note.
-            List<int> keyNotes = ParseNoteString(key); //, scriptNoteDefs);
+            List<int> keyNotes = ParseNoteString(key);
 
             if (keyNotes.Count > 0)
             {
@@ -192,7 +203,7 @@ namespace Nebulator.Common
 
                 if (scaleDef == null)
                 {
-                    scaleDef = ScriptNoteDefs[scale];
+                    scaleDef = _scriptNoteDefs[scale];
                 }
 
                 if (scaleDef != null && scaleDef.Count >= 1)

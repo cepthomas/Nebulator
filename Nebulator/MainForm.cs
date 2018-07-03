@@ -167,8 +167,6 @@ namespace Nebulator
 
             levers.LeverChangeEvent += Levers_Changed;
 
-            NoteUtils.Init();
-
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
 
             // Catches runtime errors during drawing.

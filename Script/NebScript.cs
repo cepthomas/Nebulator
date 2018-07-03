@@ -259,7 +259,7 @@ namespace Nebulator.Script
         /// <param name="parts">"1 4 6 b13"</param>
         protected void createNotes(string name, string parts)
         {
-            NoteUtils.ScriptNoteDefs.Add(name, parts.SplitByToken(" "));
+            NoteUtils.AddScriptNoteDef(name, parts);
         }
 
         /// <summary>Convert the argument into numbered notes.</summary>
