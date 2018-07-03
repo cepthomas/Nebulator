@@ -61,7 +61,7 @@ namespace Nebulator.Script
         {
             controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
             NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
-            DynamicElements.InputControls.Add(mp);
+            InputControls.Add(mp);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Nebulator.Script
         {
             controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
             NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
-            DynamicElements.OutputControls.Add(mp);
+            OutputControls.Add(mp);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Nebulator.Script
         protected void createLever(NVariable bound)
         {
             NControlPoint lp = new NControlPoint() { BoundVar = bound };
-            DynamicElements.Levers.Add(lp);
+            Levers.Add(lp);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Nebulator.Script
         protected NVariable createVariable(string name, int val, int min, int max, Action handler = null)
         {
             NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
-            DynamicElements.Variables.Add(nv);
+            Variables.Add(nv);
             return nv;
         }
 
@@ -109,7 +109,7 @@ namespace Nebulator.Script
         protected NSequence createSequence(int length)
         {
             NSequence nseq = new NSequence() { Length = length };
-            DynamicElements.Sequences.Add(nseq);
+            Sequences.Add(nseq);
             return nseq;
         }
 
@@ -122,7 +122,7 @@ namespace Nebulator.Script
         protected NSection ceateSection(string name, int start, int length)
         {
             NSection nsec = new NSection() { Name = name, Start = start, Length = length };
-            DynamicElements.Sections.Add(nsec);
+            Sections.Add(nsec);
             return nsec;
         }
 
@@ -137,7 +137,7 @@ namespace Nebulator.Script
         protected NTrack createTrack(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
             NTrack nt = new NTrack() { Name = name, Channel = channel, WobbleVolume = wobvol, WobbleTimeBefore = wobbefore, WobbleTimeAfter = wobafter };
-            DynamicElements.Tracks.Add(nt);
+            Tracks.Add(nt);
             return nt;
         }
 
@@ -148,7 +148,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
         public void sendNote(NTrack track, int inote, int vol, double dur)
         {
-            bool _anySolo = DynamicElements.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
+            bool _anySolo = Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
 
             bool play = track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo);
 

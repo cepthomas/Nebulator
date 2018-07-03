@@ -15,50 +15,6 @@ namespace Nebulator.Script
     public enum TrackState { Normal, Mute, Solo }
 
     /// <summary>
-    /// All the dynamic stuff gleaned from the script that we might want at runtime.
-    /// </summary>
-    public class DynamicElements //TODO make not static?
-    {
-        #region Properties - things defined in the script that MainForm needs
-        /// <summary>Control inputs.</summary>
-        public static List<NControlPoint> InputControls { get; set; } = new List<NControlPoint>();
-
-        /// <summary>Control outputs.</summary>
-        public static List<NControlPoint> OutputControls { get; set; } = new List<NControlPoint>();
-
-        /// <summary>Levers.</summary>
-        public static List<NControlPoint> Levers { get; set; } = new List<NControlPoint>();
-
-        /// <summary>Levers.</summary>
-        public static List<NVariable> Variables { get; set; } = new List<NVariable>();
-
-        /// <summary>All sequences.</summary>
-        public static List<NSequence> Sequences { get; set; } = new List<NSequence>();
-
-        /// <summary>All sections.</summary>
-        public static List<NSection> Sections { get; set; } = new List<NSection>();
-
-        /// <summary>All tracks.</summary>
-        public static List<NTrack> Tracks { get; set; } = new List<NTrack>();
-        #endregion
-
-        /// <summary>Don't even think about doing this.</summary>
-        DynamicElements() { }
-
-        /// <summary>Reset everything.</summary>
-        public static void Clear()
-        {
-            InputControls.Clear();
-            OutputControls.Clear();
-            Levers.Clear();
-            Variables.Clear();
-            Sequences.Clear();
-            Sections.Clear();
-            Tracks.Clear();
-        }
-    }
-
-    /// <summary>
     /// One bound variable.
     /// </summary>
     public class NVariable

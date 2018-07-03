@@ -21,19 +21,17 @@ namespace Nebulator.Script
         bool _disposed = false;
         #endregion
 
-        #region Things needed by compiled script
+        #region Constants - needed by compiled script
         public const int PITCH_CTL = ControllerType.PITCH;
         public const int NOTE_CTL = ControllerType.NOTE;
         #endregion
 
-        #region Properties
+        #region Properties - general
         /// <summary>Protocol to use.</summary>
         public IProtocol Protocol { get; set; } = null;
+        #endregion
 
-        ///// <summary>Shared context.</summary>
-        //public RuntimeContext Context { get; set; } = new RuntimeContext();
-
-        #region Things shared between host and script at runtime
+        #region Properties - shared between host and script at runtime
         /// <summary>Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
 
@@ -56,8 +54,27 @@ namespace Nebulator.Script
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
         #endregion
 
+        #region Properties - things defined in the script that MainForm needs
+        /// <summary>Control inputs.</summary>
+        public List<NControlPoint> InputControls { get; set; } = new List<NControlPoint>();
 
+        /// <summary>Control outputs.</summary>
+        public List<NControlPoint> OutputControls { get; set; } = new List<NControlPoint>();
 
+        /// <summary>Levers.</summary>
+        public List<NControlPoint> Levers { get; set; } = new List<NControlPoint>();
+
+        /// <summary>Levers.</summary>
+        public List<NVariable> Variables { get; set; } = new List<NVariable>();
+
+        /// <summary>All sequences.</summary>
+        public List<NSequence> Sequences { get; set; } = new List<NSequence>();
+
+        /// <summary>All sections.</summary>
+        public List<NSection> Sections { get; set; } = new List<NSection>();
+
+        /// <summary>All tracks.</summary>
+        public List<NTrack> Tracks { get; set; } = new List<NTrack>();
         #endregion
 
         #region Lifecycle

@@ -113,7 +113,6 @@ namespace Nebulator.Script
             _drumDefs.Clear();
             _controllerDefs.Clear();
             NoteUtils.Init();
-            DynamicElements.Clear();
             Errors.Clear();
 
             if (nebfn != Utils.UNKNOWN_STRING && File.Exists(nebfn))

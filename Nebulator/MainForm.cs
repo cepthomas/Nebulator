@@ -235,7 +235,7 @@ namespace Nebulator
                     _nebpVals.SetValue("master", "sequence", chkSeq.Checked);
                     _nebpVals.SetValue("master", "ui", chkUi.Checked);
                     _nebpVals.SetValue("master", "seq", chkSeq.Checked);
-                    DynamicElements.Tracks.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
+                    _script.Tracks.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
 
@@ -422,7 +422,7 @@ namespace Nebulator
             // Convert compiled stuff to step collection.
             _compiledSteps.Clear();
 
-            foreach (NSection sect in DynamicElements.Sections)
+            foreach (NSection sect in _script.Sections)
             {
                 // Collect important times.
                 timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
@@ -474,20 +474,26 @@ namespace Nebulator
                 }
             }
 
-            foreach (NTrack t in DynamicElements.Tracks)
+            if(_script != null)
             {
-                // Init from persistence.
-                int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
-                t.Volume = vt == 0 ? 90 : vt; // in case it's new
-
-                TrackControl trk = new TrackControl()
+                foreach (NTrack t in _script.Tracks)
                 {
-                    Location = new Point(x, 0), // txtTime.Top),
-                    BoundTrack = t
-                };
-                trk.TrackChangeEvent += TrackChange_Event;
-                splitContainerMain.Panel1.Controls.Add(trk);
-                x += trk.Width + CONTROL_SPACING;
+                    // Init from persistence.
+                    int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
+                    t.Volume = vt == 0 ? 90 : vt; // in case it's new
+
+                    TrackControl trk = new TrackControl()
+                    {
+                        Location = new Point(x, 0), // txtTime.Top),
+                        BoundTrack = t
+                    };
+                    trk.TrackChangeEvent += TrackChange_Event;
+                    splitContainerMain.Panel1.Controls.Add(trk);
+                    x += trk.Width + CONTROL_SPACING;
+                }
+
+                // Levers.
+                levers.Init(_script.Levers);
             }
 
             ///// Init other controls.
@@ -499,10 +505,6 @@ namespace Nebulator
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
             //ProcessPlay(PlayCommand.StopRewind, false);
-
-            ///// Init the user input area.
-            // Levers.
-            levers.Init(DynamicElements.Levers);
         }
 
         /// <summary>
@@ -557,7 +559,7 @@ namespace Nebulator
             foreach (NVariable var in _ctrlChanges.Values)
             {
                 // Output any out controllers.
-                foreach(NControlPoint c in DynamicElements.OutputControls)
+                foreach(NControlPoint c in _script.OutputControls)
                 {
                     if(c.BoundVar.Name == var.Name)
                     {
@@ -655,12 +657,12 @@ namespace Nebulator
             ///// Local common function /////
             void PlayStep(Step step)
             {
-                if(DynamicElements.Tracks.Count > 0)
+                if(_script.Tracks.Count > 0)
                 {
-                    NTrack track = DynamicElements.Tracks.Where(t => t.Channel == step.Channel).First();
+                    NTrack track = _script.Tracks.Where(t => t.Channel == step.Channel).First();
 
                     // Is it ok to play now?
-                    bool _anySolo = DynamicElements.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
+                    bool _anySolo = _script.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
                     bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
 
                     if (play)
@@ -707,7 +709,7 @@ namespace Nebulator
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
 
                         // Process through our list of inputs of interest.
-                        foreach (NControlPoint ctlpt in DynamicElements.InputControls)
+                        foreach (NControlPoint ctlpt in _script.InputControls)
                         {
                             if (ctlpt.ControllerId == ControllerType.NOTE && ctlpt.Track.Channel == channel)
                             {
@@ -724,7 +726,7 @@ namespace Nebulator
                         StepControllerChange scc = e.Step as StepControllerChange;
 
                         // Process through our list of inputs of interest.
-                        foreach (NControlPoint ctlpt in DynamicElements.InputControls)
+                        foreach (NControlPoint ctlpt in _script.InputControls)
                         {
                             if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
                             {
@@ -760,12 +762,12 @@ namespace Nebulator
             if (sender is TrackControl)
             {
                 // Check for solos.
-                bool _anySolo = DynamicElements.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = _script.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    DynamicElements.Tracks.ForEach(t => { if (t.State != TrackState.Solo) _device1.Kill(t.Channel); });
+                    _script.Tracks.ForEach(t => { if (t.State != TrackState.Solo) _device1.Kill(t.Channel); });
                 }
             }
         }
@@ -1465,7 +1467,7 @@ namespace Nebulator
         void ExportMidi(string fn)
         {
             Dictionary<int, string> tracks = new Dictionary<int, string>();
-            DynamicElements.Tracks.ForEach(t => tracks.Add(t.Channel, t.Name));
+            _script.Tracks.ForEach(t => tracks.Add(t.Channel, t.Name));
 
             // Convert speed/bpm to sec per tick.
             double ticksPerMinute = potSpeed.Value; // bpm
