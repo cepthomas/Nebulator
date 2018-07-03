@@ -11,42 +11,6 @@ using Nebulator.Protocol;
 
 namespace Nebulator.Script
 {
-    /// <summary>
-    /// Things shared between host and script at runtime. TODO make not static?
-    /// </summary>
-    public class RuntimeContext
-    {
-        /// <summary>Main -> Script</summary>
-        public static Time StepTime { get; set; } = new Time();
-
-        /// <summary>Main -> Script</summary>
-        public static bool Playing { get; set; } = false;
-
-        /// <summary>Main -> Script</summary>
-        public static float RealTime { get; set; } = 0.0f;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public static float Speed { get; set; } = 0.0f;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public static int Volume { get; set; } = 0;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public static int FrameRate { get; set; } = 0;
-
-        /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
-        public static StepCollection RuntimeSteps { get; private set; } = new StepCollection();
-
-        /// <summary>Don't even try to do this.</summary>
-        RuntimeContext() { }
-
-        ///// <summary>Reset everything.</summary>
-        //public static void Clear()
-        //{
-        //    RuntimeSteps.Clear();
-        //}
-    }
-
     public partial class ScriptCore : IDisposable
     {
         #region Fields
@@ -64,7 +28,36 @@ namespace Nebulator.Script
 
         #region Properties
         /// <summary>Protocol to use.</summary>
-        public IProtocol Protocol { get; set; }
+        public IProtocol Protocol { get; set; } = null;
+
+        ///// <summary>Shared context.</summary>
+        //public RuntimeContext Context { get; set; } = new RuntimeContext();
+
+        #region Things shared between host and script at runtime
+        /// <summary>Main -> Script</summary>
+        public Time StepTime { get; set; } = new Time();
+
+        /// <summary>Main -> Script</summary>
+        public bool Playing { get; set; } = false;
+
+        /// <summary>Main -> Script</summary>
+        public float RealTime { get; set; } = 0.0f;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public float Speed { get; set; } = 0.0f;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public int Volume { get; set; } = 0;
+
+        /// <summary>Main -> Script -> Main</summary>
+        public int FrameRate { get; set; } = 0;
+
+        /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
+        public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
+        #endregion
+
+
+
         #endregion
 
         #region Lifecycle

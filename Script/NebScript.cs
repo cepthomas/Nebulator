@@ -15,28 +15,28 @@ namespace Nebulator.Script
     {
         #region User script properties
         /// <summary>Sound is playing.</summary>
-        public bool playing { get { return RuntimeContext.Playing; } }
+        public bool playing { get { return Playing; } }
 
         /// <summary>Current Nebulator step time.</summary>
-        public Time stepTime { get { return RuntimeContext.StepTime; } }
+        public Time stepTime { get { return StepTime; } }
 
         /// <summary>Current Nebulator Tick.</summary>
-        public int tick { get { return RuntimeContext.StepTime.Tick; } }
+        public int tick { get { return StepTime.Tick; } }
 
         /// <summary>Current Nebulator Tock.</summary>
-        public int tock { get { return RuntimeContext.StepTime.Tock; } }
+        public int tock { get { return StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return RuntimeContext.RealTime; } }
+        public float now { get { return RealTime; } }
 
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Time.TOCKS_PER_TICK; } }
 
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
-        public float speed { get { return RuntimeContext.Speed; } set { RuntimeContext.Speed = value; } }
+        public float speed { get { return Speed; } set { Speed = value; } }
 
         /// <summary>Nebulator master Volume.</summary>
-        public int volume { get { return RuntimeContext.Volume; } set { RuntimeContext.Volume = value; } }
+        public int volume { get { return Volume; } set { Volume = value; } }
 
         /// <summary>Indicates using internal synth.</summary>
         public bool winGm { get { return UserSettings.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
@@ -248,8 +248,8 @@ namespace Nebulator.Script
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(NTrack track, NSequence seq)
         {
-            StepCollection scoll = ConvertToSteps(track, seq, RuntimeContext.StepTime.Tick);
-            RuntimeContext.RuntimeSteps.Add(scoll);
+            StepCollection scoll = ConvertToSteps(track, seq, StepTime.Tick);
+            RuntimeSteps.Add(scoll);
         }
 
         /// <summary>

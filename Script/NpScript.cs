@@ -159,8 +159,8 @@ namespace Nebulator.Script
         //public int displayDensity() { NotImpl(nameof(displayDensity)); }
         public bool focused { get; internal set; }
         public int frameCount { get; internal set; } = 1;
-        public int frameRate() { return RuntimeContext.FrameRate; }
-        public void frameRate(int num) { RuntimeContext.FrameRate = num; }
+        public int frameRate() { return FrameRate; }
+        public void frameRate(int num) { FrameRate = num; }
         public void fullScreen() { NotImpl(nameof(fullScreen), "Size is set by main form."); }
         public int height { get; internal set; }
         //public void noCursor() { NotImpl(nameof(noCursor)); }
@@ -516,7 +516,7 @@ namespace Nebulator.Script
         public int day() { return DateTime.Now.Day; }
         public int hour() { return DateTime.Now.Hour; }
         public int minute() { return DateTime.Now.Minute; }
-        public int millis() { return (int)(RuntimeContext.RealTime * 1000); }
+        public int millis() { return (int)(RealTime * 1000); }
         public int month() { return DateTime.Now.Month; }
         public int second() { return DateTime.Now.Second; }
         public int year() { return DateTime.Now.Year; }

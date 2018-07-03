@@ -600,8 +600,8 @@ namespace Nebulator
                 //}
 
                 // Process any sequence steps the script added.
-                RuntimeContext.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                RuntimeContext.RuntimeSteps.DeleteSteps(_stepTime);
+                _script.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                _script.RuntimeSteps.DeleteSteps(_stepTime);
 
                 // Now do the compiled steps.
                 if (chkSeq.Checked)
@@ -787,13 +787,13 @@ namespace Nebulator
         /// </summary>
         void InitRuntime()
         {
-            RuntimeContext.Playing = chkPlay.Checked;
-            RuntimeContext.StepTime = _stepTime;
-            RuntimeContext.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
-            RuntimeContext.Speed = (float)potSpeed.Value;
-            RuntimeContext.Volume = sldVolume.Value;
-            RuntimeContext.FrameRate = _frameRate;
-            RuntimeContext.RuntimeSteps.Clear();
+            _script.Playing = chkPlay.Checked;
+            _script.StepTime = _stepTime;
+            _script.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
+            _script.Speed = (float)potSpeed.Value;
+            _script.Volume = sldVolume.Value;
+            _script.FrameRate = _frameRate;
+            _script.RuntimeSteps.Clear();
         }
 
         /// <summary>
@@ -801,20 +801,20 @@ namespace Nebulator
         /// </summary>
         void ProcessRuntime()
         {
-            if (RuntimeContext.Speed != potSpeed.Value)
+            if (_script.Speed != potSpeed.Value)
             {
-                potSpeed.Value = RuntimeContext.Speed;
+                potSpeed.Value = _script.Speed;
                 SetSpeedTimerPeriod();
             }
 
-            if (RuntimeContext.Volume != sldVolume.Value)
+            if (_script.Volume != sldVolume.Value)
             {
-                sldVolume.Value = RuntimeContext.Volume;
+                sldVolume.Value = _script.Volume;
             }
 
-            if (RuntimeContext.FrameRate != _frameRate)
+            if (_script.FrameRate != _frameRate)
             {
-                _frameRate = RuntimeContext.FrameRate;
+                _frameRate = _script.FrameRate;
                 SetUiTimerPeriod();
             }
         }
