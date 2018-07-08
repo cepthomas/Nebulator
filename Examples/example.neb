@@ -219,7 +219,7 @@ public override void step()
 
 public void On_PITCH()
 {
-    //print("MODN changed to", MODN.Value);
+    //print(MODN.Name, "changed to", MODN.Value);
 }
 
 void algoDynamic()

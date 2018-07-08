@@ -4,6 +4,7 @@
     "master.speed": 44.0,
     "master.sequence": true,
     "master.ui": true,
+    "master.seq": true,
     "sound.volume": 90
   }
 }

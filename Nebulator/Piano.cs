@@ -61,7 +61,8 @@ namespace Nebulator
             {
                 int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MIDDLE_C).First());
 
-                foreach (string l in File.ReadLines(@"Resources\reaper-vkbmap.txt"))
+                string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\reaper-vkbmap.txt");
+                foreach (string l in File.ReadLines(fpath))
                 {
                     List<string> parts = l.SplitByToken(" ");
 

@@ -28,6 +28,8 @@ public override void setup()
 {
      //size (640, 360);
 
+    frameRate(1);
+
     // Instantiate arrays
     cells = new int[width / cellSize, height / cellSize];
     cellsBuffer = new int[width / cellSize, height / cellSize];

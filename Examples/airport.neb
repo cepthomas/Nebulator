@@ -90,7 +90,7 @@ public override void step()
 
 public void On_MODF()
 {
-    print("MODF changed to", MODF.Value);
+    print(MODF.Name, "changed to", MODF.Value);
 }
 
 public override void draw()

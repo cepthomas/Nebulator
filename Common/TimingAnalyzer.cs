@@ -14,7 +14,7 @@ namespace Nebulator.Common
         Stopwatch _watch = new Stopwatch();
 
         /// <summary>Last grab time for calculating diff.</summary>
-        long _lastTicks = -1; //XXX
+        long _lastTicks = -1;
         #endregion
 
         #region Properties

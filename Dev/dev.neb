@@ -109,7 +109,7 @@ public override void setup()
     noStroke();
     frameRate(1);
 
-    COL1.Value = 999;
+    COL1.Value = 100;
 
     tileWidth = width / tileCountX;
     tileHeight = height / tileCountY;
@@ -158,12 +158,12 @@ public override void keyPressed()
 
 public void On_COL1()
 {
-    print("COL1 changed to ", COL1.Value);
+    print(COL1.Name, "changed to", COL1.Value);
 }
 
 public void On_MOD1()
 {
-    print("MOD1 changed to ", MOD1.Value);
+    print(MOD1.Name, "changed to", MOD1.Value);
 
     // Send a control change.
     sendController(KEYS, 1, MOD1.Value);

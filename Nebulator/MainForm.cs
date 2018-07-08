@@ -17,9 +17,47 @@ using Nebulator.Server;
 
 
 // TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures? Or make everything static?
-// TODO still don't like the ui/sound start/stop controls...
+/*
+public partial class dev : ScriptCore
+{
+    protected static ScriptCore s;
+    public dev() : base()
+    {
+        s = this;
+    }
+}
+C:\Dev\Nebulator\Dev\scale.neb:
+   15:         scaleNotes = s.getScaleNotes(scale, root);
+   46:         int r = s.random(totalWeight);
+   61:         int oct = s.random(0, 3) - 1;
+C:\Dev\Nebulator\Examples\boids.neb:
+  206:         float theta = velocity.heading() + s.radians(90);
+  208:         s.fill(200, 100, 50);
+  209:         s.stroke(255);
+  210:         s.pushMatrix();
+  211:         s.translate(position.x, position.y);
+  212:         s.rotate(theta);
+  213:         s.beginShape();  // was: beginShape(TRIANGLES);
+  214:         s.vertex(0, -r * 2);
+  215:         s.vertex(-r, r * 2);
+  216:         s.vertex(r, r * 2);
+  217:         s.endShape(CLOSE);
+  218:         s.popMatrix();
+  224:         if (position.x < -r) position.x = s.width + r;
+  225:         if (position.y < -r) position.y = s.height + r;
+  226:         if (position.x > s.width + r) position.x = -r;
+  227:         if (position.y > s.height + r) position.y = -r;
+C:\Dev\Nebulator\Examples\utils.neb:
+   39:         return _thing * s.random(value);
+*/
+
+
+
+// TODO still don't like the ui/sound start/stop controls. chkUi, chkSeq
+
 // TODO test all changed midi/controller/pitch/noteonoff stuff.
-// IProtocol _device1. TODO support multiple and OSC. Need to change DynamicElements.XXXControls, UserSettings, etc too.
+
+// TODO support multiple and OSC IProtocol. Need to change InputControls/OutputControls, UserSettings, etc too.
 
 
 namespace Nebulator
@@ -103,7 +141,7 @@ namespace Nebulator
         public MainForm()
         {
             // Need to load settings before creating controls in MainForm_Load().
-            string appDir = Utils.GetAppDir();
+            string appDir = Utils.GetAppDataDir();
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
             UserSettings.Load(appDir);
@@ -161,6 +199,8 @@ namespace Nebulator
             #endregion
 
             #region Misc setups
+            KeyPreview = true; // for routing kbd strokes properly
+
             InitControls();
 
             _watcher.FileChangeEvent += Watcher_Changed;
@@ -187,31 +227,32 @@ namespace Nebulator
             }
             #endregion
 
-            #region Debug stuff
-#if _DEV
-            //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.neb");
-            OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-            //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+#if _DEV // Debug stuff
+            if (args.Count() <= 1)
+            {
+                //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
+                OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
 
-            //// Server debug stuff
-            //TestClient client = new TestClient();
-            //Task.Run(async () => { await client.Run(); });
+                //// Server debug stuff
+                //TestClient client = new TestClient();
+                //Task.Run(async () => { await client.Run(); });
 
 
-            //ExportMidi("test.mid");
+                //ExportMidi("test.mid");
 
-            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-            //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
-            //Clipboard.SetText(string.Join(Environment.NewLine, v));
+                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
+                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+                //Clipboard.SetText(string.Join(Environment.NewLine, v));
+            }
 #endif
-            #endregion
         }
 
         /// <summary>
@@ -830,7 +871,7 @@ namespace Nebulator
 
             // Locate the offending frame.
             string srcFile = Utils.UNKNOWN_STRING;
-            int srcLine = -1; //XXX
+            int srcLine = -1;
             StackTrace st = new StackTrace(args.Exception, true);
             StackFrame sf = null;
 
@@ -878,7 +919,7 @@ namespace Nebulator
                 {
                     ErrorType = ScriptError.ScriptErrorType.Runtime,
                     SourceFile = "",
-                    LineNumber = -1, //XXX
+                    LineNumber = -1,
                     Message = args.Exception.Message
                 };
 
@@ -942,11 +983,12 @@ namespace Nebulator
                                 // Running on the UI thread
                                 SetCompileStatus(true);
                                 AddToRecentDefs(fn);
-                                Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
 
                                 Compile();
                             });
                         }
+
+                        Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
                     }
                     else
                     {
@@ -1071,7 +1113,7 @@ namespace Nebulator
         /// </summary>
         void InitLogging()
         { 
-            string appDir = Utils.GetAppDir();
+            string appDir = Utils.GetAppDataDir();
 
             FileInfo fi = new FileInfo(Path.Combine(appDir, "log.txt"));
             if(fi.Exists && fi.Length > 100000)
@@ -1121,7 +1163,7 @@ namespace Nebulator
                 tv.Colors.Add("|_WARN|", Color.Plum);
                 tv.Colors.Add("|_INFO|", Color.LightGreen);
 
-                string appDir = Utils.GetAppDir();
+                string appDir = Utils.GetAppDataDir();
                 string logFilename = Path.Combine(appDir, "log.txt");
                 using (new WaitCursor())
                 {
@@ -1277,6 +1319,7 @@ namespace Nebulator
                         {
                             _startTime = DateTime.Now;
                             SetSpeedTimerPeriod();
+                            chkPlay.Checked = true;
                         }
                         else
                         {
@@ -1284,7 +1327,7 @@ namespace Nebulator
                             ret = false;
                         }
                     }
-                    else
+                    else // from the server
                     {
                         if (_needCompile)
                         {
@@ -1292,19 +1335,16 @@ namespace Nebulator
                         }
                         else
                         {
-                            chkPlay.Checked = true;
                             _startTime = DateTime.Now;
                             SetSpeedTimerPeriod();
+                            chkPlay.Checked = true;
                         }
                     }
                     break;
 
                 case PlayCommand.Stop:
-                    if (!userAction)
-                    {
-                        chkPlay.Checked = false;
-                    }
-                    
+                    chkPlay.Checked = false;
+
                     // Send midi stop all notes just in case.
                     _device1.Kill();
                     break;

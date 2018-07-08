@@ -52,7 +52,8 @@ namespace Nebulator.Common
             // Drum:
             // AcousticBassDrum | 35
 
-            foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md"))
+            string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\ScriptDefinitions.md");
+            foreach (string sl in File.ReadAllLines(fpath))
             {
                 List<string> parts = sl.SplitByToken("|");
 

@@ -20,7 +20,7 @@ namespace Nebulator.Script
     public class NVariable
     {
         #region Properties
-        /// <summary>Var name.</summary>
+        /// <summary>Variable name - as shown in ui.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Value as int. It is initialized from the script supplied value.</summary>

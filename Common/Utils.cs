@@ -72,10 +72,20 @@ namespace Nebulator.Common
         /// Get the user app dir.
         /// </summary>
         /// <returns></returns>
-        public static string GetAppDir()
+        public static string GetAppDataDir()
         {
             string localdir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             return Path.Combine(localdir, "Nebulator");
+        }
+
+        /// <summary>
+        /// Get the executable dir.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetExeDir()
+        {
+            string sdir = Application.StartupPath;
+            return sdir;
         }
 
         /// <summary>

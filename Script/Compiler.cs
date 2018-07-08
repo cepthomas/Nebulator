@@ -155,7 +155,8 @@ namespace Nebulator.Script
                 // Read the file.
                 Dictionary<string, string> section = new Dictionary<string, string>();
 
-                foreach (string sl in File.ReadAllLines(@"Resources\ScriptDefinitions.md"))
+                string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\ScriptDefinitions.md");
+                foreach (string sl in File.ReadAllLines(fpath))
                 {
                     List<string> parts = sl.SplitByToken("|");
 
@@ -420,8 +421,8 @@ namespace Nebulator.Script
                             Errors.Add(new ScriptError()
                             {
                                 ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.Warning : ScriptError.ScriptErrorType.Error,
-                                SourceFile = "None",
-                                LineNumber = -1, //XXX
+                                SourceFile = "NoSourceFile",
+                                LineNumber = -1,
                                 Message = err.ErrorText
                             });
                         }
