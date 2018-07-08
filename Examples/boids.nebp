@@ -2,9 +2,6 @@
   "Values": {
     "master.volume": 90,
     "master.speed": 93.0,
-    "master.sequence": false,
-    "master.ui": true,
-    "master.seq": false,
     "keys.volume": 90,
     "bass.volume": 90,
     "synth.volume": 90

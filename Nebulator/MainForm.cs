@@ -233,11 +233,11 @@ namespace Nebulator
                 //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
-                OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+                OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
 
 
@@ -273,9 +273,6 @@ namespace Nebulator
                     _nebpVals.Clear();
                     _nebpVals.SetValue("master", "volume", sldVolume.Value);
                     _nebpVals.SetValue("master", "speed", potSpeed.Value);
-                    _nebpVals.SetValue("master", "sequence", chkSeq.Checked);
-                    _nebpVals.SetValue("master", "ui", chkUi.Checked);
-                    _nebpVals.SetValue("master", "seq", chkSeq.Checked);
                     _script.Tracks.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
@@ -540,8 +537,6 @@ namespace Nebulator
             ///// Init other controls.
             potSpeed.Value = Convert.ToInt32(_nebpVals.GetValue("master", "speed"));
             int mv = Convert.ToInt32(_nebpVals.GetValue("master", "volume"));
-            chkSeq.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "sequence"));
-            chkUi.Checked = Convert.ToBoolean(_nebpVals.GetValue("master", "ui"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
@@ -645,18 +640,14 @@ namespace Nebulator
                 _script.RuntimeSteps.DeleteSteps(_stepTime);
 
                 // Now do the compiled steps.
-                if (chkSeq.Checked)
-                {
-                    _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                }
-                timeMaster.ShowProgress = chkSeq.Checked;
+                _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
 
                 ///// Bump time.
                 _stepTime.Advance();
 
                 ////// Check for end of play.
                 // If no steps or not selected, free running mode so always keep going.
-                if(_compiledSteps.Times.Count() != 0 && chkSeq.Checked)
+                if(_compiledSteps.Times.Count() != 0)
                 {
                     // Check for end and loop condition.
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
@@ -671,7 +662,8 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            if (e.ElapsedTimers.Contains("UI") && chkUi.Checked && !_needCompile)
+//            if (e.ElapsedTimers.Contains("UI") && chkUi.Checked && !_needCompile)
+            if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && !_needCompile)
             {
                 //_tanUi.Arm();
 
@@ -1442,12 +1434,6 @@ namespace Nebulator
             chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-
-            chkSeq.BackColor = UserSettings.TheSettings.BackColor;
-            chkSeq.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-
-            chkUi.BackColor = UserSettings.TheSettings.BackColor;
-            chkUi.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
             potSpeed.ControlColor = UserSettings.TheSettings.IconColor;
             potSpeed.Font = UserSettings.TheSettings.ControlFont;

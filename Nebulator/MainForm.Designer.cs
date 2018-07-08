@@ -31,8 +31,6 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
-            this.chkSeq = new System.Windows.Forms.CheckBox();
-            this.chkUi = new System.Windows.Forms.CheckBox();
             this.btnCompile = new System.Windows.Forms.Button();
             this.timeMaster = new Nebulator.Controls.TimeControl();
             this.sldVolume = new Nebulator.Controls.Slider();
@@ -171,8 +169,6 @@
             // splitContainerMain.Panel1
             // 
             this.splitContainerMain.Panel1.AutoScroll = true;
-            this.splitContainerMain.Panel1.Controls.Add(this.chkSeq);
-            this.splitContainerMain.Panel1.Controls.Add(this.chkUi);
             this.splitContainerMain.Panel1.Controls.Add(this.btnCompile);
             this.splitContainerMain.Panel1.Controls.Add(this.timeMaster);
             this.splitContainerMain.Panel1.Controls.Add(this.sldVolume);
@@ -186,38 +182,12 @@
             this.splitContainerMain.Size = new System.Drawing.Size(826, 556);
             this.splitContainerMain.TabIndex = 14;
             // 
-            // chkSeq
-            // 
-            this.chkSeq.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkSeq.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkSeq.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkSeq.Location = new System.Drawing.Point(88, 25);
-            this.chkSeq.Name = "chkSeq";
-            this.chkSeq.Size = new System.Drawing.Size(21, 19);
-            this.chkSeq.TabIndex = 41;
-            this.chkSeq.Text = "S";
-            this.toolTip.SetToolTip(this.chkSeq, "Play declaritive sequences when play is pushed");
-            this.chkSeq.UseVisualStyleBackColor = true;
-            // 
-            // chkUi
-            // 
-            this.chkUi.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkUi.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkUi.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkUi.Location = new System.Drawing.Point(88, 5);
-            this.chkUi.Name = "chkUi";
-            this.chkUi.Size = new System.Drawing.Size(21, 19);
-            this.chkUi.TabIndex = 40;
-            this.chkUi.Text = "U";
-            this.toolTip.SetToolTip(this.chkUi, "Run graphics continuously");
-            this.chkUi.UseVisualStyleBackColor = true;
-            // 
             // btnCompile
             // 
             this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(116, 7);
+            this.btnCompile.Location = new System.Drawing.Point(78, 7);
             this.btnCompile.Name = "btnCompile";
             this.btnCompile.Size = new System.Drawing.Size(34, 32);
             this.btnCompile.TabIndex = 38;
@@ -232,7 +202,7 @@
             time1.Tock = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(269, 7);
+            this.timeMaster.Location = new System.Drawing.Point(231, 7);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
             this.timeMaster.MaxTick = 0;
             this.timeMaster.Name = "timeMaster";
@@ -245,7 +215,7 @@
             // 
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
-            this.sldVolume.Location = new System.Drawing.Point(196, 7);
+            this.sldVolume.Location = new System.Drawing.Point(158, 7);
             this.sldVolume.Maximum = 200;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
@@ -278,7 +248,7 @@
             // 
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
-            this.potSpeed.Location = new System.Drawing.Point(155, 7);
+            this.potSpeed.Location = new System.Drawing.Point(117, 7);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
@@ -401,8 +371,6 @@
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
         private InfoDisplay infoDisplay;
         private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
-        private System.Windows.Forms.CheckBox chkSeq;
-        private System.Windows.Forms.CheckBox chkUi;
     }
 }
 
