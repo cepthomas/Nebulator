@@ -5,6 +5,8 @@
 
 // Support microtonal notes with Pitch changes.
 
+// C:\Tools\AStyle --style=allman "C:\Dev\Nebulator\Examples\processing.neb"
+
 
 // Import other stuff.
 $load "scale.neb";
@@ -34,11 +36,10 @@ int[] _notesPlaying = new int[128];
 Scale _scale;
 
 float _ypos = 0;
-int _c = 0;
-int tileCountX = 10;
-int tileCountY = 10;
-int tileWidth = 0;
-int tileHeight = 0;
+int _tileCountX = 10;
+int _tileCountY = 10;
+int _tileWidth = 0;
+int _tileHeight = 0;
 
 public override void setupNeb()
 {
@@ -70,7 +71,7 @@ public override void setupNeb()
     // Create sequences, add notes/chords/funcs.
     SEQ1 = createSequence(8);
     SEQ1.Add(00.00, "G3", 90, 0.60);
-    SEQ1.Add(01.00, algoDynamic, 90);
+    SEQ1.Add(01.00, "D3", 90, 0.60);
     SEQ1.Add(02.00, "A3.m7", 90, 0.60);
     SEQ1.Add(03.00, 66, 90, 0.60);
     SEQ1.Add(03.48, CrashCymbal1, 90, 0.60);
@@ -106,13 +107,13 @@ public override void setupNeb()
 public override void setup()
 {
     colorMode(HSB, 360, 100, 100);
-    noStroke();
+    noStroke(); // this makes the lines go away
     frameRate(1);
 
     COL1.Value = 100;
 
-    tileWidth = width / tileCountX;
-    tileHeight = height / tileCountY;
+    _tileWidth = width / _tileCountX;
+    _tileHeight = height / _tileCountY;
     noFill();
     stroke(0, 128);
 }
@@ -169,7 +170,7 @@ public void On_MOD1()
     sendController(KEYS, 1, MOD1.Value);
 }
 
-public void On_KNOTE() // int notenum, bool on)
+public void On_KNOTE()
 {
     print("KNOTE = ", KNOTE.Value);
 }
@@ -206,9 +207,6 @@ void drawTarget(float xloc, float yloc, int size, int num)
     {
         fill(i * grayvalues, num * 10, (_c * 1) % 255);
         ellipse(xloc, yloc, size - i * steps, size - i * steps);
-        
-        //psychedelic:
-        //_c++;
     }
 
     int radius = size / 2;

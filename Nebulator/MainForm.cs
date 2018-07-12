@@ -16,49 +16,6 @@ using Nebulator.Protocol;
 using Nebulator.Server;
 
 
-// TODO Get rid of the s.XXX rqmt like: ScriptSyntax.md: s.print("DoIt got:", val); use closures? Or make everything static?
-/*
-public partial class dev : ScriptCore
-{
-    protected static ScriptCore s;
-    public dev() : base()
-    {
-        s = this;
-    }
-}
-C:\Dev\Nebulator\Dev\scale.neb:
-   15:         scaleNotes = s.getScaleNotes(scale, root);
-   46:         int r = s.random(totalWeight);
-   61:         int oct = s.random(0, 3) - 1;
-C:\Dev\Nebulator\Examples\boids.neb:
-  206:         float theta = velocity.heading() + s.radians(90);
-  208:         s.fill(200, 100, 50);
-  209:         s.stroke(255);
-  210:         s.pushMatrix();
-  211:         s.translate(position.x, position.y);
-  212:         s.rotate(theta);
-  213:         s.beginShape();  // was: beginShape(TRIANGLES);
-  214:         s.vertex(0, -r * 2);
-  215:         s.vertex(-r, r * 2);
-  216:         s.vertex(r, r * 2);
-  217:         s.endShape(CLOSE);
-  218:         s.popMatrix();
-  224:         if (position.x < -r) position.x = s.width + r;
-  225:         if (position.y < -r) position.y = s.height + r;
-  226:         if (position.x > s.width + r) position.x = -r;
-  227:         if (position.y > s.height + r) position.y = -r;
-C:\Dev\Nebulator\Examples\utils.neb:
-   39:         return _thing * s.random(value);
-*/
-
-
-
-// TODO still don't like the ui/sound start/stop controls. chkUi, chkSeq
-
-// TODO test all changed midi/controller/pitch/noteonoff stuff.
-
-// TODO support multiple and OSC IProtocol. Need to change InputControls/OutputControls, UserSettings, etc too.
-
 
 namespace Nebulator
 {
@@ -75,6 +32,9 @@ namespace Nebulator
 
         /// <summary>Fast timer.</summary>
         NebTimer _nebTimer = new NebTimer();
+
+        /// <summary>The in/out devices. TODO support multiple and OSC.</summary>
+        IProtocol _device1 = new Midi.MidiInterface();
 
         /// <summary>Surface child form.</summary>
         Surface _surface = new Surface();
@@ -129,9 +89,6 @@ namespace Nebulator
 
         /// <summary>Server host.</summary>
         SelfHost _selfHost = null;
-
-        /// <summary>The in/out device.</summary>
-        IProtocol _device1 = new Midi.MidiInterface();
         #endregion
 
         #region Lifecycle
@@ -237,8 +194,9 @@ namespace Nebulator
                 //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.neb");
-                OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
                 //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
+                OpenFile(@"C:\Dev\Nebulator\Dev\algo1.neb");
 
 
                 //// Server debug stuff
