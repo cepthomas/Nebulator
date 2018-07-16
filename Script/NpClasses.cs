@@ -20,12 +20,16 @@ namespace Nebulator.Script
         #region Storage for some globals
         /// <summary>Color mode: RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness.</summary>
         static int _mode = ScriptCore.RGB;
+
         /// <summary>Range for the red or hue depending on the current color mode.</summary>
         static float _max1 = 255;
+
         /// <summary>Range for the green or saturation depending on the current color mode.</summary>
         static float _max2 = 255;
+
         /// <summary>Range for the blue or brightness depending on the current color mode.</summary>
         static float _max3 = 255;
+
         /// <summary>Range for the alpha channel.</summary>
         static float _maxA = 255;
 
@@ -67,17 +71,6 @@ namespace Nebulator.Script
                 FromRGB((int)v1, (int)v2, (int)v3, (int)a);
             }
         }
-
-        //public color(string hex) // like "#RRVVBB" or "0xAARRVVBB"
-        //{
-        //    string s = hex.Replace("#", "").Replace("0x", "");
-        //    FromARGB(Convert.ToInt32(s, 16)); // or int.Parse("3A", NumberStyles.HexNumber)
-        //}
-
-        //public color(int hex) // like "0xAARRVVBB"
-        //{
-        //    FromARGB(hex);
-        //}
 
         public color(float gray, float a = 255)
         {
@@ -217,31 +210,30 @@ namespace Nebulator.Script
     {
         // Added native:
         public SKBitmap bmp { get; private set; } = new SKBitmap();
-
         public color[] pixels { get; private set; }
         public int width { get { return bmp.Width; } }
         public int height { get { return bmp.Height; } }
         public PImage(string fname) { bmp = SKBitmap.Decode(fname); }
         public PImage(SKBitmap bm) { bmp = bm; }
+
         public color get(int x, int y)
         {
             return new color(bmp.GetPixel(x, y));
         }
+
         public PImage get(int x, int y, int width, int height)
         {
             SKBitmap dest = new SKBitmap();
             bmp.ExtractSubset(dest, new SKRectI(x, y, width, height));
             return new PImage(dest);
         }
+
         public void set(int x, int y, color color)
         {
             bmp.SetPixel(x, y, color.NativeColor);
         }
-        //public void set(int x, int y, PImage img)
-        //{
-        //    //  pixel by pixel? Graphics.FromImage(bmp).DrawImageUnscaled(img.image(), x, y);
-        //}
 
+        //public void set(int x, int y, PImage img) { NotImpl(nameof(save)); }
         //public bool save(string filename) { NotImpl(nameof(save)); }
         //public void loadPixels() { NotImpl(nameof(loadPixels)); }
         //public void updatePixels() { NotImpl(nameof(updatePixels)); }
@@ -365,7 +357,7 @@ namespace Nebulator.Script
                 case WHEEL: sact = "WHEEL"; break;
             }
 
-            return $"<MouseEvent {sact}@{_x},{_y} count:{_count} button:{_button}>";
+            return $"MouseEvent: sact:{sact} _x:{_x} _y:{_y} count:{_count} button:{_button}";
         }
     }
 }

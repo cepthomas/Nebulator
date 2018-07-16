@@ -356,16 +356,13 @@ namespace Nebulator.Script
         }
 
         public void curve(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) { NotImpl(nameof(curve)); }
-        //{
-        //    //Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two 
-        //    //parameters specify the ending control point. The middle parameters specify the start and stop of the curve. 
-        //    //Longer curves can be created by putting a series of curve() functions together or using curveVertex().
-        //    //An additional function called curveTightness() provides control for the visual quality of the curve. 
-        //    //The curve() function is an implementation of Catmull-Rom splines.
-        //    //The GDI function: Draws a cardinal spline through a specified array of Point structures.
-
-        //    //_gr.DrawCurve(_pen, new SKPoint[4] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3), new SKPoint(x4, y4) }, 1, 1, 0.5f);
-        //}
+        //Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two 
+        //parameters specify the ending control point. The middle parameters specify the start and stop of the curve. 
+        //Longer curves can be created by putting a series of curve() functions together or using curveVertex().
+        //An additional function called curveTightness() provides control for the visual quality of the curve. 
+        //The curve() function is an implementation of Catmull-Rom splines.
+        //The GDI function: Draws a cardinal spline through a specified array of Point structures.
+        //_gr.DrawCurve(_pen, new SKPoint[4] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3), new SKPoint(x4, y4) }, 1, 1, 0.5f);
 
         //public void curveDetail() { NotImpl(nameof(curveDetail)); }
         //public void curvePoint() { NotImpl(nameof(curvePoint)); }

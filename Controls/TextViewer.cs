@@ -68,7 +68,7 @@ namespace Nebulator.Controls
                 txtView.SelectedText = "";
             }
 
-            txtView.SelectionBackColor = BackColor;
+            txtView.SelectionBackColor = UserSettings.TheSettings.BackColor;
 
             foreach (string s in Colors.Keys)
             {

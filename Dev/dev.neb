@@ -60,10 +60,12 @@ public override void setupNeb()
     createNotes("MY_CHORD", "1 4 6 b13");
     createNotes("MY_SCALE", "1 3 4 b7");
 
-    // devices
+    // controller points
     createControllerIn(KEYS, 4, COL1);
     createControllerIn(KEYS, PITCH_CTL, KPITCH);
     createControllerIn(KEYS, NOTE_CTL, KNOTE);
+
+    // levers
     createLever(COL1);
     createLever(KPITCH);
     createLever(MOD1);

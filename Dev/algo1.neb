@@ -2,6 +2,233 @@
 // Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
 
+// All the neb variables.
+NVariable BACK_COLOR;
+NVariable KEYS_PITCH;
+NVariable MOD1;
+NVariable KEYS_NOTE;
+
+// All the tracks.
+NTrack KEYS;
+NTrack SYNTH;
+NTrack BASS;
+NTrack DRUMS;
+
+// Neb script stuff.
+int[] _chordNotes;
+int[] _scaleNotes;
+//int[] _notesPlaying = new int[128];
+
+
+public override void setupNeb()
+{
+    // const int WHEN1 = 8;
+
+    // All the neb variables.
+    BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
+    KEYS_PITCH = createVariable("pitch", 8192, 0, 16383); // center is 8192
+    MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
+    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE);
+
+    // All the tracks.
+    KEYS = createTrack("keys", 1, 5, 0, 0);
+    SYNTH = createTrack("synth", 2, 0);
+    BASS = createTrack("bass", 3, 4, 0, 0);
+    DRUMS = createTrack("drums", 10, 4, 0, 0);
+
+    // create set of notes (chord)
+    createNotes("MY_CHORD", "1 4 6 b13");
+    createNotes("MY_SCALE", "1 3 4 b7");
+
+    // controller points
+    createControllerIn(KEYS, 4, BACK_COLOR);
+    createControllerIn(KEYS, PITCH_CTL, KEYS_PITCH);
+    createControllerIn(KEYS, NOTE_CTL, KEYS_NOTE);
+
+    // levers
+    createLever(BACK_COLOR);
+    createLever(KEYS_PITCH);
+    createLever(MOD1);
+
+    // Get some stock chords and scales
+    _chordNotes = getNotes("C4.o7");
+    _scaleNotes = getScaleNotes("Algerian", "A3");
+
+// NSequence DRUMS_VERSE;
+// DRUMS_VERSE.Add(5.10, RideCymbal1,      DRUM_DEF_VOL);
+// DRUMS_VERSE.Add(5.60, HiMidTom,         DRUM_DEF_VOL);
+// DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
+// DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
+
+// NSequence DRUMS_SIMPLE;
+// // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
+// DRUMS_SIMPLE = createSequence(8);
+// DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
+// DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    80);
+
+
+    if(winGm)
+    {
+        sendPatch(KEYS, AcousticGrandPiano);
+        sendPatch(SYNTH, Pad3Polysynth);
+        sendPatch(BASS, AcousticBass);
+    }
+}
+
+int _noteNum = 0;
+
+public override void step()
+{
+    // Tick sort of corresponds to a beat (or whatever you mean it to be) and Tock is 1/96 of a Tick.
+
+    bool doTick = false;
+
+    switch(tock)
+    {
+        case 0:
+            doTick = true;
+            break;
+
+        case 8:
+        case 16:
+        case 24:
+        //case 32:
+            int sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
+            sendNote(SYNTH, sn + tick, 90, 0.28);
+            break;
+
+        default:
+            break;
+    }
+
+    if(doTick)
+    {
+        // keys
+        switch(tick % 16)
+        {
+            case 0:
+            case 4:
+            case 8:
+            case 12:
+                foreach(int n in _chordNotes)
+                {
+                    sendNote(KEYS, n, 90, 1.0);
+                }
+                break;
+        }
+
+        // bass
+        switch(tick % 16)
+        {
+            case 0:
+            case 7:
+            case 8:
+                sendNote(BASS, 50, 90, 2.0);
+                break;
+        }
+    }
+
+
+    // int n = _scale.randomNote();
+
+
+    // if(tick % 9 == 0)
+    // {
+    //     playSequence(KEYS, SEQ1);
+    // }
+
+    // if(tick % 13 == 0)
+    // {
+    //     playSequence(KEYS, SEQ2);
+    // }
+}
+
+////////////////////////////// ui //////////////////////////
+
+public override void setup()
+{
+    colorMode(HSB, 360, 100, 100);
+    noStroke(); // draw no lines
+    frameRate(1);
+
+    BACK_COLOR.Value = 100;
+
+    //noFill();
+    //stroke(0, 128);
+}
+
+public override void keyPressed()
+{
+    print("keyPressed:", key);
+}
+
+public void On_BACK_COLOR()
+{
+    print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
+}
+
+public void On_MOD1()
+{
+    print(MOD1.Name, "changed to", MOD1.Value);
+
+    // Send a control change.
+    sendController(KEYS, 1, MOD1.Value);
+}
+
+public void On_KEYS_NOTE()
+{
+    print("KEYS_NOTE = ", KEYS_NOTE.Value);
+}
+
+public override void draw()
+{
+    //print("draw");
+    background(BACK_COLOR.Value, 100, 200);
+
+    drawTarget(width * 0.15f, height * 0.4f, 100, 10);
+    drawTarget(width * 0.5f, height * 0.5f, 300, 20);
+    drawTarget(width * 0.85f, height * 0.3f, 150, 12);    
+
+    if (mouseIsPressed)
+    {
+        //print("mouse is pressed");
+        fill(random(255), random(255), random(255));
+        strokeWeight(2);
+        stroke(0, 100);
+        ellipse(mouseX, mouseY, 80, 80);
+    }
+}
+
+void drawTarget(float xloc, float yloc, int size, int num)
+{
+    int grayvalues = 255 / num;
+    float steps = size / num;
+    for (int i = 0; i < num; i++)
+    {
+        //fill(i * grayvalues, num * 10, (_c * 1) % 255);
+        fill(i * grayvalues, num * 10, 0 % 255);
+        ellipse(xloc, yloc, size - i * steps, size - i * steps);
+    }
+
+    int radius = size / 2;
+    int h = random(0, 360);
+
+    for (int r = radius; r > 0; r-=1)
+    {
+        fill(h, 90, 90);
+        ellipse(xloc, yloc, r * 2, r * 2);
+        h = (h + 1) % 360;
+    }
+}
+
+public override void mouseClicked()
+{
+    // Note selected based on mouse position.
+    int sn = (int)map(mouseX, 0, width, 55, 70);
+    sendNote(SYNTH, sn, 90, 0.48);
+}
+
+
 /*
 --------------------------------------------------------------------
 Types of contrapuntal motion
@@ -27,11 +254,13 @@ The graph item stream pattern type creates an item stream of user-specified rule
 Sonification uses data that is typically not musical and involves remapping this to musical parameters to create a composition.
 
 ---------------------------------------------------------------------
+How Phase Music Works
 Phasing by playing e.g. six loops with different durations - sync/phase.
 
 Random note/Octave Shifts, Instrumentation, etc...
-How Phase Music Works
+
 And now we come to the real technical trick that underlies "It's Gonna Rain": What we are hearing are two identical tape loops playing at the same time. There's one in the left ear and one in the right. But one of those loops is running ever so slightly faster than the other.
+
 The difference is so small you don't even notice it at first, but after a while it amounts to a phase shift between the two loops that keeps growing bigger and bigger as time goes by. First it sounds like there's an echo. Then the echo transforms into a repeating effect, and then it builds into a series of strange combinations of sounds as different parts of the sample overlap with others. At the halfway point the loops start to approach each other again, and we go back through repetition and echo to unison.
 
 --------------------------------------------------------------------
@@ -120,154 +349,3 @@ C B     0%   90%  10%
 C C     70%  14%  16%
 
 */
-
-// All the neb variables.
-NVariable BACKCOL;
-NVariable KPITCH;
-NVariable MOD1;
-NVariable KNOTE;
-
-// All the tracks.
-NTrack KEYS;
-NTrack SYNTH;
-NTrack BASS;
-
-// Neb script stuff.
-int[] _chordNotes;
-int[] _scaleNotes;
-int[] _notesPlaying = new int[128];
-
-
-public override void setupNeb()
-{
-    // const int WHEN1 = 8;
-
-    // All the neb variables.
-    BACKCOL = createVariable("color", 200, 0, 255, On_BACKCOL);
-    KPITCH = createVariable("pitch", 8192, 0, 16383); // center is 8192
-    MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
-    KNOTE = createVariable("note", 60, -127, 127, On_KNOTE);
-
-    // All the tracks.
-    KEYS = createTrack("keys", 1, 5, 0, 0);
-    SYNTH = createTrack("synth", 3, 0);
-    BASS = createTrack("drums", 10, 4, 0, 0);
-
-    // create set of notes (chord)
-    createNotes("MY_CHORD", "1 4 6 b13");
-    createNotes("MY_SCALE", "1 3 4 b7");
-
-    // devices
-    createControllerIn(KEYS, 4, BACKCOL);
-    createControllerIn(KEYS, PITCH_CTL, KPITCH);
-    createControllerIn(KEYS, NOTE_CTL, KNOTE);
-
-    createLever(BACKCOL);
-    createLever(KPITCH);
-    createLever(MOD1);
-
-    if(winGm)
-    {
-        sendPatch(KEYS, AcousticGrandPiano);
-        sendPatch(SYNTH, Pad3Polysynth);
-        sendPatch(BASS, AcousticBass);
-    }
-}
-
-public override void setup()
-{
-    colorMode(HSB, 360, 100, 100);
-    noStroke(); // draw no lines
-    frameRate(10);
-
-    BACKCOL.Value = 100;
-
-    //noFill();
-    //stroke(0, 128);
-}
-
-public override void step()
-{
-    //Tick sort of corresponds to a beat (or whatever you mean it to be) and Tock is 1/96 of a Tick.
-
-    // if(tick == 5)
-    // {
-    //     speed = 50;
-    //     volume = 50;
-    // }
-
-    if(tock == 0)
-    {
-        // algoDynamic();
-    }
-}
-
-public override void keyPressed()
-{
-    print("keyPressed:", key);
-}
-
-public void On_BACKCOL()
-{
-    print(BACKCOL.Name, "changed to", BACKCOL.Value);
-}
-
-public void On_MOD1()
-{
-    print(MOD1.Name, "changed to", MOD1.Value);
-
-    // Send a control change.
-    sendController(KEYS, 1, MOD1.Value);
-}
-
-public void On_KNOTE()
-{
-    print("KNOTE = ", KNOTE.Value);
-}
-
-public override void draw()
-{
-    //print("draw");
-    background(BACKCOL.Value, 100, 200);
-
-    drawTarget(width * 0.15f, height * 0.4f, 100, 10);
-    drawTarget(width * 0.5f, height * 0.5f, 300, 20);
-    drawTarget(width * 0.85f, height * 0.3f, 150, 12);    
-
-    if (mouseIsPressed)
-    {
-        //print("mouse is pressed");
-        fill(random(255), random(255), random(255));
-        strokeWeight(2);
-        stroke(0, 100);
-        ellipse(mouseX, mouseY, 80, 80);
-    }
-}
-
-void drawTarget(float xloc, float yloc, int size, int num)
-{
-    int grayvalues = 255 / num;
-    float steps = size / num;
-    for (int i = 0; i < num; i++)
-    {
-        fill(i * grayvalues, num * 10, (_c * 1) % 255);
-        ellipse(xloc, yloc, size - i * steps, size - i * steps);
-    }
-
-    int radius = size / 2;
-    int h = random(0, 360);
-
-    for (int r = radius; r > 0; r-=1)
-    {
-        fill(h, 90, 90);
-        ellipse(xloc, yloc, r * 2, r * 2);
-        h = (h + 1) % 360;
-    }
-}
-
-public override void mouseClicked()
-{
-    // Note selected based on mouse position.
-    int sn = (int)map(mouseX, 0, width, 55, 70);
-    sendNote(SYNTH, sn, 90, 0.48);
-}

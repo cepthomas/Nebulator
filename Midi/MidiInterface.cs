@@ -149,7 +149,7 @@ namespace Nebulator.Midi
                                 if(stt.Duration.TotalTocks > 0)
                                 {
                                     // Remove any lingering note offs and add a fresh one.
-                                    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber);
+                                    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.Channel == stt.Channel);
 
                                     _stops.Add(new StepNoteOff()
                                     {

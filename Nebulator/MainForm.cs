@@ -620,7 +620,6 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-//            if (e.ElapsedTimers.Contains("UI") && chkUi.Checked && !_needCompile)
             if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && !_needCompile)
             {
                 //_tanUi.Arm();
@@ -1007,12 +1006,7 @@ namespace Nebulator
         /// </summary>
         void Play_Click(object sender, EventArgs e)
         {
-            bool ok = _needCompile ? Compile() : true;
-
-            if(ok)
-            {
-                ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop, true);
-            }
+            ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop, true);
         }
 
         /// <summary>
@@ -1109,9 +1103,9 @@ namespace Nebulator
             {
                 TextViewer tv = new TextViewer() { Dock = DockStyle.Fill };
                 f.Controls.Add(tv);
-                tv.Colors.Add("|ERROR|", Color.Pink);
-                tv.Colors.Add("|_WARN|", Color.Plum);
-                tv.Colors.Add("|_INFO|", Color.LightGreen);
+                tv.Colors.Add(" ERROR ", Color.Pink);
+                tv.Colors.Add(" _WARN ", Color.Plum);
+                tv.Colors.Add(" _INFO ", Color.LightGreen);
 
                 string appDir = Utils.GetAppDataDir();
                 string logFilename = Path.Combine(appDir, "log.txt");

@@ -72,9 +72,11 @@ public override void setupNeb()
     createNotes("MY_CHORD", "1 4 6 b13");
     createNotes("MY_SCALE", "1 3 4 b7");
 
-    // devices
+    // controller points
     createControllerIn(KEYS, 4, MODN);
     createControllerOut(KEYS, -1, PITCH);
+
+    // levers
     createLever(COL1);
     createLever(PITCH); // max range
     createLever(MODN);
