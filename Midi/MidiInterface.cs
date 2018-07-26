@@ -305,12 +305,6 @@ namespace Nebulator.Midi
                 ProtocolInputEventArgs args = new ProtocolInputEventArgs() { Step = step };
                 ProtocolInputEvent?.Invoke(this, args);
 
-                if(!args.Handled)
-                {
-                    // Pass through.
-                    Send(step);
-                }
-
                 if (UserSettings.TheSettings.MidiMonitorIn)
                 {
                     LogMsg(ProtocolLogEventArgs.LogCategory.Recv, step.ToString());

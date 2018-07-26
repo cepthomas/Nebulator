@@ -9,9 +9,6 @@ namespace Nebulator.Protocol
     {
         /// <summary>Received data.</summary>
         public Step Step { get; set; } = null;
-
-        /// <summary>Was it processed.</summary>
-        public bool Handled { get; set; } = false;
     }
 
     public class ProtocolLogEventArgs : EventArgs

@@ -7,6 +7,7 @@ NVariable BACK_COLOR;
 NVariable KEYS_PITCH;
 NVariable MOD1;
 NVariable KEYS_NOTE;
+NVariable CTL_TEST;
 
 // All the tracks.
 NTrack KEYS;
@@ -19,12 +20,17 @@ int[] _chordNotes;
 int[] _scaleNotes;
 //int[] _notesPlaying = new int[128];
 
+// Processing stuff.
+int _segmentCount = 36; // 360;
+int _radius = 300;
+
 
 public override void setupNeb()
 {
     // const int WHEN1 = 8;
 
     // All the neb variables.
+    CTL_TEST = createVariable("ctest", 200, 0, 255, On_CTL_TEST);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     KEYS_PITCH = createVariable("pitch", 8192, 0, 16383); // center is 8192
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
@@ -41,6 +47,7 @@ public override void setupNeb()
     createNotes("MY_SCALE", "1 3 4 b7");
 
     // controller points
+    createControllerIn(KEYS, 3, CTL_TEST);
     createControllerIn(KEYS, 4, BACK_COLOR);
     createControllerIn(KEYS, PITCH_CTL, KEYS_PITCH);
     createControllerIn(KEYS, NOTE_CTL, KEYS_NOTE);
@@ -128,10 +135,6 @@ public override void step()
         }
     }
 
-
-    // int n = _scale.randomNote();
-
-
     // if(tick % 9 == 0)
     // {
     //     playSequence(KEYS, SEQ1);
@@ -149,12 +152,9 @@ public override void setup()
 {
     colorMode(HSB, 360, 100, 100);
     noStroke(); // draw no lines
-    frameRate(10);
+    frameRate(2);
 
     BACK_COLOR.Value = 100;
-
-    //noFill();
-    //stroke(0, 128);
 }
 
 public override void keyPressed()
@@ -167,6 +167,14 @@ public void On_BACK_COLOR()
     print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
 }
 
+public void On_CTL_TEST()
+{
+    if(CTL_TEST.Value > 50 && CTL_TEST.Value < 70)
+    {
+        sendNote(KEYS, CTL_TEST.Value, 90, 2.0);
+    }
+}
+
 public void On_MOD1()
 {
     print(MOD1.Name, "changed to", MOD1.Value);
@@ -177,21 +185,27 @@ public void On_MOD1()
 
 public void On_KEYS_NOTE()
 {
-    print("KEYS_NOTE = ", KEYS_NOTE.Value);
+    print("KEYS_NOTE", "=", KEYS_NOTE.Value);
+
+    if(KEYS_NOTE.Value > 0)
+    {
+        sendNote(SYNTH, KEYS_NOTE.Value, 90, 2.0);
+    }
 }
 
-
-/////////////////////////////////
-int segmentCount = 36; // 360;
-int radius = 300;
-
 public override void draw()
+{
+    // drawFan();
+    drawTargets();
+}
+
+void drawFan()
 {
     noStroke();
     colorMode(HSB, 360, width, height);
     background(160); // gray
 
-    float angleStep = 360 / segmentCount;
+    float angleStep = 360 / _segmentCount;
 
     for (float angle = 0; angle <= 360; angle += angleStep)
     {
@@ -200,8 +214,8 @@ public override void draw()
         beginShape();  // (TRIANGLE_FAN);
         vertex(width / 2, height / 2); // center
 
-        float vx = width / 2 + cos(radians(angle)) * radius;
-        float vy = height / 2 + sin(radians(angle)) * radius;
+        float vx = width / 2 + cos(radians(angle)) * _radius;
+        float vy = height / 2 + sin(radians(angle)) * _radius;
         vertex(vx, vy);
         
         vx -= 10;
@@ -211,10 +225,8 @@ public override void draw()
         endShape(CLOSE);
     }
 }
-/////////////////////////////////////////////////
 
-
-void drawx() // public override void draw()
+void drawTargets()
 {
     //print("draw");
     background(BACK_COLOR.Value, 100, 200);

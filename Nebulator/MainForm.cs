@@ -688,13 +688,14 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                e.Handled = false; // default
+                bool handled = false; // default
 
                 if (_script != null && e.Step != null)
                 {
                     if(e.Step is StepNoteOn || e.Step is StepNoteOff)
                     {
                         int channel = (e.Step as Step).Channel;
+
                         // Dig out the note number. Note sign change for note off.
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
 
@@ -706,7 +707,7 @@ namespace Nebulator
                                 // Add to our list for processing at the next tock.
                                 ctlpt.BoundVar.Value = value;
                                 _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
-                                e.Handled = true;
+                                handled = true;
                             }
                         }
                     }
@@ -723,10 +724,16 @@ namespace Nebulator
                                 // Add to our list for processing at the next tock.
                                 ctlpt.BoundVar.Value = scc.Value;
                                 _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
-                                e.Handled = true;
+                                handled = true;
                             }
                         }
                     }
+                }
+
+                if (!handled)
+                {
+                    // Pass through.
+                    _device1.Send(e.Step);
                 }
             });
         }
@@ -1078,7 +1085,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                string s = $"{msg}{Environment.NewLine}"; //.Replace(ScriptCore.SCRIPT_PRINT_PREFIX, "");
+                string s = $"{msg}{Environment.NewLine}";
                 infoDisplay.AddInfo(s);
             });
         }
