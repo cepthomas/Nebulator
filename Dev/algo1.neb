@@ -19,6 +19,7 @@ NTrack DRUMS;
 int[] _chordNotes;
 int[] _scaleNotes;
 //int[] _notesPlaying = new int[128];
+int _noteNum = 0;
 
 // Processing stuff.
 int _segmentCount = 36; // 360;
@@ -32,7 +33,7 @@ public override void setupNeb()
     // All the neb variables.
     CTL_TEST = createVariable("ctest", 200, 0, 255, On_CTL_TEST);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
-    KEYS_PITCH = createVariable("pitch", 8192, 0, 16383); // center is 8192
+    KEYS_PITCH = createVariable("pitch", 8192, 0, 16383, On_KEYS_PITCH); // center is 8192
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE);
 
@@ -61,18 +62,17 @@ public override void setupNeb()
     _chordNotes = getNotes("C4.o7");
     _scaleNotes = getScaleNotes("Algerian", "A3");
 
-// NSequence DRUMS_VERSE;
-// DRUMS_VERSE.Add(5.10, RideCymbal1,      DRUM_DEF_VOL);
-// DRUMS_VERSE.Add(5.60, HiMidTom,         DRUM_DEF_VOL);
-// DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
-// DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
+    // NSequence DRUMS_VERSE;
+    // DRUMS_VERSE.Add(5.10, RideCymbal1,      DRUM_DEF_VOL);
+    // DRUMS_VERSE.Add(5.60, HiMidTom,         DRUM_DEF_VOL);
+    // DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
+    // DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
 
-// NSequence DRUMS_SIMPLE;
-// // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
-// DRUMS_SIMPLE = createSequence(8);
-// DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
-// DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    80);
-
+    // NSequence DRUMS_SIMPLE;
+    // // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
+    // DRUMS_SIMPLE = createSequence(8);
+    // DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
+    // DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    80);
 
     if(winGm)
     {
@@ -81,8 +81,6 @@ public override void setupNeb()
         sendPatch(BASS, AcousticBass);
     }
 }
-
-int _noteNum = 0;
 
 public override void step()
 {
@@ -191,6 +189,13 @@ public void On_KEYS_NOTE()
     {
         sendNote(SYNTH, KEYS_NOTE.Value, 90, 2.0);
     }
+}
+
+public void On_KEYS_PITCH()
+{
+    print("KEYS_PITCH", "=", KEYS_PITCH.Value);
+
+    sendController(KEYS, PITCH_CTL, KEYS_PITCH.Value);
 }
 
 public override void draw()

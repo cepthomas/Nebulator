@@ -776,7 +776,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Levers_Changed(object sender, Levers.LeverChangeEventArgs e)
         {
-            _ctrlChanges.Add(e.BoundVar.Name, e.BoundVar);
+            _ctrlChanges[e.BoundVar.Name] = e.BoundVar;
         }
 
         /// <summary>
