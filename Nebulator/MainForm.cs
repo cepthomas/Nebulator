@@ -1172,6 +1172,7 @@ namespace Nebulator
                 };
 
                 // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
+                ListSelector.Options.Clear();
                 ListSelector.Options.Add("MidiIn", _device1.ProtocolInputs);
                 ListSelector.Options.Add("MidiOut", _device1.ProtocolOutputs);
 
