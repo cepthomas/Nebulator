@@ -67,12 +67,12 @@
     <Compile Include="AssemblyInfoTool.cs" />
     <Compile Include="Bag.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="LazyCollection.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="MultiFileWatcher.cs" />
     <Compile Include="NebTimer.cs" />
     <Compile Include="NoteUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptDefinitions.cs" />
     <Compile Include="StateMachine.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="TimingAnalyzer.cs" />

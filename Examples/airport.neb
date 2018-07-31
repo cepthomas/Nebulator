@@ -44,7 +44,7 @@ public override void setupNeb()
     // controller points
     createControllerIn(SOUND, 4, MODF);
     createControllerOut(SOUND, 4, MODF);
-    createControllerOut(SOUND, -1, PITCH);
+    createControllerOut(SOUND, PitchControl, PITCH);
 
     // levers
     createLever(COLOR);

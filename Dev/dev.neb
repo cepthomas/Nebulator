@@ -34,6 +34,7 @@ int[] _chordNotes;
 int[] _scaleNotes;
 int[] _notesPlaying = new int[128];
 Scale _scale;
+int _c = 1;
 
 float _ypos = 0;
 int _tileCountX = 10;
@@ -62,8 +63,8 @@ public override void setupNeb()
 
     // controller points
     createControllerIn(KEYS, 4, COL1);
-    createControllerIn(KEYS, PITCH_CTL, KPITCH);
-    createControllerIn(KEYS, NOTE_CTL, KNOTE);
+    createControllerIn(KEYS, PitchControl, KPITCH);
+    createControllerIn(KEYS, NoteControl, KNOTE);
 
     // levers
     createLever(COL1);

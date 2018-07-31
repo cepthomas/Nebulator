@@ -80,19 +80,17 @@ namespace Nebulator.Midi
                             break;
 
                         case StepControllerChange stt:
-                            switch (stt.ControllerId)
+                            if (stt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
                             {
-                                default:
-                                    evt = new ControlChangeEvent(midiTime, stt.Channel, (MidiController)stt.ControllerId, stt.Value);
-                                    break;
-
-                                case ControllerType.PITCH:
-                                    evt = new PitchWheelChangeEvent(midiTime, stt.Channel, stt.Value);
-                                    break;
-
-                                case ControllerType.NOTE:
-                                    // Shouldn't happen, ignore.
-                                    break;
+                                // Shouldn't happen, ignore.
+                            }
+                            else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
+                            {
+                                evt = new PitchWheelChangeEvent(midiTime, stt.Channel, stt.Value);
+                            }
+                            else // CC
+                            {
+                                evt = new ControlChangeEvent(midiTime, stt.Channel, (MidiController)stt.ControllerId, stt.Value);
                             }
                             break;
 

@@ -62,7 +62,7 @@ namespace Nebulator.Midi
                 MinNote = 0,
                 MaxNote = 127,
                 MinControllerValue = 0,
-                MaxControllerValue = 127,
+                MaxControllerValue = 255,
                 MinPitchValue = 0,
                 MaxPitchValue = 16383
             };
@@ -172,23 +172,21 @@ namespace Nebulator.Midi
 
                         case StepControllerChange stt:
                             {
-                                switch (stt.ControllerId)
+                                if (stt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
                                 {
-                                    default:
-                                        ControlChangeEvent nevt = new ControlChangeEvent(0, stt.Channel, (MidiController)stt.ControllerId,
-                                            Utils.Constrain(stt.Value, Caps.MinControllerValue, Caps.MaxControllerValue));
-                                        msg = nevt.GetAsShortMessage();
-                                        break;
-
-                                    case ControllerType.PITCH:
-                                        PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.Channel,
-                                            Utils.Constrain(stt.Value, Caps.MinPitchValue, Caps.MaxPitchValue));
-                                        msg = pevt.GetAsShortMessage();
-                                        break;
-
-                                    case ControllerType.NOTE:
-                                        // Shouldn't happen, ignore.
-                                        break;
+                                    // Shouldn't happen, ignore.
+                                }
+                                else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
+                                {
+                                    PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.Channel,
+                                        Utils.Constrain(stt.Value, Caps.MinPitchValue, Caps.MaxPitchValue));
+                                    msg = pevt.GetAsShortMessage();
+                                }
+                                else // CC
+                                {
+                                    ControlChangeEvent nevt = new ControlChangeEvent(0, stt.Channel, (MidiController)stt.ControllerId,
+                                        Utils.Constrain(stt.Value, Caps.MinControllerValue, Caps.MaxControllerValue));
+                                    msg = nevt.GetAsShortMessage();
                                 }
                             }
                             break;
@@ -292,7 +290,7 @@ namespace Nebulator.Midi
                         step = new StepControllerChange()
                         {
                             Channel = evt.Channel,
-                            ControllerId = ControllerType.PITCH,
+                            ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
                             Value = evt.Pitch
                         };
                     }

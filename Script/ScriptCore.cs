@@ -21,11 +21,6 @@ namespace Nebulator.Script
         bool _disposed = false;
         #endregion
 
-        #region Constants - needed by compiled script
-        public const int PITCH_CTL = ControllerType.PITCH;
-        public const int NOTE_CTL = ControllerType.NOTE;
-        #endregion
-
         #region Properties - general
         /// <summary>Protocol to use.</summary>
         public IProtocol Protocol { get; set; } = null;

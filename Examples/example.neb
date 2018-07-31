@@ -74,7 +74,7 @@ public override void setupNeb()
 
     // controller points
     createControllerIn(KEYS, 4, MODN);
-    createControllerOut(KEYS, -1, PITCH);
+    createControllerOut(KEYS, PitchControl, PITCH);
 
     // levers
     createLever(COL1);

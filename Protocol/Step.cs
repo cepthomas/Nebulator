@@ -7,13 +7,6 @@ using Nebulator.Common;
 
 namespace Nebulator.Protocol
 {
-    /// <summary>Special controller types encoded in ControllerId.</summary>
-    public class ControllerType
-    {
-        public const int PITCH = -1;
-        public const int NOTE = -2;
-    }
-
     /// <summary>
     /// Base class for internal interface representation of a compiled event to be sent or received.
     /// </summary>
@@ -112,19 +105,17 @@ namespace Nebulator.Protocol
         {
             StringBuilder sb = new StringBuilder($"StepControllerChange: {base.ToString()}");
 
-            switch(ControllerId)
+            if (ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
             {
-                default: // normal
-                    sb.Append($" ControllerId:{ControllerId} Value:{Value}");
-                    break;
-
-                case ControllerType.PITCH:
-                    sb.Append($" Pitch:{Value}");
-                    break;
-
-                case ControllerType.NOTE:
-                    sb.Append($" Note:{Value}");
-                    break;
+                sb.Append($" Note:{Value}");
+            }
+            else if (ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
+            {
+                sb.Append($" Pitch:{Value}");
+            }
+            else // CC
+            {
+                sb.Append($" ControllerId:{ControllerId} Value:{Value}");
             }
 
             return sb.ToString();

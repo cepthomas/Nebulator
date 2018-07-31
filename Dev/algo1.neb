@@ -35,12 +35,12 @@ public override void setupNeb()
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     KEYS_PITCH = createVariable("pitch", 8192, 0, 16383, On_KEYS_PITCH); // center is 8192
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
-    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE);
+    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE); // neg number for note off encoding
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
-    SYNTH = createTrack("synth", 2, 0);
-    BASS = createTrack("bass", 3, 4, 0, 0);
+    BASS = createTrack("bass", 2, 4, 0, 0);
+    SYNTH = createTrack("synth", 3, 0);
     DRUMS = createTrack("drums", 10, 4, 0, 0);
 
     // create set of notes (chord)
@@ -50,8 +50,8 @@ public override void setupNeb()
     // controller points
     createControllerIn(KEYS, 3, CTL_TEST);
     createControllerIn(KEYS, 4, BACK_COLOR);
-    createControllerIn(KEYS, PITCH_CTL, KEYS_PITCH);
-    createControllerIn(KEYS, NOTE_CTL, KEYS_NOTE);
+    createControllerIn(KEYS, PitchControl, KEYS_PITCH);
+    createControllerIn(KEYS, NoteControl, KEYS_NOTE);
 
     // levers
     createLever(BACK_COLOR);
@@ -167,10 +167,12 @@ public void On_BACK_COLOR()
 
 public void On_CTL_TEST()
 {
-    if(CTL_TEST.Value > 50 && CTL_TEST.Value < 70)
-    {
-        sendNote(KEYS, CTL_TEST.Value, 90, 2.0);
-    }
+    sendNote(KEYS, 50 + CTL_TEST.Value % 20, 90, 2.0);
+
+    // if(CTL_TEST.Value > 50 && CTL_TEST.Value < 70)
+    // {
+    //     sendNote(KEYS, CTL_TEST.Value, 90, 2.0);
+    // }
 }
 
 public void On_MOD1()
@@ -187,7 +189,12 @@ public void On_KEYS_NOTE()
 
     if(KEYS_NOTE.Value > 0)
     {
-        sendNote(SYNTH, KEYS_NOTE.Value, 90, 2.0);
+        sendNote(SYNTH, KEYS_NOTE.Value, 90, 0.0); // noteon
+        //sendNote(SYNTH, KEYS_NOTE.Value, 90, 2.0); // fixed duration
+    }
+    else
+    {
+        sendNote(SYNTH, -KEYS_NOTE.Value, 0, 0.0); // noteoff
     }
 }
 
@@ -195,7 +202,7 @@ public void On_KEYS_PITCH()
 {
     print("KEYS_PITCH", "=", KEYS_PITCH.Value);
 
-    sendController(KEYS, PITCH_CTL, KEYS_PITCH.Value);
+    sendController(KEYS, PitchControl, KEYS_PITCH.Value);
 }
 
 public override void draw()

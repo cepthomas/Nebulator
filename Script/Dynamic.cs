@@ -85,8 +85,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar} Track:{Track}");
-
+            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} Track:{Track}");
             return sb.ToString();
         }
     }

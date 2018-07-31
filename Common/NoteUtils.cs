@@ -17,74 +17,11 @@ namespace Nebulator.Common
         #endregion
 
         #region Fields
-        /// <summary>The chord definitions from ScriptDefinitions.md. Key is chord name, Value is list of constituent notes.</summary>
-        static LazyCollection<List<string>> _stockChordDefs = new LazyCollection<List<string>>();
-
-        /// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is list of constituent notes.</summary>
-        static LazyCollection<List<string>> _stockScaleDefs = new LazyCollection<List<string>>();
-
-        /// <summary>The midi drum definitions from ScriptDefinitions.md. Key is midi drum name, value is note num.</summary>
-        static LazyCollection<List<string>> _stockDrumDefs = new LazyCollection<List<string>>();
-
         /// <summary>Chord and scale definitions added from the script. Value is list of constituent notes.</summary>
-        static LazyCollection<List<string>> _scriptNoteDefs { get; set; } = new LazyCollection<List<string>>();
+        static Dictionary<string, List<string>> _scriptNoteDefs { get; set; } = new Dictionary<string, List<string>>();
         #endregion
 
         #region Public functions
-        /// <summary>
-        /// Initialize the note and chord helpers.
-        /// </summary>
-        public static void Init()
-        {
-            _stockChordDefs.Clear();
-            _stockScaleDefs.Clear();
-            _stockDrumDefs.Clear();
-            _scriptNoteDefs.Clear();
-            _scriptNoteDefs.AllowOverwrite = true;
-
-            ///// Read the defs file.
-            LazyCollection<List<string>> section = null;
-
-            // Chord:
-            // M | 1 3 5 | Named after the major 3rd interval between root and 3.
-            // Scale:
-            // Acoustic | 1 2 3 #4 5 6 b7 | Acoustic scale | whole tone | minor
-            // Drum:
-            // AcousticBassDrum | 35
-
-            string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\ScriptDefinitions.md");
-            foreach (string sl in File.ReadAllLines(fpath))
-            {
-                List<string> parts = sl.SplitByToken("|");
-
-                if (parts.Count > 1)
-                {
-                    switch (parts[0])
-                    {
-                        case "Chord":
-                            section = _stockChordDefs;
-                            break;
-
-                        case "Scale":
-                            section = _stockScaleDefs;
-                            break;
-
-                        case "Drum":
-                            section = _stockDrumDefs;
-                            break;
-
-                        case string s when !s.StartsWith("---"):
-                            section?.Add(parts[0], parts.GetRange(1, parts.Count - 1));
-                            break;
-                    }
-                }
-                else
-                {
-                    section = null;
-                }
-            }
-        }
-
         /// <summary>
         /// Add a chord or scale definition from the script.
         /// </summary>
@@ -92,7 +29,8 @@ namespace Nebulator.Common
         /// <param name="parts">"1 4 6 b13"</param>
         public static void AddScriptNoteDef(string name, string parts)
         {
-            _scriptNoteDefs.Add(name, parts.SplitByToken(" "));
+///            _scriptNoteDefs.Add(name, parts.SplitByToken(" "));
+            _scriptNoteDefs[name] = parts.SplitByToken(" ");
         }
 
         /// <summary>
@@ -141,7 +79,7 @@ namespace Nebulator.Common
                 if (parts.Count > 1)
                 {
                     // It's a chord. M, M7, m, m7, etc. Determine the constituents. Start with the stock collection then try user defs.
-                    var chordParts = _stockChordDefs[parts[1]];
+                    var chordParts = ScriptDefinitions.TheDefinitions.ChordDefs[parts[1]];
 
                     if(chordParts == null)
                     {
@@ -200,7 +138,7 @@ namespace Nebulator.Common
             if (keyNotes.Count > 0)
             {
                 // Start with the stock collection then try user defs.
-                var scaleDef = _stockScaleDefs[scale];
+                var scaleDef = ScriptDefinitions.TheDefinitions.ScaleDefs[scale];
 
                 if (scaleDef == null)
                 {
@@ -268,9 +206,9 @@ namespace Nebulator.Common
 
                     string s = string.Join(" ", intervals);
                     string chord = null;
-                    foreach(string key in _stockChordDefs.Keys)
+                    foreach(string key in ScriptDefinitions.TheDefinitions.ChordDefs.Keys)
                     {
-                        if(string.Join(" ", _stockChordDefs[key]) == s)
+                        if(string.Join(" ", ScriptDefinitions.TheDefinitions.ChordDefs[key]) == s)
                         {
                             chord = key;
                             break;
@@ -316,9 +254,9 @@ namespace Nebulator.Common
         {
             string drumName = Utils.UNKNOWN_STRING;
 
-            foreach (string key in _stockDrumDefs.Keys)
+            foreach (string key in ScriptDefinitions.TheDefinitions.DrumDefs.Keys)
             {
-                if (string.Join(" ", _stockDrumDefs[key]) == note.ToString())
+                if (string.Join(" ", ScriptDefinitions.TheDefinitions.DrumDefs[key]) == note.ToString())
                 {
                     drumName = key;
                     break;

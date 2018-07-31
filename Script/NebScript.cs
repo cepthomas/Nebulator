@@ -59,7 +59,7 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createControllerIn(NTrack track, int controlId, NVariable bound)
         {
-            controlId = Utils.Constrain(controlId, -Protocol.Caps.MaxControllerValue, Protocol.Caps.MaxControllerValue);
+            controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
             NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
             InputControls.Add(mp);
         }

@@ -135,13 +135,12 @@ namespace Nebulator
             _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
-            #region App innards
             InitLogging();
 
             PopulateRecentMenu();
-            #endregion
 
-            #region Set up devices
+            ScriptDefinitions.TheDefinitions.Init();
+
             // Input events.
             _device1.ProtocolInputEvent += Midi_InputEvent;
             _device1.ProtocolLogEvent += Midi_LogEvent;
@@ -153,9 +152,7 @@ namespace Nebulator
             SetUiTimerPeriod();
             _nebTimer.TimerElapsedEvent += TimerElapsedEvent;
             _nebTimer.Start();
-            #endregion
 
-            #region Misc setups
             KeyPreview = true; // for routing kbd strokes properly
 
             InitControls();
@@ -173,7 +170,6 @@ namespace Nebulator
             _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
-            #endregion
 
             #region Command line
             // Look for filename passed in.
@@ -702,7 +698,7 @@ namespace Nebulator
                         // Process through our list of inputs of interest.
                         foreach (NControlPoint ctlpt in _script.InputControls)
                         {
-                            if (ctlpt.ControllerId == ControllerType.NOTE && ctlpt.Track.Channel == channel)
+                            if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Track.Channel == channel)
                             {
                                 // Add to our list for processing at the next tock.
                                 ctlpt.BoundVar.Value = value;
@@ -719,6 +715,13 @@ namespace Nebulator
                         // Process through our list of inputs of interest.
                         foreach (NControlPoint ctlpt in _script.InputControls)
                         {
+                            if(ctlpt.Track.Channel == scc.Channel)
+                            {
+
+                            }
+
+
+
                             if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
                             {
                                 // Add to our list for processing at the next tock.

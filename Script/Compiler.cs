@@ -18,7 +18,7 @@ namespace Nebulator.Script
     /// <summary>General script error container.</summary>
     public class ScriptError
     {
-        public enum ScriptErrorType { None, Warning, /*Parse,*/ Error, Runtime }
+        public enum ScriptErrorType { None, Warning, Error, Runtime }
 
         /// <summary>Where it came from.</summary>
         [JsonConverter(typeof(StringEnumConverter))]
@@ -86,15 +86,6 @@ namespace Nebulator.Script
 
         /// <summary>Products of file process. Key is generated file name.</summary>
         Dictionary<string, FileContext> _filesToCompile = new Dictionary<string, FileContext>();
-
-        /// <summary>The midi instrument definitions from ScriptDefinitions.md.</summary>
-        Dictionary<string, string> _instrumentDefs = new Dictionary<string, string>();
-
-        /// <summary>The midi drum definitions from ScriptDefinitions.md.</summary>
-        Dictionary<string, string> _drumDefs = new Dictionary<string, string>();
-
-        /// <summary>The midi controller definitions from ScriptDefinitions.md.</summary>
-        Dictionary<string, string> _controllerDefs = new Dictionary<string, string>();
         #endregion
 
         /// <summary>
@@ -109,10 +100,7 @@ namespace Nebulator.Script
             // Reset everything.
             _filesToCompile.Clear();
             _initLines.Clear();
-            _instrumentDefs.Clear();
-            _drumDefs.Clear();
-            _controllerDefs.Clear();
-            NoteUtils.Init();
+
             Errors.Clear();
 
             if (nebfn != Utils.UNKNOWN_STRING && File.Exists(nebfn))
@@ -128,7 +116,6 @@ namespace Nebulator.Script
 
                 ///// Compile.
                 DateTime startTime = DateTime.Now; // for metrics
-                LoadDefinitions();
                 Parse(nebfn);
                 script = Compile();
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
@@ -139,54 +126,6 @@ namespace Nebulator.Script
             }
 
             return Errors.Count == 0 ? script : null;
-        }
-
-        /// <summary>
-        /// Load chord and midi definitions from md doc file.
-        /// </summary>
-        void LoadDefinitions()
-        {
-            try
-            {
-                _instrumentDefs.Clear();
-                _drumDefs.Clear();
-                _controllerDefs.Clear();
-
-                // Read the file.
-                Dictionary<string, string> section = new Dictionary<string, string>();
-
-                string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\ScriptDefinitions.md");
-                foreach (string sl in File.ReadAllLines(fpath))
-                {
-                    List<string> parts = sl.SplitByToken("|");
-
-                    if (parts.Count > 1)
-                    {
-                        switch (parts[0])
-                        {
-                            case "Instrument":
-                                section = _instrumentDefs;
-                                break;
-
-                            case "Drum":
-                                section = _drumDefs;
-                                break;
-
-                            case "Controller":
-                                section = _controllerDefs;
-                                break;
-
-                            case string s when !s.StartsWith("---"):
-                                section[parts[0]] = parts[1];
-                                break;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Couldn't load the definitions file: " + ex.Message);
-            }
         }
 
         /// <summary>
@@ -477,9 +416,9 @@ namespace Nebulator.Script
             List<string> codeLines = GenTopOfFile("");
 
             // The various defines.
-            _instrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_instrumentDefs[k]};"));
-            _drumDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_drumDefs[k]};"));
-            _controllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {_controllerDefs[k]};"));
+            ScriptDefinitions.TheDefinitions.InstrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.InstrumentDefs[k]};"));
+            ScriptDefinitions.TheDefinitions.DrumDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.DrumDefs[k]};"));
+            ScriptDefinitions.TheDefinitions.ControllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.ControllerDefs[k]};"));
 
             // Bottom stuff.
             codeLines.AddRange(GenBottomOfFile());
