@@ -4,10 +4,13 @@
 
 // All the neb variables.
 NVariable BACK_COLOR;
-NVariable KEYS_PITCH;
-NVariable MOD1;
+//NVariable KEYS_PITCH;
+NVariable SYNTH_PITCH;
+NVariable MOD_UI;
 NVariable KEYS_NOTE;
-NVariable CTL_TEST;
+NVariable CTL2_IN;
+NVariable CTL3_IN;
+NVariable CTL_OUT;
 
 // All the tracks.
 NTrack KEYS;
@@ -31,10 +34,13 @@ public override void setupNeb()
     // const int WHEN1 = 8;
 
     // All the neb variables.
-    CTL_TEST = createVariable("ctest", 200, 0, 255, On_CTL_TEST);
+    CTL2_IN = createVariable("ctlin2", 200, 0, 255, On_CTL2_IN);
+    CTL3_IN = createVariable("ctlin3", 200, 0, 255, On_CTL3_IN);
+    CTL_OUT = createVariable("ctlout", 200, 0, 255);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
-    KEYS_PITCH = createVariable("pitch", 8192, 0, 16383, On_KEYS_PITCH); // center is 8192
-    MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
+    //KEYS_PITCH = createVariable("pitch", 8192, 0, 16383, On_KEYS_PITCH); // center is 8192
+    SYNTH_PITCH = createVariable("synpitch", 8192, 0, 16383); // center is 8192
+    MOD_UI = createVariable("mod", 127, 0, 255, On_MOD_UI);
     KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE); // neg number for note off encoding
 
     // All the tracks.
@@ -48,15 +54,19 @@ public override void setupNeb()
     createNotes("MY_SCALE", "1 3 4 b7");
 
     // controller points
-    createControllerIn(KEYS, 3, CTL_TEST);
-    createControllerIn(KEYS, 4, BACK_COLOR);
-    createControllerIn(KEYS, PitchControl, KEYS_PITCH);
-    createControllerIn(KEYS, NoteControl, KEYS_NOTE);
+    createControllerIn(KEYS, 2, CTL2_IN); // affect some effect
+    createControllerIn(KEYS, 3, CTL3_IN); // affect some effect
+    createControllerIn(KEYS, 4, BACK_COLOR); // change ui color
+    //createControllerIn(KEYS, PitchControl, KEYS_PITCH); // my kbd doesn't have a pitch control!?
+    createControllerIn(KEYS, NoteControl, KEYS_NOTE);  // make some funny notes
+
+    createControllerOut(SYNTH, 9, CTL_OUT);
+    createControllerOut(SYNTH, PitchControl, SYNTH_PITCH);
 
     // levers
     createLever(BACK_COLOR);
-    createLever(KEYS_PITCH);
-    createLever(MOD1);
+    //createLever(KEYS_PITCH);
+    createLever(MOD_UI);
 
     // Get some stock chords and scales
     _chordNotes = getNotes("C4.o7");
@@ -165,31 +175,40 @@ public void On_BACK_COLOR()
     print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
 }
 
-public void On_CTL_TEST()
+public void On_CTL2_IN()
 {
-    sendNote(KEYS, 50 + CTL_TEST.Value % 20, 90, 2.0);
+    int newval = CTL2_IN.Value * 100 + 4000;
+    print("On_CTL2_IN:", newval);
+    //CTL_OUT.Value = CTL2_IN.Value;
+    SYNTH_PITCH.Value = newval;
+}
 
-    // if(CTL_TEST.Value > 50 && CTL_TEST.Value < 70)
+public void On_CTL3_IN()
+{
+    sendNote(KEYS, 50 + CTL3_IN.Value % 20, 90, 2.0);
+
+    // if(CTL3_IN.Value > 50 && CTL3_IN.Value < 70)
     // {
-    //     sendNote(KEYS, CTL_TEST.Value, 90, 2.0);
+    //     sendNote(KEYS, CTL3_IN.Value, 90, 2.0);
     // }
 }
 
-public void On_MOD1()
+public void On_MOD_UI()
 {
-    print(MOD1.Name, "changed to", MOD1.Value);
+    print(MOD_UI.Name, "changed to", MOD_UI.Value);
 
     // Send a control change.
-    sendController(KEYS, 1, MOD1.Value);
+    sendController(KEYS, 1, MOD_UI.Value);
 }
 
 public void On_KEYS_NOTE()
 {
     print("KEYS_NOTE", "=", KEYS_NOTE.Value);
 
+    // Test for on or off.
     if(KEYS_NOTE.Value > 0)
     {
-        sendNote(SYNTH, KEYS_NOTE.Value, 90, 0.0); // noteon
+        sendNote(SYNTH, KEYS_NOTE.Value, 110, 0.0); // noteon
         //sendNote(SYNTH, KEYS_NOTE.Value, 90, 2.0); // fixed duration
     }
     else
@@ -198,12 +217,12 @@ public void On_KEYS_NOTE()
     }
 }
 
-public void On_KEYS_PITCH()
-{
-    print("KEYS_PITCH", "=", KEYS_PITCH.Value);
+// public void On_KEYS_PITCH()
+// {
+//     print("KEYS_PITCH", "=", KEYS_PITCH.Value);
 
-    sendController(KEYS, PitchControl, KEYS_PITCH.Value);
-}
+//     sendController(KEYS, PitchControl, KEYS_PITCH.Value);
+// }
 
 public override void draw()
 {

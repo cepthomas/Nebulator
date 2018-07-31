@@ -65,7 +65,7 @@ namespace Nebulator.Protocol
     /// </summary>
     public class StepNoteOff : Step
     {
-        /// <summary>The default note.</summary>
+        /// <summary>The note to stop.</summary>
         public int NoteNumber { get; set; }
 
         /// <summary>Velocity.</summary>

@@ -548,7 +548,7 @@ namespace Nebulator
             ////// Process changed vars regardless of any other status //////
             foreach (NVariable var in _ctrlChanges.Values)
             {
-                // Output any out controllers.
+                // Output any out controllers. TODO??
                 foreach(NControlPoint c in _script.OutputControls)
                 {
                     if(c.BoundVar.Name == var.Name)
@@ -692,7 +692,7 @@ namespace Nebulator
                     {
                         int channel = (e.Step as Step).Channel;
 
-                        // Dig out the note number. Note sign change for note off.
+                        // Dig out the note number. Note sign change for note off. TODO better way to handle this?
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
 
                         // Process through our list of inputs of interest.
@@ -700,7 +700,7 @@ namespace Nebulator
                         {
                             if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Track.Channel == channel)
                             {
-                                // Add to our list for processing at the next tock.
+                                // Add to our list for processing at the next tock. TODO or do now?
                                 ctlpt.BoundVar.Value = value;
                                 _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
                                 handled = true;
@@ -715,16 +715,9 @@ namespace Nebulator
                         // Process through our list of inputs of interest.
                         foreach (NControlPoint ctlpt in _script.InputControls)
                         {
-                            if(ctlpt.Track.Channel == scc.Channel)
-                            {
-
-                            }
-
-
-
                             if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
                             {
-                                // Add to our list for processing at the next tock.
+                                // Add to our list for processing at the next tock. TODO or do now?
                                 ctlpt.BoundVar.Value = scc.Value;
                                 _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
                                 handled = true;
