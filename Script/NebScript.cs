@@ -65,19 +65,6 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Create a controller output.
-        /// </summary>
-        /// <param name="track">Associated track.</param>
-        /// <param name="controlId">Which</param>
-        /// <param name="bound">NVariable</param>
-        protected void createControllerOut(NTrack track, int controlId, NVariable bound)
-        {
-            controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
-            OutputControllers.Add(mp);
-        }
-
-        /// <summary>
         /// Create a UI lever.
         /// </summary>
         /// <param name="bound"></param>
@@ -119,7 +106,7 @@ namespace Nebulator.Script
         /// <param name="name"></param>
         /// <param name="start"></param>
         /// <param name="length"></param>
-        protected NSection ceateSection(string name, int start, int length)
+        protected NSection createSection(string name, int start, int length)
         {
             NSection nsec = new NSection() { Name = name, Start = start, Length = length };
             Sections.Add(nsec);
@@ -203,7 +190,7 @@ namespace Nebulator.Script
             }
         }
 
-        /// <summary>Send a note immediately. TODO or put in a Q? Respects solo/mute.</summary>
+        /// <summary>Send a note immediately. Respects solo/mute. TODO or put in a queue?</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
@@ -213,7 +200,7 @@ namespace Nebulator.Script
             sendNote(track, snote, vol, dur.AsDouble);
         }
 
-        /// <summary>Send a controller immediately. TODO or put in a Q?</summary>
+        /// <summary>Send a controller immediately. TODO or put in a queue?</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>

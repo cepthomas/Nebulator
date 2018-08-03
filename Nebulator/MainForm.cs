@@ -60,9 +60,6 @@ namespace Nebulator
         /// <summary>Script compile errors and warnings.</summary>
         List<ScriptError> _compileResults = new List<ScriptError>();
 
-        /// <summary>Accumulated control input var changes to be processed at next step.</summary>
-        Dictionary<string, NVariable> _ctrlChanges = new Dictionary<string, NVariable>();
-
         /// <summary>Current neb file name.</summary>
         string _fn = Utils.UNKNOWN_STRING;
 
@@ -488,7 +485,6 @@ namespace Nebulator
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
-            //ProcessPlay(PlayCommand.StopRewind, false);
         }
 
         /// <summary>
@@ -539,37 +535,12 @@ namespace Nebulator
         /// <param name="e">Information about updates required.</param>
         void NextStep(NebTimer.TimerEventArgs e)
         {
-            ////// Process changed vars regardless of any other status //////
-            foreach (NVariable var in _ctrlChanges.Values)
-            {
-                // Output any out controllers.
-                foreach(NControlPoint c in _script.OutputControllers)
-                {
-                    if(c.BoundVar.Name == var.Name)
-                    {
-                        StepControllerChange step = new StepControllerChange()
-                        {
-                            Channel = c.Track.Channel,
-                            ControllerId = c.ControllerId,
-                            Value = c.BoundVar.Value
-                        };
-                        _device1.Send(step);
-                    }
-                }
-            }
-
-            // Reset controllers for next go around.
-            _ctrlChanges.Clear();
-            /////////////////////////////////////
-
-
-
             ////// Neb steps /////
             InitRuntime();
 
             if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB") && !_needCompile)
             {
-                //_tanNeb.Arm();
+                //_tan.Arm();
 
                 // Kick it.
                 try
@@ -581,9 +552,9 @@ namespace Nebulator
                     ProcessScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
                 }
 
-                //if (_tanNeb.Grab())
+                //if (_tan.Grab())
                 //{
-                //    _logger.Info("NEB tan: " + _tanNeb.ToString());
+                //    _logger.Info("NEB tan: " + _tan.ToString());
                 //}
 
                 // Process any sequence steps the script added.
@@ -682,25 +653,24 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                bool handled = false; // default
-
                 if (_script != null && e.Step != null)
                 {
-                    if(e.Step is StepNoteOn || e.Step is StepNoteOff)
+                    bool handled = false; // default
+
+                    if (e.Step is StepNoteOn || e.Step is StepNoteOff)
                     {
                         int channel = (e.Step as Step).Channel;
 
-                        // Dig out the note number. Note sign change for note off. TODO better way to handle this?
+                        // Dig out the note number. Note sign change for note off. TODOX better way to handle this?
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
 
-                        // Process through our list of inputs of interest.
+                        // Process through our list of inputs of interest. TODOX make into a dict?
                         foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
                             if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Track.Channel == channel)
                             {
-                                // Add to our list for processing at the next tock.
-                                ctlpt.BoundVar.Value = value; // >>> callback
-                                _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
+                                // Assign new value which triggers script callback.
+                                ctlpt.BoundVar.Value = value;
                                 handled = true;
                             }
                         }
@@ -710,24 +680,23 @@ namespace Nebulator
                         // Control change
                         StepControllerChange scc = e.Step as StepControllerChange;
 
-                        // Process through our list of inputs of interest.
+                        // Process through our list of inputs of interest. TODOX make into a dict w/above?
                         foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
                             if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
                             {
-                                // Add to our list for processing at the next tock.
-                                ctlpt.BoundVar.Value = scc.Value; // >>> callback
-                                _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
+                                // Assign new value which triggers script callback.
+                                ctlpt.BoundVar.Value = scc.Value;
                                 handled = true;
                             }
                         }
                     }
-                }
 
-                if (!handled)
-                {
-                    // Pass through.
-                    _device1.Send(e.Step);
+                    if (!handled)
+                    {
+                        // Pass through.
+                        _device1.Send(e.Step);
+                    }
                 }
             });
         }
@@ -764,13 +733,13 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// UI change event. Add to our list for processing at the next tock.
+        /// UI change event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void Levers_Changed(object sender, Levers.LeverChangeEventArgs e)
         {
-            _ctrlChanges[e.BoundVar.Name] = e.BoundVar; // TODO 
+
         }
 
         /// <summary>

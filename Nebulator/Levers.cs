@@ -111,7 +111,7 @@ namespace Nebulator
                 // Update the bound var and report to the master.
                 Slider sl = sender as Slider;
                 NVariable refVar = sl.Tag as NVariable;
-                refVar.Value = sl.Value; //TODO  // >>> callback
+                refVar.Value = sl.Value; // This triggers any hooked script handlers.
 
                 LeverChangeEvent?.Invoke(this, new LeverChangeEventArgs() { BoundVar = refVar });
             }

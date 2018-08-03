@@ -21,7 +21,7 @@ const int DRUM_DEF_VOL = 100;
 ///// Variables /////
 NVariable COL1;
 NVariable MODN;
-NVariable PITCH;
+//NVariable PITCH;
 
 ///// Tracks /////
 NTrack KEYS;
@@ -74,7 +74,7 @@ public override void setupNeb()
 
     // controller points
     createControllerIn(KEYS, 4, MODN);
-    createControllerOut(KEYS, PitchControl, PITCH);
+xxx    createControllerOut(KEYS, PitchControl, PITCH);
 
     // levers
     createLever(COL1);
@@ -160,18 +160,18 @@ public override void setupNeb()
     NULL_SEQ.Add(00.00, algoNull, 90);
 
     // Sections
-    NSection PART1 = ceateSection("part1", WHEN1, WHEN2 - WHEN1);
+    NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
     PART1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
     PART1.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
     PART1.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
 
-    NSection PART2 = ceateSection("part2", WHEN2, WHEN3 - WHEN2);
+    NSection PART2 = createSection("part2", WHEN2, WHEN3 - WHEN2);
     PART2.Add(KEYS, KEYS_VERSE2, KEYS_VERSE2);
     PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
     PART2.Add(BASS, BASS_VERSE, BASS_VERSE);
     PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
 
-    NSection PART3 = ceateSection("part3", WHEN3, WHEN4 - WHEN3);
+    NSection PART3 = createSection("part3", WHEN3, WHEN4 - WHEN3);
     PART3.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
     PART3.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
     PART3.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);

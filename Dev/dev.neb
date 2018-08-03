@@ -85,7 +85,7 @@ public override void setupNeb()
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
 
     // section
-    NSection PART1 = ceateSection("section", WHEN1, 0);
+    NSection PART1 = createSection("section", WHEN1, 0);
     PART1.Add(KEYS, SEQ1, SEQ1);
     PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 

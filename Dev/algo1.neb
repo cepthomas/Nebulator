@@ -1,16 +1,12 @@
 
 // Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
-
 // All the neb variables.
 NVariable BACK_COLOR;
-//NVariable KEYS_PITCH;
-NVariable SYNTH_PITCH;
-NVariable MOD_UI;
+NVariable MOD1;
 NVariable KEYS_NOTE;
-NVariable CTL2_IN;
-NVariable CTL3_IN;
-NVariable CTL_OUT;
+NVariable CTL2;
+NVariable CTL3;
 
 // All the tracks.
 NTrack KEYS;
@@ -31,17 +27,12 @@ int _radius = 300;
 
 public override void setupNeb()
 {
-    // const int WHEN1 = 8;
-
     // All the neb variables.
-    CTL2_IN = createVariable("ctlin2", 200, 0, 255, On_CTL2_IN);
-    CTL3_IN = createVariable("ctlin3", 200, 0, 255, On_CTL3_IN);
-    CTL_OUT = createVariable("ctlout", 200, 0, 255);
+    CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
+    CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
-    //KEYS_PITCH = createVariable("pitch", 8192, 0, 16383, On_KEYS_PITCH); // center is 8192
-    SYNTH_PITCH = createVariable("synpitch", 8192, 0, 16383); // center is 8192
-    MOD_UI = createVariable("mod", 127, 0, 255, On_MOD_UI);
-    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE); // neg number for note off encoding TODO??
+    MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
+    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE); // neg number for note off encoding TODOX?
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -54,19 +45,14 @@ public override void setupNeb()
     createNotes("MY_SCALE", "1 3 4 b7");
 
     // controller points
-    createControllerIn(KEYS, 2, CTL2_IN); // affect some effect
-    createControllerIn(KEYS, 3, CTL3_IN); // affect some effect
+    createControllerIn(KEYS, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+    createControllerIn(KEYS, 3, CTL3); // another controller
     createControllerIn(KEYS, 4, BACK_COLOR); // change ui color
-    //createControllerIn(KEYS, PitchControl, KEYS_PITCH); // my kbd doesn't have a pitch control
     createControllerIn(KEYS, NoteControl, KEYS_NOTE);  // make some funny notes
-
-    createControllerOut(SYNTH, 9, CTL_OUT);
-    createControllerOut(SYNTH, PitchControl, SYNTH_PITCH);
 
     // levers
     createLever(BACK_COLOR);
-    //createLever(KEYS_PITCH);
-    createLever(MOD_UI);
+    createLever(MOD1);
 
     // Get some stock chords and scales
     _chordNotes = getNotes("C4.o7");
@@ -125,6 +111,7 @@ public override void step()
             case 4:
             case 8:
             case 12:
+                //playSequence(KEYS, SEQ1);
                 foreach(int n in _chordNotes)
                 {
                     sendNote(KEYS, n, 90, 1.0);
@@ -142,16 +129,6 @@ public override void step()
                 break;
         }
     }
-
-    // if(tick % 9 == 0)
-    // {
-    //     playSequence(KEYS, SEQ1);
-    // }
-
-    // if(tick % 13 == 0)
-    // {
-    //     playSequence(KEYS, SEQ2);
-    // }
 }
 
 ////////////////////////////// ui //////////////////////////
@@ -175,37 +152,32 @@ public void On_BACK_COLOR()
     print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
 }
 
-public void On_CTL2_IN()
+public void On_CTL2()
 {
-    int newval = CTL2_IN.Value * 100 + 4000;
-    print("On_CTL2_IN:", newval);
-    //CTL_OUT.Value = CTL2_IN.Value;
-    SYNTH_PITCH.Value = newval;
+    // 0 -> 127 in
+    int newval = (int)map(CTL2.Value, 0, 127, 0, 16383);
+    //print("On_CTL2:", newval);
+    sendController(SYNTH, PitchControl, newval);
 }
 
-public void On_CTL3_IN()
+public void On_CTL3()
 {
-    sendNote(KEYS, 50 + CTL3_IN.Value % 20, 90, 2.0);
-
-    // if(CTL3_IN.Value > 50 && CTL3_IN.Value < 70)
-    // {
-    //     sendNote(KEYS, CTL3_IN.Value, 90, 2.0);
-    // }
+    sendNote(KEYS, 50 + CTL3.Value % 20, 90, 2.0);
 }
 
-public void On_MOD_UI()
+public void On_MOD1()
 {
-    print(MOD_UI.Name, "changed to", MOD_UI.Value);
+    print(MOD1.Name, "changed to", MOD1.Value);
 
     // Send a control change.
-    sendController(KEYS, 1, MOD_UI.Value);
+    sendController(KEYS, 1, MOD1.Value);
 }
 
 public void On_KEYS_NOTE()
 {
     print("KEYS_NOTE", "=", KEYS_NOTE.Value);
 
-    // Test for on or off.
+    // Test for on or off. TODOX
     if(KEYS_NOTE.Value > 0)
     {
         sendNote(SYNTH, KEYS_NOTE.Value, 110, 0.0); // noteon
@@ -216,13 +188,6 @@ public void On_KEYS_NOTE()
         sendNote(SYNTH, -KEYS_NOTE.Value, 0, 0.0); // noteoff
     }
 }
-
-// public void On_KEYS_PITCH()
-// {
-//     print("KEYS_PITCH", "=", KEYS_PITCH.Value);
-
-//     sendController(KEYS, PitchControl, KEYS_PITCH.Value);
-// }
 
 public override void draw()
 {

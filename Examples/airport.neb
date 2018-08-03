@@ -5,10 +5,7 @@
 const int SOUND_DEF_VOL = 100;
 
 ///// Variables /////
-NVariable COLOR; // change color
-NVariable MODF;  // modulate filter - linked in reaper project
-NVariable PITCH; // modulate pitch
-
+NVariable COLOR;
 
 ///// Tracks /////
 NTrack SOUND;
@@ -35,21 +32,12 @@ public override void setupNeb()
 {
     ///// Variables /////
     COLOR = createVariable("color", 240, 0, 255); // change color
-    MODF = createVariable("modf", 0, 0, 255, On_MODF); // modulate filter - linked in reaper project
-    PITCH = createVariable("pitch", 8192, 0, 16383); // center is 8192
 
     ///// Tracks /////
     SOUND = createTrack("sound", 1, 5, 0, 0);
 
-    // controller points
-    createControllerIn(SOUND, 4, MODF);
-    createControllerOut(SOUND, 4, MODF);
-    createControllerOut(SOUND, PitchControl, PITCH);
-
     // levers
     createLever(COLOR);
-    createLever(PITCH); // max range
-    createLever(MODF);
 
     // Set up the loops.
     loops.Clear();
@@ -88,11 +76,6 @@ public override void step()
             l.nextStart = stepTime + l.delay + l.duration;
         }
     }
-}
-
-public void On_MODF()
-{
-    print(MODF.Name, "changed to", MODF.Value);
 }
 
 public override void draw()
@@ -138,11 +121,4 @@ public override void draw()
             text(loop.snote, x - 15, y - 10);
         }
     }
-}
-
-public override void mouseClicked()
-{
-    // Maybe do something?
-    //int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
-    //sendNote(SOUND, sn, 90, 0.48);
 }

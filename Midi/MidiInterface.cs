@@ -62,7 +62,7 @@ namespace Nebulator.Midi
                 MinNote = 0,
                 MaxNote = 127,
                 MinControllerValue = 0,
-                MaxControllerValue = 255,
+                MaxControllerValue = 127,
                 MinPitchValue = 0,
                 MaxPitchValue = 16383
             };
