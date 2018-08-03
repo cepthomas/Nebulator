@@ -4,7 +4,7 @@
 // All the neb variables.
 NVariable BACK_COLOR;
 NVariable MOD1;
-NVariable KEYS_NOTE;
+NVariable CTL_NOTE;
 NVariable CTL2;
 NVariable CTL3;
 
@@ -17,11 +17,10 @@ NTrack DRUMS;
 // Neb script stuff.
 int[] _chordNotes;
 int[] _scaleNotes;
-//int[] _notesPlaying = new int[128];
 int _noteNum = 0;
 
 // Processing stuff.
-int _segmentCount = 36; // 360;
+int _segmentCount = 36;
 int _radius = 300;
 
 
@@ -32,7 +31,7 @@ public override void setupNeb()
     CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
-    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE); // neg number for note off encoding TODOX?
+    CTL_NOTE = createVariable("note", 60, -127, 127, On_CTL_NOTE); // neg number for note off encoding
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -48,7 +47,7 @@ public override void setupNeb()
     createControllerIn(KEYS, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
     createControllerIn(KEYS, 3, CTL3); // another controller
     createControllerIn(KEYS, 4, BACK_COLOR); // change ui color
-    createControllerIn(KEYS, NoteControl, KEYS_NOTE);  // make some funny notes
+    createControllerIn(KEYS, NoteControl, CTL_NOTE);  // make some funny notes
 
     // levers
     createLever(BACK_COLOR);
@@ -173,19 +172,19 @@ public void On_MOD1()
     sendController(KEYS, 1, MOD1.Value);
 }
 
-public void On_KEYS_NOTE()
+public void On_CTL_NOTE()
 {
-    print("KEYS_NOTE", "=", KEYS_NOTE.Value);
+    print("CTL_NOTE", "=", CTL_NOTE.Value);
 
-    // Test for on or off. TODOX
-    if(KEYS_NOTE.Value > 0)
+    // Test for on or off. TODO
+    if(CTL_NOTE.Value > 0)
     {
-        sendNote(SYNTH, KEYS_NOTE.Value, 110, 0.0); // noteon
-        //sendNote(SYNTH, KEYS_NOTE.Value, 90, 2.0); // fixed duration
+        sendNote(SYNTH, CTL_NOTE.Value, 110, 0.0); // noteon
+        //sendNote(SYNTH, CTL_NOTE.Value, 90, 2.0); // fixed duration
     }
     else
     {
-        sendNote(SYNTH, -KEYS_NOTE.Value, 0, 0.0); // noteoff
+        sendNote(SYNTH, -CTL_NOTE.Value, 0, 0.0); // noteoff
     }
 }
 

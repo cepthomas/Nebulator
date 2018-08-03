@@ -661,10 +661,10 @@ namespace Nebulator
                     {
                         int channel = (e.Step as Step).Channel;
 
-                        // Dig out the note number. Note sign change for note off. TODOX better way to handle this?
+                        // Dig out the note number. Note sign change for note off. TODO better way to do this?
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
 
-                        // Process through our list of inputs of interest. TODOX make into a dict?
+                        // Process through our list of inputs of interest. TODO make into a dict?
                         foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
                             if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Track.Channel == channel)
@@ -680,7 +680,7 @@ namespace Nebulator
                         // Control change
                         StepControllerChange scc = e.Step as StepControllerChange;
 
-                        // Process through our list of inputs of interest. TODOX make into a dict w/above?
+                        // Process through our list of inputs of interest. TODO make into a dict w/above?
                         foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
                             if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
