@@ -41,7 +41,7 @@ public override void setupNeb()
     //KEYS_PITCH = createVariable("pitch", 8192, 0, 16383, On_KEYS_PITCH); // center is 8192
     SYNTH_PITCH = createVariable("synpitch", 8192, 0, 16383); // center is 8192
     MOD_UI = createVariable("mod", 127, 0, 255, On_MOD_UI);
-    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE); // neg number for note off encoding
+    KEYS_NOTE = createVariable("note", 60, -127, 127, On_KEYS_NOTE); // neg number for note off encoding TODO??
 
     // All the tracks.
     KEYS = createTrack("keys", 1, 5, 0, 0);
@@ -57,7 +57,7 @@ public override void setupNeb()
     createControllerIn(KEYS, 2, CTL2_IN); // affect some effect
     createControllerIn(KEYS, 3, CTL3_IN); // affect some effect
     createControllerIn(KEYS, 4, BACK_COLOR); // change ui color
-    //createControllerIn(KEYS, PitchControl, KEYS_PITCH); // my kbd doesn't have a pitch control!?
+    //createControllerIn(KEYS, PitchControl, KEYS_PITCH); // my kbd doesn't have a pitch control
     createControllerIn(KEYS, NoteControl, KEYS_NOTE);  // make some funny notes
 
     createControllerOut(SYNTH, 9, CTL_OUT);

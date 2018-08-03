@@ -61,7 +61,7 @@ namespace Nebulator.Script
         {
             controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
             NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
-            InputControls.Add(mp);
+            InputControllers.Add(mp);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Nebulator.Script
         {
             controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
             NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
-            OutputControls.Add(mp);
+            OutputControllers.Add(mp);
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Nebulator.Script
             }
         }
 
-        /// <summary>Send a note immediately. Respects solo/mute.</summary>
+        /// <summary>Send a note immediately. TODO or put in a Q? Respects solo/mute.</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
@@ -213,7 +213,7 @@ namespace Nebulator.Script
             sendNote(track, snote, vol, dur.AsDouble);
         }
 
-        /// <summary>Send a controller immediately.</summary>
+        /// <summary>Send a controller immediately. TODO or put in a Q?</summary>
         /// <param name="track">Which track to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>

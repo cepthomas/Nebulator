@@ -51,10 +51,10 @@ namespace Nebulator.Script
 
         #region Properties - things defined in the script that MainForm needs
         /// <summary>Control inputs.</summary>
-        public List<NControlPoint> InputControls { get; set; } = new List<NControlPoint>();
+        public List<NControlPoint> InputControllers { get; set; } = new List<NControlPoint>();
 
         /// <summary>Control outputs.</summary>
-        public List<NControlPoint> OutputControls { get; set; } = new List<NControlPoint>();
+        public List<NControlPoint> OutputControllers { get; set; } = new List<NControlPoint>();
 
         /// <summary>Levers.</summary>
         public List<NControlPoint> Levers { get; set; } = new List<NControlPoint>();

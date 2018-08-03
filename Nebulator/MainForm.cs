@@ -33,7 +33,7 @@ namespace Nebulator
         /// <summary>Fast timer.</summary>
         NebTimer _nebTimer = new NebTimer();
 
-        /// <summary>The in/out devices. TODO support multiple and OSC.</summary>
+        /// <summary>The in/out devices. TODO support multiple midis and OSC.</summary>
         IProtocol _device1 = new Midi.MidiInterface();
 
         /// <summary>Surface child form.</summary>
@@ -78,14 +78,8 @@ namespace Nebulator
         /// <summary>Persisted internal values for current neb/nebp file.</summary>
         Bag _nebpVals = new Bag();
 
-        /// <summary>Indicates needs user involvement.</summary>
-        Color _attentionColor = Color.Red;
-
         /// <summary>Diagnostics for timing measurement.</summary>
-        TimingAnalyzer _tanUi = new TimingAnalyzer() { SampleSize = 100 };
-
-        /// <summary>Diagnostics for timing measurement.</summary>
-        TimingAnalyzer _tanNeb = new TimingAnalyzer() { SampleSize = 100 };
+        TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
         /// <summary>Server host.</summary>
         SelfHost _selfHost = null;
@@ -510,7 +504,7 @@ namespace Nebulator
             }
             else
             {
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, _attentionColor);
+                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Color.Red);
                 _needCompile = true;
             }
 
@@ -524,7 +518,7 @@ namespace Nebulator
         void TimerElapsedEvent(object sender, NebTimer.TimerEventArgs e)
         {
             //// Do some stats gathering for measuring jitter.
-            //if ( _tanTimer.Grab())
+            //if ( _tan.Grab())
             //{
             //    _logger.Info($"Midi timing: {stats}");
             //}
@@ -548,8 +542,8 @@ namespace Nebulator
             ////// Process changed vars regardless of any other status //////
             foreach (NVariable var in _ctrlChanges.Values)
             {
-                // Output any out controllers. TODO??
-                foreach(NControlPoint c in _script.OutputControls)
+                // Output any out controllers.
+                foreach(NControlPoint c in _script.OutputControllers)
                 {
                     if(c.BoundVar.Name == var.Name)
                     {
@@ -566,10 +560,13 @@ namespace Nebulator
 
             // Reset controllers for next go around.
             _ctrlChanges.Clear();
+            /////////////////////////////////////
 
-            InitRuntime();
+
 
             ////// Neb steps /////
+            InitRuntime();
+
             if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB") && !_needCompile)
             {
                 //_tanNeb.Arm();
@@ -618,7 +615,7 @@ namespace Nebulator
             ///// UI updates /////
             if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && !_needCompile)
             {
-                //_tanUi.Arm();
+                //_tan.Arm();
 
                 try
                 {
@@ -629,15 +626,16 @@ namespace Nebulator
                     ProcessScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
                 }
 
-                //if (_tanUi.Grab())
+                //if (_tan.Grab())
                 //{
-                //    _logger.Info("UI tan: " + _tanUi.ToString());
+                //    _logger.Info("UI tan: " + _tan.ToString());
                 //}
             }
 
+            // Process whatever the script did.
             ProcessRuntime();
 
-            ///// Process any lingering noteoffs. /////
+            // Process any lingering noteoffs.
             _device1.Housekeep();
 
             ///// Local common function /////
@@ -696,12 +694,12 @@ namespace Nebulator
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
 
                         // Process through our list of inputs of interest.
-                        foreach (NControlPoint ctlpt in _script.InputControls)
+                        foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
                             if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Track.Channel == channel)
                             {
-                                // Add to our list for processing at the next tock. TODO or do now?
-                                ctlpt.BoundVar.Value = value;
+                                // Add to our list for processing at the next tock.
+                                ctlpt.BoundVar.Value = value; // >>> callback
                                 _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
                                 handled = true;
                             }
@@ -713,12 +711,12 @@ namespace Nebulator
                         StepControllerChange scc = e.Step as StepControllerChange;
 
                         // Process through our list of inputs of interest.
-                        foreach (NControlPoint ctlpt in _script.InputControls)
+                        foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
                             if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
                             {
-                                // Add to our list for processing at the next tock. TODO or do now?
-                                ctlpt.BoundVar.Value = scc.Value;
+                                // Add to our list for processing at the next tock.
+                                ctlpt.BoundVar.Value = scc.Value; // >>> callback
                                 _ctrlChanges[ctlpt.BoundVar.Name] = ctlpt.BoundVar;
                                 handled = true;
                             }
@@ -772,7 +770,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Levers_Changed(object sender, Levers.LeverChangeEventArgs e)
         {
-            _ctrlChanges[e.BoundVar.Name] = e.BoundVar;
+            _ctrlChanges[e.BoundVar.Name] = e.BoundVar; // TODO 
         }
 
         /// <summary>
