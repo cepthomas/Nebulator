@@ -8,24 +8,24 @@ using Nebulator.Script;
 namespace Nebulator
 {
     /// <summary>
-    /// Common track controller.
+    /// Common channel controller.
     /// </summary>
-    public partial class TrackControl : UserControl
+    public partial class ChannelControl : UserControl
     {
         #region Properties
         /// <summary>
-        /// Corresponding track object.
+        /// Corresponding channel object.
         /// </summary>
-        public NTrack BoundTrack { get; set; }
+        public NChannel BoundChannel { get; set; }
         #endregion
 
         #region Events
         /// <summary>
         /// User changed something.
         /// </summary>
-        public event EventHandler<TrackChangeEventArgs> TrackChangeEvent;
+        public event EventHandler<ChannelChangeEventArgs> ChannelChangeEvent;
 
-        public class TrackChangeEventArgs : EventArgs
+        public class ChannelChangeEventArgs : EventArgs
         {
             public string What { get; set; } = "";
         }
@@ -34,7 +34,7 @@ namespace Nebulator
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TrackControl()
+        public ChannelControl()
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
@@ -43,17 +43,17 @@ namespace Nebulator
         /// <summary>
         /// Initialize the UI from the object.
         /// </summary>
-        private void TrackControl_Load(object sender, EventArgs e)
+        private void ChannelControl_Load(object sender, EventArgs e)
         {
             chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
             chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
             sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
             sldVolume.Font = UserSettings.TheSettings.ControlFont;
-            sldVolume.Label = BoundTrack.Name;
+            sldVolume.Label = BoundChannel.Name;
             sldVolume.Maximum = 200;
-            sldVolume.Value = BoundTrack.Volume;
+            sldVolume.Value = BoundChannel.Volume;
 
-            sldVolume.ValueChanged += VolTrack_ValueChanged;
+            sldVolume.ValueChanged += VolChannel_ValueChanged;
         }
 
         /// <summary>
@@ -74,26 +74,26 @@ namespace Nebulator
 
             if (chkMute.Checked)
             {
-                BoundTrack.State = TrackState.Mute;
+                BoundChannel.State = ChannelState.Mute;
             }
             else if (chkSolo.Checked)
             {
-                BoundTrack.State = TrackState.Solo;
+                BoundChannel.State = ChannelState.Solo;
             }
             else
             {
-                BoundTrack.State = TrackState.Normal;
+                BoundChannel.State = ChannelState.Normal;
             }
 
-            TrackChangeEvent?.Invoke(this, new TrackChangeEventArgs() { What = "TrackState" });
+            ChannelChangeEvent?.Invoke(this, new ChannelChangeEventArgs() { What = "ChannelState" });
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private void VolTrack_ValueChanged(object sender, EventArgs e)
+        private void VolChannel_ValueChanged(object sender, EventArgs e)
         {
-            BoundTrack.Volume = sldVolume.Value;
+            BoundChannel.Volume = sldVolume.Value;
         }
     }
 }

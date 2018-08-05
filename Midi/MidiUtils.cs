@@ -17,10 +17,10 @@ namespace Nebulator.Midi
         /// </summary>
         /// <param name="steps"></param>
         /// <param name="midiFileName"></param>
-        /// <param name="tracks">Map of channel number to track name.</param>
+        /// <param name="channels">Map of channel number to channel name.</param>
         /// <param name="secPerTick">Seconds per Tick (aka qtr note).</param>
         /// <param name="info">Extra info to add to midi file.</param>
-        public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> tracks, double secPerTick, string info)
+        public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double secPerTick, string info)
         {
             // Events per track.
             Dictionary<int, IList<MidiEvent>> trackEvents = new Dictionary<int, IList<MidiEvent>>();
@@ -51,11 +51,11 @@ namespace Nebulator.Midi
             lhdr.Add(new MetaEvent(MetaEventType.EndTrack, 0, 0));
 
             ///// Make one midi event collection per track.
-            foreach(int channel in tracks.Keys)
+            foreach(int channel in channels.Keys)
             {
                 IList<MidiEvent> le = events.AddTrack();
                 trackEvents.Add(channel, le);
-                le.Add(new TextEvent(tracks[channel], MetaEventType.SequenceTrackName, 0));
+                le.Add(new TextEvent(channels[channel], MetaEventType.SequenceTrackName, 0));
                 // >> 0 SequenceTrackName G.MIDI Acou Bass
             }
 
@@ -109,7 +109,7 @@ namespace Nebulator.Midi
                 }
             }
 
-            // Finish up tracks with end marker.
+            // Finish up channels with end marker.
             foreach (IList<MidiEvent> let in trackEvents.Values)
             {
                 long ltime = let.Last().AbsoluteTime;
@@ -129,7 +129,7 @@ namespace Nebulator.Midi
         public static List<string> ImportStyle(string fileName)
         {
             List<string> constants = new List<string>() { "///// Constants /////" };
-            List<string> tracks = new List<string>() { "///// Tracks and Loops /////" };
+            List<string> channels = new List<string>() { "///// Channels and Loops /////" };
             List<string> sequences = new List<string>() { "///// Sequences and Notes /////" };
             List<string> leftovers = new List<string> { "///// Leftovers /////" };
 
@@ -138,12 +138,12 @@ namespace Nebulator.Midi
 
             // Process collected events into strings digestible by neb.
             List<string> parts = sty.Parts;
-            List<int> channels = sty.Channels;
+            List<int> stychannels = sty.Channels;
 
             // Collect sequence info.
             foreach(var part in parts)
             {
-                foreach (int channel in channels)
+                foreach (int channel in stychannels)
                 {
                     var events = sty.GetEvents(part, channel);
 
@@ -286,7 +286,7 @@ namespace Nebulator.Midi
             }
 
             // Process track info.
-            channels.ForEach(c => tracks.Add($"track(TRACK_{c}, {c}, 0, 0, 0);"));
+            channels.ForEach(c => channels.Add($"track(TRACK_{c}, {c}, 0, 0, 0);"));
 
             // Global stuff.
             constants.Add($"const(TLEN, 888);");
@@ -294,7 +294,7 @@ namespace Nebulator.Midi
             List<string> all = new List<string>() { "///// Imported Style /////" };
             all.AddRange(constants);
             all.Add(""); // space
-            all.AddRange(tracks);
+            all.AddRange(channels);
             all.Add(""); // space
             all.AddRange(sequences);
 

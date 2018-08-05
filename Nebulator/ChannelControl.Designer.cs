@@ -1,6 +1,6 @@
 ﻿namespace Nebulator
 {
-    partial class TrackControl
+    partial class ChannelControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -44,7 +44,7 @@
             this.chkMute.Size = new System.Drawing.Size(10, 34);
             this.chkMute.TabIndex = 1;
             this.chkMute.Text = "M";
-            this.toolTip.SetToolTip(this.chkMute, "Mute track");
+            this.toolTip.SetToolTip(this.chkMute, "Mute channel");
             this.chkMute.UseVisualStyleBackColor = true;
             this.chkMute.Click += new System.EventHandler(this.Check_Click);
             // 
@@ -57,7 +57,7 @@
             this.chkSolo.Size = new System.Drawing.Size(10, 34);
             this.chkSolo.TabIndex = 4;
             this.chkSolo.Text = "S";
-            this.toolTip.SetToolTip(this.chkSolo, "Solo track");
+            this.toolTip.SetToolTip(this.chkSolo, "Solo channel");
             this.chkSolo.UseVisualStyleBackColor = true;
             this.chkSolo.Click += new System.EventHandler(this.Check_Click);
             // 
@@ -71,20 +71,20 @@
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.Size = new System.Drawing.Size(66, 34);
             this.sldVolume.TabIndex = 5;
-            this.toolTip.SetToolTip(this.sldVolume, "Track volume");
+            this.toolTip.SetToolTip(this.sldVolume, "Channel volume");
             this.sldVolume.Value = 90;
-            this.sldVolume.ValueChanged += new System.EventHandler(this.VolTrack_ValueChanged);
+            this.sldVolume.ValueChanged += new System.EventHandler(this.VolChannel_ValueChanged);
             // 
-            // TrackControl
+            // ChannelControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.sldVolume);
             this.Controls.Add(this.chkSolo);
             this.Controls.Add(this.chkMute);
-            this.Name = "TrackControl";
+            this.Name = "ChannelControl";
             this.Size = new System.Drawing.Size(91, 43);
-            this.Load += new System.EventHandler(this.TrackControl_Load);
+            this.Load += new System.EventHandler(this.ChannelControl_Load);
             this.ResumeLayout(false);
 
         }

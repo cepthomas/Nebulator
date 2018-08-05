@@ -11,8 +11,8 @@ using Nebulator.Protocol;
 
 namespace Nebulator.Script
 {
-    /// <summary>Track state.</summary>
-    public enum TrackState { Normal, Mute, Solo }
+    /// <summary>Channel state.</summary>
+    public enum ChannelState { Normal, Mute, Solo }
 
     /// <summary>
     /// One bound variable.
@@ -65,18 +65,18 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// Defines a controller: input/output/pitch/ui/etc control.
+    /// Defines a controller input.
     /// </summary>
     public class NControlPoint
     {
         #region Properties
-        /// <summary>Associated track - required.</summary>
-        public NTrack Track { get; set; } = null;
+        /// <summary>Associated channel.</summary>
+        public NChannel Channel { get; set; } = null;
 
-        /// <summary>The numerical (midi) controller type - required.</summary>
+        /// <summary>The numerical (midi) controller type.</summary>
         public int ControllerId { get; set; } = 0;
 
-        /// <summary>The bound var - required.</summary>
+        /// <summary>The bound var.</summary>
         public NVariable BoundVar { get; set; } = null;
         #endregion
 
@@ -85,7 +85,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} Track:{Track}");
+            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} Channel:{Channel}");
             return sb.ToString();
         }
     }
@@ -93,10 +93,10 @@ namespace Nebulator.Script
     /// <summary>
     /// One instrument.
     /// </summary>
-    public class NTrack
+    public class NChannel
     {
         #region Properties
-        /// <summary>The UI name for this track.</summary>
+        /// <summary>The UI name for this channel.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The numerical (midi) channel to use: 1 - 16.</summary>
@@ -126,8 +126,8 @@ namespace Nebulator.Script
             set { _timeWobbler.RangeHigh = value; }
         }
 
-        /// <summary>Current state for this track.</summary>
-        public TrackState State { get; set; } = TrackState.Normal;
+        /// <summary>Current state for this channel.</summary>
+        public ChannelState State { get; set; } = ChannelState.Normal;
         #endregion
 
         #region Fields
@@ -162,7 +162,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NTrack: Name:{Name} Channel:{Channel}";
+            return $"NChannel: Name:{Name} Channel:{Channel}";
         }
     }
 
@@ -181,29 +181,29 @@ namespace Nebulator.Script
         /// <summary>Length in Ticks.</summary>
         public int Length { get; set; } = 0;
 
-        /// <summary>Contained track info.</summary>
-        public List<NSectionTrack> SectionTracks { get; set; } = new List<NSectionTrack>();
+        /// <summary>Contained channel info.</summary>
+        public List<NSectionChannel> SectionChannels { get; set; } = new List<NSectionChannel>();
         #endregion
 
         /// <summary>
         /// Script callable function.
         /// </summary>
-        /// <param name="track"></param>
+        /// <param name="channel"></param>
         /// <param name="seqs"></param>
-        public void Add(NTrack track, params NSequence[] seqs)
+        public void Add(NChannel channel, params NSequence[] seqs)
         {
-            SectionTracks.Add(new NSectionTrack() { ParentTrack = track, Sequences = seqs.ToList() });
+            SectionChannels.Add(new NSectionChannel() { ParentChannel = channel, Sequences = seqs.ToList() });
         }
     }
 
     /// <summary>
-    /// One row in the Section. Describes the sequences associated with a track in the section.
+    /// One row in the Section. Describes the sequences associated with a channel in the section.
     /// </summary>
-    public class NSectionTrack
+    public class NSectionChannel
     {
         #region Properties
-        /// <summary>The owner track.</summary>
-        public NTrack ParentTrack { get; set; } = null;
+        /// <summary>The owner channel.</summary>
+        public NChannel ParentChannel { get; set; } = null;
 
         /// <summary>The associated Sequences.</summary>
         public List<NSequence> Sequences { get; set; } = null;

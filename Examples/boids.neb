@@ -15,10 +15,10 @@
 
 // Click the mouse to add a new boid.
 
-// Tracks
-NTrack KEYS;
-NTrack BASS;
-NTrack SYNTH;
+// Channels
+NChannel KEYS;
+NChannel BASS;
+NChannel SYNTH;
 
 
 Flock my_flock;
@@ -55,10 +55,10 @@ public override void mousePressed()
 
 public override void setupNeb()
 {
-    // Tracks
-    KEYS = createTrack("keys", 1, 5, 0, 0);
-    BASS = createTrack("bass", 2, 2, 0, 0);
-    SYNTH = createTrack("synth", 3, 0);
+    // Channels
+    KEYS = createChannel("keys", 1, 5, 0, 0);
+    BASS = createChannel("bass", 2, 2, 0, 0);
+    SYNTH = createChannel("synth", 3, 0);
 
     if(winGm)
     {

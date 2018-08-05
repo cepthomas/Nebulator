@@ -54,13 +54,13 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a controller input.
         /// </summary>
-        /// <param name="track">Associated track.</param>
+        /// <param name="channel">Associated channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>
-        protected void createControllerIn(NTrack track, int controlId, NVariable bound)
+        protected void createControllerIn(NChannel channel, int controlId, NVariable bound)
         {
             controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
-            NControlPoint mp = new NControlPoint() { Track = track, ControllerId = controlId, BoundVar = bound };
+            NControlPoint mp = new NControlPoint() { Channel = channel, ControllerId = controlId, BoundVar = bound };
             InputControllers.Add(mp);
         }
 
@@ -121,48 +121,48 @@ namespace Nebulator.Script
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NTrack createTrack(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
-            NTrack nt = new NTrack() { Name = name, Channel = channel, WobbleVolume = wobvol, WobbleTimeBefore = wobbefore, WobbleTimeAfter = wobafter };
-            Tracks.Add(nt);
+            NChannel nt = new NChannel() { Name = name, Channel = channel, WobbleVolume = wobvol, WobbleTimeBefore = wobbefore, WobbleTimeAfter = wobafter };
+            Channels.Add(nt);
             return nt;
         }
 
         /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
-        /// <param name="track">Which track to send it on.</param>
+        /// <param name="channel">Which channel to send it on.</param>
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
-        public void sendNote(NTrack track, int inote, int vol, double dur)
+        public void sendNote(NChannel channel, int inote, int vol, double dur)
         {
-            bool _anySolo = Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
+            bool _anySolo = Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
 
-            bool play = track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo);
+            bool play = channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !_anySolo);
 
             if (play)
             {
-                int vel = track.NextVol(vol);
+                int vel = channel.NextVol(vol);
                 int notenum = Utils.Constrain(inote, Protocol.Caps.MinNote, Protocol.Caps.MaxNote);
 
                 if (vol > 0)
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
-                        Channel = track.Channel,
+                        Channel = channel.Channel,
                         NoteNumber = notenum,
                         Velocity = vel,
                         VelocityToPlay = vel,
                         Duration = new Time(dur)
                     };
 
-                    step.Adjust(Protocol.Caps, volume, track.Volume);
+                    step.Adjust(Protocol.Caps, volume, channel.Volume);
                     Protocol.Send(step);
                 }
                 else
                 {
                     StepNoteOff step = new StepNoteOff()
                     {
-                        Channel = track.Channel,
+                        Channel = channel.Channel,
                         NoteNumber = notenum
                     };
 
@@ -172,11 +172,11 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send a note immediately. Respects solo/mute.</summary>
-        /// <param name="track">Which track to send it on.</param>
+        /// <param name="channel">Which channel to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void sendNote(NTrack track, string snote, int vol, double dur)
+        public void sendNote(NChannel channel, string snote, int vol, double dur)
         {
             NSequenceElement note = new NSequenceElement(snote);
 
@@ -186,29 +186,29 @@ namespace Nebulator.Script
             }
             else
             {
-                note.Notes.ForEach(n => sendNote(track, n, vol, dur));
+                note.Notes.ForEach(n => sendNote(channel, n, vol, dur));
             }
         }
 
         /// <summary>Send a note immediately. Respects solo/mute. TODO or put in a queue?</summary>
-        /// <param name="track">Which track to send it on.</param>
+        /// <param name="channel">Which channel to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void sendNote(NTrack track, string snote, int vol, Time dur)
+        public void sendNote(NChannel channel, string snote, int vol, Time dur)
         {
-            sendNote(track, snote, vol, dur.AsDouble);
+            sendNote(channel, snote, vol, dur.AsDouble);
         }
 
         /// <summary>Send a controller immediately. TODO or put in a queue?</summary>
-        /// <param name="track">Which track to send it on.</param>
+        /// <param name="channel">Which channel to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>
-        public void sendController(NTrack track, int ctlnum, int val)
+        public void sendController(NChannel channel, int ctlnum, int val)
         {
             StepControllerChange step = new StepControllerChange()
             {
-                Channel = track.Channel,
+                Channel = channel.Channel,
                 ControllerId = ctlnum,
                 Value = val
             };
@@ -217,13 +217,13 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send a midi patch immediately.</summary>
-        /// <param name="track"></param>
+        /// <param name="channel"></param>
         /// <param name="patch"></param>
-        public void sendPatch(NTrack track, int patch)
+        public void sendPatch(NChannel channel, int patch)
         {
             StepPatch step = new StepPatch()
             {
-                Channel = track.Channel,
+                Channel = channel.Channel,
                 PatchNumber = patch
             };
 
@@ -231,11 +231,11 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send a named sequence.</summary>
-        /// <param name="track">Which track to send it on.</param>
+        /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        public void playSequence(NTrack track, NSequence seq)
+        public void playSequence(NChannel channel, NSequence seq)
         {
-            StepCollection scoll = ConvertToSteps(track, seq, StepTime.Tick);
+            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
             RuntimeSteps.Add(scoll);
         }
 

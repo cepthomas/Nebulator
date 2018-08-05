@@ -149,11 +149,11 @@
     <Compile Include="Piano.Designer.cs">
       <DependentUpon>Piano.cs</DependentUpon>
     </Compile>
-    <Compile Include="TrackControl.cs">
+    <Compile Include="ChannelControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TrackControl.Designer.cs">
-      <DependentUpon>TrackControl.cs</DependentUpon>
+    <Compile Include="ChannelControl.Designer.cs">
+      <DependentUpon>ChannelControl.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -180,8 +180,8 @@
     <EmbeddedResource Include="Piano.resx">
       <DependentUpon>Piano.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TrackControl.resx">
-      <DependentUpon>TrackControl.cs</DependentUpon>
+    <EmbeddedResource Include="ChannelControl.resx">
+      <DependentUpon>ChannelControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

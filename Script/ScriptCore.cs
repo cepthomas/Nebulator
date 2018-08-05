@@ -53,9 +53,6 @@ namespace Nebulator.Script
         /// <summary>Control inputs.</summary>
         public List<NControlPoint> InputControllers { get; set; } = new List<NControlPoint>();
 
-        /// <summary>Control outputs.</summary>
-        public List<NControlPoint> OutputControllers { get; set; } = new List<NControlPoint>();
-
         /// <summary>Levers.</summary>
         public List<NControlPoint> Levers { get; set; } = new List<NControlPoint>();
 
@@ -68,8 +65,8 @@ namespace Nebulator.Script
         /// <summary>All sections.</summary>
         public List<NSection> Sections { get; set; } = new List<NSection>();
 
-        /// <summary>All tracks.</summary>
-        public List<NTrack> Tracks { get; set; } = new List<NTrack>();
+        /// <summary>All channels.</summary>
+        public List<NChannel> Channels { get; set; } = new List<NChannel>();
         #endregion
 
         #region Lifecycle
@@ -99,17 +96,17 @@ namespace Nebulator.Script
         /// <summary>
         /// Generate steps from sequence notes.
         /// </summary>
-        /// <param name="track">Which track to send it on.</param>
+        /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(NTrack track, NSequence seq, int startTick)
+        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
         {
             StepCollection steps = new StepCollection();
 
             foreach (NSequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
-                int toffset = startTick == -1 ? 0 : track.NextTime();
+                int toffset = startTick == -1 ? 0 : channel.NextTime();
 
                 Time startNoteTime = new Time(startTick, toffset) + seqel.When;
                 Time stopNoteTime = startNoteTime + seqel.Duration;
@@ -119,7 +116,7 @@ namespace Nebulator.Script
                 {
                     StepInternal step = new StepInternal()
                     {
-                        Channel = track.Channel,
+                        Channel = channel.Channel,
                         ScriptFunction = seqel.ScriptFunction
                     };
                     steps.AddStep(startNoteTime, step);
@@ -130,10 +127,10 @@ namespace Nebulator.Script
                     foreach (int noteNum in seqel.Notes)
                     {
                         ///// Note on.
-                        int vel = track.NextVol(seqel.Volume);
+                        int vel = channel.NextVol(seqel.Volume);
                         StepNoteOn step = new StepNoteOn()
                         {
-                            Channel = track.Channel,
+                            Channel = channel.Channel,
                             NoteNumber = noteNum,
                             Velocity = vel,
                             VelocityToPlay = vel,

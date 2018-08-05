@@ -29,7 +29,6 @@ namespace Nebulator.Common
         /// <param name="parts">"1 4 6 b13"</param>
         public static void AddScriptNoteDef(string name, string parts)
         {
-///            _scriptNoteDefs.Add(name, parts.SplitByToken(" "));
             _scriptNoteDefs[name] = parts.SplitByToken(" ");
         }
 

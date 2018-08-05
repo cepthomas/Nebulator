@@ -69,7 +69,7 @@ namespace Nebulator
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
         bool _needCompile = false;
 
-        /// <summary>The temp dir for tracking down runtime errors.</summary>
+        /// <summary>The temp dir for channeling down runtime errors.</summary>
         string _compileTempDir = "";
 
         /// <summary>Persisted internal values for current neb/nebp file.</summary>
@@ -218,7 +218,7 @@ namespace Nebulator
                     _nebpVals.Clear();
                     _nebpVals.SetValue("master", "volume", sldVolume.Value);
                     _nebpVals.SetValue("master", "speed", potSpeed.Value);
-                    _script.Tracks.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
+                    _script.Channels.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
                     _nebpVals.Save();
                 }
 
@@ -410,25 +410,25 @@ namespace Nebulator
                 // Collect important times.
                 timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
 
-                // Iterate through the sections tracks.
-                foreach (NSectionTrack strack in sect.SectionTracks)
+                // Iterate through the sections channels.
+                foreach (NSectionChannel schannel in sect.SectionChannels)
                 {
                     // For processing current Sequence.
                     int seqOffset = sect.Start;
 
                     // Gen steps for each sequence.
-                    foreach (NSequence seq in strack.Sequences)
+                    foreach (NSequence seq in schannel.Sequences)
                     {
                         try
                         {
-                            StepCollection stepsToAdd = ScriptCore.ConvertToSteps(strack.ParentTrack, seq, seqOffset);
+                            StepCollection stepsToAdd = ScriptCore.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
                             _compiledSteps.Add(stepsToAdd);
                             seqOffset += seq.Length;
 
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception($"Error in the sequences for NTrack {strack.ParentTrack.Name} : {ex.Message}");
+                            throw new Exception($"Error in the sequences for NChannel {schannel.ParentChannel.Name} : {ex.Message}");
                         }
                     }
                 }
@@ -444,14 +444,14 @@ namespace Nebulator
             const int CONTROL_SPACING = 10;
             int x = timeMaster.Right + CONTROL_SPACING;
 
-            ///// The track controls.
+            ///// The channel controls.
             
             // Clean up current controls.
             foreach (Control ctl in splitContainerMain.Panel1.Controls)
             {
-                if (ctl is TrackControl)
+                if (ctl is ChannelControl)
                 {
-                    TrackControl tctl = ctl as TrackControl;
+                    ChannelControl tctl = ctl as ChannelControl;
                     tctl.Dispose();
                     splitContainerMain.Panel1.Controls.Remove(tctl);
                 }
@@ -459,18 +459,18 @@ namespace Nebulator
 
             if(_script != null)
             {
-                foreach (NTrack t in _script.Tracks)
+                foreach (NChannel t in _script.Channels)
                 {
                     // Init from persistence.
                     int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
                     t.Volume = vt == 0 ? 90 : vt; // in case it's new
 
-                    TrackControl trk = new TrackControl()
+                    ChannelControl trk = new ChannelControl()
                     {
                         Location = new Point(x, 0), // txtTime.Top),
-                        BoundTrack = t
+                        BoundChannel = t
                     };
-                    trk.TrackChangeEvent += TrackChange_Event;
+                    trk.ChannelChangeEvent += ChannelChange_Event;
                     splitContainerMain.Panel1.Controls.Add(trk);
                     x += trk.Width + CONTROL_SPACING;
                 }
@@ -612,13 +612,13 @@ namespace Nebulator
             ///// Local common function /////
             void PlayStep(Step step)
             {
-                if(_script.Tracks.Count > 0)
+                if(_script.Channels.Count > 0)
                 {
-                    NTrack track = _script.Tracks.Where(t => t.Channel == step.Channel).First();
+                    NChannel channel = _script.Channels.Where(t => t.Channel == step.Channel).First();
 
                     // Is it ok to play now?
-                    bool _anySolo = _script.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
-                    bool play = track != null && (track.State == TrackState.Solo || (track.State == TrackState.Normal && !_anySolo));
+                    bool _anySolo = _script.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
+                    bool play = channel != null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !_anySolo));
 
                     if (play)
                     {
@@ -636,7 +636,7 @@ namespace Nebulator
                         else
                         {
                             // Maybe tweak values.
-                            step.Adjust(_device1.Caps, sldVolume.Value, track.Volume);
+                            step.Adjust(_device1.Caps, sldVolume.Value, channel.Volume);
                             _device1.Send(step);
                         }
                     }
@@ -667,7 +667,7 @@ namespace Nebulator
                         // Process through our list of inputs of interest. TODO make into a dict?
                         foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
-                            if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Track.Channel == channel)
+                            if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Channel.Channel == channel)
                             {
                                 // Assign new value which triggers script callback.
                                 ctlpt.BoundVar.Value = value;
@@ -683,7 +683,7 @@ namespace Nebulator
                         // Process through our list of inputs of interest. TODO make into a dict w/above?
                         foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
-                            if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Track.Channel == scc.Channel)
+                            if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Channel.Channel == scc.Channel)
                             {
                                 // Assign new value which triggers script callback.
                                 ctlpt.BoundVar.Value = scc.Value;
@@ -715,19 +715,19 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// User has changed a track value. Interested in solo/mute.
+        /// User has changed a channel value. Interested in solo/mute.
         /// </summary>
-        void TrackChange_Event(object sender, TrackControl.TrackChangeEventArgs e)
+        void ChannelChange_Event(object sender, ChannelControl.ChannelChangeEventArgs e)
         {
-            if (sender is TrackControl)
+            if (sender is ChannelControl)
             {
                 // Check for solos.
-                bool _anySolo = _script.Tracks.Where(t => t.State == TrackState.Solo).Count() > 0;
+                bool _anySolo = _script.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    _script.Tracks.ForEach(t => { if (t.State != TrackState.Solo) _device1.Kill(t.Channel); });
+                    _script.Channels.ForEach(t => { if (t.State != ChannelState.Solo) _device1.Kill(t.Channel); });
                 }
             }
         }
@@ -1415,15 +1415,15 @@ namespace Nebulator
         /// <param name="fn"></param>
         void ExportMidi(string fn)
         {
-            Dictionary<int, string> tracks = new Dictionary<int, string>();
-            _script.Tracks.ForEach(t => tracks.Add(t.Channel, t.Name));
+            Dictionary<int, string> channels = new Dictionary<int, string>();
+            _script.Channels.ForEach(t => channels.Add(t.Channel, t.Name));
 
             // Convert speed/bpm to sec per tick.
             double ticksPerMinute = potSpeed.Value; // bpm
             double ticksPerSec = ticksPerMinute / 60;
             double secPerTick = 1 / ticksPerSec;
 
-            Midi.MidiUtils.ExportMidi(_compiledSteps, fn, tracks, secPerTick, "Converted from " + _fn);
+            Midi.MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
         }
 
         /// <summary>

@@ -8,11 +8,11 @@ NVariable CTL_NOTE;
 NVariable CTL2;
 NVariable CTL3;
 
-// All the tracks.
-NTrack KEYS;
-NTrack SYNTH;
-NTrack BASS;
-NTrack DRUMS;
+// All the channels.
+NChannel KEYS;
+NChannel SYNTH;
+NChannel BASS;
+NChannel DRUMS;
 
 // Neb script stuff.
 int[] _chordNotes;
@@ -31,19 +31,20 @@ public override void setupNeb()
     CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
-    CTL_NOTE = createVariable("note", 60, -127, 127, On_CTL_NOTE); // neg number for note off encoding
+    CTL_NOTE = createVariable("note", 60, -127, 127, On_CTL_NOTE); // note neg number for note off encoding
 
-    // All the tracks.
-    KEYS = createTrack("keys", 1, 5, 0, 0);
-    BASS = createTrack("bass", 2, 4, 0, 0);
-    SYNTH = createTrack("synth", 3, 0);
-    DRUMS = createTrack("drums", 10, 4, 0, 0);
+    // All the channels.
+    KEYS = createChannel("keys", 1, 5, 0, 0);
+    BASS = createChannel("bass", 2, 4, 0, 0);
+    SYNTH = createChannel("synth", 3, 0);
+    DRUMS = createChannel("drums", 10, 4, 0, 0);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");
     createNotes("MY_SCALE", "1 3 4 b7");
 
     // controller points
+    createControllerIn(KEYS, 1, MOD1); // modulate eq
     createControllerIn(KEYS, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
     createControllerIn(KEYS, 3, CTL3); // another controller
     createControllerIn(KEYS, 4, BACK_COLOR); // change ui color
@@ -169,7 +170,7 @@ public void On_MOD1()
     print(MOD1.Name, "changed to", MOD1.Value);
 
     // Send a control change.
-    sendController(KEYS, 1, MOD1.Value);
+    sendController(SYNTH, 1, MOD1.Value);
 }
 
 public void On_CTL_NOTE()

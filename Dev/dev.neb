@@ -17,10 +17,10 @@ NVariable KPITCH;
 NVariable MOD1;
 NVariable KNOTE;
 
-// All the tracks.
-NTrack KEYS;
-NTrack SYNTH;
-NTrack DRUMS;
+// All the channels.
+NChannel KEYS;
+NChannel SYNTH;
+NChannel DRUMS;
 
 // All the sequences
 NSequence SEQ1;
@@ -52,10 +52,10 @@ public override void setupNeb()
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KNOTE = createVariable("note", 60, -127, 127, On_KNOTE);
 
-    // All the tracks.
-    KEYS = createTrack("keys", 1, 5, 0, 0);
-    SYNTH = createTrack("synth", 3, 0);
-    DRUMS = createTrack("drums", 10, 4, 0, 0);
+    // All the channels.
+    KEYS = createChannel("keys", 1, 5, 0, 0);
+    SYNTH = createChannel("synth", 3, 0);
+    DRUMS = createChannel("drums", 10, 4, 0, 0);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");

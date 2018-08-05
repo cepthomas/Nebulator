@@ -18,8 +18,8 @@ namespace Nebulator.Protocol
         /// <summary>Possibly make adjustments to values.</summary>
         /// <param name="caps">What it can do.</param>
         /// <param name="masterVolume"></param>
-        /// <param name="trackVolume"></param>
-        public virtual void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume) { }
+        /// <param name="channelVolume"></param>
+        public virtual void Adjust(ProtocolCaps caps, int masterVolume, int channelVolume) { }
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
@@ -46,10 +46,10 @@ namespace Nebulator.Protocol
         public Time Duration { get; set; } = new Time(0);
 
         /// <inheritdoc />
-        public override void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume)
+        public override void Adjust(ProtocolCaps caps, int masterVolume, int channelVolume)
         {
             // Maybe alter note velocity.
-            int vel = Velocity * trackVolume * masterVolume / caps.MaxVolume / caps.MaxVolume;
+            int vel = Velocity * channelVolume * masterVolume / caps.MaxVolume / caps.MaxVolume;
             VelocityToPlay = Utils.Constrain(vel, 0, caps.MaxVolume);
         }
 
@@ -75,7 +75,7 @@ namespace Nebulator.Protocol
         public int Expiry { get; set; } = -1;
 
         /// <inheritdoc />
-        public override void Adjust(ProtocolCaps caps, int masterVolume, int trackVolume)
+        public override void Adjust(ProtocolCaps caps, int masterVolume, int channelVolume)
         {
         }
 
