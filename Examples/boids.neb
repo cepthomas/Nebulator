@@ -70,9 +70,9 @@ public override void setupNeb()
 
 public override void step()
 {
-    if(tock % 24 == 0 && random(3) == 0)
+    if(tock % 4 == 0 && random(7) == 0) // play with these for how often
     {
-        int which = random(40, 70);
+        int which = random(40, 80);
 
         if(_notesPlaying[which] == 0) // don't play if already playing
         {
@@ -87,7 +87,6 @@ public override void step()
         {
             if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
             {
-                //sendNote(SYNTH, _notesPlaying[i], 0, 0.00);
                 _notesPlaying[i] = 0;
             }
         }

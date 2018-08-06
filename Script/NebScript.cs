@@ -190,7 +190,7 @@ namespace Nebulator.Script
             }
         }
 
-        /// <summary>Send a note immediately. Respects solo/mute. TODO or put in a queue?</summary>
+        /// <summary>Send a note immediately. Respects solo/mute.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
@@ -200,7 +200,24 @@ namespace Nebulator.Script
             sendNote(channel, snote, vol, dur.AsDouble);
         }
 
-        /// <summary>Send a controller immediately. TODO or put in a queue?</summary>
+        /// <summary>Send a note on immediately. Respects solo/mute.</summary>
+        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="inote">Note number.</param>
+        /// <param name="vol">Note volume.</param>
+        public void sendNoteOn(NChannel channel, int inote, int vol)
+        {
+            sendNote(channel, inote, vol, 0.0);
+        }
+
+        /// <summary>Send a note off.</summary>
+        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="inote">Note number.</param>
+        public void sendNoteOff(NChannel channel, int inote)
+        {
+            sendNote(channel, inote, 0, 0.0);
+        }
+
+        /// <summary>Send a controller immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>

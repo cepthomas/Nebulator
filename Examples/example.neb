@@ -21,7 +21,6 @@ const int DRUM_DEF_VOL = 100;
 ///// Variables /////
 NVariable COL1;
 NVariable MODN;
-//NVariable PITCH;
 
 ///// Channels /////
 NChannel KEYS;
@@ -59,7 +58,6 @@ public override void setupNeb()
 {
     // All the neb variables.
     COL1 = createVariable("color", 200, 0, 255); // change color
-    PITCH = createVariable("pitch", 8192, 0, 16383, On_PITCH); // center is 8192
     MODN = createVariable("modn", 0, -10, 10);
 
     // All the channels.
@@ -74,11 +72,9 @@ public override void setupNeb()
 
     // controller points
     createControllerIn(KEYS, 4, MODN);
-xxx    createControllerOut(KEYS, PitchControl, PITCH);
 
     // levers
     createLever(COL1);
-    createLever(PITCH); // max range
     createLever(MODN);
 
     ///// Sequences /////
@@ -196,16 +192,18 @@ public override void step()
         switch(tick)
         {
             case 0:
+                sendNote(SYNTH, "F3", 95, 0.48);
+                break;
             case 16:
                 playSequence(SYNTH, DYNAMIC_SEQ);
                 break;
 
             case 8:
-                sendNote(SYNTH, "D4", 95, 0.00); // named note on, no chase
+                sendNoteOn(SYNTH, 62, 95); // numbered note on, no chase
                 break;
 
             case 12:
-                sendNote(SYNTH, 62, 0, 0.00); // numbered note (D4 above) off
+                sendNoteOff(SYNTH, 62); // numbered note off
                 break;
 
             case 24:
@@ -219,15 +217,11 @@ public override void step()
     }
 }
 
-public void On_PITCH()
-{
-    //print(MODN.Name, "changed to", MODN.Value);
-}
-
 void algoDynamic()
 {
     // print("!!!! algoDynamic");
-    sendNote(SYNTH, 70, 0, 0.00);
+    int notenum = random(40, 70);
+    sendNote(SYNTH, notenum, 90, 0.30);
 }
 
 void algoNull()

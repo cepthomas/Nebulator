@@ -185,6 +185,9 @@ namespace Nebulator
                 //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
                 OpenFile(@"C:\Dev\Nebulator\Dev\algo1.neb");
 
+// public void sendNote(NChannel channel, int inote, int vol, double dur);
+// public void sendNoteOn(NChannel channel, int inote, int vol);
+// public void sendNoteOff(NChannel channel, int inote);
 
                 //// Server debug stuff
                 //TestClient client = new TestClient();

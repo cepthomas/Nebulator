@@ -18,10 +18,13 @@ NChannel DRUMS;
 int[] _chordNotes;
 int[] _scaleNotes;
 int _noteNum = 0;
+// Index is note number, value is when to stop it.
+int[] _notesPlaying = new int[128];
 
 // Processing stuff.
 int _segmentCount = 36;
 int _radius = 300;
+
 
 
 public override void setupNeb()
@@ -80,8 +83,12 @@ public override void setupNeb()
 
 public override void step()
 {
-    // Tick sort of corresponds to a beat (or whatever you mean it to be) and Tock is 1/96 of a Tick.
+    //sequenced();
+    randish();
+}
 
+void sequenced()
+{
     bool doTick = false;
 
     switch(tock)
@@ -95,7 +102,7 @@ public override void step()
         case 24:
         //case 32:
             int sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-            sendNote(SYNTH, sn + tick, 90, 0.28);
+            sendNote(SYNTH, sn + tick % 24, 90, 0.28);
             break;
 
         default:
@@ -129,6 +136,33 @@ public override void step()
                 break;
         }
     }
+}
+
+void randish()
+{
+    // from boids:
+    if(tock % 4 == 0 && random(7) == 0) // play with these for how often
+    {
+        int which = random(40, 80);
+
+        if(_notesPlaying[which] == 0) // don't play if already playing
+        {
+            //print("algoDynamic:", which);
+            int dur = random(1, 8);
+            _notesPlaying[which] = tick + dur;
+            sendNote(SYNTH, which, random(80, 100), dur);
+        }
+
+        // Remove any scheduled to stop now.
+        for(int i = 0;i < _notesPlaying.Length;i++)
+        {
+            if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
+            {
+                _notesPlaying[i] = 0;
+            }
+        }
+    }
+
 }
 
 ////////////////////////////// ui //////////////////////////
@@ -167,25 +201,24 @@ public void On_CTL3()
 
 public void On_MOD1()
 {
-    print(MOD1.Name, "changed to", MOD1.Value);
-
+    //print(MOD1.Name, "changed to", MOD1.Value);
     // Send a control change.
     sendController(SYNTH, 1, MOD1.Value);
 }
 
 public void On_CTL_NOTE()
 {
-    print("CTL_NOTE", "=", CTL_NOTE.Value);
+    //print("CTL_NOTE", "=", CTL_NOTE.Value);
 
     // Test for on or off. TODO
     if(CTL_NOTE.Value > 0)
     {
-        sendNote(SYNTH, CTL_NOTE.Value, 110, 0.0); // noteon
+        sendNoteOn(SYNTH, CTL_NOTE.Value, 110);
         //sendNote(SYNTH, CTL_NOTE.Value, 90, 2.0); // fixed duration
     }
     else
     {
-        sendNote(SYNTH, -CTL_NOTE.Value, 0, 0.0); // noteoff
+        sendNoteOff(SYNTH, -CTL_NOTE.Value);
     }
 }
 
