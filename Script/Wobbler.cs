@@ -4,7 +4,7 @@ using System.Linq;
 using Nebulator.Common;
 
 
-namespace Nebulator.Common
+namespace Nebulator.Script
 {
     /// <summary>
     /// Statistical randomizer for time and volume.

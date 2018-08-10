@@ -54,7 +54,7 @@ namespace Nebulator.Common
         public FormInfo MainFormInfo { get; set; } = new FormInfo();
 
         [Browsable(false)]
-        public FormInfo SurfaceFormInfo { get; set; } = new FormInfo();
+        public FormInfo SurfaceFormInfo { get; set; } = new FormInfo(); // TODO now set in script
 
         [Browsable(false)]
         public FormInfo PianoFormInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000, Visible = true };

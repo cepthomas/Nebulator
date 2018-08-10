@@ -92,6 +92,7 @@
     <Compile Include="Surface.Designer.cs">
       <DependentUpon>Surface.cs</DependentUpon>
     </Compile>
+    <Compile Include="Wobbler.cs" />
     <EmbeddedResource Include="Surface.resx">
       <DependentUpon>Surface.cs</DependentUpon>
     </EmbeddedResource>

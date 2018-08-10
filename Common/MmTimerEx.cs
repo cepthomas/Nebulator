@@ -31,7 +31,7 @@ namespace Nebulator.Common
     /// measure the elapsed time rather than trust the mm timer period. It seems to be an improvement.
     /// Also see "Microsecond and Millisecond C# Timer - CodeProject.html". Good accuracy at the expense of a whole core.
     /// </summary>
-    public class NebTimer
+    public class MmTimerEx
     {
         class TimerInstance
         {
@@ -127,7 +127,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Initializes a new instance of the Timer class.
         /// </summary>
-        public NebTimer()
+        public MmTimerEx()
         {
             if (!Stopwatch.IsHighResolution)
             {
@@ -141,7 +141,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Destructor.
         /// </summary>
-        ~NebTimer()
+        ~MmTimerEx()
         {
             if (_running)
             {

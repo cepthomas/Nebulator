@@ -11,7 +11,7 @@ using MoreLinq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Nebulator.Common;
-
+using System.Diagnostics;
 
 namespace Nebulator.Script
 {
@@ -67,7 +67,7 @@ namespace Nebulator.Script
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
 
-        /// <summary>Specifies the temp dir for tracking down runtime errors.</summary>
+        /// <summary>Specifies the temp dir used so client can track down runtime errors.</summary>
         public string TempDir { get; set; } = "";
         #endregion
 
@@ -88,6 +88,7 @@ namespace Nebulator.Script
         Dictionary<string, FileContext> _filesToCompile = new Dictionary<string, FileContext>();
         #endregion
 
+        #region Public functions
         /// <summary>
         /// Run the Compiler.
         /// </summary>
@@ -127,7 +128,9 @@ namespace Nebulator.Script
 
             return Errors.Count == 0 ? script : null;
         }
+        #endregion
 
+        #region Private functions
         /// <summary>
         /// Top level parser.
         /// </summary>
@@ -269,10 +272,11 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
                 cp.ReferencedAssemblies.Add("SkiaSharp.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.exe");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
+
+                //cp.ReferencedAssemblies.Add("Nebulator.exe");//TODO these
+                //cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -471,5 +475,6 @@ namespace Nebulator.Script
 
             return codeLines;
         }
+        #endregion
     }
 }
