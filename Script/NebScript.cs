@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MoreLinq;
 using Nebulator.Common;
-using Nebulator.Protocol;
+using Nebulator.Protocol; //TODO get rid of dependency on Protocol
+
 
 // Nebulator API stuff.
 

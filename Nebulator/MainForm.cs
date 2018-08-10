@@ -101,22 +101,14 @@ namespace Nebulator
         /// </summary>
         void MainForm_Load(object sender, EventArgs e)
         {
-            #region Init main UI from settings
-            if (UserSettings.TheSettings.MainFormInfo.Width == 0)
-            {
-                WindowState = FormWindowState.Maximized;
-            }
-            else
-            {
-                Location = new Point(UserSettings.TheSettings.MainFormInfo.X, UserSettings.TheSettings.MainFormInfo.Y);
-                Size = new Size(UserSettings.TheSettings.MainFormInfo.Width, UserSettings.TheSettings.MainFormInfo.Height);
-                WindowState = FormWindowState.Normal;
-            }
+            #region Init UI from settings
+            Location = new Point(UserSettings.TheSettings.MainFormInfo.X, UserSettings.TheSettings.MainFormInfo.Y);
+            Size = new Size(UserSettings.TheSettings.MainFormInfo.Width, UserSettings.TheSettings.MainFormInfo.Height);
+            WindowState = FormWindowState.Normal;
 
-            _surface.Size = new Size(UserSettings.TheSettings.SurfaceFormInfo.Width, UserSettings.TheSettings.SurfaceFormInfo.Height);
             _surface.Visible = true;
+            _surface.Location = new Point(Right, Top);
             _surface.TopMost = UserSettings.TheSettings.LockUi;
-            _surface.Location = new Point(UserSettings.TheSettings.SurfaceFormInfo.X, UserSettings.TheSettings.SurfaceFormInfo.Y);
 
             _piano.Size = new Size(UserSettings.TheSettings.PianoFormInfo.Width, UserSettings.TheSettings.PianoFormInfo.Height);
             _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
@@ -1045,19 +1037,8 @@ namespace Nebulator
         /// </summary>
         void SaveSettings()
         {
-            UserSettings.TheSettings.SurfaceFormInfo.FromForm(_surface);
             UserSettings.TheSettings.PianoFormInfo.FromForm(_piano);
-
-            if (WindowState == FormWindowState.Maximized)
-            {
-                UserSettings.TheSettings.MainFormInfo.Width = 0; // indicates maximized
-                UserSettings.TheSettings.MainFormInfo.Height = 0;
-            }
-            else
-            {
-                UserSettings.TheSettings.MainFormInfo.FromForm(this);
-            }
-
+            UserSettings.TheSettings.MainFormInfo.FromForm(this);
             UserSettings.TheSettings.Save();
         }
 

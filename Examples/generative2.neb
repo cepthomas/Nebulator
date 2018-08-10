@@ -16,7 +16,7 @@ public override void setup()
 
 public override void draw()
 {
-    //clear();
+    size(600, 600);
     background(250);
 
     randomSeed(actRandomSeed);

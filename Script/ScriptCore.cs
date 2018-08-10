@@ -8,7 +8,8 @@ using System.IO;
 using SkiaSharp;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Protocol;
+using Nebulator.Protocol; //TODO get rid of dependency on Protocol
+
 
 
 namespace Nebulator.Script
@@ -21,11 +22,25 @@ namespace Nebulator.Script
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
+
+        /// <summary>Script randomizer.</summary>
+        Random _rand = new Random();
         #endregion
 
         #region Properties - general
         /// <summary>Protocol to use.</summary>
         public IProtocol Protocol { get; set; } = null;
+        #endregion
+
+        #region Properties - Nebulator not processing! TODO ????
+        /// <summary>Loop option.</summary>
+        public bool Loop { get; private set; } = true;
+
+        /// <summary>Redraw option.</summary>
+        public bool Redraw { get; internal set; } = false;
+
+        /// <summary>Current working object to draw on.</summary>
+        public SKCanvas Canvas { get; internal set; } = null;
         #endregion
 
         #region Properties - shared between host and script at runtime

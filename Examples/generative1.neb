@@ -19,7 +19,7 @@ int actRandomSeed = 0;
 
 public override void setup()
 {
-    //createCanvas(800, 800);
+    size(800, 800);
     tileWidth = width / tileCountX;
     tileHeight = height / tileCountY;
     noFill();

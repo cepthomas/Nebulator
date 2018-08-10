@@ -18,9 +18,6 @@ namespace Nebulator.Script
     public partial class ScriptCore
     {
         #region Fields
-        /// <summary>Script randomizer.</summary>
-        Random _rand = new Random();
-
         /// <summary>Current font to draw.</summary>
         SKPaint _textPaint = new SKPaint()
         {
@@ -63,18 +60,6 @@ namespace Nebulator.Script
 
         /// <summary>Smoothing option.</summary>
         bool _smooth = true;
-        #endregion
-
-        #region Properties - Nebulator not processing!
-
-        /// <summary>Loop option.</summary>
-        public bool Loop { get; private set; } = true;
-
-        /// <summary>Redraw option.</summary>
-        public bool Redraw { get; internal set; } = false;
-
-        /// <summary>Current working object to draw on.</summary>
-        public SKCanvas Canvas { get; internal set; } = null;
         #endregion
 
         #region Definitions - same values as Processing
@@ -162,16 +147,16 @@ namespace Nebulator.Script
         public int frameRate() { return FrameRate; }
         public void frameRate(int num) { FrameRate = num; }
         public void fullScreen() { NotImpl(nameof(fullScreen), "Size is set by main form."); }
-        public int height { get; internal set; }
+        public int height { get; internal set; } = 300;
         //public void noCursor() { NotImpl(nameof(noCursor)); }
         public void noSmooth() { _smooth = false; }
         public void pixelDensity(int density) { NotImpl(nameof(pixelDensity)); }
         public int pixelHeight { get { NotImpl(nameof(pixelHeight), "Assume 1."); return 1; } }
         public int pixelWidth { get { NotImpl(nameof(pixelWidth), "Assume 1."); return 1; } }
-        public void size(int w, int h) { NotImpl(nameof(size), "Size is set by main form."); }
+        public void size(int w, int h) { height = h; width = w; }
         public void smooth() { _smooth = true; }
         public void smooth(int level) { _smooth = level > 0; }
-        public int width { get; internal set; }
+        public int width { get; internal set; } = 300;
         #endregion
 
         #region Data

@@ -35,16 +35,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(738, 442);
+            this.ClientSize = new System.Drawing.Size(412, 288);
             this.ControlBox = false;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Surface";
             this.Text = "Surface";
             this.Load += new System.EventHandler(this.Surface_Load);
-            this.Resize += new System.EventHandler(this.Surface_Resize);
             this.ResumeLayout(false);
-
         }
 
         #endregion

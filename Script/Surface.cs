@@ -56,7 +56,7 @@ namespace Nebulator.Script
             _skcontrol = new SKControl();
             Controls.Add(_skcontrol);
 
-            ResizeRedraw = true;
+           // ResizeRedraw = true;
         }
 
         /// <summary>
@@ -66,35 +66,6 @@ namespace Nebulator.Script
         {
             // Intercept all keyboard events.
             KeyPreview = true;
-        }
-
-        /// <summary>
-        /// Handle resize event.
-        /// </summary>
-        private void Surface_Resize(object sender, EventArgs e)
-        {
-            if (_script != null)
-            {
-                InitSurface(_script);
-            }
-        }
-
-        /// <summary>
-        /// General purpose bitmap utility.
-        /// </summary>
-        /// <param name="regen">True to recreate.</param>
-        void CleanupBitmap(bool regen = false)
-        {
-            if (_bitmap != null)
-            {
-                _bitmap.Dispose();
-                _bitmap = null;
-            }
-
-            if (regen)
-            {
-                _bitmap = new System.Drawing.Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            }
         }
         #endregion
 
@@ -106,14 +77,10 @@ namespace Nebulator.Script
         public void InitSurface(ScriptCore script)
         {
             _script = script;
-            _script.width = Width;
-            _script.height = Height;
+            ClientSize = new System.Drawing.Size(_script.width, _script.height);
             _script.focused = Focused;
             _script.frameCount = 0;
-
             _script.setup();
-
-            CleanupBitmap(true);
         }
 
         /// <summary>
@@ -123,6 +90,20 @@ namespace Nebulator.Script
         {
             if (_script != null && (_script.Loop || _script.Redraw))
             {
+                // Check for resize or init.
+                if(_bitmap == null || _bitmap.Width != _script.width || _bitmap.Height != _script.height)
+                {
+                    if (_bitmap != null)
+                    {
+                        _bitmap.Dispose();
+                        _bitmap = null;
+                    }
+
+                    // Update client side.
+                    _bitmap = new System.Drawing.Bitmap(_script.width, _script.height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                    ClientSize = new System.Drawing.Size(_script.width, _script.height);
+                }
+
                 Render();
                 Invalidate();
             }
@@ -135,8 +116,8 @@ namespace Nebulator.Script
         /// </summary>
         void Render()
         {
-            var w = Width;
-            var h = Height;
+            var w = _script.width; // Width;
+            var h = _script.height; // Height;
 
             var data = _bitmap.LockBits(new System.Drawing.Rectangle(0, 0, w, h), System.Drawing.Imaging.ImageLockMode.WriteOnly, _bitmap.PixelFormat);
 

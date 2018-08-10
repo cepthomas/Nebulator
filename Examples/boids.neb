@@ -29,6 +29,7 @@ int[] _notesPlaying = new int[128];
 
 public override void setup()
 {
+    size(800, 800);
     my_flock = new Flock();
 
     // Add an initial set of boids into the system

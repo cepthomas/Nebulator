@@ -232,6 +232,7 @@ void algoNull()
 ////// Processing graphics stuff //////
 public override void setup()
 {
+    size(800, 800);
     //print("setup()");
 }
 

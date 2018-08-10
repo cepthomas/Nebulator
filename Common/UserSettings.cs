@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace Nebulator.Common
 {
     [Serializable]
-    public class UserSettings
+    public class UserSettings // TODO nprocessing needs a different version.
     {
         #region Persisted editable properties
         [DisplayName("Editor Font"), Description("The font to use for editors etc."), Browsable(true)]
@@ -52,9 +52,6 @@ namespace Nebulator.Common
         #region Persisted non-editable properties
         [Browsable(false)]
         public FormInfo MainFormInfo { get; set; } = new FormInfo();
-
-        [Browsable(false)]
-        public FormInfo SurfaceFormInfo { get; set; } = new FormInfo(); // TODO now set in script
 
         [Browsable(false)]
         public FormInfo PianoFormInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000, Visible = true };

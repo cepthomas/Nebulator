@@ -4,6 +4,7 @@
 
 public override void setup()
 {
+    size(800, 800);
     // testStuff();
 
     // setup_force_fail();
