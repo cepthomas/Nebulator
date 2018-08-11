@@ -13,22 +13,20 @@ Some interesting reads on music-by-code:
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after a Mark S C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs, and display of whatever on the UI.
 
-The script syntax is roughly based on that used by [Processing](https://processing.org/), combined with C# language features. In fact, a subset of the Processing graphics functions is implemented to support the UI/graphical aspects. Simple Processing scripts should port easily and run fine.
+The script syntax is roughly based on that used by [Processing](https://processing.org/), combined with C# language features.
+A subset of the Processing graphics functions is implemented to support the UI/graphical aspects. Simple Processing scripts should port easily and run fine. For specifics on that aspect see [NProcessing](https://github.com/cepthomas/NProcessing).
 
 For lots more info see the [Wiki](https://github.com/cepthomas/Nebulator/wiki)
-
 
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.
 - A theoretically better multimedia timer with improved accuracy for sub 10 msec period.
 - Midi classes may be useful elsewhere in conjunction with NAudio.
-- A state machine class based on one that was used in several products.
 - Partial import of Yahama style (.sty) files.
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
 - Piano control based on Leslie Sanford's.
 - Various utilities and extensions.
-- Super lightweight unit tester for when NUnit is too much.
 
 
 # Third Party
