@@ -3,7 +3,8 @@
 // Warning: this is not actual music!
 
 ///// Include other lib files. /////
-$load "utils.neb"
+$load "utils.np"
+$load "scale.np"
 
 
 ///// Constants /////

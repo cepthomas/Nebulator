@@ -60,7 +60,7 @@ namespace Nebulator
         /// <summary>Script compile errors and warnings.</summary>
         List<ScriptError> _compileResults = new List<ScriptError>();
 
-        /// <summary>Current neb file name.</summary>
+        /// <summary>Current np file name.</summary>
         string _fn = Utils.UNKNOWN_STRING;
 
         /// <summary>Detect changed composition files.</summary>
@@ -72,8 +72,8 @@ namespace Nebulator
         /// <summary>The temp dir for channeling down runtime errors.</summary>
         string _compileTempDir = "";
 
-        /// <summary>Persisted internal values for current neb/nebp file.</summary>
-        Bag _nebpVals = new Bag();
+        /// <summary>Persisted internal values for current np/npp file.</summary>
+        Bag _nppVals = new Bag();
 
         /// <summary>Diagnostics for timing measurement.</summary>
         TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
@@ -93,6 +93,7 @@ namespace Nebulator
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
             UserSettings.Load(appDir);
+            ProtocolSettings.Load(appDir);
             InitializeComponent();
         }
 
@@ -110,11 +111,11 @@ namespace Nebulator
             _surface.Location = new Point(Right, Top);
             _surface.TopMost = UserSettings.TheSettings.LockUi;
 
-            _piano.Size = new Size(UserSettings.TheSettings.PianoFormInfo.Width, UserSettings.TheSettings.PianoFormInfo.Height);
-            _piano.Visible = UserSettings.TheSettings.PianoFormInfo.Visible;
+            _piano.Size = new Size(ProtocolSettings.TheSettings.PianoFormInfo.Width, ProtocolSettings.TheSettings.PianoFormInfo.Height);
+            _piano.Visible = ProtocolSettings.TheSettings.PianoFormInfo.Visible;
             _piano.TopMost = false;
-            _piano.Location = new Point(UserSettings.TheSettings.PianoFormInfo.X, UserSettings.TheSettings.PianoFormInfo.Y);
-            pianoToolStripMenuItem.Checked = UserSettings.TheSettings.PianoFormInfo.Visible;
+            _piano.Location = new Point(ProtocolSettings.TheSettings.PianoFormInfo.X, ProtocolSettings.TheSettings.PianoFormInfo.Y);
+            pianoToolStripMenuItem.Checked = ProtocolSettings.TheSettings.PianoFormInfo.Visible;
             _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
@@ -166,16 +167,20 @@ namespace Nebulator
 #if _DEV // Debug stuff
             if (args.Count() <= 1)
             {
-                //OpenFile(@"C:\Dev\Nebulator\Examples\example.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\airport.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\gol.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\boids.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Dev\dev.neb");
-                //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.neb");
-                OpenFile(@"C:\Dev\Nebulator\Dev\algo1.neb");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
+                OpenFile(@"C:\Dev\Nebulator\Examples\algo1.np");
+
+
+//these in np:
+                //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.np");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.np");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\gol.np");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\flocking.np");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.np");
+                //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.np");
+
 
 
                 //// Server debug stuff
@@ -185,8 +190,8 @@ namespace Nebulator
 
                 //ExportMidi("test.mid");
 
-                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\npulator\midi\styles-jazzy\Mambo.sty");
+                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\npulator\midi\styles-jazzy\Funk.sty");
                 //Clipboard.SetText(string.Join(Environment.NewLine, v));
             }
 #endif
@@ -207,11 +212,11 @@ namespace Nebulator
                 if(_script != null)
                 {
                     // Save the project.
-                    _nebpVals.Clear();
-                    _nebpVals.SetValue("master", "volume", sldVolume.Value);
-                    _nebpVals.SetValue("master", "speed", potSpeed.Value);
-                    _script.Channels.ForEach(c => _nebpVals.SetValue(c.Name, "volume", c.Volume));
-                    _nebpVals.Save();
+                    _nppVals.Clear();
+                    _nppVals.SetValue("master", "volume", sldVolume.Value);
+                    _nppVals.SetValue("master", "speed", potSpeed.Value);
+                    _script.Channels.ForEach(c => _nppVals.SetValue(c.Name, "volume", c.Volume));
+                    _nppVals.Save();
                 }
 
                 // Save user settings.
@@ -318,8 +323,8 @@ namespace Nebulator
             {
                 NebCompiler compiler = new NebCompiler();
 
-                // Save internal nebp file vals now as they will be reloaded during compile.
-                _nebpVals.Save();
+                // Save internal npp file vals now as they will be reloaded during compile.
+                _nppVals.Save();
 
                 // Compile now.
                 _script = compiler.Execute(_fn);
@@ -454,7 +459,7 @@ namespace Nebulator
                 foreach (NChannel t in _script.Channels)
                 {
                     // Init from persistence.
-                    int vt = Convert.ToInt32(_nebpVals.GetValue(t.Name, "volume"));
+                    int vt = Convert.ToInt32(_nppVals.GetValue(t.Name, "volume"));
                     t.Volume = vt == 0 ? 90 : vt; // in case it's new
 
                     ChannelControl trk = new ChannelControl()
@@ -472,8 +477,8 @@ namespace Nebulator
             }
 
             ///// Init other controls.
-            potSpeed.Value = Convert.ToInt32(_nebpVals.GetValue("master", "speed"));
-            int mv = Convert.ToInt32(_nebpVals.GetValue("master", "volume"));
+            potSpeed.Value = Convert.ToInt32(_nppVals.GetValue("master", "speed"));
+            int mv = Convert.ToInt32(_nppVals.GetValue("master", "volume"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
@@ -801,13 +806,13 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Allows the user to select a neb file from file system.
+        /// Allows the user to select a np file from file system.
         /// </summary>
         void Open_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
-                Filter = "Nebulator files (*.neb)|*.neb",
+                Filter = "Nebulator files (*.np)|*.np",
                 Title = "Select a Nebulator file"
             };
 
@@ -818,10 +823,10 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Common neb file opener.
+        /// Common np file opener.
         /// </summary>
-        /// <param name="fn">The neb file to open.</param>
-        /// <returns>Error string or empty if ok.</returns>
+        /// <param name="fn">The np file to open.</param>
+        /// <returns>Error string or empty if ok. TODO handle by all callers.</returns>
         public string OpenFile(string fn)
         {
             string ret = "";
@@ -832,8 +837,8 @@ namespace Nebulator
                 {
                     if(File.Exists(fn))
                     {
-                        _logger.Info($"Reading neb file: {fn}");
-                        _nebpVals = Bag.Load(fn.Replace(".neb", ".nebp"));
+                        _logger.Info($"Reading np file: {fn}");
+                        _nppVals = Bag.Load(fn.Replace(".np", ".npp"));
                         _fn = fn;
 
                         // This may be coming from the web service...
@@ -858,7 +863,7 @@ namespace Nebulator
                 }
                 catch (Exception ex)
                 {
-                    ret = $"Couldn't open the neb file: {fn} because: {ex.Message}";
+                    ret = $"Couldn't open the np file: {fn} because: {ex.Message}";
                     _logger.Error(ret);
                 }
 
@@ -898,7 +903,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// One or more neb files have changed so reload/compile.
+        /// One or more np files have changed so reload/compile.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1037,15 +1042,17 @@ namespace Nebulator
         /// </summary>
         void SaveSettings()
         {
-            UserSettings.TheSettings.PianoFormInfo.FromForm(_piano);
             UserSettings.TheSettings.MainFormInfo.FromForm(this);
             UserSettings.TheSettings.Save();
+
+            ProtocolSettings.TheSettings.PianoFormInfo.FromForm(_piano);
+            ProtocolSettings.TheSettings.Save();
         }
 
         /// <summary>
-        /// Edit the options in a property grid.
+        /// Edit the common options in a property grid.
         /// </summary>
-        void Settings_Click(object sender, EventArgs e)
+        void UserSettings_Click(object sender, EventArgs e)
         {
             using (Form f = new Form()
             {
@@ -1065,19 +1072,65 @@ namespace Nebulator
                     SelectedObject = UserSettings.TheSettings
                 };
 
-                // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
-                ListSelector.Options.Clear();
-                ListSelector.Options.Add("MidiIn", _device1.ProtocolInputs);
-                ListSelector.Options.Add("MidiOut", _device1.ProtocolOutputs);
-
                 // Detect changes of interest.
-                bool midi = false;
                 bool ctrls = false;
                 pg.PropertyValueChanged += (sdr, args) =>
                 {
                     string p = args.ChangedItem.PropertyDescriptor.Name;
-                    midi |= p.Contains("Midi");
                     ctrls |= (p.Contains("Font") | p.Contains("Color"));
+                };
+
+                f.Controls.Add(pg);
+                f.ShowDialog();
+
+                // Figure out what changed - each handled differently.
+                if (ctrls)
+                {
+                    MessageBox.Show("UI changes require a restart to take effect.");
+                }
+
+                // Always safe to update these.
+                SetUiTimerPeriod();
+                _surface.TopMost = UserSettings.TheSettings.LockUi;
+
+                SaveSettings();
+            }
+        }
+
+        /// <summary>
+        /// Edit the midi options in a property grid.
+        /// </summary>
+        void MidiSettings_Click(object sender, EventArgs e)
+        {
+            using (Form f = new Form()
+            {
+                Text = "Midi Settings",
+                Size = new Size(350, 400),
+                StartPosition = FormStartPosition.Manual,
+                Location = new Point(200, 200),
+                FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                ShowIcon = false,
+                ShowInTaskbar = false
+            })
+            {
+                PropertyGridEx pg = new PropertyGridEx()
+                {
+                    Dock = DockStyle.Fill,
+                    PropertySort = PropertySort.NoSort,
+                    SelectedObject = ProtocolSettings.TheSettings
+                };
+
+                // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
+                ListSelector.Options.Clear();
+                ListSelector.Options.Add("InputDevice", _device1.ProtocolInputs);
+                ListSelector.Options.Add("OutputDevice", _device1.ProtocolOutputs);
+
+                // Detect changes of interest.
+                bool midi = false;
+                pg.PropertyValueChanged += (sdr, args) =>
+                {
+                    string p = args.ChangedItem.PropertyDescriptor.Name;
+                    midi |= p.Contains("Device");
                 };
 
                 f.Controls.Add(pg);
@@ -1087,11 +1140,6 @@ namespace Nebulator
                 if (midi)
                 {
                     _device1.Init();
-                }
-
-                if (ctrls)
-                {
-                    MessageBox.Show("UI changes require a restart to take effect.");
                 }
 
                 // Always safe to update these.
@@ -1302,21 +1350,6 @@ namespace Nebulator
 
             infoDisplay.BackColor = UserSettings.TheSettings.BackColor;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Surface_Resize(object sender, EventArgs e)
-        {
-            if (_script != null)
-            {
-                InitRuntime();
-                _surface.InitSurface(_script);
-                ProcessRuntime();
-            }
-        }
         #endregion
 
         #region Midi utilities
@@ -1331,7 +1364,7 @@ namespace Nebulator
             {
                 Filter = "Midi files (*.mid)|*.mid",
                 Title = "Export to midi file",
-                FileName = _fn.Replace(".neb", ".mid")
+                FileName = _fn.Replace(".np", ".mid")
             };
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
@@ -1358,7 +1391,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Import a style file as neb file lines.
+        /// Import a style file as np file lines.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

@@ -32,7 +32,7 @@ namespace Nebulator.Script
         public IProtocol Protocol { get; set; } = null;
         #endregion
 
-        #region Properties - Nebulator not processing! TODO ????
+        #region Properties - Nebulator not processing! TODO ???? cleanup all
         /// <summary>Loop option.</summary>
         public bool Loop { get; private set; } = true;
 

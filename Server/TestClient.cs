@@ -42,7 +42,7 @@ namespace Nebulator.Server
 
                 // POST
                 Console.WriteLine("TestClient POST open");
-                Task<string> openTask = PostCommandAsync(client, "open", @"C:\Dev\Nebulator\Dev\dev.neb");
+                Task<string> openTask = PostCommandAsync(client, "open", @"C:\Dev\Nebulator\Examples\dev.np");
                 await Task.WhenAll(openTask);
                 Console.WriteLine($"TestClient result: {openTask.Result}");
 

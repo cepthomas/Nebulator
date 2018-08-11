@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Nebulator.Common;
+using Nebulator.Protocol;
+
 
 namespace Nebulator
 {
@@ -49,8 +51,8 @@ namespace Nebulator
             btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
             //btnWrap.Checked = true;
 
-            btnMonIn.Checked = UserSettings.TheSettings.MidiMonitorIn;
-            btnMonOut.Checked = UserSettings.TheSettings.MidiMonitorOut;
+            btnMonIn.Checked = ProtocolSettings.TheSettings.MonitorInput;
+            btnMonOut.Checked = ProtocolSettings.TheSettings.MonitorOutput;
             btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
@@ -100,7 +102,7 @@ namespace Nebulator
         /// </summary>
         private void BtnMonIn_Click(object sender, EventArgs e)
         {
-            UserSettings.TheSettings.MidiMonitorIn = btnMonIn.Checked;
+            ProtocolSettings.TheSettings.MonitorInput = btnMonIn.Checked;
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace Nebulator
         /// </summary>
         private void BtnMonOut_Click(object sender, EventArgs e)
         {
-            UserSettings.TheSettings.MidiMonitorOut = btnMonOut.Checked;
+            ProtocolSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
         }
 
         /// <summary>

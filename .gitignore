@@ -288,18 +288,8 @@ __pycache__/
 *.xsd.cs
 
 # My added ignores
-_leftovers
-/_readme.md
 /packages
 temp
-/Examples/import.nebp
-/Examples/import.neb
-/Examples/test1.nebp
-/Examples/test1.neb
-/Examples/test
-/todo
 /_old
 /neb.sublime-workspace
 /neb.sublime-project
-/Examples/generative2.nebp
-/Examples/generative1.nebp

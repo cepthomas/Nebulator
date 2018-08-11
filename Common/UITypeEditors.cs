@@ -46,7 +46,7 @@ namespace Nebulator.Common
             //pgex.RaisePropertyGridExEvent(context.PropertyDescriptor.Name, listvals);
 
             _service.DropDownControl(lb);
-            return lb.SelectedItem.ToString();
+            return lb.SelectedItem == null ? "" : lb.SelectedItem.ToString();
         }
 
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)

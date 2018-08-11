@@ -208,7 +208,7 @@ namespace Nebulator.Midi
                         {
                             _midiOut.Send(msg);
 
-                            if (UserSettings.TheSettings.MidiMonitorOut)
+                            if (ProtocolSettings.TheSettings.MonitorOutput)
                             {
                                 LogMsg(ProtocolLogEventArgs.LogCategory.Send, step.ToString());
                             }
@@ -291,7 +291,7 @@ namespace Nebulator.Midi
                         {
                             Channel = evt.Channel,
                             ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
-                            Value = evt.Pitch
+                            Value = Utils.Constrain(evt.Pitch, Caps.MinPitchValue, Caps.MaxPitchValue)
                         };
                     }
                     break;
@@ -303,7 +303,7 @@ namespace Nebulator.Midi
                 ProtocolInputEventArgs args = new ProtocolInputEventArgs() { Step = step };
                 ProtocolInputEvent?.Invoke(this, args);
 
-                if (UserSettings.TheSettings.MidiMonitorIn)
+                if (ProtocolSettings.TheSettings.MonitorInput)
                 {
                     LogMsg(ProtocolLogEventArgs.LogCategory.Recv, step.ToString());
                 }
@@ -315,7 +315,7 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            if (UserSettings.TheSettings.MidiMonitorIn)
+            if (ProtocolSettings.TheSettings.MonitorInput)
             {
                 LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
             }
@@ -341,9 +341,9 @@ namespace Nebulator.Midi
                     ProtocolInputs.Add(MidiIn.DeviceInfo(device).ProductName);
                 }
 
-                if (ProtocolInputs.Count > 0 && ProtocolInputs.Contains(UserSettings.TheSettings.MidiIn))
+                if (ProtocolInputs.Count > 0 && ProtocolInputs.Contains(ProtocolSettings.TheSettings.InputDevice))
                 {
-                    _midiIn = new MidiIn(ProtocolInputs.IndexOf(UserSettings.TheSettings.MidiIn));
+                    _midiIn = new MidiIn(ProtocolInputs.IndexOf(ProtocolSettings.TheSettings.InputDevice));
                     _midiIn.MessageReceived += MidiIn_MessageReceived;
                     _midiIn.ErrorReceived += MidiIn_ErrorReceived;
                     _midiIn.Start();
@@ -378,9 +378,9 @@ namespace Nebulator.Midi
                     ProtocolOutputs.Add(MidiOut.DeviceInfo(device).ProductName);
                 }
 
-                if (ProtocolOutputs.Count > 0 && ProtocolOutputs.Contains(UserSettings.TheSettings.MidiOut))
+                if (ProtocolOutputs.Count > 0 && ProtocolOutputs.Contains(ProtocolSettings.TheSettings.OutputDevice))
                 {
-                    int mi = ProtocolOutputs.IndexOf(UserSettings.TheSettings.MidiOut);
+                    int mi = ProtocolOutputs.IndexOf(ProtocolSettings.TheSettings.OutputDevice);
                     _midiOut = new MidiOut(mi);
                 }
                 else

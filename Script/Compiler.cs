@@ -38,7 +38,7 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// Parses/compiles *.neb file(s).
+    /// Parses/compiles *.np file(s).
     /// </summary>
     public class NebCompiler
     {
@@ -92,9 +92,9 @@ namespace Nebulator.Script
         /// <summary>
         /// Run the Compiler.
         /// </summary>
-        /// <param name="nebfn">Fully qualified path to topmost file.</param>
+        /// <param name="npfn">Fully qualified path to topmost file.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public ScriptCore Execute(string nebfn)
+        public ScriptCore Execute(string npfn)
         {
             ScriptCore script = null;
 
@@ -104,26 +104,26 @@ namespace Nebulator.Script
 
             Errors.Clear();
 
-            if (nebfn != Utils.UNKNOWN_STRING && File.Exists(nebfn))
+            if (npfn != Utils.UNKNOWN_STRING && File.Exists(npfn))
             {
-                _logger.Info($"Compiling {nebfn}.");
+                _logger.Info($"Compiling {npfn}.");
 
                 ///// Get and sanitize the script name.
-                _scriptName = Path.GetFileNameWithoutExtension(nebfn);
+                _scriptName = Path.GetFileNameWithoutExtension(npfn);
                 StringBuilder sb = new StringBuilder();
                 _scriptName.ForEach(c => sb.Append(char.IsLetterOrDigit(c) ? c : '_'));
                 _scriptName = sb.ToString();
-                _baseDir = Path.GetDirectoryName(nebfn);
+                _baseDir = Path.GetDirectoryName(npfn);
 
                 ///// Compile.
                 DateTime startTime = DateTime.Now; // for metrics
-                Parse(nebfn);
+                Parse(npfn);
                 script = Compile();
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
             }
             else
             {
-                _logger.Error($"Invalid file {nebfn}.");
+                _logger.Error($"Invalid file {npfn}.");
             }
 
             return Errors.Count == 0 ? script : null;
@@ -134,13 +134,13 @@ namespace Nebulator.Script
         /// <summary>
         /// Top level parser.
         /// </summary>
-        /// <param name="nebfn">Topmost file in collection.</param>
-        void Parse(string nebfn)
+        /// <param name="npfn">Topmost file in collection.</param>
+        void Parse(string npfn)
         {
             // Start parsing from the main file. ParseOneFile is a recursive function.
             FileContext pcont = new FileContext()
             {
-                SourceFile = nebfn,
+                SourceFile = npfn,
                 LineNumber = 1
             };
             ParseOneFile(pcont);
@@ -203,8 +203,8 @@ namespace Nebulator.Script
                     string cline = pos >= 0 ? s.Left(pos) : s;
 
                     // Test for nested files
-                    // $load "path\name.neb"
-                    // $load "include path\split file name.neb"
+                    // $load "path\name.np"
+                    // $load "include path\split file name.np"
                     if(s.StartsWith("$load"))
                     {
                         List<string> parts = s.SplitByTokens("\";");

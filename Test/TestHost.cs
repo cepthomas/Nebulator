@@ -45,7 +45,7 @@ namespace Nebulator.Test
             // Clipboard.SetText(string.Join(Environment.NewLine, v));
 
             // MainForm mf = new MainForm();
-            // mf.OpenFile(@"C:\Dev\Nebulator\Examples\dev.neb"); // airport  dev  example  lsys
+            // mf.OpenFile(@"C:\Dev\Nebulator\Examples\dev.np"); // airport  dev  example  lsys
         }
 
         /// <summary>

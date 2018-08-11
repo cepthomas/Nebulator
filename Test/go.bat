@@ -1,20 +1,20 @@
 
 cd ..\Nebulator\bin\
 
-rem Nebulator ..\..\Examples\example.neb
+rem Nebulator ..\..\Examples\example.np
 
-rem Nebulator ..\..\Examples\airport.neb
+rem Nebulator ..\..\Examples\airport.np
 
-rem Nebulator ..\..\Examples\lsys.neb
+rem Nebulator ..\..\Examples\lsys.np
 
-Nebulator ..\..\Examples\gol.neb
+Nebulator ..\..\Examples\gol.np
 
-rem Nebulator ..\..\Examples\boids.neb
+rem Nebulator ..\..\Examples\boids.np
 
-rem Nebulator ..\..\Examples\generative1.neb
+rem Nebulator ..\..\Examples\generative1.np
 
-rem Nebulator ..\..\Examples\generative2.neb
+rem Nebulator ..\..\Examples\generative2.np
 
-rem Nebulator ..\..\Dev\dev.neb
+rem Nebulator ..\..\Dev\dev.np
 
-rem Nebulator ..\..\Dev\nptest.neb
+rem Nebulator ..\..\Dev\nptest.np

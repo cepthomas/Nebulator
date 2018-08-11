@@ -9,7 +9,7 @@ using Nebulator.Common;
 namespace Nebulator
 {
     /// <summary>
-    /// Cheesy about page.
+    /// Cheesy about page. TODO
     /// </summary>
     public partial class About : Form
     {

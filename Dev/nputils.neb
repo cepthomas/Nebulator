@@ -1,9 +1,0 @@
-
-///// Functions /////
-
-int notavar = 911;
-
-bool plainFunc(int num)
-{
-    return num > 0;
-}

@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace Nebulator.Common
 {
     [Serializable]
-    public class UserSettings // TODO nprocessing needs a different version.
+    public class UserSettings
     {
         #region Persisted editable properties
         [DisplayName("Editor Font"), Description("The font to use for editors etc."), Browsable(true)]
@@ -39,28 +39,11 @@ namespace Nebulator.Common
 
         [DisplayName("Lock UI"), Description("Forces UI to always topmost."), Browsable(true)]
         public bool LockUi { get; set; } = false;
-
-        [DisplayName("Midi Input"), Description("Your choice of midi input."), Browsable(true)]
-        [Editor(typeof(ListSelector), typeof(UITypeEditor))]
-        public string MidiIn { get; set; } = Utils.UNKNOWN_STRING;
-
-        [DisplayName("Midi Output"), Description("Your choice of midi output."), Browsable(true)]
-        [Editor(typeof(ListSelector), typeof(UITypeEditor))]
-        public string MidiOut { get; set; } = Utils.UNKNOWN_STRING;
         #endregion
 
         #region Persisted non-editable properties
         [Browsable(false)]
         public FormInfo MainFormInfo { get; set; } = new FormInfo();
-
-        [Browsable(false)]
-        public FormInfo PianoFormInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000, Visible = true };
-
-        [Browsable(false)]
-        public bool MidiMonitorIn { get; set; } = false;
-
-        [Browsable(false)]
-        public bool MidiMonitorOut { get; set; } = false;
 
         [Browsable(false)]
         public List<string> RecentFiles { get; set; } = new List<string>();
@@ -98,7 +81,7 @@ namespace Nebulator.Common
                 string json = File.ReadAllText(fn);
                 TheSettings = JsonConvert.DeserializeObject<UserSettings>(json);
 
-                // Clean up bad file names.
+                // Clean up any bad file names.
                 TheSettings.RecentFiles.RemoveAll(f => !File.Exists(f));
 
                 TheSettings._fn = fn;
@@ -113,24 +96,5 @@ namespace Nebulator.Common
             }
         }
         #endregion
-    }
-
-    [Serializable]
-    public class FormInfo
-    {
-        public bool Visible { get; set; } = false;
-        public int X { get; set; } = 50;
-        public int Y { get; set; } = 50;
-        public int Width { get; set; } = 1000;
-        public int Height { get; set; } = 700;
-
-        public void FromForm(Form f)
-        {
-            Visible = f.Visible;
-            X = f.Location.X;
-            Y = f.Location.Y;
-            Width = f.Width;
-            Height = f.Height;
-        }
     }
 }

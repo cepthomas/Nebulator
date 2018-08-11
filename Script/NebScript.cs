@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MoreLinq;
 using Nebulator.Common;
-using Nebulator.Protocol; //TODO get rid of dependency on Protocol
+using Nebulator.Protocol; // TODO get rid of dependency on Protocol
 
 
 // Nebulator API stuff.
@@ -40,7 +40,7 @@ namespace Nebulator.Script
         public int volume { get { return Volume; } set { Volume = value; } }
 
         /// <summary>Indicates using internal synth.</summary>
-        public bool winGm { get { return UserSettings.TheSettings.MidiOut == "Microsoft GS Wavetable Synth"; } }
+        public bool winGm { get { return ProtocolSettings.TheSettings.OutputDevice == "Microsoft GS Wavetable Synth"; } }
         #endregion
 
         #region Functions that can be overridden in the user script
