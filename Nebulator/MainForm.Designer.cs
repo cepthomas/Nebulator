@@ -22,36 +22,26 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.midiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.killMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pianoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnCompile = new System.Windows.Forms.Button();
             this.timeMaster = new Nebulator.Controls.TimeControl();
             this.sldVolume = new Nebulator.Controls.Slider();
             this.chkPlay = new System.Windows.Forms.CheckBox();
             this.potSpeed = new Nebulator.Controls.Pot();
             this.btnRewind = new System.Windows.Forms.Button();
-            this.splitContainerControl = new System.Windows.Forms.SplitContainer();
             this.levers = new Nebulator.Levers();
-            this.infoDisplay = new Nebulator.InfoDisplay();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.infoDisplay = new Nebulator.InfoDisplay();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
-            this.splitContainerMain.Panel1.SuspendLayout();
-            this.splitContainerMain.Panel2.SuspendLayout();
-            this.splitContainerMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerControl)).BeginInit();
-            this.splitContainerControl.Panel1.SuspendLayout();
-            this.splitContainerControl.Panel2.SuspendLayout();
-            this.splitContainerControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -62,7 +52,7 @@
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(826, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(733, 24);
             this.menuStrip1.TabIndex = 15;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -87,40 +77,6 @@
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
             this.recentToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.recentToolStripMenuItem.Text = "Recent";
-            // 
-            // toolsToolStripMenuItem
-            // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.logToolStripMenuItem,
-            this.settingsToolStripMenuItem,
-            this.aboutToolStripMenuItem});
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
-            this.toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // logToolStripMenuItem
-            // 
-            this.logToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_331_blog;
-            this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.logToolStripMenuItem.Text = "View Log";
-            this.logToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
             // midiToolStripMenuItem
             // 
@@ -176,37 +132,46 @@
             this.settingsMidiToolStripMenuItem.Text = "Settings";
             this.settingsMidiToolStripMenuItem.Click += new System.EventHandler(this.MidiSettings_Click);
             // 
-            // splitContainerMain
+            // toolsToolStripMenuItem
             // 
-            this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerMain.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainerMain.IsSplitterFixed = true;
-            this.splitContainerMain.Location = new System.Drawing.Point(0, 24);
-            this.splitContainerMain.Name = "splitContainerMain";
-            this.splitContainerMain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.logToolStripMenuItem,
+            this.settingsToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
             // 
-            // splitContainerMain.Panel1
+            // logToolStripMenuItem
             // 
-            this.splitContainerMain.Panel1.AutoScroll = true;
-            this.splitContainerMain.Panel1.Controls.Add(this.btnCompile);
-            this.splitContainerMain.Panel1.Controls.Add(this.timeMaster);
-            this.splitContainerMain.Panel1.Controls.Add(this.sldVolume);
-            this.splitContainerMain.Panel1.Controls.Add(this.chkPlay);
-            this.splitContainerMain.Panel1.Controls.Add(this.potSpeed);
-            this.splitContainerMain.Panel1.Controls.Add(this.btnRewind);
+            this.logToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_331_blog;
+            this.logToolStripMenuItem.Name = "logToolStripMenuItem";
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.logToolStripMenuItem.Text = "View Log";
+            this.logToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
             // 
-            // splitContainerMain.Panel2
+            // settingsToolStripMenuItem
             // 
-            this.splitContainerMain.Panel2.Controls.Add(this.splitContainerControl);
-            this.splitContainerMain.Size = new System.Drawing.Size(826, 556);
-            this.splitContainerMain.TabIndex = 14;
+            this.settingsToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
             // btnCompile
             // 
             this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(78, 7);
+            this.btnCompile.Location = new System.Drawing.Point(78, 33);
             this.btnCompile.Name = "btnCompile";
             this.btnCompile.Size = new System.Drawing.Size(34, 32);
             this.btnCompile.TabIndex = 38;
@@ -221,7 +186,7 @@
             time1.Tock = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(231, 7);
+            this.timeMaster.Location = new System.Drawing.Point(231, 33);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
             this.timeMaster.MaxTick = 0;
             this.timeMaster.Name = "timeMaster";
@@ -234,7 +199,7 @@
             // 
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
-            this.sldVolume.Location = new System.Drawing.Point(158, 7);
+            this.sldVolume.Location = new System.Drawing.Point(158, 33);
             this.sldVolume.Maximum = 200;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
@@ -253,7 +218,7 @@
             this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkPlay.Image = global::Nebulator.Properties.Resources.glyphicons_174_play;
-            this.chkPlay.Location = new System.Drawing.Point(49, 7);
+            this.chkPlay.Location = new System.Drawing.Point(49, 33);
             this.chkPlay.MaximumSize = new System.Drawing.Size(32, 32);
             this.chkPlay.MinimumSize = new System.Drawing.Size(32, 32);
             this.chkPlay.Name = "chkPlay";
@@ -267,7 +232,7 @@
             // 
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
-            this.potSpeed.Location = new System.Drawing.Point(117, 7);
+            this.potSpeed.Location = new System.Drawing.Point(117, 33);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
@@ -282,7 +247,7 @@
             this.btnRewind.FlatAppearance.BorderSize = 0;
             this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRewind.Image = global::Nebulator.Properties.Resources.glyphicons_172_fast_backward;
-            this.btnRewind.Location = new System.Drawing.Point(10, 7);
+            this.btnRewind.Location = new System.Drawing.Point(10, 33);
             this.btnRewind.Name = "btnRewind";
             this.btnRewind.Size = new System.Drawing.Size(34, 32);
             this.btnRewind.TabIndex = 31;
@@ -290,41 +255,13 @@
             this.btnRewind.UseVisualStyleBackColor = false;
             this.btnRewind.Click += new System.EventHandler(this.Rewind_Click);
             // 
-            // splitContainerControl
-            // 
-            this.splitContainerControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerControl.Location = new System.Drawing.Point(0, 0);
-            this.splitContainerControl.Name = "splitContainerControl";
-            this.splitContainerControl.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainerControl.Panel1
-            // 
-            this.splitContainerControl.Panel1.Controls.Add(this.levers);
-            // 
-            // splitContainerControl.Panel2
-            // 
-            this.splitContainerControl.Panel2.Controls.Add(this.infoDisplay);
-            this.splitContainerControl.Size = new System.Drawing.Size(826, 502);
-            this.splitContainerControl.SplitterDistance = 43;
-            this.splitContainerControl.TabIndex = 2;
-            // 
             // levers
             // 
             this.levers.BackColor = System.Drawing.Color.AliceBlue;
-            this.levers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.levers.Location = new System.Drawing.Point(0, 0);
+            this.levers.Location = new System.Drawing.Point(10, 73);
             this.levers.Name = "levers";
-            this.levers.Size = new System.Drawing.Size(826, 43);
+            this.levers.Size = new System.Drawing.Size(714, 42);
             this.levers.TabIndex = 0;
-            // 
-            // infoDisplay
-            // 
-            this.infoDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoDisplay.Location = new System.Drawing.Point(0, 0);
-            this.infoDisplay.MaxLength = 5000;
-            this.infoDisplay.Name = "infoDisplay";
-            this.infoDisplay.Size = new System.Drawing.Size(826, 455);
-            this.infoDisplay.TabIndex = 0;
             // 
             // toolTip
             // 
@@ -335,15 +272,34 @@
             this.toolTip.UseAnimation = false;
             this.toolTip.UseFading = false;
             // 
+            // infoDisplay
+            // 
+            this.infoDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.infoDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.infoDisplay.Location = new System.Drawing.Point(10, 121);
+            this.infoDisplay.MaxLength = 5000;
+            this.infoDisplay.Name = "infoDisplay";
+            this.infoDisplay.Size = new System.Drawing.Size(714, 264);
+            this.infoDisplay.TabIndex = 0;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(826, 580);
-            this.Controls.Add(this.splitContainerMain);
+            this.ClientSize = new System.Drawing.Size(733, 397);
+            this.Controls.Add(this.infoDisplay);
+            this.Controls.Add(this.levers);
+            this.Controls.Add(this.btnCompile);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.timeMaster);
+            this.Controls.Add(this.sldVolume);
+            this.Controls.Add(this.potSpeed);
+            this.Controls.Add(this.btnRewind);
+            this.Controls.Add(this.chkPlay);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
@@ -353,14 +309,6 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.splitContainerMain.Panel1.ResumeLayout(false);
-            this.splitContainerMain.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
-            this.splitContainerMain.ResumeLayout(false);
-            this.splitContainerControl.Panel1.ResumeLayout(false);
-            this.splitContainerControl.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerControl)).EndInit();
-            this.splitContainerControl.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -375,12 +323,10 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pianoToolStripMenuItem;
-        private System.Windows.Forms.SplitContainer splitContainerMain;
         private Controls.Slider sldVolume;
         private System.Windows.Forms.CheckBox chkPlay;
         private Controls.Pot potSpeed;
         private System.Windows.Forms.Button btnRewind;
-        private System.Windows.Forms.SplitContainer splitContainerControl;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private Levers levers;
@@ -388,10 +334,10 @@
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
-        private InfoDisplay infoDisplay;
         private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem midiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsMidiToolStripMenuItem;
+        private InfoDisplay infoDisplay;
     }
 }
 

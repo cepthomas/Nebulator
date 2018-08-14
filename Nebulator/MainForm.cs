@@ -15,9 +15,8 @@ using Nebulator.Script;
 using Nebulator.Protocol;
 using Nebulator.Server;
 
-//TODO fix scrunched neb ui
-//TODO refactor non-processing stuff in Common: ScriptDefinitions, NoteUtils, etc?
-//TODO remove Protocol dependency in Script project?
+//TODO? refactor non-processing stuff in Common: ScriptDefinitions, NoteUtils, etc
+//TODO? remove Protocol dependency in Script project
 
 
 namespace Nebulator
@@ -452,13 +451,14 @@ namespace Nebulator
             ///// The channel controls.
             
             // Clean up current controls.
-            foreach (Control ctl in splitContainerMain.Panel1.Controls)
+            foreach (Control ctl in Controls)
             {
                 if (ctl is ChannelControl)
                 {
                     ChannelControl tctl = ctl as ChannelControl;
+                    tctl.ChannelChangeEvent -= ChannelChange_Event;
                     tctl.Dispose();
-                    splitContainerMain.Panel1.Controls.Remove(tctl);
+                    Controls.Remove(tctl);
                 }
             }
 
@@ -470,14 +470,14 @@ namespace Nebulator
                     int vt = Convert.ToInt32(_nppVals.GetValue(t.Name, "volume"));
                     t.Volume = vt == 0 ? 90 : vt; // in case it's new
 
-                    ChannelControl trk = new ChannelControl()
+                    ChannelControl tctl = new ChannelControl()
                     {
-                        Location = new Point(x, 0), // txtTime.Top),
+                        Location = new Point(x, timeMaster.Top),
                         BoundChannel = t
                     };
-                    trk.ChannelChangeEvent += ChannelChange_Event;
-                    splitContainerMain.Panel1.Controls.Add(trk);
-                    x += trk.Width + CONTROL_SPACING;
+                    tctl.ChannelChangeEvent += ChannelChange_Event;
+                    Controls.Add(tctl);
+                    x += tctl.Width + CONTROL_SPACING;
                 }
 
                 // Levers.
