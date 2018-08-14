@@ -15,6 +15,9 @@ using Nebulator.Script;
 using Nebulator.Protocol;
 using Nebulator.Server;
 
+//TODO fix scrunched neb ui
+//TODO refactor non-processing stuff in Common: ScriptDefinitions, NoteUtils, etc?
+//TODO remove Protocol dependency in Script project?
 
 
 namespace Nebulator
@@ -155,31 +158,32 @@ namespace Nebulator
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
 
-            #region Command line
+            #region Open file
+            string sopen = "";
             // Look for filename passed in.
             string[] args = Environment.GetCommandLineArgs();
             if (args.Count() > 1)
             {
-                OpenFile(args[1]);
+                sopen = OpenFile(args[1]);
             }
             #endregion
 
 #if _DEV // Debug stuff
             if (args.Count() <= 1)
             {
-                //OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
-                OpenFile(@"C:\Dev\Nebulator\Examples\algo1.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\algo1.np");
 
 
-//these in np:
-                //OpenFile(@"C:\Dev\Nebulator\Dev\nptest.np");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\lsys.np");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\gol.np");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\flocking.np");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\generative1.np");
-                //OpenFile(@"C:\Dev\Nebulator\Examples\generative2.np");
+                //these in np:
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Dev\nptest.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\lsys.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\gol.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\flocking.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\generative1.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\generative2.np");
 
 
 
@@ -195,6 +199,10 @@ namespace Nebulator
                 //Clipboard.SetText(string.Join(Environment.NewLine, v));
             }
 #endif
+            if(sopen != "")
+            {
+                _logger.Error(sopen);
+            }
         }
 
         /// <summary>
@@ -418,7 +426,7 @@ namespace Nebulator
                     {
                         try
                         {
-                            StepCollection stepsToAdd = ScriptCore.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
+                            StepCollection stepsToAdd = ScriptUtils.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
                             _compiledSteps.Add(stepsToAdd);
                             seqOffset += seq.Length;
 
@@ -657,36 +665,34 @@ namespace Nebulator
                     if (e.Step is StepNoteOn || e.Step is StepNoteOff)
                     {
                         int channel = (e.Step as Step).Channel;
-
                         // Dig out the note number. Note sign change for note off. TODO better way to do this?
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
-
-                        // Process through our list of inputs of interest. TODO make into a dict?
-                        foreach (NControlPoint ctlpt in _script.InputControllers)
-                        {
-                            if (ctlpt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl && ctlpt.Channel.Channel == channel)
-                            {
-                                // Assign new value which triggers script callback.
-                                ctlpt.BoundVar.Value = value;
-                                handled = true;
-                            }
-                        }
+                        handled = ProcessInput(ScriptDefinitions.TheDefinitions.NoteControl, channel, value);
                     }
                     else if(e.Step is StepControllerChange)
                     {
                         // Control change
                         StepControllerChange scc = e.Step as StepControllerChange;
+                        handled = ProcessInput(scc.ControllerId, scc.Channel, scc.Value);
+                    }
 
-                        // Process through our list of inputs of interest. TODO make into a dict w/above?
+                    ///// Local common function TODO test /////
+                    bool ProcessInput(int ctrlId, int channel, int value)
+                    {
+                        bool ret = false;
+
+                        // Process through our list of inputs of interest.
                         foreach (NControlPoint ctlpt in _script.InputControllers)
                         {
-                            if (ctlpt.ControllerId == scc.ControllerId && ctlpt.Channel.Channel == scc.Channel)
+                            if (ctlpt.ControllerId == ctrlId && ctlpt.Channel.Channel == channel)
                             {
                                 // Assign new value which triggers script callback.
-                                ctlpt.BoundVar.Value = scc.Value;
-                                handled = true;
+                                ctlpt.BoundVar.Value = value;
+                                ret = true;
                             }
                         }
+
+                        return ret;
                     }
 
                     if (!handled)
@@ -785,7 +791,7 @@ namespace Nebulator
             ProcessPlay(PlayCommand.Stop, false);
             SetCompileStatus(false);
 
-            ScriptError err = ScriptCore.ProcessScriptRuntimeError(args, _compileTempDir);
+            ScriptError err = ScriptUtils.ProcessScriptRuntimeError(args, _compileTempDir);
 
             if(err != null)
             {
@@ -802,7 +808,11 @@ namespace Nebulator
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             string fn = sender.ToString();
-            OpenFile(fn);
+            string sopen = OpenFile(fn);
+            if (sopen != "")
+            {
+                _logger.Error(sopen);
+            }
         }
 
         /// <summary>
@@ -818,7 +828,11 @@ namespace Nebulator
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
-                OpenFile(openDlg.FileName);
+                string sopen = OpenFile(openDlg.FileName);
+                if (sopen != "")
+                {
+                    _logger.Error(sopen);
+                }
             }
         }
 
@@ -826,7 +840,7 @@ namespace Nebulator
         /// Common np file opener.
         /// </summary>
         /// <param name="fn">The np file to open.</param>
-        /// <returns>Error string or empty if ok. TODO handle by all callers.</returns>
+        /// <returns>Error string or empty if ok.</returns>
         public string OpenFile(string fn)
         {
             string ret = "";
@@ -837,7 +851,7 @@ namespace Nebulator
                 {
                     if(File.Exists(fn))
                     {
-                        _logger.Info($"Reading np file: {fn}");
+                        _logger.Info($"Opening {fn}");
                         _nppVals = Bag.Load(fn.Replace(".np", ".npp"));
                         _fn = fn;
 
@@ -849,7 +863,6 @@ namespace Nebulator
                                 // Running on the UI thread
                                 SetCompileStatus(true);
                                 AddToRecentDefs(fn);
-
                                 Compile();
                             });
                         }
@@ -866,9 +879,11 @@ namespace Nebulator
                     ret = $"Couldn't open the np file: {fn} because: {ex.Message}";
                     _logger.Error(ret);
                 }
-
-                SetCompileStatus(false);
-                InitScriptUi();
+                finally
+                {
+                    SetCompileStatus(false);
+                    InitScriptUi();
+                }
             }
 
             return ret;

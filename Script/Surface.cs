@@ -88,7 +88,7 @@ namespace Nebulator.Script
         /// </summary>
         public void UpdateSurface()
         {
-            if (_script != null && (_script.Loop || _script.Redraw))
+            if (_script != null && (_script._loop || _script._redraw))
             {
                 // Check for resize or init.
                 if(_bitmap == null || _bitmap.Width != _script.width || _bitmap.Height != _script.height)
@@ -126,12 +126,12 @@ namespace Nebulator.Script
                 try
                 {
                     // Hand over to the script for drawing on.
-                    _script.Canvas = skSurface.Canvas;
+                    _script._canvas = skSurface.Canvas;
 
                     // Some housekeeping.
                     _script.pMouseX = _script.mouseX;
                     _script.pMouseY = _script.mouseY;
-                    _script.Redraw = false;
+                    _script._redraw = false;
 
                     //_tanDraw.Arm();
 

@@ -29,20 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.picBox = new System.Windows.Forms.PictureBox();
             this.browser = new System.Windows.Forms.WebBrowser();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // picBox
-            // 
-            this.picBox.InitialImage = null;
-            this.picBox.Location = new System.Drawing.Point(14, 12);
-            this.picBox.Name = "picBox";
-            this.picBox.Size = new System.Drawing.Size(131, 132);
-            this.picBox.TabIndex = 0;
-            this.picBox.TabStop = false;
             // 
             // browser
             // 
@@ -55,11 +43,6 @@
             this.browser.Size = new System.Drawing.Size(875, 434);
             this.browser.TabIndex = 1;
             // 
-            // timer1
-            // 
-            this.timer1.Interval = 50;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // About
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -67,20 +50,16 @@
             this.BackColor = System.Drawing.Color.PaleTurquoise;
             this.ClientSize = new System.Drawing.Size(899, 458);
             this.Controls.Add(this.browser);
-            this.Controls.Add(this.picBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "About";
             this.Text = "About";
             this.Load += new System.EventHandler(this.About_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.picBox)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox picBox;
         private System.Windows.Forms.WebBrowser browser;
-        private System.Windows.Forms.Timer timer1;
     }
 }

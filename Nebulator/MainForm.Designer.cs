@@ -58,8 +58,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.toolsToolStripMenuItem,
-            this.midiToolStripMenuItem});
+            this.midiToolStripMenuItem,
+            this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(826, 24);
@@ -102,7 +102,7 @@
             // 
             this.logToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_331_blog;
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.logToolStripMenuItem.Text = "View Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
             // 
@@ -110,7 +110,7 @@
             // 
             this.settingsToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
             // 
@@ -118,7 +118,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -138,7 +138,7 @@
             // 
             this.killMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_206_electricity;
             this.killMidiToolStripMenuItem.Name = "killMidiToolStripMenuItem";
-            this.killMidiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.killMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.killMidiToolStripMenuItem.Text = "Kill Midi";
             this.killMidiToolStripMenuItem.ToolTipText = "Instant stop all devices";
             this.killMidiToolStripMenuItem.Click += new System.EventHandler(this.Kill_Click);
@@ -148,7 +148,7 @@
             this.pianoToolStripMenuItem.CheckOnClick = true;
             this.pianoToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_327_piano;
             this.pianoToolStripMenuItem.Name = "pianoToolStripMenuItem";
-            this.pianoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pianoToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.pianoToolStripMenuItem.Text = "Piano";
             this.pianoToolStripMenuItem.Click += new System.EventHandler(this.Piano_Click);
             // 
@@ -156,7 +156,7 @@
             // 
             this.importMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_359_file_import;
             this.importMidiToolStripMenuItem.Name = "importMidiToolStripMenuItem";
-            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.importMidiToolStripMenuItem.Text = "Import Style";
             this.importMidiToolStripMenuItem.Click += new System.EventHandler(this.ImportStyle_Click);
             // 
@@ -164,7 +164,7 @@
             // 
             this.exportMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_360_file_export;
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
@@ -172,7 +172,7 @@
             // 
             this.settingsMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsMidiToolStripMenuItem.Name = "settingsMidiToolStripMenuItem";
-            this.settingsMidiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.settingsMidiToolStripMenuItem.Text = "Settings";
             this.settingsMidiToolStripMenuItem.Click += new System.EventHandler(this.MidiSettings_Click);
             // 

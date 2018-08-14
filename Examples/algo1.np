@@ -10,8 +10,8 @@ NVariable CTL3;
 
 // All the channels.
 NChannel KEYS;
-NChannel SYNTH;
 NChannel BASS;
+NChannel SYNTH;
 NChannel DRUMS;
 
 // Neb script stuff.
@@ -75,8 +75,8 @@ public override void setupNeb()
     if(winGm)
     {
         sendPatch(KEYS, AcousticGrandPiano);
-        sendPatch(SYNTH, Pad3Polysynth);
         sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Pad3Polysynth);
     }
 }
 
@@ -214,7 +214,7 @@ public void On_CTL_NOTE()
 {
     //print("CTL_NOTE", "=", CTL_NOTE.Value);
 
-    // Test for on or off. TODO
+    // Test for note on or off. TODO
     if(CTL_NOTE.Value > 0)
     {
         sendNoteOn(SYNTH, CTL_NOTE.Value, 110);

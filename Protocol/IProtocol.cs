@@ -23,7 +23,7 @@ namespace Nebulator.Protocol
     }
 
     /// <summary>What it can do. Self explanatory.</summary>
-    public class ProtocolCaps //TODO check all
+    public class ProtocolCaps
     {
         public int NumChannels { get; set; }
         public int MinVolume { get; set; }

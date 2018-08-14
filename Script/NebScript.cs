@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MoreLinq;
 using Nebulator.Common;
-using Nebulator.Protocol; // TODO get rid of dependency on Protocol
+using Nebulator.Protocol;
 
 
 // Nebulator API stuff.
@@ -253,7 +253,7 @@ namespace Nebulator.Script
         /// <param name="seq">Which sequence to send.</param>
         public void playSequence(NChannel channel, NSequence seq)
         {
-            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
+            StepCollection scoll = ScriptUtils.ConvertToSteps(channel, seq, StepTime.Tick);
             RuntimeSteps.Add(scoll);
         }
 

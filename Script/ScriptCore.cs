@@ -8,15 +8,14 @@ using System.IO;
 using SkiaSharp;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Protocol; //TODO get rid of dependency on Protocol
-
+using Nebulator.Protocol;
 
 
 namespace Nebulator.Script
 {
     public partial class ScriptCore : IDisposable
     {
-        #region Fields
+        #region Fields - internal
         /// <summary>My logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -25,22 +24,65 @@ namespace Nebulator.Script
 
         /// <summary>Script randomizer.</summary>
         Random _rand = new Random();
+
+        /// <summary>Loop option.</summary>
+        internal bool _loop = true;
+
+        /// <summary>Redraw option.</summary>
+        internal bool _redraw = false;
+
+        /// <summary>Current working object to draw on.</summary>
+        internal SKCanvas _canvas = null;
+        #endregion
+
+        #region Fields - graphics/processing
+        /// <summary>Current font to draw with.</summary>
+        SKPaint _textPaint = new SKPaint()
+        {
+            TextSize = 12,
+            Color = SKColors.Black,
+            Typeface = SKTypeface.FromFamilyName("Arial"),
+            TextAlign = SKTextAlign.Left,
+            IsAntialias = true
+        };
+
+        /// <summary>Current pen to draw with.</summary>
+        SKPaint _pen = new SKPaint()
+        {
+            Color = SKColors.Black,
+            Style = SKPaintStyle.Stroke,
+            IsStroke = true,
+            StrokeWidth = 1,
+            FilterQuality = SKFilterQuality.High,
+            IsAntialias = true
+        };
+
+        /// <summary>Current brush to draw with.</summary>
+        SKPaint _fill = new SKPaint()
+        {
+            Color = SKColors.Transparent,
+            Style = SKPaintStyle.Fill,
+            IsStroke = false,
+            FilterQuality = SKFilterQuality.High,
+            IsAntialias = true
+        };
+
+        /// <summary>Current drawing points.</summary>
+        List<SKPoint> _vertexes = new List<SKPoint>();
+
+        /// <summary>General purpose stack</summary>
+        Stack<SKMatrix> _matrixStack = new Stack<SKMatrix>();
+
+        /// <summary>Background color.</summary>
+        SKColor _bgColor = SKColors.LightGray;
+
+        /// <summary>Smoothing option.</summary>
+        bool _smooth = true;
         #endregion
 
         #region Properties - general
         /// <summary>Protocol to use.</summary>
         public IProtocol Protocol { get; set; } = null;
-        #endregion
-
-        #region Properties - Nebulator not processing! TODO ???? cleanup all
-        /// <summary>Loop option.</summary>
-        public bool Loop { get; private set; } = true;
-
-        /// <summary>Redraw option.</summary>
-        public bool Redraw { get; internal set; } = false;
-
-        /// <summary>Current working object to draw on.</summary>
-        public SKCanvas Canvas { get; internal set; } = null;
         #endregion
 
         #region Properties - shared between host and script at runtime
@@ -109,133 +151,8 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Public functions
-        /// <summary>
-        /// Generate steps from sequence notes.
-        /// </summary>
-        /// <param name="channel">Which channel to send it on.</param>
-        /// <param name="seq">Which notes to send.</param>
-        /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
-        {
-            StepCollection steps = new StepCollection();
-
-            foreach (NSequenceElement seqel in seq.Elements)
-            {
-                // Create the note start and stop times.
-                int toffset = startTick == -1 ? 0 : channel.NextTime();
-
-                Time startNoteTime = new Time(startTick, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + seqel.Duration;
-
-                // Is it a function?
-                if (seqel.ScriptFunction != null)
-                {
-                    StepInternal step = new StepInternal()
-                    {
-                        Channel = channel.Channel,
-                        ScriptFunction = seqel.ScriptFunction
-                    };
-                    steps.AddStep(startNoteTime, step);
-                }
-                else // plain ordinary
-                {
-                    // Process all note numbers.
-                    foreach (int noteNum in seqel.Notes)
-                    {
-                        ///// Note on.
-                        int vel = channel.NextVol(seqel.Volume);
-                        StepNoteOn step = new StepNoteOn()
-                        {
-                            Channel = channel.Channel,
-                            NoteNumber = noteNum,
-                            Velocity = vel,
-                            VelocityToPlay = vel,
-                            Duration = seqel.Duration
-                        };
-                        steps.AddStep(startNoteTime, step);
-
-                        //// Maybe add a deferred stop note.
-                        //if (stopNoteTime != startNoteTime)
-                        //{
-                        //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
-                        //}
-                        //// else client is taking care of it.
-                    }
-                }
-            }
-
-            return steps;
-        }
-
-        /// <summary>
-        /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="compileDir"></param>
-        public static ScriptError ProcessScriptRuntimeError(Surface.RuntimeErrorEventArgs args, string compileDir)
-        {
-            ScriptError err = null;
-
-            // Locate the offending frame.
-            string srcFile = Utils.UNKNOWN_STRING;
-            int srcLine = -1;
-            StackTrace st = new StackTrace(args.Exception, true);
-            StackFrame sf = null;
-
-            for (int i = 0; i < st.FrameCount; i++)
-            {
-                StackFrame stf = st.GetFrame(i);
-                if (stf.GetFileName() != null && stf.GetFileName().ToUpper().Contains(compileDir.ToUpper()))
-                {
-                    sf = stf;
-                    break;
-                }
-            }
-
-            if (sf != null)
-            {
-                // Dig out generated file parts.
-                string genFile = sf.GetFileName();
-                int genLine = sf.GetFileLineNumber() - 1;
-
-                // Open the generated file and dig out the source file and line.
-                string[] genLines = File.ReadAllLines(genFile);
-
-                srcFile = genLines[0].Trim().Replace("//", "");
-
-                int ind = genLines[genLine].LastIndexOf("//");
-                if (ind != -1)
-                {
-                    string sl = genLines[genLine].Substring(ind + 2);
-                    int.TryParse(sl, out srcLine);
-                }
-
-                err = new ScriptError()
-                {
-                    ErrorType = ScriptError.ScriptErrorType.Runtime,
-                    SourceFile = srcFile,
-                    LineNumber = srcLine,
-                    Message = args.Exception.Message
-                };
-            }
-            else // unknown?
-            {
-                err = new ScriptError()
-                {
-                    ErrorType = ScriptError.ScriptErrorType.Runtime,
-                    SourceFile = "",
-                    LineNumber = -1,
-                    Message = args.Exception.Message
-                };
-            }
-
-            return err;
-        }
-        #endregion
-
         #region Private functions
-        /// <summary>Handle unimplemented script elements that we can safely ignore. But do tell the user.</summary>
+        /// <summary>Handle unimplemented script elements that we can safely ignore but do tell the user.</summary>
         /// <param name="name"></param>
         /// <param name="desc"></param>
         void NotImpl(string name, string desc = "")
