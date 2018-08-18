@@ -186,7 +186,7 @@ public override void keyPressed()
 
 public void On_BACK_COLOR()
 {
-    print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
+    //print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
 }
 
 public void On_CTL2()
@@ -200,7 +200,10 @@ public void On_CTL2()
 public void On_CTL3()
 {
     //print("On_CTL3:", CTL3.Value);
-    sendNote(KEYS, 50 + CTL3.Value % 20, 90, 2.0);
+    if(random(0, 10) == 0)
+    {
+        sendNote(KEYS, 50 + CTL3.Value % 20, 90, 2.0);
+    }
 }
 
 public void On_MOD1()
@@ -214,7 +217,7 @@ public void On_CTL_NOTE()
 {
     //print("CTL_NOTE", "=", CTL_NOTE.Value);
 
-    // Test for note on or off. TODO
+    // Test for note on or off.
     if(CTL_NOTE.Value > 0)
     {
         sendNoteOn(SYNTH, CTL_NOTE.Value, 110);

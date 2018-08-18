@@ -15,8 +15,11 @@ using Nebulator.Script;
 using Nebulator.Protocol;
 using Nebulator.Server;
 
-//TODO? refactor non-processing stuff in Common: ScriptDefinitions, NoteUtils, etc
-//TODO? remove Protocol dependency in Script project
+
+// TODO? refactor non-processing stuff in Common: ScriptDefinitions (Midi, Protocol, Script), NoteUtils (Midi, Script), Time (Midi, Protocol, Script)
+// Midi >> Protocol  Script >> Protocol
+
+// TODO? remove Protocol dependency in Script project
 
 
 namespace Nebulator
@@ -676,7 +679,7 @@ namespace Nebulator
                         handled = ProcessInput(scc.ControllerId, scc.Channel, scc.Value);
                     }
 
-                    ///// Local common function TODO test /////
+                    ///// Local common function /////
                     bool ProcessInput(int ctrlId, int channel, int value)
                     {
                         bool ret = false;
