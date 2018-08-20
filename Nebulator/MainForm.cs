@@ -16,10 +16,12 @@ using Nebulator.Protocol;
 using Nebulator.Server;
 
 
-// TODO? refactor non-processing stuff in Common: ScriptDefinitions (Midi, Protocol, Script), NoteUtils (Midi, Script), Time (Midi, Protocol, Script)
-// Midi >> Protocol  Script >> Protocol
+// TODO Factor out the processing and non-processing stuff would be nice but much breakage.
+//   - Remove Protocol dependency in Script project
+//   - Breaks the ScriptCore partial class model.
 
-// TODO? remove Protocol dependency in Script project
+// TODO Would be nice to abstract out the midi stuff from Protocol a bit more.
+//   - Many tendrils involving ScriptDefinitions, NoteUtils
 
 
 namespace Nebulator

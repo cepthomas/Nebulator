@@ -22,7 +22,7 @@ namespace Nebulator.Protocol
         public string Message { get; set; } = null;
     }
 
-    /// <summary>What it can do. Self explanatory.</summary>
+    /// <summary>What it can do, provided by implementations. Self explanatory.</summary>
     public class ProtocolCaps
     {
         public int NumChannels { get; set; }

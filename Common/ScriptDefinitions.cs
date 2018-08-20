@@ -27,6 +27,7 @@ namespace Nebulator.Common
         /// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is list of constituent notes.</summary>
         public Dictionary<string, List<string>> ScaleDefs { get; private set; } = new Dictionary<string, List<string>>();
 
+        // TODO These two are a bit klunky. The right way to do things is to make separate classes for each type instead of smooshing them together but that is a bit of a rabbit hole too.
         /// <summary>Helper for internals.</summary>
         public int NoteControl { get; set; } = -1;
 
