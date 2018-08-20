@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nebulator.Common;
 
 
-namespace Nebulator.Common
+namespace Nebulator.Protocol
 {
     /// <summary>
     /// Unit of time.

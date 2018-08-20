@@ -16,7 +16,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Nebulator.Common.Time time1 = new Nebulator.Common.Time();
+            Nebulator.Protocol.Time time1 = new Nebulator.Protocol.Time();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();

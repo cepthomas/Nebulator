@@ -220,12 +220,14 @@ public void On_CTL_NOTE()
     // Test for note on or off.
     if(CTL_NOTE.Value > 0)
     {
-        sendNoteOn(SYNTH, CTL_NOTE.Value, 110);
+        sendNoteOn(KEYS, CTL_NOTE.Value, 110);
+        //sendNoteOn(SYNTH, CTL_NOTE.Value, 110);
         //sendNote(SYNTH, CTL_NOTE.Value, 90, 2.0); // fixed duration
     }
     else
     {
-        sendNoteOff(SYNTH, -CTL_NOTE.Value);
+        sendNoteOff(KEYS, -CTL_NOTE.Value);
+        //sendNoteOff(SYNTH, -CTL_NOTE.Value);
     }
 }
 

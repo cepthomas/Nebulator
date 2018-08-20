@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Nebulator.Common;
+using Nebulator.Protocol;
 
 
 namespace Nebulator.Controls
