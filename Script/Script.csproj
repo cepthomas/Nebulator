@@ -106,9 +106,9 @@
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Protocol\Protocol.csproj">
-      <Project>{dfb8fd27-c870-4bf6-97d5-f44c13049fee}</Project>
-      <Name>Protocol</Name>
+    <ProjectReference Include="..\Comm\Comm.csproj">
+      <Project>{dfb8fd27-c870-4bf6-1234-f44c13049fee}</Project>
+      <Name>Comm</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nebulator.Common;
-using Nebulator.Protocol;
+using Nebulator.Comm;
 
 
 namespace Nebulator.Script

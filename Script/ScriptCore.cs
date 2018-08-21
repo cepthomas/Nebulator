@@ -8,7 +8,7 @@ using System.IO;
 using SkiaSharp;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Protocol;
+using Nebulator.Comm;
 
 
 namespace Nebulator.Script
@@ -81,8 +81,8 @@ namespace Nebulator.Script
         #endregion
 
         #region Properties - general
-        /// <summary>Protocol to use.</summary>
-        public IProtocol Protocol { get; set; } = null;
+        /// <summary>Device to use.</summary>
+        public IComm Comm { get; set; } = null;
         #endregion
 
         #region Properties - shared between host and script at runtime

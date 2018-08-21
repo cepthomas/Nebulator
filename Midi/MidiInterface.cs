@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using NAudio.Midi;
 using Nebulator.Common;
-using Nebulator.Protocol;
+using Nebulator.Comm;
 
 
 namespace Nebulator.Midi
 {
     /// <summary>
-    /// Abstraction layer between NAudio midi and Nebulator steps.
+    /// Abstraction layer between NAudio midi and Nebulator steps. TODO these should be one per input/output....
     /// </summary>
-    public class MidiInterface : IProtocol, IDisposable
+    public class MidiInterface : IComm, IDisposable
     {
         #region Fields
         /// <summary>Midi input device.</summary>
@@ -31,21 +31,21 @@ namespace Nebulator.Midi
 
         #region Events
         /// <inheritdoc />
-        public event EventHandler<ProtocolInputEventArgs> ProtocolInputEvent;
+        public event EventHandler<CommInputEventArgs> CommInputEvent;
 
         /// <inheritdoc />
-        public event EventHandler<ProtocolLogEventArgs> ProtocolLogEvent;
+        public event EventHandler<CommLogEventArgs> CommLogEvent;
         #endregion
 
         #region Properties
         /// <inheritdoc />
-        public List<string> ProtocolInputs { get; set; } = new List<string>();
+        public List<string> CommInputs { get; set; } = new List<string>();
 
         /// <inheritdoc />
-        public List<string> ProtocolOutputs { get; set; } = new List<string>();
+        public List<string> CommOutputs { get; set; } = new List<string>();
 
         /// <inheritdoc />
-        public ProtocolCaps Caps { get; set; } = null;
+        public CommCaps Caps { get; set; } = null;
         #endregion
 
         #region Lifecycle
@@ -54,7 +54,7 @@ namespace Nebulator.Midi
         /// </summary>
         public MidiInterface()
         {
-            Caps = new ProtocolCaps()
+            Caps = new CommCaps()
             {
                 NumChannels = 16,
                 MinVolume = 0,
@@ -208,14 +208,14 @@ namespace Nebulator.Midi
                         {
                             _midiOut.Send(msg);
 
-                            if (ProtocolSettings.TheSettings.MonitorOutput)
+                            if (CommSettings.TheSettings.MonitorOutput)
                             {
-                                LogMsg(ProtocolLogEventArgs.LogCategory.Send, step.ToString());
+                                LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
                             }
                         }
                         catch (Exception ex)
                         {
-                            LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Midi couldn't send step {step}: {ex.Message}");
+                            LogMsg(CommLogEventArgs.LogCategory.Error, $"Midi couldn't send step {step}: {ex.Message}");
                         }
                     }
                 }
@@ -300,12 +300,12 @@ namespace Nebulator.Midi
             if (step != null)
             {
                 // Pass it up for handling.
-                ProtocolInputEventArgs args = new ProtocolInputEventArgs() { Step = step };
-                ProtocolInputEvent?.Invoke(this, args);
+                CommInputEventArgs args = new CommInputEventArgs() { Step = step };
+                CommInputEvent?.Invoke(this, args);
 
-                if (ProtocolSettings.TheSettings.MonitorInput)
+                if (CommSettings.TheSettings.MonitorInput)
                 {
-                    LogMsg(ProtocolLogEventArgs.LogCategory.Recv, step.ToString());
+                    LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
                 }
             }
         }
@@ -315,9 +315,9 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            if (ProtocolSettings.TheSettings.MonitorInput)
+            if (CommSettings.TheSettings.MonitorInput)
             {
-                LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
+                LogMsg(CommLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
             }
         }
 
@@ -335,27 +335,27 @@ namespace Nebulator.Midi
                     _midiIn = null;
                 }
 
-                ProtocolInputs.Clear();
+                CommInputs.Clear();
                 for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                 {
-                    ProtocolInputs.Add(MidiIn.DeviceInfo(device).ProductName);
+                    CommInputs.Add(MidiIn.DeviceInfo(device).ProductName);
                 }
 
-                if (ProtocolInputs.Count > 0 && ProtocolInputs.Contains(ProtocolSettings.TheSettings.InputDevice))
+                if (CommInputs.Count > 0 && CommInputs.Contains(CommSettings.TheSettings.InputDevice))
                 {
-                    _midiIn = new MidiIn(ProtocolInputs.IndexOf(ProtocolSettings.TheSettings.InputDevice));
+                    _midiIn = new MidiIn(CommInputs.IndexOf(CommSettings.TheSettings.InputDevice));
                     _midiIn.MessageReceived += MidiIn_MessageReceived;
                     _midiIn.ErrorReceived += MidiIn_ErrorReceived;
                     _midiIn.Start();
                 }
                 else
                 {
-                    LogMsg(ProtocolLogEventArgs.LogCategory.Info, "No midi input device selected.");
+                    LogMsg(CommLogEventArgs.LogCategory.Info, "No midi input device selected.");
                 }
             }
             catch (Exception ex)
             {
-                LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Init midi in failed: {ex.Message}");
+                LogMsg(CommLogEventArgs.LogCategory.Error, $"Init midi in failed: {ex.Message}");
             }
         }
 
@@ -372,25 +372,25 @@ namespace Nebulator.Midi
                     _midiOut = null;
                 }
 
-                ProtocolOutputs.Clear();
+                CommOutputs.Clear();
                 for (int device = 0; device < MidiOut.NumberOfDevices; device++)
                 {
-                    ProtocolOutputs.Add(MidiOut.DeviceInfo(device).ProductName);
+                    CommOutputs.Add(MidiOut.DeviceInfo(device).ProductName);
                 }
 
-                if (ProtocolOutputs.Count > 0 && ProtocolOutputs.Contains(ProtocolSettings.TheSettings.OutputDevice))
+                if (CommOutputs.Count > 0 && CommOutputs.Contains(CommSettings.TheSettings.OutputDevice))
                 {
-                    int mi = ProtocolOutputs.IndexOf(ProtocolSettings.TheSettings.OutputDevice);
+                    int mi = CommOutputs.IndexOf(CommSettings.TheSettings.OutputDevice);
                     _midiOut = new MidiOut(mi);
                 }
                 else
                 {
-                    LogMsg(ProtocolLogEventArgs.LogCategory.Error, "No midi output device selected.");
+                    LogMsg(CommLogEventArgs.LogCategory.Error, "No midi output device selected.");
                 }
             }
             catch (Exception ex)
             {
-                LogMsg(ProtocolLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
+                LogMsg(CommLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
             }
         }
 
@@ -422,9 +422,9 @@ namespace Nebulator.Midi
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(ProtocolLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
         {
-            ProtocolLogEvent?.Invoke(this, new ProtocolLogEventArgs() { Category = cat, Message = msg });
+            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
         }
         #endregion
     }

@@ -274,7 +274,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("SkiaSharp.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Protocol.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll"); //TODO decouple
                 //cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
                 //cp.ReferencedAssemblies.Add("Nebulator.exe");
 
@@ -295,7 +295,7 @@ namespace Nebulator.Script
                     paths.Add(fullpath);
                 }
 
-                // Make it compile.
+                // Make it compile. TODO try Roslyn again. F# too?
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
 

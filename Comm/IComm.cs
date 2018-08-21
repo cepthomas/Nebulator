@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using Nebulator.Common;
 
 
-namespace Nebulator.Protocol
+namespace Nebulator.Comm
 {
-    public class ProtocolInputEventArgs : EventArgs
+    public class CommInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
         public Step Step { get; set; } = null;
     }
 
-    public class ProtocolLogEventArgs : EventArgs
+    public class CommLogEventArgs : EventArgs
     {
         public enum LogCategory { Info, Send, Recv, Error }
 
@@ -23,7 +23,7 @@ namespace Nebulator.Protocol
     }
 
     /// <summary>What it can do, provided by implementations. Self explanatory.</summary>
-    public class ProtocolCaps
+    public class CommCaps
     {
         public int NumChannels { get; set; }
         public int MinVolume { get; set; }
@@ -37,25 +37,25 @@ namespace Nebulator.Protocol
     }
 
     /// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>
-    public interface IProtocol
+    public interface IComm
     {
         #region Events
         /// <summary>Reporting a change to listeners.</summary>
-        event EventHandler<ProtocolInputEventArgs> ProtocolInputEvent;
+        event EventHandler<CommInputEventArgs> CommInputEvent;
 
         /// <summary>Request for logging service.</summary>
-        event EventHandler<ProtocolLogEventArgs> ProtocolLogEvent;
+        event EventHandler<CommLogEventArgs> CommLogEvent;
         #endregion
 
         #region Properties
         /// <summary>What it can do.</summary>
-        ProtocolCaps Caps { get; set; }
+        CommCaps Caps { get; set; }
 
         /// <summary>All available inputs for UI selection.</summary>
-        List<string> ProtocolInputs { get; set; }
+        List<string> CommInputs { get; set; }
 
         /// <summary>All available outputs for UI selection.</summary>
-        List<string> ProtocolOutputs { get; set; }
+        List<string> CommOutputs { get; set; }
         #endregion
 
         #region Functions
@@ -71,7 +71,7 @@ namespace Nebulator.Protocol
         /// <summary>Background operations such as process any stop notes.</summary>
         void Housekeep();
 
-        /// <summary>Protocol out processor.</summary>
+        /// <summary>Comm out processor.</summary>
         /// <param name="step"></param>
         void Send(Step step);
 

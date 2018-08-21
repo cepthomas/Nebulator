@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using Nebulator.Common;
-using Nebulator.Protocol;
+using Nebulator.Comm;
 
 
 namespace Nebulator.Script

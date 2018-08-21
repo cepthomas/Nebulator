@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Nebulator.Common;
 
 
-namespace Nebulator.Protocol
+namespace Nebulator.Comm
 {
     /// <summary>
     /// Unit of time.

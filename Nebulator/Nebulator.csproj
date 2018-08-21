@@ -298,6 +298,10 @@
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Comm\Comm.csproj">
+      <Project>{dfb8fd27-c870-4bf6-1234-f44c13049fee}</Project>
+      <Name>Comm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Controls\Controls.csproj">
       <Project>{433a6140-96c9-4fc8-9f3b-e937a4cf71e1}</Project>
       <Name>Controls</Name>
@@ -305,10 +309,6 @@
     <ProjectReference Include="..\Midi\Midi.csproj">
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Protocol\Protocol.csproj">
-      <Project>{dfb8fd27-c870-4bf6-97d5-f44c13049fee}</Project>
-      <Name>Protocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\Script\Script.csproj">
       <Project>{1202e3e2-7ff4-4132-9041-aade2aa9a584}</Project>

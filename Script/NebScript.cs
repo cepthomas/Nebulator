@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MoreLinq;
 using Nebulator.Common;
-using Nebulator.Protocol;
+using Nebulator.Comm;
 
 
 // Nebulator API stuff.
@@ -40,7 +40,7 @@ namespace Nebulator.Script
         public int volume { get { return Volume; } set { Volume = value; } }
 
         /// <summary>Indicates using internal synth.</summary>
-        public bool winGm { get { return ProtocolSettings.TheSettings.OutputDevice == "Microsoft GS Wavetable Synth"; } }
+        public bool winGm { get { return CommSettings.TheSettings.OutputDevice == "Microsoft GS Wavetable Synth"; } }
         #endregion
 
         #region Functions that can be overridden in the user script
@@ -60,7 +60,7 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createControllerIn(NChannel channel, int controlId, NVariable bound)
         {
-            controlId = Utils.Constrain(controlId, 0, Protocol.Caps.MaxControllerValue);
+            controlId = Utils.Constrain(controlId, 0, Comm.Caps.MaxControllerValue);
             NControlPoint mp = new NControlPoint() { Channel = channel, ControllerId = controlId, BoundVar = bound };
             InputControllers.Add(mp);
         }
@@ -143,7 +143,7 @@ namespace Nebulator.Script
             if (play)
             {
                 int vel = channel.NextVol(vol);
-                int notenum = Utils.Constrain(inote, Protocol.Caps.MinNote, Protocol.Caps.MaxNote);
+                int notenum = Utils.Constrain(inote, Comm.Caps.MinNote, Comm.Caps.MaxNote);
 
                 if (vol > 0)
                 {
@@ -156,8 +156,8 @@ namespace Nebulator.Script
                         Duration = new Time(dur)
                     };
 
-                    step.Adjust(Protocol.Caps, volume, channel.Volume);
-                    Protocol.Send(step);
+                    step.Adjust(Comm.Caps, volume, channel.Volume);
+                    Comm.Send(step);
                 }
                 else
                 {
@@ -167,7 +167,7 @@ namespace Nebulator.Script
                         NoteNumber = notenum
                     };
 
-                    Protocol.Send(step);
+                    Comm.Send(step);
                 }
             }
         }
@@ -231,7 +231,7 @@ namespace Nebulator.Script
                 Value = val
             };
 
-            Protocol.Send(step);
+            Comm.Send(step);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -245,7 +245,7 @@ namespace Nebulator.Script
                 PatchNumber = patch
             };
 
-            Protocol.Send(step);
+            Comm.Send(step);
         }
 
         /// <summary>Send a named sequence.</summary>

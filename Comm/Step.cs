@@ -5,7 +5,7 @@ using System.Text;
 using Nebulator.Common;
 
 
-namespace Nebulator.Protocol
+namespace Nebulator.Comm
 {
     /// <summary>
     /// Base class for internal interface representation of a compiled event to be sent or received.
@@ -19,7 +19,7 @@ namespace Nebulator.Protocol
         /// <param name="caps">What it can do.</param>
         /// <param name="masterVolume"></param>
         /// <param name="channelVolume"></param>
-        public virtual void Adjust(ProtocolCaps caps, int masterVolume, int channelVolume) { }
+        public virtual void Adjust(CommCaps caps, int masterVolume, int channelVolume) { }
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
@@ -46,7 +46,7 @@ namespace Nebulator.Protocol
         public Time Duration { get; set; } = new Time(0);
 
         /// <inheritdoc />
-        public override void Adjust(ProtocolCaps caps, int masterVolume, int channelVolume)
+        public override void Adjust(CommCaps caps, int masterVolume, int channelVolume)
         {
             // Maybe alter note velocity.
             int vel = Velocity * channelVolume * masterVolume / caps.MaxVolume / caps.MaxVolume;
@@ -75,7 +75,7 @@ namespace Nebulator.Protocol
         public int Expiry { get; set; } = -1;
 
         /// <inheritdoc />
-        public override void Adjust(ProtocolCaps caps, int masterVolume, int channelVolume)
+        public override void Adjust(CommCaps caps, int masterVolume, int channelVolume)
         {
         }
 

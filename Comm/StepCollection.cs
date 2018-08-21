@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Nebulator.Common;
 
 
-namespace Nebulator.Protocol
+namespace Nebulator.Comm
 {
     /// <summary>A collection of Steps.</summary>
     public class StepCollection

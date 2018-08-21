@@ -12,15 +12,15 @@ using Newtonsoft.Json;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
-using Nebulator.Protocol;
+using Nebulator.Comm;
 using Nebulator.Server;
 
 
 // TODO Factor out the processing and non-processing stuff would be nice but much breakage.
-//   - Remove Protocol dependency in Script project
+//   - Remove Comm dependency in Script project
 //   - Breaks the ScriptCore partial class model.
 
-// TODO Would be nice to abstract out the midi stuff from Protocol a bit more.
+// TODO Would be nice to abstract out the midi stuff from Comm a bit more.
 //   - Many tendrils involving ScriptDefinitions, NoteUtils
 
 
@@ -41,7 +41,7 @@ namespace Nebulator
         MmTimerEx _timer = new MmTimerEx();
 
         /// <summary>The in/out devices. TODO support multiple midis and OSC.</summary>
-        IProtocol _device1 = new Midi.MidiInterface();
+        IComm _protocol1 = new Midi.MidiInterface();
 
         /// <summary>Surface child form.</summary>
         Surface _surface = new Surface();
@@ -100,7 +100,7 @@ namespace Nebulator
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
             UserSettings.Load(appDir);
-            ProtocolSettings.Load(appDir);
+            CommSettings.Load(appDir);
             InitializeComponent();
         }
 
@@ -118,11 +118,11 @@ namespace Nebulator
             _surface.Location = new Point(Right, Top);
             _surface.TopMost = UserSettings.TheSettings.LockUi;
 
-            _piano.Size = new Size(ProtocolSettings.TheSettings.PianoFormInfo.Width, ProtocolSettings.TheSettings.PianoFormInfo.Height);
-            _piano.Visible = ProtocolSettings.TheSettings.PianoFormInfo.Visible;
+            _piano.Size = new Size(CommSettings.TheSettings.PianoFormInfo.Width, CommSettings.TheSettings.PianoFormInfo.Height);
+            _piano.Visible = CommSettings.TheSettings.PianoFormInfo.Visible;
             _piano.TopMost = false;
-            _piano.Location = new Point(ProtocolSettings.TheSettings.PianoFormInfo.X, ProtocolSettings.TheSettings.PianoFormInfo.Y);
-            pianoToolStripMenuItem.Checked = ProtocolSettings.TheSettings.PianoFormInfo.Visible;
+            _piano.Location = new Point(CommSettings.TheSettings.PianoFormInfo.X, CommSettings.TheSettings.PianoFormInfo.Y);
+            pianoToolStripMenuItem.Checked = CommSettings.TheSettings.PianoFormInfo.Visible;
             _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
@@ -133,9 +133,9 @@ namespace Nebulator
             ScriptDefinitions.TheDefinitions.Init();
 
             // Input events.
-            _device1.ProtocolInputEvent += Midi_InputEvent;
-            _device1.ProtocolLogEvent += Midi_LogEvent;
-            _device1.Init();
+            _protocol1.CommInputEvent += Midi_InputEvent;
+            _protocol1.CommLogEvent += Midi_LogEvent;
+            _protocol1.Init();
 
             // Midi timer.
             _timer = new MmTimerEx();
@@ -219,7 +219,7 @@ namespace Nebulator
                 ProcessPlay(PlayCommand.Stop, false);
 
                 // Just in case.
-                _device1.Kill();
+                _protocol1.Kill();
 
                 if(_script != null)
                 {
@@ -254,9 +254,9 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                _device1?.Stop();
-                _device1?.Dispose();
-                _device1 = null;
+                _protocol1?.Stop();
+                _protocol1?.Dispose();
+                _protocol1 = null;
 
                 components?.Dispose();
             }
@@ -356,7 +356,7 @@ namespace Nebulator
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
-                    _script.Protocol = _device1;
+                    _script.Comm = _protocol1;
 
                     try
                     {
@@ -585,7 +585,7 @@ namespace Nebulator
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
-                        _device1.Kill(); // just in case
+                        _protocol1.Kill(); // just in case
                     }
                 }
                 // else keep going
@@ -617,7 +617,7 @@ namespace Nebulator
             ProcessRuntime();
 
             // Process any lingering noteoffs.
-            _device1.Housekeep();
+            _protocol1.Housekeep();
 
             ///// Local common function /////
             void PlayStep(Step step)
@@ -646,8 +646,8 @@ namespace Nebulator
                         else
                         {
                             // Maybe tweak values.
-                            step.Adjust(_device1.Caps, sldVolume.Value, channel.Volume);
-                            _device1.Send(step);
+                            step.Adjust(_protocol1.Caps, sldVolume.Value, channel.Volume);
+                            _protocol1.Send(step);
                         }
                     }
                 }
@@ -659,7 +659,7 @@ namespace Nebulator
         /// Is it a midi controller? Look it up in the inputs.
         /// If not a ctlr or not found, send to the midi output, otherwise trigger listeners.
         /// </summary>
-        void Midi_InputEvent(object sender, ProtocolInputEventArgs e)
+        void Midi_InputEvent(object sender, CommInputEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -703,7 +703,7 @@ namespace Nebulator
                     if (!handled)
                     {
                         // Pass through.
-                        _device1.Send(e.Step);
+                        _protocol1.Send(e.Step);
                     }
                 }
             });
@@ -712,7 +712,7 @@ namespace Nebulator
         /// <summary>
         /// Process midi log event.
         /// </summary>
-        void Midi_LogEvent(object sender, ProtocolLogEventArgs e)
+        void Midi_LogEvent(object sender, CommLogEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -735,7 +735,7 @@ namespace Nebulator
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    _script.Channels.ForEach(t => { if (t.State != ChannelState.Solo) _device1.Kill(t.Channel); });
+                    _script.Channels.ForEach(t => { if (t.State != ChannelState.Solo) _protocol1.Kill(t.Channel); });
                 }
             }
         }
@@ -1065,8 +1065,8 @@ namespace Nebulator
             UserSettings.TheSettings.MainFormInfo.FromForm(this);
             UserSettings.TheSettings.Save();
 
-            ProtocolSettings.TheSettings.PianoFormInfo.FromForm(_piano);
-            ProtocolSettings.TheSettings.Save();
+            CommSettings.TheSettings.PianoFormInfo.FromForm(_piano);
+            CommSettings.TheSettings.Save();
         }
 
         /// <summary>
@@ -1137,13 +1137,13 @@ namespace Nebulator
                 {
                     Dock = DockStyle.Fill,
                     PropertySort = PropertySort.NoSort,
-                    SelectedObject = ProtocolSettings.TheSettings
+                    SelectedObject = CommSettings.TheSettings
                 };
 
                 // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
-                ListSelector.Options.Clear();
-                ListSelector.Options.Add("InputDevice", _device1.ProtocolInputs);
-                ListSelector.Options.Add("OutputDevice", _device1.ProtocolOutputs);
+                //TODO ListSelector.Options.Clear();
+                //ListSelector.Options.Add("InputDevice", _device1.CommInputs);
+                //ListSelector.Options.Add("OutputDevice", _device1.CommOutputs);
 
                 // Detect changes of interest.
                 bool midi = false;
@@ -1159,7 +1159,7 @@ namespace Nebulator
                 // Figure out what changed - each handled differently.
                 if (midi)
                 {
-                    _device1.Init();
+                    _protocol1.Init();
                 }
 
                 // Always safe to update these.
@@ -1184,22 +1184,22 @@ namespace Nebulator
                 StepNoteOn step = new StepNoteOn()
                 {
                     Channel = 2,
-                    NoteNumber = Utils.Constrain(e.NoteId, _device1.Caps.MinNote, _device1.Caps.MaxNote),
+                    NoteNumber = Utils.Constrain(e.NoteId, _protocol1.Caps.MinNote, _protocol1.Caps.MaxNote),
                     Velocity = 90,
                     VelocityToPlay = 90,
                     Duration = new Time(0)
                 };
-                _device1.Send(step);
+                _protocol1.Send(step);
             }
             else
             {
                 StepNoteOff step = new StepNoteOff()
                 {
                     Channel = 2,
-                    NoteNumber = Utils.Constrain(e.NoteId, _device1.Caps.MinNote, _device1.Caps.MaxNote),
+                    NoteNumber = Utils.Constrain(e.NoteId, _protocol1.Caps.MinNote, _protocol1.Caps.MaxNote),
                     Velocity = 64
                 };
-                _device1.Send(step);
+                _protocol1.Send(step);
             }
         }
 
@@ -1260,7 +1260,7 @@ namespace Nebulator
                     chkPlay.Checked = false;
 
                     // Send midi stop all notes just in case.
-                    _device1.Kill();
+                    _protocol1.Kill();
                     break;
 
                 case PlayCommand.Rewind:
@@ -1438,7 +1438,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Kill_Click(object sender, EventArgs e)
         {
-            _device1.Kill();
+            _protocol1.Kill();
         }
         #endregion
     }

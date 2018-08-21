@@ -13,9 +13,9 @@ namespace Nebulator.Common
     /// <summary
     /// >Plugin to property grid.
     /// </summary>
-    public class ListSelector : UITypeEditor
+    public class ListSelectorX : UITypeEditor
     {
-        /// <summary>The owner supplies the listbox contents using this. A bit kludgy...</summary>
+        /// <summary>The owner supplies the listbox contents using this. A bit kludgy... TODO fix?</summary>
         public static Dictionary<string, List<string>> Options { get; set; } = new Dictionary<string, List<string>>();
 
         IWindowsFormsEditorService _service = null;
