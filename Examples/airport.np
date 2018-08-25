@@ -34,7 +34,7 @@ public override void setupNeb()
     COLOR = createVariable("color", 240, 0, 255); // change color
 
     ///// Channels /////
-    SOUND = createChannel("sound", 1, 5, 0, 0);
+    SOUND = createChannel("sound", 1, 5);
 
     // levers
     createLever(COLOR);

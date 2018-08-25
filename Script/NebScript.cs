@@ -38,9 +38,6 @@ namespace Nebulator.Script
 
         /// <summary>Nebulator master Volume.</summary>
         public int volume { get { return Volume; } set { Volume = value; } }
-
-        /// <summary>Indicates using internal synth.</summary>
-        public bool winGm { get { return CommSettings.TheSettings.OutputDevice == "Microsoft GS Wavetable Synth"; } }
         #endregion
 
         #region Functions that can be overridden in the user script
@@ -55,13 +52,22 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a controller input.
         /// </summary>
-        /// <param name="channel">Associated channel.</param>
+        /// <param name="commName">Name of comm device.</param>
+        /// <param name="channelNum">Which channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>
-        protected void createControllerIn(NChannel channel, int controlId, NVariable bound)
+        protected void createController(string commName, int channelNum, int controlId, NVariable bound)
         {
-            controlId = Utils.Constrain(controlId, 0, Comm.Caps.MaxControllerValue);
-            NControlPoint mp = new NControlPoint() { Channel = channel, ControllerId = controlId, BoundVar = bound };
+            //TODOX connect to device Comm
+
+            // controlId = Utils.Constrain(controlId, 0, channel.Comm.Caps.MaxControllerValue);
+            NController mp = new NController()
+            {
+                CommName = commName,
+                ChannelNumber = channelNum,
+                ControllerId = controlId,
+                BoundVar = bound
+            };
             InputControllers.Add(mp);
         }
 
@@ -71,7 +77,7 @@ namespace Nebulator.Script
         /// <param name="bound"></param>
         protected void createLever(NVariable bound)
         {
-            NControlPoint lp = new NControlPoint() { BoundVar = bound };
+            NController lp = new NController() { BoundVar = bound };
             Levers.Add(lp);
         }
 
@@ -117,14 +123,25 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal factory.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="channel"></param>
+        /// <param name="name">For UI display.</param>
+        /// <param name="commName">Name of comm device.</param>
+        /// <param name="channelNum"></param>
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NChannel createChannel(string name, int channel, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(string name, string commName, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
-            NChannel nt = new NChannel() { Name = name, Channel = channel, WobbleVolume = wobvol, WobbleTimeBefore = wobbefore, WobbleTimeAfter = wobafter };
+            // TODOX do wobble differently???
+            //TODOX connect to device Comm
+            NChannel nt = new NChannel()
+            {
+                Name = name,
+                CommName = commName,
+                ChannelNumber = channelNum,
+                WobbleVolume = wobvol,
+                WobbleTimeBefore = wobbefore,
+                WobbleTimeAfter = wobafter
+            };
             Channels.Add(nt);
             return nt;
         }
@@ -136,38 +153,38 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
         public void sendNote(NChannel channel, int inote, int vol, double dur)
         {
-            bool _anySolo = Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
+            bool _anySolo = Channels.Where(ch => ch.State == ChannelState.Solo).Count() > 0;
 
             bool play = channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !_anySolo);
 
             if (play)
             {
                 int vel = channel.NextVol(vol);
-                int notenum = Utils.Constrain(inote, Comm.Caps.MinNote, Comm.Caps.MaxNote);
+                int notenum = Utils.Constrain(inote, channel.Comm.Caps.MinNote, channel.Comm.Caps.MaxNote);
 
                 if (vol > 0)
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
-                        Channel = channel.Channel,
+                        ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum,
                         Velocity = vel,
                         VelocityToPlay = vel,
                         Duration = new Time(dur)
                     };
 
-                    step.Adjust(Comm.Caps, volume, channel.Volume);
-                    Comm.Send(step);
+                    step.Adjust(volume, channel.Volume);
+                    (channel.Comm as ICommOutput).Send(step);
                 }
                 else
                 {
                     StepNoteOff step = new StepNoteOff()
                     {
-                        Channel = channel.Channel,
+                        ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum
                     };
 
-                    Comm.Send(step);
+                    (channel.Comm as ICommOutput).Send(step);
                 }
             }
         }
@@ -210,7 +227,7 @@ namespace Nebulator.Script
             sendNote(channel, inote, vol, 0.0);
         }
 
-        /// <summary>Send a note off.</summary>
+        /// <summary>Send a note off immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="inote">Note number.</param>
         public void sendNoteOff(NChannel channel, int inote)
@@ -226,12 +243,13 @@ namespace Nebulator.Script
         {
             StepControllerChange step = new StepControllerChange()
             {
-                Channel = channel.Channel,
+                Comm = channel.Comm,
+                ChannelNumber = channel.ChannelNumber,
                 ControllerId = ctlnum,
                 Value = val
             };
 
-            Comm.Send(step);
+            channel.Comm.Send(step);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -241,11 +259,12 @@ namespace Nebulator.Script
         {
             StepPatch step = new StepPatch()
             {
-                Channel = channel.Channel,
+                Comm = channel.Comm,
+                ChannelNumber = channel.ChannelNumber,
                 PatchNumber = patch
             };
 
-            Comm.Send(step);
+            channel.Comm.Send(step);
         }
 
         /// <summary>Send a named sequence.</summary>

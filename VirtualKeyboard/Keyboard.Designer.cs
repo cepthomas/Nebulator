@@ -1,6 +1,6 @@
-﻿namespace Nebulator
+﻿namespace Nebulator.VirtualKeyboard
 {
-    partial class Piano
+    partial class VKeyboard
     {
         /// <summary>
         /// Required designer variable.
@@ -28,22 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Piano));
             this.SuspendLayout();
             // 
-            // Piano
+            // VirtualKeyboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(706, 104);
+            this.ClientSize = new System.Drawing.Size(773, 173);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Piano";
-            this.Text = "Piano";
-            this.Load += new System.EventHandler(this.Piano_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Piano_KeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Piano_KeyUp);
-            this.Resize += new System.EventHandler(this.Piano_Resize);
+            this.Name = "VirtualKeyboard";
+            this.Text = "VirtualKeyboard";
+            this.Load += new System.EventHandler(this.Keyboard_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Keyboard_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Keyboard_KeyUp);
+            this.Resize += new System.EventHandler(this.Keyboard_Resize);
             this.ResumeLayout(false);
 
         }

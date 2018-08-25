@@ -62,10 +62,10 @@ public override void setupNeb()
     MODN = createVariable("modn", 0, -10, 10);
 
     // All the channels.
-    KEYS = createChannel("keys", 1, 5, 0, 0);
-    BASS = createChannel("bass", 2, 2, 0, 0);
+    KEYS = createChannel("keys", 1, 5);
+    BASS = createChannel("bass", 2, 2);
     SYNTH = createChannel("synth", 3, 0);
-    DRUMS = createChannel("drums", 10, 4, 0, 0);
+    DRUMS = createChannel("drums", 10, 4);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");

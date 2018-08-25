@@ -67,11 +67,17 @@ namespace Nebulator.Script
     /// <summary>
     /// Defines a controller input.
     /// </summary>
-    public class NControlPoint
+    public class NController
     {
         #region Properties
-        /// <summary>Associated channel.</summary>
-        public NChannel Channel { get; set; } = null;
+        /// <summary>The associated comm device.</summary>
+        public ICommInput Comm { get; set; } = null;
+
+        /// <summary>The associated comm device.</summary>
+        public string CommName { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>The associated numerical (midi) channel to use.</summary>
+        public int ChannelNumber { get; set; } = -1;
 
         /// <summary>The numerical (midi) controller type.</summary>
         public int ControllerId { get; set; } = 0;
@@ -85,13 +91,13 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"NControlPoint: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} Channel:{Channel}");
+            StringBuilder sb = new StringBuilder($"NController: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} ChannelNumber:{ChannelNumber}");
             return sb.ToString();
         }
     }
 
     /// <summary>
-    /// One instrument.
+    /// One channel output, usually an instrument.
     /// </summary>
     public class NChannel
     {
@@ -99,8 +105,14 @@ namespace Nebulator.Script
         /// <summary>The UI name for this channel.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
-        /// <summary>The numerical (midi) channel to use: 1 - 16.</summary>
-        public int Channel { get; set; } = 1;
+        /// <summary>The associated comm device.</summary>
+        public ICommOutput Comm { get; set; } = null;
+
+        /// <summary>The associated comm device.</summary>
+        public string CommName { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>The associated numerical (midi) channel to use.</summary>
+        public int ChannelNumber { get; set; } = -1;
 
         /// <summary>Current volume.</summary>
         public int Volume { get; set; } = 90;
@@ -162,7 +174,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NChannel: Name:{Name} Channel:{Channel}";
+            return $"NChannel: Name:{Name} ChannelNumber:{ChannelNumber}";
         }
     }
 

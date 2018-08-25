@@ -80,10 +80,13 @@ namespace Nebulator.Script
         bool _smooth = true;
         #endregion
 
-        #region Properties - general
-        /// <summary>Device to use.</summary>
-        public IComm Comm { get; set; } = null;
-        #endregion
+        //#region Properties - general
+        ///// <summary>Device to use for send.</summary>
+        //public ICommOutput CommOut { get; set; } = null;
+
+        ///// <summary>Device to use for recv.</summary>
+        //public ICommInput CommIn { get; set; } = null;
+        //#endregion
 
         #region Properties - shared between host and script at runtime
         /// <summary>Main -> Script</summary>
@@ -110,10 +113,10 @@ namespace Nebulator.Script
 
         #region Properties - things defined in the script that MainForm needs
         /// <summary>Control inputs.</summary>
-        public List<NControlPoint> InputControllers { get; set; } = new List<NControlPoint>();
+        public List<NController> InputControllers { get; set; } = new List<NController>();
 
         /// <summary>Levers.</summary>
-        public List<NControlPoint> Levers { get; set; } = new List<NControlPoint>();
+        public List<NController> Levers { get; set; } = new List<NController>();
 
         /// <summary>Levers.</summary>
         public List<NVariable> Variables { get; set; } = new List<NVariable>();

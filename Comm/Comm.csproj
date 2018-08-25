@@ -55,9 +55,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CommCommon.cs" />
     <Compile Include="IComm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CommSettings.cs" />
     <Compile Include="Step.cs" />
     <Compile Include="StepCollection.cs" />
     <Compile Include="Time.cs" />

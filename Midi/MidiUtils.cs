@@ -72,11 +72,11 @@ namespace Nebulator.Midi
                     switch (step)
                     {
                         case StepNoteOn stt:
-                            evt = new NoteEvent(midiTime, stt.Channel, MidiCommandCode.NoteOn, stt.NoteNumber, stt.Velocity);
+                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOn, stt.NoteNumber, stt.Velocity);
                             break;
 
                         case StepNoteOff stt:
-                            evt = new NoteEvent(midiTime, stt.Channel, MidiCommandCode.NoteOff, stt.NoteNumber, stt.Velocity);
+                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOff, stt.NoteNumber, stt.Velocity);
                             break;
 
                         case StepControllerChange stt:
@@ -86,16 +86,16 @@ namespace Nebulator.Midi
                             }
                             else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                             {
-                                evt = new PitchWheelChangeEvent(midiTime, stt.Channel, stt.Value);
+                                evt = new PitchWheelChangeEvent(midiTime, stt.ChannelNumber, stt.Value);
                             }
                             else // CC
                             {
-                                evt = new ControlChangeEvent(midiTime, stt.Channel, (MidiController)stt.ControllerId, stt.Value);
+                                evt = new ControlChangeEvent(midiTime, stt.ChannelNumber, (MidiController)stt.ControllerId, stt.Value);
                             }
                             break;
 
                         case StepPatch stt:
-                            evt = new PatchChangeEvent(midiTime, stt.Channel, stt.PatchNumber);
+                            evt = new PatchChangeEvent(midiTime, stt.ChannelNumber, stt.PatchNumber);
                             break;
 
                         default:
@@ -104,7 +104,7 @@ namespace Nebulator.Midi
 
                     if (evt != null)
                     {
-                        trackEvents[step.Channel].Add(evt);
+                        trackEvents[step.ChannelNumber].Add(evt);
                     }
                 }
             }

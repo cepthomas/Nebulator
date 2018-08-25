@@ -14,14 +14,92 @@ using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Comm;
 using Nebulator.Server;
+//using Nebulator.VirtualKeyboard;
+using NAudio.Midi;
 
 
 // TODO Factor out the processing and non-processing stuff would be nice but much breakage.
 //   - Remove Comm dependency in Script project
 //   - Breaks the ScriptCore partial class model.
-
-// TODO Would be nice to abstract out the midi stuff from Comm a bit more.
 //   - Many tendrils involving ScriptDefinitions, NoteUtils
+
+
+
+
+
+
+////////xxxxxxxxxxxxxxxxxxxxxxxxx
+//// Input events.
+//_commIn.CommInputEvent += Midi_InputEvent;
+//_commIn.CommLogEvent += Midi_LogEvent;
+//_commIn.Init();
+////////xxxxxxxxxxxxxxxxxxxxxxxxx  TODOX
+//_commIn = null;
+//_commIn = new Midi.MidiInput();
+//_commIn.CommInputEvent += Midi_InputEvent;
+//_commIn.CommLogEvent += Midi_LogEvent;
+//_commIn.Init();
+//// Output events.
+//_commOut.CommLogEvent += Midi_LogEvent;
+//_commOut.Init();
+////////xxxxxxxxxxxxxxxxxxxxxxxxx
+//
+
+//for (int device = 0; device < NAudio.Midi.MidiIn.NumberOfDevices; device++)
+//{
+//    string s = NAudio.Midi.MidiIn.DeviceInfo(device).ProductName;
+//    _logger.Info("IN:" + s);
+//}
+//for (int device = 0; device < NAudio.Midi.MidiOut.NumberOfDevices; device++)
+//{
+//    string s = NAudio.Midi.MidiOut.DeviceInfo(device).ProductName;
+//    _logger.Info("OUT:" + s);
+//}
+
+
+
+
+//// TODOX go through NChannels and set up comms.  Check for "Virtual Keyboard"
+//_commsIn.Clear();
+//_commsOut.Clear();
+
+//// Get all valid midi devices.
+//HashSet<string> midiIns = new HashSet<string>();
+//HashSet<string> midiOuts = new HashSet<string>();
+//for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+//{
+//    midiIns.Add(MidiIn.DeviceInfo(device).ProductName);
+//}
+
+//for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+//{
+//    midiOuts.Add(MidiOut.DeviceInfo(device).ProductName);
+//}
+
+//// Init comms and hook up.
+//_script.Channels.ForEach(ch =>
+//{
+//    if(!_comms.ContainsKey(ch.CommName))
+//    {
+//        // New one, add it.
+//    }
+//});
+
+
+
+
+
+///// <summary>Piano child form.</summary>
+//VirtualKeyboard _vkbd = new VirtualKeyboard(); // TODOX
+
+//TODOX piano:
+//_vkbd.Size = new Size(NebSettings.TheSettings.PianoFormInfo.Width, NebSettings.TheSettings.PianoFormInfo.Height);
+//_vkbd.Visible = NebSettings.TheSettings.PianoFormInfo.Visible;
+//_vkbd.TopMost = false;
+//_vkbd.Location = new Point(NebSettings.TheSettings.PianoFormInfo.X, NebSettings.TheSettings.PianoFormInfo.Y);
+//_vkbd.PianoKeyEvent += Piano_PianoKeyEvent;
+
+
 
 
 namespace Nebulator
@@ -40,14 +118,22 @@ namespace Nebulator
         /// <summary>Fast timer.</summary>
         MmTimerEx _timer = new MmTimerEx();
 
-        /// <summary>The in/out devices. TODO support multiple midis and OSC.</summary>
-        IComm _protocol1 = new Midi.MidiInterface();
-
-        /// <summary>Surface child form.</summary>
+        /// <summary>Surface form.</summary>
         Surface _surface = new Surface();
 
-        /// <summary>Piano child form.</summary>
-        Piano _piano = new Piano();
+
+
+
+
+
+
+        Dictionary<string, ICommInput> _commsIn = new Dictionary<string, ICommInput>();
+        Dictionary<string, ICommOutput> _commsOut = new Dictionary<string, ICommOutput>();
+
+
+
+
+
 
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
@@ -100,7 +186,7 @@ namespace Nebulator
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
             UserSettings.Load(appDir);
-            CommSettings.Load(appDir);
+            NebSettings.Load(appDir);
             InitializeComponent();
         }
 
@@ -117,13 +203,6 @@ namespace Nebulator
             _surface.Visible = true;
             _surface.Location = new Point(Right, Top);
             _surface.TopMost = UserSettings.TheSettings.LockUi;
-
-            _piano.Size = new Size(CommSettings.TheSettings.PianoFormInfo.Width, CommSettings.TheSettings.PianoFormInfo.Height);
-            _piano.Visible = CommSettings.TheSettings.PianoFormInfo.Visible;
-            _piano.TopMost = false;
-            _piano.Location = new Point(CommSettings.TheSettings.PianoFormInfo.X, CommSettings.TheSettings.PianoFormInfo.Y);
-            pianoToolStripMenuItem.Checked = CommSettings.TheSettings.PianoFormInfo.Visible;
-            _piano.PianoKeyEvent += Piano_PianoKeyEvent;
             #endregion
 
             InitLogging();
@@ -132,12 +211,7 @@ namespace Nebulator
 
             ScriptDefinitions.TheDefinitions.Init();
 
-            // Input events.
-            _protocol1.CommInputEvent += Midi_InputEvent;
-            _protocol1.CommLogEvent += Midi_LogEvent;
-            _protocol1.Init();
-
-            // Midi timer.
+            // Fast timer.
             _timer = new MmTimerEx();
             SetSpeedTimerPeriod();
             SetUiTimerPeriod();
@@ -155,7 +229,7 @@ namespace Nebulator
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
 
             // Catches runtime errors during drawing.
-            _surface.RuntimeErrorEvent += (object esender, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
+            _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
             // Init server.
             _selfHost = new SelfHost();
@@ -219,9 +293,9 @@ namespace Nebulator
                 ProcessPlay(PlayCommand.Stop, false);
 
                 // Just in case.
-                _protocol1.Kill();
+                _commsOut.Values.ForEach(co => co.Kill());
 
-                if(_script != null)
+                if (_script != null)
                 {
                     // Save the project.
                     _nppVals.Clear();
@@ -254,9 +328,8 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                _protocol1?.Stop();
-                _protocol1?.Dispose();
-                _protocol1 = null;
+                _commsIn.Values.ForEach(ci => { ci?.Stop(); ci?.Dispose(); });
+                _commsOut.Values.ForEach(co => { co?.Stop(); co?.Dispose(); });
 
                 components?.Dispose();
             }
@@ -341,7 +414,7 @@ namespace Nebulator
                 // Compile now.
                 _script = compiler.Execute(_fn);
 
-                // Update file watcher just in case.
+                // Update file watcher - keeps an eye in any included files too.
                 _watcher.Clear();
                 compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
 
@@ -356,7 +429,6 @@ namespace Nebulator
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
-                    _script.Comm = _protocol1;
 
                     try
                     {
@@ -407,7 +479,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Convert the script output into steps for feeding devices.
+        /// Convert the script output into steps for feeding output devices.
         /// </summary>
         void ConvertToSteps()
         {
@@ -585,7 +657,7 @@ namespace Nebulator
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
-                        _protocol1.Kill(); // just in case
+                        _commsOut.Values.ForEach(co => co.Kill()); // just in case
                     }
                 }
                 // else keep going
@@ -616,15 +688,16 @@ namespace Nebulator
             // Process whatever the script did.
             ProcessRuntime();
 
-            // Process any lingering noteoffs.
-            _protocol1.Housekeep();
+            // Process any lingering noteoffs etc.
+            _commsOut.Values.ForEach(co => co.Housekeep());
+            _commsIn.Values.ForEach(co => co.Housekeep());
 
             ///// Local common function /////
             void PlayStep(Step step)
             {
                 if(_script.Channels.Count > 0)
                 {
-                    NChannel channel = _script.Channels.Where(t => t.Channel == step.Channel).First();
+                    NChannel channel = _script.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
 
                     // Is it ok to play now?
                     bool _anySolo = _script.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
@@ -646,8 +719,8 @@ namespace Nebulator
                         else
                         {
                             // Maybe tweak values.
-                            step.Adjust(_protocol1.Caps, sldVolume.Value, channel.Volume);
-                            _protocol1.Send(step);
+                            step.Adjust(sldVolume.Value, channel.Volume);
+                            step.Comm.Send(step);
                         }
                     }
                 }
@@ -669,16 +742,16 @@ namespace Nebulator
 
                     if (e.Step is StepNoteOn || e.Step is StepNoteOff)
                     {
-                        int channel = (e.Step as Step).Channel;
+                        int chanNum = (e.Step as Step).ChannelNumber;
                         // Dig out the note number. Note sign change for note off. TODO better way to do this?
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
-                        handled = ProcessInput(ScriptDefinitions.TheDefinitions.NoteControl, channel, value);
+                        handled = ProcessInput(ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
                     }
                     else if(e.Step is StepControllerChange)
                     {
                         // Control change
                         StepControllerChange scc = e.Step as StepControllerChange;
-                        handled = ProcessInput(scc.ControllerId, scc.Channel, scc.Value);
+                        handled = ProcessInput(scc.ControllerId, scc.ChannelNumber, scc.Value);
                     }
 
                     ///// Local common function /////
@@ -687,9 +760,9 @@ namespace Nebulator
                         bool ret = false;
 
                         // Process through our list of inputs of interest.
-                        foreach (NControlPoint ctlpt in _script.InputControllers)
+                        foreach (NController ctlpt in _script.InputControllers)
                         {
-                            if (ctlpt.ControllerId == ctrlId && ctlpt.Channel.Channel == channel)
+                            if (ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channel)
                             {
                                 // Assign new value which triggers script callback.
                                 ctlpt.BoundVar.Value = value;
@@ -702,8 +775,8 @@ namespace Nebulator
 
                     if (!handled)
                     {
-                        // Pass through.
-                        _protocol1.Send(e.Step);
+                        // Pass through. TODOX boom
+                        e.Step.Comm.Send(e.Step);
                     }
                 }
             });
@@ -730,12 +803,12 @@ namespace Nebulator
             if (sender is ChannelControl)
             {
                 // Check for solos.
-                bool _anySolo = _script.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
+                bool _anySolo = _script.Channels.Where(c => c.State == ChannelState.Solo).Count() > 0;
 
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    _script.Channels.ForEach(t => { if (t.State != ChannelState.Solo) _protocol1.Kill(t.Channel); });
+                    _script.Channels.ForEach(c => { if (c.State != ChannelState.Solo && c.Comm != null) c.Comm.Kill(c.ChannelNumber); });
                 }
             }
         }
@@ -1065,8 +1138,15 @@ namespace Nebulator
             UserSettings.TheSettings.MainFormInfo.FromForm(this);
             UserSettings.TheSettings.Save();
 
-            CommSettings.TheSettings.PianoFormInfo.FromForm(_piano);
-            CommSettings.TheSettings.Save();
+            _commsOut.Values.ForEach(co =>
+            {
+                if(co is VirtualKeyboard.VKeyboard)
+                {
+                    NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(co as VirtualKeyboard.VKeyboard);
+                }
+            });
+
+            NebSettings.TheSettings.Save();
         }
 
         /// <summary>
@@ -1116,101 +1196,40 @@ namespace Nebulator
                 SaveSettings();
             }
         }
-
-        /// <summary>
-        /// Edit the midi options in a property grid.
-        /// </summary>
-        void MidiSettings_Click(object sender, EventArgs e)
-        {
-            using (Form f = new Form()
-            {
-                Text = "Midi Settings",
-                Size = new Size(350, 400),
-                StartPosition = FormStartPosition.Manual,
-                Location = new Point(200, 200),
-                FormBorderStyle = FormBorderStyle.FixedToolWindow,
-                ShowIcon = false,
-                ShowInTaskbar = false
-            })
-            {
-                PropertyGridEx pg = new PropertyGridEx()
-                {
-                    Dock = DockStyle.Fill,
-                    PropertySort = PropertySort.NoSort,
-                    SelectedObject = CommSettings.TheSettings
-                };
-
-                // Supply the midi options. There should be a cleaner way than this but the ComponentModel is a hard wrestle.
-                //TODO ListSelector.Options.Clear();
-                //ListSelector.Options.Add("InputDevice", _device1.CommInputs);
-                //ListSelector.Options.Add("OutputDevice", _device1.CommOutputs);
-
-                // Detect changes of interest.
-                bool midi = false;
-                pg.PropertyValueChanged += (sdr, args) =>
-                {
-                    string p = args.ChangedItem.PropertyDescriptor.Name;
-                    midi |= p.Contains("Device");
-                };
-
-                f.Controls.Add(pg);
-                f.ShowDialog();
-
-                // Figure out what changed - each handled differently.
-                if (midi)
-                {
-                    _protocol1.Init();
-                }
-
-                // Always safe to update these.
-                SetUiTimerPeriod();
-                _surface.TopMost = UserSettings.TheSettings.LockUi;
-
-                SaveSettings();
-            }
-        }
         #endregion
 
-        #region Piano
-        /// <summary>
-        /// Handle piano key event.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Piano_PianoKeyEvent(object sender, Piano.PianoKeyEventArgs e)
-        {
-            if(e.Down)
-            {
-                StepNoteOn step = new StepNoteOn()
-                {
-                    Channel = 2,
-                    NoteNumber = Utils.Constrain(e.NoteId, _protocol1.Caps.MinNote, _protocol1.Caps.MaxNote),
-                    Velocity = 90,
-                    VelocityToPlay = 90,
-                    Duration = new Time(0)
-                };
-                _protocol1.Send(step);
-            }
-            else
-            {
-                StepNoteOff step = new StepNoteOff()
-                {
-                    Channel = 2,
-                    NoteNumber = Utils.Constrain(e.NoteId, _protocol1.Caps.MinNote, _protocol1.Caps.MaxNote),
-                    Velocity = 64
-                };
-                _protocol1.Send(step);
-            }
-        }
-
-        /// <summary>
-        /// Turn piano on/off.
-        /// </summary>
-        void Piano_Click(object sender, EventArgs e)
-        {
-            _piano.Visible = pianoToolStripMenuItem.Checked;
-        }
-        #endregion
+        //#region Virtual Keyboard
+        ///// <summary>
+        ///// Handle key event.
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //void VirtualKeyboard_KeyEvent(object sender, PianoForm.PianoKeyEventArgs e) //TODOX use IComm instead
+        //{
+        //    if(e.Down)
+        //    {
+        //        StepNoteOn step = new StepNoteOn()
+        //        {
+        //            Channel = 2,
+        //            NoteNumber = Utils.Constrain(e.NoteId, _commOut.Caps.MinNote, _commOut.Caps.MaxNote),
+        //            Velocity = 90,
+        //            VelocityToPlay = 90,
+        //            Duration = new Time(0)
+        //        };
+        //        _commOut.Send(step);
+        //    }
+        //    else
+        //    {
+        //        StepNoteOff step = new StepNoteOff()
+        //        {
+        //            Channel = 2,
+        //            NoteNumber = Utils.Constrain(e.NoteId, _commOut.Caps.MinNote, _commOut.Caps.MaxNote),
+        //            Velocity = 64
+        //        };
+        //        _commOut.Send(step);
+        //    }
+        //}
+        //#endregion
 
         #region Play control
         /// <summary>
@@ -1260,7 +1279,7 @@ namespace Nebulator
                     chkPlay.Checked = false;
 
                     // Send midi stop all notes just in case.
-                    _protocol1.Kill();
+                    _commsOut.Values.ForEach(co => co.Kill());
                     break;
 
                 case PlayCommand.Rewind:
@@ -1400,7 +1419,7 @@ namespace Nebulator
         void ExportMidi(string fn)
         {
             Dictionary<int, string> channels = new Dictionary<int, string>();
-            _script.Channels.ForEach(t => channels.Add(t.Channel, t.Name));
+            _script.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.Name));
 
             // Convert speed/bpm to sec per tick.
             double ticksPerMinute = potSpeed.Value; // bpm
@@ -1438,7 +1457,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Kill_Click(object sender, EventArgs e)
         {
-            _protocol1.Kill();
+            _commsOut.Values.ForEach(co => co.Kill());
         }
         #endregion
     }

@@ -12,19 +12,21 @@ namespace Nebulator.Comm
     /// </summary>
     public abstract class Step
     {
-        /// <summary>Channel.</summary>
-        public int Channel { get; set; } = 1;
+        /// <summary>Comm device to use - optional.</summary>
+        public ICommOutput Comm { get; set; } = null;
+
+        /// <summary>Channel number.</summary>
+        public int ChannelNumber { get; set; } = 1;
 
         /// <summary>Possibly make adjustments to values.</summary>
-        /// <param name="caps">What it can do.</param>
         /// <param name="masterVolume"></param>
         /// <param name="channelVolume"></param>
-        public virtual void Adjust(CommCaps caps, int masterVolume, int channelVolume) { }
+        public virtual void Adjust(int masterVolume, int channelVolume) { }
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"Channel:{Channel}";
+            return $"ChannelNumber:{ChannelNumber}";
         }
     }
 
@@ -46,11 +48,11 @@ namespace Nebulator.Comm
         public Time Duration { get; set; } = new Time(0);
 
         /// <inheritdoc />
-        public override void Adjust(CommCaps caps, int masterVolume, int channelVolume)
+        public override void Adjust(int masterVolume, int channelVolume)
         {
             // Maybe alter note velocity.
-            int vel = Velocity * channelVolume * masterVolume / caps.MaxVolume / caps.MaxVolume;
-            VelocityToPlay = Utils.Constrain(vel, 0, caps.MaxVolume);
+            int vel = Velocity * channelVolume * masterVolume / Comm.Caps.MaxVolume / Comm.Caps.MaxVolume;
+            VelocityToPlay = Utils.Constrain(vel, 0, Comm.Caps.MaxVolume);
         }
 
         /// <summary>For viewing pleasure.</summary>
@@ -75,7 +77,7 @@ namespace Nebulator.Comm
         public int Expiry { get; set; } = -1;
 
         /// <inheritdoc />
-        public override void Adjust(CommCaps caps, int masterVolume, int channelVolume)
+        public override void Adjust(int masterVolume, int channelVolume)
         {
         }
 

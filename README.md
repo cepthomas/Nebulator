@@ -25,7 +25,7 @@ This project contains a bunch of components that are either recycled or created 
 - Partial import of Yahama style (.sty) files.
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
-- Piano control based on Leslie Sanford's.
+- Virtual keyboard control based on Leslie Sanford's piano.
 - Various utilities and extensions.
 
 

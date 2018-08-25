@@ -51,8 +51,8 @@ namespace Nebulator
             btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
             //btnWrap.Checked = true;
 
-            btnMonIn.Checked = CommSettings.TheSettings.MonitorInput;
-            btnMonOut.Checked = CommSettings.TheSettings.MonitorOutput;
+            btnMonIn.Checked = NebSettings.TheSettings.MonitorInput;
+            btnMonOut.Checked = NebSettings.TheSettings.MonitorOutput;
             btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
@@ -102,7 +102,7 @@ namespace Nebulator
         /// </summary>
         private void BtnMonIn_Click(object sender, EventArgs e)
         {
-            CommSettings.TheSettings.MonitorInput = btnMonIn.Checked;
+            NebSettings.TheSettings.MonitorInput = btnMonIn.Checked;
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Nebulator
         /// </summary>
         private void BtnMonOut_Click(object sender, EventArgs e)
         {
-            CommSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
+            NebSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
         }
 
         /// <summary>

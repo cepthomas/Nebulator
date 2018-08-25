@@ -1,5 +1,44 @@
 
-// Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
+/////// TODOX fix all scripts when done.
+
+/////// API changes:
+// protected NChannel createChannel(string name, string commName, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+// >>>
+// stays same....
+
+// protected void createControllerIn(NChannel channel, int controlId, NVariable bound)
+// >>>
+// protected void createController(string commName, int channelNum, int controlId, NVariable bound);
+
+
+///// script changes:
+
+// string MY_MIDI_OUT = "Microsoft GS Wavetable Synth";
+// //string MY_MIDI_OUT = "loopMIDI Port 1"; // in/out
+// string MY_MIDI_IN = "MPK mini";
+
+
+// // All the input channels.
+// createController(MY_MIDI_IN, 1, NoteControl, "TODOX var");
+// createController("Virtual Keyboard", 0, NoteControl, "TODOX var");
+// // NoteControl | 102
+// // PitchControl | 103
+
+// winGm gone
+///////////////////////////
+
+////// TODOX keep?
+// NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
+// PART1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
+// - keep sequences in general? Dump decl model?
+
+
+
+// IO devices.
+string MY_MIDI_OUT = "Microsoft GS Wavetable Synth";
+//string MY_MIDI_OUT = "loopMIDI Port 1"; // in/out
+string MY_MIDI_IN = "MPK mini";
+
 
 // All the neb variables.
 NVariable BACK_COLOR;
@@ -8,8 +47,8 @@ NVariable CTL_NOTE;
 NVariable CTL2;
 NVariable CTL3;
 
-// All the channels.
-NChannel KEYS;
+// All the output channels.
+NChannel PIANO;
 NChannel BASS;
 NChannel SYNTH;
 NChannel DRUMS;
@@ -35,26 +74,27 @@ public override void setupNeb()
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     CTL_NOTE = createVariable("note", 60, -127, 127, On_CTL_NOTE); // note neg number for note off encoding
 
-    // All the channels.
-    KEYS = createChannel("keys", 1, 5, 0, 0);
-    BASS = createChannel("bass", 2, 4, 0, 0);
-    SYNTH = createChannel("synth", 3, 0);
-    DRUMS = createChannel("drums", 10, 4, 0, 0);
+    // All the output channels.
+    PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);
+    BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
+    SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
+    DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
 
-    // create set of notes (chord)
-    createNotes("MY_CHORD", "1 4 6 b13");
-    createNotes("MY_SCALE", "1 3 4 b7");
-
-    // controller points
-    createControllerIn(KEYS, 1, MOD1); // modulate eq
-    createControllerIn(KEYS, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-    createControllerIn(KEYS, 3, CTL3); // another controller
-    createControllerIn(KEYS, 4, BACK_COLOR); // change ui color
-    createControllerIn(KEYS, NoteControl, CTL_NOTE);  // make some funny notes
+    // All the input controllers.
+    createController(MY_MIDI_IN, 1, NoteControl, MOD1); // modulate eq
+    createController(MY_MIDI_IN, 2, NoteControl, CTL2); // since I don't have a pitch knob, I'll use this instead
+    createController(MY_MIDI_IN, 3, NoteControl, CTL3); // another controller
+    createController(MY_MIDI_IN, 4, NoteControl, BACK_COLOR); // change ui color
+    createController(MY_MIDI_IN, NoteControl, CTL_NOTE);  // make some funny notes
+    createController("Virtual Keyboard", 0, NoteControl, "TODOX var");
 
     // levers
     createLever(BACK_COLOR);
     createLever(MOD1);
+
+    // create set of notes (chord)
+    createNotes("MY_CHORD", "1 4 6 b13");
+    createNotes("MY_SCALE", "1 3 4 b7");
 
     // Get some stock chords and scales
     _chordNotes = getNotes("C4.o7");
@@ -74,7 +114,7 @@ public override void setupNeb()
 
     if(winGm)
     {
-        sendPatch(KEYS, AcousticGrandPiano);
+        sendPatch(PIANO, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Pad3Polysynth);
     }
@@ -117,10 +157,10 @@ void sequenced()
             case 4:
             case 8:
             case 12:
-                //playSequence(KEYS, SEQ1);
+                //playSequence(PIANO, SEQ1);
                 foreach(int n in _chordNotes)
                 {
-                    sendNote(KEYS, n, 90, 1.0);
+                    sendNote(PIANO, n, 90, 1.0);
                 }
                 break;
         }
@@ -161,7 +201,6 @@ void randish()
             }
         }
     }
-
 }
 
 public override void setup()
@@ -200,7 +239,7 @@ public void On_CTL3()
     //print("On_CTL3:", CTL3.Value);
     if(random(0, 10) == 0)
     {
-        sendNote(KEYS, 50 + CTL3.Value % 20, 90, 2.0);
+        sendNote(PIANO, 50 + CTL3.Value % 20, 90, 2.0);
     }
 }
 
@@ -218,13 +257,13 @@ public void On_CTL_NOTE()
     // Test for note on or off.
     if(CTL_NOTE.Value > 0)
     {
-        //sendNoteOn(KEYS, CTL_NOTE.Value, 110);
+        //sendNoteOn(PIANO, CTL_NOTE.Value, 110);
         sendNoteOn(SYNTH, CTL_NOTE.Value, 110);
         //sendNote(SYNTH, CTL_NOTE.Value, 90, 2.0); // fixed duration
     }
     else
     {
-        //sendNoteOff(KEYS, -CTL_NOTE.Value);
+        //sendNoteOff(PIANO, -CTL_NOTE.Value);
         sendNoteOff(SYNTH, -CTL_NOTE.Value);
     }
 }

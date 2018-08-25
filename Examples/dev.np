@@ -58,9 +58,9 @@ public override void setupNeb()
     KNOTE = createVariable("note", 60, -127, 127, On_KNOTE);
 
     // All the channels.
-    KEYS = createChannel("keys", 1, 5, 0, 0);
+    KEYS = createChannel("keys", 1, 5);
     SYNTH = createChannel("synth", 3, 0);
-    DRUMS = createChannel("drums", 10, 4, 0, 0);
+    DRUMS = createChannel("drums", 10, 4);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");

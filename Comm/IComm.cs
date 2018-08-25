@@ -1,86 +1,121 @@
 using System;
 using System.Collections.Generic;
 using Nebulator.Common;
+using Nebulator.Comm;
 
 
 namespace Nebulator.Comm
 {
-    public class CommInputEventArgs : EventArgs
-    {
-        /// <summary>Received data.</summary>
-        public Step Step { get; set; } = null;
-    }
-
-    public class CommLogEventArgs : EventArgs
-    {
-        public enum LogCategory { Info, Send, Recv, Error }
-
-        /// <summary>Category.</summary>
-        public LogCategory Category { get; set; } = LogCategory.Info;
-
-        /// <summary>Text to log.</summary>
-        public string Message { get; set; } = null;
-    }
-
-    /// <summary>What it can do, provided by implementations. Self explanatory.</summary>
-    public class CommCaps
-    {
-        public int NumChannels { get; set; }
-        public int MinVolume { get; set; }
-        public int MaxVolume { get; set; }
-        public int MinNote { get; set; }
-        public int MaxNote { get; set; }
-        public int MinControllerValue { get; set; }
-        public int MaxControllerValue { get; set; }
-        public int MinPitchValue { get; set; }
-        public int MaxPitchValue { get; set; }
-    }
-
     /// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>
-    public interface IComm
+    public interface IComm : IDisposable
     {
         #region Events
-        /// <summary>Reporting a change to listeners.</summary>
-        event EventHandler<CommInputEventArgs> CommInputEvent;
-
         /// <summary>Request for logging service.</summary>
         event EventHandler<CommLogEventArgs> CommLogEvent;
         #endregion
 
         #region Properties
+        /// <summary>Comm name.</summary>
+        string CommName { get; set; }
+
         /// <summary>What it can do.</summary>
         CommCaps Caps { get; set; }
 
-        /// <summary>All available inputs for UI selection.</summary>
-        List<string> CommInputs { get; set; }
-
-        /// <summary>All available outputs for UI selection.</summary>
-        List<string> CommOutputs { get; set; }
+        /// <summary>Log traffic.</summary>
+        bool Monitor { get; set; }
         #endregion
 
         #region Functions
-        /// <summary>Initialize everything.</summary>
-        void Init();
+        /// <summary>Initialize everything. Set valid CommName first!</summary>
+        bool Init();
 
-        /// <summary>Start listening for inputs.</summary>
+        /// <summary>Start operation.</summary>
         void Start();
 
-        /// <summary>Stop listening for inputs.</summary>
+        /// <summary>Stop operation.</summary>
         void Stop();
 
         /// <summary>Background operations such as process any stop notes.</summary>
         void Housekeep();
+        #endregion
+    }
 
+    /// <summary>Input specific version.</summary>
+    public interface ICommInput : IComm
+    {
+        #region Events
+        /// <summary>Reporting a change to listeners.</summary>
+        event EventHandler<CommInputEventArgs> CommInputEvent;
+        #endregion
+    }
+
+    /// <summary>Output specific version.</summary>
+    public interface ICommOutput : IComm
+    {
+        #region Functions
         /// <summary>Comm out processor.</summary>
         /// <param name="step"></param>
-        void Send(Step step);
+        bool Send(Step step);
 
         /// <summary>Kill one channel.</summary>
         /// <param name="channel">Specific channel or null for all.</param>
         void Kill(int? channel = null);
-
-        /// <summary>Clean up resources.</summary>
-        void Dispose();
         #endregion
     }
+
+
+
+
+
+
+
+    ///// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>
+    //public interface IComm : IDisposable
+    //{
+    //    #region Events
+    //    /// <summary>Reporting a change to listeners.</summary>
+    //    event EventHandler<CommInputEventArgs> CommInputEvent;
+
+    //    /// <summary>Request for logging service.</summary>
+    //    event EventHandler<CommLogEventArgs> CommLogEvent;
+    //    #endregion
+
+    //    #region Properties
+    //    /// <summary>Comm name.</summary>
+    //    string CommName { get; set; }
+
+    //    /// <summary>Which way is traffic.</summary>
+    //    CommDirection Direction { get; set; }
+
+    //    /// <summary>What it can do.</summary>
+    //    CommCaps Caps { get; set; }
+
+    //    /// <summary>Log traffic.</summary>
+    //    bool Monitor { get; set; }
+    //    #endregion
+
+    //    #region Functions
+    //    /// <summary>Initialize everything. Set valid CommName first!</summary>
+    //    bool Init();
+
+    //    /// <summary>Start operation.</summary>
+    //    void Start();
+
+    //    /// <summary>Stop operation.</summary>
+    //    void Stop();
+
+    //    /// <summary>Background operations such as process any stop notes.</summary>
+    //    void Housekeep();
+
+    //    /// <summary>Comm out processor.</summary>
+    //    /// <param name="step"></param>
+    //    bool Send(Step step);
+
+    //    /// <summary>Kill one channel.</summary>
+    //    /// <param name="channel">Specific channel or null for all.</param>
+    //    void Kill(int? channel = null);
+    //    #endregion
+    //}
+
+
 }

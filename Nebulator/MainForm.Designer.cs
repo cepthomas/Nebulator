@@ -22,12 +22,9 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.midiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.killMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pianoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.killCommToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,7 +45,6 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.midiToolStripMenuItem,
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -78,35 +74,14 @@
             this.recentToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
-            // midiToolStripMenuItem
+            // killCommToolStripMenuItem
             // 
-            this.midiToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.killMidiToolStripMenuItem,
-            this.pianoToolStripMenuItem,
-            this.importMidiToolStripMenuItem,
-            this.exportMidiToolStripMenuItem,
-            this.settingsMidiToolStripMenuItem});
-            this.midiToolStripMenuItem.Name = "midiToolStripMenuItem";
-            this.midiToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
-            this.midiToolStripMenuItem.Text = "Midi";
-            // 
-            // killMidiToolStripMenuItem
-            // 
-            this.killMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_206_electricity;
-            this.killMidiToolStripMenuItem.Name = "killMidiToolStripMenuItem";
-            this.killMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.killMidiToolStripMenuItem.Text = "Kill Midi";
-            this.killMidiToolStripMenuItem.ToolTipText = "Instant stop all devices";
-            this.killMidiToolStripMenuItem.Click += new System.EventHandler(this.Kill_Click);
-            // 
-            // pianoToolStripMenuItem
-            // 
-            this.pianoToolStripMenuItem.CheckOnClick = true;
-            this.pianoToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_327_piano;
-            this.pianoToolStripMenuItem.Name = "pianoToolStripMenuItem";
-            this.pianoToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.pianoToolStripMenuItem.Text = "Piano";
-            this.pianoToolStripMenuItem.Click += new System.EventHandler(this.Piano_Click);
+            this.killCommToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_206_electricity;
+            this.killCommToolStripMenuItem.Name = "killCommToolStripMenuItem";
+            this.killCommToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.killCommToolStripMenuItem.Text = "Kill Comm";
+            this.killCommToolStripMenuItem.ToolTipText = "Instant stop all devices";
+            this.killCommToolStripMenuItem.Click += new System.EventHandler(this.Kill_Click);
             // 
             // importMidiToolStripMenuItem
             // 
@@ -124,17 +99,12 @@
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
-            // settingsMidiToolStripMenuItem
-            // 
-            this.settingsMidiToolStripMenuItem.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
-            this.settingsMidiToolStripMenuItem.Name = "settingsMidiToolStripMenuItem";
-            this.settingsMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.settingsMidiToolStripMenuItem.Text = "Settings";
-            this.settingsMidiToolStripMenuItem.Click += new System.EventHandler(this.MidiSettings_Click);
-            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.killCommToolStripMenuItem,
+            this.importMidiToolStripMenuItem,
+            this.exportMidiToolStripMenuItem,
             this.logToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.aboutToolStripMenuItem});
@@ -322,7 +292,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pianoToolStripMenuItem;
         private Controls.Slider sldVolume;
         private System.Windows.Forms.CheckBox chkPlay;
         private Controls.Pot potSpeed;
@@ -334,9 +303,7 @@
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem killMidiToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem midiToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem settingsMidiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem killCommToolStripMenuItem;
         private InfoDisplay infoDisplay;
     }
 }

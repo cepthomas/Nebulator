@@ -274,7 +274,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("SkiaSharp.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll"); //TODO decouple
+                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll"); //TODO decouple?
                 //cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
                 //cp.ReferencedAssemblies.Add("Nebulator.exe");
 

@@ -107,6 +107,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
+    <Compile Include="NebSettings.cs" />
     <Compile Include="TimeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -143,12 +144,6 @@
     <Compile Include="Levers.Designer.cs">
       <DependentUpon>Levers.cs</DependentUpon>
     </Compile>
-    <Compile Include="Piano.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Piano.Designer.cs">
-      <DependentUpon>Piano.cs</DependentUpon>
-    </Compile>
     <Compile Include="ChannelControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -176,9 +171,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Levers.resx">
       <DependentUpon>Levers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Piano.resx">
-      <DependentUpon>Piano.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ChannelControl.resx">
       <DependentUpon>ChannelControl.cs</DependentUpon>
@@ -309,6 +301,10 @@
     <ProjectReference Include="..\Midi\Midi.csproj">
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VirtualKeyboard\VirtualKeyboard.csproj">
+      <Project>{4f76fffe-cd6f-4951-b74e-a7d4ffeb1a9f}</Project>
+      <Name>VirtualKeyboard</Name>
     </ProjectReference>
     <ProjectReference Include="..\Script\Script.csproj">
       <Project>{1202e3e2-7ff4-4132-9041-aade2aa9a584}</Project>

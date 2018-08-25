@@ -19,7 +19,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
+        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)//TODOX needs IComm also - or channel?
         {
             StepCollection steps = new StepCollection();
 
@@ -36,7 +36,8 @@ namespace Nebulator.Script
                 {
                     StepInternal step = new StepInternal()
                     {
-                        Channel = channel.Channel,
+                        Comm = channel.Comm,
+                        ChannelNumber = channel.ChannelNumber,
                         ScriptFunction = seqel.ScriptFunction
                     };
                     steps.AddStep(startNoteTime, step);
@@ -50,7 +51,8 @@ namespace Nebulator.Script
                         int vel = channel.NextVol(seqel.Volume);
                         StepNoteOn step = new StepNoteOn()
                         {
-                            Channel = channel.Channel,
+                            Comm = channel.Comm,
+                            ChannelNumber = channel.ChannelNumber,
                             NoteNumber = noteNum,
                             Velocity = vel,
                             VelocityToPlay = vel,
