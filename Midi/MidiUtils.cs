@@ -13,6 +13,26 @@ namespace Nebulator.Midi
     public class MidiUtils
     {
         /// <summary>
+        /// Common capabilities setter.
+        /// </summary>
+        /// <returns>The caps.</returns>
+        public static CommCaps GetCommCaps()
+        {
+            return new CommCaps()
+            {
+                NumChannels = 16,
+                MinVolume = 0,
+                MaxVolume = 127,
+                MinNote = 0,
+                MaxNote = 127,
+                MinControllerValue = 0,
+                MaxControllerValue = 127,
+                MinPitchValue = 0,
+                MaxPitchValue = 16383
+            };
+        }
+
+        /// <summary>
         /// Convert neb steps to midi file.
         /// </summary>
         /// <param name="steps"></param>

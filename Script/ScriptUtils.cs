@@ -19,7 +19,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)//TODOX needs IComm also - or channel?
+        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
         {
             StepCollection steps = new StepCollection();
 

@@ -23,6 +23,9 @@ const int DRUM_DEF_VOL = 100;
 NVariable COL1;
 NVariable MODN;
 
+///// I/O /////
+NOutput MIDI_OUT;
+
 ///// Channels /////
 NChannel KEYS;
 NChannel BASS;
@@ -61,18 +64,18 @@ public override void setupNeb()
     COL1 = createVariable("color", 200, 0, 255); // change color
     MODN = createVariable("modn", 0, -10, 10);
 
+    // I/O
+    MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); // or "loopMIDI Port 1"
+
     // All the channels.
-    KEYS = createChannel("keys", 1, 5);
-    BASS = createChannel("bass", 2, 2);
-    SYNTH = createChannel("synth", 3, 0);
-    DRUMS = createChannel("drums", 10, 4);
+    KEYS = createChannel("keys", MIDI_OUT, 1, 5);
+    BASS = createChannel("bass", MIDI_OUT, 2, 2);
+    SYNTH = createChannel("synth", MIDI_OUT, 3, 0);
+    DRUMS = createChannel("drums", MIDI_OUT, 10, 4);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");
     createNotes("MY_SCALE", "1 3 4 b7");
-
-    // controller points
-    createControllerIn(KEYS, 4, MODN);
 
     // levers
     createLever(COL1);
@@ -176,12 +179,10 @@ public override void setupNeb()
     // Get some stock chords and scales
     scaleNotes = getScaleNotes("Algerian", "A3");
 
-    if(winGm)
-    {
-        sendPatch(KEYS, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Pad3Polysynth);
-    }
+    // if winGm
+    sendPatch(KEYS, AcousticGrandPiano);
+    sendPatch(BASS, AcousticBass);
+    sendPatch(SYNTH, Pad3Polysynth);
 }
 
 public override void step()

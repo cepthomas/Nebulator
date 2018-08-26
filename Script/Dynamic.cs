@@ -20,9 +20,6 @@ namespace Nebulator.Script
     public class NInput
     {
         #region Properties
-        ///// <summary>Variable name - as shown in ui.</summary>
-        //public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
         /// <summary>The associated internal device.</summary>
         public ICommInput Comm { get; set; } = null;
         #endregion
@@ -32,7 +29,6 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            //StringBuilder sb = new StringBuilder($"NInput: Name:{Name}");
             StringBuilder sb = new StringBuilder($"NInput:");
             return sb.ToString();
         }
@@ -44,9 +40,6 @@ namespace Nebulator.Script
     public class NOutput
     {
         #region Properties
-        ///// <summary>Variable name - as shown in ui.</summary>
-        //public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
         /// <summary>The associated internal device.</summary>
         public ICommOutput Comm { get; set; } = null;
         #endregion
@@ -56,7 +49,6 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            //StringBuilder sb = new StringBuilder($"NOutput: Name:{Name}");
             StringBuilder sb = new StringBuilder($"NOutput:");
             return sb.ToString();
         }
@@ -121,9 +113,6 @@ namespace Nebulator.Script
         /// <summary>The associated comm device.</summary>
         public NInput Input { get; set; } = null;
 
-        // /// <summary>The associated comm device.</summary>
-        // public string CommName { get; set; } = Utils.UNKNOWN_STRING;
-
         /// <summary>The associated numerical (midi) channel to use.</summary>
         public int ChannelNumber { get; set; } = -1;
 
@@ -155,9 +144,6 @@ namespace Nebulator.Script
 
         /// <summary>The associated comm device.</summary>
         public NOutput Output { get; set; } = null;
-
-        // /// <summary>The associated comm device.</summary>
-        // public string CommName { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The associated numerical (midi) channel to use.</summary>
         public int ChannelNumber { get; set; } = -1;

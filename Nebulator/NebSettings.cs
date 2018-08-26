@@ -16,16 +16,6 @@ namespace Nebulator
     [Serializable]
     public class NebSettings
     {
-        // #region Persisted editable properties
-        // [DisplayName("Input Device"), Description("Your choice of input."), Browsable(true)]
-        // [Editor(typeof(CommSelector), typeof(UITypeEditor))]
-        // public string InputDevice { get; set; } = Utils.UNKNOWN_STRING;
-
-        // [DisplayName("Output Device"), Description("Your choice of output."), Browsable(true)]
-        // [Editor(typeof(CommSelector), typeof(UITypeEditor))]
-        // public string OutputDevice { get; set; } = Utils.UNKNOWN_STRING;
-        // #endregion
-
         #region Persisted non-editable properties
         [Browsable(false)]
         public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000, Visible = true };

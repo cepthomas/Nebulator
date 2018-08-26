@@ -86,10 +86,6 @@ namespace Nebulator.Comm
             StringBuilder sb = new StringBuilder();
             int total = _steps.Values.Sum(v => v.Count);
             sb.Append($"Times:{_steps.Keys.Count} TotalSteps:{total}");
-            //foreach (KeyValuePair<Time, List<Step>> kv in _steps)
-            //{
-            //    sb.Append($"{Environment.NewLine}Time:{kv.Key} Steps:{kv.Value.Count}");
-            //}
             return sb.ToString();
         }
         #endregion

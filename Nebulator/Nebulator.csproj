@@ -281,11 +281,6 @@
     <None Include="Resources\glyphicons-551-erase.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\reaper-vkbmap.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>

@@ -45,18 +45,7 @@ namespace Nebulator.Midi
         /// </summary>
         public MidiInput()
         {
-            Caps = new CommCaps() //TODOX common?
-            {
-                NumChannels = 16,
-                MinVolume = 0,
-                MaxVolume = 127,
-                MinNote = 0,
-                MaxNote = 127,
-                MinControllerValue = 0,
-                MaxControllerValue = 127,
-                MinPitchValue = 0,
-                MaxPitchValue = 16383
-            };
+            Caps = MidiUtils.GetCommCaps();
         }
 
         /// <inheritdoc />

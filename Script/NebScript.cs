@@ -161,18 +161,18 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal factory.
         /// </summary>
-        /// <param name="output">Comm device.</param>
         /// <param name="name">UI name</param>
+        /// <param name="output">Comm device.</param>
         /// <param name="channelNum"></param>
-        /// <param name="wobvol">TODOX do wobble differently?</param>
+        /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NChannel createChannel(NOutput output, string name, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(string name, NOutput output, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
-            NChannel nt = new NChannel()
+            NChannel nt = new NChannel() // TODO do wobble differently?
             {
-                Output = output,
                 Name = name,
+                Output = output,
                 ChannelNumber = channelNum,
                 WobbleVolume = wobvol,
                 WobbleTimeBefore = wobbefore,

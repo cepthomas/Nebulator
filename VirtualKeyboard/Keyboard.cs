@@ -6,7 +6,7 @@ using System.Linq;
 using System.IO;
 using Nebulator.Common;
 using Nebulator.Comm;
-
+using Nebulator.Midi;
 
 namespace Nebulator.VirtualKeyboard
 {
@@ -55,18 +55,7 @@ namespace Nebulator.VirtualKeyboard
             CreateKeys();
             InitializeComponent();
 
-            Caps = new CommCaps() //TODOX common?
-            {
-                NumChannels = 16,
-                MinVolume = 0,
-                MaxVolume = 127,
-                MinNote = 0,
-                MaxNote = 127,
-                MinControllerValue = 0,
-                MaxControllerValue = 127,
-                MinPitchValue = 0,
-                MaxPitchValue = 16383
-            };
+            Caps = MidiUtils.GetCommCaps();
         }
 
         /// <summary>
@@ -76,7 +65,11 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_Load(object sender, EventArgs e)
         {
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = CommLogEventArgs.LogCategory.Info, Message = "Load VKeyboard" });
+            // Get the bitmap.
+            Bitmap bm = new Bitmap(Properties.Resources.glyphicons_327_piano);
+
+            // Convert to an icon and use for the form's icon.
+            Icon = Icon.FromHandle(bm.GetHicon());
         }
 
         /// <inheritdoc />
@@ -86,54 +79,82 @@ namespace Nebulator.VirtualKeyboard
 
             DrawKeys();
 
-            // Load the midi kbd mapping.
-            try
+            // Create the midi kbd mapping.
+            int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MIDDLE_C).First());
+
+            string[] keyDefs =
             {
-                int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MIDDLE_C).First());
+                    "Z  -12  ;  C-3",
+                    "S  -11  ;  C#",
+                    "X  -10  ;  D",
+                    "D  -9   ;  D#",
+                    "C  -8   ;  E",
+                    "V  -7   ;  F",
+                    "G  -6   ;  F#",
+                    "B  -5   ;  G",
+                    "H  -4   ;  G#",
+                    "N  -3   ;  A",
+                    "J  -2   ;  A#",
+                    "M  -1   ;  B",
+                    ",   0   ;  C-4",
+                    "L  +1   ;  C#-4",
+                    ".  +2   ;  D",
+                    ";  +3   ;  D#",
+                    "/  +4   ;  E-4",
+                    "Q   0   ;  C-4",
+                    "2  +1   ;  C#",
+                    "W  +2   ;  D",
+                    "3  +3   ;  D#",
+                    "E  +4   ;  E",
+                    "R  +5   ;  F",
+                    "5  +6   ;  F#",
+                    "T  +7   ;  G",
+                    "6  +8   ;  G#",
+                    "Y  +9   ;  A",
+                    "7  +10  ;  A#",
+                    "U  +11  ;  B",
+                    "I  +12  ;  C-5",
+                    "9  +13  ;  C#-5",
+                    "O  +14  ;  D",
+                    "0  +15  ;  D#",
+                    "P  +16  ;  E-5"
+                };
 
-                string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\reaper-vkbmap.txt");//TODOX 
-                foreach (string l in File.ReadLines(fpath))
+            foreach (string l in keyDefs)
+            {
+                List<string> parts = l.SplitByToken(" ");
+
+                if (parts.Count >= 2 && parts[0] != ";")
                 {
-                    List<string> parts = l.SplitByToken(" ");
+                    string key = parts[0];
+                    char ch = key[0];
+                    int offset = int.Parse(parts[1]);
+                    int note = indexOfMiddleC + offset;
 
-                    if (parts.Count >= 2 && parts[0] != ";")
+                    switch (key)
                     {
-                        string key = parts[0];
-                        char ch = key[0];
-                        int offset = int.Parse(parts[1]);
-                        int note = indexOfMiddleC + offset;
+                        case ",": _keysMap.Add(Keys.Oemcomma, note); break;
+                        case "=": _keysMap.Add(Keys.Oemplus, note); break;
+                        case "-": _keysMap.Add(Keys.OemMinus, note); break;
+                        case "/": _keysMap.Add(Keys.OemQuestion, note); break;
+                        case ".": _keysMap.Add(Keys.OemPeriod, note); break;
+                        case "\'": _keysMap.Add(Keys.OemQuotes, note); break;
+                        case "\\": _keysMap.Add(Keys.OemPipe, note); break;
+                        case "]": _keysMap.Add(Keys.OemCloseBrackets, note); break;
+                        case "[": _keysMap.Add(Keys.OemOpenBrackets, note); break;
+                        case "`": _keysMap.Add(Keys.Oemtilde, note); break;
+                        case ";": _keysMap.Add(Keys.OemSemicolon, note); break;
 
-                        switch (key)
-                        {
-                            case ",": _keysMap.Add(Keys.Oemcomma, note); break;
-                            case "=": _keysMap.Add(Keys.Oemplus, note); break;
-                            case "-": _keysMap.Add(Keys.OemMinus, note); break;
-                            case "/": _keysMap.Add(Keys.OemQuestion, note); break;
-                            case ".": _keysMap.Add(Keys.OemPeriod, note); break;
-                            case "\'": _keysMap.Add(Keys.OemQuotes, note); break;
-                            case "\\": _keysMap.Add(Keys.OemPipe, note); break;
-                            case "]": _keysMap.Add(Keys.OemCloseBrackets, note); break;
-                            case "[": _keysMap.Add(Keys.OemOpenBrackets, note); break;
-                            case "`": _keysMap.Add(Keys.Oemtilde, note); break;
-                            case ";;": _keysMap.Add(Keys.OemSemicolon, note); break;
-
-                            default:
-                                if ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9'))
-                                {
-                                    _keysMap.Add((Keys)ch, note);
-                                }
-                                break;
-                        }
+                        default:
+                            if ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9'))
+                            {
+                                _keysMap.Add((Keys)ch, note);
+                            }
+                            break;
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = CommLogEventArgs.LogCategory.Error, Message = $"Unable to process midi keyboard file:{ex.Message}" });
-                ret = false;
-            }
 
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = CommLogEventArgs.LogCategory.Info, Message = "Init VKeyboard" });
             Show();
 
             return ret;
@@ -175,6 +196,8 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_KeyDown(object sender, KeyEventArgs e)
         {
+            //Console.WriteLine($"==={e.KeyCode.ToString()}");
+
             if (_keysMap.ContainsKey(e.KeyCode))
             {
                 VKey pk = _keys[_keysMap[e.KeyCode]];
@@ -214,7 +237,7 @@ namespace Nebulator.VirtualKeyboard
                 {
                     step = new StepNoteOn()
                     {
-                        ChannelNumber = -1, // caller will fill? TODOX
+                        ChannelNumber = 0,
                         NoteNumber = e.NoteId,
                         Velocity = 100,
                         VelocityToPlay = 100,
@@ -225,7 +248,7 @@ namespace Nebulator.VirtualKeyboard
                 {
                     step = new StepNoteOff()
                     {
-                        ChannelNumber = -1, // caller will fill? TODOX
+                        ChannelNumber = 0,
                         NoteNumber = e.NoteId,
                         Velocity = 0
                     };

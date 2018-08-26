@@ -14,7 +14,6 @@ using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Comm;
 using Nebulator.Server;
-//using Nebulator.VirtualKeyboard;
 using NAudio.Midi;
 using Nebulator.Midi;
 
@@ -22,18 +21,7 @@ using Nebulator.Midi;
 // TODO Factor out the processing and non-processing stuff would be nice but much breakage.
 //   - Remove Comm dependency in Script project
 //   - Breaks the ScriptCore partial class model.
-//   - Many tendrils involving ScriptDefinitions, NoteUtils
-
-
-///// <summary>Piano child form.</summary>
-//VirtualKeyboard _vkbd = new VirtualKeyboard(); // TODOX
-
-//TODOX piano:
-//_vkbd.Size = new Size(NebSettings.TheSettings.PianoFormInfo.Width, NebSettings.TheSettings.PianoFormInfo.Height);
-//_vkbd.Visible = NebSettings.TheSettings.PianoFormInfo.Visible;
-//_vkbd.TopMost = false;
-//_vkbd.Location = new Point(NebSettings.TheSettings.PianoFormInfo.X, NebSettings.TheSettings.PianoFormInfo.Y);
-//_vkbd.PianoKeyEvent += Piano_PianoKeyEvent;
+//   - Many tendrils involving ScriptDefinitions, NoteUtils, etc.
 
 
 
@@ -55,20 +43,6 @@ namespace Nebulator
 
         /// <summary>Surface form.</summary>
         Surface _surface = new Surface();
-
-
-
-
-
-
-
-        Dictionary<string, ICommInput> _commsIn = new Dictionary<string, ICommInput>();
-        Dictionary<string, ICommOutput> _commsOut = new Dictionary<string, ICommOutput>();
-
-
-
-
-
 
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
@@ -243,7 +217,7 @@ namespace Nebulator
                 ProcessPlay(PlayCommand.Stop, false);
 
                 // Just in case.
-                _commsOut.Values.ForEach(co => co.Kill());
+                _script?.Outputs.ForEach(o => o.Comm?.Kill());
 
                 if (_script != null)
                 {
@@ -280,8 +254,8 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                _commsIn.Values.ForEach(ci => { ci?.Stop(); ci?.Dispose(); });
-                _commsOut.Values.ForEach(co => { co?.Stop(); co?.Dispose(); });
+                _script?.Outputs.ForEach(o => { o.Comm?.Stop(); o.Comm?.Dispose(); });
+                _script?.Inputs.ForEach(i => { i.Comm?.Stop(); i.Comm?.Dispose(); });
 
                 components?.Dispose();
             }
@@ -395,8 +369,14 @@ namespace Nebulator
                         _script.Inputs.Add(input);
                     }
 
+                    // Add the virtual keyboard as an input.
                     {
                         VirtualKeyboard.VKeyboard vk = new VirtualKeyboard.VKeyboard();
+                        vk.StartPosition = FormStartPosition.Manual;
+                        vk.Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height);
+                        vk.Visible = NebSettings.TheSettings.VirtualKeyboardInfo.Visible;
+                        vk.TopMost = false;
+                        vk.Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y);
                         vk.CommInputEvent += Comm_InputEvent;
                         vk.CommLogEvent += Comm_LogEvent;
                         NInput input = new NInput() { Comm = vk };
@@ -638,7 +618,7 @@ namespace Nebulator
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
-                        _commsOut.Values.ForEach(co => co.Kill()); // just in case
+                        _script?.Outputs.ForEach(o => o.Comm?.Kill()); // just in case
                     }
                 }
                 // else keep going
@@ -670,8 +650,8 @@ namespace Nebulator
             ProcessRuntime();
 
             // Process any lingering noteoffs etc.
-            _commsOut.Values.ForEach(co => co.Housekeep());
-            _commsIn.Values.ForEach(co => co.Housekeep());
+            _script?.Outputs.ForEach(o => o.Comm?.Housekeep());
+            _script?.Inputs.ForEach(i => i.Comm?.Housekeep());
 
             ///// Local common function /////
             void PlayStep(Step step)
@@ -736,14 +716,14 @@ namespace Nebulator
                     }
 
                     ///// Local common function /////
-                    bool ProcessInput(int ctrlId, int channel, int value)
+                    bool ProcessInput(int ctrlId, int channelNum, int value) //TODOX also needs ICommInput specific device.
                     {
                         bool ret = false;
 
-                        // Process through our list of inputs of interest.
+                        // Run through our list of inputs of interest.
                         foreach (NController ctlpt in _script.InputControllers)
                         {
-                            if (ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channel)
+                            if (ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
                             {
                                 // Assign new value which triggers script callback.
                                 ctlpt.BoundVar.Value = value;
@@ -756,8 +736,8 @@ namespace Nebulator
 
                     if (!handled)
                     {
-                        // Pass through. TODOX boom - need to add a default output def. also for vkey.
-                        e.Step.Comm.Send(e.Step);
+                        // Pass through. TODOX boom - need to add a default output def. also for vkey. or let the script handle it.
+                        //e.Step.Comm.Send(e.Step);
                     }
                 }
             });
@@ -770,8 +750,8 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                // Route all midi events through log.
-                string s = $"Midi{e.Category} {_stepTime} {e.Message}";
+                // Route all events through log.
+                string s = $"Comm{e.Category} {_stepTime} {e.Message}";
                 _logger.Info(s);
             });
         }
@@ -1125,11 +1105,12 @@ namespace Nebulator
             UserSettings.TheSettings.MainFormInfo.FromForm(this);
             UserSettings.TheSettings.Save();
 
-            _commsOut.Values.ForEach(co =>
+            // Get the vkbd position.
+            _script?.Inputs.ForEach(i => 
             {
-                if(co is VirtualKeyboard.VKeyboard)
+                if(i.Comm is VirtualKeyboard.VKeyboard)
                 {
-                    NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(co as VirtualKeyboard.VKeyboard);
+                    NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(i.Comm as VirtualKeyboard.VKeyboard);
                 }
             });
 
@@ -1185,39 +1166,6 @@ namespace Nebulator
         }
         #endregion
 
-        //#region Virtual Keyboard
-        ///// <summary>
-        ///// Handle key event.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //void VirtualKeyboard_KeyEvent(object sender, PianoForm.PianoKeyEventArgs e) //TODOX use IComm instead
-        //{
-        //    if(e.Down)
-        //    {
-        //        StepNoteOn step = new StepNoteOn()
-        //        {
-        //            Channel = 2,
-        //            NoteNumber = Utils.Constrain(e.NoteId, _commOut.Caps.MinNote, _commOut.Caps.MaxNote),
-        //            Velocity = 90,
-        //            VelocityToPlay = 90,
-        //            Duration = new Time(0)
-        //        };
-        //        _commOut.Send(step);
-        //    }
-        //    else
-        //    {
-        //        StepNoteOff step = new StepNoteOff()
-        //        {
-        //            Channel = 2,
-        //            NoteNumber = Utils.Constrain(e.NoteId, _commOut.Caps.MinNote, _commOut.Caps.MaxNote),
-        //            Velocity = 64
-        //        };
-        //        _commOut.Send(step);
-        //    }
-        //}
-        //#endregion
-
         #region Play control
         /// <summary>
         /// Update everything per param.
@@ -1266,7 +1214,7 @@ namespace Nebulator
                     chkPlay.Checked = false;
 
                     // Send midi stop all notes just in case.
-                    _commsOut.Values.ForEach(co => co.Kill());
+                    _script?.Outputs.ForEach(o => o.Comm?.Kill());
                     break;
 
                 case PlayCommand.Rewind:
@@ -1444,7 +1392,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Kill_Click(object sender, EventArgs e)
         {
-            _commsOut.Values.ForEach(co => co.Kill());
+            _script?.Outputs.ForEach(o => o.Comm?.Kill());
         }
         #endregion
     }

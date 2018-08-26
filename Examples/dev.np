@@ -1,38 +1,6 @@
 
-/////// TODOX fix all scripts when done.
 
-/////// API changes:
-
-// New:
-// protected NInput createInput(string commName);
-// protected NOutput createOutput(string commName);
-
-
-// protected NChannel createChannel(string name, string commName, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
-// >>>
-// protected NChannel createChannel(NOutput output, string name, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
-
-// protected void createControllerIn(NChannel channel, int controlId, NVariable bound)
-// >>>
-// protected void createController(NInput input, int channelNum, int controlId, NVariable bound);
-
-
-///// script changes:
-
-// NOutput MY_MIDI_OUT;
-// NInput MY_MIDI_IN;
-
-
-// MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
-// MY_MIDI_IN = createInput"MPK mini"); // "Virtual Keyboard"
-
-// // All the inputs.
-// createController(MY_MIDI_IN, 1, NoteControl, "TODOX var");
-
-// winGm gone
-///////////////////////////
-
-////// TODOX keep?
+////// TODOX keep sections and decl?
 // NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
 // PART1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
 // - keep sequences in general? Dump decl model?
@@ -40,11 +8,6 @@
 // C:\Dev\Nebulator\Examples\algo1.np:
 //    31: // NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
 //   111:     // DRUMS_SIMPLE = createSequence(8);
-//
-// C:\Dev\Nebulator\Examples\dev.np:
-//    93:     NSection PART1 = createSection("section", WHEN1, 0);
-//    80:     SEQ1 = createSequence(8);
-//    87:     DRUMS_SIMPLE = createSequence(8);
 //
 // C:\Dev\Nebulator\Examples\example.np:
 //   160:     NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
@@ -126,24 +89,24 @@ public override void setupNeb()
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     CTL_NOTE = createVariable("note", 60, -127, 127, On_CTL_NOTE); // note neg number for note off encoding
-    V_NOTE = createVariable("note", 60, -127, 127, On_CTL_NOTE);
+    V_NOTE = createVariable("note", 60, -127, 127, On_V_NOTE);
 
     MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
     // MY_MIDI_IN = createInput("MPK mini");
-    MY_VKEY = createInput("Virtual Keyboard");
+    MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
 
     // All the output channels.
-    PIANO = createChannel(MY_MIDI_OUT, "piano", 1, 5);
-    BASS = createChannel(MY_MIDI_OUT, "bass", 2, 4);
-    SYNTH = createChannel(MY_MIDI_OUT, "synth", 3, 0);
-    DRUMS = createChannel(MY_MIDI_OUT, "drums", 10, 4);
+    PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);  
+    BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
+    SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
+    DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
 
     // All the input controllers.
-    // createController(MY_MIDI_IN, 1, NoteControl, MOD1); // modulate eq
-    // createController(MY_MIDI_IN, 2, NoteControl, CTL2); // since I don't have a pitch knob, I'll use this instead
-    // createController(MY_MIDI_IN, 3, NoteControl, CTL3); // another controller
-    // createController(MY_MIDI_IN, 4, NoteControl, BACK_COLOR); // change ui color
-    // createController(MY_MIDI_IN, 0, NoteControl, CTL_NOTE);  // make some funny notes
+    // createController(MY_MIDI_IN, 0, 1, MOD1); // modulate eq
+    // createController(MY_MIDI_IN, 0, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+    // createController(MY_MIDI_IN, 0, 3, CTL3); // another controller
+    // createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+    // createController(MY_MIDI_IN, 0, 0, CTL_NOTE);  // make some funny notes
     createController(MY_VKEY, 0, NoteControl, V_NOTE);
 
     // levers
@@ -176,12 +139,10 @@ public override void setupNeb()
     PART1.Add(PIANO, SEQ1, SEQ1);
     PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 
-    //if(winGm)
-    {
-        sendPatch(PIANO, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Pad3Polysynth);
-    }
+    //if winGm
+    sendPatch(PIANO, AcousticGrandPiano);
+    sendPatch(BASS, AcousticBass);
+    sendPatch(SYNTH, Pad3Polysynth);
 }
 
 public override void step()
@@ -314,6 +275,21 @@ public void On_MOD1()
     //print(MOD1.Name, "changed to", MOD1.Value);
     // Send a control change.
     sendController(SYNTH, 1, MOD1.Value);
+}
+
+public void On_V_NOTE()
+{
+    //print("V_NOTE", "=", V_NOTE.Value);
+
+    // Test for note on or off.
+    if(V_NOTE.Value > 0)
+    {
+        sendNoteOn(SYNTH, V_NOTE.Value, 110);
+    }
+    else
+    {
+        sendNoteOff(SYNTH, -V_NOTE.Value);
+    }
 }
 
 public void On_CTL_NOTE()

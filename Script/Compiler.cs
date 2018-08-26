@@ -274,9 +274,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("SkiaSharp.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll"); //TODO decouple?
-                //cp.ReferencedAssemblies.Add("Nebulator.Midi.dll");
-                //cp.ReferencedAssemblies.Add("Nebulator.exe");
+                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll"); // TODO decouple for NProcessing?
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -451,6 +449,7 @@ namespace Nebulator.Script
                 "using SkiaSharp;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
+                "using Nebulator.Comm;", // TODO decouple for NProcessing?
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : ScriptCore",
