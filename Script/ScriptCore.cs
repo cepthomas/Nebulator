@@ -80,15 +80,7 @@ namespace Nebulator.Script
         bool _smooth = true;
         #endregion
 
-        //#region Properties - general
-        ///// <summary>Device to use for send.</summary>
-        //public ICommOutput CommOut { get; set; } = null;
-
-        ///// <summary>Device to use for recv.</summary>
-        //public ICommInput CommIn { get; set; } = null;
-        //#endregion
-
-        #region Properties - shared between host and script at runtime
+        #region Properties - dynamic things shared between host and script at runtime
         /// <summary>Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
 
@@ -109,6 +101,14 @@ namespace Nebulator.Script
 
         /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
+        #endregion
+
+        #region Properties - available comm devices
+        /// <summary>Devices to use for send.</summary>
+        public List<NOutput> Outputs { get; set; } = new List<NOutput>();
+
+        /// <summary>Devices to use for recv.</summary>
+        public List<NInput> Inputs { get; set; } = new List<NInput>();
         #endregion
 
         #region Properties - things defined in the script that MainForm needs
@@ -137,6 +137,9 @@ namespace Nebulator.Script
         /// </summary>
         public void Dispose()
         {
+            Inputs.ForEach(ci => { if (ci.Comm != null) ci.Comm.Dispose(); });
+            Outputs.ForEach(co => { if (co.Comm != null) co.Comm.Dispose(); });
+
             Dispose(true);
             GC.SuppressFinalize(this);
         }

@@ -50,20 +50,58 @@ namespace Nebulator.Script
 
         #region Script callable functions
         /// <summary>
+        /// Create a device input.
+        /// </summary>
+        /// <param name="commName"></param>
+        /// <returns></returns>
+        protected NInput createInput(string commName)
+        {
+            var ins = Inputs.Where(ci => ci.Comm.CommName == commName);
+            if(ins.Count() == 0)
+            {
+                throw new Exception($"Invalid input comm name: {commName}");
+            }
+            else
+            {
+                NInput nin = ins.First();
+                nin.Comm.Init();
+                return nin;
+            }
+        }
+
+        /// <summary>
+        /// Create a device output.
+        /// </summary>
+        /// <param name="commName"></param>
+        /// <returns></returns>
+        protected NOutput createOutput(string commName)
+        {
+            var outs = Outputs.Where(ci => ci.Comm.CommName == commName);
+            if (outs.Count() == 0)
+            {
+                throw new Exception($"Invalid input comm name: {commName}");
+            }
+            else
+            {
+                NOutput nout = outs.First();
+                nout.Comm.Init();
+                return nout;
+            }
+        }
+
+        /// <summary>
         /// Create a controller input.
         /// </summary>
-        /// <param name="commName">Name of comm device.</param>
+        /// <param name="input">Comm device.</param>
         /// <param name="channelNum">Which channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>
-        protected void createController(string commName, int channelNum, int controlId, NVariable bound)
+        protected void createController(NInput input, int channelNum, int controlId, NVariable bound)
         {
-            //TODOX connect to device Comm
-
-            // controlId = Utils.Constrain(controlId, 0, channel.Comm.Caps.MaxControllerValue);
+            controlId = Utils.Constrain(controlId, input.Comm.Caps.MinControllerValue, input.Comm.Caps.MaxControllerValue);
             NController mp = new NController()
             {
-                CommName = commName,
+                Input = input,
                 ChannelNumber = channelNum,
                 ControllerId = controlId,
                 BoundVar = bound
@@ -123,20 +161,18 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal factory.
         /// </summary>
-        /// <param name="name">For UI display.</param>
-        /// <param name="commName">Name of comm device.</param>
+        /// <param name="output">Comm device.</param>
+        /// <param name="name">UI name</param>
         /// <param name="channelNum"></param>
-        /// <param name="wobvol"></param>
+        /// <param name="wobvol">TODOX do wobble differently?</param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NChannel createChannel(string name, string commName, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(NOutput output, string name, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
-            // TODOX do wobble differently???
-            //TODOX connect to device Comm
             NChannel nt = new NChannel()
             {
+                Output = output,
                 Name = name,
-                CommName = commName,
                 ChannelNumber = channelNum,
                 WobbleVolume = wobvol,
                 WobbleTimeBefore = wobbefore,
@@ -160,12 +196,13 @@ namespace Nebulator.Script
             if (play)
             {
                 int vel = channel.NextVol(vol);
-                int notenum = Utils.Constrain(inote, channel.Comm.Caps.MinNote, channel.Comm.Caps.MaxNote);
+                int notenum = Utils.Constrain(inote, channel.Output.Comm.Caps.MinNote, channel.Output.Comm.Caps.MaxNote);
 
                 if (vol > 0)
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
+                        Comm = channel.Output.Comm,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum,
                         Velocity = vel,
@@ -174,17 +211,18 @@ namespace Nebulator.Script
                     };
 
                     step.Adjust(volume, channel.Volume);
-                    (channel.Comm as ICommOutput).Send(step);
+                    channel.Output.Comm.Send(step);
                 }
                 else
                 {
                     StepNoteOff step = new StepNoteOff()
                     {
+                        Comm = channel.Output.Comm,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum
                     };
 
-                    (channel.Comm as ICommOutput).Send(step);
+                    channel.Output.Comm.Send(step);
                 }
             }
         }
@@ -243,13 +281,13 @@ namespace Nebulator.Script
         {
             StepControllerChange step = new StepControllerChange()
             {
-                Comm = channel.Comm,
+                Comm = channel.Output.Comm,
                 ChannelNumber = channel.ChannelNumber,
                 ControllerId = ctlnum,
                 Value = val
             };
 
-            channel.Comm.Send(step);
+            channel.Output.Comm.Send(step);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -259,12 +297,12 @@ namespace Nebulator.Script
         {
             StepPatch step = new StepPatch()
             {
-                Comm = channel.Comm,
+                Comm = channel.Output.Comm,
                 ChannelNumber = channel.ChannelNumber,
                 PatchNumber = patch
             };
 
-            channel.Comm.Send(step);
+            channel.Output.Comm.Send(step);
         }
 
         /// <summary>Send a named sequence.</summary>

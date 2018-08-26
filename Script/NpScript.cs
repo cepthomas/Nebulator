@@ -17,51 +17,6 @@ namespace Nebulator.Script
 {
     public partial class ScriptCore
     {
-        //#region Fields
-        ///// <summary>Current font to draw.</summary>
-        //SKPaint _textPaint = new SKPaint()
-        //{
-        //    TextSize = 12,
-        //    Color = SKColors.Black,
-        //    Typeface = SKTypeface.FromFamilyName("Arial"),
-        //    TextAlign = SKTextAlign.Left,
-        //    IsAntialias = true
-        //};
-
-        ///// <summary>Current pen to draw.</summary>
-        //SKPaint _pen = new SKPaint()
-        //{
-        //    Color = SKColors.Black,
-        //    Style = SKPaintStyle.Stroke,
-        //    IsStroke = true,
-        //    StrokeWidth = 1,
-        //    FilterQuality = SKFilterQuality.High,
-        //    IsAntialias = true
-        //};
-
-        ///// <summary>Current brush to draw.</summary>
-        //SKPaint _fill = new SKPaint()
-        //{
-        //    Color = SKColors.Transparent,
-        //    Style = SKPaintStyle.Fill,
-        //    IsStroke = false,
-        //    FilterQuality = SKFilterQuality.High,
-        //    IsAntialias = true
-        //};
-
-        ///// <summary>Current drawing points.</summary>
-        //List<SKPoint> _vertexes = new List<SKPoint>();
-
-        ///// <summary>General purpose stack</summary>
-        //Stack<SKMatrix> _matrixStack = new Stack<SKMatrix>();
-
-        ///// <summary>Background color.</summary>
-        //SKColor _bgColor = SKColors.LightGray;
-
-        ///// <summary>Smoothing option.</summary>
-        //bool _smooth = true;
-        //#endregion
-
         #region Definitions - same values as Processing
         //---- Math
         public const float QUARTER_PI = (float)(Math.PI / 4.0);

@@ -16,77 +16,13 @@ using Nebulator.Comm;
 using Nebulator.Server;
 //using Nebulator.VirtualKeyboard;
 using NAudio.Midi;
+using Nebulator.Midi;
 
 
 // TODO Factor out the processing and non-processing stuff would be nice but much breakage.
 //   - Remove Comm dependency in Script project
 //   - Breaks the ScriptCore partial class model.
 //   - Many tendrils involving ScriptDefinitions, NoteUtils
-
-
-
-
-
-
-////////xxxxxxxxxxxxxxxxxxxxxxxxx
-//// Input events.
-//_commIn.CommInputEvent += Midi_InputEvent;
-//_commIn.CommLogEvent += Midi_LogEvent;
-//_commIn.Init();
-////////xxxxxxxxxxxxxxxxxxxxxxxxx  TODOX
-//_commIn = null;
-//_commIn = new Midi.MidiInput();
-//_commIn.CommInputEvent += Midi_InputEvent;
-//_commIn.CommLogEvent += Midi_LogEvent;
-//_commIn.Init();
-//// Output events.
-//_commOut.CommLogEvent += Midi_LogEvent;
-//_commOut.Init();
-////////xxxxxxxxxxxxxxxxxxxxxxxxx
-//
-
-//for (int device = 0; device < NAudio.Midi.MidiIn.NumberOfDevices; device++)
-//{
-//    string s = NAudio.Midi.MidiIn.DeviceInfo(device).ProductName;
-//    _logger.Info("IN:" + s);
-//}
-//for (int device = 0; device < NAudio.Midi.MidiOut.NumberOfDevices; device++)
-//{
-//    string s = NAudio.Midi.MidiOut.DeviceInfo(device).ProductName;
-//    _logger.Info("OUT:" + s);
-//}
-
-
-
-
-//// TODOX go through NChannels and set up comms.  Check for "Virtual Keyboard"
-//_commsIn.Clear();
-//_commsOut.Clear();
-
-//// Get all valid midi devices.
-//HashSet<string> midiIns = new HashSet<string>();
-//HashSet<string> midiOuts = new HashSet<string>();
-//for (int device = 0; device < MidiIn.NumberOfDevices; device++)
-//{
-//    midiIns.Add(MidiIn.DeviceInfo(device).ProductName);
-//}
-
-//for (int device = 0; device < MidiOut.NumberOfDevices; device++)
-//{
-//    midiOuts.Add(MidiOut.DeviceInfo(device).ProductName);
-//}
-
-//// Init comms and hook up.
-//_script.Channels.ForEach(ch =>
-//{
-//    if(!_comms.ContainsKey(ch.CommName))
-//    {
-//        // New one, add it.
-//    }
-//});
-
-
-
 
 
 ///// <summary>Piano child form.</summary>
@@ -98,7 +34,6 @@ using NAudio.Midi;
 //_vkbd.TopMost = false;
 //_vkbd.Location = new Point(NebSettings.TheSettings.PianoFormInfo.X, NebSettings.TheSettings.PianoFormInfo.Y);
 //_vkbd.PianoKeyEvent += Piano_PianoKeyEvent;
-
 
 
 
@@ -226,8 +161,6 @@ namespace Nebulator
 
             levers.LeverChangeEvent += Levers_Changed;
 
-            Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
-
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
@@ -246,13 +179,30 @@ namespace Nebulator
             }
             #endregion
 
+            #region System info
+            Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
+
+            string sins = "Inputs: \"Virtual Keyboard\"";
+            for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+            {
+                sins += $" \"{MidiIn.DeviceInfo(device).ProductName}\"";
+            }
+            _logger.Info(sins);
+
+            string souts = "Outputs:";
+            for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+            {
+                souts += $" \"{MidiOut.DeviceInfo(device).ProductName}\"";
+            }
+            _logger.Info(souts);
+            #endregion
+
 #if _DEV // Debug stuff
             if (args.Count() <= 1)
             {
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\algo1.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
 
 
                 //these in np:
@@ -303,6 +253,8 @@ namespace Nebulator
                     _nppVals.SetValue("master", "speed", potSpeed.Value);
                     _script.Channels.ForEach(c => _nppVals.SetValue(c.Name, "volume", c.Volume));
                     _nppVals.Save();
+
+                    _script.Dispose();
                 }
 
                 // Save user settings.
@@ -411,6 +363,9 @@ namespace Nebulator
                 // Save internal npp file vals now as they will be reloaded during compile.
                 _nppVals.Save();
 
+                // Clean up any old.
+                _script?.Dispose();
+
                 // Compile now.
                 _script = compiler.Execute(_fn);
 
@@ -429,6 +384,32 @@ namespace Nebulator
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
+
+                    // Hook up comms for runtime.
+                    for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+                    {
+                        ICommInput cin = new MidiInput() { CommName = MidiIn.DeviceInfo(device).ProductName };
+                        cin.CommInputEvent += Comm_InputEvent;
+                        cin.CommLogEvent += Comm_LogEvent;
+                        NInput input = new NInput() { Comm = cin };
+                        _script.Inputs.Add(input);
+                    }
+
+                    {
+                        VirtualKeyboard.VKeyboard vk = new VirtualKeyboard.VKeyboard();
+                        vk.CommInputEvent += Comm_InputEvent;
+                        vk.CommLogEvent += Comm_LogEvent;
+                        NInput input = new NInput() { Comm = vk };
+                        _script.Inputs.Add(input);
+                    }
+
+                    for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+                    {
+                        ICommOutput cout = new MidiOutput() { CommName = MidiOut.DeviceInfo(device).ProductName };
+                        cout.CommLogEvent += Comm_LogEvent;
+                        NOutput output = new NOutput() { Comm = cout };
+                        _script.Outputs.Add(output);
+                    }
 
                     try
                     {
@@ -732,7 +713,7 @@ namespace Nebulator
         /// Is it a midi controller? Look it up in the inputs.
         /// If not a ctlr or not found, send to the midi output, otherwise trigger listeners.
         /// </summary>
-        void Midi_InputEvent(object sender, CommInputEventArgs e)
+        void Comm_InputEvent(object sender, CommInputEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -775,7 +756,7 @@ namespace Nebulator
 
                     if (!handled)
                     {
-                        // Pass through. TODOX boom
+                        // Pass through. TODOX boom - need to add a default output def. also for vkey.
                         e.Step.Comm.Send(e.Step);
                     }
                 }
@@ -785,7 +766,7 @@ namespace Nebulator
         /// <summary>
         /// Process midi log event.
         /// </summary>
-        void Midi_LogEvent(object sender, CommLogEventArgs e)
+        void Comm_LogEvent(object sender, CommLogEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -808,7 +789,13 @@ namespace Nebulator
                 if (_anySolo)
                 {
                     // Kill any not solo.
-                    _script.Channels.ForEach(c => { if (c.State != ChannelState.Solo && c.Comm != null) c.Comm.Kill(c.ChannelNumber); });
+                    _script.Channels.ForEach(c =>
+                    {
+                        if (c.State != ChannelState.Solo && c.Output.Comm != null)
+                        {
+                            c.Output.Comm.Kill(c.ChannelNumber);
+                        }
+                    });
                 }
             }
         }

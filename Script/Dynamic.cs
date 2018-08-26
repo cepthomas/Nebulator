@@ -15,6 +15,54 @@ namespace Nebulator.Script
     public enum ChannelState { Normal, Mute, Solo }
 
     /// <summary>
+    /// One input comm device.
+    /// </summary>
+    public class NInput
+    {
+        #region Properties
+        ///// <summary>Variable name - as shown in ui.</summary>
+        //public string Name { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>The associated internal device.</summary>
+        public ICommInput Comm { get; set; } = null;
+        #endregion
+
+        /// <summary>
+        /// For viewing pleasure.
+        /// </summary>
+        public override string ToString()
+        {
+            //StringBuilder sb = new StringBuilder($"NInput: Name:{Name}");
+            StringBuilder sb = new StringBuilder($"NInput:");
+            return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// One output comm device.
+    /// </summary>
+    public class NOutput
+    {
+        #region Properties
+        ///// <summary>Variable name - as shown in ui.</summary>
+        //public string Name { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>The associated internal device.</summary>
+        public ICommOutput Comm { get; set; } = null;
+        #endregion
+
+        /// <summary>
+        /// For viewing pleasure.
+        /// </summary>
+        public override string ToString()
+        {
+            //StringBuilder sb = new StringBuilder($"NOutput: Name:{Name}");
+            StringBuilder sb = new StringBuilder($"NOutput:");
+            return sb.ToString();
+        }
+    }
+
+    /// <summary>
     /// One bound variable.
     /// </summary>
     public class NVariable
@@ -71,10 +119,10 @@ namespace Nebulator.Script
     {
         #region Properties
         /// <summary>The associated comm device.</summary>
-        public ICommInput Comm { get; set; } = null;
+        public NInput Input { get; set; } = null;
 
-        /// <summary>The associated comm device.</summary>
-        public string CommName { get; set; } = Utils.UNKNOWN_STRING;
+        // /// <summary>The associated comm device.</summary>
+        // public string CommName { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The associated numerical (midi) channel to use.</summary>
         public int ChannelNumber { get; set; } = -1;
@@ -106,10 +154,10 @@ namespace Nebulator.Script
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The associated comm device.</summary>
-        public ICommOutput Comm { get; set; } = null;
+        public NOutput Output { get; set; } = null;
 
-        /// <summary>The associated comm device.</summary>
-        public string CommName { get; set; } = Utils.UNKNOWN_STRING;
+        // /// <summary>The associated comm device.</summary>
+        // public string CommName { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The associated numerical (midi) channel to use.</summary>
         public int ChannelNumber { get; set; } = -1;

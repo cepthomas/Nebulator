@@ -54,6 +54,19 @@ namespace Nebulator.VirtualKeyboard
         {
             CreateKeys();
             InitializeComponent();
+
+            Caps = new CommCaps() //TODOX common?
+            {
+                NumChannels = 16,
+                MinVolume = 0,
+                MaxVolume = 127,
+                MinNote = 0,
+                MaxNote = 127,
+                MinControllerValue = 0,
+                MaxControllerValue = 127,
+                MinPitchValue = 0,
+                MaxPitchValue = 16383
+            };
         }
 
         /// <summary>
@@ -63,7 +76,7 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_Load(object sender, EventArgs e)
         {
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = CommLogEventArgs.LogCategory.Info, Message = "Hello" });
+            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = CommLogEventArgs.LogCategory.Info, Message = "Load VKeyboard" });
         }
 
         /// <inheritdoc />
@@ -119,6 +132,9 @@ namespace Nebulator.VirtualKeyboard
                 CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = CommLogEventArgs.LogCategory.Error, Message = $"Unable to process midi keyboard file:{ex.Message}" });
                 ret = false;
             }
+
+            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = CommLogEventArgs.LogCategory.Info, Message = "Init VKeyboard" });
+            Show();
 
             return ret;
         }
