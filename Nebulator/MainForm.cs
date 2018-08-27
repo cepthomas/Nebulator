@@ -703,24 +703,24 @@ namespace Nebulator
                         int chanNum = (e.Step as Step).ChannelNumber;
                         // Dig out the note number. Note sign change for note off.
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
-                        handled = ProcessInput(ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
+                        handled = ProcessInput(sender as NInput, ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
                     }
                     else if(e.Step is StepControllerChange)
                     {
                         // Control change
                         StepControllerChange scc = e.Step as StepControllerChange;
-                        handled = ProcessInput(scc.ControllerId, scc.ChannelNumber, scc.Value);
+                        handled = ProcessInput(sender as NInput, scc.ControllerId, scc.ChannelNumber, scc.Value);
                     }
 
                     ///// Local common function /////
-                    bool ProcessInput(int ctrlId, int channelNum, int value) //TODOX also needs ICommInput specific device.
+                    bool ProcessInput(NInput input, int ctrlId, int channelNum, int value) //TODOX also needs ICommInput specific device.
                     {
                         bool ret = false;
 
                         // Run through our list of inputs of interest.
                         foreach (NController ctlpt in _script.InputControllers)
                         {
-                            if (ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
+                            if (ctlpt.Input == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
                             {
                                 // Assign new value which triggers script callback.
                                 ctlpt.BoundVar.Value = value;
@@ -748,7 +748,7 @@ namespace Nebulator
             BeginInvoke((MethodInvoker)delegate ()
             {
                 // Route all events through log.
-                string s = $"Comm{e.Category} {_stepTime} {e.Message}";
+                string s = $"{e.Category} {_stepTime} {e.Message}";
                 _logger.Info(s);
             });
         }

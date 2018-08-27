@@ -35,8 +35,8 @@ namespace Nebulator.Midi
         /// <inheritdoc />
         public string CommName { get; set; } = Utils.UNKNOWN_STRING;
 
-        /// <inheritdoc />
-        public bool Monitor { get; set; } = false;
+        ///// <inheritdoc />
+        //public bool Monitor { get; set; } = false;
 
         /// <inheritdoc />
         public CommCaps Caps { get; set; } = null;
@@ -211,7 +211,7 @@ namespace Nebulator.Midi
                         {
                             _midiOut.Send(msg);
 
-                            if (Monitor)
+                            //if (Monitor)
                             {
                                 LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
                             }

@@ -8,7 +8,7 @@ using Nebulator.Common;
 namespace Nebulator.Comm
 {
     /// <summary>
-    /// Base class for internal interface representation of a compiled event to be sent or received.
+    /// Base class for internal interface representation of a compiled event to be sent.
     /// </summary>
     public abstract class Step
     {
@@ -26,7 +26,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"ChannelNumber:{ChannelNumber}";
+            return $"channel:{ChannelNumber}";
         }
     }
 
@@ -58,7 +58,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepNoteOn: {base.ToString()} VelocityToPlay:{VelocityToPlay} Duration:{Duration}";
+            return $"StepNoteOn: {base.ToString()} note:{NoteNumber} vel:{VelocityToPlay} dur:{Duration}";
         }
     }
 
@@ -84,7 +84,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepNoteOff: {base.ToString()} NoteNumber:{NoteNumber}";
+            return $"StepNoteOff: {base.ToString()} note:{NoteNumber}";
         }
     }
 
@@ -117,7 +117,7 @@ namespace Nebulator.Comm
             }
             else // CC
             {
-                sb.Append($" ControllerId:{ControllerId} Value:{Value}");
+                sb.Append($" ControllerId:{ControllerId} value:{Value}");
             }
 
             return sb.ToString();
@@ -132,7 +132,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepPatch: {base.ToString()} PatchNumber:{PatchNumber}";
+            return $"StepPatch: {base.ToString()} patch:{PatchNumber}";
         }
     }
 
@@ -145,7 +145,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepInternal: {base.ToString()} Function:{ScriptFunction}";
+            return $"StepInternal: {base.ToString()} function:{ScriptFunction}";
         }
     }
 }

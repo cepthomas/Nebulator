@@ -47,15 +47,16 @@ namespace Nebulator
             txtView.WordWrap = UserSettings.TheSettings.WordWrap;
 
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
-
             btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
-            //btnWrap.Checked = true;
 
             btnMonIn.Checked = NebSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = NebSettings.TheSettings.MonitorOutput;
             btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
+
+            Colors.Add("ERROR:", Color.Pink);
+            Colors.Add("WARNING:", Color.Plum);
         }
         #endregion
 

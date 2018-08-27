@@ -42,8 +42,8 @@ namespace Nebulator.VirtualKeyboard
         /// <inheritdoc />
         public CommCaps Caps { get; set; }
 
-        /// <inheritdoc />
-        public bool Monitor { get; set; }
+        ///// <inheritdoc />
+        //public bool Monitor { get; set; }
         #endregion
 
         #region Lifecycle
@@ -254,8 +254,21 @@ namespace Nebulator.VirtualKeyboard
                     };
                 }
 
+                //if (Monitor)
+                {
+                    LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
+                }
+
                 CommInputEvent.Invoke(this, new CommInputEventArgs() { Step = step });
             }
+        }
+
+        /// <summary>Ask host to do something with this.</summary>
+        /// <param name="cat"></param>
+        /// <param name="msg"></param>
+        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
+        {
+            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
         }
         #endregion
 

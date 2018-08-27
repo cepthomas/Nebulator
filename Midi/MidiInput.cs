@@ -32,8 +32,8 @@ namespace Nebulator.Midi
         /// <inheritdoc />
         public string CommName { get; set; } = Utils.UNKNOWN_STRING;
 
-        /// <inheritdoc />
-        public bool Monitor { get; set; } = false;
+        ///// <inheritdoc />
+        //public bool Monitor { get; set; } = false;
 
         /// <inheritdoc />
         public CommCaps Caps { get; set; } = null;
@@ -90,7 +90,7 @@ namespace Nebulator.Midi
                 ret = false;
             }
 
-            LogMsg(CommLogEventArgs.LogCategory.Info, $"****** Midi In!");
+            //LogMsg(CommLogEventArgs.LogCategory.Info, $"****** Midi In!");
 
             return ret;
         }
@@ -198,7 +198,7 @@ namespace Nebulator.Midi
                         {
                             ChannelNumber = evt.Channel,
                             ControllerId = (int)evt.Controller,
-                            Value = (byte)evt.ControllerValue
+                            Value = evt.ControllerValue
                         };
                     }
                     break;
@@ -222,7 +222,7 @@ namespace Nebulator.Midi
                 CommInputEventArgs args = new CommInputEventArgs() { Step = step };
                 CommInputEvent?.Invoke(this, args);
 
-                if (Monitor)
+                //if (Monitor)
                 {
                     LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
                 }
@@ -234,7 +234,7 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            if (Monitor)
+            //if (Monitor)
             {
                 LogMsg(CommLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
             }

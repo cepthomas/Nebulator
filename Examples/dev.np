@@ -9,8 +9,8 @@ NInput MY_VKEY;
 // All the neb variables.
 NVariable BACK_COLOR;
 NVariable MOD1;
-NVariable CTL_NOTE;
-NVariable V_NOTE;
+NVariable KBD_NOTE;
+NVariable VKBD_NOTE;
 NVariable CTL2;
 NVariable CTL3;
 
@@ -49,11 +49,11 @@ public override void setupNeb()
     CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
-    CTL_NOTE = createVariable("note", 60, -127, 127, On_CTL_NOTE); // note neg number for note off encoding
-    V_NOTE = createVariable("note", 60, -127, 127, On_V_NOTE);
+    KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
+    VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
-    // MY_MIDI_IN = createInput("MPK mini");
+    MY_MIDI_IN = createInput("MPK mini");
     MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
 
     // All the output channels.
@@ -63,12 +63,12 @@ public override void setupNeb()
     DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
 
     // All the input controllers.
-    // createController(MY_MIDI_IN, 0, 1, MOD1); // modulate eq
-    // createController(MY_MIDI_IN, 0, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-    // createController(MY_MIDI_IN, 0, 3, CTL3); // another controller
-    // createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
-    // createController(MY_MIDI_IN, 0, 0, CTL_NOTE);  // make some funny notes
-    createController(MY_VKEY, 0, NoteControl, V_NOTE);
+    createController(MY_MIDI_IN, 0, 1, MOD1); // modulate eq
+    createController(MY_MIDI_IN, 0, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+    createController(MY_MIDI_IN, 0, 3, CTL3); // another controller
+    createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+    createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
+    createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
 
     // levers
     createLever(BACK_COLOR);
@@ -189,26 +189,6 @@ void randish()
     }
 }
 
-////////////// processing stuff ////////////////////
-
-public override void setup()
-{
-    // size(200, 400);
-    size(500, 500);
-
-    colorMode(HSB, 360, 100, 100);
-    noStroke(); // draw no lines
-    frameRate(2);
-
-    BACK_COLOR.Value = 100;
-}
-
-public override void keyPressed()
-{
-    print("keyPressed:", key);
-    // size(500, 500);
-}
-
 public void On_BACK_COLOR()
 {
     //print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
@@ -238,37 +218,58 @@ public void On_MOD1()
     sendController(SYNTH, 1, MOD1.Value);
 }
 
-public void On_V_NOTE()
+public void On_VKBD_NOTE()
 {
-    //print("V_NOTE", "=", V_NOTE.Value);
+    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
 
     // Test for note on or off.
-    if(V_NOTE.Value > 0)
+    if(VKBD_NOTE.Value > 0)
     {
-        sendNoteOn(SYNTH, V_NOTE.Value, 110);
+        sendNoteOn(SYNTH, VKBD_NOTE.Value, 110);
     }
     else
     {
-        sendNoteOff(SYNTH, -V_NOTE.Value);
+        sendNoteOff(SYNTH, -VKBD_NOTE.Value);
     }
 }
 
-public void On_CTL_NOTE()
+public void On_KBD_NOTE()
 {
-    //print("CTL_NOTE", "=", CTL_NOTE.Value);
+    //print("KBD_NOTE", "=", KBD_NOTE.Value);
 
     // Test for note on or off.
-    if(CTL_NOTE.Value > 0)
+    if(KBD_NOTE.Value > 0)
     {
-        //sendNoteOn(PIANO, CTL_NOTE.Value, 110);
-        sendNoteOn(SYNTH, CTL_NOTE.Value, 110);
-        //sendNote(SYNTH, CTL_NOTE.Value, 90, 2.0); // fixed duration
+        //sendNoteOn(PIANO, KBD_NOTE.Value, 110);
+        sendNoteOn(SYNTH, KBD_NOTE.Value, 110);
+        //sendNote(SYNTH, KBD_NOTE.Value, 90, 2.0); // fixed duration
     }
     else
     {
-        //sendNoteOff(PIANO, -CTL_NOTE.Value);
-        sendNoteOff(SYNTH, -CTL_NOTE.Value);
+        //sendNoteOff(PIANO, -KBD_NOTE.Value);
+        sendNoteOff(SYNTH, -KBD_NOTE.Value);
     }
+}
+
+
+////////////// processing stuff ////////////////////
+
+public override void setup()
+{
+    // size(200, 400);
+    size(500, 500);
+
+    colorMode(HSB, 360, 100, 100);
+    noStroke(); // draw no lines
+    frameRate(2);
+
+    BACK_COLOR.Value = 100;
+}
+
+public override void keyPressed()
+{
+    print("keyPressed:", key);
+    // size(500, 500);
 }
 
 public override void draw()
@@ -365,124 +366,3 @@ void drawRecursive(float x, float y, float squareSize, float minSize)
         drawRecursive(x, y + squareSize, squareSize / 2, minSize);
     }
 }
-
-/*
---------------------------------------------------------------------
-Types of contrapuntal motion
-
-In parallel motion, two voices move in the same direction by the same generic interval. For example, the following two voices both move up by a step. Note also that both dyads form the same generic interval (sixth). This will always be true when two voices move in parallel motion.
-
-In similar motion, also called direct motion, two voices move in the same direction, but by different intervals. For example, the following two voices both move down, but the upper voice moves by step while the lower voice moves by leap. Note also that the two dyads are different generic intervals. This will always be the case with similar or direct motion.
-
-In contrary motion, two voices move in opposite directions—one up, the other down.
-
-In oblique motion, one voice is stationary, while the other voice moves (in either direction). The stationary tone may or may not be rearticulated.
-
---------------------------------------------------------------------
-Generative Music becomes Reflective Music when your text can be used as a seed for how it starts.
-http://spheric-lounge-live-ambient-music.blogspot.com/
-
-The random item stream pattern type uses the optional keyword :weight to alter the probability of an event being selected in relation to the other events in the item stream.
->>> need this, for scale note selections.
-
-The graph item stream pattern type creates an item stream of user-specified rules for traversing a series of nodes called a graph.
->>> my loops - rules to change/transition.
-
-Sonification uses data that is typically not musical and involves remapping this to musical parameters to create a composition.
-
----------------------------------------------------------------------
-How Phase Music Works
-Phasing by playing e.g. six loops with different durations - sync/phase.
-
-Random note/Octave Shifts, Instrumentation, etc...
-
-And now we come to the real technical trick that underlies "It's Gonna Rain": What we are hearing are two identical tape loops playing at the same time. There's one in the left ear and one in the right. But one of those loops is running ever so slightly faster than the other.
-
-The difference is so small you don't even notice it at first, but after a while it amounts to a phase shift between the two loops that keeps growing bigger and bigger as time goes by. First it sounds like there's an echo. Then the echo transforms into a repeating effect, and then it builds into a series of strange combinations of sounds as different parts of the sample overlap with others. At the halfway point the loops start to approach each other again, and we go back through repetition and echo to unison.
-
---------------------------------------------------------------------
-http://www.auralfractals.net/about/
-
-The Generators are a series of algorithms used for creating musical compositions. They generate the base pattern seed from diverse 
-procedural methods, such as fractals (The Lyapunov Generators, Random Walks, etc), Cellular Automatas (Heat CA, Harmonic Oscillators), or musical rules (Tone Walks).
-
-The generators can be accessed from the Base Pattern Editor.
-
-AI Inverse Pentatonic: AI Generator over the pentatonic scale with tonal inversion
-AI Inverse Scale:: AI Generator over the selected tones with tonal inversion
-AI Inverse: AI Generator over white notes with tonal inversion
-AI Pentatonic: Artificial Intelligence Generator over the pentatonic scale
-AI Scale: Artificial Intelligence Generator over the selected tones
-AI White Notes: Artificial Intelligence Generator over white notes
-Cellular Automata I: Notes comes from the cell values of the Heat Cellular Automata.
-Cellular Automata II: Notes comes from a cell value of the Heat Cellular Automata in time.
-Cellular Automata III: Variation of the Heat Cellular Automata Generator.
-Cellular Automata IV: Variation of the Heat Cellular Automata Generator in time.
-Harmonic Oscillator: Simple Harmonic Oscillator
-Lyapunov Fractal: Generate notes from the Lyapunov Fractal iteration
-Markov Chains: Simple tone generator using Markov Chains
-Normalized AI Inverse Pentatonic: Normalized AI Generator over the pentatonic scale with tonal inversion
-Normalized AI Inverse Scale: Normalized AI Generator over the selected tones with tonal inversion
-Normalized AI Inverse: Normalized AI Generator over white notes with tonal inversion
-Pattern II: Multi tonal repetitive pattern
-Pattern: Simple repetitive tonal pattern
-Pentatonic Markov Chain: Markov Chain generator over the pentatonic scale
-Pentatonic Walk I: Random Walk over the pentatonic scale
-Pentatonic Walk II: Weighted Random Walk over the pentatonic scale
-Pentatonic Walk III: Variation of the Weighted Random Walk over the pentatonic scale
-Random Walk II: Random Walk over selected tones
-Random Walk: Simple Random Walk generator
-Random: Creates a random sequence of notes
-Sine Wave: Notes are created from a sinusoidal curve
-Symmetric Random Walk: Uses a symmetrical version of the Random Walk algorithm
-Tone Walk I: Random walk using Tonnetz
-Tone Walk II: Weighted Random Walk using Tonnetz
-Tone Walk III: Variation of the Random Walk using Tonnetz
-
-The Musical Transformations are a set of rules applied to the current Base Pattern, that modify the notes in both tones and positions.
-The Transformations can also reverse in time the note structure, also can invert the tones of the notes.
-
-First Half 1 Octave Down: The second half contains the notes of the first half lowered one octave.
-First Half 1 Octave Up: The second half contains the notes of the first half raised one octave.
-First Half Mirrored, 1 Octave Down: The second half contains the notes of the first half lowered one octave but reversed in time.
-First Half Mirrored, 1 Octave Up: The second half contains the notes of the first half raised one octave but reversed in time.
-First Half Mirrored, 1 Octave Up: The second half contains the notes of the first half raised one octave but reversed in time.
-Mirror First Half: The first half of the Base Pattern is mirrored in the second half
-Mirror Second Half: The second half of the Base Pattern is mirrored on the first half
-No Transformation: No Transformation is applied to the current Base Pattern
-One Octave Down, Period 16: The tone of the note is lowered one octave every 16 notes during the next 16 notes.
-One Octave Down, Period 32: The tone of the note is lowered one octave every 32 notes during the next 32 notes.
-One Octave Up, Period 16: The tone of the note is raised one octave every 16 notes during the next 16 notes.
-One Octave Up, Period 32: The tone of the note is raised one octave every 32 notes during the next 32 notes.
-Period One Round Wave: The tone of the note is affected by the amplitude of the round wave.
-Period One Sine Wave: The tone of the note is affected by the amplitude of the sinusoidal wave.
-Period One Triangular Wave: The tone of the note is affected by the amplitude of the triangular wave.
-Period Two Round Wave: The tone of the note is affected by the amplitude of the round wave with double frequency.
-Period Two Sine Wave: The tone of the note is affected by the amplitude of the sinusoidal wave with double frequency.
-Period Two Triangular Wave: The tone of the note is affected by the amplitude of the triangular wave with double frequency.
-Second Half Mirrored, 1 Octave Down: The first half contains the notes of the second half lowered one octave but reversed in time.
-Second Half Mirrored, 1 Octave Up: The first half contains the notes of the second half raised one octave but reversed in time.
-Time Reversed: The whole base pattern is reversed in time.
-
-------------------------- Markov chain ---------------------------------
-first-order Markov chain.
-Current next next next
-Note    A    B    C
-A       20%  50%  30%
-B       35%  25%  40%
-C       70%  14%  16%
-
-second-order Markov chain. current state and also the previous state
-Current next next next
-Notes   A    B    C
-A A     15%  55%  30%
-A B     20%  45%  35%
-A C     60%  30%  10%
-B A     35%  25%  40%
-B B     49%  48%  3%
-B C     60%  20%  20%
-C A     5%   75%  20%
-C B     0%   90%  10%
-C C     70%  14%  16%
-
-*/

@@ -56,17 +56,18 @@ namespace Nebulator.Script
         /// <returns></returns>
         protected NInput createInput(string commName)
         {
+            NInput nin = null;
             var ins = Inputs.Where(ci => ci.CommName == commName);
             if(ins.Count() == 0)
             {
-                throw new Exception($"Invalid input comm name: {commName}");
+                throw new Exception($"Invalid input name: {commName}");
             }
             else
             {
-                NInput nin = ins.First();
+                nin = ins.First();
                 nin.Init();
-                return nin;
             }
+            return nin;
         }
 
         /// <summary>
@@ -76,17 +77,18 @@ namespace Nebulator.Script
         /// <returns></returns>
         protected NOutput createOutput(string commName)
         {
+            NOutput nout = null;
             var outs = Outputs.Where(ci => ci.CommName == commName);
             if (outs.Count() == 0)
             {
-                throw new Exception($"Invalid input comm name: {commName}");
+                throw new Exception($"Invalid input name: {commName}");
             }
             else
             {
-                NOutput nout = outs.First();
+                nout = outs.First();
                 nout.Init();
-                return nout;
             }
+            return nout;
         }
 
         /// <summary>
@@ -169,7 +171,7 @@ namespace Nebulator.Script
         /// <param name="wobafter"></param>
         protected NChannel createChannel(string name, NOutput output, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
-            NChannel nt = new NChannel() // TODO do wobble differently?
+            NChannel nt = new NChannel()
             {
                 Name = name,
                 Output = output,

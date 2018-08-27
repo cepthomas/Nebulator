@@ -21,8 +21,8 @@ namespace Nebulator.Comm
         /// <summary>What it can do.</summary>
         CommCaps Caps { get; set; }
 
-        /// <summary>Log traffic.</summary>
-        bool Monitor { get; set; }
+        ///// <summary>Log traffic.</summary>
+        //bool Monitor { get; set; } //TODOX clean up all these + global one.
         #endregion
 
         #region Functions

@@ -1,10 +1,10 @@
 {
   "Values": {
-    "master.volume": 90,
+    "master.volume": 151,
     "master.speed": 100.0,
     "piano.volume": 90,
     "bass.volume": 90,
     "synth.volume": 90,
-    "drums.volume": 103
+    "drums.volume": 90
   }
 }
