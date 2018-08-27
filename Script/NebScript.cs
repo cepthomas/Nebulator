@@ -56,7 +56,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         protected NInput createInput(string commName)
         {
-            var ins = Inputs.Where(ci => ci.Comm.CommName == commName);
+            var ins = Inputs.Where(ci => ci.CommName == commName);
             if(ins.Count() == 0)
             {
                 throw new Exception($"Invalid input comm name: {commName}");
@@ -64,7 +64,7 @@ namespace Nebulator.Script
             else
             {
                 NInput nin = ins.First();
-                nin.Comm.Init();
+                nin.Init();
                 return nin;
             }
         }
@@ -76,7 +76,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         protected NOutput createOutput(string commName)
         {
-            var outs = Outputs.Where(ci => ci.Comm.CommName == commName);
+            var outs = Outputs.Where(ci => ci.CommName == commName);
             if (outs.Count() == 0)
             {
                 throw new Exception($"Invalid input comm name: {commName}");
@@ -84,7 +84,7 @@ namespace Nebulator.Script
             else
             {
                 NOutput nout = outs.First();
-                nout.Comm.Init();
+                nout.Init();
                 return nout;
             }
         }
@@ -98,7 +98,7 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createController(NInput input, int channelNum, int controlId, NVariable bound)
         {
-            controlId = Utils.Constrain(controlId, input.Comm.Caps.MinControllerValue, input.Comm.Caps.MaxControllerValue);
+            controlId = Utils.Constrain(controlId, input.Caps.MinControllerValue, input.Caps.MaxControllerValue);
             NController mp = new NController()
             {
                 Input = input,
@@ -196,13 +196,13 @@ namespace Nebulator.Script
             if (play)
             {
                 int vel = channel.NextVol(vol);
-                int notenum = Utils.Constrain(inote, channel.Output.Comm.Caps.MinNote, channel.Output.Comm.Caps.MaxNote);
+                int notenum = Utils.Constrain(inote, channel.Output.Caps.MinNote, channel.Output.Caps.MaxNote);
 
                 if (vol > 0)
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
-                        Comm = channel.Output.Comm,
+                        Output = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum,
                         Velocity = vel,
@@ -211,18 +211,18 @@ namespace Nebulator.Script
                     };
 
                     step.Adjust(volume, channel.Volume);
-                    channel.Output.Comm.Send(step);
+                    channel.Output.Send(step);
                 }
                 else
                 {
                     StepNoteOff step = new StepNoteOff()
                     {
-                        Comm = channel.Output.Comm,
+                        Output = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum
                     };
 
-                    channel.Output.Comm.Send(step);
+                    channel.Output.Send(step);
                 }
             }
         }
@@ -281,13 +281,13 @@ namespace Nebulator.Script
         {
             StepControllerChange step = new StepControllerChange()
             {
-                Comm = channel.Output.Comm,
+                Output = channel.Output,
                 ChannelNumber = channel.ChannelNumber,
                 ControllerId = ctlnum,
                 Value = val
             };
 
-            channel.Output.Comm.Send(step);
+            channel.Output.Send(step);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -297,12 +297,12 @@ namespace Nebulator.Script
         {
             StepPatch step = new StepPatch()
             {
-                Comm = channel.Output.Comm,
+                Output = channel.Output,
                 ChannelNumber = channel.ChannelNumber,
                 PatchNumber = patch
             };
 
-            channel.Output.Comm.Send(step);
+            channel.Output.Send(step);
         }
 
         /// <summary>Send a named sequence.</summary>

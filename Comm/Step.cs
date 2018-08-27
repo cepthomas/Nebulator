@@ -12,8 +12,8 @@ namespace Nebulator.Comm
     /// </summary>
     public abstract class Step
     {
-        /// <summary>Comm device to use - optional.</summary>
-        public ICommOutput Comm { get; set; } = null;
+        /// <summary>Associated comm device - optional.</summary>
+        public NOutput Output { get; set; } = null;
 
         /// <summary>Channel number.</summary>
         public int ChannelNumber { get; set; } = 1;
@@ -51,8 +51,8 @@ namespace Nebulator.Comm
         public override void Adjust(int masterVolume, int channelVolume)
         {
             // Maybe alter note velocity.
-            int vel = Velocity * channelVolume * masterVolume / Comm.Caps.MaxVolume / Comm.Caps.MaxVolume;
-            VelocityToPlay = Utils.Constrain(vel, 0, Comm.Caps.MaxVolume);
+            int vel = Velocity * channelVolume * masterVolume / Output.Caps.MaxVolume / Output.Caps.MaxVolume;
+            VelocityToPlay = Utils.Constrain(vel, 0, Output.Caps.MaxVolume);
         }
 
         /// <summary>For viewing pleasure.</summary>

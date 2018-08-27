@@ -10,7 +10,7 @@ namespace Nebulator.Midi
     /// <summary>
     /// Abstraction layer between NAudio midi and Nebulator steps.
     /// </summary>
-    public class MidiInput : ICommInput
+    public class MidiInput : NInput
     {
         #region Fields
         /// <summary>Midi input device.</summary>

@@ -137,8 +137,8 @@ namespace Nebulator.Script
         /// </summary>
         public void Dispose()
         {
-            Inputs.ForEach(ci => { if (ci.Comm != null) ci.Comm.Dispose(); });
-            Outputs.ForEach(co => { if (co.Comm != null) co.Comm.Dispose(); });
+            Inputs.ForEach(ci => { if (ci != null) ci.Dispose(); });
+            Outputs.ForEach(co => { if (co != null) co.Dispose(); });
 
             Dispose(true);
             GC.SuppressFinalize(this);

@@ -65,7 +65,7 @@ public override void setupNeb()
     MODN = createVariable("modn", 0, -10, 10);
 
     // I/O
-    MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); // or "loopMIDI Port 1"
+    MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); // or your own
 
     // All the channels.
     KEYS = createChannel("keys", MIDI_OUT, 1, 5);

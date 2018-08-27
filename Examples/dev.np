@@ -1,48 +1,10 @@
 
-
-////// TODOX keep sections and decl?
-// NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
-// PART1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
-// - keep sequences in general? Dump decl model?
-//
-// C:\Dev\Nebulator\Examples\algo1.np:
-//    31: // NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
-//   111:     // DRUMS_SIMPLE = createSequence(8);
-//
-// C:\Dev\Nebulator\Examples\example.np:
-//   160:     NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
-//   165:     NSection PART2 = createSection("part2", WHEN2, WHEN3 - WHEN2);
-//   171:     NSection PART3 = createSection("part3", WHEN3, WHEN4 - WHEN3);
-//    82:     KEYS_VERSE1 = createSequence(16);
-//    96:     KEYS_VERSE2 = createSequence(8);
-//   115:     BASS_VERSE = createSequence(8);
-//   125:     DRUMS_VERSE = createSequence(8);
-//   141:     DRUMS_SIMPLE = createSequence(8);
-//   146:     DYNAMIC_SEQ = createSequence(8);
-//   153:     ALGO_SEQ = createSequence(8);
-//   156:     NULL_SEQ = createSequence(8);
-
-
-
-// My akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
-
-// Support microtonal notes with Pitch changes.
-// Pitch Bend Range can be set by sending MIDI controller messages. Specifically, you do it with Registered Parameters (cc# 100 and 101).
-// On the MIDI channel in question, you need to send:
-// MIDI cc101  = 0
-// MIDI cc100  = 0
-// MIDI cc6    = value of desired bend range (in semitones)
-// Example: Lets say you want to set the bend range to 2 semi-tones. First you send cc# 100 with a value of 0; then cc#101 with a value of 0. This turns on reception for setting pitch bend with the Data controller (#6). Then you send cc# 6 with a value of 2 (in semitones; this will give you a whole step up and a whole step down from the center).
-// Once you have set the bend range the way you want, then you send controller 100 or 101 with a value of 127 so that any further messages of controller 6 (which you might be using for other stuff) won't change the bend range.
-
-
-
+/////////// Laboratory for brilliant new ideas //////////
 
 // IO devices.
 NOutput MY_MIDI_OUT;
 NInput MY_MIDI_IN;
 NInput MY_VKEY;
-
 
 // All the neb variables.
 NVariable BACK_COLOR;
@@ -57,7 +19,6 @@ NChannel PIANO;
 NChannel BASS;
 NChannel SYNTH;
 NChannel DRUMS;
-
 
 // All the sequences
 NSequence SEQ1;

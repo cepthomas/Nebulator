@@ -217,7 +217,7 @@ namespace Nebulator
                 ProcessPlay(PlayCommand.Stop, false);
 
                 // Just in case.
-                _script?.Outputs.ForEach(o => o.Comm?.Kill());
+                _script?.Outputs.ForEach(o => o?.Kill());
 
                 if (_script != null)
                 {
@@ -254,8 +254,8 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                _script?.Outputs.ForEach(o => { o.Comm?.Stop(); o.Comm?.Dispose(); });
-                _script?.Inputs.ForEach(i => { i.Comm?.Stop(); i.Comm?.Dispose(); });
+                _script?.Outputs.ForEach(o => { o?.Stop(); o?.Dispose(); });
+                _script?.Inputs.ForEach(i => { i?.Stop(); i?.Dispose(); });
 
                 components?.Dispose();
             }
@@ -362,10 +362,9 @@ namespace Nebulator
                     // Hook up comms for runtime.
                     for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                     {
-                        ICommInput cin = new MidiInput() { CommName = MidiIn.DeviceInfo(device).ProductName };
-                        cin.CommInputEvent += Comm_InputEvent;
-                        cin.CommLogEvent += Comm_LogEvent;
-                        NInput input = new NInput() { Comm = cin };
+                        NInput input = new MidiInput() { CommName = MidiIn.DeviceInfo(device).ProductName };
+                        input.CommInputEvent += Comm_InputEvent;
+                        input.CommLogEvent += Comm_LogEvent;
                         _script.Inputs.Add(input);
                     }
 
@@ -379,15 +378,13 @@ namespace Nebulator
                         vk.Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y);
                         vk.CommInputEvent += Comm_InputEvent;
                         vk.CommLogEvent += Comm_LogEvent;
-                        NInput input = new NInput() { Comm = vk };
-                        _script.Inputs.Add(input);
+                        _script.Inputs.Add(vk);
                     }
 
                     for (int device = 0; device < MidiOut.NumberOfDevices; device++)
                     {
-                        ICommOutput cout = new MidiOutput() { CommName = MidiOut.DeviceInfo(device).ProductName };
-                        cout.CommLogEvent += Comm_LogEvent;
-                        NOutput output = new NOutput() { Comm = cout };
+                        NOutput output = new MidiOutput() { CommName = MidiOut.DeviceInfo(device).ProductName };
+                        output.CommLogEvent += Comm_LogEvent;
                         _script.Outputs.Add(output);
                     }
 
@@ -618,7 +615,7 @@ namespace Nebulator
                     if (_stepTime.Tick >= _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
-                        _script?.Outputs.ForEach(o => o.Comm?.Kill()); // just in case
+                        _script?.Outputs.ForEach(o => o?.Kill()); // just in case
                     }
                 }
                 // else keep going
@@ -650,8 +647,8 @@ namespace Nebulator
             ProcessRuntime();
 
             // Process any lingering noteoffs etc.
-            _script?.Outputs.ForEach(o => o.Comm?.Housekeep());
-            _script?.Inputs.ForEach(i => i.Comm?.Housekeep());
+            _script?.Outputs.ForEach(o => o?.Housekeep());
+            _script?.Inputs.ForEach(i => i?.Housekeep());
 
             ///// Local common function /////
             void PlayStep(Step step)
@@ -681,7 +678,7 @@ namespace Nebulator
                         {
                             // Maybe tweak values.
                             step.Adjust(sldVolume.Value, channel.Volume);
-                            step.Comm.Send(step);
+                            step.Output.Send(step);
                         }
                     }
                 }
@@ -704,7 +701,7 @@ namespace Nebulator
                     if (e.Step is StepNoteOn || e.Step is StepNoteOff)
                     {
                         int chanNum = (e.Step as Step).ChannelNumber;
-                        // Dig out the note number. Note sign change for note off. TODO better way to do this?
+                        // Dig out the note number. Note sign change for note off.
                         int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
                         handled = ProcessInput(ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
                     }
@@ -771,9 +768,9 @@ namespace Nebulator
                     // Kill any not solo.
                     _script.Channels.ForEach(c =>
                     {
-                        if (c.State != ChannelState.Solo && c.Output.Comm != null)
+                        if (c.State != ChannelState.Solo && c.Output != null)
                         {
-                            c.Output.Comm.Kill(c.ChannelNumber);
+                            c.Output.Kill(c.ChannelNumber);
                         }
                     });
                 }
@@ -1108,9 +1105,9 @@ namespace Nebulator
             // Get the vkbd position.
             _script?.Inputs.ForEach(i => 
             {
-                if(i.Comm is VirtualKeyboard.VKeyboard)
+                if(i is VirtualKeyboard.VKeyboard)
                 {
-                    NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(i.Comm as VirtualKeyboard.VKeyboard);
+                    NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(i as VirtualKeyboard.VKeyboard);
                 }
             });
 
@@ -1214,7 +1211,7 @@ namespace Nebulator
                     chkPlay.Checked = false;
 
                     // Send midi stop all notes just in case.
-                    _script?.Outputs.ForEach(o => o.Comm?.Kill());
+                    _script?.Outputs.ForEach(o => o?.Kill());
                     break;
 
                 case PlayCommand.Rewind:
@@ -1392,7 +1389,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Kill_Click(object sender, EventArgs e)
         {
-            _script?.Outputs.ForEach(o => o.Comm?.Kill());
+            _script?.Outputs.ForEach(o => o?.Kill());
         }
         #endregion
     }

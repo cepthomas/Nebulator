@@ -13,7 +13,7 @@ namespace Nebulator.VirtualKeyboard
     /// <summary>
     /// Virtual keyboard control borrowed from Leslie Sanford with extras.
     /// </summary>
-    public partial class VKeyboard : Form, ICommInput
+    public partial class VKeyboard : Form, NInput
     {
         #region Events
         /// <inheritdoc />

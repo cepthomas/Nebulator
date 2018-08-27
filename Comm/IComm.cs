@@ -40,8 +40,8 @@ namespace Nebulator.Comm
         #endregion
     }
 
-    /// <summary>Input specific version.</summary>
-    public interface ICommInput : IComm
+    /// <summary>Input specific version. Slight naming violation to support user scripts consistently.</summary>
+    public interface NInput : IComm
     {
         #region Events
         /// <summary>Reporting a change to listeners.</summary>
@@ -49,15 +49,15 @@ namespace Nebulator.Comm
         #endregion
     }
 
-    /// <summary>Output specific version.</summary>
-    public interface ICommOutput : IComm
+    /// <summary>Output specific version. Slight naming violation to support user scripts consistently.</summary>
+    public interface NOutput : IComm
     {
         #region Functions
         /// <summary>Comm out processor.</summary>
         /// <param name="step"></param>
         bool Send(Step step);
 
-        /// <summary>Kill one channel.</summary>
+        /// <summary>Kill channel(s).</summary>
         /// <param name="channel">Specific channel or null for all.</param>
         void Kill(int? channel = null);
         #endregion

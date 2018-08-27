@@ -15,46 +15,6 @@ namespace Nebulator.Script
     public enum ChannelState { Normal, Mute, Solo }
 
     /// <summary>
-    /// One input comm device.
-    /// </summary>
-    public class NInput
-    {
-        #region Properties
-        /// <summary>The associated internal device.</summary>
-        public ICommInput Comm { get; set; } = null;
-        #endregion
-
-        /// <summary>
-        /// For viewing pleasure.
-        /// </summary>
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder($"NInput:");
-            return sb.ToString();
-        }
-    }
-
-    /// <summary>
-    /// One output comm device.
-    /// </summary>
-    public class NOutput
-    {
-        #region Properties
-        /// <summary>The associated internal device.</summary>
-        public ICommOutput Comm { get; set; } = null;
-        #endregion
-
-        /// <summary>
-        /// For viewing pleasure.
-        /// </summary>
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder($"NOutput:");
-            return sb.ToString();
-        }
-    }
-
-    /// <summary>
     /// One bound variable.
     /// </summary>
     public class NVariable
