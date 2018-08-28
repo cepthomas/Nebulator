@@ -34,9 +34,6 @@ namespace Nebulator.Common
         [DisplayName("Background Color"), Description("The color used for overall background."), Browsable(true)]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
-        [DisplayName("Word Wrap"), Description("Set UI preference."), Browsable(true)]
-        public bool WordWrap { get; set; } = false;
-
         [DisplayName("Lock UI"), Description("Forces UI to always topmost."), Browsable(true)]
         public bool LockUi { get; set; } = false;
         #endregion

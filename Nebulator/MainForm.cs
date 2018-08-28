@@ -97,6 +97,7 @@ namespace Nebulator
             UserSettings.Load(appDir);
             NebSettings.Load(appDir);
             InitializeComponent();
+            toolStrip1.Renderer = new Common.CheckBoxRenderer(); // for checked color.
         }
 
         /// <summary>
@@ -105,13 +106,47 @@ namespace Nebulator
         void MainForm_Load(object sender, EventArgs e)
         {
             #region Init UI from settings
+            // Main form.
             Location = new Point(UserSettings.TheSettings.MainFormInfo.X, UserSettings.TheSettings.MainFormInfo.Y);
             Size = new Size(UserSettings.TheSettings.MainFormInfo.Width, UserSettings.TheSettings.MainFormInfo.Height);
             WindowState = FormWindowState.Normal;
+            BackColor = UserSettings.TheSettings.BackColor;
 
+            // Where we draw.
             _surface.Visible = true;
             _surface.Location = new Point(Right, Top);
             _surface.TopMost = UserSettings.TheSettings.LockUi;
+
+            // The rest of the controls.
+            textViewer.Colors.Add("ERROR", Color.Plum);
+            textViewer.Colors.Add("WARNING:", Color.LightPink);
+
+            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
+            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
+            btnKillComm.Image = Utils.ColorizeBitmap(btnKillComm.Image, UserSettings.TheSettings.IconColor);
+            btnSettings.Image = Utils.ColorizeBitmap(btnSettings.Image, UserSettings.TheSettings.IconColor);
+            btnAbout.Image = Utils.ColorizeBitmap(btnAbout.Image, UserSettings.TheSettings.IconColor);
+            fileDropDownButton.Image = Utils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
+            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
+            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+
+            btnMonIn.Checked = NebSettings.TheSettings.MonitorInput;
+            btnMonOut.Checked = NebSettings.TheSettings.MonitorOutput;
+
+            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
+            chkPlay.BackColor = UserSettings.TheSettings.BackColor;
+            chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+
+            potSpeed.ControlColor = UserSettings.TheSettings.IconColor;
+            potSpeed.Font = UserSettings.TheSettings.ControlFont;
+            potSpeed.Invalidate();
+
+            sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.Font = UserSettings.TheSettings.ControlFont;
+            sldVolume.Invalidate();
+
+            timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
+            timeMaster.Invalidate();
             #endregion
 
             InitLogging();
@@ -128,8 +163,6 @@ namespace Nebulator
             _timer.Start();
 
             KeyPreview = true; // for routing kbd strokes properly
-
-            InitControls();
 
             _watcher.FileChangeEvent += Watcher_Changed;
 
@@ -764,12 +797,28 @@ namespace Nebulator
         /// </summary>
         void Comm_LogEvent(object sender, CommLogEventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            bool logit = true;
+
+            switch(e.Category)
             {
-                // Route all events through log.
-                string s = $"{e.Category} {_stepTime} {e.Message}";
-                _logger.Info(s);
-            });
+                case CommLogEventArgs.LogCategory.Recv:
+                    logit = NebSettings.TheSettings.MonitorInput;
+                    break;
+
+                case CommLogEventArgs.LogCategory.Send:
+                    logit = NebSettings.TheSettings.MonitorOutput;
+                    break;
+            }
+
+            if(logit)
+            {
+                BeginInvoke((MethodInvoker)delegate ()
+                {
+                    // Route all events through log.
+                    string s = $"{e.Category} {_stepTime} {e.Message}";
+                    _logger.Info(s);
+                });
+            }
         }
 
         /// <summary>
@@ -1042,6 +1091,24 @@ namespace Nebulator
             _stepTime = timeMaster.CurrentTime;
             ProcessPlay(PlayCommand.UpdateUiTime, true);
         }
+
+        /// <summary>
+        /// Monitor comm messages. Note that monitoring slows down processing so use judiciously.
+        /// </summary>
+        private void Mon_Click(object sender, EventArgs e)
+        {
+            NebSettings.TheSettings.MonitorInput = btnMonIn.Checked;
+            NebSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
+        }
+
+        /// <summary>
+        /// The meaning of life.
+        /// </summary>
+        void About_Click(object sender, EventArgs e)
+        {
+            About dlg = new About();
+            dlg.ShowDialog();
+        }
         #endregion
 
         #region Messages and logging
@@ -1071,8 +1138,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                string s = $"{msg}{Environment.NewLine}";
-                infoDisplay.AddInfo(s);
+                textViewer.AddLine(msg);
             });
         }
 
@@ -1098,7 +1164,6 @@ namespace Nebulator
                 f.Controls.Add(tv);
                 tv.Colors.Add(" ERROR ", Color.Plum);
                 tv.Colors.Add(" _WARN ", Color.LightPink);
-                tv.Colors.Add(" _INFO ", Color.LightGreen);
 
                 string appDir = Utils.GetAppDataDir();
                 string logFilename = Path.Combine(appDir, "log.txt");
@@ -1299,46 +1364,6 @@ namespace Nebulator
             double framesPerMsec = (double)_frameRate / 1000;
             double msecPerFrame = 1 / framesPerMsec;
             _timer.SetTimer("UI", (int)msecPerFrame);
-        }
-        #endregion
-
-        #region Internal stuff
-        /// <summary>
-        /// The meaning of life.
-        /// </summary>
-        void About_Click(object sender, EventArgs e)
-        {
-            About dlg = new About();
-            dlg.ShowDialog();
-        }
-
-        /// <summary>
-        /// Colorize by theme.
-        /// </summary>
-        void InitControls()
-        {
-            BackColor = UserSettings.TheSettings.BackColor;
-
-            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
-
-            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
-
-            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
-            chkPlay.BackColor = UserSettings.TheSettings.BackColor;
-            chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-
-            potSpeed.ControlColor = UserSettings.TheSettings.IconColor;
-            potSpeed.Font = UserSettings.TheSettings.ControlFont;
-            potSpeed.Invalidate();
-
-            sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.Font = UserSettings.TheSettings.ControlFont;
-            sldVolume.Invalidate();
-
-            timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
-            timeMaster.Invalidate();
-
-            infoDisplay.BackColor = UserSettings.TheSettings.BackColor;
         }
         #endregion
 

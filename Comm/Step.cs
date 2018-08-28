@@ -12,8 +12,8 @@ namespace Nebulator.Comm
     /// </summary>
     public abstract class Step
     {
-        /// <summary>Associated comm device - NInput or NOutput.</summary>
-        public IComm Comm { get; set; } = null;   // TODOX hmmmm attaching to each kinda klunky.
+        /// <summary>Associated comm device to use.</summary>
+        public IComm Comm { get; set; } = null;   // TODO hmmmm attaching to each kinda klunky.
 
         /// <summary>Channel number.</summary>
         public int ChannelNumber { get; set; } = 1;

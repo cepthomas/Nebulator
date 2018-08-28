@@ -41,9 +41,6 @@ namespace Nebulator.VirtualKeyboard
 
         /// <inheritdoc />
         public CommCaps Caps { get; set; }
-
-        ///// <inheritdoc />
-        //public bool Monitor { get; set; }
         #endregion
 
         #region Lifecycle
@@ -256,12 +253,8 @@ namespace Nebulator.VirtualKeyboard
                     };
                 }
 
-                //if (Monitor)
-                {
-                    LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
-                }
-
                 CommInputEvent.Invoke(this, new CommInputEventArgs() { Step = step });
+                LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
             }
         }
 

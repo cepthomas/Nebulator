@@ -32,9 +32,6 @@ namespace Nebulator.Midi
         /// <inheritdoc />
         public string CommName { get; set; } = Utils.UNKNOWN_STRING;
 
-        ///// <inheritdoc />
-        //public bool Monitor { get; set; } = false;
-
         /// <inheritdoc />
         public CommCaps Caps { get; set; } = null;
         #endregion
@@ -226,11 +223,7 @@ namespace Nebulator.Midi
                 // Pass it up for handling.
                 CommInputEventArgs args = new CommInputEventArgs() { Step = step };
                 CommInputEvent?.Invoke(this, args);
-
-                //if (Monitor)
-                {
-                    LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
-                }
+                LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
             }
         }
 
@@ -239,10 +232,7 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            //if (Monitor)
-            {
-                LogMsg(CommLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
-            }
+            LogMsg(CommLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
         }
 
         /// <summary>Ask host to do something with this.</summary>

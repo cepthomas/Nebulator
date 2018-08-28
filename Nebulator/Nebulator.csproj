@@ -132,12 +132,6 @@
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="InfoDisplay.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InfoDisplay.Designer.cs">
-      <DependentUpon>InfoDisplay.cs</DependentUpon>
-    </Compile>
     <Compile Include="Levers.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -165,9 +159,6 @@
     </Compile>
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InfoDisplay.resx">
-      <DependentUpon>InfoDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Levers.resx">
       <DependentUpon>Levers.cs</DependentUpon>
