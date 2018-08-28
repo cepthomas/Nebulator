@@ -24,6 +24,9 @@ using Nebulator.Midi;
 //   - Many tendrils involving ScriptDefinitions, NoteUtils, etc.
 
 
+            btnClear.Click += (object _, EventArgs __) => { txtView.Clear(); };
+            btnWrap.Click += (object _, EventArgs __) => { txtView.WordWrap = btnWrap.Checked; };
+
 
 namespace Nebulator
 {
