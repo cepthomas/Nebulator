@@ -36,7 +36,7 @@ namespace Nebulator.Script
                 {
                     StepInternal step = new StepInternal()
                     {
-                        Output = channel.Output,
+                        Comm = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         ScriptFunction = seqel.ScriptFunction
                     };
@@ -51,7 +51,7 @@ namespace Nebulator.Script
                         int vel = channel.NextVol(seqel.Volume);
                         StepNoteOn step = new StepNoteOn()
                         {
-                            Output = channel.Output,
+                            Comm = channel.Output,
                             ChannelNumber = channel.ChannelNumber,
                             NoteNumber = noteNum,
                             Velocity = vel,

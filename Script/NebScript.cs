@@ -204,7 +204,7 @@ namespace Nebulator.Script
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
-                        Output = channel.Output,
+                        Comm = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum,
                         Velocity = vel,
@@ -219,7 +219,7 @@ namespace Nebulator.Script
                 {
                     StepNoteOff step = new StepNoteOff()
                     {
-                        Output = channel.Output,
+                        Comm = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum
                     };
@@ -283,7 +283,7 @@ namespace Nebulator.Script
         {
             StepControllerChange step = new StepControllerChange()
             {
-                Output = channel.Output,
+                Comm = channel.Output,
                 ChannelNumber = channel.ChannelNumber,
                 ControllerId = ctlnum,
                 Value = val
@@ -299,7 +299,7 @@ namespace Nebulator.Script
         {
             StepPatch step = new StepPatch()
             {
-                Output = channel.Output,
+                Comm = channel.Output,
                 ChannelNumber = channel.ChannelNumber,
                 PatchNumber = patch
             };

@@ -160,6 +160,7 @@ namespace Nebulator.Midi
                         {
                             step = new StepNoteOff()
                             {
+                                Comm = this,
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                                 Velocity = 0
@@ -169,6 +170,7 @@ namespace Nebulator.Midi
                         {
                             step = new StepNoteOn()
                             {
+                                Comm = this,
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = evt.NoteNumber,
                                 Velocity = evt.Velocity,
@@ -184,6 +186,7 @@ namespace Nebulator.Midi
                         NoteEvent evt = me as NoteEvent;
                         step = new StepNoteOff()
                         {
+                            Comm = this,
                             ChannelNumber = evt.Channel,
                             NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                             Velocity = evt.Velocity
@@ -196,6 +199,7 @@ namespace Nebulator.Midi
                         ControlChangeEvent evt = me as ControlChangeEvent;
                         step = new StepControllerChange()
                         {
+                            Comm = this,
                             ChannelNumber = evt.Channel,
                             ControllerId = (int)evt.Controller,
                             Value = evt.ControllerValue
@@ -208,6 +212,7 @@ namespace Nebulator.Midi
                         PitchWheelChangeEvent evt = me as PitchWheelChangeEvent;
                         step = new StepControllerChange()
                         {
+                            Comm = this,
                             ChannelNumber = evt.Channel,
                             ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
                             Value = Utils.Constrain(evt.Pitch, Caps.MinPitchValue, Caps.MaxPitchValue)

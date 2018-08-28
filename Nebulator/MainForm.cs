@@ -663,6 +663,18 @@ namespace Nebulator
 
                     if (play)
                     {
+                        switch (step)
+                        {
+
+                            case StepInternal stin:
+
+                                break;
+
+
+
+                        }
+
+
                         if (step is StepInternal)
                         {
                             try
@@ -676,9 +688,16 @@ namespace Nebulator
                         }
                         else
                         {
-                            // Maybe tweak values.
-                            step.Adjust(sldVolume.Value, channel.Volume);
-                            step.Output.Send(step);
+                            if (step.Comm is NOutput)
+                            {
+                                // Maybe tweak values.
+                                if (step is StepNoteOn)
+                                {
+                                    (step as StepNoteOn).Adjust(sldVolume.Value, channel.Volume);
+                                }
+
+                                (step.Comm as NOutput).Send(step);
+                            }
                         }
                     }
                 }
@@ -713,7 +732,7 @@ namespace Nebulator
                     }
 
                     ///// Local common function /////
-                    bool ProcessInput(NInput input, int ctrlId, int channelNum, int value) //TODOX also needs ICommInput specific device.
+                    bool ProcessInput(NInput input, int ctrlId, int channelNum, int value)
                     {
                         bool ret = false;
 
@@ -733,7 +752,7 @@ namespace Nebulator
 
                     if (!handled)
                     {
-                        // Pass through. TODOX boom - need to add a default output def. also for vkey. or let the script handle it.
+                        // Pass through. Not.... let the script handle it.
                         //e.Step.Comm.Send(e.Step);
                     }
                 }
@@ -1077,8 +1096,8 @@ namespace Nebulator
             {
                 TextViewer tv = new TextViewer() { Dock = DockStyle.Fill };
                 f.Controls.Add(tv);
-                tv.Colors.Add(" ERROR ", Color.Pink);
-                tv.Colors.Add(" _WARN ", Color.Plum);
+                tv.Colors.Add(" ERROR ", Color.Plum);
+                tv.Colors.Add(" _WARN ", Color.LightPink);
                 tv.Colors.Add(" _INFO ", Color.LightGreen);
 
                 string appDir = Utils.GetAppDataDir();

@@ -237,6 +237,7 @@ namespace Nebulator.VirtualKeyboard
                 {
                     step = new StepNoteOn()
                     {
+                        Comm = this,
                         ChannelNumber = 0,
                         NoteNumber = e.NoteId,
                         Velocity = 100,
@@ -248,6 +249,7 @@ namespace Nebulator.VirtualKeyboard
                 {
                     step = new StepNoteOff()
                     {
+                        Comm = this,
                         ChannelNumber = 0,
                         NoteNumber = e.NoteId,
                         Velocity = 0

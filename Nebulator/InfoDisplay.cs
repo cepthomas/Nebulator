@@ -55,8 +55,8 @@ namespace Nebulator
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
 
-            Colors.Add("ERROR:", Color.Pink);
-            Colors.Add("WARNING:", Color.Plum);
+            Colors.Add("ERROR:", Color.Plum);
+            Colors.Add("WARNING:", Color.LightPink);
         }
         #endregion
 

@@ -42,7 +42,12 @@ int _radius = 300;
 
 public override void setupNeb()
 {
-    const int WHEN1 = 8;
+    const int WHEN1 = 0;
+    const int WHEN2 = 32;
+    const int WHEN3 = 48;
+    const int WHEN4 = 80;
+    // Total length.
+    const int TLEN = 128;
 
     // All the neb variables.
     CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
@@ -95,12 +100,23 @@ public override void setupNeb()
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
 
-    // section
-    NSection PART1 = createSection("section", WHEN1, 0);
+    // // Sequence that calls a script function.
+    // ALGO_SEQ = createSequence(8);
+    // ALGO_SEQ.Add(03.32, algoDynamic, 90);
+    // NULL_SEQ = createSequence(8);
+    // NULL_SEQ.Add(05.16, algoNull, 90);
+
+    // Sections
+    NSection PART1 = createSection("part1", WHEN1, 0);
     PART1.Add(PIANO, SEQ1, SEQ1);
     PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 
-    //if winGm
+    // NSection PART2 = createSection("part2", WHEN1, 0);
+    // PART2.Add(PIANO, SEQ1, SEQ1);
+    // PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
+    // PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
+
+    // *** if winGm
     sendPatch(PIANO, AcousticGrandPiano);
     sendPatch(BASS, AcousticBass);
     sendPatch(SYNTH, Pad3Polysynth);
@@ -111,6 +127,24 @@ public override void step()
     //sequenced();
     randish();
 }
+
+
+
+
+// void algoDynamic()
+// {
+//     // print("!!!! algoDynamic");
+//     int notenum = random(40, 70);
+//     sendNote(SYNTH, notenum, 90, 0.30);
+// }
+
+// void algoNull()
+// {
+//     // print("!!!! algoNull");
+// }
+
+
+
 
 void sequenced()
 {

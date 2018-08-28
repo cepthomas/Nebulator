@@ -156,6 +156,7 @@ namespace Nebulator.Midi
 
                                     _stops.Add(new StepNoteOff()
                                     {
+                                        Comm = stt.Comm,
                                         ChannelNumber = stt.ChannelNumber,
                                         NoteNumber = Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
                                         Expiry = stt.Duration.TotalTocks
@@ -244,12 +245,22 @@ namespace Nebulator.Midi
             {
                 for (int i = 0; i < Caps.NumChannels; i++)
                 {
-                    Send(new StepControllerChange() { ChannelNumber = i + 1, ControllerId = (int)MidiController.AllNotesOff });
+                    Send(new StepControllerChange()
+                    {
+                        Comm = this,
+                        ChannelNumber = i + 1,
+                        ControllerId = (int)MidiController.AllNotesOff
+                    });
                 }
             }
             else
             {
-                Send(new StepControllerChange() { ChannelNumber = channel.Value, ControllerId = (int)MidiController.AllNotesOff });
+                Send(new StepControllerChange()
+                {
+                    Comm = this,
+                    ChannelNumber = channel.Value,
+                    ControllerId = (int)MidiController.AllNotesOff
+                });
             }
         }
 
