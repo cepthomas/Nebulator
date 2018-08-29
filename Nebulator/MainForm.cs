@@ -9,12 +9,13 @@ using System.Threading.Tasks;
 using NLog;
 using MoreLinq;
 using Newtonsoft.Json;
+using NAudio.Midi;
+
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Comm;
 using Nebulator.Server;
-using NAudio.Midi;
 using Nebulator.Midi;
 
 
@@ -22,10 +23,6 @@ using Nebulator.Midi;
 //   - Remove Comm dependency in Script project
 //   - Breaks the ScriptCore partial class model.
 //   - Many tendrils involving ScriptDefinitions, NoteUtils, etc.
-
-
-            btnClear.Click += (object _, EventArgs __) => { txtView.Clear(); };
-            btnWrap.Click += (object _, EventArgs __) => { txtView.WordWrap = btnWrap.Checked; };
 
 
 namespace Nebulator
@@ -699,18 +696,6 @@ namespace Nebulator
 
                     if (play)
                     {
-                        switch (step)
-                        {
-
-                            case StepInternal stin:
-
-                                break;
-
-
-
-                        }
-
-
                         if (step is StepInternal)
                         {
                             try

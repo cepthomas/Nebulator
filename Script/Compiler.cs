@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using System.IO;
 using System.CodeDom.Compiler;
 using System.Reflection;
+using System.Diagnostics;
 using NLog;
 using MoreLinq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Nebulator.Common;
-using System.Diagnostics;
+
 
 namespace Nebulator.Script
 {
@@ -274,7 +275,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("SkiaSharp.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll"); // TODO decouple for NProcessing
+                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -449,7 +450,7 @@ namespace Nebulator.Script
                 "using SkiaSharp;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
-                "using Nebulator.Comm;", // TODO decouple for NProcessing
+                "using Nebulator.Comm;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : ScriptCore",

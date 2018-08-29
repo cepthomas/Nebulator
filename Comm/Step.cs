@@ -8,7 +8,7 @@ using Nebulator.Common;
 namespace Nebulator.Comm
 {
     /// <summary>
-    /// Base class for internal interface representation of a received event or a compiled event to be sent.
+    /// Base class for representation of a received event or a compiled event to be sent.
     /// </summary>
     public abstract class Step
     {
