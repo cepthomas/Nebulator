@@ -32,7 +32,7 @@ namespace Nebulator.VirtualKeyboard
         List<VKey> _keys = new List<VKey>();
 
         /// <summary>Map from Keys value to the index in _keys.</summary>
-        Dictionary<Keys, int> _keysMap = new Dictionary<Keys, int>();
+        Dictionary<Keys, int> _keyMap = new Dictionary<Keys, int>();
         #endregion
 
         #region Properties
@@ -76,7 +76,18 @@ namespace Nebulator.VirtualKeyboard
 
             DrawKeys();
 
-            // Create the midi kbd mapping.
+            CreateKeyMap();
+
+            Show();
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Create the midi note/keyboard mapping.
+        /// </summary>
+        void CreateKeyMap()
+        {
             int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MIDDLE_C).First());
 
             string[] keyDefs =
@@ -130,31 +141,27 @@ namespace Nebulator.VirtualKeyboard
 
                     switch (key)
                     {
-                        case ",": _keysMap.Add(Keys.Oemcomma, note); break;
-                        case "=": _keysMap.Add(Keys.Oemplus, note); break;
-                        case "-": _keysMap.Add(Keys.OemMinus, note); break;
-                        case "/": _keysMap.Add(Keys.OemQuestion, note); break;
-                        case ".": _keysMap.Add(Keys.OemPeriod, note); break;
-                        case "\'": _keysMap.Add(Keys.OemQuotes, note); break;
-                        case "\\": _keysMap.Add(Keys.OemPipe, note); break;
-                        case "]": _keysMap.Add(Keys.OemCloseBrackets, note); break;
-                        case "[": _keysMap.Add(Keys.OemOpenBrackets, note); break;
-                        case "`": _keysMap.Add(Keys.Oemtilde, note); break;
-                        case ";": _keysMap.Add(Keys.OemSemicolon, note); break;
+                        case ",": _keyMap.Add(Keys.Oemcomma, note); break;
+                        case "=": _keyMap.Add(Keys.Oemplus, note); break;
+                        case "-": _keyMap.Add(Keys.OemMinus, note); break;
+                        case "/": _keyMap.Add(Keys.OemQuestion, note); break;
+                        case ".": _keyMap.Add(Keys.OemPeriod, note); break;
+                        case "\'": _keyMap.Add(Keys.OemQuotes, note); break;
+                        case "\\": _keyMap.Add(Keys.OemPipe, note); break;
+                        case "]": _keyMap.Add(Keys.OemCloseBrackets, note); break;
+                        case "[": _keyMap.Add(Keys.OemOpenBrackets, note); break;
+                        case "`": _keyMap.Add(Keys.Oemtilde, note); break;
+                        case ";": _keyMap.Add(Keys.OemSemicolon, note); break;
 
                         default:
                             if ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9'))
                             {
-                                _keysMap.Add((Keys)ch, note);
+                                _keyMap.Add((Keys)ch, note);
                             }
                             break;
                     }
                 }
             }
-
-            Show();
-
-            return ret;
         }
 
         /// <summary>
@@ -195,9 +202,9 @@ namespace Nebulator.VirtualKeyboard
         {
             //Console.WriteLine($"==={e.KeyCode.ToString()}");
 
-            if (_keysMap.ContainsKey(e.KeyCode))
+            if (_keyMap.ContainsKey(e.KeyCode))
             {
-                VKey pk = _keys[_keysMap[e.KeyCode]];
+                VKey pk = _keys[_keyMap[e.KeyCode]];
                 if (!pk.IsPressed)
                 {
                     pk.PressVKey();
@@ -212,9 +219,9 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_KeyUp(object sender, KeyEventArgs e)
         {
-            if (_keysMap.ContainsKey(e.KeyCode))
+            if (_keyMap.ContainsKey(e.KeyCode))
             {
-                VKey pk = _keys[_keysMap[e.KeyCode]];
+                VKey pk = _keys[_keyMap[e.KeyCode]];
                 pk.ReleaseVKey();
             }
         }
