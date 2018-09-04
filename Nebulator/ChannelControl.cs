@@ -23,12 +23,7 @@ namespace Nebulator
         /// <summary>
         /// User changed something.
         /// </summary>
-        public event EventHandler<ChannelChangeEventArgs> ChannelChangeEvent;
-
-        public class ChannelChangeEventArgs : EventArgs
-        {
-            public string What { get; set; } = "";
-        }
+        public event EventHandler ChannelChangeEvent;
         #endregion
 
         /// <summary>
@@ -85,7 +80,7 @@ namespace Nebulator
                 BoundChannel.State = ChannelState.Normal;
             }
 
-            ChannelChangeEvent?.Invoke(this, new ChannelChangeEventArgs() { What = "ChannelState" });
+            ChannelChangeEvent?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -94,6 +89,7 @@ namespace Nebulator
         private void VolChannel_ValueChanged(object sender, EventArgs e)
         {
             BoundChannel.Volume = sldVolume.Value;
+            ChannelChangeEvent?.Invoke(this, new EventArgs());
         }
     }
 }

@@ -32,6 +32,7 @@ NSection PART1;
 int[] _chordNotes;
 int[] _scaleNotes;
 int _noteNum = 0;
+
 // Index is note number, value is when to stop it.
 int[] _notesPlaying = new int[128];
 
@@ -42,12 +43,12 @@ int _radius = 300;
 
 public override void setupNeb()
 {
-    const int WHEN1 = 0;
-    const int WHEN2 = 32;
-    const int WHEN3 = 48;
-    const int WHEN4 = 80;
-    // Total length.
-    const int TLEN = 128;
+    // const int WHEN1 = 0;
+    // const int WHEN2 = 32;
+    // const int WHEN3 = 48;
+    // const int WHEN4 = 80;
+    // // Total length.
+    // const int TLEN = 128;
 
     // All the neb variables.
     CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
@@ -57,8 +58,8 @@ public override void setupNeb()
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
-    //MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
-    MY_MIDI_OUT = createOutput("loopMIDI Port 1");
+    MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
+    //MY_MIDI_OUT = createOutput("loopMIDI Port 1");
     MY_MIDI_IN = createInput("MPK mini");
     MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
 
@@ -108,14 +109,14 @@ public override void setupNeb()
     // NULL_SEQ.Add(05.16, algoNull, 90);
 
     // Sections
-    NSection PART1 = createSection("part1", WHEN1, 0);
-    PART1.Add(PIANO, SEQ1, SEQ1);
+    NSection PART1 = createSection("part1", 0, 16);
+    PART1.Add(PIANO, SEQ1,         SEQ1);
     PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 
-    // NSection PART2 = createSection("part2", WHEN1, 0);
-    // PART2.Add(PIANO, SEQ1, SEQ1);
-    // PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-    // PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
+    NSection PART2 = createSection("part2", 16, 32);
+    PART2.Add(PIANO, SEQ1,         SEQ1);
+    PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
+    //PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
 
     // *** if winGm
     sendPatch(PIANO, AcousticGrandPiano);
@@ -189,7 +190,6 @@ void randish()
 
         if(_notesPlaying[which] == 0) // don't play if already playing
         {
-            //print("algoDynamic:", which);
             int dur = random(1, 8);
             _notesPlaying[which] = tick + dur;
             sendNote(SYNTH, which, random(80, 100), dur);

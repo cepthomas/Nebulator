@@ -124,17 +124,18 @@ namespace Nebulator.Midi
             // Reset.
             _stops.RemoveAll(s => s.Expiry < 0);
         }
-
+        
         /// <inheritdoc />
         public bool Send(Step step)
         {
             bool ret = true;
 
-            // Critical code section
+            // Critical code section.
             lock (_midiLock)
             {
                 if(_midiOut != null)
                 {
+                    List<int> msgs = new List<int>();
                     int msg = 0;
 
                     switch (step)
@@ -146,7 +147,7 @@ namespace Nebulator.Midi
                                     Utils.Constrain(stt.VelocityToPlay, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
 
-                                if(stt.Duration.TotalTocks > 0)
+                                if(stt.Duration.TotalTocks > 0) // specific duration
                                 {
                                     // Remove any lingering note offs and add a fresh one.
                                     _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);

@@ -118,8 +118,8 @@ namespace Nebulator
             _surface.TopMost = UserSettings.TheSettings.LockUi;
 
             // The rest of the controls.
-            textViewer.Colors.Add("ERROR", Color.Plum);
-            textViewer.Colors.Add("WARNING:", Color.LightPink);
+            textViewer.Colors.Add("ERROR", Color.LightPink);
+            textViewer.Colors.Add("WARNING:", Color.Plum);
 
             btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
@@ -209,7 +209,7 @@ namespace Nebulator
             {
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
 
 
                 //these in np:
@@ -234,7 +234,7 @@ namespace Nebulator
                 //Clipboard.SetText(string.Join(Environment.NewLine, v));
             }
 #endif
-            if(sopen != "")
+            if (sopen != "")
             {
                 _logger.Error(sopen);
             }
@@ -255,12 +255,7 @@ namespace Nebulator
                 if (_script != null)
                 {
                     // Save the project.
-                    _nppVals.Clear();
-                    _nppVals.SetValue("master", "volume", sldVolume.Value);
-                    _nppVals.SetValue("master", "speed", potSpeed.Value);
-                    _script.Channels.ForEach(c => _nppVals.SetValue(c.Name, "volume", c.Volume));
-                    _nppVals.Save();
-
+                    SaveProjectValues();
                     _script.Dispose();
                 }
 
@@ -367,9 +362,6 @@ namespace Nebulator
             {
                 NebCompiler compiler = new NebCompiler();
 
-                // Save internal npp file vals now as they will be reloaded during compile.
-                _nppVals.Save();
-
                 // Clean up any old.
                 _script?.Dispose();
 
@@ -447,7 +439,7 @@ namespace Nebulator
                 }
                 else
                 {
-                    _logger.Warn("Compile failed.");
+                    _logger.Error("Compile failed.");
                     ok = false;
                     ProcessPlay(PlayCommand.StopRewind, false);
                     SetCompileStatus(false);
@@ -810,12 +802,17 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// User has changed a channel value. Interested in solo/mute.
+        /// User has changed a channel value. Interested in solo/mute and volume. TODO handle this better.
         /// </summary>
-        void ChannelChange_Event(object sender, ChannelControl.ChannelChangeEventArgs e)
+        void ChannelChange_Event(object sender, EventArgs e)
         {
             if (sender is ChannelControl)
             {
+                ChannelControl ch = sender as ChannelControl;
+                _nppVals.SetValue(ch.Name, "volume", ch.BoundChannel.Volume);
+
+                SaveProjectValues();
+
                 // Check for solos.
                 bool _anySolo = _script.Channels.Where(c => c.State == ChannelState.Solo).Count() > 0;
 
@@ -854,7 +851,7 @@ namespace Nebulator
             _script.Speed = (float)potSpeed.Value;
             _script.Volume = sldVolume.Value;
             _script.FrameRate = _frameRate;
-            _script.RuntimeSteps.Clear();
+ //           _script.RuntimeSteps.Clear();
         }
 
         /// <summary>
@@ -947,7 +944,9 @@ namespace Nebulator
             {
                 try
                 {
-                    if(File.Exists(fn))
+                    SaveProjectValues();
+
+                    if (File.Exists(fn))
                     {
                         _logger.Info($"Opening {fn}");
                         _nppVals = Bag.Load(fn.Replace(".np", ".npp"));
@@ -1028,6 +1027,18 @@ namespace Nebulator
                 SetCompileStatus(false);
             });
         }
+
+        /// <summary>
+        /// Self documenting.
+        /// </summary>
+        void SaveProjectValues()
+        {
+            _nppVals.Clear();
+            _nppVals.SetValue("master", "volume", sldVolume.Value);
+            _nppVals.SetValue("master", "speed", potSpeed.Value);
+            _script?.Channels?.ForEach(c => _nppVals.SetValue(c.Name, "volume", c.Volume));
+            _nppVals.Save();
+        }
         #endregion
 
         #region Main toolbar controls
@@ -1044,6 +1055,7 @@ namespace Nebulator
         /// </summary>
         void Speed_ValueChanged(object sender, EventArgs e)
         {
+            _nppVals.SetValue("master", "speed", potSpeed.Value);
             SetSpeedTimerPeriod();
         }
 
@@ -1060,6 +1072,7 @@ namespace Nebulator
         /// </summary>
         void Volume_ValueChanged(object sender, EventArgs e)
         {
+            _nppVals.SetValue("master", "volume", sldVolume.Value);
         }
 
         /// <summary>

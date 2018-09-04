@@ -128,7 +128,7 @@ namespace Nebulator.Script
         /// <param name="val">Initial value</param>
         /// <param name="min"></param>
         /// <param name="max"></param>
-        /// <param name="handler">Optional callback</param>
+        /// <param name="handler">Optional callback function.</param>
         protected NVariable createVariable(string name, int val, int min, int max, Action handler = null)
         {
             NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
@@ -139,7 +139,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal constructor.
         /// </summary>
-        /// <param name="length"></param>
+        /// <param name="length">Length in ticks.</param>
         protected NSequence createSequence(int length)
         {
             NSequence nseq = new NSequence() { Length = length };
@@ -152,7 +152,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="name"></param>
         /// <param name="start"></param>
-        /// <param name="length"></param>
+        /// <param name="length">Length in ticks.</param>
         protected NSection createSection(string name, int start, int length)
         {
             NSection nsec = new NSection() { Name = name, Start = start, Length = length };

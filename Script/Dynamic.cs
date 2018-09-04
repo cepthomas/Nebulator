@@ -230,7 +230,7 @@ namespace Nebulator.Script
         #endregion
 
         /// <summary>
-        /// Z.Add(00.00, "G3", 90, 0.60);
+        /// Like: Z.Add(00.00, "G3", 90, 0.60).
         /// </summary>
         /// <param name="when"></param>
         /// <param name="what"></param>
@@ -243,8 +243,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Z.Add(00.00, 66, 90, 0.60);
-        /// Z.Add(00.00, CrashCymbal1, 90, 0.60);
+        /// Like: Z.Add(00.00, 66, 90, 0.60) or Z.Add(00.00, CrashCymbal1, 90, 0.60).
         /// </summary>
         /// <param name="when"></param>
         /// <param name="what"></param>
@@ -257,7 +256,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Z.Add(01.00, algoDynamic, 90);
+        /// Like: Z.Add(01.00, algoDynamic, 90).
         /// </summary>
         /// <param name="when"></param>
         /// <param name="func"></param>
@@ -269,7 +268,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Z.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
+        /// Like: Z.Add("x-------x-------x-------x-------", AcousticBassDrum, 90).
         /// Each hit is 1/16 note - fixed res for now.
         /// </summary>
         /// <param name="pattern"></param>
