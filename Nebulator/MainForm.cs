@@ -209,16 +209,16 @@ namespace Nebulator
             {
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
 
 
-                //these in np:
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Dev\nptest.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\lsys.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\gol.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\flocking.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\generative1.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\generative2.np");
+                //these in np: 
+                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\nptest.np");
+                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\lsys.np");
+                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\gol.np");
+                sopen = OpenFile(@"C:\Dev\NProcessing\Examples\flocking.np");
+                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative1.np");
+                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative2.np");
 
 
 
