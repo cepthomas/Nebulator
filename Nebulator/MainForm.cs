@@ -209,14 +209,15 @@ namespace Nebulator
             {
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
 
 
                 //these in np: 
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\nptest.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\lsys.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\gol.np");
-                sopen = OpenFile(@"C:\Dev\NProcessing\Examples\flocking.np");
+                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\flocking.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative1.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative2.np");
 
@@ -802,31 +803,26 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// User has changed a channel value. Interested in solo/mute and volume. TODO handle this better.
+        /// User has changed a channel value. Interested in solo/mute and volume.
         /// </summary>
         void ChannelChange_Event(object sender, EventArgs e)
         {
-            if (sender is ChannelControl)
+            ChannelControl ch = sender as ChannelControl;
+            _nppVals.SetValue(ch.BoundChannel.Name, "volume", ch.BoundChannel.Volume);
+
+            // Check for solos.
+            bool _anySolo = _script.Channels.Where(c => c.State == ChannelState.Solo).Count() > 0;
+
+            if (_anySolo)
             {
-                ChannelControl ch = sender as ChannelControl;
-                _nppVals.SetValue(ch.Name, "volume", ch.BoundChannel.Volume);
-
-                SaveProjectValues();
-
-                // Check for solos.
-                bool _anySolo = _script.Channels.Where(c => c.State == ChannelState.Solo).Count() > 0;
-
-                if (_anySolo)
+                // Kill any not solo.
+                _script.Channels.ForEach(c =>
                 {
-                    // Kill any not solo.
-                    _script.Channels.ForEach(c =>
+                    if (c.State != ChannelState.Solo && c.Output != null)
                     {
-                        if (c.State != ChannelState.Solo && c.Output != null)
-                        {
-                            c.Output.Kill(c.ChannelNumber);
-                        }
-                    });
-                }
+                        c.Output.Kill(c.ChannelNumber);
+                    }
+                });
             }
         }
 

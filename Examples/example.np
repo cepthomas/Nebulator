@@ -60,12 +60,14 @@ int[] scaleNotes;
 ////// Nebulator midi stuff //////
 public override void setupNeb()
 {
+    int winGm = false;
+
     // All the neb variables.
     COL1 = createVariable("color", 200, 0, 255); // change color
     MODN = createVariable("modn", 0, -10, 10);
 
     // I/O
-    MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); // or your own
+    MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true; // or your own
 
     // All the channels.
     KEYS = createChannel("keys", MIDI_OUT, 1, 5);
@@ -179,10 +181,12 @@ public override void setupNeb()
     // Get some stock chords and scales
     scaleNotes = getScaleNotes("Algerian", "A3");
 
-    // if winGm
-    sendPatch(KEYS, AcousticGrandPiano);
-    sendPatch(BASS, AcousticBass);
-    sendPatch(SYNTH, Pad3Polysynth);
+    if (winGm)
+    {
+        sendPatch(KEYS, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Pad3Polysynth);
+    }
 }
 
 public override void step()

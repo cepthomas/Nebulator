@@ -33,12 +33,16 @@ List<TapeLoop> loops = new List<TapeLoop>();
 
 public override void setupNeb()
 {
+    int winGm = false;
+
     ///// Variables /////
+
     COLOR = createVariable("color", 240, 0, 255); // change color
 
     ///// I/O /////
     MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); // or "loopMIDI Port 1"
-
+    winGm = true;
+    
     ///// Channels /////
     SOUND = createChannel("sound", MIDI_OUT, 1, 5);
 
@@ -60,8 +64,10 @@ public override void setupNeb()
     loops.Add(new TapeLoop("F4",  19.70,  4.00));
     loops.Add(new TapeLoop("F5",  20.00, 14.10));
 
-    //ifv(winGm)
-    sendPatch(SOUND, Pad2Warm);
+    if (winGm)
+    {
+        sendPatch(SOUND, Pad2Warm);
+    }
 }
 
 public override void setup()

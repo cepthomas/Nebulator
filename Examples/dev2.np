@@ -36,23 +36,20 @@ const int WHEN4 = 80;
 const int PIANO_DEF_VOL = 100;
 const int DRUM_DEF_VOL = 100;
 
-// Neb script stuff.
-// int[] _chordNotes;
-// int[] _scaleNotes;
-// int _noteNum = 0;
-
 // Index is note number, value is when to stop it.
 int[] _notesPlaying = new int[128];
 
 
 public override void setupNeb()
 {
+    int winGm = false;
+
     // All the neb variables.
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
 
-    MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
+    MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true;
     // MY_MIDI_OUT = createOutput("loopMIDI Port 1");
     // MY_MIDI_IN = createInput("MPK mini");
 
@@ -68,14 +65,6 @@ public override void setupNeb()
     // levers
     createLever(BACK_COLOR);
     createLever(MOD1);
-
-    // // Get some stock chords and scales
-    // _chordNotes = getNotes("C4.o7");
-    // _scaleNotes = getScaleNotes("Algerian", "A3");
-
-
-
-    // Create sequences.
 
     ///// Sequences /////
     PIANO_SEQ_1 = createSequence(16);
@@ -157,11 +146,12 @@ public override void setupNeb()
     PART3.Add(DRUMS, DRUMS_SEQ_1, DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1);
     PART3.Add(BASS,  BASS_SEQ_1,  BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1);
 
-
-    // *** if winGm
-    sendPatch(PIANO, AcousticGrandPiano);
-    sendPatch(BASS, AcousticBass);
-    sendPatch(SYNTH, Pad3Polysynth);
+    if (winGm)
+    {
+        sendPatch(PIANO, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Pad3Polysynth);
+    }
 }
 
 public override void step()
