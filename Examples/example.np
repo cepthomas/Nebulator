@@ -60,7 +60,7 @@ int[] scaleNotes;
 ////// Nebulator midi stuff //////
 public override void setupNeb()
 {
-    int winGm = false;
+    bool winGm = false;
 
     // All the neb variables.
     COL1 = createVariable("color", 200, 0, 255); // change color

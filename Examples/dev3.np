@@ -40,17 +40,17 @@ int[] _notesPlaying = new int[128];
 int _segmentCount = 36;
 int _radius = 300;
 
+const int WHEN1 = 0;
+const int WHEN2 = 32;
+const int WHEN3 = 48;
+const int WHEN4 = 80;
+// Total length.
+const int TLEN = 128;
+
 
 public override void setupNeb()
 {
     bool winGm = false;
-
-    // const int WHEN1 = 0;
-    // const int WHEN2 = 32;
-    // const int WHEN3 = 48;
-    // const int WHEN4 = 80;
-    // // Total length.
-    // const int TLEN = 128;
 
     // All the neb variables.
     CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
@@ -62,7 +62,7 @@ public override void setupNeb()
 
     MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true;
     //MY_MIDI_OUT = createOutput("loopMIDI Port 1");
-    MY_MIDI_IN = createInput("MPK mini");
+    //MY_MIDI_IN = createInput("MPK mini");
     MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
 
     // All the output channels.
@@ -72,11 +72,11 @@ public override void setupNeb()
     DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
 
     // All the input controllers.
-    createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
-    createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-    createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
-    createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
-    createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
+    // createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
+    // createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+    // createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
+    // createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+    // createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
     createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
 
     // levers
@@ -91,34 +91,10 @@ public override void setupNeb()
     _chordNotes = getNotes("C4.o7");
     _scaleNotes = getScaleNotes("Algerian", "A3");
 
-    // Create sequences, add notes/chords/funcs.
-    SEQ1 = createSequence(8);
-    SEQ1.Add(00.00, "G3", 90, 0.60);
-    SEQ1.Add(01.00, "D3", 90, 0.60);
-    SEQ1.Add(02.00, "A3.m7", 90, 0.60);
-    SEQ1.Add(03.00, 66, 90, 0.60);
-    SEQ1.Add(03.48, CrashCymbal1, 90, 0.60);
-
     DRUMS_SIMPLE = createSequence(8);
     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
-
-    // // Sequence that calls a script function.
-    // ALGO_SEQ = createSequence(8);
-    // ALGO_SEQ.Add(03.32, algoDynamic, 90);
-    // NULL_SEQ = createSequence(8);
-    // NULL_SEQ.Add(05.16, algoNull, 90);
-
-    // Sections
-    NSection PART1 = createSection("part1", 0, 16);
-    PART1.Add(PIANO, SEQ1,         SEQ1);
-    PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-
-    NSection PART2 = createSection("part2", 16, 32);
-    PART2.Add(PIANO, SEQ1,         SEQ1);
-    PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-    //PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
 
     if (winGm)
     {
@@ -295,95 +271,5 @@ public override void keyPressed()
 
 public override void draw()
 {
-    // drawFan();
-    drawTargets();
-}
 
-void drawFan()
-{
-    noStroke();
-    colorMode(HSB, 360, width, height);
-    background(160); // gray
-
-    float angleStep = 360 / _segmentCount;
-
-    for (float angle = 0; angle <= 360; angle += angleStep)
-    {
-        fill(angle, mouseX % width, mouseY % height);
-
-        beginShape();  // (TRIANGLE_FAN);
-        vertex(width / 2, height / 2); // center
-
-        float vx = width / 2 + cos(radians(angle)) * _radius;
-        float vy = height / 2 + sin(radians(angle)) * _radius;
-        vertex(vx, vy);
-        
-        vx -= 10;
-        vy -= 10;
-        vertex(vx, vy);
-    
-        endShape(CLOSE);
-    }
-}
-
-void drawTargets()
-{
-    //print("draw");
-    background(BACK_COLOR.Value, 100, 200);
-
-    drawTarget(width * 0.15f, height * 0.4f, 100, 10);
-    drawTarget(width * 0.5f, height * 0.5f, 300, 20);
-    drawTarget(width * 0.85f, height * 0.3f, 150, 12);    
-
-    if (mouseIsPressed)
-    {
-        //print("mouse is pressed");
-        fill(random(255), random(255), random(255));
-        strokeWeight(2);
-        stroke(0, 100);
-        ellipse(mouseX, mouseY, 80, 80);
-    }
-}
-
-void drawTarget(float xloc, float yloc, int size, int num)
-{
-    int grayvalues = 255 / num;
-    float steps = size / num;
-    for (int i = 0; i < num; i++)
-    {
-        fill(i * grayvalues, num * 10, 0 % 255);
-        ellipse(xloc, yloc, size - i * steps, size - i * steps);
-    }
-
-    int radius = size / 2;
-    int h = random(0, 360);
-
-    for (int r = radius; r > 0; r-=1)
-    {
-        fill(h, 90, 90);
-        ellipse(xloc, yloc, r * 2, r * 2);
-        h = (h + 1) % 360;
-    }
-}
-
-public override void mouseClicked()
-{
-    // Note selected based on mouse position.
-    int sn = (int)map(mouseX, 0, width, 55, 70);
-    sendNote(SYNTH, sn, 90, 0.48);
-}
-
-// Recursive rendering.
-void drawRecursive(float x, float y, float squareSize, float minSize)
-{
-    rect(x, y, squareSize, squareSize);
-    rect(x + squareSize, y, squareSize, squareSize);
-    rect(x, y + squareSize, squareSize, squareSize);
-    
-    if (squareSize > minSize)
-    {
-        drawRecursive(x, y, squareSize / 2, minSize);
-        drawRecursive(x + squareSize, y, squareSize / 2, minSize);
-        drawRecursive(x, y + squareSize, squareSize / 2, minSize);
-    }
 }

@@ -42,7 +42,7 @@ int[] _notesPlaying = new int[128];
 
 public override void setupNeb()
 {
-    int winGm = false;
+    bool winGm = false;
 
     // All the neb variables.
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);

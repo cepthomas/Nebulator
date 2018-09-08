@@ -210,7 +210,8 @@ namespace Nebulator
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev3.np");
 
 
                 //these in np: 

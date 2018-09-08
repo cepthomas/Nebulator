@@ -33,7 +33,7 @@ List<TapeLoop> loops = new List<TapeLoop>();
 
 public override void setupNeb()
 {
-    int winGm = false;
+    bool winGm = false;
 
     ///// Variables /////
 
