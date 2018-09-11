@@ -16,14 +16,23 @@ namespace Nebulator.Comm
 
         #region Properties
         /// <summary>Comm name.</summary>
-        string CommName { get; set; }
+        string CommName { get; }
 
         /// <summary>What it can do.</summary>
-        CommCaps Caps { get; set; }
+        CommCaps Caps { get; }
+
+        /// <summary>It's alive.</summary>
+        bool Inited { get; }
         #endregion
 
         #region Functions
-        /// <summary>Initialize everything. Set valid CommName first!</summary>
+        /// <summary>Interfaces don't allow constructors so do this instead.</summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        bool Create(string name);
+
+        /// <summary>Initialize everything.</summary>
+        /// <returns></returns>
         bool Init();
 
         /// <summary>Start operation.</summary>

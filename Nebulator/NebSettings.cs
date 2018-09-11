@@ -18,7 +18,7 @@ namespace Nebulator
     {
         #region Persisted non-editable properties
         [Browsable(false)]
-        public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000, Visible = true };
+        public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
 
         [Browsable(false)]
         public bool MonitorInput { get; set; } = false;

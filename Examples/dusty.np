@@ -96,6 +96,11 @@ public override void setupNeb()
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
 
+    // Sections
+    NSection PART1 = createSection("part1", 0, 32);
+    PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE, DRUMS_SIMPLE, DRUMS_SIMPLE);
+
+
     if (winGm)
     {
         sendPatch(PIANO, AcousticGrandPiano);
@@ -106,8 +111,8 @@ public override void setupNeb()
 
 public override void step()
 {
-    //sequenced();
-    randish();
+    sequenced();
+    //randish();
 }
 
 void sequenced()

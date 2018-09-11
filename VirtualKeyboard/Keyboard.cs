@@ -37,10 +37,13 @@ namespace Nebulator.VirtualKeyboard
 
         #region Properties
         /// <inheritdoc />
-        public string CommName { get; set; } = "Virtual Keyboard";
+        public string CommName { get; private set; } = "";
 
         /// <inheritdoc />
-        public CommCaps Caps { get; set; }
+        public CommCaps Caps { get; private set; } = null;
+
+        /// <inheritdoc />
+        public bool Inited { get; private set; } = false;
         #endregion
 
         #region Lifecycle
@@ -51,8 +54,6 @@ namespace Nebulator.VirtualKeyboard
         {
             CreateKeys();
             InitializeComponent();
-
-            Caps = MidiUtils.GetCommCaps();
         }
 
         /// <summary>
@@ -70,17 +71,25 @@ namespace Nebulator.VirtualKeyboard
         }
 
         /// <inheritdoc />
+        public bool Create(string s = "")
+        {
+            CommName = "Virtual Keyboard";
+            return true;
+        }
+
+        /// <inheritdoc />
         public bool Init()
         {
-            bool ret = true;
-
+            Caps = MidiUtils.GetCommCaps();
             DrawKeys();
 
             CreateKeyMap();
 
             Show();
 
-            return ret;
+            Inited = true;
+
+            return Inited;
         }
 
         /// <summary>

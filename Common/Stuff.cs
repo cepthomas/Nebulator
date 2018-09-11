@@ -15,7 +15,6 @@ namespace Nebulator.Common
     [Serializable]
     public class FormInfo
     {
-        public bool Visible { get; set; } = false;
         public int X { get; set; } = 50;
         public int Y { get; set; } = 50;
         public int Width { get; set; } = 1000;
@@ -23,7 +22,6 @@ namespace Nebulator.Common
 
         public void FromForm(Form f)
         {
-            Visible = f.Visible;
             X = f.Location.X;
             Y = f.Location.Y;
             Width = f.Width;

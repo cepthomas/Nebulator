@@ -113,7 +113,7 @@ namespace Nebulator.Script
 
         #region Properties - things defined in the script that MainForm needs
         /// <summary>Control inputs.</summary>
-        public List<NController> InputControllers { get; set; } = new List<NController>();
+        public List<NController> Controllers { get; set; } = new List<NController>();
 
         /// <summary>Levers.</summary>
         public List<NController> Levers { get; set; } = new List<NController>();
@@ -138,7 +138,9 @@ namespace Nebulator.Script
         public void Dispose()
         {
             Inputs.ForEach(ci => { if (ci != null) ci.Dispose(); });
+            Inputs.Clear();
             Outputs.ForEach(co => { if (co != null) co.Dispose(); });
+            Outputs.Clear();
 
             Dispose(true);
             GC.SuppressFinalize(this);

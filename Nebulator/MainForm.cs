@@ -82,6 +82,9 @@ namespace Nebulator
 
         /// <summary>Server host.</summary>
         SelfHost _selfHost = null;
+
+        /// <summary>The virtual keyboard.</summary>
+        VirtualKeyboard.VKeyboard _vk = null;
         #endregion
 
         #region Lifecycle
@@ -211,16 +214,25 @@ namespace Nebulator
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev3.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dusty.np");
 
-
-                //these in np: 
+                //these in NProcessing: 
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\nptest.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\lsys.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\gol.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\flocking.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative1.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative2.np");
+
+
+
+                if (Compile())
+                {
+                    ProcessPlay(PlayCommand.Stop, true);
+                }
+
+
+
 
 
 
@@ -389,28 +401,38 @@ namespace Nebulator
                     // Hook up comms for runtime.
                     for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                     {
-                        NInput input = new MidiInput() { CommName = MidiIn.DeviceInfo(device).ProductName };
+                        NInput input = new MidiInput();
+                        input.Create(MidiIn.DeviceInfo(device).ProductName);
                         input.CommInputEvent += Comm_InputEvent;
                         input.CommLogEvent += Comm_LogEvent;
                         _script.Inputs.Add(input);
                     }
 
-                    // Add the virtual keyboard as an input.
+                    // Add the virtual keyboard as a possible input.
+                    if(_vk != null)
                     {
-                        VirtualKeyboard.VKeyboard vk = new VirtualKeyboard.VKeyboard();
-                        vk.StartPosition = FormStartPosition.Manual;
-                        vk.Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height);
-                        vk.Visible = NebSettings.TheSettings.VirtualKeyboardInfo.Visible;
-                        vk.TopMost = false;
-                        vk.Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y);
-                        vk.CommInputEvent += Comm_InputEvent;
-                        vk.CommLogEvent += Comm_LogEvent;
-                        _script.Inputs.Add(vk);
+                        // Clean up old one.
+                        NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(_vk);
+                        _vk.Dispose();
+                        _vk = null;
                     }
+
+                    _vk = new VirtualKeyboard.VKeyboard
+                    {
+                        StartPosition = FormStartPosition.Manual,
+                        Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height),
+                        TopMost = false,
+                        Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y)
+                    };
+                    _vk.Create();
+                    _vk.CommInputEvent += Comm_InputEvent;
+                    _vk.CommLogEvent += Comm_LogEvent;
+                    _script.Inputs.Add(_vk);
 
                     for (int device = 0; device < MidiOut.NumberOfDevices; device++)
                     {
-                        NOutput output = new MidiOutput() { CommName = MidiOut.DeviceInfo(device).ProductName };
+                        NOutput output = new MidiOutput();
+                        output.Create(MidiOut.DeviceInfo(device).ProductName);
                         output.CommLogEvent += Comm_LogEvent;
                         _script.Outputs.Add(output);
                     }
@@ -421,6 +443,19 @@ namespace Nebulator
                         InitRuntime();
 
                         _script.setupNeb();
+
+                        // Is the virtual keybard used?
+                        if (_vk.Inited)
+                        {
+                            _vk.Visible = true;
+                            _vk.Show();
+                        }
+                        else
+                        {
+
+                            _vk.Visible = false;
+                            _vk.Hide();
+                        }
 
                         _surface.InitSurface(_script);
 
@@ -752,7 +787,7 @@ namespace Nebulator
                         bool ret = false;
 
                         // Run through our list of inputs of interest.
-                        foreach (NController ctlpt in _script.InputControllers)
+                        foreach (NController ctlpt in _script.Controllers)
                         {
                             if (ctlpt.Input == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
                             {
@@ -954,7 +989,7 @@ namespace Nebulator
                         {
                             Invoke((MethodInvoker)delegate
                             {
-                                // Running on the UI thread
+                                // Running on the UI thread.
                                 SetCompileStatus(true);
                                 AddToRecentDefs(fn);
                                 Compile();
@@ -1185,13 +1220,10 @@ namespace Nebulator
             UserSettings.TheSettings.Save();
 
             // Get the vkbd position.
-            _script?.Inputs.ForEach(i => 
+            if(_vk != null)
             {
-                if(i is VirtualKeyboard.VKeyboard)
-                {
-                    NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(i as VirtualKeyboard.VKeyboard);
-                }
-            });
+                NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(_vk);
+            }
 
             NebSettings.TheSettings.Save();
         }

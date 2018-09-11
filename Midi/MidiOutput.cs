@@ -33,10 +33,13 @@ namespace Nebulator.Midi
 
         #region Properties
         /// <inheritdoc />
-        public string CommName { get; set; } = Utils.UNKNOWN_STRING;
+        public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <inheritdoc />
-        public CommCaps Caps { get; set; } = null;
+        public CommCaps Caps { get; private set; } = null;
+
+        /// <inheritdoc />
+        public bool Inited { get; private set; } = false;
         #endregion
 
         #region Lifecycle
@@ -45,13 +48,20 @@ namespace Nebulator.Midi
         /// </summary>
         public MidiOutput()
         {
-            Caps = MidiUtils.GetCommCaps();
+        }
+
+        /// <inheritdoc />
+        public bool Create(string name)
+        {
+            CommName = name;
+            return true;
         }
 
         /// <inheritdoc />
         public bool Init()
         {
-            bool ret = true;
+            Caps = MidiUtils.GetCommCaps();
+            Inited = false;
 
             try
             {
@@ -73,20 +83,20 @@ namespace Nebulator.Midi
                 if (ind < 0)
                 {
                     LogMsg(CommLogEventArgs.LogCategory.Error, $"Invalid midi: {CommName}");
-                    ret = false;
                 }
                 else
                 {
                     _midiOut = new MidiOut(ind);
+                    Inited = true;
                 }
             }
             catch (Exception ex)
             {
                 LogMsg(CommLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
-                ret = false;
+                Inited = false;
             }
 
-            return ret;
+            return Inited;
         }
 
         /// <summary>
@@ -237,14 +247,17 @@ namespace Nebulator.Midi
         {
             if(channel is null)
             {
-                for (int i = 0; i < Caps.NumChannels; i++)
+                if(Inited)
                 {
-                    Send(new StepControllerChange()
+                    for (int i = 0; i < Caps.NumChannels; i++)
                     {
-                        Comm = this,
-                        ChannelNumber = i + 1,
-                        ControllerId = (int)MidiController.AllNotesOff
-                    });
+                        Send(new StepControllerChange()
+                        {
+                            Comm = this,
+                            ChannelNumber = i + 1,
+                            ControllerId = (int)MidiController.AllNotesOff
+                        });
+                    }
                 }
             }
             else

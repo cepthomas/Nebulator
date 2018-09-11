@@ -67,6 +67,7 @@ namespace Nebulator.Script
                 nin = ins.First();
                 nin.Init();
             }
+
             return nin;
         }
 
@@ -88,6 +89,7 @@ namespace Nebulator.Script
                 nout = outs.First();
                 nout.Init();
             }
+
             return nout;
         }
 
@@ -108,7 +110,7 @@ namespace Nebulator.Script
                 ControllerId = controlId,
                 BoundVar = bound
             };
-            InputControllers.Add(mp);
+            Controllers.Add(mp);
         }
 
         /// <summary>
