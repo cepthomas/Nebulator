@@ -186,6 +186,7 @@ public override void setupNeb()
         sendPatch(KEYS, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Pad3Polysynth);
+        sendPatch(DRUMS, 32);
     }
 }
 

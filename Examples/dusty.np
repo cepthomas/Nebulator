@@ -60,8 +60,8 @@ public override void setupNeb()
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
-    MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true;
-    //MY_MIDI_OUT = createOutput("loopMIDI Port 1");
+    //MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true;
+    MY_MIDI_OUT = createOutput("loopMIDI Port 1");
     //MY_MIDI_IN = createInput("MPK mini");
     MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
 
@@ -92,9 +92,9 @@ public override void setupNeb()
     _scaleNotes = getScaleNotes("Algerian", "A3");
 
     DRUMS_SIMPLE = createSequence(8);
-    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
-    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
-    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
+    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90); // 4 -- 35
+    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80); // 6 -- 38
+    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100); // 8 -- 42
 
     // Sections
     NSection PART1 = createSection("part1", 0, 32);
@@ -106,6 +106,7 @@ public override void setupNeb()
         sendPatch(PIANO, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Pad3Polysynth);
+        sendPatch(DRUMS, 32);
     }
 }
 
@@ -129,8 +130,8 @@ void sequenced()
         case 16:
         case 24:
         //case 32:
-            int sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-            sendNote(SYNTH, sn + tick % 24, 90, 0.28);
+            // int sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
+            // sendNote(SYNTH, sn + tick % 24, 90, 0.28);
             break;
 
         default:

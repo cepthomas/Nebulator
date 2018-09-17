@@ -79,6 +79,20 @@ namespace Nebulator.Comm
         }
 
         /// <summary>
+        /// Utility dump 
+        /// </summary>
+        /// <returns></returns>
+        public string Dump()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<Time, List<Step>> kv in _steps)
+            {
+                kv.Value.ForEach(s => sb.Append($"{kv.Key.ToString()} {s.ToString()}{Environment.NewLine}"));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Display the content steps.
         /// </summary>
         public override string ToString()

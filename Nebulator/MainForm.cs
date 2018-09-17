@@ -534,6 +534,8 @@ namespace Nebulator
                     }
                 }
             }
+
+            //Console.Write(_compiledSteps.Dump());
         }
 
         /// <summary>
@@ -644,7 +646,7 @@ namespace Nebulator
             {
                 //_tan.Arm();
 
-                // Kick it.
+                // Kick the script.
                 try
                 {
                     _script.step();
@@ -738,6 +740,8 @@ namespace Nebulator
                         }
                         else
                         {
+                            //Console.WriteLine($"{_stepTime} {step.ToString()}");
+
                             if (step.Comm is NOutput)
                             {
                                 // Maybe tweak values.
