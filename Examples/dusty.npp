@@ -1,7 +1,7 @@
 {
   "Values": {
     "master.volume": 160,
-    "master.speed": 81.0,
+    "master.speed": 70.0,
     "piano.volume": 90,
     "bass.volume": 121,
     "synth.volume": 90,

@@ -675,8 +675,8 @@ namespace Nebulator
                 // If no steps or not selected, free running mode so always keep going.
                 if(_compiledSteps.Times.Count() != 0)
                 {
-                    // Check for end and loop condition.
-                    if (_stepTime.Tick >= _compiledSteps.MaxTick)
+                    // Check for end.
+                    if (_stepTime.Tick > _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
                         _script?.Outputs.ForEach(o => o?.Kill()); // just in case
