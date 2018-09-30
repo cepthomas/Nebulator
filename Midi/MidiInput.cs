@@ -5,6 +5,15 @@ using Nebulator.Common;
 using Nebulator.Comm;
 
 
+// TODO: Support microtonal notes with Pitch changes.
+// Pitch Bend Range can be set by sending MIDI controller messages. Specifically, you do it with Registered Parameters (cc# 100 and 101).
+// On the MIDI channel in question, you need to send:
+// MIDI cc101  = 0
+// MIDI cc100  = 0
+// MIDI cc6    = value of desired bend range (in semitones)
+// Example: Lets say you want to set the bend range to 2 semi-tones. First you send cc# 100 with a value of 0; then cc#101 with a value of 0. This turns on reception for setting pitch bend with the Data controller (#6). Then you send cc# 6 with a value of 2 (in semitones; this will give you a whole step up and a whole step down from the center).
+// Once you have set the bend range the way you want, then you send controller 100 or 101 with a value of 127 so that any further messages of controller 6 (which you might be using for other stuff) won't change the bend range.
+
 namespace Nebulator.Midi
 {
     /// <summary>

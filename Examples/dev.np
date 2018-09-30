@@ -1,6 +1,7 @@
 
 /////////// Laboratory for brilliant new ideas //////////
 
+
 // IO devices.
 NOutput MY_MIDI_OUT;
 NInput MY_MIDI_IN;

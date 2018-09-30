@@ -129,22 +129,25 @@ public override void setupNeb()
     DRUMS_SEQ_2.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
     DRUMS_SEQ_2.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
 
+    // DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
+    // DRUMS_SIMPLE.Add("---xx-------x------xx-------x---", AcousticSnare, 80);
+    // DRUMS_SIMPLE.Add("x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-", ClosedHiHat, 50);
 
     // Sections
     NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
     PART1.Add(PIANO,  PIANO_SEQ_1,  PIANO_SEQ_1);
-    PART1.Add(DRUMS, DRUMS_SEQ_1, DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1);
-    PART1.Add(BASS,  BASS_SEQ_1,  BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1);
+    PART1.Add(DRUMS,  DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1);
+    PART1.Add(BASS,   BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1);
 
     NSection PART2 = createSection("part2", WHEN2, WHEN3 - WHEN2);
-    PART2.Add(PIANO,  PIANO_SEQ_2,   PIANO_SEQ_2);
-    PART2.Add(DRUMS, DRUMS_SEQ_2,  DRUMS_SEQ_2);
-    PART2.Add(BASS,  BASS_SEQ_1,   BASS_SEQ_1);
+    PART2.Add(PIANO,  PIANO_SEQ_2,  PIANO_SEQ_2);
+    PART2.Add(DRUMS,  DRUMS_SEQ_2,  DRUMS_SEQ_2);
+    PART2.Add(BASS,   BASS_SEQ_1,   BASS_SEQ_1);
 
     NSection PART3 = createSection("part3", WHEN3, WHEN4 - WHEN3);
     PART3.Add(PIANO,  PIANO_SEQ_1,  PIANO_SEQ_1);
-    PART3.Add(DRUMS, DRUMS_SEQ_1, DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1);
-    PART3.Add(BASS,  BASS_SEQ_1,  BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1);
+    PART3.Add(DRUMS,  DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1);
+    PART3.Add(BASS,   BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1);
 
     if (winGm)
     {

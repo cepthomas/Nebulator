@@ -153,38 +153,39 @@
             this.fileDropDownButton.Name = "fileDropDownButton";
             this.fileDropDownButton.Size = new System.Drawing.Size(29, 22);
             this.fileDropDownButton.Text = "fileDropDownButton";
+            this.fileDropDownButton.ToolTipText = "File operations";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // importStyleToolStripMenuItem
             // 
             this.importStyleToolStripMenuItem.Name = "importStyleToolStripMenuItem";
-            this.importStyleToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.importStyleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importStyleToolStripMenuItem.Text = "Import Style";
             this.importStyleToolStripMenuItem.Click += new System.EventHandler(this.ImportStyle_Click);
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.viewLogToolStripMenuItem.Text = "Show Log";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -232,6 +233,7 @@
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(23, 22);
             this.btnSettings.Text = "toolStripButton1";
+            this.btnSettings.ToolTipText = "Settings";
             this.btnSettings.Click += new System.EventHandler(this.UserSettings_Click);
             // 
             // btnAbout
@@ -242,6 +244,7 @@
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(23, 22);
             this.btnAbout.Text = "toolStripButton1";
+            this.btnAbout.ToolTipText = "Info";
             this.btnAbout.Click += new System.EventHandler(this.About_Click);
             // 
             // levers
