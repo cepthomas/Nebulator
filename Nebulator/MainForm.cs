@@ -1299,6 +1299,7 @@ namespace Nebulator
                             _startTime = DateTime.Now;
                             SetSpeedTimerPeriod();
                             chkPlay.Checked = true;
+                            _surface.InitSurface(_script);
                         }
                         else
                         {
