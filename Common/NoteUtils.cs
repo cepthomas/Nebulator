@@ -13,7 +13,6 @@ namespace Nebulator.Common
     {
         #region Constants
         const int NOTES_PER_OCTAVE = 12;
-        const string UNKNOWN_CHORD = Utils.UNKNOWN_STRING;
         #endregion
 
         #region Fields
@@ -190,50 +189,13 @@ namespace Nebulator.Common
                 int rootOctave = SplitNoteNumber(notes[0]).octave;
                 int rootNoteNum = SplitNoteNumber(notes[0]).root;
 
-                string sroot = $"{NoteNumberToName(rootNoteNum)}.{rootOctave}";
+                string sroot = $"\"{NoteNumberToName(rootNoteNum)}{rootOctave}\"";
 
-                if (notes.Count > 1)
+                foreach (int n in notes)
                 {
-                    // It's a chord. M, M7, m, m7, etc.
-                    // Find a match in our internal list.
-                    List<string> intervals = new List<string>();
-
-                    foreach(int i in notes)
-                    {
-                        intervals.Add(GetInterval(i - notes.Min()));
-                    }
-
-                    string s = string.Join(" ", intervals);
-                    string chord = null;
-                    foreach(string key in ScriptDefinitions.TheDefinitions.ChordDefs.Keys)
-                    {
-                        if(string.Join(" ", ScriptDefinitions.TheDefinitions.ChordDefs[key]) == s)
-                        {
-                            chord = key;
-                            break;
-                        }
-                    }
-
-                    if(chord != null)
-                    {
-                        // Known chord.
-                        snotes.Add($"{sroot}.{chord}");
-                    }
-                    else
-                    {
-                        // Unknown - add components individually.
-                        foreach (int n in notes)
-                        {
-                            int octave = SplitNoteNumber(n).octave;
-                            int root = SplitNoteNumber(n).root;
-                            snotes.Add($"{NoteNumberToName(root)}.{octave}.{UNKNOWN_CHORD}");
-                        }
-                    }
-                }
-                else
-                {
-                    // Just the root.
-                    snotes.Add(sroot);
+                    int octave = SplitNoteNumber(n).octave;
+                    int root = SplitNoteNumber(n).root;
+                    snotes.Add($"\"{NoteNumberToName(root)}{octave}\"");
                 }
             }
             catch (Exception)
@@ -251,7 +213,7 @@ namespace Nebulator.Common
         /// <returns>The drum name</returns>
         public static string FormatDrum(int note)
         {
-            string drumName = Utils.UNKNOWN_STRING;
+            string drumName = note.ToString();
 
             foreach (string key in ScriptDefinitions.TheDefinitions.DrumDefs.Keys)
             {
@@ -279,6 +241,14 @@ namespace Nebulator.Common
         #endregion
 
         #region Conversion functions
+        static string[] intervals =
+        {
+            //"1", "", "2", "", "3", "4", "", "5", "", "6", "", "7",
+            //"", "", "9", "", "", "11", "", "", "", "13", "", ""
+            "1", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "b7", "7",
+            "", "", "9", "#9", "", "11", "#11", "", "", "13", "", ""
+        };
+
         /// <summary>
         /// Get interval offset from name.
         /// </summary>
@@ -286,12 +256,6 @@ namespace Nebulator.Common
         /// <returns>Offset or null if invalid.</returns>
         static int? GetInterval(string sinterval)
         {
-            string[] intervals =
-            {
-                "1", "", "2", "", "3", "4", "", "5", "", "6", "", "7",
-                "", "", "9", "", "", "11", "", "", "", "13", "", ""
-            };
-
             int flats = sinterval.Count(c => c == 'b');
             int sharps = sinterval.Count(c => c == '#');
             sinterval = sinterval.Replace(" ", "").Replace("b", "").Replace("#", "");
@@ -307,11 +271,6 @@ namespace Nebulator.Common
         /// <returns></returns>
         static string GetInterval(int iint)
         {
-            string[] intervals =
-            {
-                "1", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "b7", "7",
-                "", "", "9", "#9", "", "11", "#11", "", "", "13", "", ""
-            };
             return iint >= intervals.Count() ? null : intervals[iint % intervals.Count()];
         }
 

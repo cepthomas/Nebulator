@@ -9,8 +9,8 @@ using Nebulator.Common;
 
 namespace Nebulator.Midi
 {
-    /// <summary>Reads in and processes standard yahama style files.</summary>
-    public class StyleParser
+    /// <summary>Reads in and processes standard midi or yahama style files.</summary>
+    public class FileParser
     {
         #region Properties gleaned from the style file
         /// <summary>All the part names.</summary>
@@ -37,7 +37,7 @@ namespace Nebulator.Midi
         Dictionary<(string part, int channel), List<MidiEvent>> _events = new Dictionary<(string, int), List<MidiEvent>>();
 
         /// <summary>Name of current part being processed.</summary>
-        string _currentPart = Utils.UNKNOWN_STRING;
+        string _currentPart = "DEF_PART";
         #endregion
 
         #region Public methods

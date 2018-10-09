@@ -207,14 +207,14 @@ namespace Nebulator
             _logger.Info(souts);
             #endregion
 
-#if _DEV // Debug stuff
+#if _DEV // Debug stuff  TODO clean this up.
             if (args.Count() <= 1)
             {
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dusty.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dusty.np");
 
                 //these in NProcessing: 
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\nptest.np");
@@ -224,16 +224,10 @@ namespace Nebulator
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative1.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative2.np");
 
-
-
-                if (Compile())
-                {
-                    ProcessPlay(PlayCommand.Stop, true);
-                }
-
-
-
-
+                //if (Compile())
+                //{
+                //    ProcessPlay(PlayCommand.Stop, true);
+                //}
 
 
                 //// Server debug stuff
@@ -243,11 +237,13 @@ namespace Nebulator
 
                 //ExportMidi("test.mid");
 
-                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\SkyDrive\OneDrive Documents\npulator\midi\styles-jazzy\Mambo.sty");
-                //var v = MidiUtils.ImportStyle(@"C:\Users\cet\OneDrive\OneDrive Documents\npulator\midi\styles-jazzy\Funk.sty");
+                //var v = MidiUtils.ImportFile(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
+                //var v = MidiUtils.ImportFile(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
+                //var v = MidiUtils.ImportFile(@"C:\Dev\Play1\AMBIENT.MID");
                 //Clipboard.SetText(string.Join(Environment.NewLine, v));
             }
 #endif
+
             if (sopen != "")
             {
                 _logger.Error(sopen);
@@ -1436,7 +1432,7 @@ namespace Nebulator
             double ticksPerSec = ticksPerMinute / 60;
             double secPerTick = 1 / ticksPerSec;
 
-            Midi.MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
+            MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
         }
 
         /// <summary>
@@ -1454,7 +1450,7 @@ namespace Nebulator
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
-                var v = Midi.MidiUtils.ImportStyle(openDlg.FileName);
+                var v = Midi.MidiUtils.ImportFile(openDlg.FileName);
                 Clipboard.SetText(string.Join(Environment.NewLine, v));
                 MessageBox.Show("Style file content is in the clipboard");
             }

@@ -140,35 +140,60 @@ namespace Nebulator.Midi
         }
 
         /// <summary>
-        /// Read a style file into text that can be placed in a neb file.
+        /// Read a midi or style file into text that can be placed in a neb file.
         /// It attempts to clean up any issues in the midi event data e.g. note on/off mismatches.
-        /// Returns the list of strings and also places them in the clipboard.
         /// </summary>
         /// <param name="fileName"></param>
-        /// <returns>Collection of strings for pasting into a file.</returns>
-        public static List<string> ImportStyle(string fileName)
+        /// <returns>Collection of strings for pasting into a neb file.</returns>
+        public static List<string> ImportFile(string fileName)
         {
-            List<string> constants = new List<string>() { "///// Constants /////" };
-            List<string> channels = new List<string>() { "///// Channels and Loops /////" };
-            List<string> sequences = new List<string>() { "///// Sequences and Notes /////" };
-            List<string> leftovers = new List<string> { "///// Leftovers /////" };
+            List<string> defs = new List<string>();
+            List<string> sequences = new List<string>() { "///// Sequences /////" };
+            List<string> leftovers = new List<string>();
 
-            StyleParser sty = new StyleParser();
-            sty.ProcessFile(fileName);
+            FileParser fpars = new FileParser();
+            fpars.ProcessFile(fileName);
 
-            // Process collected events into strings digestible by neb.
-            List<string> parts = sty.Parts;
-            List<int> stychannels = sty.Channels;
+            defs.Add("///// Channel definitions /////");
+            fpars.Channels.ForEach(ch => defs.Add($"NChannel {MakeChanName(ch)};"));
+            defs.Add("");
+
+            defs.Add("///// Sequence definitions /////");
+            fpars.Parts.ForEach(pt =>
+            {
+                fpars.Channels.ForEach(ch => defs.Add($"NSequence {MakeSeqName(pt, ch)};"));
+            });
+            defs.Add("");
+
+            #region Local functions
+            Time MidiTimeToInternal(long mtime, int tpqn)
+            {
+                //return new Time(mtime / tpqn);
+                return new Time(mtime * Time.TOCKS_PER_TICK / tpqn);
+            }
+
+            string MakeSeqName(string part, int channel)
+            {
+                return $"{part.Replace(" ", "_")}_CH{channel}";
+            }
+
+            string MakeChanName(int channel)
+            {
+                return $"CH{channel}";
+            }
+            #endregion
 
             // Collect sequence info.
-            foreach(var part in parts)
+            foreach (var part in fpars.Parts)
             {
-                foreach (int channel in stychannels)
+                foreach (int channel in fpars.Channels)
                 {
-                    var events = sty.GetEvents(part, channel);
+                    var events = fpars.GetEvents(part, channel);
 
-                    if(events != null)
+                    if (events != null)
                     {
+                        string seqName = MakeSeqName(part, channel);
+
                         // Current note on events that are waiting for corresponding note offs.
                         LinkedList<NoteOnEvent> ons = new LinkedList<NoteOnEvent>();
 
@@ -249,26 +274,14 @@ namespace Nebulator.Midi
                             }
                         }
 
-                        Time MidiTimeToInternal(long mtime, int tpqn)
-                        {
-                            //return new Time(mtime / tpqn);
-                            return new Time(mtime * Time.TOCKS_PER_TICK / tpqn);
-                        }
-
                         // Process the collected valid events.
                         if (validEvents.Count > 0)
                         {
-                            ///// Sequences and Notes /////
-                            //seq(SEQ1, 8);
-                            //note(0.00, F.4.m7, 90, 0.08);
-                            //note(1.21, C.4, 90, 0.08);
-                            // ....
-
                             validEvents.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
-                            long duration = validEvents.Last().AbsoluteTime - validEvents.First().AbsoluteTime;
-                            Time tdur = MidiTimeToInternal(duration, sty.DeltaTicksPerQuarterNote);
+                            long duration = validEvents.Last().AbsoluteTime; // - validEvents.First().AbsoluteTime;
+                            Time tdur = MidiTimeToInternal(duration, fpars.DeltaTicksPerQuarterNote);
                             tdur.RoundUp();
-                            sequences.Add($"seq({part.Replace(" ", "_")}_{channel}, {tdur.Tick});");
+                            sequences.Add($"{seqName} = createSequence({tdur.Tick}); // fix this number");
 
                             // Process each set of notes at each discrete play time.
                             foreach (IEnumerable<NoteOnEvent> nevts in validEvents.GroupBy(e => e.AbsoluteTime))
@@ -277,8 +290,8 @@ namespace Nebulator.Midi
                                 //notes.Sort();
 
                                 NoteOnEvent noevt = nevts.ElementAt(0);
-                                Time when = MidiTimeToInternal(noevt.AbsoluteTime, sty.DeltaTicksPerQuarterNote);
-                                Time dur = MidiTimeToInternal(noevt.NoteLength, sty.DeltaTicksPerQuarterNote);
+                                Time when = MidiTimeToInternal(noevt.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
+                                Time dur = MidiTimeToInternal(noevt.NoteLength, fpars.DeltaTicksPerQuarterNote);
 
                                 if (channel == 10)
                                 {
@@ -286,7 +299,7 @@ namespace Nebulator.Midi
                                     foreach(int d in notes)
                                     {
                                         string sdrum = NoteUtils.FormatDrum(d);
-                                        sequences.Add($"note({when}, {sdrum}, {noevt.Velocity}, {dur});");
+                                        sequences.Add($"{seqName}.Add({when}, {sdrum}, {noevt.Velocity});");
                                     }
                                 }
                                 else
@@ -294,7 +307,7 @@ namespace Nebulator.Midi
                                     // Instrument - note(s) or chord.
                                     foreach(string sn in NoteUtils.FormatNotes(notes))
                                     {
-                                        sequences.Add($"note({when}, {sn}, {noevt.Velocity}, {dur});");
+                                        sequences.Add($"{seqName}.Add({when}, {sn}, {noevt.Velocity}, {dur});");
                                     }
                                 }
                             }
@@ -305,22 +318,14 @@ namespace Nebulator.Midi
                 }
             }
 
-            // Process track info.
-            channels.ForEach(c => channels.Add($"track(TRACK_{c}, {c}, 0, 0, 0);"));
-
-            // Global stuff.
-            constants.Add($"const(TLEN, 888);");
-
             List<string> all = new List<string>() { "///// Imported Style /////" };
-            all.AddRange(constants);
-            all.Add(""); // space
-            all.AddRange(channels);
-            all.Add(""); // space
-            all.AddRange(sequences);
+            all.Add("");
 
-            System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, all));
+            all.AddRange(defs);
+            all.AddRange(sequences);
 
             return all;
         }
     }
 }
+
