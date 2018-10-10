@@ -56,9 +56,8 @@ namespace Nebulator.Midi
         {
         }
 
-
         /// <inheritdoc />
-        public bool Create(string name)
+        public bool Construct(string name)
         {
             CommName = name;
             return true;

@@ -71,7 +71,7 @@ namespace Nebulator.VirtualKeyboard
         }
 
         /// <inheritdoc />
-        public bool Create(string s = "")
+        public bool Construct(string _ = "")
         {
             CommName = "Virtual Keyboard";
             return true;

@@ -210,9 +210,9 @@ namespace Nebulator
 #if _DEV // Debug stuff  TODO clean this up.
             if (args.Count() <= 1)
             {
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
+                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
+                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev2.np");
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dusty.np");
 
@@ -224,17 +224,18 @@ namespace Nebulator
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative1.np");
                 //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative2.np");
 
-                //if (Compile())
-                //{
-                //    ProcessPlay(PlayCommand.Stop, true);
-                //}
+                if (Compile())
+                {
+                    ProcessPlay(PlayCommand.Stop, true);
+                }
 
 
-                //// Server debug stuff
+                //// Server debug stuff.
                 //TestClient client = new TestClient();
                 //Task.Run(async () => { await client.Run(); });
 
 
+                //// Midi utils stuff.
                 //ExportMidi("test.mid");
 
                 //var v = MidiUtils.ImportFile(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
@@ -398,7 +399,7 @@ namespace Nebulator
                     for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                     {
                         NInput input = new MidiInput();
-                        input.Create(MidiIn.DeviceInfo(device).ProductName);
+                        input.Construct(MidiIn.DeviceInfo(device).ProductName);
                         input.CommInputEvent += Comm_InputEvent;
                         input.CommLogEvent += Comm_LogEvent;
                         _script.Inputs.Add(input);
@@ -420,7 +421,7 @@ namespace Nebulator
                         TopMost = false,
                         Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y)
                     };
-                    _vk.Create();
+                    _vk.Construct();
                     _vk.CommInputEvent += Comm_InputEvent;
                     _vk.CommLogEvent += Comm_LogEvent;
                     _script.Inputs.Add(_vk);
@@ -428,7 +429,7 @@ namespace Nebulator
                     for (int device = 0; device < MidiOut.NumberOfDevices; device++)
                     {
                         NOutput output = new MidiOutput();
-                        output.Create(MidiOut.DeviceInfo(device).ProductName);
+                        output.Construct(MidiOut.DeviceInfo(device).ProductName);
                         output.CommLogEvent += Comm_LogEvent;
                         _script.Outputs.Add(output);
                     }

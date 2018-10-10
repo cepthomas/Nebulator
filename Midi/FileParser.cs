@@ -42,7 +42,7 @@ namespace Nebulator.Midi
 
         #region Public methods
         /// <summary>
-        /// Read a style file. For style parsing, only a minimal set is included. You can add the rest.
+        /// Read a file. For style parsing, only a minimal set is included. You can add the rest.
         /// See http://www.wierzba.homepage.t-online.de/StyleFileDescription_v21.pdf.
         /// </summary>
         /// <param name="fileName"></param>

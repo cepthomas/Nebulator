@@ -97,10 +97,7 @@ namespace Nebulator.Comm
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            int total = _steps.Values.Sum(v => v.Count);
-            sb.Append($"Times:{_steps.Keys.Count} TotalSteps:{total}");
-            return sb.ToString();
+            return $"Times:{_steps.Keys.Count} TotalSteps:{_steps.Values.Sum(v => v.Count)}";
         }
         #endregion
     }

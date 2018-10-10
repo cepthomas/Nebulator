@@ -63,21 +63,21 @@ public override void setupNeb()
 
     MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true;
     //MY_MIDI_OUT = createOutput("loopMIDI Port 1");
-    MY_MIDI_IN = createInput("MPK mini");
+    //MY_MIDI_IN = createInput("MPK mini");
     MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
 
     // All the output channels.
-    PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);  
+    PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);
     BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
     SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
     DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
 
     // All the input controllers.
-    createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
-    createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-    createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
-    createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
-    createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
+    // createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
+    // createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+    // createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
+    // createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+    // createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
     createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
 
     // levers

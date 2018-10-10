@@ -18,7 +18,7 @@ namespace Nebulator.Comm
         /// <summary>Comm name.</summary>
         string CommName { get; }
 
-        /// <summary>What it can do.</summary>
+        /// <summary>What it can do. Set by implementation.</summary>
         CommCaps Caps { get; }
 
         /// <summary>It's alive.</summary>
@@ -26,12 +26,15 @@ namespace Nebulator.Comm
         #endregion
 
         #region Functions
-        /// <summary>Interfaces don't allow constructors so do this instead.</summary>
+        /// <summary>
+        /// Interfaces don't allow constructors so do this instead.
+        /// Corresponds to the definition in the script.
+        /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        bool Create(string name);
+        bool Construct(string name);
 
-        /// <summary>Initialize everything.</summary>
+        /// <summary>Actually create the comm device.</summary>
         /// <returns></returns>
         bool Init();
 
