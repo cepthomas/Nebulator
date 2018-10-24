@@ -49,7 +49,7 @@ namespace Nebulator.Comm
         #endregion
     }
 
-    /// <summary>Input specific version. Slight naming violation to support user scripts consistently.</summary>
+    /// <summary>Input specific version.</summary>
     public interface NInput : IComm
     {
         #region Events
@@ -58,7 +58,7 @@ namespace Nebulator.Comm
         #endregion
     }
 
-    /// <summary>Output specific version. Slight naming violation to support user scripts consistently.</summary>
+    /// <summary>Output specific version.</summary>
     public interface NOutput : IComm
     {
         #region Functions

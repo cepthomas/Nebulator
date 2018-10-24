@@ -1,6 +1,8 @@
 
 /////////// Laboratory for brilliant new ideas //////////
 
+// Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
+
 // IO devices.
 NOutput MY_MIDI_OUT;
 NInput MY_MIDI_IN;
@@ -42,25 +44,34 @@ int[] _notesPlaying = new int[128];
 
 public override void setupNeb()
 {
-    bool winGm = false;
+    // Use wingm and virtual kbd only.
+    bool local = true;
 
     // All the neb variables.
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
 
-    MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true;
-    // MY_MIDI_OUT = createOutput("loopMIDI Port 1");
-    // MY_MIDI_IN = createInput("MPK mini");
+
+
+    if(local)
+    {
+        MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
+        MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
+        createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
+    }
+    else
+    {
+        MY_MIDI_OUT = createOutput("loopMIDI Port 1");
+        MY_MIDI_IN = createInput("MPK mini");
+        // createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
+    }
 
     // All the output channels.
     PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);  
     BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
     SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
     DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
-
-    // All the input controllers.
-    // createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
 
     // levers
     createLever(BACK_COLOR);
@@ -149,7 +160,7 @@ public override void setupNeb()
     PART3.Add(DRUMS,  DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1,  DRUMS_SEQ_1);
     PART3.Add(BASS,   BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1,   BASS_SEQ_1);
 
-    if (winGm)
+    if (local)
     {
         sendPatch(PIANO, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
