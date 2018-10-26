@@ -99,7 +99,7 @@ namespace Nebulator.Script
         /// <summary>Main -> Script -> Main</summary>
         public int FrameRate { get; set; } = 0;
 
-        /// <summary>Steps added by script functions at runtime e.g. playSequence(). Script -> Main</summary>
+        /// <summary>Steps added by script functions at runtime e.g. sendSequence(). Script -> Main</summary>
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
         #endregion
 

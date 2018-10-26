@@ -312,7 +312,7 @@ namespace Nebulator.Script
         /// <summary>Send a named sequence.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        public void playSequence(NChannel channel, NSequence seq)
+        public void sendSequence(NChannel channel, NSequence seq)
         {
             StepCollection scoll = ScriptUtils.ConvertToSteps(channel, seq, StepTime.Tick);
             RuntimeSteps.Add(scoll);

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Collections; //TODO remove
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
@@ -46,13 +45,13 @@ namespace Nebulator.OSC
         public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Where to?</summary>
-        public string RemoteHost { get; private set; } = Utils.UNKNOWN_STRING;
+        public string ServerIP { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Where to?</summary>
-        public int RemotePort { get; private set; } = -1;
+        public int ServerPort { get; private set; } = -1;
 
         /// <inheritdoc />
-        public CommCaps Caps { get; private set; } = null;
+        public CommCaps Caps { get; private set; } = OSCUtils.InitCaps();
 
         /// <inheritdoc />
         public bool Inited { get; private set; } = false;
@@ -76,14 +75,7 @@ namespace Nebulator.OSC
         /// <inheritdoc />
         public bool Init()
         {
-            Caps = new CommCaps()
-            {
-
-            };
-
-            Inited = false;
-
-            try
+                try
             {
                 if (_udpClient != null)
                 {
@@ -92,7 +84,7 @@ namespace Nebulator.OSC
                     _udpClient = null;
                 }
 
-                _udpClient = new UdpClient(RemoteHost, RemotePort);
+                _udpClient = new UdpClient(ServerIP, ServerPort);
 
                 //// Figure out which device.
                 //List<string> devices = new List<string>();
@@ -307,6 +299,22 @@ namespace Nebulator.OSC
         {
         }
         #endregion
+
+
+
+        Bundle Format(List<Step> steps)
+        {
+            Bundle bundle = new Bundle(new TimeTag());
+
+            return bundle;
+        }
+
+        Message Format(Step step)
+        {
+            Message message = new Message("TODOX");
+
+            return message;
+        }
 
         #region Private functions
         /// <summary>Ask host to do something with this.</summary>

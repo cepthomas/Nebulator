@@ -202,7 +202,7 @@ public override void step()
                 sendNote(SYNTH, "F3", 95, 0.48);
                 break;
             case 16:
-                playSequence(SYNTH, DYNAMIC_SEQ);
+                sendSequence(SYNTH, DYNAMIC_SEQ);
                 break;
 
             case 8:

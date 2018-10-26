@@ -166,7 +166,7 @@ void sequenced()
             case 4:
             case 8:
             case 12:
-                //playSequence(PIANO, SEQ1);
+                //sendSequence(PIANO, SEQ1);
                 foreach(int n in _chordNotes)
                 {
                     sendNote(PIANO, n, 90, 1.0);

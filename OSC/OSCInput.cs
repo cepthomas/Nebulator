@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Collections; //TODO remove
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
@@ -43,10 +42,10 @@ namespace Nebulator.OSC
         public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The local port.</summary>
-        public int LocalPort { get; set; } = -1;
+        public int ClientPort { get; set; } = -1;
 
         /// <inheritdoc />
-        public CommCaps Caps { get; private set; } = null;
+        public CommCaps Caps { get; private set; } = OSCUtils.InitCaps();
 
         /// <inheritdoc />
         public bool Inited { get; private set; } = false;
@@ -70,13 +69,6 @@ namespace Nebulator.OSC
         /// <inheritdoc />
         public bool Init()
         {
-            Caps = new CommCaps()
-            {
-
-            };
-
-            Inited = false;
-
             try
             {
                 if (_udpClient != null)
@@ -108,7 +100,7 @@ namespace Nebulator.OSC
                 //    Inited = true;
                 //}
 
-                _udpClient = new UdpClient(LocalPort);
+                _udpClient = new UdpClient(ClientPort);
                 //udpClient.MessageReceived += MidiIn_MessageReceived;
                 //udpClient.ErrorReceived += MidiIn_ErrorReceived;
                 //_midiIn.Start();
