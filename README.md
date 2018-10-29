@@ -27,6 +27,7 @@ This project contains a bunch of components that are either recycled or created 
 - General purpose embedded C# in memory compiler.
 - Virtual keyboard control based on Leslie Sanford's piano.
 - Various utilities and extensions.
+- Example of the use of [pnut unit tester](https://github.com/cepthomas/pnut) 
 
 
 # Third Party

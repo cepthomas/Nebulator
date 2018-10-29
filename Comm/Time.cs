@@ -135,7 +135,7 @@ namespace Nebulator.Comm
 
         public bool Equals(Time obj)
         {
-            return obj != null && obj.Tick == Tick && obj.Tock == Tock;
+            return obj != null && ReferenceEquals(this, obj);
         }
 
         public override int GetHashCode()

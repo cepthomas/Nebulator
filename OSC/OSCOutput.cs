@@ -302,6 +302,7 @@ namespace Nebulator.OSC
 
 
 
+        // TODOX all these:
         Bundle Format(List<Step> steps)
         {
             Bundle bundle = new Bundle(new TimeTag());
@@ -315,18 +316,6 @@ namespace Nebulator.OSC
 
             return message;
         }
-
-        #region Private functions
-        /// <summary>Ask host to do something with this.</summary>
-        /// <param name="cat"></param>
-        /// <param name="msg"></param>
-        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
-        {
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
-        }
-        #endregion
-
-
 
         public int Send(Bundle packet)
         {
@@ -345,5 +334,17 @@ namespace Nebulator.OSC
 
             return byteNum;
         }
+
+
+
+        #region Private functions
+        /// <summary>Ask host to do something with this.</summary>
+        /// <param name="cat"></param>
+        /// <param name="msg"></param>
+        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
+        {
+            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
+        }
+        #endregion
     }
 }

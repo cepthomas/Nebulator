@@ -138,5 +138,20 @@ namespace Nebulator.Common
                 mruList.RemoveAt(mruList.Count - 1);
             }
         }
+
+        /// <summary>
+        /// Get a subset of an array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="start"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static T[] Subset<T>(this T[] source, int start, int length)
+        {
+            T[] subset = new T[length];
+            Array.Copy(source, start, subset, 0, length);
+            return subset;
+        }
     }
 }

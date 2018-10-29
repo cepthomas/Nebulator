@@ -161,7 +161,7 @@ namespace Nebulator.OSC
         #endregion
 
         #region Private functions
-        public Bundle Receive() // needs a thread/async
+        public Bundle Receive() // needs a thread/async TODOX 
         {
             try
             {
@@ -170,7 +170,15 @@ namespace Nebulator.OSC
 
                 if (bytes != null && bytes.Length > 0)
                 {
-                    // unpack - check for bundle or message
+                    // unpack - check for bundle or message TODOX nested bundles?
+                    if(bytes[0]== '#')
+                    {
+                        Bundle b = Bundle.Parse(bytes);
+                    }
+                    else
+                    {
+                        Message m = Message.Parse(bytes);
+                    }
 
 
                     //    // Decode the message. We only care about a few.

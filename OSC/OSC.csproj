@@ -47,9 +47,13 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="OSCAddress.cs" />
+    <Compile Include="OSCBundle.cs" />
     <Compile Include="OSCCommon.cs" />
     <Compile Include="OSCInput.cs" />
+    <Compile Include="OSCMessage.cs" />
     <Compile Include="OSCOutput.cs" />
+    <Compile Include="OSCTimeTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,7 +67,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

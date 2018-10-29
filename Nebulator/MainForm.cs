@@ -207,7 +207,7 @@ namespace Nebulator
             _logger.Info(souts);
             #endregion
 
-#if _DEV // Debug stuff  TODO clean this up.
+#if _DEV // Debug stuff  TODOX clean this up.
             if (args.Count() <= 1)
             {
                 //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
@@ -228,20 +228,6 @@ namespace Nebulator
                 {
                     ProcessPlay(PlayCommand.Stop, true);
                 }
-
-
-                //// Server debug stuff.
-                //TestClient client = new TestClient();
-                //Task.Run(async () => { await client.Run(); });
-
-
-                //// Midi utils stuff.
-                //ExportMidi("test.mid");
-
-                //var v = MidiUtils.ImportFile(@"C:\Users\cet\SkyDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Mambo.sty");
-                //var v = MidiUtils.ImportFile(@"C:\Users\cet\OneDrive\OneDrive Documents\nebulator\midi\styles-jazzy\Funk.sty");
-                //var v = MidiUtils.ImportFile(@"C:\Dev\Play1\AMBIENT.MID");
-                //Clipboard.SetText(string.Join(Environment.NewLine, v));
             }
 #endif
 
