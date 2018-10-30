@@ -281,7 +281,7 @@ namespace Nebulator.Midi
                             long duration = validEvents.Last().AbsoluteTime; // - validEvents.First().AbsoluteTime;
                             Time tdur = MidiTimeToInternal(duration, fpars.DeltaTicksPerQuarterNote);
                             tdur.RoundUp();
-                            sequences.Add($"{seqName} = createSequence({tdur.Tick}); // fix this number");
+                            sequences.Add($"{seqName} = createSequence({tdur.Tick}); // !!! fix this number !!!");
 
                             // Process each set of notes at each discrete play time.
                             foreach (IEnumerable<NoteOnEvent> nevts in validEvents.GroupBy(e => e.AbsoluteTime))

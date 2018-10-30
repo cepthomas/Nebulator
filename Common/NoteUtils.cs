@@ -41,6 +41,7 @@ namespace Nebulator.Common
             List<int> notes = new List<int>();
 
             // Parse the input value.
+            // Note: Need exception handling here to protect from user script errors.
             try
             {
                 // Could be:
@@ -183,24 +184,17 @@ namespace Nebulator.Common
         {
             List<string> snotes = new List<string>();
 
-            try
-            {
-                // Dissect root note.
-                int rootOctave = SplitNoteNumber(notes[0]).octave;
-                int rootNoteNum = SplitNoteNumber(notes[0]).root;
+            // Dissect root note.
+            int rootOctave = SplitNoteNumber(notes[0]).octave;
+            int rootNoteNum = SplitNoteNumber(notes[0]).root;
 
-                string sroot = $"\"{NoteNumberToName(rootNoteNum)}{rootOctave}\"";
+            string sroot = $"\"{NoteNumberToName(rootNoteNum)}{rootOctave}\"";
 
-                foreach (int n in notes)
-                {
-                    int octave = SplitNoteNumber(n).octave;
-                    int root = SplitNoteNumber(n).root;
-                    snotes.Add($"\"{NoteNumberToName(root)}{octave}\"");
-                }
-            }
-            catch (Exception)
+            foreach (int n in notes)
             {
-                throw new Exception($"Invalid note list: {string.Join(",", notes)}");
+                int octave = SplitNoteNumber(n).octave;
+                int root = SplitNoteNumber(n).root;
+                snotes.Add($"\"{NoteNumberToName(root)}{octave}\"");
             }
 
             return snotes;

@@ -39,73 +39,66 @@ namespace Nebulator.Common
         /// </summary>
         public void Init()
         {
-            try
+            InstrumentDefs.Clear();
+            DrumDefs.Clear();
+            ControllerDefs.Clear();
+            ChordDefs.Clear();
+            ScaleDefs.Clear();
+
+            // Read the file.
+            object section = null;
+
+            string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\ScriptDefinitions.md");
+            foreach (string sl in File.ReadAllLines(fpath))
             {
-                InstrumentDefs.Clear();
-                DrumDefs.Clear();
-                ControllerDefs.Clear();
-                ChordDefs.Clear();
-                ScaleDefs.Clear();
+                List<string> parts = sl.SplitByToken("|");
 
-                // Read the file.
-                object section = null;
-
-                string fpath = Path.Combine(Utils.GetExeDir(), @"Resources\ScriptDefinitions.md");
-                foreach (string sl in File.ReadAllLines(fpath))
+                if (parts.Count > 1)
                 {
-                    List<string> parts = sl.SplitByToken("|");
-
-                    if (parts.Count > 1)
+                    switch (parts[0])
                     {
-                        switch (parts[0])
-                        {
-                            case "Instrument":
-                                section = InstrumentDefs;
-                                break;
+                        case "Instrument":
+                            section = InstrumentDefs;
+                            break;
 
-                            case "Drum":
-                                section = DrumDefs;
-                                break;
+                        case "Drum":
+                            section = DrumDefs;
+                            break;
 
-                            case "Controller":
-                                section = ControllerDefs;
-                                break;
+                        case "Controller":
+                            section = ControllerDefs;
+                            break;
 
-                            case "Chord":
-                                section = ChordDefs;
-                                break;
+                        case "Chord":
+                            section = ChordDefs;
+                            break;
 
-                            case "Scale":
-                                section = ScaleDefs;
-                                break;
+                        case "Scale":
+                            section = ScaleDefs;
+                            break;
 
-                            case string s when !s.StartsWith("---"):
-                                switch(section)
-                                {
-                                    case Dictionary<string, string> sd:
-                                        (section as Dictionary<string, string>)[parts[0]] = parts[1];
-                                        break;
+                        case string s when !s.StartsWith("---"):
+                            switch(section)
+                            {
+                                case Dictionary<string, string> sd:
+                                    (section as Dictionary<string, string>)[parts[0]] = parts[1];
+                                    break;
 
-                                    case Dictionary<string, List<string>> sd:
-                                        (section as Dictionary<string, List<string>>).Add(parts[0], parts.GetRange(1, parts.Count - 1));
-                                        break;
+                                case Dictionary<string, List<string>> sd:
+                                    (section as Dictionary<string, List<string>>).Add(parts[0], parts.GetRange(1, parts.Count - 1));
+                                    break;
 
-                                    default:
-                                        throw new Exception("Invalid script definition processing");
-                                }
-                                break;
-                        }
+                                default:
+                                    throw new Exception("Invalid script definition processing");
+                            }
+                            break;
                     }
                 }
+            }
 
-                // Internals.
-                NoteControl = int.Parse(ControllerDefs["NoteControl"]);
-                PitchControl = int.Parse(ControllerDefs["PitchControl"]);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Couldn't load the definitions file: " + ex.Message);
-            }
+            // Internals.
+            NoteControl = int.Parse(ControllerDefs["NoteControl"]);
+            PitchControl = int.Parse(ControllerDefs["PitchControl"]);
         }
     }
 }

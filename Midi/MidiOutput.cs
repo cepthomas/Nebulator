@@ -216,16 +216,8 @@ namespace Nebulator.Midi
 
                     if(msg != 0)
                     {
-                        try
-                        {
-                            _midiOut.Send(msg);
-                            LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
-                        }
-                        catch (Exception ex)
-                        {
-                            LogMsg(CommLogEventArgs.LogCategory.Error, $"Midi couldn't send step {step}: {ex.Message}");
-                            ret = false;
-                        }
+                        _midiOut.Send(msg);
+                        LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
                     }
                 }
             }

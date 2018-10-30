@@ -75,7 +75,7 @@ namespace Nebulator.OSC
         /// <inheritdoc />
         public bool Init()
         {
-                try
+            try
             {
                 if (_udpClient != null)
                 {
@@ -239,7 +239,7 @@ namespace Nebulator.OSC
             //                _midiOut.Send(msg);
             //                LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
             //            }
-            //            catch (Exception ex)
+            //            catchxxx (Exception ex)
             //            {
             //                LogMsg(CommLogEventArgs.LogCategory.Error, $"Midi couldn't send step {step}: {ex.Message}");
             //                ret = false;
@@ -322,15 +322,7 @@ namespace Nebulator.OSC
             int byteNum = 0;
             byte[] data = null;
 
-            try
-            {
-                byteNum = _udpClient.Send(data, data.Length);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
-            }
+            byteNum = _udpClient.Send(data, data.Length);
 
             return byteNum;
         }

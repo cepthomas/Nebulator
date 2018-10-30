@@ -163,116 +163,110 @@ namespace Nebulator.OSC
         #region Private functions
         public Bundle Receive() // needs a thread/async TODOX 
         {
-            try
-            {
-                IPEndPoint ip = null;
-                byte[] bytes = _udpClient.Receive(ref ip);
+            Bundle b = null;
 
-                if (bytes != null && bytes.Length > 0)
+            IPEndPoint ip = null;
+            byte[] bytes = _udpClient.Receive(ref ip);
+
+            if (bytes != null && bytes.Length > 0)
+            {
+                // unpack - check for bundle or message TODOX nested bundles?
+                if (bytes[0] == '#')
                 {
-                    // unpack - check for bundle or message TODOX nested bundles?
-                    if(bytes[0]== '#')
-                    {
-                        Bundle b = Bundle.Parse(bytes);
-                    }
-                    else
-                    {
-                        Message m = Message.Parse(bytes);
-                    }
-
-
-                    //    // Decode the message. We only care about a few.
-                    //    MidiEvent me = MidiEvent.FromRawMessage(e.RawMessage);
-                    //    Step step = null;
-
-                    //    switch (me.CommandCode)
-                    //    {
-                    //        case MidiCommandCode.NoteOn:
-                    //            {
-                    //                NoteOnEvent evt = me as NoteOnEvent;
-
-                    //                if(evt.Velocity == 0)
-                    //                {
-                    //                    step = new StepNoteOff()
-                    //                    {
-                    //                        Comm = this,
-                    //                        ChannelNumber = evt.Channel,
-                    //                        NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                    //                        Velocity = 0
-                    //                    };
-                    //                }
-                    //                else
-                    //                {
-                    //                    step = new StepNoteOn()
-                    //                    {
-                    //                        Comm = this,
-                    //                        ChannelNumber = evt.Channel,
-                    //                        NoteNumber = evt.NoteNumber,
-                    //                        Velocity = evt.Velocity,
-                    //                        VelocityToPlay = evt.Velocity,
-                    //                        Duration = new Time(0)
-                    //                    };
-                    //                }
-                    //            }
-                    //            break;
-
-                    //        case MidiCommandCode.NoteOff:
-                    //            {
-                    //                NoteEvent evt = me as NoteEvent;
-                    //                step = new StepNoteOff()
-                    //                {
-                    //                    Comm = this,
-                    //                    ChannelNumber = evt.Channel,
-                    //                    NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                    //                    Velocity = evt.Velocity
-                    //                };
-                    //            }
-                    //            break;
-
-                    //        case MidiCommandCode.ControlChange:
-                    //            {
-                    //                ControlChangeEvent evt = me as ControlChangeEvent;
-                    //                step = new StepControllerChange()
-                    //                {
-                    //                    Comm = this,
-                    //                    ChannelNumber = evt.Channel,
-                    //                    ControllerId = (int)evt.Controller,
-                    //                    Value = evt.ControllerValue
-                    //                };
-                    //            }
-                    //            break;
-
-                    //        case MidiCommandCode.PitchWheelChange:
-                    //            {
-                    //                PitchWheelChangeEvent evt = me as PitchWheelChangeEvent;
-                    //                step = new StepControllerChange()
-                    //                {
-                    //                    Comm = this,
-                    //                    ChannelNumber = evt.Channel,
-                    //                    ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
-                    //                    Value = Utils.Constrain(evt.Pitch, Caps.MinPitchValue, Caps.MaxPitchValue)
-                    //                };
-                    //            }
-                    //            break;
-                    //    }
-
-                    //    if (step != null)
-                    //    {
-                    //        // Pass it up for handling.
-                    //        CommInputEventArgs args = new CommInputEventArgs() { Step = step };
-                    //        CommInputEvent?.Invoke(this, args);
-                    //        LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
-                    //    }
-
+                    Bundle bnest = Bundle.Unpack(bytes);
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return null;
+                else
+                {
+                    Message m = Message.Unpack(bytes);
+                }
+
+
+                //    // Decode the message. We only care about a few.
+                //    MidiEvent me = MidiEvent.FromRawMessage(e.RawMessage);
+                //    Step step = null;
+
+                //    switch (me.CommandCode)
+                //    {
+                //        case MidiCommandCode.NoteOn:
+                //            {
+                //                NoteOnEvent evt = me as NoteOnEvent;
+
+                //                if(evt.Velocity == 0)
+                //                {
+                //                    step = new StepNoteOff()
+                //                    {
+                //                        Comm = this,
+                //                        ChannelNumber = evt.Channel,
+                //                        NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                //                        Velocity = 0
+                //                    };
+                //                }
+                //                else
+                //                {
+                //                    step = new StepNoteOn()
+                //                    {
+                //                        Comm = this,
+                //                        ChannelNumber = evt.Channel,
+                //                        NoteNumber = evt.NoteNumber,
+                //                        Velocity = evt.Velocity,
+                //                        VelocityToPlay = evt.Velocity,
+                //                        Duration = new Time(0)
+                //                    };
+                //                }
+                //            }
+                //            break;
+
+                //        case MidiCommandCode.NoteOff:
+                //            {
+                //                NoteEvent evt = me as NoteEvent;
+                //                step = new StepNoteOff()
+                //                {
+                //                    Comm = this,
+                //                    ChannelNumber = evt.Channel,
+                //                    NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                //                    Velocity = evt.Velocity
+                //                };
+                //            }
+                //            break;
+
+                //        case MidiCommandCode.ControlChange:
+                //            {
+                //                ControlChangeEvent evt = me as ControlChangeEvent;
+                //                step = new StepControllerChange()
+                //                {
+                //                    Comm = this,
+                //                    ChannelNumber = evt.Channel,
+                //                    ControllerId = (int)evt.Controller,
+                //                    Value = evt.ControllerValue
+                //                };
+                //            }
+                //            break;
+
+                //        case MidiCommandCode.PitchWheelChange:
+                //            {
+                //                PitchWheelChangeEvent evt = me as PitchWheelChangeEvent;
+                //                step = new StepControllerChange()
+                //                {
+                //                    Comm = this,
+                //                    ChannelNumber = evt.Channel,
+                //                    ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
+                //                    Value = Utils.Constrain(evt.Pitch, Caps.MinPitchValue, Caps.MaxPitchValue)
+                //                };
+                //            }
+                //            break;
+                //    }
+
+                //    if (step != null)
+                //    {
+                //        // Pass it up for handling.
+                //        CommInputEventArgs args = new CommInputEventArgs() { Step = step };
+                //        CommInputEvent?.Invoke(this, args);
+                //        LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
+                //    }
+
             }
 
-            return null;
+            return b;
         }
 
         /// <summary>Ask host to do something with this.</summary>

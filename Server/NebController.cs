@@ -52,23 +52,16 @@ namespace Nebulator.Server
         {
             bool ret = true;
 
-            try
-            {
-                var args = new SelfHost.RequestEventArgs() { Request = which, Param = "" };
-                SelfHost.FireEvent(args);
+            var args = new SelfHost.RequestEventArgs() { Request = which, Param = "" };
+            SelfHost.FireEvent(args);
 
-                if (args.Result == null)
-                {
-                    throw new Exception($"Error for command: {which}");
-                }
-                else
-                {
-                    ret = context.JsonResponse(args.Result);
-                }
-            }
-            catch (Exception ex)
+            if (args.Result == null)
             {
-                ret = context.JsonExceptionResponse(ex);
+                ret = context.JsonResponse($"Error for command: {which}");
+            }
+            else
+            {
+                ret = context.JsonResponse(args.Result);
             }
 
             return ret;

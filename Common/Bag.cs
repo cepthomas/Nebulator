@@ -82,18 +82,19 @@ namespace Nebulator.Common
         {
             Bag bag;
 
-            try
+            if(File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
                 bag = JsonConvert.DeserializeObject<Bag>(json);
             }
-            catch (Exception)
+            else
             {
                 // Doesn't exist, create a new one.
                 bag = new Bag();
             }
 
             bag._fn = fn;
+            
             return bag;
         }
         #endregion

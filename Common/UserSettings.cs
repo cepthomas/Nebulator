@@ -73,7 +73,7 @@ namespace Nebulator.Common
             TheSettings = null;
             string fn = Path.Combine(appDir, "settings.json");
 
-            try
+            if(File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
                 TheSettings = JsonConvert.DeserializeObject<UserSettings>(json);
@@ -83,7 +83,7 @@ namespace Nebulator.Common
 
                 TheSettings._fn = fn;
             }
-            catch (Exception)
+            else
             {
                 // Doesn't exist, create a new one.
                 TheSettings = new UserSettings

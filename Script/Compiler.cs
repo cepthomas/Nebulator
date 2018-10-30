@@ -254,7 +254,7 @@ namespace Nebulator.Script
         {
             ScriptCore script = null;
 
-            try
+            try // many ways to go wrong...
             {
                 // Set the compiler parameters.
                 CompilerParameters cp = new CompilerParameters()

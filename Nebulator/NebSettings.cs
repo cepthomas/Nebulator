@@ -54,13 +54,13 @@ namespace Nebulator
             TheSettings = null;
             string fn = Path.Combine(appDir, "neb.json");
 
-            try
+            if(File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
                 TheSettings = JsonConvert.DeserializeObject<NebSettings>(json);
                 TheSettings._fn = fn;
             }
-            catch (Exception)
+            else
             {
                 // Doesn't exist, create a new one.
                 TheSettings = new NebSettings

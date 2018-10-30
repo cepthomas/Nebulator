@@ -179,16 +179,6 @@ namespace Nebulator
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
 
-            #region Open file
-            string sopen = "";
-            // Look for filename passed in.
-            string[] args = Environment.GetCommandLineArgs();
-            if (args.Count() > 1)
-            {
-                sopen = OpenFile(args[1]);
-            }
-            #endregion
-
             #region System info
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
 
@@ -207,34 +197,29 @@ namespace Nebulator
             _logger.Info(souts);
             #endregion
 
-#if _DEV // Debug stuff  TODOX clean this up.
-            if (args.Count() <= 1)
+            #region Open file
+            string sopen = "";
+            
+            // Look for filename passed in.
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Count() > 1)
             {
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\example.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\airport.np");
-                sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dev-sect.np");
-                //sopen = OpenFile(@"C:\Dev\Nebulator\Examples\dusty.np");
+                sopen = OpenFile(args[1]);
+            }
 
-                //these in NProcessing: 
-                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\nptest.np");
-                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\lsys.np");
-                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\gol.np");
-                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\flocking.np");
-                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative1.np");
-                //sopen = OpenFile(@"C:\Dev\NProcessing\Examples\generative2.np");
-
+            if (sopen == "")
+            {
                 if (Compile())
                 {
                     ProcessPlay(PlayCommand.Stop, true);
                 }
             }
-#endif
-
-            if (sopen != "")
+            else
             {
                 _logger.Error(sopen);
+
             }
+            #endregion
         }
 
         /// <summary>
@@ -242,27 +227,20 @@ namespace Nebulator
         /// </summary>
         void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
+            ProcessPlay(PlayCommand.Stop, false);
+
+            // Just in case.
+            _script?.Outputs.ForEach(o => o?.Kill());
+
+            if (_script != null)
             {
-                ProcessPlay(PlayCommand.Stop, false);
-
-                // Just in case.
-                _script?.Outputs.ForEach(o => o?.Kill());
-
-                if (_script != null)
-                {
-                    // Save the project.
-                    SaveProjectValues();
-                    _script.Dispose();
-                }
-
-                // Save user settings.
-                SaveSettings();
+                // Save the project.
+                SaveProjectValues();
+                _script.Dispose();
             }
-            catch (Exception ex)
-            {
-                _logger.Error($"Couldn't save the file: {ex.Message}.");
-            }
+
+            // Save user settings.
+            SaveSettings();
         }
 
         /// <summary>
@@ -420,6 +398,7 @@ namespace Nebulator
                         _script.Outputs.Add(output);
                     }
 
+                    // Note: Need exception handling here to protect from user script errors.
                     try
                     {
                         // Surface area.
@@ -497,23 +476,22 @@ namespace Nebulator
                 // Iterate through the sections channels.
                 foreach (NSectionChannel schannel in sect.SectionChannels)
                 {
-                    // For processing current Sequence.
-                    int seqOffset = sect.Start;
-
-                    // Gen steps for each sequence.
-                    foreach (NSequence seq in schannel.Sequences)
+                    try
                     {
-                        try
+                        // For processing current Sequence.
+                        int seqOffset = sect.Start;
+
+                        // Gen steps for each sequence.
+                        foreach (NSequence seq in schannel.Sequences)
                         {
                             StepCollection stepsToAdd = ScriptUtils.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
                             _compiledSteps.Add(stepsToAdd);
                             seqOffset += seq.Length;
-
                         }
-                        catch (Exception ex)
-                        {
-                            throw new Exception($"Error in the sequences for NChannel {schannel.ParentChannel.Name} : {ex.Message}");
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error in the sequences for NChannel {schannel.ParentChannel.Name} : {ex.Message}");
                     }
                 }
             }
@@ -629,7 +607,7 @@ namespace Nebulator
             {
                 //_tan.Arm();
 
-                // Kick the script.
+                // Kick the script. Note: Need exception handling here to protect from user script errors.
                 try
                 {
                     _script.step();
@@ -675,6 +653,7 @@ namespace Nebulator
             {
                 //_tan.Arm();
 
+                // Note: Need exception handling here to protect from user script errors.
                 try
                 {
                     _surface.UpdateSurface();
@@ -712,6 +691,7 @@ namespace Nebulator
                     {
                         if (step is StepInternal)
                         {
+                            // Note: Need exception handling here to protect from user script errors.
                             try
                             {
                                 (step as StepInternal).ScriptFunction();

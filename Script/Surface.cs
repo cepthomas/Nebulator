@@ -123,6 +123,7 @@ namespace Nebulator.Script
 
             using (var skSurface = SKSurface.Create(w, h, SKImageInfo.PlatformColorType, SKAlphaType.Premul, data.Scan0, w * 4))
             {
+                // Note: Need exception handling here to protect from user script errors.
                 try
                 {
                     // Hand over to the script for drawing on.

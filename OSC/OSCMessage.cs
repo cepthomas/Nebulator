@@ -14,7 +14,7 @@ using Nebulator.Common;
 using Nebulator.Comm;
 
 
-// TODOX review all exception usage. Better way to handle return codes? No C# macros...  "exceptions mean bugs"
+// TODOX Clever way to handle return codes? No C# macros...  "exceptions mean bugs"
 
 
 
