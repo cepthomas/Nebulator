@@ -73,7 +73,7 @@ namespace Nebulator.OSC
         /// Client request to format the message.
         /// </summary>
         /// <returns></returns>
-        public List<byte> Format()
+        public List<byte> Pack()
         {
             bool ok = true;
 
@@ -89,22 +89,22 @@ namespace Nebulator.OSC
                 {
                     case int i:
                         dtype.Append('i');
-                        dvals.AddRange(OSCUtils.Format(i));
+                        dvals.AddRange(OSCUtils.Pack(i));
                         break;
 
                     case float f:
                         dtype.Append('f');
-                        dvals.AddRange(OSCUtils.Format(f));
+                        dvals.AddRange(OSCUtils.Pack(f));
                         break;
 
                     case string s:
                         dtype.Append('s');
-                        dvals.AddRange(OSCUtils.Format(s));
+                        dvals.AddRange(OSCUtils.Pack(s));
                         break;
 
                     case List<byte> b:
                         dtype.Append('b');
-                        dvals.AddRange(OSCUtils.Format(b));
+                        dvals.AddRange(OSCUtils.Pack(b));
                         break;
 
                     default:
@@ -118,9 +118,9 @@ namespace Nebulator.OSC
             {
                 // Put it all together.
                 List<byte> bytes = new List<byte>();
-                bytes.AddRange(OSCUtils.Format(Address.Raw));
+                bytes.AddRange(OSCUtils.Pack(Address.Raw));
                 dtype.Insert(0, ',');
-                bytes.AddRange(OSCUtils.Format(dtype.ToString()));
+                bytes.AddRange(OSCUtils.Pack(dtype.ToString()));
                 bytes.AddRange(dvals);
                 return bytes;
             }
@@ -135,7 +135,7 @@ namespace Nebulator.OSC
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        public static Message Parse(byte[] bytes)
+        public static Message Unpack(byte[] bytes)
         {
             int index = 0;
             bool ok = true;
@@ -144,7 +144,7 @@ namespace Nebulator.OSC
             string address = null;
             if (ok)
             {
-                ok = OSCUtils.Parse(bytes, ref index, ref address);
+                ok = OSCUtils.Unpack(bytes, ref index, ref address);
             }
             if (!ok)
             {
@@ -155,7 +155,7 @@ namespace Nebulator.OSC
             string dtypes = null;
             if (ok)
             {
-                ok = OSCUtils.Parse(bytes, ref index, ref dtypes);
+                ok = OSCUtils.Unpack(bytes, ref index, ref dtypes);
             }
             if (ok)
             {
@@ -172,7 +172,7 @@ namespace Nebulator.OSC
                     {
                         case 'i':
                             int di = 0;
-                            ok = OSCUtils.Parse(bytes, ref index, ref di);
+                            ok = OSCUtils.Unpack(bytes, ref index, ref di);
                             if (ok)
                             {
                                 dvals.Add(di);
@@ -181,7 +181,7 @@ namespace Nebulator.OSC
 
                         case 'f':
                             float df = 0;
-                            ok = OSCUtils.Parse(bytes, ref index, ref df);
+                            ok = OSCUtils.Unpack(bytes, ref index, ref df);
                             if (ok)
                             {
                                 dvals.Add(df);
@@ -190,7 +190,7 @@ namespace Nebulator.OSC
 
                         case 's':
                             string ds = "";
-                            ok = OSCUtils.Parse(bytes, ref index, ref ds);
+                            ok = OSCUtils.Unpack(bytes, ref index, ref ds);
                             if (ok)
                             {
                                 dvals.Add(ds);
@@ -199,7 +199,7 @@ namespace Nebulator.OSC
 
                         case 'b':
                             List<byte> db = new List<byte>();
-                            ok = OSCUtils.Parse(bytes, ref index, ref db);
+                            ok = OSCUtils.Unpack(bytes, ref index, ref db);
                             if (ok)
                             {
                                 dvals.Add(db);

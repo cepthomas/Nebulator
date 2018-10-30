@@ -23,15 +23,21 @@ namespace Nebulator.OSC
     {
         public static CommCaps InitCaps()
         {
-            CommCaps caps = new CommCaps() //TODOX
+            return new CommCaps()
             {
-
+                NumChannels = 16,
+                MinVolume = 0,
+                MaxVolume = 127,
+                MinNote = 0,
+                MaxNote = 127,
+                MinControllerValue = 0,
+                MaxControllerValue = 127,
+                MinPitchValue = 0,
+                MaxPitchValue = 16383
             };
-
-            return caps;
         }
 
-        public static List<byte> Format(string value)
+        public static List<byte> Pack(string value)
         {
             List<byte> bytes = new List<byte>();
             value.ToList().ForEach(v => bytes.Add((byte)v));
@@ -40,37 +46,37 @@ namespace Nebulator.OSC
             return bytes;
         }
 
-        public static List<byte> Format(int value)
+        public static List<byte> Pack(int value)
         {
             List<byte> bytes = new List<byte>(BitConverter.GetBytes(value));
             bytes.FixEndian();
             return bytes;
         }
 
-        public static List<byte> Format(ulong value)
+        public static List<byte> Pack(ulong value)
         {
             List<byte> bytes = new List<byte>(BitConverter.GetBytes(value));
             bytes.FixEndian();
             return bytes;
         }
 
-        public static List<byte> Format(float value)
+        public static List<byte> Pack(float value)
         {
             List<byte> bytes = new List<byte>(BitConverter.GetBytes(value));
             bytes.FixEndian();
             return bytes;
         }
 
-        public static List<byte> Format(List<byte> value)
+        public static List<byte> Pack(List<byte> value)
         {
             List<byte> bytes = new List<byte>();
-            bytes.AddRange(Format(value.Count));
+            bytes.AddRange(Pack(value.Count));
             bytes.AddRange(value);
             bytes.Pad(); // pad to 4x bytes
             return bytes;
         }
 
-        public static bool Parse(byte[] msg, ref int start, ref string val)
+        public static bool Unpack(byte[] msg, ref int start, ref string val)
         {
             bool ok = false;
             bool isTerm = false;
@@ -109,7 +115,7 @@ namespace Nebulator.OSC
             return ok;
         }
 
-        public static bool Parse(byte[] msg, ref int start, ref int val)
+        public static bool Unpack(byte[] msg, ref int start, ref int val)
         {
             bool ok = false;
             int nextStart = start;
@@ -128,7 +134,7 @@ namespace Nebulator.OSC
             return ok;
         }
 
-        public static bool Parse(byte[] msg, ref int start, ref ulong val)
+        public static bool Unpack(byte[] msg, ref int start, ref ulong val)
         {
             bool ok = false;
             int nextStart = start;
@@ -147,7 +153,7 @@ namespace Nebulator.OSC
             return ok;
         }
 
-        public static bool Parse(byte[] msg, ref int start, ref float val)
+        public static bool Unpack(byte[] msg, ref int start, ref float val)
         {
             bool ok = false;
             int nextStart = start;
@@ -166,7 +172,7 @@ namespace Nebulator.OSC
             return ok;
         }
 
-        public static bool Parse(byte[] msg, ref int start, ref List<byte> val)
+        public static bool Unpack(byte[] msg, ref int start, ref List<byte> val)
         {
             bool ok = false;
             int nextStart = start;
@@ -175,7 +181,7 @@ namespace Nebulator.OSC
             if (msg.Length - start >= 4)
             {
                 int blen = 0;
-                ok = Parse(msg, ref start, ref blen);
+                ok = Unpack(msg, ref start, ref blen);
                 if(ok)
                 {
                     ok = blen <= (val.Count - 4);

@@ -1,20 +1,41 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+using System.Diagnostics;
 using Newtonsoft;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PNUT;
 using Nebulator.Common;
-using System.Diagnostics;
+using Nebulator.Server;
 
 
-namespace Nebulator.Server
+namespace Nebulator.Test
 {
+    public class SERVER_Basic : TestSuite
+    {
+        public override void RunSuite()
+        {
+            // TODO this:
+            // Server debug stuff.
+            TestClient client = new TestClient();
+            Task.Run(async () => { await client.Run(); });
+
+            // Need some tests...
+
+
+        }
+    }
+
     /// <summary>
     /// Test client for the server.
     /// </summary>
@@ -70,7 +91,7 @@ namespace Nebulator.Server
         async Task<string> PostCommandAsync(HttpClient client, string which, string arg = "")
         {
             string cmd = "command/" + which;
-            if(arg != "")
+            if (arg != "")
             {
                 cmd += "/" + arg;
             }
@@ -89,4 +110,6 @@ namespace Nebulator.Server
             return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : "Response failed";
         }
     }
+
+
 }

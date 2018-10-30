@@ -11,17 +11,6 @@ using PNUT;
 using Nebulator.OSC;
 
 
-
-/* binary looks like:
-/muse/elements/alpha_relative\0\0\0
-,ffff\0\0\0
-\xff\xc0\0\0
-\xff\xc0\0\0
-\xff\xc0\0\0
-\xff\xc0\0\0
-*/
-
-
 namespace Nebulator.Test
 {
     public class OSC_TimeTag : TestSuite
@@ -79,6 +68,16 @@ namespace Nebulator.Test
 
     public class OSC_Message : TestSuite
     {
+
+        /* binary looks like:
+        /muse/elements/alpha_relative\0\0\0
+        ,ffff\0\0\0
+        \xff\xc0\0\0
+        \xff\xc0\0\0
+        \xff\xc0\0\0
+        \xff\xc0\0\0
+        */
+        
         public override void RunSuite()
         {
             Message m = new Message("TODOX");

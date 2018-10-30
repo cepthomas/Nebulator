@@ -14,20 +14,19 @@ using Nebulator.Common;
 using Nebulator.Comm;
 
 
-// TODOX review all exception usage. Better way to handle return codes? No C# macros...  "exceptions mean bugs"
-
 
 namespace Nebulator.OSC
 {
     /// <summary>
-    /// An OSC Bundle consists of the OSC-string "#bundle" followed by an OSC Time Tag, followed by zero or more OSC Message or Bundle Elements.
-    /// TODOX An OSC Bundle Element consists of its size and its contents. The size is an int32 representing the number of 8-bit bytes in
-    ///   the contents, and will always be a multiple of 4. The contents are either an OSC Message or an OSC Bundle.
+    /// An OSC Bundle consists of the OSC-string "#bundle" followed by an OSC Time Tag, followed by zero or more
+    /// OSC Message or Bundle Elements. An OSC Bundle Element consists of its TODOX size and its contents. The size
+    /// is an int32 representing the number of 8-bit bytes in the contents, and will always be a multiple of 4.
+    /// The contents are either an OSC Message or an OSC Bundle.
     /// Note this recursive definition: bundle may contain bundles.
     /// </summary>
     public class Bundle
     {
-        //TODOX support nested bundles? public List<Bundle> Bundles { get; private set; } = new List<Bundle>();
+        //TODOX support nested bundles? public List<Bundle> Bundles { get; private set; } = new List<Bundle>(); other apps flatten them out.
 
         #region Constants
         /// <summary>Bundle marker</summary>
@@ -56,14 +55,14 @@ namespace Nebulator.OSC
         /// Format to binary form.
         /// </summary>
         /// <returns></returns>
-        public List<byte> Format()
+        public List<byte> Pack()
         {
             List<byte> bytes = new List<byte>();
 
-            bytes.AddRange(OSCUtils.Format(BUNDLE_ID));
-            bytes.AddRange(OSCUtils.Format(TimeTag.Raw));
-            //Bundles.ForEach(b => bytes.AddRange(b.Format()));
-            Messages.ForEach(m => bytes.AddRange(m.Format()));
+            bytes.AddRange(OSCUtils.Pack(BUNDLE_ID));
+            bytes.AddRange(OSCUtils.Pack(TimeTag.Raw));
+            //Bundles.ForEach(b => bytes.AddRange(b.Pack()));
+            Messages.ForEach(m => bytes.AddRange(m.Pack()));
             bytes.Pad();
 
             return bytes;
@@ -74,7 +73,7 @@ namespace Nebulator.OSC
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        public static Bundle Parse(byte[] bytes)
+        public static Bundle Unpack(byte[] bytes)
         {
             int index = 0;
             bool ok = true;
@@ -83,7 +82,7 @@ namespace Nebulator.OSC
             string marker = null;
             if (ok)
             {
-                ok = OSCUtils.Parse(bytes, ref index, ref marker);
+                ok = OSCUtils.Unpack(bytes, ref index, ref marker);
             }
             if (ok)
             {
@@ -98,7 +97,7 @@ namespace Nebulator.OSC
             ulong tt = 0;
             if (ok)
             {
-                ok = OSCUtils.Parse(bytes, ref index, ref tt);
+                ok = OSCUtils.Unpack(bytes, ref index, ref tt);
             }
 
             // Parse bundles and messages.
@@ -111,7 +110,7 @@ namespace Nebulator.OSC
                 {
                     if (bytes[index] == '#') // bundle?
                     {
-                        Bundle b = Bundle.Parse(bytes);
+                        Bundle b = Bundle.Unpack(bytes);
                         if (b != null)
                         {
                             bundles.Add(b);
@@ -124,7 +123,7 @@ namespace Nebulator.OSC
                     }
                     else // message?
                     {
-                        Message m = Message.Parse(bytes);
+                        Message m = Message.Unpack(bytes);
                         if (m != null)
                         {
                             messages.Add(m);
