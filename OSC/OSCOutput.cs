@@ -25,11 +25,11 @@ namespace Nebulator.OSC
         /// <summary>OSC output device.</summary>
         UdpClient _udpClient;
 
-        ///// <summary>Access synchronizer.</summary>
-        //object _oscLock = new object();
+        /// <summary>Access synchronizer.</summary>
+        object _oscLock = new object();
 
-        ///// <summary>Notes to stop later.</summary>
-        //List<StepNoteOff> _stops = new List<StepNoteOff>();
+        /// <summary>Notes to stop later.</summary>
+        List<StepNoteOff> _stops = new List<StepNoteOff>();
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -146,118 +146,103 @@ namespace Nebulator.OSC
         /// <inheritdoc />
         public void Housekeep()
         {
-            //// Send any stops due.
-            //_stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
+            // Send any stops due.
+            _stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
 
-            //// Reset.
-            //_stops.RemoveAll(s => s.Expiry < 0);
+            // Reset.
+            _stops.RemoveAll(s => s.Expiry < 0);
         }
 
         /// <inheritdoc />
-        public bool Send(Step step)
+        public bool Send(Step step) // TODOX send bundle???
         {
             bool ret = true;
 
-            //// Critical code section.
-            //lock (_midiLock)
-            //{
-            //    if (_midiOut != null)
-            //    {
-            //        List<int> msgs = new List<int>();
-            //        int msg = 0;
+            // Critical code section.
+            lock (_oscLock)
+            {
+                if (_udpClient != null)
+                {
+                    List<int> msgs = new List<int>();
+                    Message msg = null;
 
-            //        switch (step)
-            //        {
-            //            case StepNoteOn stt:
-            //                {
-            //                    NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOn,
-            //                        Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-            //                        Utils.Constrain(stt.VelocityToPlay, Caps.MinVolume, Caps.MaxVolume));
-            //                    msg = evt.GetAsShortMessage();
+                    switch (step)
+                    {
+                        case StepNoteOn non:
+                            // /note/ channel notenum vel
+                            msg = new Message("/note/");
+                            msg.Data.Add(non.ChannelNumber);
+                            msg.Data.Add(non.NoteNumber);
+                            msg.Data.Add(non.VelocityToPlay);
 
-            //                    if (stt.Duration.TotalTocks > 0) // specific duration
-            //                    {
-            //                        // Remove any lingering note offs and add a fresh one.
-            //                        _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
+                            if (non.Duration.TotalTocks > 0) // specific duration
+                            {
+                                // Remove any lingering note offs and add a fresh one.
+                                _stops.RemoveAll(s => s.NoteNumber == non.NoteNumber && s.ChannelNumber == non.ChannelNumber);
 
-            //                        _stops.Add(new StepNoteOff()
-            //                        {
-            //                            Comm = stt.Comm,
-            //                            ChannelNumber = stt.ChannelNumber,
-            //                            NoteNumber = Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-            //                            Expiry = stt.Duration.TotalTocks
-            //                        });
-            //                    }
-            //                }
-            //                break;
+                                _stops.Add(new StepNoteOff()
+                                {
+                                    Comm = non.Comm,
+                                    ChannelNumber = non.ChannelNumber,
+                                    NoteNumber = Utils.Constrain(non.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                                    Expiry = non.Duration.TotalTocks
+                                });
+                            }
+                            break;
 
-            //            case StepNoteOff stt:
-            //                {
-            //                    NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOff,
-            //                        Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-            //                        Utils.Constrain(stt.Velocity, Caps.MinVolume, Caps.MaxVolume));
-            //                    msg = evt.GetAsShortMessage();
-            //                }
-            //                break;
+                        case StepNoteOff noff:
+                            // /note/ channel notenum 0
+                            msg = new Message("/note/");
+                            msg.Data.Add(noff.ChannelNumber);
+                            msg.Data.Add(noff.NoteNumber);
+                            msg.Data.Add(0);
 
-            //            case StepControllerChange stt:
-            //                {
-            //                    if (stt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
-            //                    {
-            //                        // Shouldn't happen, ignore.
-            //                    }
-            //                    else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
-            //                    {
-            //                        PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.ChannelNumber,
-            //                            Utils.Constrain(stt.Value, Caps.MinPitchValue, Caps.MaxPitchValue));
-            //                        msg = pevt.GetAsShortMessage();
-            //                    }
-            //                    else // CC
-            //                    {
-            //                        ControlChangeEvent nevt = new ControlChangeEvent(0, stt.ChannelNumber, (MidiController)stt.ControllerId,
-            //                            Utils.Constrain(stt.Value, Caps.MinControllerValue, Caps.MaxControllerValue));
-            //                        msg = nevt.GetAsShortMessage();
-            //                    }
-            //                }
-            //                break;
+                            break;
 
-            //            case StepPatch stt:
-            //                {
-            //                    PatchChangeEvent evt = new PatchChangeEvent(0, stt.ChannelNumber, stt.PatchNumber);
-            //                    msg = evt.GetAsShortMessage();
-            //                }
-            //                break;
+                        case StepControllerChange ctl:
+                            // /control/ channel ctlnum val
+                            msg = new Message("/control/");
+                            msg.Data.Add(ctl.ChannelNumber);
+                            msg.Data.Add(ctl.ControllerId);
+                            msg.Data.Add(ctl.Value);
+                            break;
 
-            //            default:
-            //                break;
-            //        }
+                        case StepPatch stt:
+                            // ignore n/a
+                            break;
 
-            //        if (msg != 0)
-            //        {
-            //            try
-            //            {
-            //                _midiOut.Send(msg);
-            //                LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
-            //            }
-            //            catchxxx (Exception ex)
-            //            {
-            //                LogMsg(CommLogEventArgs.LogCategory.Error, $"Midi couldn't send step {step}: {ex.Message}");
-            //                ret = false;
-            //            }
-            //        }
-                //}
-            //}
+                        default:
+                            break;
+                    }
+
+                    if (msg != null)
+                    {
+                        List<byte> bytes = msg.Pack();
+                        if (bytes != null)
+                        {
+                            if (msg.Errors.Count == 0)
+                            {
+                                _udpClient.Send(bytes.ToArray(), bytes.Count, ServerIP, ServerPort);
+                                LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
+                            }
+                            else
+                            {
+                                msg.Errors.ForEach(e => LogMsg(CommLogEventArgs.LogCategory.Error, e));
+                            }
+                        }
+                        else
+                        {
+                            LogMsg(CommLogEventArgs.LogCategory.Error, step.ToString());
+                        }
+                    }
+                    else
+                    {
+                        LogMsg(CommLogEventArgs.LogCategory.Error, step.ToString());
+                    }
+                }
+            }
 
             return ret;
-        }
-
-        /// <inheritdoc />
-        public void KillAll()
-        {
-            for (int i = 0; i < Caps.NumChannels; i++)
-            {
-                Kill(i + 1);
-            }
         }
 
         /// <inheritdoc />
@@ -265,27 +250,18 @@ namespace Nebulator.OSC
         {
             if (channel is null)
             {
-                if (Inited)
-                {
-                    for (int i = 0; i < Caps.NumChannels; i++)
-                    {
-                        Send(new StepControllerChange()
-                        {
-                            Comm = this,
-                            ChannelNumber = i + 1,
- //                           ControllerId = (int)MidiController.AllNotesOff
-                        });
-                    }
-                }
+                Message msg = new Message("/killall/");
+                List<byte> bytes = msg.Pack();
+                _udpClient.Send(bytes.ToArray(), bytes.Count, ServerIP, ServerPort);
+                LogMsg(CommLogEventArgs.LogCategory.Send, "killall");
             }
             else
             {
-                Send(new StepControllerChange()
-                {
-                    Comm = this,
-                    ChannelNumber = channel.Value,
- //                   ControllerId = (int)MidiController.AllNotesOff
-                });
+                Message msg = new Message("/kill/");
+                msg.Data.Add(channel);
+                List<byte> bytes = msg.Pack();
+                _udpClient.Send(bytes.ToArray(), bytes.Count, ServerIP, ServerPort);
+                LogMsg(CommLogEventArgs.LogCategory.Send, $"kill {channel}");
             }
         }
 
@@ -299,35 +275,6 @@ namespace Nebulator.OSC
         {
         }
         #endregion
-
-
-
-        // TODOX all these:
-        Bundle Format(List<Step> steps)
-        {
-            Bundle bundle = new Bundle(new TimeTag());
-
-            return bundle;
-        }
-
-        Message Format(Step step)
-        {
-            Message message = new Message("TODOX");
-
-            return message;
-        }
-
-        public int Send(Bundle packet)
-        {
-            int byteNum = 0;
-            byte[] data = null;
-
-            byteNum = _udpClient.Send(data, data.Length);
-
-            return byteNum;
-        }
-
-
 
         #region Private functions
         /// <summary>Ask host to do something with this.</summary>

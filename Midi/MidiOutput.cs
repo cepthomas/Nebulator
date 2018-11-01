@@ -226,15 +226,6 @@ namespace Nebulator.Midi
         }
 
         /// <inheritdoc />
-        public void KillAll()
-        {
-            for (int i = 0; i < Caps.NumChannels; i++)
-            {
-                Kill(i + 1);
-            }
-        }
-
-        /// <inheritdoc />
         public void Kill(int? channel)
         {
             if(channel is null)

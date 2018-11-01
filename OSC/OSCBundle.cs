@@ -14,12 +14,15 @@ using Nebulator.Common;
 using Nebulator.Comm;
 
 
+// TODOX Clever way to handle return codes? No C# macros...  "exceptions mean bugs"
+
+
 
 namespace Nebulator.OSC
 {
     /// <summary>
     /// An OSC Bundle consists of the OSC-string "#bundle" followed by an OSC Time Tag, followed by zero or more
-    /// OSC Message or Bundle Elements. An OSC Bundle Element consists of its TODOX size and its contents. The size
+    /// OSC Message or Bundle Elements. An OSC Bundle Element consists of its size and its contents. The size
     /// is an int32 representing the number of 8-bit bytes in the contents, and will always be a multiple of 4.
     /// The contents are either an OSC Message or an OSC Bundle.
     /// Note this recursive definition: bundle may contain bundles.
@@ -39,6 +42,9 @@ namespace Nebulator.OSC
 
         /// <summary>Contained messages.</summary>
         public List<Message> Messages { get; private set; } = new List<Message>();
+
+        /// <summary>Parse errors.</summary>
+        public List<string> Errors { get; private set; } = new List<string>();
         #endregion
 
         #region Public functions
@@ -64,7 +70,7 @@ namespace Nebulator.OSC
             //Bundles.ForEach(b => bytes.AddRange(b.Pack()));
             Messages.ForEach(m => bytes.AddRange(m.Pack()));
             bytes.Pad();
-
+            bytes.InsertRange(0, OSCUtils.Pack(bytes.Count));
             return bytes;
         }
 
@@ -77,6 +83,7 @@ namespace Nebulator.OSC
         {
             int index = 0;
             bool ok = true;
+            List<string> errors = new List<string>();
 
             // Parse marker.
             string marker = null;
@@ -90,7 +97,7 @@ namespace Nebulator.OSC
             }
             if (!ok)
             {
-                //TODOX   Error("Invalid marker string");
+                errors.Add("Invalid marker string");
             }
 
             // Parse timetag.
@@ -118,7 +125,7 @@ namespace Nebulator.OSC
                         else
                         {
                             ok = false;
-                            // TODOX error message
+                            errors.Add("Couldn't unpack the bundle");
                         }
                     }
                     else // message?
@@ -131,13 +138,13 @@ namespace Nebulator.OSC
                         else
                         {
                             ok = false;
-                            // TODOX error message
+                            errors.Add("Couldn't unpack the message");
                         }
                     }
                 }
             }
 
-            return ok ? new Bundle(new TimeTag(tt)) {/* Bundles = bundles, */Messages = messages } : null;
+            return ok ? new Bundle(new TimeTag(tt)) {/* Bundles = bundles, */Messages = messages, Errors = errors } : null;
         }
         #endregion
     }

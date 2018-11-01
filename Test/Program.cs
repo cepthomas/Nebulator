@@ -14,7 +14,7 @@ namespace Nebulator.Test
         static void Main(string[] args)
         {
             TestRunner runner = new TestRunner(OutputFormat.Readable);
-            string[] cases = new string[] { "OSC", "MIDI", "SERVER" };
+            string[] cases = new string[] { "OSC", "MIDI"/*, "SERVER"*/ };
             runner.RunSuites(cases);
         }
     }

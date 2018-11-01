@@ -22,7 +22,7 @@ namespace Nebulator.OSC
     public class OSCInput : NInput
     {
         #region Fields
-        /// <summary>Midi input device.</summary>
+        /// <summary>OSC input device.</summary>
         UdpClient _udpClient = null;
 
         /// <summary>Resource clean up.</summary>
@@ -78,32 +78,32 @@ namespace Nebulator.OSC
                     _udpClient = null;
                 }
 
-                //// Figure out which device.
-                //List<string> devices = new List<string>();
-                //for (int device = 0; device < MidiIn.NumberOfDevices; device++)
-                //{
-                //    devices.Add(MidiIn.DeviceInfo(device).ProductName);
-                //}
+                // Figure out which device.
+                List<string> devices = new List<string>();
+                for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+                {
+                   devices.Add(MidiIn.DeviceInfo(device).ProductName);
+                }
 
-                //int ind = devices.IndexOf(CommName);
+                int ind = devices.IndexOf(CommName);
 
-                //if(ind < 0)
-                //{
-                //    LogMsg(CommLogEventArgs.LogCategory.Error, $"Invalid midi: {CommName}");
-                //}
-                //else
-                //{
-                //    _midiIn = new MidiIn(ind);
-                //    _midiIn.MessageReceived += MidiIn_MessageReceived;
-                //    _midiIn.ErrorReceived += MidiIn_ErrorReceived;
-                //    _midiIn.Start();
-                //    Inited = true;
-                //}
+                if(ind < 0)
+                {
+                   LogMsg(CommLogEventArgs.LogCategory.Error, $"Invalid midi: {CommName}");
+                }
+                else
+                {
+                   _udpClient = new MidiIn(ind);
+                   _udpClient.MessageReceived += MidiIn_MessageReceived;
+                   _udpClient.ErrorReceived += MidiIn_ErrorReceived;
+                   _udpClient.Start();
+                   Inited = true;
+                }
 
                 _udpClient = new UdpClient(ClientPort);
-                //udpClient.MessageReceived += MidiIn_MessageReceived;
-                //udpClient.ErrorReceived += MidiIn_ErrorReceived;
-                //_midiIn.Start();
+                udpClient.MessageReceived += MidiIn_MessageReceived;
+                udpClient.ErrorReceived += MidiIn_ErrorReceived;
+                _udpClient.Start();
                 Inited = true;
 
             }
@@ -145,13 +145,13 @@ namespace Nebulator.OSC
         /// <inheritdoc />
         public void Start()
         {
-           // _midiIn?.Start();
+           _udpClient?.Start();
         }
 
         /// <inheritdoc />
         public void Stop()
         {
-          //  _midiIn?.Stop();
+           _udpClient?.Stop();
         }
 
         /// <inheritdoc />
@@ -181,80 +181,15 @@ namespace Nebulator.OSC
                 }
 
 
-                //    // Decode the message. We only care about a few.
-                //    MidiEvent me = MidiEvent.FromRawMessage(e.RawMessage);
-                //    Step step = null;
+                //    // Decode the message. We only care about a few. TODOX now what? pass back to the script?
+                // Midi does like this:
+                // MY_MIDI_IN = createInput("MPK mini");
+                // createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
+                // createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+                // createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
+                // createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+                // createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
 
-                //    switch (me.CommandCode)
-                //    {
-                //        case MidiCommandCode.NoteOn:
-                //            {
-                //                NoteOnEvent evt = me as NoteOnEvent;
-
-                //                if(evt.Velocity == 0)
-                //                {
-                //                    step = new StepNoteOff()
-                //                    {
-                //                        Comm = this,
-                //                        ChannelNumber = evt.Channel,
-                //                        NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                //                        Velocity = 0
-                //                    };
-                //                }
-                //                else
-                //                {
-                //                    step = new StepNoteOn()
-                //                    {
-                //                        Comm = this,
-                //                        ChannelNumber = evt.Channel,
-                //                        NoteNumber = evt.NoteNumber,
-                //                        Velocity = evt.Velocity,
-                //                        VelocityToPlay = evt.Velocity,
-                //                        Duration = new Time(0)
-                //                    };
-                //                }
-                //            }
-                //            break;
-
-                //        case MidiCommandCode.NoteOff:
-                //            {
-                //                NoteEvent evt = me as NoteEvent;
-                //                step = new StepNoteOff()
-                //                {
-                //                    Comm = this,
-                //                    ChannelNumber = evt.Channel,
-                //                    NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                //                    Velocity = evt.Velocity
-                //                };
-                //            }
-                //            break;
-
-                //        case MidiCommandCode.ControlChange:
-                //            {
-                //                ControlChangeEvent evt = me as ControlChangeEvent;
-                //                step = new StepControllerChange()
-                //                {
-                //                    Comm = this,
-                //                    ChannelNumber = evt.Channel,
-                //                    ControllerId = (int)evt.Controller,
-                //                    Value = evt.ControllerValue
-                //                };
-                //            }
-                //            break;
-
-                //        case MidiCommandCode.PitchWheelChange:
-                //            {
-                //                PitchWheelChangeEvent evt = me as PitchWheelChangeEvent;
-                //                step = new StepControllerChange()
-                //                {
-                //                    Comm = this,
-                //                    ChannelNumber = evt.Channel,
-                //                    ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
-                //                    Value = Utils.Constrain(evt.Pitch, Caps.MinPitchValue, Caps.MaxPitchValue)
-                //                };
-                //            }
-                //            break;
-                //    }
 
                 //    if (step != null)
                 //    {

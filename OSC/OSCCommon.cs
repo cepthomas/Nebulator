@@ -21,6 +21,7 @@ namespace Nebulator.OSC
     /// </summary>
     public static class OSCUtils
     {
+        #region Misc
         public static CommCaps InitCaps()
         {
             return new CommCaps()
@@ -36,7 +37,9 @@ namespace Nebulator.OSC
                 MaxPitchValue = 16383
             };
         }
+        #endregion
 
+        #region Typed converters to binary
         public static List<byte> Pack(string value)
         {
             List<byte> bytes = new List<byte>();
@@ -75,38 +78,79 @@ namespace Nebulator.OSC
             bytes.Pad(); // pad to 4x bytes
             return bytes;
         }
+        #endregion
 
+        #region Typed converters from binary
         public static bool Unpack(byte[] msg, ref int start, ref string val)
         {
-            bool ok = false;
-            bool isTerm = false;
-            int nextStart = start;
+            bool ok = true;
 
-            for(int i = start; i < msg.Length && nextStart == start; i++)
+            // 0=start 1=collecting-chars 2=looking-for-end 3=done
+            int state = 0;
+            int index = start;
+            StringBuilder sb = new StringBuilder();
+
+            while(ok && state <= 2)
             {
-                if(isTerm)
+                switch (state)
                 {
-                    if(msg[i] != 0)
-                    {
-                        // transition term to non-term == end of string
-                        nextStart = i;
-                    }
-                }
-                else
-                {
-                    isTerm = msg[i] == 0;
+                    case 0:
+                        if(IsReadable(msg[index]))
+                        {
+                            sb.Append((char)msg[index]);
+                            index++;
+                            state = 1;
+                        }
+                        else // ng value at beginning
+                        {
+                            ok = false;
+                        }
+                        break;
+
+                    case 1:
+                        if (IsReadable(msg[index]))
+                        {
+                            sb.Append((char)msg[index]);
+                            index++;
+                        }
+                        else if(msg[index] == 0) // at end part
+                        {
+                            state = 2;
+                            index++;
+                        }
+                        else // junk char
+                        {
+                            ok = false;
+                        }
+                        break;
+
+                    case 2:
+                        if ((index - start) % 4 == 0) // done?
+                        {
+                            state = 3;
+                        }
+                        else // bump
+                        {
+                            if (msg[index] == 0) // bump
+                            {
+                                index++;
+                            }
+                            else // unexpected char in term area
+                            {
+                                ok = false;
+                            }
+                        }
+                        break;
                 }
             }
 
-            // Check for valid form.
-            if(nextStart > start && (nextStart - start) % 4 == 0)
+            // What happened?
+            if(ok)
             {
-                // All good, clean up.
-                val = Encoding.ASCII.GetString(msg, start, nextStart - start).Replace("\0", "");
-                start = nextStart;
-                ok = true;
+                val = sb.ToString();
+                start = index;
             }
-            else // ng
+            else
             {
                 val = "";
                 start = -1;
@@ -123,10 +167,10 @@ namespace Nebulator.OSC
             // Sanity checks.
             if (msg.Length - start >= 4)
             {
-                var ss = msg.Subset(start, 4).ToList();
+                var ss = msg.Subset(start, 4).ToList(); //TODOX not very efficient/smart...
                 ss.FixEndian();
 
-                val = BitConverter.ToInt32(msg, start);
+                val = BitConverter.ToInt32(ss.ToArray(), 0);
                 start += 4;
                 ok = true;
             }
@@ -145,7 +189,7 @@ namespace Nebulator.OSC
                 var ss = msg.Subset(start, 8).ToList();
                 ss.FixEndian();
 
-                val = BitConverter.ToUInt64(msg, start);
+                val = BitConverter.ToUInt64(ss.ToArray(), 0);
                 start += 4;
                 ok = true;
             }
@@ -164,7 +208,7 @@ namespace Nebulator.OSC
                 var ss = msg.Subset(start, 4).ToList();
                 ss.FixEndian();
 
-                val = BitConverter.ToSingle(msg, start);
+                val = BitConverter.ToSingle(ss.ToArray(), 0);
                 start += 4;
                 ok = true;
             }
@@ -175,28 +219,45 @@ namespace Nebulator.OSC
         public static bool Unpack(byte[] msg, ref int start, ref List<byte> val)
         {
             bool ok = false;
-            int nextStart = start;
+            //int nextStart = start;
+            int blen = 0;
 
-            // Sanity checks.
             if (msg.Length - start >= 4)
             {
-                int blen = 0;
                 ok = Unpack(msg, ref start, ref blen);
                 if(ok)
                 {
-                    ok = blen <= (val.Count - 4);
+                    ok = blen <= (msg.Length - start);
                 }
+            }
 
-                if (ok)
-                {
-                    val.AddRange(msg.Subset(4, blen));
-                }
+            if (ok)
+            {
+                val.AddRange(msg.Subset(4, blen));
+            }
+
+            // Remove pad.
+            while(start % 4 != 0)
+            {
+                start++;
             }
 
             return ok;
         }
+        #endregion
 
-        // extension
+
+        public static bool IsReadable(byte b)
+        {
+            return b >= 32 && b <= 126;
+        }
+
+
+        #region Extensions TODOX in common?
+        /// <summary>
+        /// Add 0s to make multiple of 4.
+        /// </summary>
+        /// <param name="bytes"></param>
         public static void Pad(this List<byte> bytes)
         {
             for (int i = 0; i < bytes.Count % 4; i++)
@@ -205,15 +266,30 @@ namespace Nebulator.OSC
             }
         }
 
-        // extension
-        internal static void FixEndian(this List<byte> bytes)
+        /// <summary>
+        /// Handle endianness.
+        /// </summary>
+        /// <param name="bytes">Data in place.</param>
+        public static void FixEndian(this List<byte> bytes)
         {
             if (BitConverter.IsLittleEndian)
             {
                 bytes.Reverse();
             }
         }
+
+        /// <summary>
+        /// Make readable string.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="delim"></param>
+        /// <returns></returns>
+        public static string Dump(this List<byte> bytes, string delim = "")
+        {
+            StringBuilder sb = new StringBuilder();
+            bytes.ForEach(b => { if (IsReadable(b)) sb.Append((char)b); else sb.AppendFormat(@"{0}{1:000}", delim, b); });
+            return sb.ToString();
+        }
+        #endregion
     }
-
-
 }

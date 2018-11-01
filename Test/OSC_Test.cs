@@ -55,32 +55,34 @@ namespace Nebulator.Test
         }
     }
 
-    public class OSC_Address : TestSuite
-    {
-        public override void RunSuite()
-        {
-            Address a = new Address("TODOX");
-
-
-
-        }
-    }
-
     public class OSC_Message : TestSuite
     {
-
-        /* binary looks like:
-        /muse/elements/alpha_relative\0\0\0
-        ,ffff\0\0\0
-        \xff\xc0\0\0
-        \xff\xc0\0\0
-        \xff\xc0\0\0
-        \xff\xc0\0\0
-        */
-        
         public override void RunSuite()
         {
-            Message m = new Message("TODOX");
+            Message m1 = new Message(@"/foo/bar/");
+
+            m1.Data.Add(919);
+            m1.Data.Add("some text");
+            m1.Data.Add(83.743f); //TODOX handle double also?
+            m1.Data.Add(new List<byte>() { 11, 28, 205, 68, 137, 251 });
+
+            List<byte> packed = m1.Pack();
+
+            var vs = packed.Dump("|");
+            UT_INFO(vs);
+
+            UT_FALSE(packed == null);
+            UT_EQUAL(packed.Count(), 52);
+
+            Message m2 = Message.Unpack(packed.ToArray());
+
+            UT_FALSE(m2 == null);
+            UT_EQUAL(m2.Address, m1.Address);
+            UT_EQUAL(m2.Data.Count, m1.Data.Count);
+            UT_EQUAL(m2.Data[0].ToString(), m1.Data[0].ToString());
+            UT_EQUAL(m2.Data[1].ToString(), m1.Data[1].ToString());
+            UT_EQUAL(m2.Data[2].ToString(), m1.Data[2].ToString());
+            UT_EQUAL(m2.Data[3].ToString(), m1.Data[3].ToString());
 
         }
     }
@@ -90,8 +92,8 @@ namespace Nebulator.Test
         public override void RunSuite()
         {
             DateTime dt = new DateTime(2005, 5, 9, 15, 47, 39, 123);
-            TimeTag tt = new TimeTag(dt); // specific constructor
-            TimeTag ttImmediate = new TimeTag(); // default constructor
+            TimeTag tt = new TimeTag(dt);
+            TimeTag ttImmediate = new TimeTag();
 
             Bundle b = new Bundle(tt);
 

@@ -14,14 +14,12 @@ using Nebulator.Common;
 using Nebulator.Comm;
 
 
-// TODOX Clever way to handle return codes? No C# macros...  "exceptions mean bugs"
-
-
 
 namespace Nebulator.OSC
 {
     /// <summary>
-    /// Message contains an address, a comma followed by one or more data type identifiers, then the data itself follows in binary encoding.
+    /// Message contains an address, a comma followed by one or more data type identifiers,
+    /// then the data itself follows in binary encoding.
     /// 
     /// Data types - OSC Specs 1.0:
     /// i = int32 = 32-bit big-endian two's complement integer
@@ -52,11 +50,14 @@ namespace Nebulator.OSC
     public class Message
     {
         #region Properties
-        /// <summary>Storage of original address.</summary>
-        public Address Address { get; private set; } = null;
+        /// <summary>Storage of address.</summary>
+        public string Address { get; private set; } = null;
 
         /// <summary>Data elements in the message.</summary>
         public List<object> Data { get; private set; } = new List<object>();
+
+        /// <summary>Parse errors.</summary>
+        public List<string> Errors { get; private set; } = new List<string>();
         #endregion
 
         #region Public functions
@@ -66,7 +67,7 @@ namespace Nebulator.OSC
         /// <param name="address"></param>
         public Message(string address)
         {
-            Address = new Address(address);
+            Address = address;
         }
 
         /// <summary>
@@ -108,7 +109,7 @@ namespace Nebulator.OSC
                         break;
 
                     default:
-                        //TODOX throw new Exception($"Unknown type: {d.GetType()}");
+                        Errors.Add($"Unknown type: {d.GetType()}");
                         ok = false;
                         break;
                 }
@@ -118,10 +119,11 @@ namespace Nebulator.OSC
             {
                 // Put it all together.
                 List<byte> bytes = new List<byte>();
-                bytes.AddRange(OSCUtils.Pack(Address.Raw));
+                bytes.AddRange(OSCUtils.Pack(Address));
                 dtype.Insert(0, ',');
                 bytes.AddRange(OSCUtils.Pack(dtype.ToString()));
                 bytes.AddRange(dvals);
+                bytes.InsertRange(0, OSCUtils.Pack(bytes.Count));
                 return bytes;
             }
             else
@@ -139,6 +141,7 @@ namespace Nebulator.OSC
         {
             int index = 0;
             bool ok = true;
+            List<string> errors = new List<string>();
 
             // Parse address.
             string address = null;
@@ -148,7 +151,7 @@ namespace Nebulator.OSC
             }
             if (!ok)
             {
-                //TODOX               Error("Invalid address string");
+                errors.Add("Invalid address string");
             }
 
             // Parse data types.
@@ -208,13 +211,13 @@ namespace Nebulator.OSC
 
                         default:
                             ok = false;
-                            //TODOX                           Error($"Invalid data type: {dtypes[i]}");
+                            errors.Add($"Invalid data type: {dtypes[i]}");
                             break;
                     }
                 }
             }
 
-            return ok ? new Message(address) { Data = dvals } : null;
+            return ok ? new Message(address) { Data = dvals, Errors = errors } : null;
         }
         #endregion
     }
