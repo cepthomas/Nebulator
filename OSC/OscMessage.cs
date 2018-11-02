@@ -90,22 +90,22 @@ namespace Nebulator.OSC
                 {
                     case int i:
                         dtype.Append('i');
-                        dvals.AddRange(OSCUtils.Pack(i));
+                        dvals.AddRange(OscUtils.Pack(i));
                         break;
 
                     case float f:
                         dtype.Append('f');
-                        dvals.AddRange(OSCUtils.Pack(f));
+                        dvals.AddRange(OscUtils.Pack(f));
                         break;
 
                     case string s:
                         dtype.Append('s');
-                        dvals.AddRange(OSCUtils.Pack(s));
+                        dvals.AddRange(OscUtils.Pack(s));
                         break;
 
                     case List<byte> b:
                         dtype.Append('b');
-                        dvals.AddRange(OSCUtils.Pack(b));
+                        dvals.AddRange(OscUtils.Pack(b));
                         break;
 
                     default:
@@ -119,11 +119,11 @@ namespace Nebulator.OSC
             {
                 // Put it all together.
                 List<byte> bytes = new List<byte>();
-                bytes.AddRange(OSCUtils.Pack(Address));
+                bytes.AddRange(OscUtils.Pack(Address));
                 dtype.Insert(0, ',');
-                bytes.AddRange(OSCUtils.Pack(dtype.ToString()));
+                bytes.AddRange(OscUtils.Pack(dtype.ToString()));
                 bytes.AddRange(dvals);
-                bytes.InsertRange(0, OSCUtils.Pack(bytes.Count));
+                bytes.InsertRange(0, OscUtils.Pack(bytes.Count));
                 return bytes;
             }
             else
@@ -147,7 +147,7 @@ namespace Nebulator.OSC
             string address = null;
             if (ok)
             {
-                ok = OSCUtils.Unpack(bytes, ref index, ref address);
+                ok = OscUtils.Unpack(bytes, ref index, ref address);
             }
             if (!ok)
             {
@@ -158,7 +158,7 @@ namespace Nebulator.OSC
             string dtypes = null;
             if (ok)
             {
-                ok = OSCUtils.Unpack(bytes, ref index, ref dtypes);
+                ok = OscUtils.Unpack(bytes, ref index, ref dtypes);
             }
             if (ok)
             {
@@ -175,7 +175,7 @@ namespace Nebulator.OSC
                     {
                         case 'i':
                             int di = 0;
-                            ok = OSCUtils.Unpack(bytes, ref index, ref di);
+                            ok = OscUtils.Unpack(bytes, ref index, ref di);
                             if (ok)
                             {
                                 dvals.Add(di);
@@ -184,7 +184,7 @@ namespace Nebulator.OSC
 
                         case 'f':
                             float df = 0;
-                            ok = OSCUtils.Unpack(bytes, ref index, ref df);
+                            ok = OscUtils.Unpack(bytes, ref index, ref df);
                             if (ok)
                             {
                                 dvals.Add(df);
@@ -193,7 +193,7 @@ namespace Nebulator.OSC
 
                         case 's':
                             string ds = "";
-                            ok = OSCUtils.Unpack(bytes, ref index, ref ds);
+                            ok = OscUtils.Unpack(bytes, ref index, ref ds);
                             if (ok)
                             {
                                 dvals.Add(ds);
@@ -202,7 +202,7 @@ namespace Nebulator.OSC
 
                         case 'b':
                             List<byte> db = new List<byte>();
-                            ok = OSCUtils.Unpack(bytes, ref index, ref db);
+                            ok = OscUtils.Unpack(bytes, ref index, ref db);
                             if (ok)
                             {
                                 dvals.Add(db);

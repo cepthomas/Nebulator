@@ -19,7 +19,7 @@ namespace Nebulator.OSC
     /// <summary>
     /// Bunch of utilities for formatting and parsing. Not documented because they are self-explanatory.
     /// </summary>
-    public static class OSCUtils
+    public static class OscUtils
     {
         #region Misc
         public static CommCaps InitCaps()

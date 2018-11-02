@@ -4,14 +4,13 @@
 // Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
 // IO devices.
-NOutput MY_OSC;
-NInput MY_MIDI_IN;
+NOutput MY_OSC_OUT;
+NInput MY_OSC_IN;
 NInput MY_VKEY;
 
 // All the neb variables.
 NVariable BACK_COLOR;
 NVariable MOD1;
-NVariable KBD_NOTE;
 NVariable VKBD_NOTE;
 NVariable CTL2;
 NVariable CTL3;
@@ -22,25 +21,6 @@ NChannel BASS;
 NChannel SYNTH;
 NChannel DRUMS;
 
-// All the sequences
-NSequence SEQ1;
-NSequence DRUMS_SIMPLE;
-
-// Sections.
-NSection PART1;
-
-
-// Neb script stuff.
-int[] _chordNotes;
-int[] _scaleNotes;
-int _noteNum = 0;
-
-// Index is note number, value is when to stop it.
-int[] _notesPlaying = new int[128];
-
-// Processing stuff.
-int _segmentCount = 36;
-int _radius = 300;
 
 
 public override void setupNeb()
@@ -53,25 +33,25 @@ public override void setupNeb()
     CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
     BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
-    KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
-    MY_OSC = createOutput("Microsoft GS Wavetable Synth");
+    MY_OSC_OUT = createOutput("Microsoft GS Wavetable Synth");
+
     MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
     createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
 
-    MY_MIDI_IN = createInput("MPK mini");
-    createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
-    createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-    createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
-    createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
-    createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
+    MY_OSC_IN = createInput("MPK mini");
+    createController(MY_OSC_IN, 1, 1, MOD1); // modulate eq
+    createController(MY_OSC_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+    createController(MY_OSC_IN, 1, 3, CTL3); // another controller
+    createController(MY_OSC_IN, 0, 4, BACK_COLOR); // change ui color
+    createController(MY_OSC_IN, 1, NoteControl, KBD_NOTE);
 
     // All the output channels.
-    PIANO = createChannel("piano", MY_OSC, 1, 5);
-    BASS = createChannel("bass", MY_OSC, 2, 4);
-    SYNTH = createChannel("synth", MY_OSC, 3, 0);
-    DRUMS = createChannel("drums", MY_OSC, 10, 4);
+    PIANO = createChannel("piano", MY_OSC_OUT, 1, 5);
+    BASS = createChannel("bass", MY_OSC_OUT, 2, 4);
+    SYNTH = createChannel("synth", MY_OSC_OUT, 3, 0);
+    DRUMS = createChannel("drums", MY_OSC_OUT, 10, 4);
 
     // levers
     createLever(BACK_COLOR);
@@ -81,46 +61,6 @@ public override void setupNeb()
     createNotes("MY_CHORD", "1 4 6 b13");
     createNotes("MY_SCALE", "1 3 4 b7");
 
-    // Get some stock chords and scales
-    _chordNotes = getNotes("C4.o7");
-    _scaleNotes = getScaleNotes("Algerian", "A3");
-
-    // Create sequences, add notes/chords/funcs.
-    SEQ1 = createSequence(8);
-    SEQ1.Add(00.00, "G3", 90, 0.60);
-    SEQ1.Add(01.00, "D3", 90, 0.60);
-    SEQ1.Add(02.00, "A3.m7", 90, 0.60);
-    SEQ1.Add(03.00, 66, 90, 0.60);
-    SEQ1.Add(03.48, CrashCymbal1, 90, 0.60);
-
-    DRUMS_SIMPLE = createSequence(8);
-    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
-    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
-    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
-
-    // // Sequence that calls a script function.
-    // ALGO_SEQ = createSequence(8);
-    // ALGO_SEQ.Add(03.32, algoDynamic, 90);
-    // NULL_SEQ = createSequence(8);
-    // NULL_SEQ.Add(05.16, algoNull, 90);
-
-    // Sections
-    NSection PART1 = createSection("part1", 0, 16);
-    PART1.Add(PIANO, SEQ1,         SEQ1);
-    PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-
-    NSection PART2 = createSection("part2", 16, 32);
-    PART2.Add(PIANO, SEQ1,         SEQ1);
-    PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-    //PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
-
-    if (local)
-    {
-        sendPatch(PIANO, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Pad3Polysynth);
-        sendPatch(DRUMS, 32);
-    }
 }
 
 public override void step()
@@ -222,25 +162,6 @@ public void On_VKBD_NOTE()
         sendNoteOff(SYNTH, -VKBD_NOTE.Value);
     }
 }
-
-public void On_KBD_NOTE()
-{
-    //print("KBD_NOTE", "=", KBD_NOTE.Value);
-
-    // Test for note on or off.
-    if(KBD_NOTE.Value > 0)
-    {
-        //sendNoteOn(PIANO, KBD_NOTE.Value, 110);
-        sendNoteOn(SYNTH, KBD_NOTE.Value, 110);
-        //sendNote(SYNTH, KBD_NOTE.Value, 90, 2.0); // fixed duration
-    }
-    else
-    {
-        //sendNoteOff(PIANO, -KBD_NOTE.Value);
-        sendNoteOff(SYNTH, -KBD_NOTE.Value);
-    }
-}
-
 
 ////////////// processing stuff ////////////////////
 

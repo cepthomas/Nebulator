@@ -19,7 +19,7 @@ namespace Nebulator.OSC
     /// <summary>
     /// Abstraction layer between OSC comm and Nebulator steps.
     /// </summary>
-    public class OSCOutput : NOutput
+    public class OscOutput : NOutput
     {
         #region Fields
         /// <summary>OSC output device.</summary>
@@ -51,7 +51,7 @@ namespace Nebulator.OSC
         public int ServerPort { get; private set; } = -1;
 
         /// <inheritdoc />
-        public CommCaps Caps { get; private set; } = OSCUtils.InitCaps();
+        public CommCaps Caps { get; private set; } = OscUtils.InitCaps();
 
         /// <inheritdoc />
         public bool Inited { get; private set; } = false;
@@ -61,7 +61,7 @@ namespace Nebulator.OSC
         /// <summary>
         /// Constructor.
         /// </summary>
-        public OSCOutput()
+        public OscOutput()
         {
         }
 
@@ -154,7 +154,7 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public bool Send(Step step) // TODOX send bundle???
+        public bool Send(Step step)
         {
             bool ret = true;
 

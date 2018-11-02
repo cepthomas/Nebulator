@@ -1,5 +1,13 @@
 // (launch with s.ck)
 
+// Transport Type: UDP
+// Packet Parsing (Client)
+// Packet Construction (Server)
+// Type Support: 
+// i: int32
+// s: string
+// f: float32
+
 // the patch
 SinOsc s => JCRev r => dac;
 .5 => s.gain;
@@ -7,21 +15,24 @@ SinOsc s => JCRev r => dac;
 
 // create our OSC receiver
 OscIn oin;
+
 // create our OSC message
 OscMsg msg;
+
 // use port 6449 (or whatever)
 6449 => oin.port;
+
 // create an address in the receiver
-oin.addAddress( "/foo/notes, if" );
+oin.addAddress("/foo/notes, if");
 
 // infinite event loop
-while( true )
+while(true)
 {
     // wait for event to arrive
     oin => now;
 
     // grab the next message from the queue. 
-    while( oin.recv(msg) )
+    while(oin.recv(msg))
     { 
         int i;
         float f;

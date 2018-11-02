@@ -47,12 +47,12 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="OSCBundle.cs" />
-    <Compile Include="OSCCommon.cs" />
-    <Compile Include="OSCInput.cs" />
-    <Compile Include="OSCMessage.cs" />
-    <Compile Include="OSCOutput.cs" />
-    <Compile Include="OSCTimeTag.cs" />
+    <Compile Include="OscBundle.cs" />
+    <Compile Include="OscCommon.cs" />
+    <Compile Include="OscInput.cs" />
+    <Compile Include="OscMessage.cs" />
+    <Compile Include="OscOutput.cs" />
+    <Compile Include="OscTimeTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

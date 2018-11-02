@@ -65,12 +65,12 @@ namespace Nebulator.OSC
         {
             List<byte> bytes = new List<byte>();
 
-            bytes.AddRange(OSCUtils.Pack(BUNDLE_ID));
-            bytes.AddRange(OSCUtils.Pack(TimeTag.Raw));
+            bytes.AddRange(OscUtils.Pack(BUNDLE_ID));
+            bytes.AddRange(OscUtils.Pack(TimeTag.Raw));
             //Bundles.ForEach(b => bytes.AddRange(b.Pack()));
             Messages.ForEach(m => bytes.AddRange(m.Pack()));
             bytes.Pad();
-            bytes.InsertRange(0, OSCUtils.Pack(bytes.Count));
+            bytes.InsertRange(0, OscUtils.Pack(bytes.Count));
             return bytes;
         }
 
@@ -89,7 +89,7 @@ namespace Nebulator.OSC
             string marker = null;
             if (ok)
             {
-                ok = OSCUtils.Unpack(bytes, ref index, ref marker);
+                ok = OscUtils.Unpack(bytes, ref index, ref marker);
             }
             if (ok)
             {
@@ -104,7 +104,7 @@ namespace Nebulator.OSC
             ulong tt = 0;
             if (ok)
             {
-                ok = OSCUtils.Unpack(bytes, ref index, ref tt);
+                ok = OscUtils.Unpack(bytes, ref index, ref tt);
             }
 
             // Parse bundles and messages.
