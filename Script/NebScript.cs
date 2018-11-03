@@ -50,62 +50,18 @@ namespace Nebulator.Script
 
         #region Script callable functions
         /// <summary>
-        /// Create a device input.
-        /// </summary>
-        /// <param name="commName"></param>
-        /// <returns></returns>
-        protected NInput createInput(string commName)
-        {
-            NInput nin = null;
-            var ins = Inputs.Where(ci => ci.CommName == commName);
-            if(ins.Count() == 0)
-            {
-                throw new Exception($"Invalid input name: {commName}");
-            }
-            else
-            {
-                nin = ins.First();
-                nin.Init();
-            }
-
-            return nin;
-        }
-
-        /// <summary>
-        /// Create a device output.
-        /// </summary>
-        /// <param name="commName"></param>
-        /// <returns></returns>
-        protected NOutput createOutput(string commName)
-        {
-            NOutput nout = null;
-            var outs = Outputs.Where(ci => ci.CommName == commName);
-            if (outs.Count() == 0)
-            {
-                throw new Exception($"Invalid input name: {commName}");
-            }
-            else
-            {
-                nout = outs.First();
-                nout.Init();
-            }
-
-            return nout;
-        }
-
-        /// <summary>
         /// Create a controller input.
         /// </summary>
         /// <param name="input">Comm device.</param>
         /// <param name="channelNum">Which channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>
-        protected void createController(NInput input, int channelNum, int controlId, NVariable bound)
+        protected void createController(string input, int channelNum, int controlId, NVariable bound)
         {
-            controlId = Utils.Constrain(controlId, input.Caps.MinControllerValue, input.Caps.MaxControllerValue);
+            //TODOY ?? controlId = Utils.Constrain(controlId, input.Caps.MinControllerValue, input.Caps.MaxControllerValue);
             NController mp = new NController()
             {
-                Input = input,
+                InputName = input,
                 ChannelNumber = channelNum,
                 ControllerId = controlId,
                 BoundVar = bound
@@ -171,12 +127,12 @@ namespace Nebulator.Script
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NChannel createChannel(string name, NOutput output, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(string name, string output, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
             NChannel nt = new NChannel()
             {
                 Name = name,
-                Output = output,
+                OutputName = output,
                 ChannelNumber = channelNum,
                 WobbleVolume = wobvol,
                 WobbleTimeBefore = wobbefore,

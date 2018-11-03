@@ -288,6 +288,10 @@
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OSC\OSC.csproj">
+      <Project>{7c6b21d5-cf62-41f6-9188-7846e88d3dcd}</Project>
+      <Name>OSC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VirtualKeyboard\VirtualKeyboard.csproj">
       <Project>{4f76fffe-cd6f-4951-b74e-a7d4ffeb1a9f}</Project>
       <Name>VirtualKeyboard</Name>

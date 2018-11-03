@@ -23,11 +23,14 @@ namespace Nebulator.VirtualKeyboard
         public event EventHandler<CommInputEventArgs> CommInputEvent;
         #endregion
 
-        #region Fields
+        #region Constants
+        public const string VKBD_NAME = "Virtual Keyboard";
         const int LOW_NOTE = 21;
         const int HIGH_NOTE = 109;
         const int MIDDLE_C = 60;
+        #endregion
 
+        #region Fields
         /// <summary>All the created piano keys.</summary>
         List<VKey> _keys = new List<VKey>();
 
@@ -41,9 +44,6 @@ namespace Nebulator.VirtualKeyboard
 
         /// <inheritdoc />
         public CommCaps Caps { get; private set; } = null;
-
-        /// <inheritdoc />
-        public bool Inited { get; private set; } = false;
         #endregion
 
         #region Lifecycle
@@ -71,15 +71,11 @@ namespace Nebulator.VirtualKeyboard
         }
 
         /// <inheritdoc />
-        public bool Construct(string _ = "")
+        public bool Init(string _ = "")
         {
-            CommName = "Virtual Keyboard";
-            return true;
-        }
+            bool inited = false;
 
-        /// <inheritdoc />
-        public bool Init()
-        {
+            CommName = VKBD_NAME;
             Caps = MidiUtils.GetCommCaps();
             DrawKeys();
 
@@ -87,9 +83,9 @@ namespace Nebulator.VirtualKeyboard
 
             Show();
 
-            Inited = true;
+            inited = true;
 
-            return Inited;
+            return inited;
         }
 
         /// <summary>

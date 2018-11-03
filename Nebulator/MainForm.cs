@@ -10,13 +10,13 @@ using NLog;
 using MoreLinq;
 using Newtonsoft.Json;
 using NAudio.Midi;
-
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Comm;
 using Nebulator.Server;
 using Nebulator.Midi;
+using Nebulator.OSC;
 
 
 // TODO Factor out the processing and non-processing stuff would be nice but much breakage.
@@ -85,6 +85,12 @@ namespace Nebulator
 
         /// <summary>The virtual keyboard.</summary>
         VirtualKeyboard.VKeyboard _vk = null;
+
+        /// <summary>Devices to use for send.</summary>
+        Dictionary<string, NOutput> _outputs = new Dictionary<string, NOutput>();
+
+        /// <summary>Devices to use for recv.</summary>
+        Dictionary<string, NInput> _inputs = new Dictionary<string, NInput>();
         #endregion
 
         #region Lifecycle
@@ -179,10 +185,25 @@ namespace Nebulator
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
 
+            #region
+            // Create it now but don't show.
+            _vk = new VirtualKeyboard.VKeyboard
+            {
+                Visible = false,
+                StartPosition = FormStartPosition.Manual,
+                Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height),
+                TopMost = false,
+                Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y)
+            };
+            _vk.Init();
+            _vk.CommInputEvent += Comm_InputEvent;
+            _vk.CommLogEvent += Comm_LogEvent;
+            #endregion
+
             #region System info
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
 
-            string sins = "Inputs: \"Virtual Keyboard\"";
+            string sins = $"Inputs: \"{VirtualKeyboard.VKeyboard.VKBD_NAME}\"";
             for (int device = 0; device < MidiIn.NumberOfDevices; device++)
             {
                 sins += $" \"{MidiIn.DeviceInfo(device).ProductName}\"";
@@ -230,7 +251,9 @@ namespace Nebulator
             ProcessPlay(PlayCommand.Stop, false);
 
             // Just in case.
-            _script?.Outputs.ForEach(o => o?.Kill());
+            _outputs.ForEach(o => o.Value?.Kill());
+
+            DeleteDevices();
 
             if (_script != null)
             {
@@ -257,13 +280,154 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                _script?.Outputs.ForEach(o => { o?.Stop(); o?.Dispose(); });
-                _script?.Inputs.ForEach(i => { i?.Stop(); i?.Dispose(); });
+                _outputs.ForEach(o => { o.Value?.Stop(); o.Value?.Dispose(); });
+                _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
 
                 components?.Dispose();
             }
 
             base.Dispose(disposing);
+        }
+        #endregion
+
+        #region Device management
+        /// <summary>
+        /// Dispose of all current devices.
+        /// </summary>
+        void DeleteDevices()
+        {
+            _inputs.ForEach(ci => { ci.Value?.Dispose(); });
+            _inputs.Clear();
+            _outputs.ForEach(co => { co.Value?.Dispose(); });
+            _outputs.Clear();
+        }
+
+        /// <summary>
+        /// Create all devices from user script.
+        /// </summary>
+        void CreateDevices()
+        {
+            // Clean up for company.
+            DeleteDevices();
+
+            // Add default.
+            _inputs.Add(VirtualKeyboard.VKeyboard.VKBD_NAME, _vk);
+            bool hasVk = false;
+
+            // Get requested inputs.
+            foreach (NController ctlr in _script.Controllers)
+            {
+                // Check.
+                hasVk |= ctlr.InputName == VirtualKeyboard.VKeyboard.VKBD_NAME;
+
+                // Have we seen it yet?
+                if (_inputs.ContainsKey(ctlr.InputName))
+                {
+                    ctlr.Input = _inputs[ctlr.InputName];
+                }
+                else // nope
+                {
+                    NInput nin = null;
+
+                    // Is it midi?
+                    if (nin == null)
+                    {
+                        for (int device = 0; device < MidiIn.NumberOfDevices && nin == null; device++)
+                        {
+                            if (MidiIn.DeviceInfo(device).ProductName == ctlr.InputName)
+                            {
+                                nin = new MidiInput();
+                            }
+                        }
+                    }
+
+                    // Is it OSC?
+                    if (nin == null)
+                    {
+                        nin = new OscInput();
+                    }
+
+                    // Finish it up.
+                    if (nin != null)
+                    {
+                        if (nin.Init(ctlr.InputName))
+                        {
+                            nin.CommInputEvent += Comm_InputEvent;
+                            nin.CommLogEvent += Comm_LogEvent;
+                            ctlr.Input = nin;
+                            _inputs.Add(ctlr.InputName, nin);
+                        }
+                        else
+                        {
+                            _logger.Error($"Failed to init controller: {ctlr.InputName}");
+                        }
+                    }
+                    else
+                    {
+                        _logger.Error($"Invalid controller: {ctlr.InputName}");
+                    }
+                }
+            }
+
+            // Get requested outputs.
+            foreach (NChannel chan in _script.Channels)
+            {
+                // Have we seen it yet?
+                if (_outputs.ContainsKey(chan.OutputName))
+                {
+                    chan.Output = _outputs[chan.OutputName];
+                }
+                else // nope
+                {
+                    NOutput nout = null;
+
+                    // Is it midi?
+                    for (int device = 0; device < MidiOut.NumberOfDevices && nout == null; device++)
+                    {
+                        if (MidiOut.DeviceInfo(device).ProductName == chan.OutputName)
+                        {
+                            nout = new MidiOutput();
+                        }
+                    }
+
+                    // Is it OSC?
+                    if (nout == null)
+                    {
+                        nout = new OscOutput();
+                    }
+
+                    // Finish it up.
+                    if (nout != null)
+                    {
+                        if (nout.Init(chan.OutputName))
+                        {
+                            nout.CommLogEvent += Comm_LogEvent;
+                            chan.Output = nout;
+                            _outputs.Add(chan.OutputName, nout);
+                        }
+                        else
+                        {
+                            _logger.Error($"Failed to init channel: {chan.OutputName}");
+                        }
+                    }
+                    else
+                    {
+                        _logger.Error($"Invalid channel: {chan.OutputName}");
+                    }
+                }
+            }
+
+            // Is the virtual keybard used?
+            if (hasVk)
+            {
+                _vk.Visible = true;
+                _vk.Show();
+            }
+            else
+            {
+                _vk.Visible = false;
+                _vk.Hide();
+            }
         }
         #endregion
 
@@ -359,65 +523,17 @@ namespace Nebulator
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 
-                    // Hook up comms for runtime.
-                    for (int device = 0; device < MidiIn.NumberOfDevices; device++)
-                    {
-                        NInput input = new MidiInput();
-                        input.Construct(MidiIn.DeviceInfo(device).ProductName);
-                        input.CommInputEvent += Comm_InputEvent;
-                        input.CommLogEvent += Comm_LogEvent;
-                        _script.Inputs.Add(input);
-                    }
-
-                    // Add the virtual keyboard as a possible input.
-                    if(_vk != null)
-                    {
-                        // Clean up old one.
-                        NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(_vk);
-                        _vk.Dispose();
-                        _vk = null;
-                    }
-
-                    _vk = new VirtualKeyboard.VKeyboard
-                    {
-                        StartPosition = FormStartPosition.Manual,
-                        Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height),
-                        TopMost = false,
-                        Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y)
-                    };
-                    _vk.Construct();
-                    _vk.CommInputEvent += Comm_InputEvent;
-                    _vk.CommLogEvent += Comm_LogEvent;
-                    _script.Inputs.Add(_vk);
-
-                    for (int device = 0; device < MidiOut.NumberOfDevices; device++)
-                    {
-                        NOutput output = new MidiOutput();
-                        output.Construct(MidiOut.DeviceInfo(device).ProductName);
-                        output.CommLogEvent += Comm_LogEvent;
-                        _script.Outputs.Add(output);
-                    }
-
                     // Note: Need exception handling here to protect from user script errors.
                     try
                     {
                         // Surface area.
                         InitRuntime();
 
+                        // Setup.
                         _script.setupNeb();
 
-                        // Is the virtual keybard used?
-                        if (_vk.Inited)
-                        {
-                            _vk.Visible = true;
-                            _vk.Show();
-                        }
-                        else
-                        {
-
-                            _vk.Visible = false;
-                            _vk.Hide();
-                        }
+                        // Devices specified in script - create now.
+                        CreateDevices();
 
                         _surface.InitSurface(_script);
 
@@ -640,7 +756,7 @@ namespace Nebulator
                     if (_stepTime.Tick > _compiledSteps.MaxTick)
                     {
                         ProcessPlay(PlayCommand.StopRewind, false);
-                        _script?.Outputs.ForEach(o => o?.Kill()); // just in case
+                        _outputs.ForEach(o => o.Value?.Kill()); // just in case
                     }
                 }
                 // else keep going
@@ -673,8 +789,8 @@ namespace Nebulator
             ProcessRuntime();
 
             // Process any lingering noteoffs etc.
-            _script?.Outputs.ForEach(o => o?.Housekeep());
-            _script?.Inputs.ForEach(i => i?.Housekeep());
+            _outputs.ForEach(o => o.Value?.Housekeep());
+            _inputs.ForEach(i => i.Value?.Housekeep());
 
             ///// Local common function /////
             void PlayStep(Step step)
@@ -1293,7 +1409,7 @@ namespace Nebulator
                     chkPlay.Checked = false;
 
                     // Send midi stop all notes just in case.
-                    _script?.Outputs.ForEach(o => o?.Kill());
+                    _outputs.ForEach(o => o.Value?.Kill());
                     break;
 
                 case PlayCommand.Rewind:
@@ -1418,7 +1534,7 @@ namespace Nebulator
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
-                var v = Midi.MidiUtils.ImportFile(openDlg.FileName);
+                var v = MidiUtils.ImportFile(openDlg.FileName);
                 Clipboard.SetText(string.Join(Environment.NewLine, v));
                 MessageBox.Show("Style file content is in the clipboard");
             }
@@ -1431,7 +1547,7 @@ namespace Nebulator
         /// <param name="e"></param>
         void Kill_Click(object sender, EventArgs e)
         {
-            _script?.Outputs.ForEach(o => o?.Kill());
+            _outputs.ForEach(o => o.Value?.Kill());
         }
         #endregion
     }

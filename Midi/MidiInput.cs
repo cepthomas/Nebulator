@@ -43,9 +43,6 @@ namespace Nebulator.Midi
 
         /// <inheritdoc />
         public CommCaps Caps { get; private set; } = null;
-
-        /// <inheritdoc />
-        public bool Inited { get; private set; } = false;
         #endregion
 
         #region Lifecycle
@@ -57,17 +54,12 @@ namespace Nebulator.Midi
         }
 
         /// <inheritdoc />
-        public bool Construct(string name)
+        public bool Init(string name)
         {
-            CommName = name;
-            return true;
-        }
+            bool inited = false;
 
-        /// <inheritdoc />
-        public bool Init()
-        {
+            CommName = name;
             Caps = MidiUtils.GetCommCaps();
-            Inited = false;
 
             try
             {
@@ -97,15 +89,16 @@ namespace Nebulator.Midi
                     _midiIn.MessageReceived += MidiIn_MessageReceived;
                     _midiIn.ErrorReceived += MidiIn_ErrorReceived;
                     _midiIn.Start();
-                    Inited = true;
+                    inited = true;
                 }
             }
             catch (Exception ex)
             {
                 LogMsg(CommLogEventArgs.LogCategory.Error, $"Init midi in failed: {ex.Message}");
+                inited = false;
             }
 
-            return Inited;
+            return inited;
         }
 
         /// <summary>

@@ -103,14 +103,6 @@ namespace Nebulator.Script
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
         #endregion
 
-        #region Properties - available comm devices
-        /// <summary>Devices to use for send.</summary>
-        public List<NOutput> Outputs { get; set; } = new List<NOutput>();
-
-        /// <summary>Devices to use for recv.</summary>
-        public List<NInput> Inputs { get; set; } = new List<NInput>();
-        #endregion
-
         #region Properties - things defined in the script that MainForm needs
         /// <summary>Control inputs.</summary>
         public List<NController> Controllers { get; set; } = new List<NController>();
@@ -137,11 +129,6 @@ namespace Nebulator.Script
         /// </summary>
         public void Dispose()
         {
-            Inputs.ForEach(ci => { if (ci != null) ci.Dispose(); });
-            Inputs.Clear();
-            Outputs.ForEach(co => { if (co != null) co.Dispose(); });
-            Outputs.Clear();
-
             Dispose(true);
             GC.SuppressFinalize(this);
         }

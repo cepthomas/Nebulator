@@ -70,6 +70,9 @@ namespace Nebulator.Script
     public class NController
     {
         #region Properties
+        /// <summary>The associated comm device name.</summary>
+        public string InputName { get; set; } = Utils.UNKNOWN_STRING;
+
         /// <summary>The associated comm device.</summary>
         public NInput Input { get; set; } = null;
 
@@ -99,11 +102,14 @@ namespace Nebulator.Script
     public class NChannel
     {
         #region Properties
-        /// <summary>The UI name for this channel.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
+        /// <summary>The associated comm device name.</summary>
+        public string OutputName { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The associated comm device.</summary>
         public NOutput Output { get; set; } = null;
+
+        /// <summary>The UI name for this channel.</summary>
+        public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>The associated numerical (midi) channel to use.</summary>
         public int ChannelNumber { get; set; } = -1;

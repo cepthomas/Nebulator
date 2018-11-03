@@ -37,9 +37,6 @@ namespace Nebulator.Midi
 
         /// <inheritdoc />
         public CommCaps Caps { get; private set; } = null;
-
-        /// <inheritdoc />
-        public bool Inited { get; private set; } = false;
         #endregion
 
         #region Lifecycle
@@ -51,17 +48,13 @@ namespace Nebulator.Midi
         }
 
         /// <inheritdoc />
-        public bool Construct(string name)
+        public bool Init(string name)
         {
-            CommName = name;
-            return true;
-        }
+            bool inited = false;
 
-        /// <inheritdoc />
-        public bool Init()
-        {
+            CommName = name;
+
             Caps = MidiUtils.GetCommCaps();
-            Inited = false;
 
             try
             {
@@ -87,16 +80,16 @@ namespace Nebulator.Midi
                 else
                 {
                     _midiOut = new MidiOut(ind);
-                    Inited = true;
+                    inited = true;
                 }
             }
             catch (Exception ex)
             {
                 LogMsg(CommLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
-                Inited = false;
+                inited = false;
             }
 
-            return Inited;
+            return inited;
         }
 
         /// <summary>
@@ -230,17 +223,14 @@ namespace Nebulator.Midi
         {
             if(channel is null)
             {
-                if(Inited)
+                for (int i = 0; i < Caps.NumChannels; i++)
                 {
-                    for (int i = 0; i < Caps.NumChannels; i++)
+                    Send(new StepControllerChange()
                     {
-                        Send(new StepControllerChange()
-                        {
-                            Comm = this,
-                            ChannelNumber = i + 1,
-                            ControllerId = (int)MidiController.AllNotesOff
-                        });
-                    }
+                        Comm = this,
+                        ChannelNumber = i + 1,
+                        ControllerId = (int)MidiController.AllNotesOff
+                    });
                 }
             }
             else

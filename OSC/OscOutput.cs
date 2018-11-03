@@ -45,16 +45,13 @@ namespace Nebulator.OSC
         public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Where to?</summary>
-        public string ServerIP { get; private set; } = Utils.UNKNOWN_STRING;
+        public string IP { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Where to?</summary>
-        public int ServerPort { get; private set; } = -1;
+        public int Port { get; private set; } = -1;
 
         /// <inheritdoc />
         public CommCaps Caps { get; private set; } = OscUtils.InitCaps();
-
-        /// <inheritdoc />
-        public bool Inited { get; private set; } = false;
         #endregion
 
         #region Lifecycle
@@ -66,15 +63,11 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public bool Construct(string name)
+        public bool Init(string name)
         {
-            CommName = name;
-            return true;
-        }
+            bool inited = false;
 
-        /// <inheritdoc />
-        public bool Init()
-        {
+            CommName = name;
             try
             {
                 if (_udpClient != null)
@@ -84,36 +77,28 @@ namespace Nebulator.OSC
                     _udpClient = null;
                 }
 
-                _udpClient = new UdpClient(ServerIP, ServerPort);
+                _udpClient = new UdpClient(IP, Port);
 
-                //// Figure out which device.
-                //List<string> devices = new List<string>();
-                //for (int device = 0; device < MidiOut.NumberOfDevices; device++)
-                //{
-                //    devices.Add(MidiOut.DeviceInfo(device).ProductName);
-                //}
+                List<string> parts = name.SplitByToken(":");
 
-                //int ind = devices.IndexOf(CommName);
+                if(parts.Count == 2)
+                {
+                    IP = parts[0];
 
-                //if (ind < 0)
-                //{
-                //    LogMsg(CommLogEventArgs.LogCategory.Error, $"Invalid midi: {CommName}");
-                //}
-                //else
-                //{
-                //    _udpClient = new UdpClient(_remoteHost, _remotePort);
-                //    Inited = true;
-                //}
-
-                Inited = true;
+                    if (int.TryParse(parts[1], out int port))
+                    {
+                        Port = port;
+                        inited = true;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 LogMsg(CommLogEventArgs.LogCategory.Error, $"Init OSC out failed: {ex.Message}");
-                Inited = false;
+                inited = false;
             }
 
-            return Inited;
+            return inited;
         }
 
         /// <summary>
@@ -222,7 +207,7 @@ namespace Nebulator.OSC
                         {
                             if (msg.Errors.Count == 0)
                             {
-                                _udpClient.Send(bytes.ToArray(), bytes.Count, ServerIP, ServerPort);
+                                _udpClient.Send(bytes.ToArray(), bytes.Count, IP, Port);
                                 LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
                             }
                             else
@@ -252,7 +237,7 @@ namespace Nebulator.OSC
             {
                 Message msg = new Message("/killall/");
                 List<byte> bytes = msg.Pack();
-                _udpClient.Send(bytes.ToArray(), bytes.Count, ServerIP, ServerPort);
+                _udpClient.Send(bytes.ToArray(), bytes.Count, IP, Port);
                 LogMsg(CommLogEventArgs.LogCategory.Send, "killall");
             }
             else
@@ -260,7 +245,7 @@ namespace Nebulator.OSC
                 Message msg = new Message("/kill/");
                 msg.Data.Add(channel);
                 List<byte> bytes = msg.Pack();
-                _udpClient.Send(bytes.ToArray(), bytes.Count, ServerIP, ServerPort);
+                _udpClient.Send(bytes.ToArray(), bytes.Count, IP, Port);
                 LogMsg(CommLogEventArgs.LogCategory.Send, $"kill {channel}");
             }
         }

@@ -20,9 +20,6 @@ namespace Nebulator.Comm
 
         /// <summary>What it can do. Set by implementation.</summary>
         CommCaps Caps { get; }
-
-        /// <summary>It's alive.</summary>
-        bool Inited { get; }
         #endregion
 
         #region Functions
@@ -32,11 +29,7 @@ namespace Nebulator.Comm
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        bool Construct(string name);
-
-        /// <summary>Actually create the comm device.</summary>
-        /// <returns></returns>
-        bool Init();
+        bool Init(string name);
 
         /// <summary>Start operation.</summary>
         void Start();
