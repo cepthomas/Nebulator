@@ -68,6 +68,7 @@ namespace Nebulator.OSC
             bool inited = false;
 
             CommName = name;
+
             try
             {
                 if (_udpClient != null)
@@ -77,17 +78,15 @@ namespace Nebulator.OSC
                     _udpClient = null;
                 }
 
-                _udpClient = new UdpClient(IP, Port);
-
                 List<string> parts = name.SplitByToken(":");
 
                 if(parts.Count == 2)
                 {
-                    IP = parts[0];
-
                     if (int.TryParse(parts[1], out int port))
                     {
+                        IP = parts[0];
                         Port = port;
+                        _udpClient = new UdpClient(IP, Port);
                         inited = true;
                     }
                 }
@@ -207,7 +206,7 @@ namespace Nebulator.OSC
                         {
                             if (msg.Errors.Count == 0)
                             {
-                                _udpClient.Send(bytes.ToArray(), bytes.Count, IP, Port);
+                                _udpClient.Send(bytes.ToArray(), bytes.Count);
                                 LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
                             }
                             else
@@ -237,7 +236,7 @@ namespace Nebulator.OSC
             {
                 Message msg = new Message("/killall/");
                 List<byte> bytes = msg.Pack();
-                _udpClient.Send(bytes.ToArray(), bytes.Count, IP, Port);
+                int i = _udpClient.Send(bytes.ToArray(), bytes.Count);
                 LogMsg(CommLogEventArgs.LogCategory.Send, "killall");
             }
             else
@@ -245,7 +244,7 @@ namespace Nebulator.OSC
                 Message msg = new Message("/kill/");
                 msg.Data.Add(channel);
                 List<byte> bytes = msg.Pack();
-                _udpClient.Send(bytes.ToArray(), bytes.Count, IP, Port);
+                _udpClient.Send(bytes.ToArray(), bytes.Count);
                 LogMsg(CommLogEventArgs.LogCategory.Send, $"kill {channel}");
             }
         }

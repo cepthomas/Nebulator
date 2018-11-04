@@ -58,7 +58,7 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createController(string input, int channelNum, int controlId, NVariable bound)
         {
-            //TODOY ?? controlId = Utils.Constrain(controlId, input.Caps.MinControllerValue, input.Caps.MaxControllerValue);
+            //TODOX ?? controlId = Utils.Constrain(controlId, input.Caps.MinControllerValue, input.Caps.MaxControllerValue);
             NController mp = new NController()
             {
                 InputName = input,

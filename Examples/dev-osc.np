@@ -1,5 +1,5 @@
 
-// TODOY fix all files and md.
+// TODOX fix all files and md.
 // IO devices.
 //was:
 // NOutput MY_OSC_OUT;
@@ -33,7 +33,7 @@
 
 // IO devices.
 string MY_OSC_OUT = "localhost:6449";  // 192.168.1.6:1234
-string MY_OSC_IN = "6449";
+string MY_OSC_IN = "6448";
 string MY_VKEY = "Virtual Keyboard";
 
 // remove:
@@ -88,7 +88,7 @@ public override void setupNeb()
     createController(MY_OSC_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
     createController(MY_OSC_IN, 1, 3, CTL3); // another controller
     createController(MY_OSC_IN, 0, 4, BACK_COLOR); // change ui color
-    createController(MY_OSC_IN, 1, NoteControl, KBD_NOTE);
+//    createController(MY_OSC_IN, 1, NoteControl, KBD_NOTE);
 
     // All the output channels.
     PIANO = createChannel("piano", MY_OSC_OUT, 1, 5);
@@ -139,10 +139,10 @@ void sequenced()
             case 8:
             case 12:
                 //sendSequence(PIANO, SEQ1);
-                foreach(int n in _chordNotes)
-                {
-                    sendNote(PIANO, n, 90, 1.0);
-                }
+                // foreach(int n in _chordNotes)
+                // {
+                //     sendNote(PIANO, n, 90, 1.0);
+                // }
                 break;
         }
 
@@ -234,7 +234,9 @@ void drawFan()
     colorMode(HSB, 360, width, height);
     background(160); // gray
 
-    float angleStep = 360 / _segmentCount;
+    float angleStep = 360 / 12; // _segmentCount;
+    int radius = 300;
+
 
     for (float angle = 0; angle <= 360; angle += angleStep)
     {
@@ -243,8 +245,8 @@ void drawFan()
         beginShape();  // (TRIANGLE_FAN);
         vertex(width / 2, height / 2); // center
 
-        float vx = width / 2 + cos(radians(angle)) * _radius;
-        float vy = height / 2 + sin(radians(angle)) * _radius;
+        float vx = width / 2 + cos(radians(angle)) * radius;
+        float vy = height / 2 + sin(radians(angle)) * radius;
         vertex(vx, vy);
         
         vx -= 10;

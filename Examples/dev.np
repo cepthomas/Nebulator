@@ -3,10 +3,37 @@
 
 // Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
+// TODOX fix all files and md.
 // IO devices.
-NOutput MY_MIDI_OUT;
-NInput MY_MIDI_IN;
-NInput MY_VKEY;
+//was:
+// NOutput MY_OSC_OUT;
+// NInput MY_OSC_IN;
+// NInput MY_VKEY;
+//
+// now:
+// string MY_OSC_OUT = "localhost:6449";  // 192.168.1.6:1234
+// string MY_OSC_IN = "6449";
+// string MY_VKEY = "Virtual Keyboard";
+
+// remove:
+// createOutput("localhost:6449"); // 192.168.1.6:1234
+// createInput("Virtual Keyboard"); // always channelNum = 0
+
+// edit:
+// createController("MY_VKEY", 0, NoteControl, VKBD_NOTE);
+// createChannel("piano", "MY_OSC_OUT", 1, 5);
+
+// Also:
+// NOutput MY_MIDI_OUT;
+// NInput MY_MIDI_IN;
+// MY_MIDI_OUT = createOutput("loopMIDI Port 1");
+// MY_MIDI_IN = createInput("MPK mini");
+
+
+// IO devices.
+// NOutput MY_MIDI_OUT;
+// NInput MY_MIDI_IN;
+// NInput MY_VKEY;
 
 // All the neb variables.
 NVariable BACK_COLOR;
@@ -56,28 +83,36 @@ public override void setupNeb()
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
+
     if(local)
     {
-        MY_MIDI_OUT = createOutput("Microsoft GS Wavetable Synth");
-        MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
-        createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
+        string MY_MIDI_OUT = "Microsoft GS Wavetable Synth";
+
+        // All the output channels.
+        PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);
+        BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
+        SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
+        DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
+
+        createController("Virtual Keyboard", 0, NoteControl, VKBD_NOTE);
     }
     else
     {
-        MY_MIDI_OUT = createOutput("loopMIDI Port 1");
-        MY_MIDI_IN = createInput("MPK mini");
+        string MY_MIDI_OUT = "loopMIDI Port 1";
+        string MY_MIDI_IN = "MPK mini";
+
+        // All the output channels.
+        PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);
+        BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
+        SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
+        DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
+
         createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
         createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
         createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
         createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
         createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
     }
-
-    // All the output channels.
-    PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);
-    BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
-    SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
-    DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
 
     // levers
     createLever(BACK_COLOR);

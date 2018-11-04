@@ -123,7 +123,6 @@ namespace Nebulator.OSC
                 dtype.Insert(0, ',');
                 bytes.AddRange(OscUtils.Pack(dtype.ToString()));
                 bytes.AddRange(dvals);
-                bytes.InsertRange(0, OscUtils.Pack(bytes.Count));
                 return bytes;
             }
             else
@@ -217,7 +216,21 @@ namespace Nebulator.OSC
                 }
             }
 
-            return ok ? new Message(address) { Data = dvals, Errors = errors } : null;
+            return new Message(address) { Data = dvals, Errors = errors };
+        }
+
+        /// <summary>
+        /// Readable.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"Address:{Address} Data:");
+
+            Data.ForEach(o => sb.Append(o.ToString() + " "));
+
+            return sb.ToString();
         }
         #endregion
     }

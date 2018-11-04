@@ -68,8 +68,8 @@ namespace Nebulator.Test
 
             List<byte> packed = m1.Pack();
 
-            var vs = packed.Dump("|");
-            UT_INFO(vs);
+            //var vs = packed.Dump("|");
+            //UT_INFO(vs);
 
             UT_FALSE(packed == null);
             UT_EQUAL(packed.Count(), 52);
@@ -83,7 +83,6 @@ namespace Nebulator.Test
             UT_EQUAL(m2.Data[1].ToString(), m1.Data[1].ToString());
             UT_EQUAL(m2.Data[2].ToString(), m1.Data[2].ToString());
             UT_EQUAL(m2.Data[3].ToString(), m1.Data[3].ToString());
-
         }
     }
 

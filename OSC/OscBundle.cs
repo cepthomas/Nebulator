@@ -65,10 +65,19 @@ namespace Nebulator.OSC
         {
             List<byte> bytes = new List<byte>();
 
+            // Front matter
             bytes.AddRange(OscUtils.Pack(BUNDLE_ID));
             bytes.AddRange(OscUtils.Pack(TimeTag.Raw));
-            //Bundles.ForEach(b => bytes.AddRange(b.Pack()));
-            Messages.ForEach(m => bytes.AddRange(m.Pack()));
+
+            // Messages
+            foreach(Message m in Messages)
+            {
+                List<byte> mb = m.Pack();
+                bytes.AddRange(OscUtils.Pack(mb.Count));
+                bytes.AddRange(mb);
+            }
+
+            // Tail
             bytes.Pad();
             bytes.InsertRange(0, OscUtils.Pack(bytes.Count));
             return bytes;
@@ -144,7 +153,7 @@ namespace Nebulator.OSC
                 }
             }
 
-            return ok ? new Bundle(new TimeTag(tt)) {/* Bundles = bundles, */Messages = messages, Errors = errors } : null;
+            return new Bundle(new TimeTag(tt)) {/* Bundles = bundles, */Messages = messages, Errors = errors };
         }
         #endregion
     }

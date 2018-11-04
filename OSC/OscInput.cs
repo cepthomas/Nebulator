@@ -76,12 +76,8 @@ namespace Nebulator.OSC
                 if (int.TryParse(name, out int port))
                 {
                     Port = port;
+                    _udpClient = new UdpClient(Port);
                     inited = true;
-                }
-
-                if(inited)
-                {
-                    Start();
                 }
             }
             catch (Exception ex)
@@ -123,7 +119,7 @@ namespace Nebulator.OSC
         /// <inheritdoc />
         public void Start()
         {
-            _udpClient.BeginReceive(new AsyncCallback(OscReceive), _udpClient);
+            _udpClient.BeginReceive(new AsyncCallback(OscReceive), this);
         }
 
         /// <inheritdoc />
@@ -142,51 +138,121 @@ namespace Nebulator.OSC
         /// <summary>
         /// Handle a received message.
         /// </summary>
-        /// <param name="result"></param>
-        static void OscReceive(IAsyncResult result)
+        /// <param name="ares"></param>
+        void OscReceive(IAsyncResult ares)
         {
-            UdpClient udpClient = result.AsyncState as UdpClient;
+            //OscInput inputDev = ares.AsyncState as OscInput;
             IPEndPoint sender = new IPEndPoint(0, 0);
-            // Get input. TODOY handle it - CommInputEvent - payload is a Step?
-            byte[] message = udpClient.EndReceive(result, ref sender);
-            // Listen again.
-            udpClient.BeginReceive(new AsyncCallback(OscReceive), udpClient);
-        }
 
-        //public Bundle Receive()
-        //{
-        //    Bundle b = null;
-        //    IPEndPoint ip = null;
-        //    byte[] bytes = _udpClient.Receive(ref ip);
-        //    if (bytes != null && bytes.Length > 0)
-        //    {
-        //        // unpack - check for bundle or message TODOX nested bundles?
-        //        if (bytes[0] == '#')
-        //        {
-        //            Bundle bnest = Bundle.Unpack(bytes);
-        //        }
-        //        else
-        //        {
-        //            Message m = Message.Unpack(bytes);
-        //        }
-        //        //    // Decode the message. We only care about a few. TODOX now what? pass back to the script?
-        //        // Midi does like this:
-        //        // MY_MIDI_IN = createInput("MPK mini");
-        //        // createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
-        //        // createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-        //        // createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
-        //        // createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
-        //        // createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
-        //        //    if (step != null)
-        //        //    {
-        //        //        // Pass it up for handling.
-        //        //        CommInputEventArgs args = new CommInputEventArgs() { Step = step };
-        //        //        CommInputEvent?.Invoke(this, args);
-        //        //        LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
-        //        //    }
-        //    }
-        //    return b;
-        //}
+            // Process input.
+            byte[] bytes = _udpClient.EndReceive(ares, ref sender);
+
+            if (bytes != null && bytes.Length > 0)
+            {
+                // unpack - check for bundle or message TODOX nested bundles?
+                if (bytes[0] == '#')
+                {
+                    Bundle b = Bundle.Unpack(bytes);
+                    if(b.Errors.Count == 0)
+                    {
+                        b.Messages.ForEach(m => ProcessMessage(m));
+                    }
+                    else
+                    {
+                        b.Errors.ForEach(e => LogMsg(CommLogEventArgs.LogCategory.Error, e));
+                    }
+                }
+                else
+                {
+                    Message m = Message.Unpack(bytes);
+                    if (m.Errors.Count == 0)
+                    {
+                        ProcessMessage(m);
+                    }
+                    else
+                    {
+                        m.Errors.ForEach(e => LogMsg(CommLogEventArgs.LogCategory.Error, e));
+                    }
+                }
+            }
+
+            // Local message decoder.
+            void ProcessMessage(Message msg)
+            {
+                // could be:
+                // /note/ channel notenum vel
+                // /control/ channel ctlnum val
+
+                Step step = null;
+
+                switch(msg.Address)
+                {
+                    case "/note/":
+                        if(msg.Data.Count == 3)
+                        {
+                            int channel = Utils.Constrain((int)msg.Data[0], 0, Caps.NumChannels);
+                            int notenum = Utils.Constrain((int)msg.Data[1], Caps.MinNote, Caps.MaxNote);
+                            int velocity = Utils.Constrain((int)msg.Data[2], Caps.MinVolume, Caps.MaxVolume);
+
+                            if (velocity == 0)
+                            {
+                                step = new StepNoteOff()
+                                {
+                                    Comm = this,
+                                    ChannelNumber = channel,
+                                    NoteNumber = notenum,
+                                    Velocity = 0
+                                };
+                            }
+                            else
+                            {
+                                step = new StepNoteOn()
+                                {
+                                    Comm = this,
+                                    ChannelNumber = channel,
+                                    NoteNumber = notenum,
+                                    Velocity = velocity,
+                                    VelocityToPlay = velocity,
+                                    Duration = new Time(0)
+                                };
+                            }
+                        }
+                        break;
+
+                    case "/control/":
+                        if (msg.Data.Count == 3)
+                        {
+                            int channel = Utils.Constrain((int)msg.Data[0], 0, Caps.NumChannels);
+                            int ctlnum = (int)msg.Data[1];
+                            int value = Utils.Constrain((int)msg.Data[2], Caps.MinControllerValue, Caps.MaxControllerValue);
+
+                            step = new StepControllerChange()
+                            {
+                                Comm = this,
+                                ChannelNumber = channel,
+                                ControllerId = ctlnum,
+                                Value = value
+                            };
+                        }
+                        break;
+
+                    default:
+                        LogMsg(CommLogEventArgs.LogCategory.Error, $"Invalid address: {msg.Address}");
+                        break;
+                }
+
+                if (step != null)
+                {
+                    // Pass it up for handling.
+                    CommInputEventArgs args = new CommInputEventArgs() { Step = step };
+                    CommInputEvent?.Invoke(this, args);
+                    LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
+                }
+            }
+
+            // Listen again.
+            _udpClient.BeginReceive(new AsyncCallback(OscReceive), this);
+        }
 
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
