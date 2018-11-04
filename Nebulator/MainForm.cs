@@ -296,7 +296,7 @@ namespace Nebulator
         /// </summary>
         void DeleteDevices()
         {
-            _inputs.ForEach(ci => { ci.Value?.Dispose(); });
+            _inputs.ForEach(ci => { if(ci.Value != _vk) ci.Value?.Dispose(); });
             _inputs.Clear();
             _outputs.ForEach(co => { co.Value?.Dispose(); });
             _outputs.Clear();
@@ -504,7 +504,7 @@ namespace Nebulator
                 // Clean up any old.
                 _script?.Dispose();
 
-                // Compile now.
+                // Compile script now.
                 _script = compiler.Execute(_fn);
 
                 // Update file watcher - keeps an eye in any included files too.
@@ -532,7 +532,7 @@ namespace Nebulator
                         // Setup.
                         _script.setupNeb();
 
-                        // Devices specified in script - create now.
+                        // Devices specified in script setupNeb() - create now.
                         CreateDevices();
 
                         _surface.InitSurface(_script);
@@ -540,6 +540,8 @@ namespace Nebulator
                         ProcessRuntime();
 
                         ConvertToSteps();
+
+                        SetSpeedTimerPeriod();
 
                         // Show everything.
                         InitScriptUi();
@@ -966,7 +968,6 @@ namespace Nebulator
             _script.Speed = (float)potSpeed.Value;
             _script.Volume = sldVolume.Value;
             _script.FrameRate = _frameRate;
- //           _script.RuntimeSteps.Clear();
         }
 
         /// <summary>
@@ -1362,7 +1363,7 @@ namespace Nebulator
 
         #region Play control
         /// <summary>
-        /// Update everything per param.
+        /// Update UI state per param.
         /// </summary>
         /// <param name="cmd">The command.</param>
         /// <param name="userAction">Something the user did.</param>
@@ -1380,9 +1381,7 @@ namespace Nebulator
                         if (ok)
                         {
                             _startTime = DateTime.Now;
-                            SetSpeedTimerPeriod();
                             chkPlay.Checked = true;
-                            _surface.InitSurface(_script);
                         }
                         else
                         {
@@ -1399,7 +1398,6 @@ namespace Nebulator
                         else
                         {
                             _startTime = DateTime.Now;
-                            SetSpeedTimerPeriod();
                             chkPlay.Checked = true;
                         }
                     }
@@ -1520,23 +1518,23 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Import a style file as np file lines.
+        /// Import a midi or style file as np file lines.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ImportStyle_Click(object sender, EventArgs e)
+        void ImportMidi_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
-                Filter = "Style files (*.sty)|*.sty",
-                Title = "Import from style file"
+                Filter = "Midi files (*.mid)|*.mid|Style files (*.sty)|*.sty|All files (*.*)|*.*",
+                Title = "Import from midi or style file"
             };
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
                 var v = MidiUtils.ImportFile(openDlg.FileName);
                 Clipboard.SetText(string.Join(Environment.NewLine, v));
-                MessageBox.Show("Style file content is in the clipboard");
+                MessageBox.Show("File content is in the clipboard");
             }
         }
 

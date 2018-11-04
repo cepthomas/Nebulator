@@ -52,16 +52,16 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a controller input.
         /// </summary>
-        /// <param name="input">Comm device.</param>
+        /// <param name="devName">Comm device.</param>
         /// <param name="channelNum">Which channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>
-        protected void createController(string input, int channelNum, int controlId, NVariable bound)
+        protected void createController(string devName, int channelNum, int controlId, NVariable bound)
         {
-            //TODOX ?? controlId = Utils.Constrain(controlId, input.Caps.MinControllerValue, input.Caps.MaxControllerValue);
+            //TODOX ?? controlId = Utils.Constrain(controlId, devName.Caps.MinControllerValue, devName.Caps.MaxControllerValue);
             NController mp = new NController()
             {
-                InputName = input,
+                InputName = devName,
                 ChannelNumber = channelNum,
                 ControllerId = controlId,
                 BoundVar = bound
@@ -122,17 +122,17 @@ namespace Nebulator.Script
         /// Normal factory.
         /// </summary>
         /// <param name="name">UI name</param>
-        /// <param name="output">Comm device.</param>
+        /// <param name="devName">Comm device.</param>
         /// <param name="channelNum"></param>
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NChannel createChannel(string name, string output, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(string name, string devName, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
         {
             NChannel nt = new NChannel()
             {
                 Name = name,
-                OutputName = output,
+                OutputName = devName,
                 ChannelNumber = channelNum,
                 WobbleVolume = wobvol,
                 WobbleTimeBefore = wobbefore,

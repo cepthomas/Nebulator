@@ -25,8 +25,7 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            // TODO this:
-            // Server debug stuff.
+            // TODO this: Server debug stuff.
             TestClient client = new TestClient();
             Task.Run(async () => { await client.Run(); });
 

@@ -7,12 +7,10 @@ const int SOUND_DEF_VOL = 100;
 ///// Variables /////
 NVariable COLOR;
 
-///// I/O /////
-NOutput MIDI_OUT;
-
 ///// Channels /////
 NChannel SOUND;
 
+bool _winGm = false;
 
 class TapeLoop
 {
@@ -33,18 +31,11 @@ List<TapeLoop> loops = new List<TapeLoop>();
 
 public override void setupNeb()
 {
-    bool winGm = false;
-
     ///// Variables /////
-
     COLOR = createVariable("color", 240, 0, 255); // change color
 
-    ///// I/O /////
-    MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); // or "loopMIDI Port 1"
-    winGm = true;
-    
     ///// Channels /////
-    SOUND = createChannel("sound", MIDI_OUT, 1, 5);
+    SOUND = createChannel("sound", "Microsoft GS Wavetable Synth", 1, 5); // or "loopMIDI Port 1"
 
     // levers
     createLever(COLOR);
@@ -63,11 +54,6 @@ public override void setupNeb()
     // 6th
     loops.Add(new TapeLoop("F4",  19.70,  4.00));
     loops.Add(new TapeLoop("F5",  20.00, 14.10));
-
-    if (winGm)
-    {
-        sendPatch(SOUND, Pad2Warm);
-    }
 }
 
 public override void setup()
@@ -78,6 +64,11 @@ public override void setup()
 
 public override void step()
 {
+    if(tick == 0 && tock == 0 && _local)
+    {
+        sendPatch(SOUND, Pad2Warm);
+    }
+
     foreach(TapeLoop l in loops)
     {
         if(stepTime >= l.nextStart)

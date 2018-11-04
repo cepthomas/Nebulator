@@ -4,7 +4,7 @@ I grew frustrated with traditional piano roll midi editors as found in your typi
 
 I played around with various scripting concepts (I do like Lua and it may reappear), but ended up realizing that C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
 
-I decided to do this as all midi, rather than try to implement native sound generation. The rationale is that I (and you) have plenty of great sounding instruments and effects using my [DAW](https://www.reaper.fm/), so may as well use those via a midi loopback driver. TODOX-rewrite Midi has some severe limitations so OSC could appear later.  
+I decided to do this as all midi and OSC, rather than try to implement native sound generation. The rationale is that I (and you) have plenty of great sounding instruments and effects using my [DAW](https://www.reaper.fm/), so may as well use those via a midi loopback driver.
 
 Some interesting reads on music-by-code:
 - [Michael Gogins](http://csoundjournal.com/issue17/gogins_composing_in_cpp.html)

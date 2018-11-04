@@ -14,7 +14,7 @@ using Nebulator.Common;
 using Nebulator.Comm;
 
 
-// TODOX Clever way to handle return codes? No C# macros...  "exceptions mean bugs"
+// TODOX Cleverer way to handle return codes? No C# macros boo...  "exceptions mean bugs"
 
 
 
@@ -25,12 +25,10 @@ namespace Nebulator.OSC
     /// OSC Message or Bundle Elements. An OSC Bundle Element consists of its size and its contents. The size
     /// is an int32 representing the number of 8-bit bytes in the contents, and will always be a multiple of 4.
     /// The contents are either an OSC Message or an OSC Bundle.
-    /// Note this recursive definition: bundle may contain bundles.
+    /// Note this recursive definition: bundle may contain bundles. TODO not yet - future? other apps flatten them out.
     /// </summary>
     public class Bundle
     {
-        //TODOX support nested bundles? public List<Bundle> Bundles { get; private set; } = new List<Bundle>(); other apps flatten them out.
-
         #region Constants
         /// <summary>Bundle marker</summary>
         public const string BUNDLE_ID = "#bundle";

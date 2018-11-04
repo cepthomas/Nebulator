@@ -1,39 +1,6 @@
 
-/////////// Laboratory for brilliant new ideas //////////
-
 // Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
-// TODOX fix all files and md.
-// IO devices.
-//was:
-// NOutput MY_OSC_OUT;
-// NInput MY_OSC_IN;
-// NInput MY_VKEY;
-//
-// now:
-// string MY_OSC_OUT = "localhost:6449";  // 192.168.1.6:1234
-// string MY_OSC_IN = "6449";
-// string MY_VKEY = "Virtual Keyboard";
-
-// remove:
-// createOutput("localhost:6449"); // 192.168.1.6:1234
-// createInput("Virtual Keyboard"); // always channelNum = 0
-
-// edit:
-// createController("MY_VKEY", 0, NoteControl, VKBD_NOTE);
-// createChannel("piano", "MY_OSC_OUT", 1, 5);
-
-// Also:
-// NOutput MY_MIDI_OUT;
-// NInput MY_MIDI_IN;
-// MY_MIDI_OUT = createOutput("loopMIDI Port 1");
-// MY_MIDI_IN = createInput("MPK mini");
-
-
-// IO devices.
-// NOutput MY_MIDI_OUT;
-// NInput MY_MIDI_IN;
-// NInput MY_VKEY;
 
 // All the neb variables.
 NVariable BACK_COLOR;
@@ -69,12 +36,11 @@ int[] _notesPlaying = new int[128];
 int _segmentCount = 36;
 int _radius = 300;
 
+// Use wingm and virtual kbd only.
+bool _local = true;
 
 public override void setupNeb()
 {
-    // Use wingm and virtual kbd only.
-    bool local = true;
-
     // All the neb variables.
     CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
     CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
@@ -83,8 +49,7 @@ public override void setupNeb()
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
-
-    if(local)
+    if(_local)
     {
         string MY_MIDI_OUT = "Microsoft GS Wavetable Synth";
 
@@ -139,7 +104,7 @@ public override void setupNeb()
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
 
-    // // Sequence that calls a script function.
+    // Sequence that calls a script function.
     // ALGO_SEQ = createSequence(8);
     // ALGO_SEQ.Add(03.32, algoDynamic, 90);
     // NULL_SEQ = createSequence(8);
@@ -154,18 +119,18 @@ public override void setupNeb()
     PART2.Add(PIANO, SEQ1,         SEQ1);
     PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
     //PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
-
-    if (local)
-    {
-        sendPatch(PIANO, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Pad3Polysynth);
-        sendPatch(DRUMS, 32);
-    }
 }
 
 public override void step()
 {
+    if(tick == 0 && tock == 0 && _local)
+    {
+        sendPatch(PIANO, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Lead1Square);
+        sendPatch(DRUMS, 32);
+    }
+
     //sequenced();
     randish();
 }
@@ -185,7 +150,7 @@ void sequenced()
         case 24:
         //case 32:
             int sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-            sendNote(SYNTH, sn + tick % 24, 90, 0.28);
+            sendNote(PIANO, sn + tick % 24, 90, 0.28);
             break;
 
         default:
@@ -232,7 +197,7 @@ void randish()
         {
             int dur = random(1, 8);
             _notesPlaying[which] = tick + dur;
-            sendNote(SYNTH, which, random(80, 100), dur);
+            sendNote(PIANO, which, random(80, 100), dur);
         }
 
         // Remove any scheduled to stop now.

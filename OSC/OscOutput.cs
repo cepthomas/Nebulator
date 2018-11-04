@@ -78,13 +78,13 @@ namespace Nebulator.OSC
                     _udpClient = null;
                 }
 
+                // Check for properly formed port.
                 List<string> parts = name.SplitByToken(":");
-
-                if(parts.Count == 2)
+                if(parts.Count == 3 && parts[0] == "OSC")
                 {
-                    if (int.TryParse(parts[1], out int port))
+                    if (int.TryParse(parts[2], out int port))
                     {
-                        IP = parts[0];
+                        IP = parts[1];
                         Port = port;
                         _udpClient = new UdpClient(IP, Port);
                         inited = true;
@@ -234,18 +234,18 @@ namespace Nebulator.OSC
         {
             if (channel is null)
             {
-                Message msg = new Message("/killall/");
-                List<byte> bytes = msg.Pack();
-                int i = _udpClient.Send(bytes.ToArray(), bytes.Count);
-                LogMsg(CommLogEventArgs.LogCategory.Send, "killall");
+                // TODOX all?
             }
             else
             {
-                Message msg = new Message("/kill/");
-                msg.Data.Add(channel);
-                List<byte> bytes = msg.Pack();
-                _udpClient.Send(bytes.ToArray(), bytes.Count);
-                LogMsg(CommLogEventArgs.LogCategory.Send, $"kill {channel}");
+                StepControllerChange step = new StepControllerChange()
+                {
+                    ChannelNumber = (int)channel,
+                    ControllerId = 123, //(int)MidiController.AllNotesOff,
+                    Value = 0
+                };
+
+                Send(step);
             }
         }
 

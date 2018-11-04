@@ -63,7 +63,7 @@ namespace Nebulator.Test
 
             m1.Data.Add(919);
             m1.Data.Add("some text");
-            m1.Data.Add(83.743f); //TODOX handle double also?
+            m1.Data.Add(83.743f); // float, not double!
             m1.Data.Add(new List<byte>() { 11, 28, 205, 68, 137, 251 });
 
             List<byte> packed = m1.Pack();

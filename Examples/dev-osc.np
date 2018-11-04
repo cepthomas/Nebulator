@@ -1,54 +1,9 @@
 
-// TODOX fix all files and md.
-// IO devices.
-//was:
-// NOutput MY_OSC_OUT;
-// NInput MY_OSC_IN;
-// NInput MY_VKEY;
-//
-// now:
-// string MY_OSC_OUT = "localhost:6449";  // 192.168.1.6:1234
-// string MY_OSC_IN = "6449";
-// string MY_VKEY = "Virtual Keyboard";
-
-// remove:
-// createOutput("localhost:6449"); // 192.168.1.6:1234
-// createInput("Virtual Keyboard"); // always channelNum = 0
-
-// edit:
-// createController("MY_VKEY", 0, NoteControl, VKBD_NOTE);
-// createChannel("piano", "MY_OSC_OUT", 1, 5);
-
-// Also:
-// NOutput MY_MIDI_OUT;
-// NInput MY_MIDI_IN;
-// MY_MIDI_OUT = createOutput("loopMIDI Port 1");
-// MY_MIDI_IN = createInput("MPK mini");
-
-
-
-/////////// Laboratory for brilliant new ideas //////////
-
-// Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
 // IO devices.
-string MY_OSC_OUT = "localhost:6449";  // 192.168.1.6:1234
-string MY_OSC_IN = "6448";
+string MY_OSC_OUT = "OSC:localhost:6449";  // 192.168.1.6:1234
+string MY_OSC_IN = "OSC:6448";
 string MY_VKEY = "Virtual Keyboard";
-
-// remove:
-// createOutput("localhost:6449"); // 192.168.1.6:1234
-// createInput("Virtual Keyboard"); // always channelNum = 0
-
-// edit:
-// createController("MY_VKEY", 0, NoteControl, VKBD_NOTE);
-// createChannel("piano", "MY_OSC_OUT", 1, 5);
-
-// Also:
-// NOutput MY_MIDI_OUT;
-// NInput MY_MIDI_IN;
-// MY_MIDI_OUT = createOutput("loopMIDI Port 1");
-// MY_MIDI_IN = createInput("MPK mini");
 
 
 // All the neb variables.
@@ -78,17 +33,12 @@ public override void setupNeb()
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
-//    MY_OSC_OUT = createOutput("localhost:6449"); // 192.168.1.6:1234
-
-//    MY_VKEY = createInput("Virtual Keyboard"); // always channelNum = 0
     createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
 
-//    MY_OSC_IN = createInput("6449");
     createController(MY_OSC_IN, 1, 1, MOD1); // modulate eq
     createController(MY_OSC_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
     createController(MY_OSC_IN, 1, 3, CTL3); // another controller
     createController(MY_OSC_IN, 0, 4, BACK_COLOR); // change ui color
-//    createController(MY_OSC_IN, 1, NoteControl, KBD_NOTE);
 
     // All the output channels.
     PIANO = createChannel("piano", MY_OSC_OUT, 1, 5);

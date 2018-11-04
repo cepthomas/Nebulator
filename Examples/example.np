@@ -23,9 +23,6 @@ const int DRUM_DEF_VOL = 100;
 NVariable COL1;
 NVariable MODN;
 
-///// I/O /////
-NOutput MIDI_OUT;
-
 ///// Channels /////
 NChannel KEYS;
 NChannel BASS;
@@ -56,24 +53,24 @@ int velY = 3;
 int ballSize = 40;
 int[] scaleNotes;
 
+// Use wingm and virtual kbd only.
+bool _local = true;
+
 
 ////// Nebulator midi stuff //////
 public override void setupNeb()
 {
-    bool winGm = false;
+    string MY_MIDI_OUT = _local ? "Microsoft GS Wavetable Synth" : "or whatever you like";
 
     // All the neb variables.
     COL1 = createVariable("color", 200, 0, 255); // change color
     MODN = createVariable("modn", 0, -10, 10);
 
-    // I/O
-    MIDI_OUT = createOutput("Microsoft GS Wavetable Synth"); winGm = true; // or your own
-
     // All the channels.
-    KEYS = createChannel("keys", MIDI_OUT, 1, 5);
-    BASS = createChannel("bass", MIDI_OUT, 2, 2);
-    SYNTH = createChannel("synth", MIDI_OUT, 3, 0);
-    DRUMS = createChannel("drums", MIDI_OUT, 10, 4);
+    KEYS = createChannel("keys", MY_MIDI_OUT, 1, 5);
+    BASS = createChannel("bass", MY_MIDI_OUT, 2, 2);
+    SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
+    DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");
@@ -180,18 +177,18 @@ public override void setupNeb()
 
     // Get some stock chords and scales
     scaleNotes = getScaleNotes("Algerian", "A3");
-
-    if (winGm)
-    {
-        sendPatch(KEYS, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Pad3Polysynth);
-        sendPatch(DRUMS, 32);
-    }
 }
 
 public override void step()
 {
+    if(tick == 0 && tock == 0 && _local)
+    {
+        sendPatch(PIANO, AcousticGrandPiano);
+        sendPatch(BASS, AcousticBass);
+        sendPatch(SYNTH, Lead1Square);
+        sendPatch(DRUMS, 32);
+    }
+
     // Play a sequence periodically.
     if(tock == 0)
     {

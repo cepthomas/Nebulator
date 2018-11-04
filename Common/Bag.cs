@@ -33,7 +33,7 @@ namespace Nebulator.Common
         /// <param name="owner"></param>
         /// <param name="valname"></param>
         /// <returns>The value or null if not in the collection.</returns>
-        public object GetValue(string owner, string valname) //TODO handle null???
+        public object GetValue(string owner, string valname)
         {
             string key = MakeKey(owner, valname);
             return Values.ContainsKey(key) ? Values[key] : null;

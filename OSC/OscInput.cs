@@ -73,11 +73,15 @@ namespace Nebulator.OSC
                 }
 
                 // Check for properly formed port.
-                if (int.TryParse(name, out int port))
+                List<string> parts = name.SplitByToken(":");
+                if (parts.Count == 2 && parts[0] == "OSC")
                 {
-                    Port = port;
-                    _udpClient = new UdpClient(Port);
-                    inited = true;
+                    if (int.TryParse(parts[1], out int port))
+                    {
+                        Port = port;
+                        _udpClient = new UdpClient(Port);
+                        inited = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -149,7 +153,7 @@ namespace Nebulator.OSC
 
             if (bytes != null && bytes.Length > 0)
             {
-                // unpack - check for bundle or message TODOX nested bundles?
+                // Unpack - check for bundle or message.
                 if (bytes[0] == '#')
                 {
                     Bundle b = Bundle.Unpack(bytes);
