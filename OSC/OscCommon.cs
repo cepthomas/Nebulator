@@ -22,7 +22,7 @@ namespace Nebulator.OSC
     public static class OscUtils
     {
         #region Misc
-        public static CommCaps InitCaps()
+        public static CommCaps InitCaps() update these
         {
             return new CommCaps()
             {

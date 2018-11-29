@@ -17,7 +17,7 @@ using Nebulator.Comm;
 namespace Nebulator.OSC
 {
     /// <summary>
-    /// Abstraction layer between OSC comm and Nebulator steps.
+    /// Abstraction layer between OSC comm and Nebulator steps. aka OSC server.
     /// </summary>
     public class OscInput : NInput
     {
@@ -185,7 +185,7 @@ namespace Nebulator.OSC
             {
                 // could be:
                 // /note/ channel notenum vel
-                // /control/ channel ctlnum val
+                // /controller/ channel ctlnum val
 
                 Step step = null;
 
@@ -223,7 +223,7 @@ namespace Nebulator.OSC
                         }
                         break;
 
-                    case "/control/":
+                    case "/controller/":
                         if (msg.Data.Count == 3)
                         {
                             int channel = Utils.Constrain((int)msg.Data[0], 0, Caps.NumChannels);

@@ -236,7 +236,7 @@ public void On_CTL3()
 public void On_MOD1()
 {
     //print(MOD1.Name, "changed to", MOD1.Value);
-    // Send a control change.
+    // Send a controller change.
     sendController(SYNTH, 1, MOD1.Value);
 }
 

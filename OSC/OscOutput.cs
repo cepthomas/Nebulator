@@ -17,7 +17,7 @@ using Nebulator.Comm;
 namespace Nebulator.OSC
 {
     /// <summary>
-    /// Abstraction layer between OSC comm and Nebulator steps.
+    /// Abstraction layer between OSC comm and Nebulator steps. aka OSC client.
     /// </summary>
     public class OscOutput : NOutput
     {
@@ -154,7 +154,7 @@ namespace Nebulator.OSC
                     {
                         case StepNoteOn non:
                             // /note/ channel notenum vel
-                            msg = new Message("/note/");
+                            msg = new Message("/note");
                             msg.Data.Add(non.ChannelNumber);
                             msg.Data.Add(non.NoteNumber);
                             msg.Data.Add(non.VelocityToPlay);
@@ -176,7 +176,7 @@ namespace Nebulator.OSC
 
                         case StepNoteOff noff:
                             // /note/ channel notenum 0
-                            msg = new Message("/note/");
+                            msg = new Message("/note");
                             msg.Data.Add(noff.ChannelNumber);
                             msg.Data.Add(noff.NoteNumber);
                             msg.Data.Add(0);
@@ -184,8 +184,8 @@ namespace Nebulator.OSC
                             break;
 
                         case StepControllerChange ctl:
-                            // /control/ channel ctlnum val
-                            msg = new Message("/control/");
+                            // /controller/ channel ctlnum val
+                            msg = new Message("/controller");
                             msg.Data.Add(ctl.ChannelNumber);
                             msg.Data.Add(ctl.ControllerId);
                             msg.Data.Add(ctl.Value);

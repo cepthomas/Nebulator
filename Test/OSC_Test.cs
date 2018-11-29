@@ -59,7 +59,7 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            Message m1 = new Message(@"/foo/bar/");
+            Message m1 = new Message(@"/foo/bar");
 
             m1.Data.Add(919);
             m1.Data.Add("some text");
