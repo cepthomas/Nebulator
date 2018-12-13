@@ -46,7 +46,7 @@ namespace Nebulator.OSC
     /// [ = Indicates the beginning of an array. The tags following are for data in the Array until a close brace tag is reached.
     /// ] = Indicates the end of an array.
     /// </summary>
-    public class Message
+    public class Message : Packet
     {
         #region Properties
         /// <summary>Storage of address.</summary>
@@ -89,22 +89,22 @@ namespace Nebulator.OSC
                 {
                     case int i:
                         dtype.Append('i');
-                        dvals.AddRange(OscUtils.Pack(i));
+                        dvals.AddRange(Pack(i));
                         break;
 
                     case float f:
                         dtype.Append('f');
-                        dvals.AddRange(OscUtils.Pack(f));
+                        dvals.AddRange(Pack(f));
                         break;
 
                     case string s:
                         dtype.Append('s');
-                        dvals.AddRange(OscUtils.Pack(s));
+                        dvals.AddRange(Pack(s));
                         break;
 
                     case List<byte> b:
                         dtype.Append('b');
-                        dvals.AddRange(OscUtils.Pack(b));
+                        dvals.AddRange(Pack(b));
                         break;
 
                     default:
@@ -118,9 +118,9 @@ namespace Nebulator.OSC
             {
                 // Put it all together.
                 List<byte> bytes = new List<byte>();
-                bytes.AddRange(OscUtils.Pack(Address));
+                bytes.AddRange(Pack(Address));
                 dtype.Insert(0, ',');
-                bytes.AddRange(OscUtils.Pack(dtype.ToString()));
+                bytes.AddRange(Pack(dtype.ToString()));
                 bytes.AddRange(dvals);
                 return bytes;
             }
@@ -145,7 +145,7 @@ namespace Nebulator.OSC
             string address = null;
             if (ok)
             {
-                ok = OscUtils.Unpack(bytes, ref index, ref address);
+                ok = Unpack(bytes, ref index, ref address);
             }
             if (!ok)
             {
@@ -156,7 +156,7 @@ namespace Nebulator.OSC
             string dtypes = null;
             if (ok)
             {
-                ok = OscUtils.Unpack(bytes, ref index, ref dtypes);
+                ok = Unpack(bytes, ref index, ref dtypes);
             }
             if (ok)
             {
@@ -173,7 +173,7 @@ namespace Nebulator.OSC
                     {
                         case 'i':
                             int di = 0;
-                            ok = OscUtils.Unpack(bytes, ref index, ref di);
+                            ok = Unpack(bytes, ref index, ref di);
                             if (ok)
                             {
                                 dvals.Add(di);
@@ -182,7 +182,7 @@ namespace Nebulator.OSC
 
                         case 'f':
                             float df = 0;
-                            ok = OscUtils.Unpack(bytes, ref index, ref df);
+                            ok = Unpack(bytes, ref index, ref df);
                             if (ok)
                             {
                                 dvals.Add(df);
@@ -191,7 +191,7 @@ namespace Nebulator.OSC
 
                         case 's':
                             string ds = "";
-                            ok = OscUtils.Unpack(bytes, ref index, ref ds);
+                            ok = Unpack(bytes, ref index, ref ds);
                             if (ok)
                             {
                                 dvals.Add(ds);
@@ -200,7 +200,7 @@ namespace Nebulator.OSC
 
                         case 'b':
                             List<byte> db = new List<byte>();
-                            ok = OscUtils.Unpack(bytes, ref index, ref db);
+                            ok = Unpack(bytes, ref index, ref db);
                             if (ok)
                             {
                                 dvals.Add(db);

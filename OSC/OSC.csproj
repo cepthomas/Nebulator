@@ -52,6 +52,7 @@
     <Compile Include="OscInput.cs" />
     <Compile Include="OscMessage.cs" />
     <Compile Include="OscOutput.cs" />
+    <Compile Include="OscPacket.cs" />
     <Compile Include="OscTimeTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

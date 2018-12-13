@@ -45,7 +45,7 @@ namespace Nebulator.OSC
         public int Port { get; set; } = -1;
 
         /// <inheritdoc />
-        public CommCaps Caps { get; private set; } = OscUtils.InitCaps();
+        public CommCaps Caps { get; private set; } = OscCommon.InitCaps();
         #endregion
 
         #region Lifecycle

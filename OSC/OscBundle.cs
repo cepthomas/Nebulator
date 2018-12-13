@@ -27,7 +27,7 @@ namespace Nebulator.OSC
     /// The contents are either an OSC Message or an OSC Bundle.
     /// Note this recursive definition: bundle may contain bundles. TODO not yet - future? other apps flatten them out.
     /// </summary>
-    public class Bundle
+    public class Bundle : Packet
     {
         #region Constants
         /// <summary>Bundle marker</summary>
@@ -64,20 +64,20 @@ namespace Nebulator.OSC
             List<byte> bytes = new List<byte>();
 
             // Front matter
-            bytes.AddRange(OscUtils.Pack(BUNDLE_ID));
-            bytes.AddRange(OscUtils.Pack(TimeTag.Raw));
+            bytes.AddRange(Pack(BUNDLE_ID));
+            bytes.AddRange(Pack(TimeTag.Raw));
 
             // Messages
             foreach(Message m in Messages)
             {
                 List<byte> mb = m.Pack();
-                bytes.AddRange(OscUtils.Pack(mb.Count));
+                bytes.AddRange(Pack(mb.Count));
                 bytes.AddRange(mb);
             }
 
             // Tail
             bytes.Pad();
-            bytes.InsertRange(0, OscUtils.Pack(bytes.Count));
+            bytes.InsertRange(0, Pack(bytes.Count));
             return bytes;
         }
 
@@ -96,7 +96,7 @@ namespace Nebulator.OSC
             string marker = null;
             if (ok)
             {
-                ok = OscUtils.Unpack(bytes, ref index, ref marker);
+                ok = Unpack(bytes, ref index, ref marker);
             }
             if (ok)
             {
@@ -111,7 +111,7 @@ namespace Nebulator.OSC
             ulong tt = 0;
             if (ok)
             {
-                ok = OscUtils.Unpack(bytes, ref index, ref tt);
+                ok = Unpack(bytes, ref index, ref tt);
             }
 
             // Parse bundles and messages.
