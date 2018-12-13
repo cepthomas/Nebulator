@@ -22,7 +22,7 @@ namespace Nebulator.OSC
     public static class OscCommon
     {
         #region Misc
-        public static CommCaps InitCaps() // TODOX update these
+        public static CommCaps InitCaps()
         {
             return new CommCaps()
             {

@@ -27,13 +27,13 @@ namespace Nebulator.Comm
     public class CommCaps
     {
         public int NumChannels { get; set; }
-        public int MinVolume { get; set; }
-        public int MaxVolume { get; set; }
-        public int MinNote { get; set; }
-        public int MaxNote { get; set; }
-        public int MinControllerValue { get; set; }
-        public int MaxControllerValue { get; set; }
-        public int MinPitchValue { get; set; }
-        public int MaxPitchValue { get; set; }
+        public double MinVolume { get; set; }
+        public double MaxVolume { get; set; }
+        public double MinNote { get; set; }
+        public double MaxNote { get; set; }
+        public double MinControllerValue { get; set; }
+        public double MaxControllerValue { get; set; }
+        public double MinPitchValue { get; set; }
+        public double MaxPitchValue { get; set; }
     }
 }

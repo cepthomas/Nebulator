@@ -856,7 +856,7 @@ namespace Nebulator
                     {
                         int chanNum = (e.Step as Step).ChannelNumber;
                         // Dig out the note number. Note sign change for note off.
-                        int value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
+                        double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
                         handled = ProcessInput(sender as NInput, ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
                     }
                     else if(e.Step is StepControllerChange)
@@ -867,7 +867,7 @@ namespace Nebulator
                     }
 
                     ///// Local common function /////
-                    bool ProcessInput(NInput input, int ctrlId, int channelNum, int value)
+                    bool ProcessInput(NInput input, int ctrlId, int channelNum, double value)
                     {
                         bool ret = false;
 
@@ -966,7 +966,7 @@ namespace Nebulator
             _script.StepTime = _stepTime;
             _script.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
             _script.Speed = (float)potSpeed.Value;
-            _script.Volume = sldVolume.Value;
+            _script.Volume = (float)sldVolume.Value;
             _script.FrameRate = _frameRate;
         }
 

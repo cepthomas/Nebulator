@@ -48,7 +48,7 @@ namespace Nebulator.Script
                     foreach (int noteNum in seqel.Notes)
                     {
                         ///// Note on.
-                        int vel = channel.NextVol(seqel.Volume);
+                        double vel = channel.NextVol(seqel.Volume);
                         StepNoteOn step = new StepNoteOn()
                         {
                             Comm = channel.Output,

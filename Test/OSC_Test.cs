@@ -59,7 +59,7 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            Message m1 = new Message(@"/foo/bar");
+            Message m1 = new Message() { Address = @"/foo/bar" };
 
             m1.Data.Add(919);
             m1.Data.Add("some text");
@@ -74,9 +74,10 @@ namespace Nebulator.Test
             UT_FALSE(packed == null);
             UT_EQUAL(packed.Count(), 52);
 
-            Message m2 = Message.Unpack(packed.ToArray());
+            Message m2 = new Message();
+            bool valid = m2.Unpack(packed.ToArray());
 
-            UT_FALSE(m2 == null);
+            UT_TRUE(valid);
             UT_EQUAL(m2.Address, m1.Address);
             UT_EQUAL(m2.Data.Count, m1.Data.Count);
             UT_EQUAL(m2.Data[0].ToString(), m1.Data[0].ToString());
@@ -94,7 +95,7 @@ namespace Nebulator.Test
             TimeTag tt = new TimeTag(dt);
             TimeTag ttImmediate = new TimeTag();
 
-            Bundle b = new Bundle(tt);
+            Bundle b = new Bundle() { TimeTag = tt };
 
         }
     }

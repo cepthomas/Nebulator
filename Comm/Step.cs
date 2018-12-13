@@ -51,7 +51,7 @@ namespace Nebulator.Comm
             if (Comm is NOutput)
             {
                 NOutput nout = Comm as NOutput;
-                int vel = Velocity * channelVolume * masterVolume / nout.Caps.MaxVolume / nout.Caps.MaxVolume;
+                double vel = Velocity * channelVolume * masterVolume / nout.Caps.MaxVolume / nout.Caps.MaxVolume;
                 VelocityToPlay = Utils.Constrain(vel, 0, nout.Caps.MaxVolume);
             }
         }

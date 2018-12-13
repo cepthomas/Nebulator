@@ -37,7 +37,7 @@ namespace Nebulator.Script
         public float speed { get { return Speed; } set { Speed = value; } }
 
         /// <summary>Nebulator master Volume.</summary>
-        public int volume { get { return Volume; } set { Volume = value; } }
+        public float volume { get { return Volume; } set { Volume = value; } }
         #endregion
 
         #region Functions that can be overridden in the user script
@@ -155,8 +155,8 @@ namespace Nebulator.Script
 
             if (play)
             {
-                int vel = channel.NextVol(vol);
-                int notenum = Utils.Constrain(inote, channel.Output.Caps.MinNote, channel.Output.Caps.MaxNote);
+                double vel = channel.NextVol(vol);
+                double notenum = Utils.Constrain(inote, channel.Output.Caps.MinNote, channel.Output.Caps.MaxNote);
 
                 if (vol > 0)
                 {

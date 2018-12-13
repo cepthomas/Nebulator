@@ -154,7 +154,7 @@ namespace Nebulator.OSC
                     {
                         case StepNoteOn non:
                             // /note/ channel notenum vel
-                            msg = new Message("/note");
+                            msg = new Message() { Address = "/note" };
                             msg.Data.Add(non.ChannelNumber);
                             msg.Data.Add(non.NoteNumber);
                             msg.Data.Add(non.VelocityToPlay);
@@ -176,7 +176,7 @@ namespace Nebulator.OSC
 
                         case StepNoteOff noff:
                             // /note/ channel notenum 0
-                            msg = new Message("/note");
+                            msg = new Message() { Address = "/note" };
                             msg.Data.Add(noff.ChannelNumber);
                             msg.Data.Add(noff.NoteNumber);
                             msg.Data.Add(0);
@@ -185,7 +185,7 @@ namespace Nebulator.OSC
 
                         case StepControllerChange ctl:
                             // /controller/ channel ctlnum val
-                            msg = new Message("/controller");
+                            msg = new Message() { Address = "/controller" };
                             msg.Data.Add(ctl.ChannelNumber);
                             msg.Data.Add(ctl.ControllerId);
                             msg.Data.Add(ctl.Value);
@@ -230,11 +230,11 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public void Kill(int? channel)
+        public void Kill(int? channel) // TODOX send a silence?
         {
             if (channel is null)
             {
-                // TODOX all?
+
             }
             else
             {

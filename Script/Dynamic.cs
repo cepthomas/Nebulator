@@ -23,8 +23,8 @@ namespace Nebulator.Script
         /// <summary>Variable name - as shown in ui.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
-        /// <summary>Value as int. It is initialized from the script supplied value.</summary>
-        public int Value
+        /// <summary>Value as double. It is initialized from the script supplied value.</summary>
+        public double Value
         {
             get
             {
@@ -39,13 +39,13 @@ namespace Nebulator.Script
                 }
             }
         }
-        int _value;
+        double _value;
 
         /// <summary>Min value - optional.</summary>
-        public int Min { get; set; } = 0;
+        public double Min { get; set; } = 0;
 
         /// <summary>Max value - optional.</summary>
-        public int Max { get; set; } = 100;
+        public double Max { get; set; } = 100;
         #endregion
 
         #region Events
@@ -115,24 +115,24 @@ namespace Nebulator.Script
         public int ChannelNumber { get; set; } = -1;
 
         /// <summary>Current volume.</summary>
-        public int Volume { get; set; } = 90;
+        public double Volume { get; set; } = 90;
 
         /// <summary>Humanize factor for volume.</summary>
-        public int WobbleVolume
+        public double WobbleVolume
         {
             get { return _volWobbler.RangeHigh; }
             set { _volWobbler.RangeHigh = value; }
         }
 
         /// <summary>Humanize factor for time - before the tock.</summary>
-        public int WobbleTimeBefore
+        public double WobbleTimeBefore
         {
             get { return _timeWobbler.RangeLow; }
             set { _timeWobbler.RangeLow = value; }
         }
 
         /// <summary>Humanize factor for time - after the tock.</summary>
-        public int WobbleTimeAfter
+        public double WobbleTimeAfter
         {
             get { return _timeWobbler.RangeHigh; }
             set { _timeWobbler.RangeHigh = value; }
@@ -156,7 +156,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         public int NextTime()
         {
-            return _timeWobbler.Next(0);
+            return (int)_timeWobbler.Next(0);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="def"></param>
         /// <returns></returns>
-        public int NextVol(int def)
+        public double NextVol(int def)
         {
             return _volWobbler.Next(def);
         }

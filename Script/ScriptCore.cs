@@ -94,7 +94,7 @@ namespace Nebulator.Script
         public float Speed { get; set; } = 0.0f;
 
         /// <summary>Main -> Script -> Main</summary>
-        public int Volume { get; set; } = 0;
+        public float Volume { get; set; } = 0;
 
         /// <summary>Main -> Script -> Main</summary>
         public int FrameRate { get; set; } = 0;

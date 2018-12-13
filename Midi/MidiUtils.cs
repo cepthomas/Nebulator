@@ -92,11 +92,11 @@ namespace Nebulator.Midi
                     switch (step)
                     {
                         case StepNoteOn stt:
-                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOn, stt.NoteNumber, stt.Velocity);
+                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOn, (int)stt.NoteNumber, (int)stt.Velocity);
                             break;
 
                         case StepNoteOff stt:
-                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOff, stt.NoteNumber, stt.Velocity);
+                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOff, (int)stt.NoteNumber, (int)stt.Velocity);
                             break;
 
                         case StepControllerChange stt:
@@ -106,11 +106,11 @@ namespace Nebulator.Midi
                             }
                             else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                             {
-                                evt = new PitchWheelChangeEvent(midiTime, stt.ChannelNumber, stt.Value);
+                                evt = new PitchWheelChangeEvent(midiTime, stt.ChannelNumber, (int)stt.Value);
                             }
                             else // CC
                             {
-                                evt = new ControlChangeEvent(midiTime, stt.ChannelNumber, (MidiController)stt.ControllerId, stt.Value);
+                                evt = new ControlChangeEvent(midiTime, stt.ChannelNumber, (MidiController)stt.ControllerId, (int)stt.Value);
                             }
                             break;
 

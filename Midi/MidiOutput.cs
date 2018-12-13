@@ -146,8 +146,8 @@ namespace Nebulator.Midi
                         case StepNoteOn stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOn, 
-                                    Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                                    Utils.Constrain(stt.VelocityToPlay, Caps.MinVolume, Caps.MaxVolume));
+                                    (int)Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                                    (int)Utils.Constrain(stt.VelocityToPlay, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
 
                                 if(stt.Duration.TotalTocks > 0) // specific duration
@@ -169,8 +169,8 @@ namespace Nebulator.Midi
                         case StepNoteOff stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOff,
-                                    Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                                    Utils.Constrain(stt.Velocity, Caps.MinVolume, Caps.MaxVolume));
+                                    (int)Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                                    (int)Utils.Constrain(stt.Velocity, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
                             }
                             break;
@@ -184,13 +184,13 @@ namespace Nebulator.Midi
                                 else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                                 {
                                     PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.ChannelNumber,
-                                        Utils.Constrain(stt.Value, Caps.MinPitchValue, Caps.MaxPitchValue));
+                                        (int)Utils.Constrain(stt.Value, Caps.MinPitchValue, Caps.MaxPitchValue));
                                     msg = pevt.GetAsShortMessage();
                                 }
                                 else // CC
                                 {
                                     ControlChangeEvent nevt = new ControlChangeEvent(0, stt.ChannelNumber, (MidiController)stt.ControllerId,
-                                        Utils.Constrain(stt.Value, Caps.MinControllerValue, Caps.MaxControllerValue));
+                                        (int)Utils.Constrain(stt.Value, Caps.MinControllerValue, Caps.MaxControllerValue));
                                     msg = nevt.GetAsShortMessage();
                                 }
                             }

@@ -12,8 +12,8 @@ namespace Nebulator.Controls
     public partial class Slider : UserControl
     {
         #region Fields
-        int _value = 50;
-        int _resetVal = 0;
+        double _value = 50;
+        double _resetVal = 0;
         #endregion
 
         #region Properties
@@ -30,17 +30,17 @@ namespace Nebulator.Controls
         /// <summary>
         /// Maximum value of this slider.
         /// </summary>
-        public int Maximum { get; set; } = 100;
+        public double Maximum { get; set; } = 100;
 
         /// <summary>
         /// Minimum value of this slider.
         /// </summary>
-        public int Minimum { get; set; } = 0;
+        public double Minimum { get; set; } = 0;
 
         /// <summary>
         /// Reset value of this slider.
         /// </summary>
-        public int ResetValue
+        public double ResetValue
         {
             get
             {
@@ -55,7 +55,7 @@ namespace Nebulator.Controls
         /// <summary>
         /// The value for this slider.
         /// </summary>
-        public int Value
+        public double Value
         {
             get
             {
@@ -96,8 +96,8 @@ namespace Nebulator.Controls
 
             // Internal.
             Brush brush = new SolidBrush(ControlColor);
-            int x = Width * (_value - Minimum) / (Maximum - Minimum);
-            pe.Graphics.FillRectangle(brush, 1, 1, x - 2, Height - 2);
+            double x = Width * (_value - Minimum) / (Maximum - Minimum);
+            pe.Graphics.FillRectangle(brush, 1, 1, (float)(x - 2), Height - 2);
 
             // Text.
             StringFormat format = new StringFormat()
@@ -157,7 +157,7 @@ namespace Nebulator.Controls
         /// <param name="x"></param>
         private void SetValueFromMouse(int x)
         {
-            int newval = Minimum + x * (Maximum - Minimum) / Width;
+            double newval = Minimum + x * (Maximum - Minimum) / Width;
             Value = Utils.Constrain(newval, Minimum, Maximum);
         }
     }

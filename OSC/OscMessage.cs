@@ -50,7 +50,7 @@ namespace Nebulator.OSC
     {
         #region Properties
         /// <summary>Storage of address.</summary>
-        public string Address { get; private set; } = null;
+        public string Address { get; set; } = null;
 
         /// <summary>Data elements in the message.</summary>
         public List<object> Data { get; private set; } = new List<object>();
@@ -60,15 +60,6 @@ namespace Nebulator.OSC
         #endregion
 
         #region Public functions
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="address"></param>
-        public Message(string address)
-        {
-            Address = address;
-        }
-
         /// <summary>
         /// Client request to format the message.
         /// </summary>
@@ -135,11 +126,11 @@ namespace Nebulator.OSC
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        public static Message Unpack(byte[] bytes)
+        public bool Unpack(byte[] bytes)
         {
             int index = 0;
             bool ok = true;
-            List<string> errors = new List<string>();
+            Data.Clear();
 
             // Parse address.
             string address = null;
@@ -147,9 +138,13 @@ namespace Nebulator.OSC
             {
                 ok = Unpack(bytes, ref index, ref address);
             }
-            if (!ok)
+            if (ok)
             {
-                errors.Add("Invalid address string");
+                Address = address;
+            }
+            else
+            {
+                Errors.Add("Invalid address string");
             }
 
             // Parse data types.
@@ -164,7 +159,6 @@ namespace Nebulator.OSC
             }
 
             // Parse data values.
-            List<object> dvals = new List<object>();
             if (ok)
             {
                 for (int i = 1; i < dtypes.Length && ok; i++)
@@ -176,7 +170,7 @@ namespace Nebulator.OSC
                             ok = Unpack(bytes, ref index, ref di);
                             if (ok)
                             {
-                                dvals.Add(di);
+                                Data.Add(di);
                             }
                             break;
 
@@ -185,7 +179,7 @@ namespace Nebulator.OSC
                             ok = Unpack(bytes, ref index, ref df);
                             if (ok)
                             {
-                                dvals.Add(df);
+                                Data.Add(df);
                             }
                             break;
 
@@ -194,7 +188,7 @@ namespace Nebulator.OSC
                             ok = Unpack(bytes, ref index, ref ds);
                             if (ok)
                             {
-                                dvals.Add(ds);
+                                Data.Add(ds);
                             }
                             break;
 
@@ -203,19 +197,19 @@ namespace Nebulator.OSC
                             ok = Unpack(bytes, ref index, ref db);
                             if (ok)
                             {
-                                dvals.Add(db);
+                                Data.Add(db);
                             }
                             break;
 
                         default:
                             ok = false;
-                            errors.Add($"Invalid data type: {dtypes[i]}");
+                            Errors.Add($"Invalid data type: {dtypes[i]}");
                             break;
                     }
                 }
             }
 
-            return new Message(address) { Data = dvals, Errors = errors };
+            return ok;
         }
 
         /// <summary>

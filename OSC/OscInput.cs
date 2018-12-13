@@ -156,8 +156,8 @@ namespace Nebulator.OSC
                 // Unpack - check for bundle or message.
                 if (bytes[0] == '#')
                 {
-                    Bundle b = Bundle.Unpack(bytes);
-                    if(b.Errors.Count == 0)
+                    Bundle b = new Bundle();
+                    if(b.Unpack(bytes))
                     {
                         b.Messages.ForEach(m => ProcessMessage(m));
                     }
@@ -168,8 +168,8 @@ namespace Nebulator.OSC
                 }
                 else
                 {
-                    Message m = Message.Unpack(bytes);
-                    if (m.Errors.Count == 0)
+                    Message m = new Message();
+                    if(m.Unpack(bytes))
                     {
                         ProcessMessage(m);
                     }
@@ -180,7 +180,7 @@ namespace Nebulator.OSC
                 }
             }
 
-            // Local message decoder.
+            // Local message decoder. Not really needed but keep as example.
             void ProcessMessage(Message msg)
             {
                 // could be:
@@ -195,8 +195,8 @@ namespace Nebulator.OSC
                         if(msg.Data.Count == 3)
                         {
                             int channel = Utils.Constrain((int)msg.Data[0], 0, Caps.NumChannels);
-                            int notenum = Utils.Constrain((int)msg.Data[1], Caps.MinNote, Caps.MaxNote);
-                            int velocity = Utils.Constrain((int)msg.Data[2], Caps.MinVolume, Caps.MaxVolume);
+                            double notenum = Utils.Constrain((int)msg.Data[1], Caps.MinNote, Caps.MaxNote);
+                            double velocity = Utils.Constrain((int)msg.Data[2], Caps.MinVolume, Caps.MaxVolume);
 
                             if (velocity == 0)
                             {
@@ -228,7 +228,7 @@ namespace Nebulator.OSC
                         {
                             int channel = Utils.Constrain((int)msg.Data[0], 0, Caps.NumChannels);
                             int ctlnum = (int)msg.Data[1];
-                            int value = Utils.Constrain((int)msg.Data[2], Caps.MinControllerValue, Caps.MaxControllerValue);
+                            double value = Utils.Constrain((int)msg.Data[2], Caps.MinControllerValue, Caps.MaxControllerValue);
 
                             step = new StepControllerChange()
                             {

@@ -36,7 +36,7 @@ namespace Nebulator.OSC
 
         #region Properties
         /// <summary>The timetag.</summary>
-        public TimeTag TimeTag { get; private set; } = new TimeTag();
+        public TimeTag TimeTag { get; set; } = new TimeTag();
 
         /// <summary>Contained messages.</summary>
         public List<Message> Messages { get; private set; } = new List<Message>();
@@ -46,15 +46,6 @@ namespace Nebulator.OSC
         #endregion
 
         #region Public functions
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="ttag"></param>
-        public Bundle(TimeTag ttag)
-        {
-            TimeTag = ttag;
-        }
-
         /// <summary>
         /// Format to binary form.
         /// </summary>
@@ -86,11 +77,12 @@ namespace Nebulator.OSC
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        public static Bundle Unpack(byte[] bytes)
+        public bool Unpack(byte[] bytes)
         {
             int index = 0;
             bool ok = true;
-            List<string> errors = new List<string>();
+            Errors.Clear();
+            Messages.Clear();
 
             // Parse marker.
             string marker = null;
@@ -104,7 +96,7 @@ namespace Nebulator.OSC
             }
             if (!ok)
             {
-                errors.Add("Invalid marker string");
+                Errors.Add("Invalid marker string");
             }
 
             // Parse timetag.
@@ -113,10 +105,13 @@ namespace Nebulator.OSC
             {
                 ok = Unpack(bytes, ref index, ref tt);
             }
+            if (ok)
+            {
+                TimeTag = new TimeTag(tt);
+            }
 
             // Parse bundles and messages.
             List<Bundle> bundles = new List<Bundle>();
-            List<Message> messages = new List<Message>();
 
             if (ok)
             {
@@ -124,34 +119,34 @@ namespace Nebulator.OSC
                 {
                     if (bytes[index] == '#') // bundle?
                     {
-                        Bundle b = Bundle.Unpack(bytes);
-                        if (b != null)
+                        Bundle b = new Bundle();
+                        if (b.Unpack(bytes))
                         {
                             bundles.Add(b);
                         }
                         else
                         {
                             ok = false;
-                            errors.Add("Couldn't unpack the bundle");
+                            Errors.Add("Couldn't unpack the bundle");
                         }
                     }
                     else // message?
                     {
-                        Message m = Message.Unpack(bytes);
-                        if (m != null)
+                        Message m = new Message();
+                        if(m.Unpack(bytes))
                         {
-                            messages.Add(m);
+                            Messages.Add(m);
                         }
                         else
                         {
                             ok = false;
-                            errors.Add("Couldn't unpack the message");
+                            Errors.Add("Couldn't unpack the message");
                         }
                     }
                 }
             }
 
-            return new Bundle(new TimeTag(tt)) {/* Bundles = bundles, */Messages = messages, Errors = errors };
+            return ok;
         }
         #endregion
     }
