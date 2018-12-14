@@ -28,16 +28,16 @@ namespace Nebulator.Script
         public int tock { get { return StepTime.Tock; } }
 
         /// <summary>Actual time since start pressed.</summary>
-        public float now { get { return RealTime; } }
+        public double now { get { return RealTime; } }
 
         /// <summary>Tock subdivision.</summary>
         public int tocksPerTick { get { return Time.TOCKS_PER_TICK; } }
 
         /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
-        public float speed { get { return Speed; } set { Speed = value; } }
+        public double speed { get { return Speed; } set { Speed = value; } }
 
         /// <summary>Nebulator master Volume.</summary>
-        public float volume { get { return Volume; } set { Volume = value; } }
+        public double volume { get { return Volume; } set { Volume = value; } }
         #endregion
 
         #region Functions that can be overridden in the user script
@@ -87,7 +87,7 @@ namespace Nebulator.Script
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <param name="handler">Optional callback function.</param>
-        protected NVariable createVariable(string name, int val, int min, int max, Action handler = null)
+        protected NVariable createVariable(string name, double val, double min, double max, Action handler = null)
         {
             NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
             Variables.Add(nv);
@@ -127,7 +127,7 @@ namespace Nebulator.Script
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
         /// <param name="wobafter"></param>
-        protected NChannel createChannel(string name, string devName, int channelNum, int wobvol = 0, int wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(string name, string devName, int channelNum, double wobvol = 0, double wobbefore = 0, int wobafter = 0)
         {
             NChannel nt = new NChannel()
             {
@@ -147,11 +147,11 @@ namespace Nebulator.Script
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
-        public void sendNote(NChannel channel, int inote, int vol, double dur)
+        public void sendNote(NChannel channel, double inote, double vol, double dur)
         {
             bool _anySolo = Channels.Where(ch => ch.State == ChannelState.Solo).Count() > 0;
 
-            bool play = channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !_anySolo);
+            bool play = (channel.State == ChannelState.Solo) || (channel.State == ChannelState.Normal && !_anySolo);
 
             if (play)
             {
@@ -192,7 +192,7 @@ namespace Nebulator.Script
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void sendNote(NChannel channel, string snote, int vol, double dur)
+        public void sendNote(NChannel channel, string snote, double vol, double dur)
         {
             NSequenceElement note = new NSequenceElement(snote);
 
@@ -211,7 +211,7 @@ namespace Nebulator.Script
         /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void sendNote(NChannel channel, string snote, int vol, Time dur)
+        public void sendNote(NChannel channel, string snote, double vol, Time dur)
         {
             sendNote(channel, snote, vol, dur.AsDouble);
         }
@@ -220,7 +220,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="inote">Note number.</param>
         /// <param name="vol">Note volume.</param>
-        public void sendNoteOn(NChannel channel, int inote, int vol)
+        public void sendNoteOn(NChannel channel, double inote, double vol)
         {
             sendNote(channel, inote, vol, 0.0);
         }
@@ -228,7 +228,7 @@ namespace Nebulator.Script
         /// <summary>Send a note off immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="inote">Note number.</param>
-        public void sendNoteOff(NChannel channel, int inote)
+        public void sendNoteOff(NChannel channel, double inote)
         {
             sendNote(channel, inote, 0, 0.0);
         }
@@ -237,7 +237,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>
-        public void sendController(NChannel channel, int ctlnum, int val)
+        public void sendController(NChannel channel, int ctlnum, double val)
         {
             StepControllerChange step = new StepControllerChange()
             {

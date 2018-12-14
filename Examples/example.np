@@ -46,8 +46,8 @@ NSequence NULL_SEQ;
 
 
 ////// Simple variables for functions. ///////
-float posX = 50;
-float posY = 50;
+double posX = 50;
+double posY = 50;
 int velX = 3;
 int velY = 3;
 int ballSize = 40;
@@ -183,7 +183,7 @@ public override void step()
 {
     if(tick == 0 && tock == 0 && _local)
     {
-        sendPatch(PIANO, AcousticGrandPiano);
+        sendPatch(KEYS, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Lead1Square);
         sendPatch(DRUMS, 32);

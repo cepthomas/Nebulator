@@ -164,7 +164,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="def"></param>
         /// <returns></returns>
-        public double NextVol(int def)
+        public double NextVol(double def)
         {
             return _volWobbler.Next(def);
         }
@@ -332,7 +332,7 @@ namespace Nebulator.Script
         public Time Duration { get; set; } = new Time(0);
 
         /// <summary>The 0th is the root note and other values comprise possible chord notes.</summary>
-        public List<int> Notes { get; private set; } = new List<int>();
+        public List<int> Notes { get; private set; } = new List<int>(); //TODOY
 
         /// <summary>Call a script function.</summary>
         public Action ScriptFunction { get; set; } = null;

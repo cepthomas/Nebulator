@@ -27,7 +27,7 @@ namespace Nebulator.Common
 
         #region UI helpers
         /// <summary>
-        /// Allows user to enter only integer or float values.
+        /// Allows user to enter only integer or double values.
         /// s</summary>
         /// <param name="sender">Sender control.</param>
         /// <param name="e">Event args.</param>
@@ -379,17 +379,17 @@ namespace Nebulator.Common
         /// <summary>Conversion.</summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static float DegreesToRadians(float angle)
+        public static double DegreesToRadians(double angle)
         {
-            return (float)(Math.PI * angle / 180.0);
+            return Math.PI * angle / 180.0;
         }
 
         /// <summary>Conversion.</summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static float RadiansToDegrees(float angle)
+        public static double RadiansToDegrees(double angle)
         {
-            return (float)(angle * 180.0 / Math.PI);
+            return angle * 180.0 / Math.PI;
         }
 
         /// <summary>
@@ -491,20 +491,6 @@ namespace Nebulator.Common
         /// <param name="max"></param>
         /// <returns></returns>
         public static double Constrain(double val, double min, double max)
-        {
-            val = Math.Max(val, min);
-            val = Math.Min(val, max);
-            return val;
-        }
-
-        /// <summary>
-        /// Bounds limits a value.
-        /// </summary>
-        /// <param name="val"></param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
-        public static float Constrain(float val, float min, float max)
         {
             val = Math.Max(val, min);
             val = Math.Min(val, max);

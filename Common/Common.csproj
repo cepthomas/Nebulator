@@ -77,6 +77,7 @@
     <Compile Include="UserSettings.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WaitCursor.cs" />
+    <Compile Include="Time.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

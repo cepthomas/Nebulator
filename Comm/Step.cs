@@ -21,7 +21,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"comm:{Comm.CommName} channel:{ChannelNumber}";
+            return $"channel:{ChannelNumber}"; // $"comm:{Comm.CommName} channel:{ChannelNumber}";
         }
     }
 
@@ -59,7 +59,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepNoteOn: {base.ToString()} note:{NoteNumber} vel:{VelocityToPlay} dur:{Duration}";
+            return $"StepNoteOn: {base.ToString()} note:{NoteNumber:F2} vel:{VelocityToPlay:F2} dur:{Duration}";
         }
     }
 
@@ -80,7 +80,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepNoteOff: {base.ToString()} note:{NoteNumber}";
+            return $"StepNoteOff: {base.ToString()} note:{NoteNumber:F2}";
         }
     }
 
@@ -105,15 +105,15 @@ namespace Nebulator.Comm
 
             if (ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
             {
-                sb.Append($" Note:{Value}");
+                sb.Append($" Note:{Value:F2}");
             }
             else if (ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
             {
-                sb.Append($" Pitch:{Value}");
+                sb.Append($" Pitch:{Value:F2}");
             }
             else // CC
             {
-                sb.Append($" ControllerId:{ControllerId} value:{Value}");
+                sb.Append($" ControllerId:{ControllerId} value:{Value:F2}");
             }
 
             return sb.ToString();

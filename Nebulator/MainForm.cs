@@ -185,7 +185,7 @@ namespace Nebulator
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
 
-            #region
+            #region Keyboard
             // Create it now but don't show.
             _vk = new VirtualKeyboard.VKeyboard
             {
@@ -964,9 +964,9 @@ namespace Nebulator
         {
             _script.Playing = chkPlay.Checked;
             _script.StepTime = _stepTime;
-            _script.RealTime = (float)(DateTime.Now - _startTime).TotalSeconds;
-            _script.Speed = (float)potSpeed.Value;
-            _script.Volume = (float)sldVolume.Value;
+            _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
+            _script.Speed = potSpeed.Value;
+            _script.Volume = sldVolume.Value;
             _script.FrameRate = _frameRate;
         }
 

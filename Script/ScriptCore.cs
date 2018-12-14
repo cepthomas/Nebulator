@@ -88,13 +88,13 @@ namespace Nebulator.Script
         public bool Playing { get; set; } = false;
 
         /// <summary>Main -> Script</summary>
-        public float RealTime { get; set; } = 0.0f;
+        public double RealTime { get; set; } = 0.0;
 
         /// <summary>Main -> Script -> Main</summary>
-        public float Speed { get; set; } = 0.0f;
+        public double Speed { get; set; } = 0.0;
 
         /// <summary>Main -> Script -> Main</summary>
-        public float Volume { get; set; } = 0;
+        public double Volume { get; set; } = 0;
 
         /// <summary>Main -> Script -> Main</summary>
         public int FrameRate { get; set; } = 0;
@@ -161,7 +161,7 @@ namespace Nebulator.Script
         /// <param name="b"></param>
         /// <param name="a"></param>
         /// <returns></returns>
-        SKColor SafeColor(float r, float g, float b, float a)
+        SKColor SafeColor(double r, double g, double b, double a)
         {
             r = constrain(r, 0, 255);
             g = constrain(g, 0, 255);

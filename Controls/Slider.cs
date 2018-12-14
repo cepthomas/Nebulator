@@ -68,6 +68,11 @@ namespace Nebulator.Controls
                 Invalidate();
             }
         }
+
+        /// <summary>
+        /// Number of decimal places to display.
+        /// </summary>
+        public int DecPlaces { get; set; } = 1;
         #endregion
 
         #region Events
@@ -97,7 +102,7 @@ namespace Nebulator.Controls
             // Internal.
             Brush brush = new SolidBrush(ControlColor);
             double x = Width * (_value - Minimum) / (Maximum - Minimum);
-            pe.Graphics.FillRectangle(brush, 1, 1, (float)(x - 2), Height - 2);
+            pe.Graphics.FillRectangle(brush, 1, 1, (float)x - 2, Height - 2);
 
             // Text.
             StringFormat format = new StringFormat()
@@ -105,9 +110,9 @@ namespace Nebulator.Controls
                 LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Center
             };
-            string sval = $"{_value}";
+            string sval = _value.ToString("#0." + new string('0', DecPlaces));
 
-            if(Label != "")
+            if (Label != "")
             {
                 Rectangle r = new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height / 2);
                 pe.Graphics.DrawString(Label, Font, Brushes.Black, r, format);

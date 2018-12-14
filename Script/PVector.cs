@@ -16,31 +16,31 @@ namespace Nebulator.Script
     public class PVector //implements Serializable
     {
         static Random _rand = new Random();
-        protected float[] _array;
+        protected double[] _array;
 
-        public float x;
-        public float y;
-        public float z;
+        public double x;
+        public double y;
+        public double z;
 
         public PVector()
         {
         }
 
-        public PVector(float x, float y, float z)
+        public PVector(double x, double y, double z)
         {
             this.x = x;
             this.y = y;
             this.z = z;
         }
 
-        public PVector(float x, float y)
+        public PVector(double x, double y)
         {
             this.x = x;
             this.y = y;
             this.z = 0;
         }
 
-        public PVector set(float x, float y, float z)
+        public PVector set(double x, double y, double z)
         {
             this.x = x;
             this.y = y;
@@ -48,7 +48,7 @@ namespace Nebulator.Script
             return this;
         }
 
-        public PVector set(float x, float y)
+        public PVector set(double x, double y)
         {
             this.x = x;
             this.y = y;
@@ -63,7 +63,7 @@ namespace Nebulator.Script
             return this;
         }
 
-        public PVector set(float[] source)
+        public PVector set(double[] source)
         {
             if (source.Length >= 2)
             {
@@ -81,15 +81,15 @@ namespace Nebulator.Script
 
         static public PVector random2D(PVector target = null)
         {
-            float angle = (float)(_rand.NextDouble() * Math.PI * 2);
+            double angle = (_rand.NextDouble() * Math.PI * 2);
 
             if (target == null)
             {
-                target = new PVector((float)Math.Cos(angle), (float)Math.Sin(angle), 0);
+                target = new PVector(Math.Cos(angle), Math.Sin(angle), 0);
             }
             else
             {
-                target.set((float)Math.Cos(angle), (float)Math.Sin(angle), 0);
+                target.set(Math.Cos(angle), Math.Sin(angle), 0);
             }
 
             return target;
@@ -97,14 +97,14 @@ namespace Nebulator.Script
 
         static public PVector random3D(PVector target = null)
         {
-            float angle;
-            float vz;
+            double angle;
+            double vz;
 
-            angle = (float)(_rand.NextDouble() * Math.PI * 2);
-            vz = (float)(_rand.NextDouble() * 2 - 1);
+            angle = (_rand.NextDouble() * Math.PI * 2);
+            vz = (_rand.NextDouble() * 2 - 1);
 
-            float vx = (float)(Math.Sqrt(1 - vz * vz) * Math.Cos(angle));
-            float vy = (float)(Math.Sqrt(1 - vz * vz) * Math.Sin(angle));
+            double vx = (Math.Sqrt(1 - vz * vz) * Math.Cos(angle));
+            double vy = (Math.Sqrt(1 - vz * vz) * Math.Sin(angle));
 
             if (target == null)
             {
@@ -139,7 +139,7 @@ namespace Nebulator.Script
         //{
 
         //    return (parent == null) ?
-        //           fromAngle((float)(Math.random() * Math.PI * 2), target) :
+        //           fromAngle((Math.random() * Math.PI * 2), target) :
         //           fromAngle(parent.random(PConstants.TAU), target);
         //}
 
@@ -160,20 +160,20 @@ namespace Nebulator.Script
 
         //static public PVector random3D(PVector target, PApplet parent)
         //{
-        //    float angle;
-        //    float vz;
+        //    double angle;
+        //    double vz;
         //    if (parent == null)
         //    {
-        //        angle = (float)(Math.random() * Math.PI * 2);
-        //        vz = (float)(Math.random() * 2 - 1);
+        //        angle = (Math.random() * Math.PI * 2);
+        //        vz = (Math.random() * 2 - 1);
         //    }
         //    else
         //    {
         //        angle = parent.random(PConstants.TWO_PI);
         //        vz = parent.random(-1, 1);
         //    }
-        //    float vx = (float)(Math.Sqrt(1 - vz * vz) * Math.cos(angle));
-        //    float vy = (float)(Math.Sqrt(1 - vz * vz) * Math.sin(angle));
+        //    double vx = (Math.Sqrt(1 - vz * vz) * Math.cos(angle));
+        //    double vy = (Math.Sqrt(1 - vz * vz) * Math.sin(angle));
         //    if (target == null)
         //    {
         //        target = new PVector(vx, vy, vz);
@@ -186,20 +186,20 @@ namespace Nebulator.Script
         //    return target;
         //}
 
-        //static public PVector fromAngle(float angle)
+        //static public PVector fromAngle(double angle)
         //{
         //    return fromAngle(angle,null);
         //}
 
-        //static public PVector fromAngle(float angle, PVector target)
+        //static public PVector fromAngle(double angle, PVector target)
         //{
         //    if (target == null)
         //    {
-        //        target = new PVector((float)Math.Cos(angle),(float)Math.Sin(angle),0);
+        //        target = new PVector(Math.Cos(angle),Math.Sin(angle),0);
         //    }
         //    else
         //    {
-        //        target.set((float)Math.Cos(angle),(float)Math.Sin(angle),0);
+        //        target.set(Math.Cos(angle),Math.Sin(angle),0);
         //    }
         //    return target;
         //}
@@ -216,11 +216,11 @@ namespace Nebulator.Script
             return copy();
         }
 
-        public float[] get(float[] target)
+        public double[] get(double[] target)
         {
             if (target == null)
             {
-                return new float[] { x, y, z };
+                return new double[] { x, y, z };
             }
 
             if (target.Length >= 2)
@@ -237,12 +237,12 @@ namespace Nebulator.Script
             return target;
         }
 
-        public float mag()
+        public double mag()
         {
-            return (float) Math.Sqrt(x*x + y*y + z*z);
+            return  Math.Sqrt(x*x + y*y + z*z);
         }
 
-        public float magSq()
+        public double magSq()
         {
             return (x*x + y*y + z*z);
         }
@@ -255,14 +255,14 @@ namespace Nebulator.Script
             return this;
         }
 
-        public PVector add(float x, float y)
+        public PVector add(double x, double y)
         {
             this.x += x;
             this.y += y;
             return this;
         }
 
-        public PVector add(float x, float y, float z)
+        public PVector add(double x, double y, double z)
         {
             this.x += x;
             this.y += y;
@@ -297,14 +297,14 @@ namespace Nebulator.Script
             return this;
         }
 
-        public PVector sub(float x, float y)
+        public PVector sub(double x, double y)
         {
             this.x -= x;
             this.y -= y;
             return this;
         }
 
-        public PVector sub(float x, float y, float z)
+        public PVector sub(double x, double y, double z)
         {
             this.x -= x;
             this.y -= y;
@@ -331,7 +331,7 @@ namespace Nebulator.Script
             return target;
         }
 
-        public PVector mult(float n)
+        public PVector mult(double n)
         {
             x *= n;
             y *= n;
@@ -339,12 +339,12 @@ namespace Nebulator.Script
             return this;
         }
 
-        static public PVector mult(PVector v, float n)
+        static public PVector mult(PVector v, double n)
         {
             return mult(v, n, null);
         }
 
-        static public PVector mult(PVector v, float n, PVector target)
+        static public PVector mult(PVector v, double n, PVector target)
         {
             if (target == null)
             {
@@ -358,7 +358,7 @@ namespace Nebulator.Script
             return target;
         }
 
-        public PVector div(float n)
+        public PVector div(double n)
         {
             x /= n;
             y /= n;
@@ -366,12 +366,12 @@ namespace Nebulator.Script
             return this;
         }
 
-        static public PVector div(PVector v, float n)
+        static public PVector div(PVector v, double n)
         {
             return div(v, n, null);
         }
 
-        static public PVector div(PVector v, float n, PVector target)
+        static public PVector div(PVector v, double n, PVector target)
         {
             if (target == null)
             {
@@ -384,33 +384,33 @@ namespace Nebulator.Script
             return target;
         }
 
-        public float dist(PVector v)
+        public double dist(PVector v)
         {
-            float dx = x - v.x;
-            float dy = y - v.y;
-            float dz = z - v.z;
-            return (float) Math.Sqrt(dx*dx + dy*dy + dz*dz);
+            double dx = x - v.x;
+            double dy = y - v.y;
+            double dz = z - v.z;
+            return  Math.Sqrt(dx*dx + dy*dy + dz*dz);
         }
 
-        static public float dist(PVector v1, PVector v2)
+        static public double dist(PVector v1, PVector v2)
         {
-            float dx = v1.x - v2.x;
-            float dy = v1.y - v2.y;
-            float dz = v1.z - v2.z;
-            return (float) Math.Sqrt(dx*dx + dy*dy + dz*dz);
+            double dx = v1.x - v2.x;
+            double dy = v1.y - v2.y;
+            double dz = v1.z - v2.z;
+            return  Math.Sqrt(dx*dx + dy*dy + dz*dz);
         }
 
-        public float dot(PVector v)
+        public double dot(PVector v)
         {
             return x*v.x + y*v.y + z*v.z;
         }
 
-        public float dot(float x, float y, float z)
+        public double dot(double x, double y, double z)
         {
             return this.x*x + this.y*y + this.z*z;
         }
 
-        static public float dot(PVector v1, PVector v2)
+        static public double dot(PVector v1, PVector v2)
         {
             return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
         }
@@ -422,9 +422,9 @@ namespace Nebulator.Script
 
         public PVector cross(PVector v, PVector target)
         {
-            float crossX = y * v.z - v.y * z;
-            float crossY = z * v.x - v.z * x;
-            float crossZ = x * v.y - v.x * y;
+            double crossX = y * v.z - v.y * z;
+            double crossY = z * v.x - v.z * x;
+            double crossZ = x * v.y - v.x * y;
 
             if (target == null)
             {
@@ -440,9 +440,9 @@ namespace Nebulator.Script
 
         static public PVector cross(PVector v1, PVector v2, PVector target)
         {
-            float crossX = v1.y * v2.z - v2.y * v1.z;
-            float crossY = v1.z * v2.x - v2.z * v1.x;
-            float crossZ = v1.x * v2.y - v2.x * v1.y;
+            double crossX = v1.y * v2.z - v2.y * v1.z;
+            double crossY = v1.z * v2.x - v2.z * v1.x;
+            double crossZ = v1.x * v2.y - v2.x * v1.y;
 
             if (target == null)
             {
@@ -458,7 +458,7 @@ namespace Nebulator.Script
 
         public PVector normalize()
         {
-            float m = mag();
+            double m = mag();
             if (m != 0 && m != 1)
             {
                 div(m);
@@ -473,7 +473,7 @@ namespace Nebulator.Script
             {
                 target = new PVector();
             }
-            float m = mag();
+            double m = mag();
             if (m > 0)
             {
                 target.set(x/m, y/m, z/m);
@@ -485,7 +485,7 @@ namespace Nebulator.Script
             return target;
         }
 
-        public PVector limit(float max)
+        public PVector limit(double max)
         {
             if (magSq() > max*max)
             {
@@ -495,48 +495,48 @@ namespace Nebulator.Script
             return this;
         }
 
-        public PVector setMag(float len)
+        public PVector setMag(double len)
         {
             normalize();
             mult(len);
             return this;
         }
 
-        public PVector setMag(PVector target, float len)
+        public PVector setMag(PVector target, double len)
         {
             target = normalize(target);
             target.mult(len);
             return target;
         }
 
-        public float heading()
+        public double heading()
         {
-            float angle = (float) Math.Atan2(y, x);
+            double angle =  Math.Atan2(y, x);
             return angle;
         }
 
         [Obsolete("Use heading().")]
-        public float heading2D()
+        public double heading2D()
         {
             return heading();
         }
 
-        public PVector rotate(float theta)
+        public PVector rotate(double theta)
         {
-           float temp = x;
+           double temp = x;
            // Might need to check for rounding errors like with angleBetween function?
-           x = x * (float)(Math.Cos(theta) - y * Math.Sin(theta));
-           y = temp * (float)(Math.Sin(theta) + y * Math.Cos(theta));
+           x = x * (Math.Cos(theta) - y * Math.Sin(theta));
+           y = temp * (Math.Sin(theta) + y * Math.Cos(theta));
 
            return this;
         }
 
-        float lerp(float start, float stop, float amt)
+        double lerp(double start, double stop, double amt)
         {
             return start + (stop - start) * amt;
         }
 
-        public PVector lerp(PVector v, float amt)
+        public PVector lerp(PVector v, double amt)
         {
            x = lerp(x, v.x, amt);
            y = lerp(y, v.y, amt);
@@ -544,14 +544,14 @@ namespace Nebulator.Script
            return this;
         }
 
-        public static PVector lerp(PVector v1, PVector v2, float amt)
+        public static PVector lerp(PVector v1, PVector v2, double amt)
         {
            PVector v = v1.copy();
            v.lerp(v2, amt);
            return v;
         }
 
-        public PVector lerp(float x, float y, float z, float amt)
+        public PVector lerp(double x, double y, double z, double amt)
         {
            this.x = lerp(this.x, x, amt);
            this.y = lerp(this.y, y, amt);
@@ -559,7 +559,7 @@ namespace Nebulator.Script
            return this;
         }
 
-        static public float angleBetween(PVector v1, PVector v2)
+        static public double angleBetween(PVector v1, PVector v2)
         {
            // We get NaN if we pass in a zero vector which can cause problems
            // Zero seems like a reasonable angle between a (0, 0, 0) vector and something else.
@@ -585,7 +585,7 @@ namespace Nebulator.Script
                return 0;
            }
 
-           return (float) Math.Acos(amt);
+           return Math.Acos(amt);
         }
 
         public override string ToString()
@@ -593,11 +593,11 @@ namespace Nebulator.Script
             return $"x:{x} y:{y} z:{z}";
         }
 
-        public float[] array()
+        public double[] array()
         {
             if (_array == null)
             {
-                _array = new float[3];
+                _array = new double[3];
             }
             _array[0] = x;
             _array[1] = y;
@@ -631,7 +631,7 @@ namespace Nebulator.Script
         {
             int hash = 0;
 
-            foreach (float f in new float[]{ x, y, z})
+            foreach (double f in new double[]{ x, y, z})
             {
                 foreach( byte b in BitConverter.GetBytes(f))
                 {

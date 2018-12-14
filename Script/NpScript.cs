@@ -19,11 +19,11 @@ namespace Nebulator.Script
     {
         #region Definitions - same values as Processing
         //---- Math
-        public const float QUARTER_PI = (float)(Math.PI / 4.0);
-        public const float HALF_PI = (float)(Math.PI / 2.0);
-        public const float PI = (float)(Math.PI);
-        public const float TWO_PI = (float)(Math.PI * 2.0);
-        public const float TAU = (float)(Math.PI * 2.0);
+        public const double QUARTER_PI = (Math.PI / 4.0);
+        public const double HALF_PI = (Math.PI / 2.0);
+        public const double PI = (Math.PI);
+        public const double TWO_PI = (Math.PI * 2.0);
+        public const double TAU = (Math.PI * 2.0);
         //---- Mouse buttons, keyboard arrows
         public const int LEFT = 37;
         public const int UP = 38;
@@ -121,7 +121,7 @@ namespace Nebulator.Script
         //public char @char (object value) { NotImpl(nameof(@char)); }
         //public float @float(object value) { NotImpl(nameof(@float)); }
         //public string hex(object value) { NotImpl(nameof(hex)); }
-        public int @int(float val) { return (int)val; }
+        public int @int(double val) { return (int)val; }
         public int @int(string val) { return int.Parse(val); }
         public string str(object value) { return value.ToString(); }
         //public int unbinary(string value) { NotImpl(nameof(unbinary)); }
@@ -160,15 +160,15 @@ namespace Nebulator.Script
         //public void loadShape() { NotImpl(nameof(loadShape)); }
 
         #region Shape - 2D Primitives
-        public void arc(float x1, float y1, float x2, float y2, float angle1, float angle2, int style)
+        public void arc(double x1, double y1, double x2, double y2, double angle1, double angle2, int style)
         {
             x1 -= width / 2;
             y1 -= height / 2;
             angle1 = Utils.RadiansToDegrees(angle1);
             angle2 = Utils.RadiansToDegrees(angle2);
             SKPath path = new SKPath();
-            SKRect rect = new SKRect(x1, y1, x2, y2);
-            path.AddArc(rect, angle1, angle2);
+            SKRect rect = new SKRect((float)x1, (float)y1, (float)x2, (float)y2);
+            path.AddArc(rect, (float)angle1, (float)angle2);
 
             //https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/curves/arcs
 
@@ -211,37 +211,37 @@ namespace Nebulator.Script
             }
         }
 
-        public void arc(float x1, float y1, float x2, float y2, float angle1, float angle2)
+        public void arc(double x1, double y1, double x2, double y2, double angle1, double angle2)
         {
             arc(x1, y1, x2, y2, angle1, angle2 - angle1, OPEN);
         }
 
-        public void ellipse(float x1, float y1, float w, float h)
+        public void ellipse(double x1, double y1, double w, double h)
         {
             if (_fill.Color != SKColors.Transparent)
             {
-                _canvas.DrawOval(x1, y1, w / 2, h / 2, _fill);
+                _canvas.DrawOval((float)x1, (float)y1, (float)w / 2, (float)h / 2, _fill);
             }
 
             if(_pen.StrokeWidth != 0)
             {
-                _canvas.DrawOval(x1, y1, w / 2, h / 2, _pen);
+                _canvas.DrawOval((float)x1, (float)y1, (float)w / 2, (float)h / 2, _pen);
             }
         }
 
-        public void line(float x1, float y1, float x2, float y2)
+        public void line(double x1, double y1, double x2, double y2)
         {
-            _canvas.DrawLine(x1, y1, x2, y2, _pen);
+            _canvas.DrawLine((float)x1, (float)y1, (float)x2, (float)y2, _pen);
         }
 
-        public void point(float x, float y)
+        public void point(double x, double y)
         {
-            _canvas.DrawPoint(x, y, _pen);
+            _canvas.DrawPoint((float)x, (float)y, _pen);
         }
 
-        public void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        public void quad(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
         {
-            SKPoint[] points = new SKPoint[4] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3), new SKPoint(x4, y4) };
+            SKPoint[] points = new SKPoint[4] { new SKPoint((float)x1, (float)y1), new SKPoint((float)x2, (float)y2), new SKPoint((float)x3, (float)y3), new SKPoint((float)x4, (float)y4) };
 
             if (_fill.Color != SKColors.Transparent)
             {
@@ -254,22 +254,22 @@ namespace Nebulator.Script
             }
         }
 
-        public void rect(float x1, float y1, float w, float h)
+        public void rect(double x1, double y1, double w, double h)
         {
             if (_fill.Color != SKColors.Transparent)
             {
-                _canvas.DrawRect(x1, y1, w, h, _fill);
+                _canvas.DrawRect((float)x1, (float)y1, (float)w, (float)h, _fill);
             }
 
             if (_pen.StrokeWidth != 0)
             {
-                _canvas.DrawRect(x1, y1, w, h, _pen);
+                _canvas.DrawRect((float)x1, (float)y1, (float)w, (float)h, _pen);
             }
         }
 
-        public void triangle(float x1, float y1, float x2, float y2, float x3, float y3)
+        public void triangle(double x1, double y1, double x2, double y2, double x3, double y3)
         {
-            SKPoint[] points = new SKPoint[3] { new SKPoint(x1, y1), new SKPoint(x2, y2), new SKPoint(x3, y3) };
+            SKPoint[] points = new SKPoint[3] { new SKPoint((float)x1, (float)y1), new SKPoint((float)x2, (float)y2), new SKPoint((float)x3, (float)y3) };
 
             if (_fill.Color != SKColors.Transparent)
             {
@@ -284,18 +284,18 @@ namespace Nebulator.Script
         #endregion
 
         #region Shape - Curves
-        public void bezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        public void bezier(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
         {
             // Draw path with cubic Bezier curve.
             using (SKPath path = new SKPath())
             {
-                path.MoveTo(x1, y1);
-                path.CubicTo(x2, y2, x3, y3, x4, y4);
+                path.MoveTo((float)x1, (float)y1);
+                path.CubicTo((float)x2, (float)y2, (float)x3, (float)y3, (float)x4, (float)y4);
                 _canvas.DrawPath(path, _pen);
             }
         }
 
-        public void curve(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) { NotImpl(nameof(curve)); }
+        public void curve(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) { NotImpl(nameof(curve)); }
         //Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two 
         //parameters specify the ending control point. The middle parameters specify the start and stop of the curve. 
         //Longer curves can be created by putting a series of curve() functions together or using curveVertex().
@@ -393,7 +393,7 @@ namespace Nebulator.Script
         }
 
         //public void quadraticVertex() { NotImpl(nameof(quadraticVertex)); }
-        public void vertex(float x, float y) { _vertexes.Add(new SKPoint(x, y)); } // Just x/y.
+        public void vertex(double x, double y) { _vertexes.Add(new SKPoint((float)x, (float)y)); } // Just x/y.
         #endregion
 
         #region Shape - Loading & Displaying
@@ -509,15 +509,15 @@ namespace Nebulator.Script
         //public void printMatrix() { NotImpl(nameof(printMatrix)); }
         public void pushMatrix() { _matrixStack.Push(_canvas.TotalMatrix); }
         //public void resetMatrix() { NotImpl(nameof(resetMatrix)); }
-        public void rotate(float angle) { _canvas.RotateRadians(angle); }
+        public void rotate(double angle) { _canvas.RotateRadians((float)angle); }
         //public void rotateX() { NotImpl(nameof(rotateX)); }
         //public void rotateY() { NotImpl(nameof(rotateY)); }
         //public void rotateZ() { NotImpl(nameof(rotateZ)); }
-        public void scale(float sc) { _canvas.Scale(sc); }
-        public void scale(float scx, float scy) { _canvas.Scale(scx, scy); }
+        public void scale(double sc) { _canvas.Scale((float)sc); }
+        public void scale(double scx, double scy) { _canvas.Scale((float)scx, (float)scy); }
         //public void shearX() { NotImpl(nameof(shearX)); }
         //public void shearY() { NotImpl(nameof(shearY)); }
-        public void translate(float dx, float dy) { _canvas.Translate(dx, dy); }
+        public void translate(double dx, double dy) { _canvas.Translate((float)dx, (float)dy); }
         #endregion
 
         #region Lights & Camera
@@ -564,49 +564,49 @@ namespace Nebulator.Script
         #region Color
         #region Color - Setting
         //public void background(int rgb) { NotImpl(nameof(background)); }
-        //public void background(int rgb, float alpha) { NotImpl(nameof(background)); }
-        public void background(float gray) { _bgColor = SafeColor(gray, gray, gray, 255); if(_canvas != null) _canvas.Clear(_bgColor); }
-        public void background(float gray, float alpha) { _bgColor = SafeColor(gray, gray, gray, alpha); if (_canvas != null) _canvas.Clear(_bgColor); }
-        public void background(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
-        public void background(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
+        //public void background(int rgb, double alpha) { NotImpl(nameof(background)); }
+        public void background(double gray) { _bgColor = SafeColor(gray, gray, gray, 255); if(_canvas != null) _canvas.Clear(_bgColor); }
+        public void background(double gray, double alpha) { _bgColor = SafeColor(gray, gray, gray, alpha); if (_canvas != null) _canvas.Clear(_bgColor); }
+        public void background(double v1, double v2, double v3) { color c = new color(v1, v2, v3, 255); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
+        public void background(double v1, double v2, double v3, double alpha) { color c = new color(v1, v2, v3, alpha); _bgColor = c.NativeColor; if (_canvas != null) _canvas.Clear(_bgColor); }
         public void background(PImage img) { if (_canvas != null) _canvas.DrawBitmap(img.bmp, new SKRect(0, 0, width, height)); }
-        public void colorMode(int mode, float max = 255) { Script.color.SetMode(mode, max, max, max, max); }
+        public void colorMode(int mode, double max = 255) { Script.color.SetMode(mode, max, max, max, max); }
         public void colorMode(int mode, int max1, int max2, int max3, int maxA = 255) { Script.color.SetMode(mode, max1, max2, max3, maxA); }
         //public void fill(int rgb) { NotImpl(nameof(fill)); }
-        //public void fill(int rgb, float alpha) { NotImpl(nameof(fill)); }
+        //public void fill(int rgb, double alpha) { NotImpl(nameof(fill)); }
         public void fill(color clr) { _fill.Color = SafeColor(clr.R, clr.G, clr.B, clr.A); }
-        public void fill(float gray) { _fill.Color = SafeColor(gray, gray, gray, 255); }
-        public void fill(float gray, float alpha) { _fill.Color = SafeColor(gray, gray, gray, alpha); }
-        public void fill(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _fill.Color = c.NativeColor; }
-        public void fill(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _fill.Color = c.NativeColor; }
+        public void fill(double gray) { _fill.Color = SafeColor(gray, gray, gray, 255); }
+        public void fill(double gray, double alpha) { _fill.Color = SafeColor(gray, gray, gray, alpha); }
+        public void fill(double v1, double v2, double v3) { color c = new color(v1, v2, v3, 255); _fill.Color = c.NativeColor; }
+        public void fill(double v1, double v2, double v3, double alpha) { color c = new color(v1, v2, v3, alpha); _fill.Color = c.NativeColor; }
         public void noFill() { _fill.Color = SKColors.Transparent; }
         public void noStroke() { _pen.StrokeWidth = 0; }
         //public void stroke(int rgb) { NotImpl(nameof(stroke)); }
         //public void stroke(int rgb, float alpha) { NotImpl(nameof(stroke)); }
-        public void stroke(float gray) { _pen.Color = SafeColor(gray, gray, gray, 255); }
-        public void stroke(float gray, float alpha) { _pen.Color = SafeColor(gray, gray, gray, alpha); }
-        public void stroke(float v1, float v2, float v3) { color c = new color(v1, v2, v3, 255); _pen.Color = c.NativeColor; }
-        public void stroke(float v1, float v2, float v3, float alpha) { color c = new color(v1, v2, v3, alpha); _pen.Color = c.NativeColor; }
+        public void stroke(double gray) { _pen.Color = SafeColor(gray, gray, gray, 255); }
+        public void stroke(double gray, double alpha) { _pen.Color = SafeColor(gray, gray, gray, alpha); }
+        public void stroke(double v1, double v2, double v3) { color c = new color(v1, v2, v3, 255); _pen.Color = c.NativeColor; }
+        public void stroke(double v1, double v2, double v3, double alpha) { color c = new color(v1, v2, v3, alpha); _pen.Color = c.NativeColor; }
         #endregion
 
         #region Color - Creating & Reading
-        public color color(float v1, float v2, float v3, float a = 255) { return new color(v1, v2, v3, a); }
-        public color color(float gray, float a = 255) { return new color(gray, a); }
-        public float alpha(color color) { return color.A; }
-        public float blue(color color) { return color.B; }
-        public float brightness(color color) { return color.Brightness; }
-        public float green(color color) { return color.G; }
-        public float hue(color color) { return color.Hue; }
-        public float red(color color) { return color.R; }
-        public float saturation(color color) { return color.Saturation; }
+        public color color(double v1, double v2, double v3, double a = 255) { return new color(v1, v2, v3, a); }
+        public color color(double gray, double a = 255) { return new color(gray, a); }
+        public double alpha(color color) { return color.A; }
+        public double blue(color color) { return color.B; }
+        public double brightness(color color) { return color.Brightness; }
+        public double green(color color) { return color.G; }
+        public double hue(color color) { return color.Hue; }
+        public double red(color color) { return color.R; }
+        public double saturation(color color) { return color.Saturation; }
 
-        public color lerpColor(color c1, color c2, float amt)
+        public color lerpColor(color c1, color c2, double amt)
         {
             amt = constrain(amt, 0, 1);
-            float r = lerp(c1.R, c2.R, amt);
-            float b = lerp(c1.B, c2.B, amt);
-            float g = lerp(c1.G, c2.G, amt);
-            float a = lerp(c1.A, c2.A, amt);
+            double r = lerp(c1.R, c2.R, amt);
+            double b = lerp(c1.B, c2.B, amt);
+            double g = lerp(c1.G, c2.G, amt);
+            double a = lerp(c1.A, c2.A, amt);
             return new color(r, g, b, a);
         }
         #endregion
@@ -616,14 +616,14 @@ namespace Nebulator.Script
         //public PImage createImage(int w, int h, int format) { NotImpl(nameof(PImage)); }
 
         #region Image - Loading & Displaying
-        public void image(PImage img, float x, float y)
+        public void image(PImage img, double x, double y)
         {
-            _canvas.DrawBitmap(img.bmp, x, y); // unscaled
+            _canvas.DrawBitmap(img.bmp, (float)x, (float)y); // unscaled
         }
 
-        public void image(PImage img, float x1, float y1, float x2, float y2)
+        public void image(PImage img, double x1, double y1, double x2, double y2)
         {
-            _canvas.DrawBitmap(img.bmp, new SKRect(x1, y1, x2, y2)); // scaled
+            _canvas.DrawBitmap(img.bmp, new SKRect((float)x1, (float)y1, (float)x2, (float)y2)); // scaled
         }
 
         public void imageMode(int mode) { NotImpl(nameof(imageMode), "Assume CORNER mode."); }
@@ -681,14 +681,14 @@ namespace Nebulator.Script
 
         //public PFont loadFont() { NotImpl(nameof(loadFont)); }
 
-        public void text(string s, float x, float y)
+        public void text(string s, double x, double y)
         {
-            _canvas.DrawText(s, x, y, _textPaint);
+            _canvas.DrawText(s, (float)x, (float)y, _textPaint);
         }
 
         public void textFont(PFont font)
         {
-            _textPaint.TextSize = font.size;
+            _textPaint.TextSize = (float)font.size;
             _textPaint.Typeface = SKTypeface.FromFamilyName(font.name);
         }
         #endregion
@@ -708,8 +708,8 @@ namespace Nebulator.Script
         //public void textLeading(int leading) { NotImpl(nameof(textLeading)); }
         //public void textMode() { NotImpl(nameof(textMode)); }
         public void textSize(int pts) { _textPaint.TextSize = pts; }
-        float textWidth(string s) { return _textPaint.MeasureText(s); }
-        float textWidth(char ch) { return textWidth(ch.ToString()); }
+        double textWidth(string s) { return _textPaint.MeasureText(s); }
+        double textWidth(char ch) { return textWidth(ch.ToString()); }
         #endregion
 
         #region Typography - Metrics
@@ -721,56 +721,56 @@ namespace Nebulator.Script
         #region Math
         #region Math - Calculation
         public int abs(int val) { return Math.Abs(val); }
-        public float abs(float val) { return Math.Abs(val); }
-        public int ceil(float val) { return (int)Math.Ceiling(val); }
-        public float constrain(float val, float min, float max) { return Utils.Constrain(val, min, max); }
+        public double abs(double val) { return Math.Abs(val); }
+        public int ceil(double val) { return (int)Math.Ceiling(val); }
+        public double constrain(double val, double min, double max) { return Utils.Constrain(val, min, max); }
         public int constrain(int val, int min, int max) { return Utils.Constrain(val, min, max); }
-        public float dist(float x1, float y1, float x2, float y2) { return (float)Math.Sqrt(sq(x1 - x2) + sq(y1 - y2)); }
-        public float dist(float x1, float y1, float z1, float x2, float y2, float z2) { return (float)Math.Sqrt(sq(x1 - x2) + sq(y1 - y2) + sq(z1 - z2)); }
-        public float exp(float exponent) { return (float)Math.Exp(exponent); }
-        public int floor(float val) { return (int)Math.Floor(val); }
-        public float lerp(float start, float stop, float amt) { return start + (stop - start) * amt; }
-        public float log(float val) { return (float)Math.Log(val); }
-        public float mag(float x, float y) { return (float)Math.Sqrt(sq(x) + sq(y)); }
-        public float mag(float x, float y, float z) { return (float)Math.Sqrt(sq(x) + sq(y) + sq(z)); }
-        public float map(float val, float start1, float stop1, float start2, float stop2) { return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1); }
-        public float max(float val1, float val2) { return Math.Max(val1, val2); }
-        public float max(float[] vals) { return vals.Max(); }
+        public double dist(double x1, double y1, double x2, double y2) { return Math.Sqrt(sq(x1 - x2) + sq(y1 - y2)); }
+        public double dist(double x1, double y1, double z1, double x2, double y2, double z2) { return Math.Sqrt(sq(x1 - x2) + sq(y1 - y2) + sq(z1 - z2)); }
+        public double exp(double exponent) { return Math.Exp(exponent); }
+        public int floor(double val) { return (int)Math.Floor(val); }
+        public double lerp(double start, double stop, double amt) { return start + (stop - start) * amt; }
+        public double log(double val) { return Math.Log(val); }
+        public double mag(double x, double y) { return Math.Sqrt(sq(x) + sq(y)); }
+        public double mag(double x, double y, double z) { return Math.Sqrt(sq(x) + sq(y) + sq(z)); }
+        public double map(double val, double start1, double stop1, double start2, double stop2) { return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1); }
+        public double max(double val1, double val2) { return Math.Max(val1, val2); }
+        public double max(double[] vals) { return vals.Max(); }
         public int max(int val1, int val2) { return Math.Max(val1, val2); }
         public int max(int[] vals) { return vals.Max(); }
-        public float min(float val1, float val2) { return Math.Min(val1, val2); }
-        public float min(float[] vals) { return vals.Min(); }
+        public double min(double val1, double val2) { return Math.Min(val1, val2); }
+        public double min(double[] vals) { return vals.Min(); }
         public int min(int val1, int val2) { return Math.Min(val1, val2); }
         public int min(int[] vals) { return vals.Min(); }
-        public float norm(float val, float start, float stop) { return (val - start) / (stop - start); }
-        public float pow(float val, float exponent) { return (float)Math.Pow(val, exponent); }
-        public int round(float val) { return (int)Math.Round(val); }
-        public float sq(float val) { return (float)Math.Pow(val, 2); }
-        public float sqrt(float val) { return (float)Math.Sqrt(val); }
-        public int truncate(float val) { return (int)val; }
+        public double norm(double val, double start, double stop) { return (val - start) / (stop - start); }
+        public double pow(double val, double exponent) { return Math.Pow(val, exponent); }
+        public int round(double val) { return (int)Math.Round(val); }
+        public double sq(double val) { return Math.Pow(val, 2); }
+        public double sqrt(double val) { return Math.Sqrt(val); }
+        public int truncate(double val) { return (int)val; }
         #endregion
 
         #region Math - Trigonometry
-        public float acos(float val) { return (float)Math.Acos(val); }
-        public float asin(float val) { return (float)Math.Asin(val); }
-        public float atan(float val) { return (float)Math.Atan(val); }
-        public float atan2(float y, float x) { return (float)Math.Atan2(y, x); }
-        public float cos(float angle) { return (float)Math.Cos(angle); }
-        public float degrees(float rad) { return 360.0f * rad / (2.0f * PI); }
-        public float radians(float degrees) { return 2.0f * PI * degrees / 360.0f; }
-        public float sin(float angle) { return (float)Math.Sin(angle); }
-        public float tan(float angle) { return (float)Math.Tan(angle); }
+        public double acos(double val) { return Math.Acos(val); }
+        public double asin(double val) { return Math.Asin(val); }
+        public double atan(double val) { return Math.Atan(val); }
+        public double atan2(double y, double x) { return Math.Atan2(y, x); }
+        public double cos(double angle) { return Math.Cos(angle); }
+        public double degrees(double rad) { return 360.0f * rad / (2.0f * PI); }
+        public double radians(double degrees) { return 2.0f * PI * degrees / 360.0f; }
+        public double sin(double angle) { return Math.Sin(angle); }
+        public double tan(double angle) { return Math.Tan(angle); }
         #endregion
 
         #region Math - Random
         //public void noise() { NotImpl(nameof(noise)); }
         //public void noiseDetail() { NotImpl(nameof(noiseDetail)); }
         //public void noiseSeed() { NotImpl(nameof(noiseSeed)); }
-        public float random(float max) { return (float)_rand.NextDouble() * max; }
-        public float random(float min, float max) { return min + (float)_rand.NextDouble() * (max - min); }
+        public double random(double max) { return _rand.NextDouble() * max; }
+        public double random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
         public int random(int max) { return _rand.Next(max); }
         public int random(int min, int max) { return _rand.Next(min, max); }
-        public float randomGaussian()
+        public double randomGaussian()
         {
             double mean = 0;
             double sigma = 1;
@@ -778,7 +778,7 @@ namespace Nebulator.Script
             var u2 = _rand.NextDouble();
             var randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
             var randNormal = mean + sigma * randStdNormal;
-            return (float)randNormal;
+            return randNormal;
         }
         public void randomSeed(int seed) { _rand = new Random(seed); }
         #endregion

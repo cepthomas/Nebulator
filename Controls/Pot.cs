@@ -53,7 +53,7 @@ namespace Nebulator.Controls
         }
 
         /// <summary>
-        /// Number of decimal places for the value.
+        /// Number of decimal places to display.
         /// </summary>
         public int DecPlaces { get; set; } = 1;
         #endregion

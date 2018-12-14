@@ -16,7 +16,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Nebulator.Comm.Time time1 = new Nebulator.Comm.Time();
+            Nebulator.Common.Time time1 = new Nebulator.Common.Time();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.btnCompile = new System.Windows.Forms.Button();
             this.sldVolume = new Nebulator.Controls.Slider();

@@ -20,31 +20,13 @@ namespace Nebulator.OSC
     /// Message contains an address, a comma followed by one or more data type identifiers,
     /// then the data itself follows in binary encoding.
     /// 
-    /// Data types - OSC Specs 1.0:
+    /// Data types supported are just the basics from the OSC Specs 1.0:
     /// i = int32 = 32-bit big-endian two's complement integer
     /// f = float32 = 32-bit big-endian IEEE 754 floating point number
-    /// s = OSC-string = A sequence of non-null ASCII characters followed by a null, followed by 0-3 additional null characters
-    ///     to make the total number of bits a multiple of 32.
+    /// s = OSC-string = A sequence of non-null ASCII characters followed by a null, followed by 0-3 additional
+    ///     null characters to make the total number of bits a multiple of 32.
     /// b = OSC-blob = An int32 size count, followed by that many 8-bit bytes of arbitrary binary data, followed by 0-3 
     ///     additional zero bytes to make the total number of bits a multiple of 32.
-    ///
-    /// Some OSC applications communicate among instances of themselves with additional, nonstandard argument types beyond
-    /// those specified above. OSC applications are not required to recognize these types; an OSC application should 
-    /// discard any message whose OSC Type Tag String contains any unrecognized OSC Type Tags. An application that does 
-    /// use any additional argument types must encode them with the OSC Type Tags in this table:
-    /// h = 64 bit big-endian two's complement integer
-    /// t = OSC-timetag
-    /// d = 64 bit ("double") IEEE 754 floating point number
-    /// S = Alternate type represented as an OSC-string (for example, for systems that differentiate "symbols" from "strings")
-    /// c = an ascii character, sent as 32 bits
-    /// r = 32 bit RGBA color
-    /// m = 4 byte MIDI message. Bytes from MSB to LSB are: port id, status byte, data1, data2
-    /// T = True. No bytes are allocated in the argument data.
-    /// F = False. No bytes are allocated in the argument data.
-    /// N = Nil. No bytes are allocated in the argument data.
-    /// I = Infinitum. No bytes are allocated in the argument data.
-    /// [ = Indicates the beginning of an array. The tags following are for data in the Array until a close brace tag is reached.
-    /// ] = Indicates the end of an array.
     /// </summary>
     public class Message : Packet
     {

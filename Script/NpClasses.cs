@@ -22,18 +22,18 @@ namespace Nebulator.Script
         static int _mode = ScriptCore.RGB;
 
         /// <summary>Range for the red or hue depending on the current color mode.</summary>
-        static float _max1 = 255;
+        static double _max1 = 255;
 
         /// <summary>Range for the green or saturation depending on the current color mode.</summary>
-        static float _max2 = 255;
+        static double _max2 = 255;
 
         /// <summary>Range for the blue or brightness depending on the current color mode.</summary>
-        static float _max3 = 255;
+        static double _max3 = 255;
 
         /// <summary>Range for the alpha channel.</summary>
-        static float _maxA = 255;
+        static double _maxA = 255;
 
-        public static void SetMode(int mode, float max1, float max2, float max3, float maxA)
+        public static void SetMode(int mode, double max1, double max2, double max3, double maxA)
         {
             _mode = mode;
             _max1 = max1;
@@ -44,9 +44,9 @@ namespace Nebulator.Script
         #endregion
 
         #region Properties
-        public float Hue { get; private set; } = 0;
-        public float Saturation { get; private set; } = 0;
-        public float Brightness { get; private set; } = 0;
+        public double Hue { get; private set; } = 0;
+        public double Saturation { get; private set; } = 0;
+        public double Brightness { get; private set; } = 0;
 
         public int R { get; private set; } = 0;
         public int G { get; private set; } = 0;
@@ -60,7 +60,7 @@ namespace Nebulator.Script
             set { FromNative(value); }
         }
 
-        public color(float v1, float v2, float v3, float a = 255)
+        public color(double v1, double v2, double v3, double a = 255)
         {
             if(_mode == ScriptCore.HSB)
             {
@@ -72,7 +72,7 @@ namespace Nebulator.Script
             }
         }
 
-        public color(float gray, float a = 255)
+        public color(double gray, double a = 255)
         {
             FromRGB((int)gray, (int)gray, (int)gray, (int)a);
         }
@@ -83,50 +83,50 @@ namespace Nebulator.Script
         }
 
         #region Converters
-        void FromHSB(float h, float s, float b, float a)
+        void FromHSB(double h, double s, double b, double a)
         {
             // Normalize input values.
-            Hue = (float)Utils.Map(h, 0, _max1, 0, 1.0);
-            Saturation = (float)Utils.Map(s, 0, _max2, 0, 1.0);
-            Brightness = (float)Utils.Map(b, 0, _max3, 0, 1.0);
+            Hue = Utils.Map(h, 0, _max1, 0, 1.0);
+            Saturation = Utils.Map(s, 0, _max2, 0, 1.0);
+            Brightness = Utils.Map(b, 0, _max3, 0, 1.0);
             A = (int)Utils.Map(a, 0, _maxA, 0, 255);
 
             // Convert them.
-            R = G = B = (int)(Brightness * 255.0f + 0.5f);
+            R = G = B = (int)(Brightness * 255.0 + 0.5);
 
             if (Saturation != 0)
             {
-                float hv = (Hue - (float)Math.Floor(Hue)) * 6.0f;
-                float f = hv - (float)Math.Floor(hv);
-                float p = Brightness * (1.0f - Saturation);
-                float q = Brightness * (1.0f - Saturation * f);
-                float t = Brightness * (1.0f - (Saturation * (1.0f - f)));
+                double hv = (Hue - Math.Floor(Hue)) * 6.0;
+                double f = hv - Math.Floor(hv);
+                double p = Brightness * (1.0 - Saturation);
+                double q = Brightness * (1.0 - Saturation * f);
+                double t = Brightness * (1.0 - (Saturation * (1.0 - f)));
 
                 switch ((int)hv)
                 {
                     case 0:
-                        G = (int)(t * 255.0f + 0.5f);
-                        B = (int)(p * 255.0f + 0.5f);
+                        G = (int)(t * 255.0 + 0.5);
+                        B = (int)(p * 255.0 + 0.5);
                         break;
                     case 1:
-                        R = (int)(q * 255.0f + 0.5f);
-                        B = (int)(p * 255.0f + 0.5f);
+                        R = (int)(q * 255.0 + 0.5);
+                        B = (int)(p * 255.0 + 0.5);
                         break;
                     case 2:
-                        R = (int)(p * 255.0f + 0.5f);
-                        B = (int)(t * 255.0f + 0.5f);
+                        R = (int)(p * 255.0 + 0.5);
+                        B = (int)(t * 255.0 + 0.5);
                         break;
                     case 3:
-                        R = (int)(p * 255.0f + 0.5f);
-                        G = (int)(q * 255.0f + 0.5f);
+                        R = (int)(p * 255.0 + 0.5);
+                        G = (int)(q * 255.0 + 0.5);
                         break;
                     case 4:
-                        R = (int)(t * 255.0f + 0.5f);
-                        G = (int)(p * 255.0f + 0.5f);
+                        R = (int)(t * 255.0 + 0.5);
+                        G = (int)(p * 255.0 + 0.5);
                         break;
                     case 5:
-                        G = (int)(p * 255.0f + 0.5f);
-                        B = (int)(q * 255.0f + 0.5f);
+                        G = (int)(p * 255.0 + 0.5);
+                        B = (int)(q * 255.0 + 0.5);
                         break;
                 }
             }
@@ -141,19 +141,19 @@ namespace Nebulator.Script
             A = (int)Utils.Map(a, 0, _maxA, 0, 255);
 
             // Calc corresponding values.
-            float cmax = (R > G) ? R : G;
+            double cmax = (R > G) ? R : G;
             if (B > cmax)
             {
                 cmax = B;
             }
 
-            float cmin = (R < G) ? R : G;
+            double cmin = (R < G) ? R : G;
             if (B < cmin)
             {
                 cmin = B;
             }
 
-            Brightness = cmax / 255.0f;
+            Brightness = cmax / 255.0;
             Saturation = cmax != 0 ? (cmax - cmin) / cmax : 0;
             if (Saturation == 0)
             {
@@ -161,9 +161,9 @@ namespace Nebulator.Script
             }
             else
             {
-                float redc = (cmax - r) / (cmax - cmin);
-                float greenc = (cmax - G) / (cmax - cmin);
-                float bluec = (cmax - B) / (cmax - cmin);
+                double redc = (cmax - r) / (cmax - cmin);
+                double greenc = (cmax - G) / (cmax - cmin);
+                double bluec = (cmax - B) / (cmax - cmin);
 
                 if (R == cmax)
                 {
@@ -178,10 +178,10 @@ namespace Nebulator.Script
                     Hue = 4.0f + greenc - redc;
                 }
 
-                Hue = Hue / 6.0f;
+                Hue = Hue / 6.0;
                 if (Hue < 0)
                 {
-                    Hue = Hue + 1.0f;
+                    Hue = Hue + 1.0;
                 }
             }
         }
@@ -261,7 +261,7 @@ namespace Nebulator.Script
     public class PFont
     {
         public string name { get; set; } = "Arial";
-        public float size { get; set; } = 12f;
+        public double size { get; set; } = 12;
 
         public PFont(string name, int size)
         {

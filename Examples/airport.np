@@ -105,7 +105,7 @@ public override void draw()
 
         if(pos >= 0)
         {
-            float x = width * pos / total;
+            double x = width * pos / total;
 
             if(pos < loop.delay.TotalTocks)
             {
