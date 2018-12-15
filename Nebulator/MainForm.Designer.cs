@@ -60,7 +60,7 @@
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
             this.sldVolume.Location = new System.Drawing.Point(158, 32);
-            this.sldVolume.Maximum = 200;
+            this.sldVolume.Maximum = 1.0;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.ResetValue = 0;
@@ -93,8 +93,8 @@
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
             this.potSpeed.Location = new System.Drawing.Point(117, 32);
-            this.potSpeed.Maximum = 200D;
-            this.potSpeed.Minimum = 30D;
+            this.potSpeed.Maximum = 200;
+            this.potSpeed.Minimum = 30;
             this.potSpeed.Name = "potSpeed";
             this.potSpeed.Size = new System.Drawing.Size(32, 32);
             this.potSpeed.TabIndex = 33;

@@ -152,6 +152,7 @@ namespace Nebulator
 
             sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
             sldVolume.Font = UserSettings.TheSettings.ControlFont;
+            sldVolume.DecPlaces = 2;
             sldVolume.Invalidate();
 
             timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
@@ -645,8 +646,8 @@ namespace Nebulator
                 foreach (NChannel t in _script.Channels)
                 {
                     // Init from persistence.
-                    int vt = Convert.ToInt32(_nppVals.GetValue(t.Name, "volume"));
-                    t.Volume = vt == 0 ? 90 : vt; // in case it's new
+                    double vt = Convert.ToDouble(_nppVals.GetValue(t.Name, "volume"));
+                    t.Volume = vt == 0.0 ? 0.5 : vt; // in case it's new
 
                     ChannelControl tctl = new ChannelControl()
                     {
@@ -664,7 +665,7 @@ namespace Nebulator
 
             ///// Init other controls.
             potSpeed.Value = Convert.ToInt32(_nppVals.GetValue("master", "speed"));
-            int mv = Convert.ToInt32(_nppVals.GetValue("master", "volume"));
+            double mv = Convert.ToDouble(_nppVals.GetValue("master", "volume"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             timeMaster.MaxTick = _compiledSteps.MaxTick;
@@ -744,22 +745,7 @@ namespace Nebulator
                 _script.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                 _script.RuntimeSteps.DeleteSteps(_stepTime);
 
-
-
-                //var ee = _script.RuntimeSteps.GetSteps(_stepTime);
-                //if(ee.Count() > 0)
-                //{
-                //    int jjj = 0;
-                //}
-
-
-
                 // Now do the compiled steps.
-                var kk = _compiledSteps._steps.Keys;
-
-                bool bb = _compiledSteps._steps.Keys.Contains(_stepTime);
-
-
                 _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
 
                 ///// Bump time.

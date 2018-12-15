@@ -66,7 +66,7 @@
             this.sldVolume.ControlColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "";
             this.sldVolume.Location = new System.Drawing.Point(9, 0);
-            this.sldVolume.Maximum = 150;
+            this.sldVolume.Maximum = 1.0;
             this.sldVolume.Minimum = 0;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.ResetValue = 0;

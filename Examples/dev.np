@@ -31,7 +31,8 @@ NSequence SEQ1;
 NSequence DRUMS_SIMPLE;
 
 // Sections.
-NSection PART1;
+NSection SECTION1;
+NSection SECTION2;
 
 
 // Neb script stuff.
@@ -62,20 +63,20 @@ public override void setupNeb()
     if(_local)
     {
         // All the output channels.
-        PIANO = createChannel("piano", GS_MIDI_OUT, 1, 5);
-        BASS = createChannel("bass", GS_MIDI_OUT, 2, 4);
+        PIANO = createChannel("piano", GS_MIDI_OUT, 1, 0.2);
+        BASS = createChannel("bass", GS_MIDI_OUT, 2, 0.1);
         SYNTH = createChannel("synth", GS_MIDI_OUT, 3, 0);
-        DRUMS = createChannel("drums", GS_MIDI_OUT, 10, 4);
+        DRUMS = createChannel("drums", GS_MIDI_OUT, 10, 0.1);
 
         createController("Virtual Keyboard", 0, NoteControl, VKBD_NOTE);
     }
     else
     {
         // All the output channels.
-        PIANO = createChannel("piano", MY_MIDI_OUT, 1, 5);
-        BASS = createChannel("bass", MY_MIDI_OUT, 2, 4);
+        PIANO = createChannel("piano", MY_MIDI_OUT, 1, 0.2);
+        BASS = createChannel("bass", MY_MIDI_OUT, 2, 0.1);
         SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
-        DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
+        DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 0.1);
 
         createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
         createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
@@ -104,32 +105,32 @@ public override void setupNeb()
 
     // Create sequences, add notes/chords/funcs.
     SEQ1 = createSequence(8);
-    SEQ1.Add(00.00, "G3", 90, 0.60);
-    SEQ1.Add(01.00, "D3", 90, 0.60);
-    SEQ1.Add(02.00, "A3.m7", 90, 0.60);
-    SEQ1.Add(03.00, 66, 90, 0.60);
-    SEQ1.Add(03.48, CrashCymbal1, 90, 0.60);
+    SEQ1.Add(00.00, "G3", 0.7, 0.60);
+    SEQ1.Add(01.00, "D3", 0.7, 0.60);
+    SEQ1.Add(02.00, "A3.m7", 0.7, 0.60);
+    SEQ1.Add(03.00, 66, 0.7, 0.60);
+    SEQ1.Add(03.48, CrashCymbal1, 0.7, 0.60);
 
     DRUMS_SIMPLE = createSequence(8);
-    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
-    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 80);
-    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 100);
+    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 0.7);
+    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare, 0.6);
+    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat, 0.8);
 
     // Sequence that calls a script function.
     // ALGO_SEQ = createSequence(8);
-    // ALGO_SEQ.Add(03.32, algoDynamic, 90);
+    // ALGO_SEQ.Add(03.32, algoDynamic, 0.7);
     // NULL_SEQ = createSequence(8);
-    // NULL_SEQ.Add(05.16, algoNull, 90);
+    // NULL_SEQ.Add(05.16, algoNull, 0.7);
 
     // Sections
-    NSection PART1 = createSection("part1", 0, 16);
-    PART1.Add(PIANO, SEQ1,         SEQ1);
-    PART1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
+    SECTION1 = createSection("section1", 0, 16);
+    SECTION1.Add(PIANO, SEQ1,         SEQ1);
+    SECTION1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
 
-    NSection PART2 = createSection("part2", 16, 32);
-    PART2.Add(PIANO, SEQ1,         SEQ1);
-    PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-    //PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
+    SECTION2 = createSection("section2", 16, 32);
+    SECTION2.Add(PIANO, SEQ1,         SEQ1);
+    SECTION2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
+    //SECTION2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
 }
 
 public override void step()
@@ -161,7 +162,7 @@ void sequenced()
         case 24:
         //case 32:
             double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-            sendNote(PIANO, sn + tick % 24, 90, 0.28);
+            sendNote(PIANO, sn + tick % 24, 0.7, 0.28);
             break;
 
         default:
@@ -180,7 +181,7 @@ void sequenced()
                 //sendSequence(PIANO, SEQ1);
                 foreach(int n in _chordNotes)
                 {
-                    sendNote(PIANO, n, 90, 1.0);
+                    sendNote(PIANO, n, 0.7, 1.0);
                 }
                 break;
         }
@@ -191,7 +192,7 @@ void sequenced()
             case 0:
             case 7:
             case 8:
-                sendNote(BASS, 50, 90, 2.0);
+                sendNote(BASS, 50, 0.8, 2.0);
                 break;
         }
     }
@@ -208,7 +209,7 @@ void randish()
         {
             int dur = random(1, 8);
             _notesPlaying[which] = tick + dur;
-            sendNote(PIANO, which, random(80, 100), dur);
+            sendNote(PIANO, which, random(0.6, 0.9), dur);
         }
 
         // Remove any scheduled to stop now.
@@ -240,7 +241,7 @@ public void On_CTL3()
     //print("On_CTL3:", CTL3.Value);
     if(random(0, 10) == 0)
     {
-        sendNote(PIANO, 50 + CTL3.Value % 20, 90, 2.0);
+        sendNote(PIANO, 50 + CTL3.Value % 20, 0.7, 2.0);
     }
 }
 
@@ -258,7 +259,7 @@ public void On_VKBD_NOTE()
     // Test for note on or off.
     if(VKBD_NOTE.Value > 0)
     {
-        sendNoteOn(SYNTH, VKBD_NOTE.Value, 110);
+        sendNoteOn(SYNTH, VKBD_NOTE.Value, 0.9);
     }
     else
     {
@@ -273,9 +274,9 @@ public void On_KBD_NOTE()
     // Test for note on or off.
     if(KBD_NOTE.Value > 0)
     {
-        //sendNoteOn(PIANO, KBD_NOTE.Value, 110);
-        sendNoteOn(SYNTH, KBD_NOTE.Value, 110);
-        //sendNote(SYNTH, KBD_NOTE.Value, 90, 2.0); // fixed duration
+        //sendNoteOn(PIANO, KBD_NOTE.Value, 0.9);
+        sendNoteOn(SYNTH, KBD_NOTE.Value, 0.9);
+        //sendNote(SYNTH, KBD_NOTE.Value, 0.8, 2.0); // fixed duration
     }
     else
     {
@@ -382,7 +383,7 @@ public override void mouseClicked()
 {
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, 55, 70);
-    sendNote(SYNTH, sn, 90, 0.48);
+    sendNote(SYNTH, sn, 0.8, 0.48);
 }
 
 // Recursive rendering.

@@ -154,10 +154,10 @@ namespace Nebulator.Script
 
         /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
         /// <param name="channel">Which channel to send it on.</param>
-        /// <param name="inote">Note number.</param>
+        /// <param name="dnote">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
-        public void sendNote(NChannel channel, double inote, double vol, double dur)
+        public void sendNote(NChannel channel, double dnote, double vol, double dur)
         {
             if (channel == null)
             {
@@ -171,7 +171,7 @@ namespace Nebulator.Script
             if (play)
             {
                 double vel = channel.NextVol(vol);
-                double notenum = Utils.Constrain(inote, channel.Output.Caps.MinNote, channel.Output.Caps.MaxNote);
+                double notenum = Utils.Constrain(dnote, channel.Output.Caps.MinNote, channel.Output.Caps.MaxNote);
 
                 if (vol > 0)
                 {

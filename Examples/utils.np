@@ -1,7 +1,7 @@
 
 
 // Define some Neb style vars.
-const int VEL = 95;
+const int VEL = 0.8;
 NVariable MAX;
 
 ///// Functions /////

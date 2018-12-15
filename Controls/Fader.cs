@@ -10,7 +10,7 @@ namespace Nebulator.Controls
     public partial class Fader : UserControl
     {
         #region Fields
-        double _value = 0;
+        double _value = 0.0;
         bool _dragging;
         int _dragy;
         const int SLIDER_HEIGHT = 30;
@@ -20,14 +20,14 @@ namespace Nebulator.Controls
 
         #region Properties
         /// <summary>
-        /// Minimum value of this fader
-        /// </summary>
-        public double Minimum { get; set; }
-
-        /// <summary>
         /// Maximum value of this fader
         /// </summary>
-        public double Maximum { get; set; }
+        public double Maximum { get; set; } = 1.0;
+
+        /// <summary>
+        /// Minimum value of this fader
+        /// </summary>
+        public double Minimum { get; set; } = 0.0;
 
         /// <summary>
         /// Current value of this fader

@@ -16,8 +16,8 @@ const int WHEN4 = 80;
 // Total length.
 const int TLEN = 128;
 // Volumes.
-const int KEYS_DEF_VOL = 100;
-const int DRUM_DEF_VOL = 100;
+const int KEYS_DEF_VOL = 0.8;
+const int DRUM_DEF_VOL = 0.8;
 
 ///// Variables /////
 NVariable COL1;
@@ -70,10 +70,10 @@ public override void setupNeb()
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // All the channels.
-    KEYS = createChannel("keys", MY_MIDI_OUT, 1, 5);
-    BASS = createChannel("bass", MY_MIDI_OUT, 2, 2);
+    KEYS = createChannel("keys", MY_MIDI_OUT, 1, 0.1);
+    BASS = createChannel("bass", MY_MIDI_OUT, 2, 0.1);
     SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
-    DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 4);
+    DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 0.1);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");
@@ -87,44 +87,44 @@ public override void setupNeb()
 
     ///// Sequences /////
     KEYS_VERSE1 = createSequence(16);
-    KEYS_VERSE1.Add(0.00,  "G4.m7", 90, 1.32);
-    KEYS_VERSE1.Add(1.60,  "G4.m7", 90, 0.20);
-    KEYS_VERSE1.Add(2.00,  "G4.m7", 90, 0.20);
-    KEYS_VERSE1.Add(4.00,  "G4.m7", 90, 1.32);
-    KEYS_VERSE1.Add(5.60,  "G4.m7", 90, 0.20);
-    KEYS_VERSE1.Add(6.00,  "G4.m7", 90, 0.20);
-    KEYS_VERSE1.Add(8.00,  "G4.m6", 90, 1.32);
-    KEYS_VERSE1.Add(9.60,  "G4.m6", 90, 0.20);
-    KEYS_VERSE1.Add(10.00, "G4.m6", 90, 0.20);
-    KEYS_VERSE1.Add(12.00, "G4.m6", 90, 1.32);
-    KEYS_VERSE1.Add(13.60, "G4.m6", 90, 0.20);
-    KEYS_VERSE1.Add(14.00, "G4.m6", 90, 0.20);
+    KEYS_VERSE1.Add(0.00,  "G4.m7", 0.7, 1.32);
+    KEYS_VERSE1.Add(1.60,  "G4.m7", 0.7, 0.20);
+    KEYS_VERSE1.Add(2.00,  "G4.m7", 0.7, 0.20);
+    KEYS_VERSE1.Add(4.00,  "G4.m7", 0.7, 1.32);
+    KEYS_VERSE1.Add(5.60,  "G4.m7", 0.7, 0.20);
+    KEYS_VERSE1.Add(6.00,  "G4.m7", 0.7, 0.20);
+    KEYS_VERSE1.Add(8.00,  "G4.m6", 0.7, 1.32);
+    KEYS_VERSE1.Add(9.60,  "G4.m6", 0.7, 0.20);
+    KEYS_VERSE1.Add(10.00, "G4.m6", 0.7, 0.20);
+    KEYS_VERSE1.Add(12.00, "G4.m6", 0.7, 1.32);
+    KEYS_VERSE1.Add(13.60, "G4.m6", 0.7, 0.20);
+    KEYS_VERSE1.Add(14.00, "G4.m6", 0.7, 0.20);
 
     KEYS_VERSE2 = createSequence(8);
-    KEYS_VERSE2.Add(0.00, "F4",    90, 0.32);
+    KEYS_VERSE2.Add(0.00, "F4",    0.7, 0.32);
     KEYS_VERSE2.Add(0.32, "D#4",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(1.00, "C4",    90, 0.32);
-    KEYS_VERSE2.Add(1.32, "B4.m7", 90, 0.32);
-    KEYS_VERSE2.Add(2.00, "F5",    90, 0.32);
+    KEYS_VERSE2.Add(1.00, "C4",    0.7, 0.32);
+    KEYS_VERSE2.Add(1.32, "B4.m7", 0.7, 0.32);
+    KEYS_VERSE2.Add(2.00, "F5",    0.7, 0.32);
     KEYS_VERSE2.Add(2.32, "D#5",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(3.00, "C5",    90, 0.32);
-    KEYS_VERSE2.Add(3.32, "B5.m7", 90, 0.32);
-    KEYS_VERSE2.Add(4.00, "F3",    90, 0.32);
+    KEYS_VERSE2.Add(3.00, "C5",    0.7, 0.32);
+    KEYS_VERSE2.Add(3.32, "B5.m7", 0.7, 0.32);
+    KEYS_VERSE2.Add(4.00, "F3",    0.7, 0.32);
     KEYS_VERSE2.Add(4.32, "D#3",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(5.00, "C3",    90, 0.32);
-    KEYS_VERSE2.Add(5.32, "B3.m7", 90, 0.32);
-    KEYS_VERSE2.Add(6.00, "F2",    90, 0.32);
+    KEYS_VERSE2.Add(5.00, "C3",    0.7, 0.32);
+    KEYS_VERSE2.Add(5.32, "B3.m7", 0.7, 0.32);
+    KEYS_VERSE2.Add(6.00, "F2",    0.7, 0.32);
     KEYS_VERSE2.Add(6.32, "D#2",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(7.00, "C2",    90, 0.32);
-    KEYS_VERSE2.Add(7.32, "B2.m7", 90, 0.32);
+    KEYS_VERSE2.Add(7.00, "C2",    0.7, 0.32);
+    KEYS_VERSE2.Add(7.32, "B2.m7", 0.7, 0.32);
 
     ////// Bass //////
     BASS_VERSE = createSequence(8);
-    BASS_VERSE.Add(0.00, "C2",  70, 0.25);
-    BASS_VERSE.Add(0.48, "C2",  70, 0.125);
-    BASS_VERSE.Add(3.32, "E2",  70, 0.25);
-    BASS_VERSE.Add(4.00, "C2",  70, 1.00);
-    BASS_VERSE.Add(7.48, "A#2", 70, 0.10);
+    BASS_VERSE.Add(0.00, "C2",  0.75, 0.25);
+    BASS_VERSE.Add(0.48, "C2",  0.75, 0.125);
+    BASS_VERSE.Add(3.32, "E2",  0.75, 0.25);
+    BASS_VERSE.Add(4.00, "C2",  0.75, 1.00);
+    BASS_VERSE.Add(7.48, "A#2", 0.75, 0.10);
 
     ////// Drums //////
 
@@ -146,23 +146,23 @@ public override void setupNeb()
 
     // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
     DRUMS_SIMPLE = createSequence(8);
-    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
-    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    80);
-    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat,     100);
+    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 0.8);
+    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    0.7);
+    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat,      0.9);
 
     // Sequence triggered in script
     DYNAMIC_SEQ = createSequence(8);
-    DYNAMIC_SEQ.Add(0.00, "G3 ", 90, 0.60);
-    DYNAMIC_SEQ.Add(1.00, "A3 ", 90, 0.60);
-    DYNAMIC_SEQ.Add(2.00, "Bb3", 90, 0.60);
-    DYNAMIC_SEQ.Add(3.00, "C4 ", 90, 0.60);
+    DYNAMIC_SEQ.Add(0.00, "G3 ", 0.75, 0.60);
+    DYNAMIC_SEQ.Add(1.00, "A3 ", 0.75, 0.60);
+    DYNAMIC_SEQ.Add(2.00, "Bb3", 0.75, 0.60);
+    DYNAMIC_SEQ.Add(3.00, "C4 ", 0.75, 0.60);
 
     // Sequence that calls a script function.
     ALGO_SEQ = createSequence(8);
-    ALGO_SEQ.Add(00.00, algoDynamic, 90);
+    ALGO_SEQ.Add(00.00, algoDynamic, 0.75);
 
     NULL_SEQ = createSequence(8);
-    NULL_SEQ.Add(00.00, algoNull, 90);
+    NULL_SEQ.Add(00.00, algoNull, 0.75);
 
     // Sections
     SECTION1 = createSection("section1", WHEN1, WHEN2 - WHEN1);
@@ -203,14 +203,14 @@ public override void step()
         switch(tick)
         {
             case 0:
-                sendNote(SYNTH, "F3", 95, 0.48);
+                sendNote(SYNTH, "F3", 0.8, 0.48);
                 break;
             case 16:
                 sendSequence(SYNTH, DYNAMIC_SEQ);
                 break;
 
             case 8:
-                sendNoteOn(SYNTH, 62, 95); // numbered note on, no chase
+                sendNoteOn(SYNTH, 62, 0.8); // numbered note on, no chase
                 break;
 
             case 12:
@@ -222,7 +222,7 @@ public override void step()
             case 26:
             case 27:
                 int notenum = random(40, 70);
-                sendNote(SYNTH, notenum, 95, 1.09);
+                sendNote(SYNTH, notenum, 0.8, 1.09);
                 break;
         }
     }
@@ -232,7 +232,7 @@ void algoDynamic()
 {
     // print("!!!! algoDynamic");
     int notenum = random(40, 70);
-    sendNote(SYNTH, notenum, 90, 0.30);
+    sendNote(SYNTH, notenum, 0.8, 0.30);
 }
 
 void algoNull()
@@ -247,7 +247,7 @@ public void On_VKBD_NOTE()
     // Test for note on or off.
     if(VKBD_NOTE.Value > 0)
     {
-        sendNoteOn(SYNTH, VKBD_NOTE.Value, 110);
+        sendNoteOn(SYNTH, VKBD_NOTE.Value, 0.9);
     }
     else
     {
@@ -269,7 +269,7 @@ public override void draw()
     if(playing && moveBall())
     {
         int notenum = random(40, 70);
-        // sendNote(SYNTH, notenum, 95, 1.09);
+        // sendNote(SYNTH, notenum, 0.8, 1.09);
     }
 
     // Draw the ball.
@@ -292,7 +292,7 @@ public override void mouseClicked()
 {
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, _scaleNotes[0], _scaleNotes[_scaleNotes.Length-1]);
-    sendNote(SYNTH, sn, 90, 0.32);
+    sendNote(SYNTH, sn, 0.8, 0.32);
 }
 
 public override void keyPressed()

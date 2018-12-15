@@ -12,8 +12,8 @@ namespace Nebulator.Controls
     public partial class Slider : UserControl
     {
         #region Fields
-        double _value = 50;
-        double _resetVal = 0;
+        double _value = 0.0;
+        double _resetVal = 0.0;
         #endregion
 
         #region Properties
@@ -30,12 +30,12 @@ namespace Nebulator.Controls
         /// <summary>
         /// Maximum value of this slider.
         /// </summary>
-        public double Maximum { get; set; } = 100;
+        public double Maximum { get; set; } = 1.0;
 
         /// <summary>
         /// Minimum value of this slider.
         /// </summary>
-        public double Minimum { get; set; } = 0;
+        public double Minimum { get; set; } = 0.0;
 
         /// <summary>
         /// Reset value of this slider.
