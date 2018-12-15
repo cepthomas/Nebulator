@@ -3,8 +3,8 @@
 
 public class Scale
 {
-    public int count = 0;
-    int[] scaleNotes;
+    int count = 0;
+    double[] scaleNotes;
     int[] noteWeights;
     int totalWeight = 100;
     int down = 0;
@@ -40,10 +40,10 @@ public class Scale
         }        
     }
 
-    public int randomNote()
+    public double randomNote()
     {
-        int note = 0;
-        int r = s.random(totalWeight);
+        double note = 0;
+        double r = s.random(totalWeight);
         
         int offset = 0;
 

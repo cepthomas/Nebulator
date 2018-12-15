@@ -744,7 +744,22 @@ namespace Nebulator
                 _script.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                 _script.RuntimeSteps.DeleteSteps(_stepTime);
 
+
+
+                //var ee = _script.RuntimeSteps.GetSteps(_stepTime);
+                //if(ee.Count() > 0)
+                //{
+                //    int jjj = 0;
+                //}
+
+
+
                 // Now do the compiled steps.
+                var kk = _compiledSteps._steps.Keys;
+
+                bool bb = _compiledSteps._steps.Keys.Contains(_stepTime);
+
+
                 _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
 
                 ///// Bump time.
@@ -850,45 +865,55 @@ namespace Nebulator
             {
                 if (_script != null && e.Step != null)
                 {
-                    bool handled = false; // default
-
-                    if (e.Step is StepNoteOn || e.Step is StepNoteOff)
+                    try
                     {
-                        int chanNum = (e.Step as Step).ChannelNumber;
-                        // Dig out the note number. Note sign change for note off.
-                        double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : - (e.Step as StepNoteOff).NoteNumber;
-                        handled = ProcessInput(sender as NInput, ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
-                    }
-                    else if(e.Step is StepControllerChange)
-                    {
-                        // Control change
-                        StepControllerChange scc = e.Step as StepControllerChange;
-                        handled = ProcessInput(sender as NInput, scc.ControllerId, scc.ChannelNumber, scc.Value);
-                    }
+                        bool handled = false; // default
 
-                    ///// Local common function /////
-                    bool ProcessInput(NInput input, int ctrlId, int channelNum, double value)
-                    {
-                        bool ret = false;
-
-                        // Run through our list of inputs of interest.
-                        foreach (NController ctlpt in _script.Controllers)
+                        if (e.Step is StepNoteOn || e.Step is StepNoteOff)
                         {
-                            if (ctlpt.Input == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
-                            {
-                                // Assign new value which triggers script callback.
-                                ctlpt.BoundVar.Value = value;
-                                ret = true;
-                            }
+                            int chanNum = (e.Step as Step).ChannelNumber;
+                            // Dig out the note number. Note sign change for note off.
+                            double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : -(e.Step as StepNoteOff).NoteNumber;
+                            handled = ProcessInput(sender as NInput, ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
+                        }
+                        else if (e.Step is StepControllerChange)
+                        {
+                            // Control change
+                            StepControllerChange scc = e.Step as StepControllerChange;
+                            handled = ProcessInput(sender as NInput, scc.ControllerId, scc.ChannelNumber, scc.Value);
                         }
 
-                        return ret;
-                    }
+                        ///// Local common function /////
+                        bool ProcessInput(NInput input, int ctrlId, int channelNum, double value)
+                        {
+                            bool ret = false;
 
-                    if (!handled)
+                            if(input != null)
+                            {
+                                // Run through our list of inputs of interest.
+                                foreach (NController ctlpt in _script.Controllers)
+                                {
+                                    if (ctlpt.Input == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
+                                    {
+                                        // Assign new value which triggers script callback.
+                                        ctlpt.BoundVar.Value = value;
+                                        ret = true;
+                                    }
+                                }
+                            }
+
+                            return ret;
+                        }
+
+                        if (!handled)
+                        {
+                            // Pass through. Not.... let the script handle it.
+                            //e.Step.Comm.Send(e.Step);
+                        }
+                    }
+                    catch (Exception ex)
                     {
-                        // Pass through. Not.... let the script handle it.
-                        //e.Step.Comm.Send(e.Step);
+                        ScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
                     }
                 }
             });

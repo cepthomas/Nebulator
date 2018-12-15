@@ -121,49 +121,82 @@ namespace Nebulator.Common
         #endregion
 
         #region Overrides and operators for custom classess
-        public override bool Equals(object obj)
+        // The Equality Operator (==) is the comparison operator and the Equals() method compares the contents of a string.
+        // The == Operator compares the reference identity while the Equals() method compares only contents.
+
+        public override bool Equals(object other)
         {
-            return Equals(obj as Time);
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return other.GetType() == GetType() && Equals((Time)other);
         }
 
-        public bool Equals(Time obj)
+        public bool Equals(Time other)
         {
-            return obj != null && ReferenceEquals(this, obj);
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return Tick.Equals(other.Tick) && Tock.Equals(other.Tock);
         }
 
-        public override int GetHashCode()
+        public static bool operator ==(Time obj1, Time obj2)
         {
-            return TotalTocks;
+            if (ReferenceEquals(obj1, obj2))
+            {
+                return true;
+            }
+
+            if (obj1 is null)
+            {
+                return false;
+            }
+
+            if (obj2 is null)
+            {
+                return false;
+            }
+
+            return (obj1.Tick == obj2.Tick && obj1.Tock == obj2.Tock);
         }
 
-        public static bool operator ==(Time t1, Time t2)
+        public static bool operator !=(Time obj1, Time obj2)
         {
-            return (object)t1 != null && (object)t2 != null && (t1.Tick == t2.Tick) && (t1.Tock == t2.Tock);
-        }
-
-        public static bool operator !=(Time t1, Time t2)
-        {
-            return (object)t1 == null || (object)t2 == null || (t1.Tick != t2.Tick) || (t1.Tock != t2.Tock);
+            return !(obj1 == obj2);
         }
 
         public static bool operator >(Time t1, Time t2)
         {
-            return (object)t1 == null || (object)t2 == null || t1.TotalTocks > t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalTocks > t2.TotalTocks;
         }
 
         public static bool operator >=(Time t1, Time t2)
         {
-            return (object)t1 == null || (object)t2 == null || t1.TotalTocks >= t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalTocks >= t2.TotalTocks;
         }
 
         public static bool operator <(Time t1, Time t2)
         {
-            return (object)t1 == null || (object)t2 == null || t1.TotalTocks < t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalTocks < t2.TotalTocks;
         }
 
         public static bool operator <=(Time t1, Time t2)
         {
-            return (object)t1 == null || (object)t2 == null || t1.TotalTocks <= t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalTocks <= t2.TotalTocks;
         }
 
         public static Time operator +(Time t1, Time t2)
@@ -171,6 +204,11 @@ namespace Nebulator.Common
             int tick = t1.Tick + t2.Tick + (t1.Tock + t2.Tock) / TOCKS_PER_TICK;
             int tock = (t1.Tock + t2.Tock) % TOCKS_PER_TICK;
             return new Time(tick, tock);
+        }
+
+        public override int GetHashCode()
+        {
+            return TotalTocks;
         }
         #endregion
 
@@ -220,7 +258,7 @@ namespace Nebulator.Common
         /// </summary>
         public override string ToString()
         {
-            return $"{Tick:00}.{Tock:00}";
+            return $"{Tick:000}.{Tock:000}";
         }
         #endregion
     }

@@ -36,9 +36,9 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="noteString">String to parse.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
-        public static List<int> ParseNoteString(string noteString)
+        public static List<double> ParseNoteString(string noteString)
         {
-            List<int> notes = new List<int>();
+            List<double> notes = new List<double>();
 
             // Parse the input value.
             // Note: Need exception handling here to protect from user script errors.
@@ -127,12 +127,12 @@ namespace Nebulator.Common
         /// <param name="scale">Name of the scale.</param>
         /// <param name="key">Key.octave</param>
         /// <returns>List of scale notes - empty if invalid.</returns>
-        public static List<int> GetScaleNotes(string scale, string key)
+        public static List<double> GetScaleNotes(string scale, string key)
         {
-            var notes = new List<int>();
+            var notes = new List<double>();
 
             // Dig out the root note.
-            List<int> keyNotes = ParseNoteString(key);
+            List<double> keyNotes = ParseNoteString(key);
 
             if (keyNotes.Count > 0)
             {

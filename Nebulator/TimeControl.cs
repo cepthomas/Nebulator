@@ -18,7 +18,7 @@ namespace Nebulator.Controls
         // Main font.
         Font _font1 = new Font("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
         // Secondary font.
-        Font _font2 = new Font("Consolas", 18, FontStyle.Regular, GraphicsUnit.Point, 0);
+        Font _font2 = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Point, 0);
         #endregion
 
         #region Properties

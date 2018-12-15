@@ -293,9 +293,4 @@ temp
 /_old
 /neb.sublime-workspace
 /neb.sublime-project
-/Examples/airport.npp
-/Examples/dev.npp
-/Examples/dev-osc.npp
-/Examples/dev-sect.npp
-/Examples/dusty.npp
-/Examples/example.npp
+/Examples/*.npp

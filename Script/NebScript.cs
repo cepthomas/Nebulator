@@ -58,6 +58,11 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createController(string devName, int channelNum, int controlId, NVariable bound)
         {
+            if(bound == null)
+            {
+                throw new Exception($"Invalid NVariable for controller {devName}");
+            }
+
             //TODOX ?? controlId = Utils.Constrain(controlId, devName.Caps.MinControllerValue, devName.Caps.MaxControllerValue);
             NController mp = new NController()
             {
@@ -75,6 +80,11 @@ namespace Nebulator.Script
         /// <param name="bound"></param>
         protected void createLever(NVariable bound)
         {
+            if (bound == null)
+            {
+                throw new Exception($"Invalid NVariable for lever");
+            }
+
             NController lp = new NController() { BoundVar = bound };
             Levers.Add(lp);
         }
@@ -149,6 +159,11 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
         public void sendNote(NChannel channel, double inote, double vol, double dur)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             bool _anySolo = Channels.Where(ch => ch.State == ChannelState.Solo).Count() > 0;
 
             bool play = (channel.State == ChannelState.Solo) || (channel.State == ChannelState.Normal && !_anySolo);
@@ -194,6 +209,11 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void sendNote(NChannel channel, string snote, double vol, double dur)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             NSequenceElement note = new NSequenceElement(snote);
 
             if (note.Notes.Count == 0)
@@ -213,6 +233,11 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void sendNote(NChannel channel, string snote, double vol, Time dur)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             sendNote(channel, snote, vol, dur.AsDouble);
         }
 
@@ -222,6 +247,11 @@ namespace Nebulator.Script
         /// <param name="vol">Note volume.</param>
         public void sendNoteOn(NChannel channel, double inote, double vol)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             sendNote(channel, inote, vol, 0.0);
         }
 
@@ -230,6 +260,11 @@ namespace Nebulator.Script
         /// <param name="inote">Note number.</param>
         public void sendNoteOff(NChannel channel, double inote)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             sendNote(channel, inote, 0, 0.0);
         }
 
@@ -239,6 +274,11 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         public void sendController(NChannel channel, int ctlnum, double val)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             StepControllerChange step = new StepControllerChange()
             {
                 Comm = channel.Output,
@@ -255,6 +295,11 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         public void sendPatch(NChannel channel, int patch)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             StepPatch step = new StepPatch()
             {
                 Comm = channel.Output,
@@ -270,6 +315,11 @@ namespace Nebulator.Script
         /// <param name="seq">Which sequence to send.</param>
         public void sendSequence(NChannel channel, NSequence seq)
         {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel for note");
+            }
+
             StepCollection scoll = ScriptUtils.ConvertToSteps(channel, seq, StepTime.Tick);
             RuntimeSteps.Add(scoll);
         }
@@ -287,20 +337,20 @@ namespace Nebulator.Script
         /// <summary>Convert the argument into numbered notes.</summary>
         /// <param name="note">Note string using any form allowed in the script.</param>
         /// <returns>Array of notes or empty if invalid.</returns>
-        public int[] getNotes(string note)
+        public double[] getNotes(string note)
         {
-            List<int> notes = NoteUtils.ParseNoteString(note);
-            return notes != null ? notes.ToArray() : new int[0];
+            List<double> notes = NoteUtils.ParseNoteString(note);
+            return notes != null ? notes.ToArray() : new double[0];
         }
 
         /// <summary>Get an array of scale notes.</summary>
         /// <param name="scale">One of the named scales from ScriptDefinitions.md.</param>
         /// <param name="key">Note name and octave.</param>
         /// <returns>Array of notes or empty if invalid.</returns>
-        public int[] getScaleNotes(string scale, string key)
+        public double[] getScaleNotes(string scale, string key)
         {
-            List<int> notes = NoteUtils.GetScaleNotes(scale, key);
-            return notes != null ? notes.ToArray() : new int[0];
+            List<double> notes = NoteUtils.GetScaleNotes(scale, key);
+            return notes != null ? notes.ToArray() : new double[0];
         }
         #endregion
     }

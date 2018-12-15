@@ -22,6 +22,7 @@ const int DRUM_DEF_VOL = 100;
 ///// Variables /////
 NVariable COL1;
 NVariable MODN;
+NVariable VKBD_NOTE;
 
 ///// Channels /////
 NChannel KEYS;
@@ -30,9 +31,9 @@ NChannel DRUMS;
 NChannel SYNTH;
 
 ////////// Sections //////////
-NSection PART1;
-NSection PART2;
-NSection PART3;
+NSection SECTION1;
+NSection SECTION2;
+NSection SECTION3;
 
 ///// Sequences /////
 NSequence KEYS_VERSE1;
@@ -46,12 +47,13 @@ NSequence NULL_SEQ;
 
 
 ////// Simple variables for functions. ///////
-double posX = 50;
-double posY = 50;
-int velX = 3;
-int velY = 3;
-int ballSize = 40;
-int[] scaleNotes;
+double _posX = 50;
+double _posY = 50;
+int _velX = 3;
+int _velY = 3;
+int _ballSize = 40;
+double[] _scaleNotes;
+double[] _chordNotes;
 
 // Use wingm and virtual kbd only.
 bool _local = true;
@@ -65,6 +67,7 @@ public override void setupNeb()
     // All the neb variables.
     COL1 = createVariable("color", 200, 0, 255); // change color
     MODN = createVariable("modn", 0, -10, 10);
+    VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // All the channels.
     KEYS = createChannel("keys", MY_MIDI_OUT, 1, 5);
@@ -79,6 +82,8 @@ public override void setupNeb()
     // levers
     createLever(COL1);
     createLever(MODN);
+
+    createController("Virtual Keyboard", 0, NoteControl, VKBD_NOTE);
 
     ///// Sequences /////
     KEYS_VERSE1 = createSequence(16);
@@ -143,6 +148,7 @@ public override void setupNeb()
     DRUMS_SIMPLE = createSequence(8);
     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 90);
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    80);
+    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat,     100);
 
     // Sequence triggered in script
     DYNAMIC_SEQ = createSequence(8);
@@ -159,24 +165,25 @@ public override void setupNeb()
     NULL_SEQ.Add(00.00, algoNull, 90);
 
     // Sections
-    NSection PART1 = createSection("part1", WHEN1, WHEN2 - WHEN1);
-    PART1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
-    PART1.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
-    PART1.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
+    SECTION1 = createSection("section1", WHEN1, WHEN2 - WHEN1);
+    SECTION1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
+    SECTION1.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
+    SECTION1.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
 
-    NSection PART2 = createSection("part2", WHEN2, WHEN3 - WHEN2);
-    PART2.Add(KEYS, KEYS_VERSE2, KEYS_VERSE2);
-    PART2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-    PART2.Add(BASS, BASS_VERSE, BASS_VERSE);
-    PART2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
+    SECTION2 = createSection("section2", WHEN2, WHEN3 - WHEN2);
+    SECTION2.Add(KEYS, KEYS_VERSE2, KEYS_VERSE2);
+    SECTION2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
+    SECTION2.Add(BASS, BASS_VERSE, BASS_VERSE);
+    SECTION2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
 
-    NSection PART3 = createSection("part3", WHEN3, WHEN4 - WHEN3);
-    PART3.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
-    PART3.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
-    PART3.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
+    SECTION3 = createSection("section3", WHEN3, WHEN4 - WHEN3);
+    SECTION3.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
+    SECTION3.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
+    SECTION3.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
 
     // Get some stock chords and scales
-    scaleNotes = getScaleNotes("Algerian", "A3");
+    _scaleNotes = getScaleNotes("Algerian", "A3");
+    _chordNotes = getNotes("C4.o7");
 }
 
 public override void step()
@@ -186,7 +193,7 @@ public override void step()
         sendPatch(KEYS, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Lead1Square);
-        sendPatch(DRUMS, 32);
+        sendPatch(DRUMS, 32); // kit
     }
 
     // Play a sequence periodically.
@@ -233,10 +240,25 @@ void algoNull()
     // print("!!!! algoNull");
 }
 
+public void On_VKBD_NOTE()
+{
+    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
+
+    // Test for note on or off.
+    if(VKBD_NOTE.Value > 0)
+    {
+        sendNoteOn(SYNTH, VKBD_NOTE.Value, 110);
+    }
+    else
+    {
+        sendNoteOff(SYNTH, -VKBD_NOTE.Value);
+    }
+}
+
 ////// Processing graphics stuff //////
 public override void setup()
 {
-    size(800, 800);
+    size(400, 400);
     //print("setup()");
 }
 
@@ -252,9 +274,9 @@ public override void draw()
 
     // Draw the ball.
     noStroke();
-    int x = (int)map(posX, 0, width, 0, 255);
+    int x = (int)map(_posX, 0, width, 0, 255);
     fill(x, (x + 100) % 256, (x + 200) % 256);
-    ellipse(posX, posY, ballSize, ballSize);
+    ellipse(_posX, _posY, _ballSize, _ballSize);
 
     if (mouseIsPressed)
     {
@@ -269,7 +291,7 @@ public override void draw()
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
-    int sn = (int)map(mouseX, 0, width, scaleNotes[0], scaleNotes[scaleNotes.Length-1]);
+    int sn = (int)map(mouseX, 0, width, _scaleNotes[0], _scaleNotes[_scaleNotes.Length-1]);
     sendNote(SYNTH, sn, 90, 0.32);
 }
 
@@ -286,31 +308,31 @@ bool moveBall()
     bool edge = false;
 
     ///// Move the ball. /////
-    posX += velX;
-    if (posX <= ballSize / 2)
+    _posX += _velX;
+    if (_posX <= _ballSize / 2)
     {
-        posX = ballSize / 2;
-        velX = -velX;
+        _posX = _ballSize / 2;
+        _velX = -_velX;
         edge = true;
     }
-    else if (posX >= width - ballSize / 2)
+    else if (_posX >= width - _ballSize / 2)
     {
-        posX = width - ballSize / 2;
-        velX = -velX;
+        _posX = width - _ballSize / 2;
+        _velX = -_velX;
         edge = true;
     }
 
-    posY += velY;
-    if (posY <= ballSize / 2)
+    _posY += _velY;
+    if (_posY <= _ballSize / 2)
     {
-        posY = ballSize / 2;
-        velY = -velY;
+        _posY = _ballSize / 2;
+        _velY = -_velY;
         edge = true;
     }
-    else if (posY >= height - ballSize / 2)
+    else if (_posY >= height - _ballSize / 2)
     {
-        posY = height - ballSize / 2;
-        velY = -velY;
+        _posY = height - _ballSize / 2;
+        _velY = -_velY;
         edge = true;
     }
     return edge;

@@ -10,7 +10,7 @@ NVariable COLOR;
 ///// Channels /////
 NChannel SOUND;
 
-bool _winGm = false;
+bool _local = false;
 
 class TapeLoop
 {
@@ -58,7 +58,7 @@ public override void setupNeb()
 
 public override void setup()
 {
-    size(800, 800);
+    size(600, 600);
     print("setup()");
 }
 

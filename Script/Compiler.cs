@@ -16,28 +16,6 @@ using Nebulator.Common;
 
 namespace Nebulator.Script
 {
-    /// <summary>General script error container.</summary>
-    public class ScriptError
-    {
-        public enum ScriptErrorType { None, Warning, Error, Runtime }
-
-        /// <summary>Where it came from.</summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
-
-        /// <summary>Original source file.</summary>
-        public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>Original source line number.</summary>
-        public int LineNumber { get; set; } = 0;
-
-        /// <summary>Content.</summary>
-        public string Message { get; set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>Readable.</summary>
-        public override string ToString() => $"{ErrorType} {SourceFile}({LineNumber}): {Message}";
-    }
-
     /// <summary>
     /// Parses/compiles *.np file(s).
     /// </summary>
@@ -476,5 +454,27 @@ namespace Nebulator.Script
             return codeLines;
         }
         #endregion
+    }
+
+    /// <summary>General script error container.</summary>
+    public class ScriptError
+    {
+        public enum ScriptErrorType { None, Warning, Error, Runtime }
+
+        /// <summary>Where it came from.</summary>
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
+
+        /// <summary>Original source file.</summary>
+        public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>Original source line number.</summary>
+        public int LineNumber { get; set; } = 0;
+
+        /// <summary>Content.</summary>
+        public string Message { get; set; } = Utils.UNKNOWN_STRING;
+
+        /// <summary>Readable.</summary>
+        public override string ToString() => $"{ErrorType} {SourceFile}({LineNumber}): {Message}";
     }
 }

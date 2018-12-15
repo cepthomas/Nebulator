@@ -21,7 +21,7 @@ namespace Nebulator.Comm
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"channel:{ChannelNumber}"; // $"comm:{Comm.CommName} channel:{ChannelNumber}";
+            return $"channel:{ChannelNumber}";
         }
     }
 
