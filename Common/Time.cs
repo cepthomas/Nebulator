@@ -258,7 +258,7 @@ namespace Nebulator.Common
         /// </summary>
         public override string ToString()
         {
-            return $"{Tick:000}.{Tock:000}";
+            return $"{Tick:00}.{Tock:00}";
         }
         #endregion
     }

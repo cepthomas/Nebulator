@@ -18,8 +18,8 @@ namespace Nebulator.Comm
         /// <summary>Comm name.</summary>
         string CommName { get; }
 
-        /// <summary>What it can do. Set by implementation.</summary>
-        CommCaps Caps { get; }
+        ///// <summary>What it can do. Set by implementation.</summary>
+        //CommCaps Caps { get; }
         #endregion
 
         #region Functions

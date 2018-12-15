@@ -35,8 +35,8 @@ namespace Nebulator.Midi
         /// <inheritdoc />
         public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
 
-        /// <inheritdoc />
-        public CommCaps Caps { get; private set; } = null;
+        ///// <inheritdoc />
+        //public CommCaps Caps { get; private set; } = null;
         #endregion
 
         #region Lifecycle
@@ -54,7 +54,7 @@ namespace Nebulator.Midi
 
             CommName = name;
 
-            Caps = MidiUtils.GetCommCaps();
+            //Caps = MidiUtils.GetCommCaps();
 
             try
             {
@@ -145,9 +145,9 @@ namespace Nebulator.Midi
                     {
                         case StepNoteOn stt:
                             {
-                                NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOn, 
-                                    (int)Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                                    (int)Utils.Constrain(stt.VelocityToPlay, Caps.MinVolume, Caps.MaxVolume));
+                                NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOn,
+                                    (int)Utils.Constrain(stt.NoteNumber, 0, 127),//Caps.MinNote, Caps.MaxNote),
+                                    (int)(Utils.Constrain(stt.VelocityToPlay, 0, 1.0) * 127));//Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
 
                                 if(stt.Duration.TotalTocks > 0) // specific duration
@@ -159,7 +159,7 @@ namespace Nebulator.Midi
                                     {
                                         Comm = stt.Comm,
                                         ChannelNumber = stt.ChannelNumber,
-                                        NoteNumber = Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                                        NoteNumber = Utils.Constrain(stt.NoteNumber, 0, 127),//Caps.MinNote, Caps.MaxNote),
                                         Expiry = stt.Duration.TotalTocks
                                     });
                                 }
@@ -169,8 +169,8 @@ namespace Nebulator.Midi
                         case StepNoteOff stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOff,
-                                    (int)Utils.Constrain(stt.NoteNumber, Caps.MinNote, Caps.MaxNote),
-                                    (int)Utils.Constrain(stt.Velocity, Caps.MinVolume, Caps.MaxVolume));
+                                    (int)Utils.Constrain(stt.NoteNumber, 0, 127),//Caps.MinNote, Caps.MaxNote),
+                                    0);// (int)Utils.Constrain(stt.Velocity, Caps.MinVolume, Caps.MaxVolume));
                                 msg = evt.GetAsShortMessage();
                             }
                             break;
@@ -184,13 +184,13 @@ namespace Nebulator.Midi
                                 else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                                 {
                                     PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.ChannelNumber,
-                                        (int)Utils.Constrain(stt.Value, Caps.MinPitchValue, Caps.MaxPitchValue));
+                                        (int)Utils.Constrain(stt.Value, 0, 16383));// Caps.MinPitchValue, Caps.MaxPitchValue));
                                     msg = pevt.GetAsShortMessage();
                                 }
                                 else // CC
                                 {
                                     ControlChangeEvent nevt = new ControlChangeEvent(0, stt.ChannelNumber, (MidiController)stt.ControllerId,
-                                        (int)Utils.Constrain(stt.Value, Caps.MinControllerValue, Caps.MaxControllerValue));
+                                        (int)Utils.Constrain(stt.Value, 0, 127));// Caps.MinControllerValue, Caps.MaxControllerValue));
                                     msg = nevt.GetAsShortMessage();
                                 }
                             }
@@ -223,7 +223,7 @@ namespace Nebulator.Midi
         {
             if(channel is null)
             {
-                for (int i = 0; i < Caps.NumChannels; i++)
+                for (int i = 0; i < 16 /*Caps.NumChannels*/; i++)
                 {
                     Send(new StepControllerChange()
                     {

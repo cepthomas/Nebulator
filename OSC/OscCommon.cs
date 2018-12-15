@@ -21,23 +21,23 @@ namespace Nebulator.OSC
     /// </summary>
     public static class OscCommon
     {
-        #region Misc
-        public static CommCaps InitCaps()
-        {
-            return new CommCaps()
-            {
-                NumChannels = 16,
-                MinVolume = 0,
-                MaxVolume = 127,
-                MinNote = 0,
-                MaxNote = 127,
-                MinControllerValue = 0,
-                MaxControllerValue = 127,
-                MinPitchValue = 0,
-                MaxPitchValue = 16383
-            };
-        }
-        #endregion
+        //#region Misc
+        //public static CommCaps InitCaps()
+        //{
+        //    return new CommCaps()
+        //    {
+        //        NumChannels = 16,
+        //        MinVolume = 0,
+        //        MaxVolume = 127,
+        //        MinNote = 0,
+        //        MaxNote = 127,
+        //        MinControllerValue = 0,
+        //        MaxControllerValue = 127,
+        //        MinPitchValue = 0,
+        //        MaxPitchValue = 16383
+        //    };
+        //}
+        //#endregion
 
         #region Utilities
         /// <summary>
@@ -82,6 +82,5 @@ namespace Nebulator.OSC
             return b >= 32 && b <= 126;
         }
         #endregion
-
     }
 }

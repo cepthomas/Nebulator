@@ -50,8 +50,8 @@ namespace Nebulator.OSC
         /// <summary>Where to?</summary>
         public int Port { get; private set; } = -1;
 
-        /// <inheritdoc />
-        public CommCaps Caps { get; private set; } = OscCommon.InitCaps();
+        ///// <inheritdoc />
+        //public CommCaps Caps { get; private set; } = OscCommon.InitCaps();
         #endregion
 
         #region Lifecycle
@@ -168,7 +168,7 @@ namespace Nebulator.OSC
                                 {
                                     Comm = non.Comm,
                                     ChannelNumber = non.ChannelNumber,
-                                    NoteNumber = Utils.Constrain(non.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                                    NoteNumber = Utils.Constrain(non.NoteNumber, 0, 127),//Caps.MinNote, Caps.MaxNote),
                                     Expiry = non.Duration.TotalTocks
                                 });
                             }

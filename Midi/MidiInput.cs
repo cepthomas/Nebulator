@@ -41,8 +41,8 @@ namespace Nebulator.Midi
         /// <inheritdoc />
         public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
 
-        /// <inheritdoc />
-        public CommCaps Caps { get; private set; } = null;
+        ///// <inheritdoc />
+        //public CommCaps Caps { get; private set; } = null;
         #endregion
 
         #region Lifecycle
@@ -59,7 +59,7 @@ namespace Nebulator.Midi
             bool inited = false;
 
             CommName = name;
-            Caps = MidiUtils.GetCommCaps();
+            //Caps = MidiUtils.GetCommCaps();
 
             try
             {
@@ -168,7 +168,7 @@ namespace Nebulator.Midi
                             {
                                 Comm = this,
                                 ChannelNumber = evt.Channel,
-                                NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                                NoteNumber = Utils.Constrain(evt.NoteNumber, 0, 127),// Caps.MinNote, Caps.MaxNote),
                                 Velocity = 0
                             };
                         }
@@ -194,7 +194,7 @@ namespace Nebulator.Midi
                         {
                             Comm = this,
                             ChannelNumber = evt.Channel,
-                            NoteNumber = Utils.Constrain(evt.NoteNumber, Caps.MinNote, Caps.MaxNote),
+                            NoteNumber = Utils.Constrain(evt.NoteNumber, 0, 127),//Caps.MinNote, Caps.MaxNote),
                             Velocity = evt.Velocity
                         };
                     }
@@ -221,7 +221,7 @@ namespace Nebulator.Midi
                             Comm = this,
                             ChannelNumber = evt.Channel,
                             ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
-                            Value = Utils.Constrain(evt.Pitch, Caps.MinPitchValue, Caps.MaxPitchValue)
+                            Value = Utils.Constrain(evt.Pitch, 0, 16383),//Caps.MinPitchValue, Caps.MaxPitchValue)
                         };
                     }
                     break;

@@ -16,8 +16,8 @@ const int WHEN4 = 80;
 // Total length.
 const int TLEN = 128;
 // Volumes.
-const int KEYS_DEF_VOL = 0.8;
-const int DRUM_DEF_VOL = 0.8;
+const double KEYS_DEF_VOL = 0.8;
+const double DRUM_DEF_VOL = 0.8;
 
 ///// Variables /////
 NVariable COL1;

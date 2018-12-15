@@ -171,7 +171,7 @@ namespace Nebulator.Script
             if (play)
             {
                 double vel = channel.NextVol(vol);
-                double notenum = Utils.Constrain(dnote, channel.Output.Caps.MinNote, channel.Output.Caps.MaxNote);
+                double notenum = Utils.Constrain(dnote, 0, 127);// channel.Output.Caps.MinNote, channel.Output.Caps.MaxNote);
 
                 if (vol > 0)
                 {
