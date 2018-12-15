@@ -14,9 +14,6 @@ using Nebulator.Common;
 using Nebulator.Comm;
 
 
-// TODOX Cleverer way to handle return codes? No C# macros boo...  "exceptions mean bugs"
-
-
 
 namespace Nebulator.OSC
 {

@@ -230,23 +230,8 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public void Kill(int? channel) // TODOX send a silence?
+        public void Kill(int? channel)
         {
-            if (channel is null)
-            {
-
-            }
-            else
-            {
-                StepControllerChange step = new StepControllerChange()
-                {
-                    ChannelNumber = (int)channel,
-                    ControllerId = 123, //(int)MidiController.AllNotesOff,
-                    Value = 0
-                };
-
-                Send(step);
-            }
         }
 
         /// <inheritdoc />
