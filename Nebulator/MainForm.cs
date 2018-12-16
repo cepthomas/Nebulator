@@ -822,8 +822,6 @@ namespace Nebulator
                         }
                         else
                         {
-                            //Console.WriteLine($"{_stepTime} {step.ToString()}");
-
                             if (step.Comm is NOutput)
                             {
                                 // Maybe tweak values.

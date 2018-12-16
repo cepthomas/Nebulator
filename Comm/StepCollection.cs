@@ -14,7 +14,7 @@ namespace Nebulator.Comm
     {
         #region Fields
         ///<summary>The main collection of Steps. The key is the time to send the list.</summary>
-public   Dictionary<Time, List<Step>> _steps = new Dictionary<Time, List<Step>>();
+        Dictionary<Time, List<Step>> _steps = new Dictionary<Time, List<Step>>();
         #endregion
 
         #region Properties

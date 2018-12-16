@@ -10,7 +10,7 @@ NVariable COLOR;
 ///// Channels /////
 NChannel SOUND;
 
-bool _local = false;
+bool _local = true;
 
 class TapeLoop
 {
@@ -35,7 +35,14 @@ public override void setupNeb()
     COLOR = createVariable("color", 240, 0, 255); // change color
 
     ///// Channels /////
-    SOUND = createChannel("sound", "Microsoft GS Wavetable Synth", 1, 0.1); // or "loopMIDI Port 1"
+    if(_local)
+    {
+        SOUND = createChannel("sound", "Microsoft GS Wavetable Synth", 1, 0.1);
+    }
+    else
+    {
+        SOUND = createChannel("sound", "Your favorite", 1, 0.1);
+    }    
 
     // levers
     createLever(COLOR);

@@ -22,18 +22,4 @@ namespace Nebulator.Comm
         /// <summary>Text to log.</summary>
         public string Message { get; set; } = null;
     }
-
-    ///// <summary>What it can do, provided by implementations. Self explanatory.</summary>
-    //public class CommCaps
-    //{
-    //    public int NumChannels { get; set; }
-    //    public double MinVolume { get; set; }
-    //    public double MaxVolume { get; set; }
-    //    public double MinNote { get; set; }
-    //    public double MaxNote { get; set; }
-    //    public double MinControllerValue { get; set; }
-    //    public double MaxControllerValue { get; set; }
-    //    public double MinPitchValue { get; set; }
-    //    public double MaxPitchValue { get; set; }
-    //}
 }

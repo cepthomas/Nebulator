@@ -12,25 +12,9 @@ namespace Nebulator.Midi
 {
     public class MidiUtils
     {
-        ///// <summary>
-        ///// Common capabilities setter.
-        ///// </summary>
-        ///// <returns>The caps.</returns>
-        //public static CommCaps GetCommCaps()
-        //{
-        //    return new CommCaps()
-        //    {
-        //        NumChannels = 16,
-        //        MinVolume = 0,
-        //        MaxVolume = 127,
-        //        MinNote = 0,
-        //        MaxNote = 127,
-        //        MinControllerValue = 0,
-        //        MaxControllerValue = 127,
-        //        MinPitchValue = 0,
-        //        MaxPitchValue = 16383
-        //    };
-        //}
+        public const int MAX_MIDI = 127;
+        public const int MAX_CHANNELS = 16;
+        public const int MAX_PITCH = 16383;
 
         /// <summary>
         /// Convert neb steps to midi file.
@@ -92,11 +76,11 @@ namespace Nebulator.Midi
                     switch (step)
                     {
                         case StepNoteOn stt:
-                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOn, (int)stt.NoteNumber, (int)stt.Velocity);
+                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOn, (int)stt.NoteNumber, (int)(stt.Velocity * MidiUtils.MAX_MIDI));
                             break;
 
                         case StepNoteOff stt:
-                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOff, (int)stt.NoteNumber, (int)stt.Velocity);
+                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOff, (int)stt.NoteNumber, (int)(stt.Velocity * MidiUtils.MAX_MIDI));
                             break;
 
                         case StepControllerChange stt:

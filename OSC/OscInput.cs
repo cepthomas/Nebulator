@@ -43,9 +43,6 @@ namespace Nebulator.OSC
 
         /// <summary>The local port.</summary>
         public int Port { get; set; } = -1;
-
-        ///// <inheritdoc />
-        //public CommCaps Caps { get; private set; } = OscCommon.InitCaps();
         #endregion
 
         #region Lifecycle
@@ -194,9 +191,9 @@ namespace Nebulator.OSC
                     case "/note/":
                         if(msg.Data.Count == 3)
                         {
-                            int channel = Utils.Constrain((int)msg.Data[0], 0, 100);// Caps.NumChannels);
-                            double notenum = Utils.Constrain((int)msg.Data[1], 0, 127);// Caps.MinNote, Caps.MaxNote);
-                            double velocity = Utils.Constrain((int)msg.Data[2], 0, 1.0);// Caps.MinVolume, Caps.MaxVolume);
+                            int channel = Utils.Constrain((int)msg.Data[0], 0, 100);
+                            double notenum = Utils.Constrain((int)msg.Data[1], 0, OscCommon.MAX_NOTE);
+                            double velocity = Utils.Constrain((int)msg.Data[2], 0, 1.0);
 
                             if (velocity == 0)
                             {
@@ -226,9 +223,9 @@ namespace Nebulator.OSC
                     case "/controller/":
                         if (msg.Data.Count == 3)
                         {
-                            int channel = Utils.Constrain((int)msg.Data[0], 0, 100);// Caps.NumChannels);
+                            int channel = Utils.Constrain((int)msg.Data[0], 0, 100);
                             int ctlnum = (int)msg.Data[1];
-                            double value = Utils.Constrain((int)msg.Data[2], 0, 10000);// Caps.MinControllerValue, Caps.MaxControllerValue);
+                            double value = Utils.Constrain((int)msg.Data[2], 0, 10000);
 
                             step = new StepControllerChange()
                             {

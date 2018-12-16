@@ -154,7 +154,6 @@ namespace Nebulator.Common
                         int? intNum = GetInterval(sn);
                         if (intNum != null)
                         {
-                            //noteNum = down ? noteNum - NOTES_PER_OCTAVE : noteNum;
                             notes.Add(keyNotes[0] + intNum.Value);
                         }
                     });
@@ -237,8 +236,6 @@ namespace Nebulator.Common
         #region Conversion functions
         static string[] intervals =
         {
-            //"1", "", "2", "", "3", "4", "", "5", "", "6", "", "7",
-            //"", "", "9", "", "", "11", "", "", "", "13", "", ""
             "1", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "b7", "7",
             "", "", "9", "#9", "", "11", "#11", "", "", "13", "", ""
         };
