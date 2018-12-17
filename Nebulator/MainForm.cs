@@ -181,7 +181,7 @@ namespace Nebulator
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
-            // Init server.
+            // Init server. TODOX use OSC instead now?
             _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
