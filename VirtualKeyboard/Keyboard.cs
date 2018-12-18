@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.IO;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 using Nebulator.Midi;
 
 namespace Nebulator.VirtualKeyboard
@@ -17,10 +17,10 @@ namespace Nebulator.VirtualKeyboard
     {
         #region Events
         /// <inheritdoc />
-        public event EventHandler<CommLogEventArgs> CommLogEvent;
+        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
 
         /// <inheritdoc />
-        public event EventHandler<CommInputEventArgs> CommInputEvent;
+        public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
         #endregion
 
         #region Constants
@@ -40,7 +40,7 @@ namespace Nebulator.VirtualKeyboard
 
         #region Properties
         /// <inheritdoc />
-        public string CommName { get; private set; } = "";
+        public string DeviceName { get; private set; } = "";
         #endregion
 
         #region Lifecycle
@@ -72,7 +72,7 @@ namespace Nebulator.VirtualKeyboard
         {
             bool inited = false;
 
-            CommName = VKBD_NAME;
+            DeviceName = VKBD_NAME;
 
             DrawKeys();
 
@@ -235,7 +235,7 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_VKeyEvent(object sender, VKey.VKeyEventArgs e)
         {
-            if(CommInputEvent != null)
+            if(DeviceInputEvent != null)
             {
                 Step step = null;
 
@@ -243,7 +243,7 @@ namespace Nebulator.VirtualKeyboard
                 {
                     step = new StepNoteOn()
                     {
-                        Comm = this,
+                        Device = this,
                         ChannelNumber = 0,
                         NoteNumber = e.NoteId,
                         Velocity = 100,
@@ -255,24 +255,24 @@ namespace Nebulator.VirtualKeyboard
                 {
                     step = new StepNoteOff()
                     {
-                        Comm = this,
+                        Device = this,
                         ChannelNumber = 0,
                         NoteNumber = e.NoteId,
                         Velocity = 0
                     };
                 }
 
-                CommInputEvent.Invoke(this, new CommInputEventArgs() { Step = step });
-                LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
+                DeviceInputEvent.Invoke(this, new DeviceInputEventArgs() { Step = step });
+                LogMsg(DeviceLogEventArgs.LogCategory.Recv, step.ToString());
             }
         }
 
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
         {
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
         }
         #endregion
 

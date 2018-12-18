@@ -253,7 +253,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("SkiaSharp.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Comm.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Device.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -428,7 +428,7 @@ namespace Nebulator.Script
                 "using SkiaSharp;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
-                "using Nebulator.Comm;",
+                "using Nebulator.Device;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : ScriptCore",

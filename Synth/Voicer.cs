@@ -18,17 +18,16 @@ namespace Nebulator.Synth
         public double noteNumber = -1; // current
         public double frequency = 0.0; // current
         public int sounding = 0; // 0=no 1=yes <0=tail ticks
-    };
+    }
 
-    class Voicer
+    public class Voicer
     {
-
         List<Voice> _voices;
 
         int _muteTime;
         //StkFrames _lastFrame;
 
-        Voicer(double decayTime)
+        Voicer(double decayTime = 0.0)
         {
             _muteTime = decayTime <= 0.0 ? 0 : ((int)decayTime * SynthCommon.SAMPLE_RATE);
             //_lastFrame.resize(1, 2); // Fixed at one stereo frame
@@ -85,7 +84,7 @@ namespace Nebulator.Synth
             _voices[which].sounding = 1;
         }
 
-        void NoteOff(double noteNumber, double amplitude) // TODOX still misses some times?
+        void NoteOff(double noteNumber, double amplitude)
         {
             foreach (Voice v in _voices)
             {
@@ -97,7 +96,7 @@ namespace Nebulator.Synth
             }
         }
 
-        void SetFrequency(double noteNumber) // TODOX this sets all ugens???
+        void SetFrequency(double noteNumber)
         {
             double frequency = SynthCommon.NoteToFreq(noteNumber);
 
@@ -169,7 +168,7 @@ namespace Nebulator.Synth
         //    }
         //}
 
-        //void tick(StkFrames& frames) // TODOX
+        //void tick(StkFrames& frames)
         //{
         //     uint nChannels = _lastFrame.channels();
         //     double* samples = &frames[channel];

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 // A bunch of lightweight classes for runtime elements.

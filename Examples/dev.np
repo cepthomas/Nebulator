@@ -50,6 +50,48 @@ int _radius = 300;
 // Use wingm and virtual kbd only.
 bool _local = true;
 
+
+/////////////////////////////////
+// elsewhere:
+// class SaxUGen : IUGen { }
+// class OtherUGen : IUGen { }
+
+// decls:
+// NChannel SAX;
+// NChannel OTHER;
+// Voicer saxvoicer;
+// Voicer othervoicer;
+
+
+// setup()
+// SAX = createChannel("sax", SYNTH_OUT, 1, 0.2);
+// OTHER = createChannel("other", SYNTH_OUT, 2, 0.1);
+
+// NChannel createChannel(string name, string devName, int channelNum, double wobvol = 0, double wobbefore = 0, int wobafter = 0)
+
+// SAX.add(new SaxUGen(), 4); //UGen contains voicer - 4 says how many voices.
+
+// IUGen:
+// void NoteOn(double frequency, double amplitude);
+// void NoteOff(double amplitude = 0.0);
+// void ControlChange(string controlId, object value);
+// bool Create(string utype, int id);
+// void Clear();
+// void Reset();
+
+
+// Voicer:
+// void Clear();
+// void AddUGen(IUGen ugen);
+// void NoteOn(double noteNumber, double amplitude);
+// void NoteOff(double noteNumber, double amplitude);
+// void SetFrequency(double noteNumber);
+// void ControlChange(string number, double value);
+// void Silence();
+
+/////////////////////////////////
+
+
 public override void setupNeb()
 {
     // All the neb variables.

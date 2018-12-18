@@ -13,14 +13,14 @@ using NAudio.Midi;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
-using Nebulator.Comm;
+using Nebulator.Device;
 using Nebulator.Server;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
 
 // TODO Factor out the processing and non-processing stuff would be nice but much breakage.
-//   - Remove Comm dependency in Script project
+//   - Remove Device dependency in Script project
 //   - Breaks the ScriptCore partial class model.
 //   - Many tendrils involving ScriptDefinitions, NoteUtils, etc.
 
@@ -181,7 +181,7 @@ namespace Nebulator
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
-            // Init server. TODOX use OSC instead now?
+            // Init HTTP server. TODOX use OSC instead now?
             _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
@@ -197,8 +197,8 @@ namespace Nebulator
                 Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y)
             };
             _vk.Init();
-            _vk.CommInputEvent += Comm_InputEvent;
-            _vk.CommLogEvent += Comm_LogEvent;
+            _vk.DeviceInputEvent += Device_InputEvent;
+            _vk.DeviceLogEvent += Device_LogEvent;
             #endregion
 
             #region System info
@@ -353,8 +353,8 @@ namespace Nebulator
                     {
                         if (nin.Init(ctlr.InputName))
                         {
-                            nin.CommInputEvent += Comm_InputEvent;
-                            nin.CommLogEvent += Comm_LogEvent;
+                            nin.DeviceInputEvent += Device_InputEvent;
+                            nin.DeviceLogEvent += Device_LogEvent;
                             ctlr.Input = nin;
                             _inputs.Add(ctlr.InputName, nin);
                         }
@@ -402,7 +402,7 @@ namespace Nebulator
                     {
                         if (nout.Init(chan.OutputName))
                         {
-                            nout.CommLogEvent += Comm_LogEvent;
+                            nout.DeviceLogEvent += Device_LogEvent;
                             chan.Output = nout;
                             _outputs.Add(chan.OutputName, nout);
                         }
@@ -822,7 +822,7 @@ namespace Nebulator
                         }
                         else
                         {
-                            if (step.Comm is NOutput)
+                            if (step.Device is NOutput)
                             {
                                 // Maybe tweak values.
                                 if (step is StepNoteOn)
@@ -830,7 +830,7 @@ namespace Nebulator
                                     (step as StepNoteOn).Adjust(sldVolume.Value, channel.Volume);
                                 }
 
-                                (step.Comm as NOutput).Send(step);
+                                (step.Device as NOutput).Send(step);
                             }
                         }
                     }
@@ -843,7 +843,7 @@ namespace Nebulator
         /// Is it a midi controller? Look it up in the inputs.
         /// If not a ctlr or not found, send to the midi output, otherwise trigger listeners.
         /// </summary>
-        void Comm_InputEvent(object sender, CommInputEventArgs e)
+        void Device_InputEvent(object sender, DeviceInputEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -892,7 +892,7 @@ namespace Nebulator
                         if (!handled)
                         {
                             // Pass through. Not.... let the script handle it.
-                            //e.Step.Comm.Send(e.Step);
+                            //e.Step.Device.Send(e.Step);
                         }
                     }
                     catch (Exception ex)
@@ -906,17 +906,17 @@ namespace Nebulator
         /// <summary>
         /// Process midi log event.
         /// </summary>
-        void Comm_LogEvent(object sender, CommLogEventArgs e)
+        void Device_LogEvent(object sender, DeviceLogEventArgs e)
         {
             bool logit = true;
 
             switch(e.Category)
             {
-                case CommLogEventArgs.LogCategory.Recv:
+                case DeviceLogEventArgs.LogCategory.Recv:
                     logit = NebSettings.TheSettings.MonitorInput;
                     break;
 
-                case CommLogEventArgs.LogCategory.Send:
+                case DeviceLogEventArgs.LogCategory.Send:
                     logit = NebSettings.TheSettings.MonitorOutput;
                     break;
             }

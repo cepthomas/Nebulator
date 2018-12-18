@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using Nebulator.Common;
 
+//TODOX Should Step etc be part of this project?
 
-namespace Nebulator.Comm
+namespace Nebulator.Device
 {
     /// <summary>
     /// Base class for representation of a received event or a compiled event to be sent.
@@ -13,7 +14,7 @@ namespace Nebulator.Comm
     public abstract class Step
     {
         /// <summary>Associated comm device to use.</summary>
-        public IComm Comm { get; set; } = null;
+        public IDevice Device { get; set; } = null;
 
         /// <summary>Channel number.</summary>
         public int ChannelNumber { get; set; } = 1;
@@ -48,9 +49,9 @@ namespace Nebulator.Comm
         public void Adjust(double masterVolume, double channelVolume)
         {
             // Maybe alter note velocity.
-            if (Comm is NOutput)
+            if (Device is NOutput)
             {
-                NOutput nout = Comm as NOutput;
+                NOutput nout = Device as NOutput;
                 double vel = Velocity * channelVolume * masterVolume;
                 VelocityToPlay = Utils.Constrain(vel, 0, 1.0);
             }

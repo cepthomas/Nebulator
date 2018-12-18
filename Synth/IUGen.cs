@@ -6,76 +6,72 @@ using System.Threading.Tasks;
 
 using NAudio.Wave;
 
+// TODOX On the performance front, the killer is the .NET garbage collector. You have to hope that it
+//doesn't kick in during a callback. With ASIO you often run at super low latencies (<10ms), and
+//the garbage collector can cause a callback to be missed, meaning you'd hear a glitch in the audio output.
+
+
+//public class SignalGenerator : ISampleProvider
+//public class AdsrSampleProvider : ISampleProvider
+//public class MultiplexingSampleProvider : ISampleProvider
+
+//C:\Users\cet\Desktop\sound-xxx\minim-cpp-master\src\ugens
+
+//C:\Users\cet\Desktop\sound-xxx/Minim-master/src/main/java/ddf/minim/ugens/Abs.java
+
+//C:\Users\cet\Desktop\sound-xxx/processing-sound-master/src/processing/sound/SawOsc.java
+
+//jsyn-master/src/com/jsyn/unitgen/SineOscillator.java
+
 
 namespace Nebulator.Synth
 {
+    /// <summary>Category types.</summary>
+    public enum UGenType { Generator, Processor }
+
     interface IUGen : ISampleProvider
     {
+
+        UGenType UGenType { get; }
+
+
+        IUGen Input { get; }
+
+
+
         #region Properties
-
-
         /// <summary></summary>
         int NumInputs { get; }
 
         /// <summary></summary>
         int NumOutputs { get; }
-
-
         #endregion
+
+
+        // Chuck: All ugen's have at least the following four parameters:
+        // 
+        // .gain - (double, READ/WRITE) - set gain.
+        // .op - (int, READ/WRITE) - set operation type  
+        //    0: stop - always output 0.
+        //    1: normal operation, add all inputs (default).
+        //    2: normal operation, subtract all inputs starting from the earliest connected.
+        //    3: normal operation, multiply all inputs.    
+        //    4: normal operation, divide inputs starting from the earliest connected.
+        //    -1: passthru - all inputs to the ugen are summed and passed directly to output.  
+        // .last - (double, READ/WRITE) - returns the last sample computed by the unit generator as a double.
+        // .channels - (int, READ only) - the number channels on the UGen
+        // .chan - (int) - returns a reference on a channel (0 -N-1)
+        // .isConnectedTo( Ugen )  returns 1 if the unit generator connects to the argument, 0 otherwise.
+
 
         #region Functions
-
-
-
-
-        // /// <summary>
-        // /// Interfaces don't allow constructors so do this instead.
-        // /// Corresponds to the definition in the script.
-        // /// </summary>
-        // /// <param name="name"></param>
-        // /// <returns></returns>
-        // bool Init(string name);
-
-        // /// <summary>Start operation.</summary>
-        // void Start();
-
-        // /// <summary>Stop operation.</summary>
-        // void Stop();
-
-        // /// <summary>Background operations such as process any stop notes.</summary>
-        // void Housekeep();
-        #endregion
-
-
-
-        //This method is inherited from System.IO.Stream, and works in the standard way.The destBuffer is
-        //the buffer into which audio should be written.The offset parameter specifies where in the buffer
-        //to write audio to (this parameter is almost always 0), and the numBytes parameter is how many
-        //bytes of audio should be read.
-
-        //The Read method returns the number for bytes that were read. This should never be more than
-        //numBytes and can only be less if the end of the audio stream is reached.NAudio playback devices
-        //will stop playing when Read returns 0.
-
-        //On the performance front, the killer is the .NET garbage collector. You have to hope that it
-        //doesn't kick in during a callback. With ASIO you often run at super low latencies (<10ms), and
-        //the garbage collector can cause a callback to be missed, meaning you'd hear a glitch in the audio output.
-
-        // similar???
-        //public class SignalGenerator : ISampleProvider
-        //public class AdsrSampleProvider : ISampleProvider
-        //public class MultiplexingSampleProvider : ISampleProvider
-
-
-
-
         /// Start a note with the given frequency and amplitude.
         void NoteOn(double frequency, double amplitude);
         /// Start envelope toward "on" target.
         //void keyOn();
 
         /// Stop a note with the given amplitude (speed of decay).
-        void NoteOff(double amplitude);
+        void NoteOff(double amplitude = 0.0);
         /// Start envelope toward "off" target.
         //void keyOff();
 
@@ -93,21 +89,8 @@ namespace Nebulator.Synth
         void Clear();
         /// and/or
         void Reset();
+        #endregion
 
-        // Chuck: All ugen's have at least the following four parameters:
-        // 
-        // .gain - (double, READ/WRITE) - set gain.
-        // .op - (int, READ/WRITE) - set operation type  
-        //    0: stop - always output 0.
-        //    1: normal operation, add all inputs (default).
-        //    2: normal operation, subtract all inputs starting from the earliest connected.
-        //    3: normal operation, multiply all inputs.    
-        //    4: normal operation, divide inputs starting from the earliest connected.
-        //    -1: passthru - all inputs to the ugen are summed and passed directly to output.  
-        // .last - (double, READ/WRITE) - returns the last sample computed by the unit generator as a double.
-        // .channels - (int, READ only) - the number channels on the UGen
-        // .chan - (int) - returns a reference on a channel (0 -N-1)
-        // .isConnectedTo( Ugen )  returns 1 if the unit generator connects to the argument, 0 otherwise.
     }
 }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NAudio.Midi;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 namespace Nebulator.Midi
@@ -28,12 +28,12 @@ namespace Nebulator.Midi
 
         #region Events
         /// <inheritdoc />
-        public event EventHandler<CommLogEventArgs> CommLogEvent;
+        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
         /// <inheritdoc />
-        public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
+        public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
         #endregion
 
         #region Lifecycle
@@ -49,7 +49,7 @@ namespace Nebulator.Midi
         {
             bool inited = false;
 
-            CommName = name;
+            DeviceName = name;
 
             try
             {
@@ -66,11 +66,11 @@ namespace Nebulator.Midi
                     devices.Add(MidiOut.DeviceInfo(device).ProductName);
                 }
 
-                int ind = devices.IndexOf(CommName);
+                int ind = devices.IndexOf(DeviceName);
 
                 if (ind < 0)
                 {
-                    LogMsg(CommLogEventArgs.LogCategory.Error, $"Invalid midi: {CommName}");
+                    LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid midi: {DeviceName}");
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace Nebulator.Midi
             }
             catch (Exception ex)
             {
-                LogMsg(CommLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
+                LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
                 inited = false;
             }
 
@@ -152,7 +152,7 @@ namespace Nebulator.Midi
 
                                     _stops.Add(new StepNoteOff()
                                     {
-                                        Comm = stt.Comm,
+                                        Device = stt.Device,
                                         ChannelNumber = stt.ChannelNumber,
                                         NoteNumber = Utils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                         Expiry = stt.Duration.TotalTocks
@@ -205,7 +205,7 @@ namespace Nebulator.Midi
                     if(msg != 0)
                     {
                         _midiOut.Send(msg);
-                        LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
+                        LogMsg(DeviceLogEventArgs.LogCategory.Send, step.ToString());
                     }
                 }
             }
@@ -222,7 +222,7 @@ namespace Nebulator.Midi
                 {
                     Send(new StepControllerChange()
                     {
-                        Comm = this,
+                        Device = this,
                         ChannelNumber = i + 1,
                         ControllerId = (int)MidiController.AllNotesOff
                     });
@@ -232,7 +232,7 @@ namespace Nebulator.Midi
             {
                 Send(new StepControllerChange()
                 {
-                    Comm = this,
+                    Device = this,
                     ChannelNumber = channel.Value,
                     ControllerId = (int)MidiController.AllNotesOff
                 });
@@ -254,9 +254,9 @@ namespace Nebulator.Midi
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
         {
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
         }
         #endregion
     }

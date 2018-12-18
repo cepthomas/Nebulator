@@ -11,19 +11,18 @@ namespace Nebulator.Synth
 {
     class TestUGen : IUGen
     {
+        #region Impl ISampleProvider
         //public WaveFormat WaveFormat => throw new NotImplementedException();
         public WaveFormat WaveFormat { get; } = new WaveFormat();
 
-        public int NumInputs => throw new NotImplementedException();
+        //This method is inherited from System.IO.Stream, and works in the standard way.The destBuffer is
+        //the buffer into which audio should be written.The offset parameter specifies where in the buffer
+        //to write audio to (this parameter is almost always 0), and the numBytes parameter is how many
+        //bytes of audio should be read.
 
-        public int NumOutputs => throw new NotImplementedException();
-
-        public TestUGen()
-        {
- //TODOX           WaveFormat = WaveFormat.CreateIeeedoubleWaveFormat(44100, 2);
-        }
-
-        double _val = 0.0f;
+        //The Read method returns the number for bytes that were read. This should never be more than
+        //numBytes and can only be less if the end of the audio stream is reached.NAudio playback devices
+        //will stop playing when Read returns 0.
 
         public int Read(float[] buffer, int offset, int count)
         {
@@ -64,6 +63,15 @@ namespace Nebulator.Synth
             return count;
         }
 
+        #endregion
+        public int NumInputs => throw new NotImplementedException();
+
+        public int NumOutputs => throw new NotImplementedException();
+
+        public UGenType UGenType => throw new NotImplementedException();
+
+        public IUGen Input => throw new NotImplementedException();
+
         public void NoteOn(double frequency, double amplitude)
         {
             throw new NotImplementedException();
@@ -89,10 +97,26 @@ namespace Nebulator.Synth
             throw new NotImplementedException();
         }
 
+        #region Impl IUGen
+        
         public void Reset()
         {
             throw new NotImplementedException();
         }
+
+        #endregion
+
+
+
+        public TestUGen()
+        {
+//TODOX            WaveFormat = WaveFormat.CreateIeeedoubleWaveFormat(44100, 2);
+        }
+
+        double _val = 0.0f;
+
+
+
 
         void test()
         {

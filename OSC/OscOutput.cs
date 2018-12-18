@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Drawing;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 namespace Nebulator.OSC
@@ -37,12 +37,12 @@ namespace Nebulator.OSC
 
         #region Events
         /// <inheritdoc />
-        public event EventHandler<CommLogEventArgs> CommLogEvent;
+        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
         /// <inheritdoc />
-        public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
+        public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Where to?</summary>
         public string IP { get; private set; } = Utils.UNKNOWN_STRING;
@@ -64,7 +64,7 @@ namespace Nebulator.OSC
         {
             bool inited = false;
 
-            CommName = name;
+            DeviceName = name;
 
             try
             {
@@ -90,7 +90,7 @@ namespace Nebulator.OSC
             }
             catch (Exception ex)
             {
-                LogMsg(CommLogEventArgs.LogCategory.Error, $"Init OSC out failed: {ex.Message}");
+                LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Init OSC out failed: {ex.Message}");
                 inited = false;
             }
 
@@ -163,7 +163,7 @@ namespace Nebulator.OSC
 
                                 _stops.Add(new StepNoteOff()
                                 {
-                                    Comm = non.Comm,
+                                    Device = non.Device,
                                     ChannelNumber = non.ChannelNumber,
                                     NoteNumber = Utils.Constrain(non.NoteNumber, 0, OscCommon.MAX_NOTE),
                                     Expiry = non.Duration.TotalTocks
@@ -204,21 +204,21 @@ namespace Nebulator.OSC
                             if (msg.Errors.Count == 0)
                             {
                                 _udpClient.Send(bytes.ToArray(), bytes.Count);
-                                LogMsg(CommLogEventArgs.LogCategory.Send, step.ToString());
+                                LogMsg(DeviceLogEventArgs.LogCategory.Send, step.ToString());
                             }
                             else
                             {
-                                msg.Errors.ForEach(e => LogMsg(CommLogEventArgs.LogCategory.Error, e));
+                                msg.Errors.ForEach(e => LogMsg(DeviceLogEventArgs.LogCategory.Error, e));
                             }
                         }
                         else
                         {
-                            LogMsg(CommLogEventArgs.LogCategory.Error, step.ToString());
+                            LogMsg(DeviceLogEventArgs.LogCategory.Error, step.ToString());
                         }
                     }
                     else
                     {
-                        LogMsg(CommLogEventArgs.LogCategory.Error, step.ToString());
+                        LogMsg(DeviceLogEventArgs.LogCategory.Error, step.ToString());
                     }
                 }
             }
@@ -246,9 +246,9 @@ namespace Nebulator.OSC
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
         {
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
         }
         #endregion
     }

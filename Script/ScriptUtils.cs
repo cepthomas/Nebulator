@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 namespace Nebulator.Script
@@ -36,7 +36,7 @@ namespace Nebulator.Script
                 {
                     StepInternal step = new StepInternal()
                     {
-                        Comm = channel.Output,
+                        Device = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         ScriptFunction = seqel.ScriptFunction
                     };
@@ -51,7 +51,7 @@ namespace Nebulator.Script
                         double vel = channel.NextVol(seqel.Volume);
                         StepNoteOn step = new StepNoteOn()
                         {
-                            Comm = channel.Output,
+                            Device = channel.Output,
                             ChannelNumber = channel.ChannelNumber,
                             NoteNumber = noteNum,
                             Velocity = vel,

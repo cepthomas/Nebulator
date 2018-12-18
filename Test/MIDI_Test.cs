@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using PNUT;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 using Nebulator.Midi;
 
 namespace Nebulator.Test

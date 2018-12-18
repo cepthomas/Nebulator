@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NAudio.Midi;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 // TODO: Support microtonal notes with Pitch changes.
@@ -31,15 +31,15 @@ namespace Nebulator.Midi
 
         #region Events
         /// <inheritdoc />
-        public event EventHandler<CommInputEventArgs> CommInputEvent;
+        public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
 
         /// <inheritdoc />
-        public event EventHandler<CommLogEventArgs> CommLogEvent;
+        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
         /// <inheritdoc />
-        public string CommName { get; private set; } = Utils.UNKNOWN_STRING;
+        public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
         #endregion
 
         #region Lifecycle
@@ -55,7 +55,7 @@ namespace Nebulator.Midi
         {
             bool inited = false;
 
-            CommName = name;
+            DeviceName = name;
 
             try
             {
@@ -73,11 +73,11 @@ namespace Nebulator.Midi
                     devices.Add(MidiIn.DeviceInfo(device).ProductName);
                 }
 
-                int ind = devices.IndexOf(CommName);
+                int ind = devices.IndexOf(DeviceName);
 
                 if(ind < 0)
                 {
-                    LogMsg(CommLogEventArgs.LogCategory.Error, $"Invalid midi: {CommName}");
+                    LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid midi: {DeviceName}");
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace Nebulator.Midi
             }
             catch (Exception ex)
             {
-                LogMsg(CommLogEventArgs.LogCategory.Error, $"Init midi in failed: {ex.Message}");
+                LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Init midi in failed: {ex.Message}");
                 inited = false;
             }
 
@@ -162,7 +162,7 @@ namespace Nebulator.Midi
                         {
                             step = new StepNoteOff()
                             {
-                                Comm = this,
+                                Device = this,
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                 Velocity = 0
@@ -172,7 +172,7 @@ namespace Nebulator.Midi
                         {
                             step = new StepNoteOn()
                             {
-                                Comm = this,
+                                Device = this,
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = evt.NoteNumber,
                                 Velocity = evt.Velocity,
@@ -188,7 +188,7 @@ namespace Nebulator.Midi
                         NoteEvent evt = me as NoteEvent;
                         step = new StepNoteOff()
                         {
-                            Comm = this,
+                            Device = this,
                             ChannelNumber = evt.Channel,
                             NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                             Velocity = evt.Velocity
@@ -201,7 +201,7 @@ namespace Nebulator.Midi
                         ControlChangeEvent evt = me as ControlChangeEvent;
                         step = new StepControllerChange()
                         {
-                            Comm = this,
+                            Device = this,
                             ChannelNumber = evt.Channel,
                             ControllerId = (int)evt.Controller,
                             Value = evt.ControllerValue
@@ -214,7 +214,7 @@ namespace Nebulator.Midi
                         PitchWheelChangeEvent evt = me as PitchWheelChangeEvent;
                         step = new StepControllerChange()
                         {
-                            Comm = this,
+                            Device = this,
                             ChannelNumber = evt.Channel,
                             ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
                             Value = Utils.Constrain(evt.Pitch, 0, MidiUtils.MAX_PITCH),
@@ -226,9 +226,9 @@ namespace Nebulator.Midi
             if (step != null)
             {
                 // Pass it up for handling.
-                CommInputEventArgs args = new CommInputEventArgs() { Step = step };
-                CommInputEvent?.Invoke(this, args);
-                LogMsg(CommLogEventArgs.LogCategory.Recv, step.ToString());
+                DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
+                DeviceInputEvent?.Invoke(this, args);
+                LogMsg(DeviceLogEventArgs.LogCategory.Recv, step.ToString());
             }
         }
 
@@ -237,15 +237,15 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            LogMsg(CommLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
+            LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Message:0x{e.RawMessage:X8}");
         }
 
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(CommLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
         {
-            CommLogEvent?.Invoke(this, new CommLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
         }
         #endregion
     }

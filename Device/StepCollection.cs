@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Nebulator.Common;
 
 
-namespace Nebulator.Comm
+namespace Nebulator.Device
 {
     /// <summary>A collection of Steps.</summary>
     public class StepCollection

@@ -70,7 +70,6 @@
     <Compile Include="FileParser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -78,9 +77,9 @@
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Comm\Comm.csproj">
+    <ProjectReference Include="..\Device\Device.csproj">
       <Project>{dfb8fd27-c870-4bf6-1234-f44c13049fee}</Project>
-      <Name>Comm</Name>
+      <Name>Device</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

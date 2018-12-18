@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MoreLinq;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 // Nebulator API stuff.
@@ -52,7 +52,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a controller input.
         /// </summary>
-        /// <param name="devName">Comm device.</param>
+        /// <param name="devName">Device device.</param>
         /// <param name="channelNum">Which channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>
@@ -63,7 +63,6 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid NVariable for controller {devName}");
             }
 
-            //TODOX ?? controlId = Utils.Constrain(controlId, devName.Caps.MinControllerValue, devName.Caps.MaxControllerValue);
             NController mp = new NController()
             {
                 InputName = devName,
@@ -132,7 +131,7 @@ namespace Nebulator.Script
         /// Normal factory.
         /// </summary>
         /// <param name="name">UI name</param>
-        /// <param name="devName">Comm device.</param>
+        /// <param name="devName">Device device.</param>
         /// <param name="channelNum"></param>
         /// <param name="wobvol"></param>
         /// <param name="wobbefore"></param>
@@ -177,7 +176,7 @@ namespace Nebulator.Script
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
-                        Comm = channel.Output,
+                        Device = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum,
                         Velocity = vel,
@@ -192,7 +191,7 @@ namespace Nebulator.Script
                 {
                     StepNoteOff step = new StepNoteOff()
                     {
-                        Comm = channel.Output,
+                        Device = channel.Output,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum
                     };
@@ -281,7 +280,7 @@ namespace Nebulator.Script
 
             StepControllerChange step = new StepControllerChange()
             {
-                Comm = channel.Output,
+                Device = channel.Output,
                 ChannelNumber = channel.ChannelNumber,
                 ControllerId = ctlnum,
                 Value = val
@@ -302,7 +301,7 @@ namespace Nebulator.Script
 
             StepPatch step = new StepPatch()
             {
-                Comm = channel.Output,
+                Device = channel.Output,
                 ChannelNumber = channel.ChannelNumber,
                 PatchNumber = patch
             };

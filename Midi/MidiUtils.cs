@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using NAudio.Midi;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 namespace Nebulator.Midi
 {

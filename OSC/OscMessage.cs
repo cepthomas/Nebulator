@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Drawing;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 namespace Nebulator.OSC

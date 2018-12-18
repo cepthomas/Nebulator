@@ -7,8 +7,8 @@
     <ProjectGuid>{DFB8FD27-C870-4BF6-1234-F44C13049FEE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nebulator.Comm</RootNamespace>
-    <AssemblyName>Nebulator.Comm</AssemblyName>
+    <RootNamespace>Nebulator.Device</RootNamespace>
+    <AssemblyName>Nebulator.Device</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Nebulator.Comm.xml</DocumentationFile>
+    <DocumentationFile>bin\Nebulator.Device.xml</DocumentationFile>
     <NoWarn>IDE1006, CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Nebulator.Comm.xml</DocumentationFile>
+    <DocumentationFile>bin\Nebulator.Device.xml</DocumentationFile>
     <NoWarn>IDE1006, CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -55,8 +55,8 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CommCommon.cs" />
-    <Compile Include="IComm.cs" />
+    <Compile Include="DeviceCommon.cs" />
+    <Compile Include="IDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Step.cs" />
     <Compile Include="StepCollection.cs" />
@@ -68,7 +68,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

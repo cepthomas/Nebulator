@@ -8,7 +8,7 @@ using System.IO;
 using SkiaSharp;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Comm;
+using Nebulator.Device;
 
 
 namespace Nebulator.Script

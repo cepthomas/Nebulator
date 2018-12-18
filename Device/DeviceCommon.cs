@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using Nebulator.Common;
 
 
-namespace Nebulator.Comm
+namespace Nebulator.Device
 {
-    public class CommInputEventArgs : EventArgs
+    public class DeviceInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
         public Step Step { get; set; } = null;
     }
 
-    public class CommLogEventArgs : EventArgs
+    public class DeviceLogEventArgs : EventArgs
     {
         /// <summary>Category types.</summary>
         public enum LogCategory { Info, Send, Recv, Error }

@@ -1,22 +1,21 @@
 using System;
 using System.Collections.Generic;
 using Nebulator.Common;
-using Nebulator.Comm;
 
 
-namespace Nebulator.Comm
+namespace Nebulator.Device
 {
     /// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>
-    public interface IComm : IDisposable
+    public interface IDevice : IDisposable
     {
         #region Events
         /// <summary>Request for logging service.</summary>
-        event EventHandler<CommLogEventArgs> CommLogEvent;
+        event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
-        /// <summary>Comm name.</summary>
-        string CommName { get; }
+        /// <summary>Device name.</summary>
+        string DeviceName { get; }
         #endregion
 
         #region Functions
@@ -40,19 +39,19 @@ namespace Nebulator.Comm
     }
 
     /// <summary>Input specific version.</summary>
-    public interface NInput : IComm
+    public interface NInput : IDevice
     {
         #region Events
         /// <summary>Reporting a change to listeners.</summary>
-        event EventHandler<CommInputEventArgs> CommInputEvent;
+        event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
         #endregion
     }
 
     /// <summary>Output specific version.</summary>
-    public interface NOutput : IComm
+    public interface NOutput : IDevice
     {
         #region Functions
-        /// <summary>Comm out processor.</summary>
+        /// <summary>Device out processor.</summary>
         /// <param name="step"></param>
         bool Send(Step step);
 
