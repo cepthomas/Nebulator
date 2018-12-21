@@ -10,6 +10,7 @@ string MY_MIDI_OUT = "loopMIDI Port 1";
 string MY_MIDI_IN = "MPK mini";
 string GS_MIDI_OUT = "Microsoft GS Wavetable Synth";
 
+string MY_SYNTH = "Synth1";
 
 
 // All the neb variables.
@@ -51,45 +52,63 @@ int _radius = 300;
 bool _local = true;
 
 
-/////////////////////////////////
-// elsewhere:
-// class SaxUGen : IUGen { }
-// class OtherUGen : IUGen { }
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 
-// decls:
-// NChannel SAX;
-// NChannel OTHER;
-// Voicer saxvoicer;
-// Voicer othervoicer;
+// NChannel SYNX;
+
+// Wrapper wrp;
+// SinOsc osc;
+// ADSR adsr;
+// Filter flt;
+// Pan pan;
+
+// Voicer vcr;
+
+// public override void setupNebZZZ()
+// {
+//     vcr = new Voicer(5);
+// }
+
+// public override void setupNebXXX()
+// {
+//     SYNX = createChannel("synx", MY_SYNTH, 1, 0.2);
+
+//     wrap = new Wrapper();
+//     osc = new SinOsc();
+//     adsr = new ADSR();
+//     filter = new Filter();
+//     pan = new Pan();
+
+//     osc.Input = wrap;
+//     adsr.Input = osc;
+//     filter.Input = adsr;
+//     pan.Input = filter;
+//     wrap.Output = pan;
+    
+//     // Start sampling.
+//     asioOut.Init(wrap);
+//     asioOut.Play(); // start playing - calls wrap.Read()
+// }
+
+// void shutDown()
+// {
+//     // Stop
+//     asioOut.Stop(); // TODOX need and IDisposable
+//     asioOut.Dispose();
+// }
+
+// public void On_CTL3_XXX()
+// {
+//     sendNote(SYNX, 50 + CTL3.Value % 20, 0.7, 2.0);
+//     filter.ControlChange(Modulation, MOD1.Value);
+//     //sendController(SYNX, Modulation, MOD1.Value);
+// }
 
 
-// setup()
-// SAX = createChannel("sax", SYNTH_OUT, 1, 0.2);
-// OTHER = createChannel("other", SYNTH_OUT, 2, 0.1);
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 
-// NChannel createChannel(string name, string devName, int channelNum, double wobvol = 0, double wobbefore = 0, int wobafter = 0)
-
-// SAX.add(new SaxUGen(), 4); //UGen contains voicer - 4 says how many voices.
-
-// IUGen:
-// void NoteOn(double frequency, double amplitude);
-// void NoteOff(double amplitude = 0.0);
-// void ControlChange(string controlId, object value);
-// bool Create(string utype, int id);
-// void Clear();
-// void Reset();
-
-
-// Voicer:
-// void Clear();
-// void AddUGen(IUGen ugen);
-// void NoteOn(double noteNumber, double amplitude);
-// void NoteOff(double noteNumber, double amplitude);
-// void SetFrequency(double noteNumber);
-// void ControlChange(string number, double value);
-// void Silence();
-
-/////////////////////////////////
 
 
 public override void setupNeb()
@@ -291,7 +310,7 @@ public void On_MOD1()
 {
     //print(MOD1.Name, "changed to", MOD1.Value);
     // Send a controller change.
-    sendController(SYNTH, 1, MOD1.Value);
+    sendController(SYNTH, Modulation, MOD1.Value);
 }
 
 public void On_VKBD_NOTE()

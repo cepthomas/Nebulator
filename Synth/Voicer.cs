@@ -13,7 +13,7 @@ namespace Nebulator.Synth
     /// Represents one sounding voice.
     class Voice
     {
-        public IUGen ugen = null;
+        public UGen ugen = null;
         public int birth = 0; // used for tracking oldest voice
         public double noteNumber = -1; // current
         public double frequency = 0.0; // current
@@ -42,7 +42,7 @@ namespace Nebulator.Synth
             _voices.Clear();
         }
 
-        void AddUGen(IUGen ugen)
+        void AddUGen(UGen ugen)
         {
             Voice voice = new Voice();
             voice.ugen = ugen;
@@ -104,11 +104,11 @@ namespace Nebulator.Synth
             {
                 v.noteNumber = noteNumber;
                 v.frequency = frequency;
- //????               v.ugen.SetFrequency(frequency);
+ //TODOX ????               v.ugen.SetFrequency(frequency);
             }
         }
 
-        void ControlChange(string number, double value)
+        void ControlChange(int number, double value)
         {
             foreach (Voice v in _voices)
             {
