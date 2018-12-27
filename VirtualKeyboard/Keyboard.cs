@@ -24,7 +24,6 @@ namespace Nebulator.VirtualKeyboard
         #endregion
 
         #region Constants
-        public const string VKBD_NAME = "Virtual Keyboard";
         const int LOW_NOTE = 21;
         const int HIGH_NOTE = 109;
         const int MIDDLE_C = 60;
@@ -71,8 +70,6 @@ namespace Nebulator.VirtualKeyboard
         public bool Init(string _ = "")
         {
             bool inited = false;
-
-            DeviceName = VKBD_NAME;
 
             DrawKeys();
 

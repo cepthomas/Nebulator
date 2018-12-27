@@ -55,6 +55,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SERVER_Test.cs" />
+    <Compile Include="SYNTH_Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -80,6 +81,10 @@
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{8b7e58a4-4477-4223-a0c3-8be403ee5737}</Project>
       <Name>Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Synth\Synth.csproj">
+      <Project>{72b15ad8-081b-4dc0-b6c5-35eaf016a67f}</Project>
+      <Name>Synth</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

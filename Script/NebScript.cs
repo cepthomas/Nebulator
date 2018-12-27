@@ -50,6 +50,45 @@ namespace Nebulator.Script
 
         #region Script callable functions
         /// <summary>
+        /// Normal factory.
+        /// </summary>
+        /// <param name="name">UI name</param>
+        /// <param name="val">Initial value</param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="handler">Optional callback function.</param>
+        protected NVariable createVariable(string name, double val, double min, double max, Action handler = null)
+        {
+            NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
+            Variables.Add(nv);
+            return nv;
+        }
+
+        /// <summary>
+        /// Normal factory.
+        /// </summary>
+        /// <param name="name">UI name</param>
+        /// <param name="devName">Device device.</param>
+        /// <param name="channelNum"></param>
+        /// <param name="wobvol"></param>
+        /// <param name="wobbefore"></param>
+        /// <param name="wobafter"></param>
+        protected NChannel createChannel(string name, string devName, int channelNum, double wobvol = 0, double wobbefore = 0, int wobafter = 0)
+        {
+            NChannel nt = new NChannel()
+            {
+                Name = name,
+                DeviceName = devName,
+                ChannelNumber = channelNum,
+                WobbleVolume = wobvol,
+                WobbleTimeBefore = wobbefore,
+                WobbleTimeAfter = wobafter
+            };
+            Channels.Add(nt);
+            return nt;
+        }
+
+        /// <summary>
         /// Create a controller input.
         /// </summary>
         /// <param name="devName">Device device.</param>
@@ -58,14 +97,14 @@ namespace Nebulator.Script
         /// <param name="bound">NVariable</param>
         protected void createController(string devName, int channelNum, int controlId, NVariable bound)
         {
-            if(bound == null)
+            if (bound == null)
             {
                 throw new Exception($"Invalid NVariable for controller {devName}");
             }
 
             NController mp = new NController()
             {
-                InputName = devName,
+                DeviceName = devName,
                 ChannelNumber = channelNum,
                 ControllerId = controlId,
                 BoundVar = bound
@@ -86,21 +125,6 @@ namespace Nebulator.Script
 
             NController lp = new NController() { BoundVar = bound };
             Levers.Add(lp);
-        }
-
-        /// <summary>
-        /// Normal factory.
-        /// </summary>
-        /// <param name="name">UI name</param>
-        /// <param name="val">Initial value</param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <param name="handler">Optional callback function.</param>
-        protected NVariable createVariable(string name, double val, double min, double max, Action handler = null)
-        {
-            NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
-            Variables.Add(nv);
-            return nv;
         }
 
         /// <summary>
@@ -125,30 +149,6 @@ namespace Nebulator.Script
             NSection nsec = new NSection() { Name = name, Start = start, Length = length };
             Sections.Add(nsec);
             return nsec;
-        }
-
-        /// <summary>
-        /// Normal factory.
-        /// </summary>
-        /// <param name="name">UI name</param>
-        /// <param name="devName">Device device.</param>
-        /// <param name="channelNum"></param>
-        /// <param name="wobvol"></param>
-        /// <param name="wobbefore"></param>
-        /// <param name="wobafter"></param>
-        protected NChannel createChannel(string name, string devName, int channelNum, double wobvol = 0, double wobbefore = 0, int wobafter = 0)
-        {
-            NChannel nt = new NChannel()
-            {
-                Name = name,
-                OutputName = devName,
-                ChannelNumber = channelNum,
-                WobbleVolume = wobvol,
-                WobbleTimeBefore = wobbefore,
-                WobbleTimeAfter = wobafter
-            };
-            Channels.Add(nt);
-            return nt;
         }
 
         /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
@@ -176,7 +176,7 @@ namespace Nebulator.Script
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
-                        Device = channel.Output,
+                        Device = channel.Device,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum,
                         Velocity = vel,
@@ -185,18 +185,18 @@ namespace Nebulator.Script
                     };
 
                     step.Adjust(volume, channel.Volume);
-                    channel.Output.Send(step);
+                    channel.Device.Send(step);
                 }
                 else
                 {
                     StepNoteOff step = new StepNoteOff()
                     {
-                        Device = channel.Output,
+                        Device = channel.Device,
                         ChannelNumber = channel.ChannelNumber,
                         NoteNumber = notenum
                     };
 
-                    channel.Output.Send(step);
+                    channel.Device.Send(step);
                 }
             }
         }
@@ -280,13 +280,13 @@ namespace Nebulator.Script
 
             StepControllerChange step = new StepControllerChange()
             {
-                Device = channel.Output,
+                Device = channel.Device,
                 ChannelNumber = channel.ChannelNumber,
                 ControllerId = ctlnum,
                 Value = val
             };
 
-            channel.Output.Send(step);
+            channel.Device.Send(step);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -301,12 +301,12 @@ namespace Nebulator.Script
 
             StepPatch step = new StepPatch()
             {
-                Device = channel.Output,
+                Device = channel.Device,
                 ChannelNumber = channel.ChannelNumber,
                 PatchNumber = patch
             };
 
-            channel.Output.Send(step);
+            channel.Device.Send(step);
         }
 
         /// <summary>Send a named sequence.</summary>

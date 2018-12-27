@@ -8,9 +8,19 @@ namespace Nebulator.Synth
 {
     public class SynthCommon
     {
-        public const int SAMPLE_RATE = 44100;
+        public const int SAMPLE_RATE = 44100; // TODOX make this a var
+        public const int NUM_CHANNELS = 2; // TODOX make this a var
 
         public const double ONE_OVER_128 = 0.0078125;
+
+        public const double ONE_PI = Math.PI;
+        public const double TWO_PI = Math.PI * 2;
+
+        public const double RAD_PER_SAMPLE = TWO_PI / SAMPLE_RATE;
+
+        public const double SQRT2 = 1.41421356237309504880;
+
+
 
         /// Convert float note to frequency.
         public static double NoteToFreq(double noteNumber)

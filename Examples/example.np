@@ -62,7 +62,7 @@ bool _local = true;
 ////// Nebulator midi stuff //////
 public override void setupNeb()
 {
-    string MY_MIDI_OUT = _local ? "Microsoft GS Wavetable Synth" : "or whatever you like";
+    string MY_MIDI_OUT = _local ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:yours";
 
     // All the neb variables.
     COL1 = createVariable("color", 200, 0, 255); // change color
@@ -83,7 +83,7 @@ public override void setupNeb()
     createLever(COL1);
     createLever(MODN);
 
-    createController("Virtual Keyboard", 0, NoteControl, VKBD_NOTE);
+    createController("VKEY:", 0, NoteControl, VKBD_NOTE);
 
     ///// Sequences /////
     KEYS_VERSE1 = createSequence(16);

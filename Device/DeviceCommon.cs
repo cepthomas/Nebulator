@@ -5,6 +5,9 @@ using Nebulator.Common;
 
 namespace Nebulator.Device
 {
+    /// <summary>Device type.</summary>
+    public enum DeviceType { Midi, OSC, ASIO, VirtualKeyboard }
+
     public class DeviceInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>

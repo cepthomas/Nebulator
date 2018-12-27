@@ -1,3 +1,4 @@
+TODOX update all of this
 
 # What It Is
 I grew frustrated with traditional piano roll midi editors as found in your typical DAW. Another case of an implementation that sounded better during the requirements phase than after it was done. Instead of dragging little dots around, I would think that I could write a simple script to do that. So that's what this is intended to do.  

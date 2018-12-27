@@ -17,7 +17,7 @@ namespace Nebulator.Midi
         MidiOut _midiOut = null;
 
         /// <summary>Midi access synchronizer.</summary>
-        object _midiLock = new object();
+        object _lock = new object();
 
         /// <summary>Notes to stop later.</summary>
         List<StepNoteOff> _stops = new List<StepNoteOff>();
@@ -49,7 +49,7 @@ namespace Nebulator.Midi
         {
             bool inited = false;
 
-            DeviceName = name;
+            DeviceName = "Invalid"; // default
 
             try
             {
@@ -59,23 +59,28 @@ namespace Nebulator.Midi
                     _midiOut = null;
                 }
 
-                // Figure out which device.
-                List<string> devices = new List<string>();
-                for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+                List<string> parts = name.SplitByToken(":");
+                if(parts.Count == 2)
                 {
-                    devices.Add(MidiOut.DeviceInfo(device).ProductName);
-                }
+                    // Figure out which device.
+                    List<string> devices = new List<string>();
+                    for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+                    {
+                        devices.Add(MidiOut.DeviceInfo(device).ProductName);
+                    }
 
-                int ind = devices.IndexOf(DeviceName);
+                    int ind = devices.IndexOf(parts[1]);
 
-                if (ind < 0)
-                {
-                    LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid midi: {DeviceName}");
-                }
-                else
-                {
-                    _midiOut = new MidiOut(ind);
-                    inited = true;
+                    if (ind < 0)
+                    {
+                        LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid midi: {parts[1]}");
+                    }
+                    else
+                    {
+                        _midiOut = new MidiOut(ind);
+                        inited = true;
+                        DeviceName = parts[1];
+                    }
                 }
             }
             catch (Exception ex)
@@ -129,7 +134,7 @@ namespace Nebulator.Midi
             bool ret = true;
 
             // Critical code section.
-            lock (_midiLock)
+            lock (_lock)
             {
                 if(_midiOut != null)
                 {

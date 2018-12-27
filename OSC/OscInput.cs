@@ -58,7 +58,7 @@ namespace Nebulator.OSC
         {
             bool inited = false;
 
-            DeviceName = name;
+            DeviceName = "Invalid"; // default
 
             try
             {
@@ -71,13 +71,14 @@ namespace Nebulator.OSC
 
                 // Check for properly formed port.
                 List<string> parts = name.SplitByToken(":");
-                if (parts.Count == 2 && parts[0] == "OSC")
+                if (parts.Count == 2)
                 {
                     if (int.TryParse(parts[1], out int port))
                     {
                         Port = port;
                         _udpClient = new UdpClient(Port);
                         inited = true;
+                        DeviceName = $"{Port}";
                     }
                 }
             }

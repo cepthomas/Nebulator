@@ -55,7 +55,7 @@ namespace Nebulator.Midi
         {
             bool inited = false;
 
-            DeviceName = name;
+            DeviceName = "Invalid"; // default
 
             try
             {
@@ -66,26 +66,31 @@ namespace Nebulator.Midi
                     _midiIn = null;
                 }
 
-                // Figure out which device.
-                List<string> devices = new List<string>();
-                for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+                List<string> parts = name.SplitByToken(":");
+                if(parts.Count == 2)
                 {
-                    devices.Add(MidiIn.DeviceInfo(device).ProductName);
-                }
+                    // Figure out which device.
+                    List<string> devices = new List<string>();
+                    for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+                    {
+                        devices.Add(MidiIn.DeviceInfo(device).ProductName);
+                    }
 
-                int ind = devices.IndexOf(DeviceName);
+                    int ind = devices.IndexOf(parts[1]);
 
-                if(ind < 0)
-                {
-                    LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid midi: {DeviceName}");
-                }
-                else
-                {
-                    _midiIn = new MidiIn(ind);
-                    _midiIn.MessageReceived += MidiIn_MessageReceived;
-                    _midiIn.ErrorReceived += MidiIn_ErrorReceived;
-                    _midiIn.Start();
-                    inited = true;
+                    if (ind < 0)
+                    {
+                        LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid midi: {parts[1]}");
+                    }
+                    else
+                    {
+                        _midiIn = new MidiIn(ind);
+                        _midiIn.MessageReceived += MidiIn_MessageReceived;
+                        _midiIn.ErrorReceived += MidiIn_ErrorReceived;
+                        _midiIn.Start();
+                        inited = true;
+                        DeviceName = parts[1];
+                    }
                 }
             }
             catch (Exception ex)

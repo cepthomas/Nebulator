@@ -1,17 +1,6 @@
 
 // Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
-// IO devices.
-//string MY_OSC_OUT = "OSC:127.0.0.1:6449";
-string MY_OSC_OUT = "OSC:localhost:6449";
-string MY_OSC_IN = "OSC:6448";
-string MY_VKEY = "Virtual Keyboard";
-string MY_MIDI_OUT = "loopMIDI Port 1";
-string MY_MIDI_IN = "MPK mini";
-string GS_MIDI_OUT = "Microsoft GS Wavetable Synth";
-
-string MY_SYNTH = "Synth1";
-
 
 // All the neb variables.
 NVariable BACK_COLOR;
@@ -41,74 +30,12 @@ double[] _chordNotes;
 double[] _scaleNotes;
 int _noteNum = 0;
 
-// Index is note number, value is when to stop it.
+// Index is integer note number, value is when to stop it.
 int[] _notesPlaying = new int[128];
 
-// Processing stuff.
-int _segmentCount = 36;
-int _radius = 300;
 
-// Use wingm and virtual kbd only.
+// Use win gm and virtual kbd only. Otherwise all midi.
 bool _local = true;
-
-
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-
-// NChannel SYNX;
-
-// Wrapper wrp;
-// SinOsc osc;
-// ADSR adsr;
-// Filter flt;
-// Pan pan;
-
-// Voicer vcr;
-
-// public override void setupNebZZZ()
-// {
-//     vcr = new Voicer(5);
-// }
-
-// public override void setupNebXXX()
-// {
-//     SYNX = createChannel("synx", MY_SYNTH, 1, 0.2);
-
-//     wrap = new Wrapper();
-//     osc = new SinOsc();
-//     adsr = new ADSR();
-//     filter = new Filter();
-//     pan = new Pan();
-
-//     osc.Input = wrap;
-//     adsr.Input = osc;
-//     filter.Input = adsr;
-//     pan.Input = filter;
-//     wrap.Output = pan;
-    
-//     // Start sampling.
-//     asioOut.Init(wrap);
-//     asioOut.Play(); // start playing - calls wrap.Read()
-// }
-
-// void shutDown()
-// {
-//     // Stop
-//     asioOut.Stop(); // TODOX need and IDisposable
-//     asioOut.Dispose();
-// }
-
-// public void On_CTL3_XXX()
-// {
-//     sendNote(SYNX, 50 + CTL3.Value % 20, 0.7, 2.0);
-//     filter.ControlChange(Modulation, MOD1.Value);
-//     //sendController(SYNX, Modulation, MOD1.Value);
-// }
-
-
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-
 
 
 public override void setupNeb()
@@ -121,24 +48,30 @@ public override void setupNeb()
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
+    // IO devices.
     if(_local)
     {
-        // All the output channels.
+        // All the outputs.
+        string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
         PIANO = createChannel("piano", GS_MIDI_OUT, 1, 0.2);
         BASS = createChannel("bass", GS_MIDI_OUT, 2, 0.1);
         SYNTH = createChannel("synth", GS_MIDI_OUT, 3, 0);
         DRUMS = createChannel("drums", GS_MIDI_OUT, 10, 0.1);
 
-        createController("Virtual Keyboard", 0, NoteControl, VKBD_NOTE);
+        // All the inputs.
+        createController("VKEY:", 0, NoteControl, VKBD_NOTE);
     }
     else
     {
-        // All the output channels.
+        // All the outputs.
+        string MY_MIDI_OUT = "MIDI:loopMIDI Port 1";
         PIANO = createChannel("piano", MY_MIDI_OUT, 1, 0.2);
         BASS = createChannel("bass", MY_MIDI_OUT, 2, 0.1);
         SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
         DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 0.1);
 
+        // All the inputs.
+        string MY_MIDI_IN = "MIDI:MPK mini";
         createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
         createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
         createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
@@ -146,6 +79,7 @@ public override void setupNeb()
         createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
     }
 
+    // string MY_OSC_IN = "OSC:6448";
     // createController(MY_OSC_IN, 1, 1, MOD1); // modulate eq
     // createController(MY_OSC_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
     // createController(MY_OSC_IN, 1, 3, CTL3); // another controller
@@ -261,7 +195,6 @@ void sequenced()
 
 void randish()
 {
-    // from boids:
     if(tock % 4 == 0 && random(7) == 0) // play with these for how often
     {
         int which = random(40, 80);
@@ -379,7 +312,8 @@ void drawFan()
     colorMode(HSB, 360, width, height);
     background(160); // gray
 
-    double angleStep = 360 / _segmentCount;
+    double angleStep = 10;
+    int radius = 300;
 
     for (double angle = 0; angle <= 360; angle += angleStep)
     {
@@ -388,8 +322,8 @@ void drawFan()
         beginShape();  // (TRIANGLE_FAN);
         vertex(width / 2, height / 2); // center
 
-        double vx = width / 2 + cos(radians(angle)) * _radius;
-        double vy = height / 2 + sin(radians(angle)) * _radius;
+        double vx = width / 2 + cos(radians(angle)) * radius;
+        double vy = height / 2 + sin(radians(angle)) * radius;
         vertex(vx, vy);
         
         vx -= 10;

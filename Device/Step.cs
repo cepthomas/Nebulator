@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Nebulator.Common;
 
-//TODOX Should Step etc be part of this project?
+//TODO Should Step etc be part of this project?
 
 namespace Nebulator.Device
 {

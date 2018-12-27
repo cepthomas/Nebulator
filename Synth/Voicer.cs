@@ -20,38 +20,97 @@ namespace Nebulator.Synth
         public int sounding = 0; // 0=no 1=yes <0=tail ticks
     }
 
-    public class Voicer
+    public class Voicer : UGen
     {
-        List<Voice> _voices;
-
+        #region Fields
+        List<Voice> _voices = new List<Voice>();
         int _muteTime;
-        //StkFrames _lastFrame;
+        #endregion
 
-        Voicer(double decayTime = 0.0)
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        public Voicer(Type t, int num, double decayTime = 0.0)
         {
-            _muteTime = decayTime <= 0.0 ? 0 : ((int)decayTime * SynthCommon.SAMPLE_RATE);
-            //_lastFrame.resize(1, 2); // Fixed at one stereo frame
+            bool ok = true;
+
+            if (t.BaseType == typeof(UGen))
+            {
+                for (int i = 0; i < num; i++)
+                {
+                    Voice voice = new Voice();
+                    voice.ugen = Activator.CreateInstance(t) as UGen;
+                    voice.birth = SynthCommon.NextId();
+                    voice.noteNumber = -1;
+                    _voices.Add(voice);
+                }
+
+                _muteTime = decayTime <= 0.0 ? 0 : ((int)decayTime * SynthCommon.SAMPLE_RATE);
+            }
+            else
+            {
+                ok = false;
+            }
+
+            if (!ok)
+            {
+                throw new Exception("Bad Voicer");
+            }
         }
 
-        void Clear()
+        public override double Sample(double din)
         {
-            //foreach(Voice v in _voices)
-            //{
-            //    delete v.ugen;
-            //}
+            double dout = 0;
+
+            foreach(Voice v in _voices)
+            {
+                if (v.sounding != 0)
+                {
+                    // Gen next sample(s).
+                    dout += v.ugen.Sample();
+ 
+                    // // Update the output buffer.
+                    // for (uint j = 0; j < v.ugen.channelsOut(); j++)
+                    // {
+                    //     _lastFrame[j] += v.ugen.lastOut(j);
+                    // }
+                }
+ 
+                // Test for tail sound.
+                if (v.sounding < 0)
+                {
+                    v.sounding++;
+                }
+ 
+                // Test for done.
+                if (v.sounding == 0)
+                {
+                    v.noteNumber = -1;
+                }
+            }
+
+            return dout;
+        }
+
+        public void Clear()
+        {
             _voices.Clear();
         }
 
-        void AddUGen(UGen ugen)
+        public override void Reset()
         {
-            Voice voice = new Voice();
-            voice.ugen = ugen;
-            voice.birth = SynthCommon.NextId();
-            voice.noteNumber = -1;
-            _voices.Add(voice);
+            foreach(Voice v in _voices)
+            {
+                if (v.sounding > 0)
+                {
+                    v.ugen.NoteOff(0.2);
+                    v.ugen.Reset();
+                }
+            }
         }
 
-        void NoteOn(double noteNumber, double amplitude)
+        public override void NoteOn(double noteNumber, double amplitude)
         {
             double frequency = SynthCommon.NoteToFreq(noteNumber);
             int found = -1;
@@ -80,11 +139,11 @@ namespace Nebulator.Synth
             _voices[which].birth = SynthCommon.NextId();
             _voices[which].noteNumber = noteNumber;
             _voices[which].frequency = frequency;
-            _voices[which].ugen.NoteOn(frequency, amplitude * SynthCommon.ONE_OVER_128);
+            _voices[which].ugen.NoteOn(noteNumber, amplitude * SynthCommon.ONE_OVER_128);
             _voices[which].sounding = 1;
         }
 
-        void NoteOff(double noteNumber, double amplitude)
+        public override void NoteOff(double noteNumber, double amplitude)
         {
             foreach (Voice v in _voices)
             {
@@ -96,102 +155,23 @@ namespace Nebulator.Synth
             }
         }
 
-        void SetFrequency(double noteNumber)
-        {
-            double frequency = SynthCommon.NoteToFreq(noteNumber);
+        #endregion
 
-            foreach (Voice v in _voices)
-            {
-                v.noteNumber = noteNumber;
-                v.frequency = frequency;
- //TODOX ????               v.ugen.SetFrequency(frequency);
-            }
-        }
+        #region Public Functions
+        #endregion
 
-        void ControlChange(int number, double value)
-        {
-            foreach (Voice v in _voices)
-            {
-                v.ugen.ControlChange(number, value);
-            }
-        }
+        #region Private functions
+        #endregion
 
-        void Silence()
-        {
-            foreach (Voice v in _voices)
-            {
-                if (v.sounding > 0)
-                {
-                    v.ugen.NoteOff(0.2);
-                }
-            }
-        }
-
-        int Read(double[] buffer, int count)
-        {
-
-
-            return count;
-        }
-
-        //void tick()
+        //void SetFrequency(double noteNumber)
         //{
-        //    // Clear buffer.
-        //    //_lastFrame[0] = 0.0;
-        //    //_lastFrame[1] = 0.0;
-
+        //    double frequency = SynthCommon.NoteToFreq(noteNumber);
         //    foreach (Voice v in _voices)
         //    {
-        //        if (v.sounding != 0)
-        //        {
-        //            // Gen next sample(s).
-        //            v.ugen.tick();
-
-        //            // Update the output buffer.
-        //            for (uint j = 0; j < v.ugen.channelsOut(); j++)
-        //            {
-        //                _lastFrame[j] += v.ugen.lastOut(j);
-        //            }
-        //        }
-
-        //        // Test for tail sound.
-        //        if (v.sounding < 0)
-        //        {
-        //            v.sounding++;
-        //        }
-
-        //        // Test for done.
-        //        if (v.sounding == 0)
-        //        {
-        //            v.noteNumber = -1;
-        //        }
+        //        v.noteNumber = noteNumber;
+        //        v.frequency = frequency;
+        //        v.ugen.SetFrequency(frequency);
         //    }
         //}
-
-        //void tick(StkFrames& frames)
-        //{
-        //     uint nChannels = _lastFrame.channels();
-        //     double* samples = &frames[channel];
-        //     uint hop = frames.channels() - nChannels;
-
-        //     for(const Voice& v: _voices)
-        //     {
-
-        //     }
-
-
-        //     for (uint i = 0; i < frames.frames(); i++, samples += hop)
-        //     {
-        //         tick();
-
-        //         for (uint j = 0; j < nChannels; j++)
-        //         {
-        //             *samples++ = _lastFrame[j];
-        //         }
-        //     }
-        //}
-
     }
-
-    
-} // namespace
+}

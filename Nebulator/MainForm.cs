@@ -17,6 +17,7 @@ using Nebulator.Device;
 using Nebulator.Server;
 using Nebulator.Midi;
 using Nebulator.OSC;
+using Nebulator.Synth;
 
 
 // TODO Factor out the processing and non-processing stuff would be nice but much breakage.
@@ -197,26 +198,13 @@ namespace Nebulator
                 Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y)
             };
             _vk.Init();
+            _vk.Hide();
             _vk.DeviceInputEvent += Device_InputEvent;
             _vk.DeviceLogEvent += Device_LogEvent;
             #endregion
 
             #region System info
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
-
-            string sins = $"Inputs: \"{VirtualKeyboard.VKeyboard.VKBD_NAME}\"";
-            for (int device = 0; device < MidiIn.NumberOfDevices; device++)
-            {
-                sins += $" \"{MidiIn.DeviceInfo(device).ProductName}\"";
-            }
-            _logger.Info(sins);
-
-            string souts = "Outputs:";
-            for (int device = 0; device < MidiOut.NumberOfDevices; device++)
-            {
-                souts += $" \"{MidiOut.DeviceInfo(device).ProductName}\"";
-            }
-            _logger.Info(souts);
             #endregion
 
             #region Open file
@@ -311,61 +299,55 @@ namespace Nebulator
             // Clean up for company.
             DeleteDevices();
 
-            // Add default.
-            _inputs.Add(VirtualKeyboard.VKeyboard.VKBD_NAME, _vk);
-            bool hasVk = false;
-
             // Get requested inputs.
             foreach (NController ctlr in _script.Controllers)
             {
-                // Check.
-                hasVk |= ctlr.InputName == VirtualKeyboard.VKeyboard.VKBD_NAME;
-
                 // Have we seen it yet?
-                if (_inputs.ContainsKey(ctlr.InputName))
+                if (_inputs.ContainsKey(ctlr.DeviceName))
                 {
-                    ctlr.Input = _inputs[ctlr.InputName];
+                    ctlr.Device = _inputs[ctlr.DeviceName];
                 }
                 else // nope
                 {
                     NInput nin = null;
 
-                    // Is it midi?
-                    if (nin == null)
+                    List<string> parts = ctlr.DeviceName.SplitByToken(":");
+                    if (parts.Count >= 1)
                     {
-                        for (int device = 0; device < MidiIn.NumberOfDevices && nin == null; device++)
+                        switch (parts[0].ToUpper())
                         {
-                            if (MidiIn.DeviceInfo(device).ProductName == ctlr.InputName)
-                            {
+                            case "MIDI":
                                 nin = new MidiInput();
-                            }
-                        }
-                    }
+                                break;
 
-                    // Is it OSC?
-                    if (nin == null)
-                    {
-                        nin = new OscInput();
+                            case "OSC":
+                                nin = new OscInput();
+                                break;
+
+                            case "VKEY":
+                                nin = new VirtualKeyboard.VKeyboard();
+                                break;
+                        }
                     }
 
                     // Finish it up.
                     if (nin != null)
                     {
-                        if (nin.Init(ctlr.InputName))
+                        if (nin.Init(ctlr.DeviceName))
                         {
                             nin.DeviceInputEvent += Device_InputEvent;
                             nin.DeviceLogEvent += Device_LogEvent;
-                            ctlr.Input = nin;
-                            _inputs.Add(ctlr.InputName, nin);
+                            ctlr.Device = nin;
+                            _inputs.Add(ctlr.DeviceName, nin);
                         }
                         else
                         {
-                            _logger.Error($"Failed to init controller: {ctlr.InputName}");
+                            _logger.Error($"Failed to init controller: {ctlr.DeviceName}");
                         }
                     }
                     else
                     {
-                        _logger.Error($"Invalid controller: {ctlr.InputName}");
+                        _logger.Error($"Invalid controller: {ctlr.DeviceName}");
                     }
                 }
             }
@@ -374,52 +356,56 @@ namespace Nebulator
             foreach (NChannel chan in _script.Channels)
             {
                 // Have we seen it yet?
-                if (_outputs.ContainsKey(chan.OutputName))
+                if (_outputs.ContainsKey(chan.DeviceName))
                 {
-                    chan.Output = _outputs[chan.OutputName];
+                    chan.Device = _outputs[chan.DeviceName];
                 }
                 else // nope
                 {
                     NOutput nout = null;
 
-                    // Is it midi?
-                    for (int device = 0; device < MidiOut.NumberOfDevices && nout == null; device++)
+                    List<string> parts = chan.DeviceName.SplitByToken(":");
+                    if (parts.Count >= 1)
                     {
-                        if (MidiOut.DeviceInfo(device).ProductName == chan.OutputName)
+                        switch (parts[0].ToUpper())
                         {
-                            nout = new MidiOutput();
-                        }
-                    }
+                            case "MIDI":
+                                nout = new MidiOutput();
+                                break;
 
-                    // Is it OSC?
-                    if (nout == null)
-                    {
-                        nout = new OscOutput();
+                            case "OSC":
+                                nout = new OscOutput();
+                                break;
+
+                            case "SYNTH":
+                                nout = new SynthOutput();
+                                break;
+                        }
                     }
 
                     // Finish it up.
                     if (nout != null)
                     {
-                        if (nout.Init(chan.OutputName))
+                        if (nout.Init(chan.DeviceName))
                         {
                             nout.DeviceLogEvent += Device_LogEvent;
-                            chan.Output = nout;
-                            _outputs.Add(chan.OutputName, nout);
+                            chan.Device = nout;
+                            _outputs.Add(chan.DeviceName, nout);
                         }
                         else
                         {
-                            _logger.Error($"Failed to init channel: {chan.OutputName}");
+                            _logger.Error($"Failed to init channel: {chan.DeviceName}");
                         }
                     }
                     else
                     {
-                        _logger.Error($"Invalid channel: {chan.OutputName}");
+                        _logger.Error($"Invalid channel: {chan.DeviceName}");
                     }
                 }
             }
 
             // Is the virtual keybard used?
-            if (hasVk)
+            if (_inputs.Values.Where(v => v.GetType() == typeof(VirtualKeyboard.VKeyboard)).Count() > 0)
             {
                 _vk.Visible = true;
                 _vk.Show();
@@ -431,6 +417,132 @@ namespace Nebulator
             }
         }
         #endregion
+
+
+        //void CreateDevices_TODOX()
+        //{
+        //    // Clean up for company.
+        //    DeleteDevices();
+
+        //    // Add default.
+        //    _inputs.Add(VirtualKeyboard.VKeyboard.VKBD_NAME, _vk);
+        //    bool hasVk = false;
+
+        //    // Get requested inputs.
+        //    foreach (NController ctlr in _script.Controllers)
+        //    {
+        //        // Check.
+        //        hasVk |= ctlr.DeviceName == VirtualKeyboard.VKeyboard.VKBD_NAME;
+
+        //        // Have we seen it yet?
+        //        if (_inputs.ContainsKey(ctlr.DeviceName))
+        //        {
+        //            ctlr.Device = _inputs[ctlr.DeviceName];
+        //        }
+        //        else // nope
+        //        {
+        //            NInput nin = null;
+
+        //            // Is it midi?
+        //            if (nin == null)
+        //            {
+        //                for (int device = 0; device < MidiIn.NumberOfDevices && nin == null; device++)
+        //                {
+        //                    if (MidiIn.DeviceInfo(device).ProductName == ctlr.DeviceName)
+        //                    {
+        //                        nin = new MidiInput();
+        //                    }
+        //                }
+        //            }
+
+        //            // Is it OSC?
+        //            if (nin == null)
+        //            {
+        //                nin = new OscInput();
+        //            }
+
+        //            // Finish it up.
+        //            if (nin != null)
+        //            {
+        //                if (nin.Init(ctlr.DeviceName))
+        //                {
+        //                    nin.DeviceInputEvent += Device_InputEvent;
+        //                    nin.DeviceLogEvent += Device_LogEvent;
+        //                    ctlr.Device = nin;
+        //                    _inputs.Add(ctlr.DeviceName, nin);
+        //                }
+        //                else
+        //                {
+        //                    _logger.Error($"Failed to init controller: {ctlr.DeviceName}");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                _logger.Error($"Invalid controller: {ctlr.DeviceName}");
+        //            }
+        //        }
+        //    }
+
+        //    // Get requested outputs.
+        //    foreach (NChannel chan in _script.Channels)
+        //    {
+        //        // Have we seen it yet?
+        //        if (_outputs.ContainsKey(chan.DeviceName))
+        //        {
+        //            chan.Device = _outputs[chan.DeviceName];
+        //        }
+        //        else // nope
+        //        {
+        //            NOutput nout = null;
+
+        //            // Is it midi?
+        //            for (int device = 0; device < MidiOut.NumberOfDevices && nout == null; device++)
+        //            {
+        //                if (MidiOut.DeviceInfo(device).ProductName == chan.DeviceName)
+        //                {
+        //                    nout = new MidiOutput();
+        //                }
+        //            }
+
+        //            // Is it OSC?
+        //            if (nout == null)
+        //            {
+        //                nout = new OscOutput();
+        //            }
+
+        //            // Finish it up.
+        //            if (nout != null)
+        //            {
+        //                if (nout.Init(chan.DeviceName))
+        //                {
+        //                    nout.DeviceLogEvent += Device_LogEvent;
+        //                    chan.Device = nout;
+        //                    _outputs.Add(chan.DeviceName, nout);
+        //                }
+        //                else
+        //                {
+        //                    _logger.Error($"Failed to init channel: {chan.DeviceName}");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                _logger.Error($"Invalid channel: {chan.DeviceName}");
+        //            }
+        //        }
+        //    }
+
+        //    // Is the virtual keybard used?
+        //    if (hasVk)
+        //    {
+        //        _vk.Visible = true;
+        //        _vk.Show();
+        //    }
+        //    else
+        //    {
+        //        _vk.Visible = false;
+        //        _vk.Hide();
+        //    }
+        //}
 
         #region Server processing
         /// <summary>
@@ -877,7 +989,7 @@ namespace Nebulator
                                 // Run through our list of inputs of interest.
                                 foreach (NController ctlpt in _script.Controllers)
                                 {
-                                    if (ctlpt.Input == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
+                                    if (ctlpt.Device == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
                                     {
                                         // Assign new value which triggers script callback.
                                         ctlpt.BoundVar.Value = value;
@@ -948,9 +1060,9 @@ namespace Nebulator
                 // Kill any not solo.
                 _script.Channels.ForEach(c =>
                 {
-                    if (c.State != ChannelState.Solo && c.Output != null)
+                    if (c.State != ChannelState.Solo && c.Device != null)
                     {
-                        c.Output.Kill(c.ChannelNumber);
+                        c.Device.Kill(c.ChannelNumber);
                     }
                 });
             }
@@ -1232,6 +1344,23 @@ namespace Nebulator
         /// </summary>
         void About_Click(object sender, EventArgs e)
         {
+
+            //// TODOX put this on the help/about
+            //string sins = $"Inputs: \"{VirtualKeyboard.VKeyboard.VKBD_NAME}\"";
+            //for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+            //{
+            //    sins += $" \"{MidiIn.DeviceInfo(device).ProductName}\"";
+            //}
+            //_logger.Info(sins);
+
+            //string souts = "Outputs:";
+            //for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+            //{
+            //    souts += $" \"{MidiOut.DeviceInfo(device).ProductName}\"";
+            //}
+            //_logger.Info(souts);
+
+
             About dlg = new About();
             dlg.ShowDialog();
         }

@@ -26,7 +26,7 @@ namespace Nebulator.OSC
         UdpClient _udpClient;
 
         /// <summary>Access synchronizer.</summary>
-        object _oscLock = new object();
+        object _lock = new object();
 
         /// <summary>Notes to stop later.</summary>
         List<StepNoteOff> _stops = new List<StepNoteOff>();
@@ -64,7 +64,7 @@ namespace Nebulator.OSC
         {
             bool inited = false;
 
-            DeviceName = name;
+            DeviceName = "Invalid"; // default
 
             try
             {
@@ -77,7 +77,7 @@ namespace Nebulator.OSC
 
                 // Check for properly formed port.
                 List<string> parts = name.SplitByToken(":");
-                if(parts.Count == 3 && parts[0] == "OSC")
+                if(parts.Count == 3)
                 {
                     if (int.TryParse(parts[2], out int port))
                     {
@@ -85,6 +85,7 @@ namespace Nebulator.OSC
                         Port = port;
                         _udpClient = new UdpClient(IP, Port);
                         inited = true;
+                        DeviceName = $"{IP}:{Port}";
                     }
                 }
             }
@@ -140,7 +141,7 @@ namespace Nebulator.OSC
             bool ret = true;
 
             // Critical code section.
-            lock (_oscLock)
+            lock (_lock)
             {
                 if (_udpClient != null)
                 {
