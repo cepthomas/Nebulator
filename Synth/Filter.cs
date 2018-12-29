@@ -1,28 +1,12 @@
 
 using System;
 
+
 namespace Nebulator.Synth
 {
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
     public abstract class Filter : UGen // virtual base
     {
-        //Filter_data d;
-        // contained these:
-        // much of this implementation is adapted or copied outright from SC3
-        // protected double _y1;
-        // protected double _y2;
-        // protected double _a0;
-        // protected double _b1;
-        // protected double _b2;
-        // protected double _freq;
-        // protected double _Q;
-        // protected double _db;
-
-
-
+        #region Fields
         protected double _a0;
         protected double _a1;
         protected double _a2;
@@ -49,10 +33,26 @@ namespace Nebulator.Synth
         protected double _prad;
         protected double _zrad;
 
-        protected double _Q;
+        protected double _q;
         protected double _db;
 
         protected bool _norm;
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+
+
 
 
 
@@ -66,7 +66,7 @@ namespace Nebulator.Synth
             double n;
             if(f >= 0)
             {
-                n = f > 1e-15 && f < 1e15 ? f : 0.0; // 1000000000000000
+                n = f > 1e-15 && f < 1e15 ? f : 0.0;
             }
             else
             {
@@ -86,10 +86,25 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class LPF : Filter
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
         public LPF()
         {
             //...
         }
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
 
         public override double Sample(double din)
         {
@@ -112,10 +127,10 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { LPF_ctrl_freq(value); }
+            set { SetParams(value); }
         }
 
-        void LPF_ctrl_freq(double freq)
+        void SetParams(double freq)
         {
             // implementation: adapted from SC3's LPF
             double pfreq = freq * SynthCommon.RAD_PER_SAMPLE * 0.5;
@@ -139,9 +154,24 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class HPF : Filter
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
         public HPF()
         {
         }
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
 
         public override double Sample(double din)
         {
@@ -163,14 +193,10 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { HPF_ctrl_freq(value); }
+            set { SetParams(value); }
         }
 
-        //-----------------------------------------------------------------------------
-        // name: HPF_ctrl_freq()
-        // desc: CTRL function ...
-        //-----------------------------------------------------------------------------
-        void HPF_ctrl_freq(double freq)
+        void SetParams(double freq)
         {
             // implementation: adapted from SC3's HPF
             double pfreq = freq * SynthCommon.RAD_PER_SAMPLE * 0.5;
@@ -194,9 +220,24 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class BPF : Filter
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
         public BPF()
         {
         }
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
 
         public override double Sample(double din)
         {
@@ -216,10 +257,10 @@ namespace Nebulator.Synth
             return result;
         }
 
-        public void set_bpf( double freq, double Q )
+        public void SetParams(double freq, double q)
         {
             double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
-            double pbw = 1.0 / Q * pfreq * .5;
+            double pbw = 1.0 / q * pfreq * .5;
 
             double C = 1.0 / Math.Tan(pbw);
             double D = 2.0 * Math.Cos(pfreq);
@@ -228,7 +269,7 @@ namespace Nebulator.Synth
             double next_b2 = (1.0 - C) * next_a0;
 
             _freq = freq;
-            _Q = Q;
+            _q = q;
             _a0 = next_a0;
             _b1 = next_b1;
             _b2 = next_b2;
@@ -237,13 +278,13 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { set_bpf( value, _Q ); }
+            set { SetParams(value, _q); }
         }
 
         public double Q
         {
-            get { return _Q; }
-            set { set_bpf( _freq, value ); }
+            get { return _q; }
+            set { SetParams(_freq, value); }
         }
     }
 
@@ -252,6 +293,21 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class BRF : Filter
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
         public BRF()
         {
             //...
@@ -276,11 +332,10 @@ namespace Nebulator.Synth
             return result;
         }
 
-        // set_brf
-        void set_brf( double freq, double Q )
+        void SetParams( double freq, double q )
         {
             double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
-            double pbw = 1.0 / Q * pfreq * .5;
+            double pbw = 1.0 / q * pfreq * .5;
 
             double C = Math.Tan(pbw);
             double D = 2.0 * Math.Cos(pfreq);
@@ -289,7 +344,7 @@ namespace Nebulator.Synth
             double next_b2 = (1.0 - C) * next_a0;
 
             _freq = freq;
-            _Q = Q;
+            _q = q;
             _a0 = next_a0;
             _b1 = next_b1;
             _b2 = next_b2;
@@ -298,13 +353,13 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { set_brf( value, _Q ); }
+            set { SetParams( value, _q ); }
         }
 
         public double Q
         {
-            get { return _Q; }
-            set { set_brf( _freq, value ); }
+            get { return _q; }
+            set { SetParams( _freq, value ); }
         }
     }
 
@@ -313,9 +368,24 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class RLPF : Filter
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
         public RLPF()
         {
-            _Q = 1.0;
+            _q = 1.0;
         }
 
         public override double Sample(double din)
@@ -336,10 +406,9 @@ namespace Nebulator.Synth
             return result;
         }
 
-        // set_rlpf
-        void set_rlpf( double freq, double Q )
+        void SetParams( double freq, double q )
         {
-            double qres = Math.Max( .001, 1.0 / Q );
+            double qres = Math.Max( .001, 1.0 / q );
             double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
 
             double D = Math.Tan(pfreq * qres * 0.5);
@@ -350,7 +419,7 @@ namespace Nebulator.Synth
             double next_a0 = (1.0 + C - next_b1) * 0.25;
 
             _freq = freq;
-            _Q = 1.0 / qres;
+            _q = 1.0 / qres;
             _a0 = next_a0;
             _b1 = next_b1;
             _b2 = next_b2;
@@ -359,13 +428,13 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { set_rlpf( value, _Q ); }
+            set { SetParams( value, _q ); }
         }
 
         public double Q
         {
-            get { return _Q; }
-            set { set_rlpf( _freq, value ); }
+            get { return _q; }
+            set { SetParams( _freq, value ); }
         }
     }
 
@@ -374,9 +443,24 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class RHPF : Filter
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
         public RHPF()
         {
-            _Q = 1.0;
+            _q = 1.0;
         }
 
         public override double Sample(double din)
@@ -397,10 +481,9 @@ namespace Nebulator.Synth
             return result;
         }
 
-        // set_rhpf
-        void set_rhpf( double freq, double Q )
+        void SetParams( double freq, double q )
         {
-            double qres = Math.Max( .001, 1.0 / Q );
+            double qres = Math.Max( .001, 1.0 / q );
             double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
 
             double D = Math.Tan(pfreq * qres * 0.5);
@@ -411,7 +494,7 @@ namespace Nebulator.Synth
             double next_a0 = (1.0 + C + next_b1) * 0.25;
 
             _freq = freq;
-            _Q = 1.0 / qres;
+            _q = 1.0 / qres;
             _a0 = next_a0;
             _b1 = next_b1;
             _b2 = next_b2;
@@ -420,13 +503,13 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { set_rhpf( value, _Q ); }
+            set { SetParams( value, _q ); }
         }
 
         public double Q
         {
-            get { return _Q; }
-            set { set_rhpf( _freq, value ); }
+            get { return _q; }
+            set { SetParams( _freq, value ); }
         }
     }
 
@@ -435,9 +518,24 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class ResonZ : Filter
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
         public ResonZ()
         {
-            set_resonz( 220, 1 );
+            SetParams(220, 1);
         }
 
         public override double Sample(double din)
@@ -458,11 +556,10 @@ namespace Nebulator.Synth
             return result;
         }
 
-        // set_resonz
-        void set_resonz( double freq, double Q )
+        void SetParams( double freq, double q )
         {
             double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
-            double B = pfreq / Q;
+            double B = pfreq / q;
             double R = 1.0 - B * 0.5;
             double R2 = 2.0 * R;
             double R22 = R * R;
@@ -472,7 +569,7 @@ namespace Nebulator.Synth
             double next_a0 = (1.0 - R22) * 0.5;
 
             _freq = freq;
-            _Q = Q;
+            _q = q;
             _a0 = next_a0;
             _b1 = next_b1;
             _b2 = next_b2;
@@ -481,13 +578,13 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { set_resonz( value, _Q ); }
+            set { SetParams( value, _q ); }
         }
 
         public double Q
         {
-            get { return _Q; }
-            set { set_resonz( _freq, value ); }
+            get { return _q; }
+            set { SetParams( _freq, value ); }
         }
     }
 
@@ -496,27 +593,20 @@ namespace Nebulator.Synth
     ////////////////////////////////////////////////////////////////////////////////////////////
     public class biquad : Filter
     {
-        // // this was in struct biquad_data:
-        // double _a0;
-        // double _a1;
-        // double _a2;
-        // double _b0;
-        // double _b1;
-        // double _b2;
+        #region Fields
+        #endregion
 
-        // double _input0;
-        // double _input1;
-        // double _input2;
-        // double _output0;
-        // double _output1;
-        // double _output2;
+        #region Properties
+        #endregion
 
-        // double _pfreq;
-        // double _zfreq;
-        // double _prad;
-        // double _zrad;
+        #region Lifecycle
+        #endregion
 
-        // bool _norm;
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
 
         public biquad()
         {
@@ -550,12 +640,12 @@ namespace Nebulator.Synth
             return _output0;
         }
 
-        void biquad_set_reson()
+        void SetResonance()
         {
             _a2 = (_prad * _prad);
             _a1 = (-2.0 * _prad * Math.Cos(2.0 * SynthCommon.ONE_PI * _pfreq / SynthCommon.SAMPLE_RATE));
 
-            if ( _norm )
+            if(_norm)
             {
                 // Use zeros at +- 1 and normalize the filter peak gain.
                 _b0 = 0.5 - 0.5 * _a2;
@@ -564,7 +654,7 @@ namespace Nebulator.Synth
             }    
         }
 
-        void biquad_set_notch()
+        void SetNotch()
         {
             _b2 = (_zrad * _zrad);
             _b1 = (-2.0 * _zrad * Math.Cos(2.0 * SynthCommon.ONE_PI * _zfreq / SynthCommon.SAMPLE_RATE));
@@ -593,26 +683,26 @@ namespace Nebulator.Synth
         // TODOX all these
         // public void biquad_ctrl_pfreq(double pfreq)
         // {
-        //     biquad_set_reson( d ); 
+        //     SetResonance( d ); 
         // }
         // public void biquad_ctrl_prad(double prad)
         // {
-        //     biquad_set_reson( d );
+        //     SetResonance( d );
         // }
         // public void biquad_ctrl_zfreq(double zfreq)
         // {
-        //     biquad_set_notch( d );
+        //     SetNotch( d );
         // }
         // public void biquad_ctrl_zrad(double zrad)
         // {
         //     biquad_data * d = (biquad_data *)OBJ_MEMBER_UINT(SELF, biquad_offset_data );
         //     zrad = GET_CK_FLOAT(ARGS);
-        //     biquad_set_notch( d );
+        //     SetNotch( d );
         // }
         // public void biquad_ctrl_norm()
         // {
         //     norm = *(bool *)ARGS;
-        //     biquad_set_reson( d );
+        //     SetResonance( d );
         // }
         // public void biquad_ctrl_pregain(double a0)
         // {
@@ -656,7 +746,7 @@ namespace Nebulator.Synth
 
     }
 
-    // // TODOX_FILTERS USING STK instead
+    // // TODOX chuck FILTERS - USING STK instead
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////////////////////////////////////////////
@@ -801,11 +891,11 @@ namespace Nebulator.Synth
     //     void twopole_ctrl_freq(double freq)
     //     {
     //         pfreq = freq;
-    //         biquad_set_reson();
+    //         SetResonance();
             
     //         if( norm )
     //         {
-    //             // Normalize the filter gain ... not terribly efficient. TODOX function
+    //             // Normalize the filter gain ... not terribly efficient. TODOX make function
     //             double real = 1.0 - prad + (m_a2 - prad) * cos( 2.0 * SynthCommon.ONE_PI * pfreq / srate );
     //             double imag = (m_a2 - prad) * sin( 2.0 * SynthCommon.ONE_PI * pfreq / srate );
     //             m_b0 = sqrt( real*real + imag*imag );
@@ -815,7 +905,7 @@ namespace Nebulator.Synth
     //     void twopole_ctrl_rad(double rad)
     //     {
     //         prad = rad;
-    //         biquad_set_reson();
+    //         SetResonance();
             
     //         if( norm )
     //         {
@@ -886,9 +976,9 @@ namespace Nebulator.Synth
     //     void twozero_ctrl_freq(double freq)
     //     {
     //         zfreq = freq;
-    //         biquad_set_notch();
+    //         SetNotch();
             
-    //         // normalize the filter gain TODOX function
+    //         // normalize the filter gain TODOX make function
     //         if( m_b1 > 0.0 )
     //             m_b0 = 1.0 / (1.0 + m_b1 + m_b2);
     //         else
@@ -900,7 +990,7 @@ namespace Nebulator.Synth
     //     void twozero_ctrl_rad(double rad)
     //     {
     //         zrad = rad;
-    //         biquad_set_notch();
+    //         SetNotch();
 
     //         // normalize the filter gain
     //         if( m_b1 > 0.0f )

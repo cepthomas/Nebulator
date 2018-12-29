@@ -1,5 +1,5 @@
-
 using System;
+
 
 namespace Nebulator.Synth
 {
@@ -16,15 +16,27 @@ namespace Nebulator.Synth
         //else if (_sync == 2)
         protected enum SyncType { Freq, Phase, FM }
 
-        public UGen SyncWith { get; set; } = null;
-
-
+        #region Fields
         protected double _num; // ticks
         protected double _freq;
         protected SyncType _sync;
         protected double _width;
         protected double _phase;
+        #endregion
 
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        public UGen SyncWith { get; set; } = null;
 
         public Osc()
         {
@@ -36,6 +48,7 @@ namespace Nebulator.Synth
 
             osc_ctrl_freq(_freq);
         }
+
 
         /// Start a note with the given frequency and amplitude.
         public override void NoteOn(double noteNumber, double amplitude)
@@ -76,43 +89,49 @@ namespace Nebulator.Synth
             _num = _freq / SynthCommon.SAMPLE_RATE;
             // bound it
             if (_num >= 1.0)
+            {
                 _num -= Math.Floor(_num);
+            }
         }
 
-        // //-----------------------------------------------------------------------------
-        // // name: osc_ctrl_period()
-        // // desc: set oscillator period
-        // //-----------------------------------------------------------------------------
-        // public void osc_ctrl_period(double period)
-        // {
-        //     // test
-        //     if (period == 0.0)
-        //         freq = 0.0;
-        //     else
-        //         freq = 1 / (period / SynthCommon.SAMPLE_RATE);
-        //     num = freq / SynthCommon.SAMPLE_RATE;
-        //     // bound it
-        //     if (num >= 1.0)
-        //         num -= Math.Floor(num);
-        //     // // return
-        //     // RETURN.v_dur = period;
-        // }
+        //-----------------------------------------------------------------------------
+        // name: osc_ctrl_period()
+        // desc: set oscillator period
+        //-----------------------------------------------------------------------------
+        public void osc_ctrl_period(double period)
+        {
+            // test
+            if (period == 0.0)
+                _freq = 0.0;
+            else
+                _freq = 1 / (period / SynthCommon.SAMPLE_RATE);
+            _num = _freq / SynthCommon.SAMPLE_RATE;
+            // bound it
+            if (_num >= 1.0)
+            {
+                _num -= Math.Floor(_num);
+            }
+            // // return
+            // RETURN.v_dur = period;
+        }
 
-        // //-----------------------------------------------------------------------------
-        // // name: osc_cget_period()
-        // // desc: get oscillator period
-        // //-----------------------------------------------------------------------------
-        // public double osc_cget_period()
-        // {
-        //     double period = 0;
+        //-----------------------------------------------------------------------------
+        // name: osc_cget_period()
+        // desc: get oscillator period
+        //-----------------------------------------------------------------------------
+        public double osc_cget_period()
+        {
+            double period = 0;
 
-        //     // get period
-        //     if (freq != 0.0)
-        //         period = 1 / freq * SynthCommon.SAMPLE_RATE;
+            // get period
+            if (_freq != 0.0)
+            {
+                period = 1 / _freq * SynthCommon.SAMPLE_RATE;
+            }
 
-        //     // return
-        //     return period;
-        // }
+            // return
+            return period;
+        }
 
         //-----------------------------------------------------------------------------
         // name: osc_ctrl_phase()
@@ -124,7 +143,9 @@ namespace Nebulator.Synth
             _phase = phase;
             //bound ( this could be set arbitrarily high or low ) 
             if (_phase >= 1.0 || _phase < 0.0)
+            {
                 _phase -= Math.Floor(_num);
+            }
             // // return
             // RETURN.v_float = (double)phase;
         }
@@ -144,7 +165,7 @@ namespace Nebulator.Synth
         // name: osc_ctrl_sync()
         // desc: select sync mode for oscillator
         //-----------------------------------------------------------------------------
-        void osc_ctrl_sync(SyncType sync) // enum?
+        void osc_ctrl_sync(SyncType sync)
         {
             // set sync
             SyncType psync = _sync;
@@ -164,16 +185,15 @@ namespace Nebulator.Synth
                 _phase += _num;
                 // keep the phase between 0 and 1
                 if (_phase > 1.0)
+                {
                     _phase -= 1.0;
+                }
             }
         }
 
 
         //-----------------------------------------------------------------------------
-        // name: osc_tick()
-        // desc: ...
-        //
-        // basic osx is a phasor... 
+        // basic osc is a phasor... 
         // we use a duty-cycle rep ( 0 - 1 ) rather than angular ( 0 - TWOPI )
         // sinusoidal oscillators are special
         //
@@ -185,7 +205,7 @@ namespace Nebulator.Synth
         // this was decidely inefficient and nit-picky.  -pld 
         //
         //-----------------------------------------------------------------------------
-        public virtual double tick(double din) //TODOX these overrides are sloppy
+        public override double Sample(double din) // TODOX these overrides are sloppy
         {
             // get the data
             // Osc_Data* d = (Osc_Data*)OBJ_MEMBER_UINT(SELF, osc_offset_data);
@@ -193,7 +213,7 @@ namespace Nebulator.Synth
             bool inc_phase = true;
 
             // if input
- //           if (ugen.m_num_src)
+            // if (ugen.m_num_src)
             {
                 // sync frequency to input
                 if (_sync == SyncType.Freq)
@@ -204,7 +224,9 @@ namespace Nebulator.Synth
                     _num = _freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0 || _num < 0.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                 }
                 // synch phase to input
                 else if (_sync == SyncType.Phase)
@@ -215,7 +237,9 @@ namespace Nebulator.Synth
                     inc_phase = false;
                     // bound it (thanks Pyry)
                     if (_phase > 1.0 || _phase < 0.0)
+                    {
                         _phase -= Math.Floor(_phase);
+                    }
                 }
                 // fm synthesis
                 else if (_sync == SyncType.FM)
@@ -226,7 +250,9 @@ namespace Nebulator.Synth
                     _num = freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0 || _num < 0.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                 }
                 // sync to now
                 // else if( sync == 3 )
@@ -247,9 +273,13 @@ namespace Nebulator.Synth
                 _phase += _num;
                 // keep the phase between 0 and 1
                 if (_phase > 1.0)
+                {
                     _phase -= 1.0;
+                }
                 else if (_phase < 0.0)
+                {
                     _phase += 1.0;
+                }
             }
 
             return dout;
@@ -258,7 +288,22 @@ namespace Nebulator.Synth
 
     public class SinOsc : Osc
     {
-        public override double tick(double din)
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        public override double Sample(double din)
         {
             // get the data
             // Osc_Data* d = (Osc_Data*)OBJ_MEMBER_UINT(SELF, osc_offset_data);
@@ -277,9 +322,13 @@ namespace Nebulator.Synth
                     _num = _freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                     else if (_num <= -1.0)
+                    {
                         _num += Math.Floor(_num);
+                    }
                 }
                 // sync phase to input
                 else if (_sync == SyncType.Phase)
@@ -297,9 +346,13 @@ namespace Nebulator.Synth
                     _num = freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                     else if (_num <= -1.0)
+                    {
                         _num += Math.Floor(_num);
+                    }
                 }
                 // sync phase to now
                 // else if( sync == 3 )
@@ -319,9 +372,13 @@ namespace Nebulator.Synth
                 _phase += _num;
                 // keep the phase between 0 and 1
                 if (_phase > 1.0)
+                {
                     _phase -= 1.0;
+                }
                 else if (_phase < 0.0)
+                {
                     _phase += 1.0;
+                }
             }
 
             return dout;
@@ -330,7 +387,22 @@ namespace Nebulator.Synth
 
     public class TriOsc : Osc
     {
-        public override double tick(double din)
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        public override double Sample(double din)
         {
             // get the data
             // Osc_Data* d = (Osc_Data*)OBJ_MEMBER_UINT(SELF, osc_offset_data);
@@ -349,9 +421,13 @@ namespace Nebulator.Synth
                     _num = _freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                     else if (_num <= -1.0)
+                    {
                         _num += Math.Floor(_num);
+                    }
                 }
                 // sync phase to input
                 else if (_sync == SyncType.Phase)
@@ -369,9 +445,13 @@ namespace Nebulator.Synth
                     _num = freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                     else if (_num <= -1.0)
+                    {
                         _num += Math.Floor(_num);
+                    }
                 }
                 // sync to now
                 // if( sync == 3 )
@@ -384,7 +464,9 @@ namespace Nebulator.Synth
             // compute
             double phase = _phase + .25;
             if (phase > 1.0)
+            {
                 phase -= 1.0;
+            }
             //if (phase < width)
             //    *out = (SAMPLE)(width == 0.0) ? 1.0 : -1.0 + 2.0 * phase / width; 
             //else
@@ -402,9 +484,13 @@ namespace Nebulator.Synth
                 _phase += _num;
                 // keep the phase between 0 and 1
                 if (_phase > 1.0)
+                {
                     _phase -= 1.0;
+                }
                 else if (_phase < 0.0)
+                {
                     _phase += 1.0;
+                }
             }
 
             return dout;
@@ -413,7 +499,22 @@ namespace Nebulator.Synth
 
     public class PulseOsc : Osc
     {
-        public override double tick(double din)
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        public override double Sample(double din)
         {
             // get the data
             // Osc_Data* d = (Osc_Data*)OBJ_MEMBER_UINT(SELF, osc_offset_data);
@@ -432,9 +533,13 @@ namespace Nebulator.Synth
                     _num = _freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                     else if (_num <= -1.0)
+                    {
                         _num += Math.Floor(_num);
+                    }
                 }
                 // sync phase to input
                 else if (_sync == SyncType.Phase)
@@ -452,9 +557,13 @@ namespace Nebulator.Synth
                     _num = freq / SynthCommon.SAMPLE_RATE;
                     // bound it
                     if (_num >= 1.0)
+                    {
                         _num -= Math.Floor(_num);
+                    }
                     else if (_num <= -1.0)
+                    {
                         _num += Math.Floor(_num);
+                    }
                 }
                 // sync to now
                 // if( sync == 3 )
@@ -473,8 +582,14 @@ namespace Nebulator.Synth
             {
                 _phase += _num;
                 // keep the phase between 0 and 1
-                if (_phase > 1.0) _phase -= 1.0;
-                else if (_phase < 0.0) _phase += 1.0;
+                if (_phase > 1.0)
+                {
+                    _phase -= 1.0;
+                }
+                else if (_phase < 0.0)
+                {
+                    _phase += 1.0;
+                }
             }
 
             return dout;
@@ -484,6 +599,21 @@ namespace Nebulator.Synth
     //////////////// sawosc_tick is tri_osc tick with width=0.0 or width=1.0  -pld 
     public class SawOsc : Osc
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
         public SawOsc()
         {
             sawosc_ctrl_width(_width);
@@ -505,6 +635,21 @@ namespace Nebulator.Synth
     ///////// sqrosc_tick is pulseosc_tick at width=0.5 -pld;
     public class SqrOsc : Osc
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+        
         public SqrOsc()
         {
             sqrosc_ctrl_width(_width);

@@ -68,24 +68,19 @@ namespace Nebulator.Test
             MySynth synth = new MySynth();
 
             SynthOutput sout = new SynthOutput();
-            bool ok = sout.Init("SYNTH:Asio4all");
+            bool ok = sout.Init("SYNTH:ASIO4ALL v2");
 
-            if(ok)
+            UT_TRUE(ok);
+
+            if (ok)
             {
                 sout.SynthUGen = synth;
 
-                sout.Start(); // TODOX separate thread?
+                sout.Start();
                 System.Threading.Thread.Sleep(2000);
                 sout.Stop();
             }
         }
-
-        //void Stopped(event)
-        //{
-        //    dac.Dispose();//??
-        //    dac = null;//??
-
-        //}
 
         // The overall synthesizer.
         public class MySynth : UGen
@@ -106,7 +101,7 @@ namespace Nebulator.Test
         {
             // 2 oscs slightly detuned and synced
             SinOsc osc1 = new SinOsc();
-            SinOsc osc2 = new SinOsc();// { SyncWith = osc1; }
+            SinOsc osc2 = new SinOsc();// TODOX { SyncWith = osc1; }
             Mix mix1 = new Mix();
             ADSR adsr = new ADSR();
 
@@ -117,30 +112,8 @@ namespace Nebulator.Test
 
             public override double Sample(double din)
             {
-                return adsr.Sample(mix1.Sample(osc1.Sample(), osc2.Sample()));
+                return adsr.Sample(mix1.Sample(osc1.Sample(0), osc2.Sample(0)));
             }
         }
-
-        //public class MyVoice2 : UGen
-        //{
-        //    // 2 oscs slightly detuned and synced
-        //    SinOsc osc1 = new SinOsc();
-        //    SinOsc osc2 = new SinOsc();
-        //    Mix mix1 = new Mix();
-        //    ADSR adsr = new ADSR();
-
-        //    public MyVoice2()
-        //    {
-        //        osc2.SyncWith = osc1;
-        //        mix1.AddInput(osc1);
-        //        mix1.AddInput(osc2);
-        //        adsr.AddInput(mix1);
-        //    }
-
-        //    public override double Sample(double din)
-        //    {
-        //        return mix1.Sample(din);
-        //    }
-        //}
     }
 }

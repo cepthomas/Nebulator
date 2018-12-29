@@ -7,63 +7,95 @@ namespace Nebulator.Synth
 ////// from ugen_xxx.* ///////
 
 
-public class Mix : UGen
-{
-    public List<UGen> Inputs
+    public class Mix : UGen // TODOX
     {
-        get;
-        set;
-    } = new List<UGen>();
+        #region Fields
+        #endregion
 
-    public Mix() //TODOX these
-    {
-        // // multi
-        // if( ugen->m_multi_chan_size )
-        // {
-        //     // set left
-        //     OBJ_MEMBER_UINT(SELF, stereo_offset_left) = (uint)(ugen->m_multi_chan[0]);
-        //     // set right
-        //     OBJ_MEMBER_UINT(SELF, stereo_offset_right) = (uint)(ugen->m_multi_chan[1]);
-        // }
-        // else // mono
-        // {
-        //     // set left and right to self
-        //     OBJ_MEMBER_UINT(SELF, stereo_offset_left) = (uint)ugen;
-        //     OBJ_MEMBER_UINT(SELF, stereo_offset_right) = (uint)ugen;
-        // }
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        public Mix()
+        {
+        }
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        public List<UGen> Inputs { get; set; } = new List<UGen>();
+
+
+        public override double Sample(double din = 0)
+        {
+            throw new Exception("Base method Sample");
+        }
+
+        public double Sample(double din1, double din2)
+        {
+            return (din1 + din2) * Gain1;
+
+            // ??? // multi
+            // if( ugen->m_multi_chan_size )
+            // {
+            //     // set left
+            //     OBJ_MEMBER_UINT(SELF, stereo_offset_left) = (uint)(ugen->m_multi_chan[0]);
+            //     // set right
+            //     OBJ_MEMBER_UINT(SELF, stereo_offset_right) = (uint)(ugen->m_multi_chan[1]);
+            // }
+            // else // mono
+            // {
+            //     // set left and right to self
+            //     OBJ_MEMBER_UINT(SELF, stereo_offset_left) = (uint)ugen;
+            //     OBJ_MEMBER_UINT(SELF, stereo_offset_right) = (uint)ugen;
+            // }
+        }
     }
 
-    public override double Sample(double din1, double din2)
+    public class Pan : UGen // TODOX
     {
-        return (din1 + din2) * Gain1;
-    }
-}
+        #region Fields
+        #endregion
 
-public class Pan : UGen
-{
-    // public double Pan1 { get; set; } = 0.0;
-    // public double Pan2 { get; set; } = 0.0;
+        #region Properties
+        #endregion
 
-    public Pan()
-    {
-        // Chuck_UGen * ugen = (Chuck_UGen * )SELF;
-        // Chuck_UGen * left = ugen->m_multi_chan[0];
-        // Chuck_UGen * right = ugen->m_multi_chan[1];
-        // // get arg
-        // double pan = GET_CK_FLOAT(ARGS);
-        // // clip it
-        // if( pan < -1.0 ) pan = -1.0;
-        // else if( pan > 1.0 ) pan = 1.0;
-        // // set it
-        // OBJ_MEMBER_FLOAT(SELF, stereo_offset_pan) = pan;
-        // // pan it
-        // left->m_pan = pan < 0.0 ? 1.0 : 1.0 - pan;
-        // right->m_pan = pan > 0.0 ? 1.0 : 1.0 + pan;
-    }
+        #region Lifecycle
+        #endregion
 
-    public override double Sample(double din)
-    {
-        return din * Gain1; //TODOX stereo
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        // public double Pan1 { get; set; } = 0.0;
+        // public double Pan2 { get; set; } = 0.0;
+
+        public Pan()
+        {
+            // Chuck_UGen * ugen = (Chuck_UGen * )SELF;
+            // Chuck_UGen * left = ugen->m_multi_chan[0];
+            // Chuck_UGen * right = ugen->m_multi_chan[1];
+            // // get arg
+            // double pan = GET_CK_FLOAT(ARGS);
+            // // clip it
+            // if( pan < -1.0 ) pan = -1.0;
+            // else if( pan > 1.0 ) pan = 1.0;
+            // // set it
+            // OBJ_MEMBER_FLOAT(SELF, stereo_offset_pan) = pan;
+            // // pan it
+            // left->m_pan = pan < 0.0 ? 1.0 : 1.0 - pan;
+            // right->m_pan = pan > 0.0 ? 1.0 : 1.0 + pan;
+        }
+
+        public override double Sample(double din)
+        {
+            return din * Gain1; // TODOX stereo
+        }
     }
-}
 }

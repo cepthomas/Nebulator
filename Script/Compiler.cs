@@ -48,6 +48,9 @@ namespace Nebulator.Script
 
         /// <summary>Specifies the temp dir used so client can track down runtime errors.</summary>
         public string TempDir { get; set; } = "";
+
+        /// <summary>Do not include some neb only components.</summary>
+        public bool Min { get; set; } = true;
         #endregion
 
         #region Fields
@@ -227,7 +230,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Top level compiler.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Compiled script</returns>
         ScriptCore Compile()
         {
             ScriptCore script = null;
@@ -254,6 +257,10 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Device.dll");
+                if(!Min)
+                {
+                    cp.ReferencedAssemblies.Add("Nebulator.Synth.dll");
+                }
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -430,6 +437,7 @@ namespace Nebulator.Script
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "using Nebulator.Device;",
+                Min ? "" : "using Nebulator.Synth;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : ScriptCore",

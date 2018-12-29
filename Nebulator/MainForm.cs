@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 using NLog;
 using MoreLinq;
@@ -18,12 +19,10 @@ using Nebulator.Server;
 using Nebulator.Midi;
 using Nebulator.OSC;
 using Nebulator.Synth;
+using NAudio.Wave;
 
 
-// TODO Factor out the processing and non-processing stuff would be nice but much breakage.
-//   - Remove Device dependency in Script project
-//   - Breaks the ScriptCore partial class model.
-//   - Many tendrils involving ScriptDefinitions, NoteUtils, etc.
+// TODO Remove Device dependency in Script project for NProcessing.
 
 
 namespace Nebulator
@@ -83,9 +82,6 @@ namespace Nebulator
 
         /// <summary>Server host.</summary>
         SelfHost _selfHost = null;
-
-        /// <summary>The virtual keyboard.</summary>
-        VirtualKeyboard.VKeyboard _vk = null;
 
         /// <summary>Devices to use for send.</summary>
         Dictionary<string, NOutput> _outputs = new Dictionary<string, NOutput>();
@@ -182,26 +178,10 @@ namespace Nebulator
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
-            // Init HTTP server. TODOX use OSC instead now?
+            // Init HTTP server. TODO use OSC instead now?
             _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
-
-            #region Keyboard
-            // Create it now but don't show.
-            _vk = new VirtualKeyboard.VKeyboard
-            {
-                Visible = false,
-                StartPosition = FormStartPosition.Manual,
-                Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height),
-                TopMost = false,
-                Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y)
-            };
-            _vk.Init();
-            _vk.Hide();
-            _vk.DeviceInputEvent += Device_InputEvent;
-            _vk.DeviceLogEvent += Device_LogEvent;
-            #endregion
 
             #region System info
             Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
@@ -269,8 +249,7 @@ namespace Nebulator
 
                 _selfHost?.Dispose();
 
-                _outputs.ForEach(o => { o.Value?.Stop(); o.Value?.Dispose(); });
-                _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
+                DeleteDevices();
 
                 components?.Dispose();
             }
@@ -285,9 +264,13 @@ namespace Nebulator
         /// </summary>
         void DeleteDevices()
         {
-            _inputs.ForEach(ci => { if(ci.Value != _vk) ci.Value?.Dispose(); });
+            // Save the vkbd position.
+            _inputs.Values.Where(v => v.GetType() == typeof(VirtualKeyboard.VKeyboard)).ForEach
+                (k => NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as VirtualKeyboard.VKeyboard));
+
+            _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
             _inputs.Clear();
-            _outputs.ForEach(co => { co.Value?.Dispose(); });
+            _outputs.ForEach(o => { o.Value?.Stop(); o.Value?.Dispose(); });
             _outputs.Clear();
         }
 
@@ -300,6 +283,8 @@ namespace Nebulator
             DeleteDevices();
 
             // Get requested inputs.
+            VirtualKeyboard.VKeyboard vkey = null; // If used, requires special handling.
+
             foreach (NController ctlr in _script.Controllers)
             {
                 // Have we seen it yet?
@@ -325,7 +310,8 @@ namespace Nebulator
                                 break;
 
                             case "VKEY":
-                                nin = new VirtualKeyboard.VKeyboard();
+                                vkey = new VirtualKeyboard.VKeyboard();
+                                nin = vkey;
                                 break;
                         }
                     }
@@ -349,6 +335,17 @@ namespace Nebulator
                     {
                         _logger.Error($"Invalid controller: {ctlr.DeviceName}");
                     }
+                }
+
+                if(vkey != null)
+                {
+                    vkey.StartPosition = FormStartPosition.Manual;
+                    vkey.Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height);
+                    vkey.TopMost = false;
+                    vkey.Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y);
+                    vkey.DeviceInputEvent += Device_InputEvent;
+                    vkey.DeviceLogEvent += Device_LogEvent;
+                    vkey.Show();
                 }
             }
 
@@ -402,18 +399,6 @@ namespace Nebulator
                         _logger.Error($"Invalid channel: {chan.DeviceName}");
                     }
                 }
-            }
-
-            // Is the virtual keybard used?
-            if (_inputs.Values.Where(v => v.GetType() == typeof(VirtualKeyboard.VKeyboard)).Count() > 0)
-            {
-                _vk.Visible = true;
-                _vk.Show();
-            }
-            else
-            {
-                _vk.Visible = false;
-                _vk.Hide();
             }
         }
         #endregion
@@ -612,7 +597,7 @@ namespace Nebulator
             }
             else
             {
-                NebCompiler compiler = new NebCompiler();
+                NebCompiler compiler = new NebCompiler() { Min = false };
 
                 // Clean up any old.
                 _script?.Dispose();
@@ -1344,24 +1329,27 @@ namespace Nebulator
         /// </summary>
         void About_Click(object sender, EventArgs e)
         {
+            List<string> sinfo = new List<string>();
+            sinfo.Add("# Your Devices");
+            sinfo.Add("## Midi Input");
+            for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+            {
+                sinfo.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
+            }
 
-            //// TODOX put this on the help/about
-            //string sins = $"Inputs: \"{VirtualKeyboard.VKeyboard.VKBD_NAME}\"";
-            //for (int device = 0; device < MidiIn.NumberOfDevices; device++)
-            //{
-            //    sins += $" \"{MidiIn.DeviceInfo(device).ProductName}\"";
-            //}
-            //_logger.Info(sins);
+            sinfo.Add("## Midi Output");
+            for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+            {
+                sinfo.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
+            }
 
-            //string souts = "Outputs:";
-            //for (int device = 0; device < MidiOut.NumberOfDevices; device++)
-            //{
-            //    souts += $" \"{MidiOut.DeviceInfo(device).ProductName}\"";
-            //}
-            //_logger.Info(souts);
+            sinfo.Add("## Asio");
+            foreach (string sdev in AsioOut.GetDriverNames())
+            {
+                sinfo.Add($"- {sdev}");
+            }
 
-
-            About dlg = new About();
+            About dlg = new About() { SysInfo = string.Join(Environment.NewLine, sinfo) };
             dlg.ShowDialog();
         }
         #endregion
@@ -1440,12 +1428,6 @@ namespace Nebulator
         {
             UserSettings.TheSettings.MainFormInfo.FromForm(this);
             UserSettings.TheSettings.Save();
-
-            // Get the vkbd position.
-            if(_vk != null)
-            {
-                NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(_vk);
-            }
 
             NebSettings.TheSettings.Save();
         }

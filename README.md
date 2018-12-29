@@ -1,16 +1,10 @@
-TODOX update all of this
 
-# What It Is
-I grew frustrated with traditional piano roll midi editors as found in your typical DAW. Another case of an implementation that sounded better during the requirements phase than after it was done. Instead of dragging little dots around, I would think that I could write a simple script to do that. So that's what this is intended to do.  
+# What This Is
+Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
 
 I played around with various scripting concepts (I do like Lua and it may reappear), but ended up realizing that C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
 
-I decided to do this as all midi and OSC, rather than try to implement native sound generation. The rationale is that I (and you) have plenty of great sounding instruments and effects using my [DAW](https://www.reaper.fm/), so may as well use those via a midi loopback driver.
-
-Some interesting reads on music-by-code:
-- [Michael Gogins](http://csoundjournal.com/issue17/gogins_composing_in_cpp.html)
-- [ChucK](http://chuck.cs.princeton.edu/)
-- [Peter Langston](http://www.langston.com/Papers/llfm.pdf)
+It supports midi and OSC, and has a WIP native synthesizer engine.
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after a Mark S C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs, and display of whatever on the UI.
 
@@ -27,13 +21,13 @@ This project contains a bunch of components that are either recycled or created 
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
 - Virtual keyboard control based on Leslie Sanford's piano.
+- Synthesizer engine based on ChucK/STK.
 - Various utilities and extensions.
 - Example of the use of [pnut unit tester](https://github.com/cepthomas/pnut) 
 
-
 # Third Party
-This application uses these excellent FOSS components:
-- NAudio DLL and modified controls, midi file: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License).
+This application uses these FOSS components:
+- NAudio DLL including modified controls and midi file utilities: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License).
 - SkiaSharp for graphics: [SkiaSharp](https://github.com/mono/SkiaSharp) (MIT). Waaaay faster than native GDI+.
 - Modified multimedia timer and piano control: [Leslie Sanford's Midi Toolkit](https://github.com/tebjan/Sanford.Multimedia.Midi) (MIT).
 - Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause).
@@ -43,6 +37,7 @@ This application uses these excellent FOSS components:
 - Web server: [embedio](https://github.com/unosquare/embedio) (MIT).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
+- The synth component is ported from [ChucK](http://chuck.cs.princeton.edu/) (GPL)
 
 # License
 https://github.com/cepthomas/Nebulator/blob/master/LICENSE

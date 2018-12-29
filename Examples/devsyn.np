@@ -1,0 +1,296 @@
+
+// Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
+
+// IO devices.
+string MY_OSC_OUT = "OSC:localhost:6449"; //"OSC:127.0.0.1:6449";
+string MY_OSC_IN = "OSC:6448";
+string MY_VKEY = "VKEY:";
+string MY_MIDI_OUT = "MIDI:loopMIDI Port 1";
+string MY_MIDI_IN = "MIDI:MPK mini";
+string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
+string MY_SYNTH_OUT = "SYNTH:ASIO4ALL v2";
+
+
+// All the neb variables.
+NVariable BACK_COLOR;
+NVariable MOD1;
+NVariable KBD_NOTE;
+NVariable VKBD_NOTE;
+NVariable CTL2;
+NVariable CTL3;
+
+// All the output channels.
+NChannel SYNTH_1;
+
+// Use win gm and virtual kbd.
+bool _local = true;
+
+// Index is integer note number, value is when to stop it.
+int[] _notesPlaying = new int[128];
+
+
+//////////////////////////////////////////////////////////////////
+/////////////////////// new stuff ////////////////////////////////
+
+// The overall synthesizer.
+public class MySynth : UGen
+{
+    // components
+    Voicer vcr = new Voicer(typeof(MyVoice), 5);
+    LPF lpf = new LPF();
+    Pan pan = new Pan();
+
+    public override double Sample(double din)
+    {
+        return pan.Sample(lpf.Sample(vcr.Sample(din)));
+    }
+}
+
+// A single voice in the generator.
+public class MyVoice : UGen
+{
+    // 2 oscs slightly detuned and synced
+    SinOsc osc1 = new SinOsc();
+    SinOsc osc2 = new SinOsc();// { SyncWith = osc1; }
+    Mix mix1 = new Mix();
+    ADSR adsr = new ADSR();
+
+    public MyVoice()
+    {
+        osc2.SyncWith = osc1;
+    }
+
+    public override double Sample(double din)
+    {
+        return adsr.Sample(mix1.Sample(osc1.Sample(), osc2.Sample()));
+    }
+}
+
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+public override void setupNeb()
+{
+    // All the neb variables.
+    CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
+    CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
+    BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
+    MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
+    KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
+    VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
+
+    // All the output channels.
+    SYNTH_1 = createChannel("synx", MY_SYNTH_OUT, 1, 0.2);
+
+    if(_local)
+    {
+        createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
+    }
+    else
+    {
+        createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
+        createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+        createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
+        createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+        createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
+    }
+
+    // levers
+    createLever(BACK_COLOR);
+    createLever(MOD1);
+}
+
+public override void step()
+{
+    if(tick == 0 && tock == 0 && _local)
+    {
+        // sendPatch(PIANO, AcousticGrandPiano);
+        // sendPatch(BASS, AcousticBass);
+        // sendPatch(SYNTH, Lead1Square);
+        // sendPatch(DRUMS, 32);
+    }
+
+    // int n = 50;
+    // if(tock == 0)
+    // {
+    //     sendNote(SYNTH_1, n, 0.7, 1.0);
+    //     n++;
+    // }
+
+
+    //void randish()
+    if(tock % 4 == 0 && random(7) == 0) // play with these for how often
+    {
+        int which = random(40, 80);
+
+        if(_notesPlaying[which] == 0) // don't play if already playing
+        {
+            int dur = random(1, 8);
+            _notesPlaying[which] = tick + dur;
+            sendNote(SYNTH_1, which, random(0.6, 0.9), dur);
+        }
+
+        // Remove any scheduled to stop now.
+        for(int i = 0;i < _notesPlaying.Length;i++)
+        {
+            if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
+            {
+                _notesPlaying[i] = 0;
+            }
+        }
+    }
+}
+
+
+
+public void On_BACK_COLOR()
+{
+    //print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
+}
+
+public void On_CTL2()
+{
+    // 0 -> 127 in
+    int newval = (int)map(CTL2.Value, 0, 127, 0, 16383);
+    //print("On_CTL2:", newval);
+    sendController(SYNTH_1, PitchControl, newval);
+}
+
+public void On_CTL3()
+{
+//TODOX controllers!    lpf.ControlChange(Modulation, MOD1.Value);
+
+    if(random(0, 10) == 0)
+    {
+        sendNote(SYNTH_1, 50 + CTL3.Value % 20, 0.7, 2.0);
+    }
+}
+
+public void On_MOD1()
+{
+    //print(MOD1.Name, "changed to", MOD1.Value);
+    // Send a controller change.
+    sendController(SYNTH_1, Modulation, MOD1.Value);
+}
+
+public void On_VKBD_NOTE()
+{
+    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
+
+    // Test for note on or off.
+    if(VKBD_NOTE.Value > 0)
+    {
+        sendNoteOn(SYNTH_1, VKBD_NOTE.Value, 0.9);
+    }
+    else
+    {
+        sendNoteOff(SYNTH_1, -VKBD_NOTE.Value);
+    }
+}
+
+public void On_KBD_NOTE()
+{
+    //print("KBD_NOTE", "=", KBD_NOTE.Value);
+
+    // Test for note on or off.
+    if(KBD_NOTE.Value > 0)
+    {
+        //sendNoteOn(PIANO, KBD_NOTE.Value, 0.9);
+        sendNoteOn(SYNTH_1, KBD_NOTE.Value, 0.9);
+        //sendNote(SYNTH, KBD_NOTE.Value, 0.8, 2.0); // fixed duration
+    }
+    else
+    {
+        //sendNoteOff(PIANO, -KBD_NOTE.Value);
+        sendNoteOff(SYNTH_1, -KBD_NOTE.Value);
+    }
+}
+
+
+////////////// processing stuff ////////////////////
+
+public override void setup()
+{
+    int s = 400;
+    size(s, s);
+
+    colorMode(HSB, 360, 100, 100);
+    noStroke(); // draw no lines
+    frameRate(2);
+
+    BACK_COLOR.Value = 100;
+}
+
+public override void draw()
+{
+    // drawFan();
+    drawTargets();
+}
+
+void drawFan()
+{
+    noStroke();
+    colorMode(HSB, 360, width, height);
+    background(160); // gray
+
+    double angleStep = 10;
+    int radius = 300;
+
+    for (double angle = 0; angle <= 360; angle += angleStep)
+    {
+        fill(angle, mouseX % width, mouseY % height);
+
+        beginShape();  // (TRIANGLE_FAN);
+        vertex(width / 2, height / 2); // center
+
+        double vx = width / 2 + cos(radians(angle)) * radius;
+        double vy = height / 2 + sin(radians(angle)) * radius;
+        vertex(vx, vy);
+        
+        vx -= 10;
+        vy -= 10;
+        vertex(vx, vy);
+    
+        endShape(CLOSE);
+    }
+}
+
+void drawTargets()
+{
+    //print("draw");
+    background(BACK_COLOR.Value, 100, 200);
+
+    drawTarget(width * 0.15f, height * 0.4f, 100, 10);
+    drawTarget(width * 0.5f, height * 0.5f, 300, 20);
+    drawTarget(width * 0.85f, height * 0.3f, 150, 12);    
+
+    if (mouseIsPressed)
+    {
+        //print("mouse is pressed");
+        fill(random(255), random(255), random(255));
+        strokeWeight(2);
+        stroke(0, 100);
+        ellipse(mouseX, mouseY, 80, 80);
+    }
+}
+
+void drawTarget(double xloc, double yloc, int size, int num)
+{
+    int grayvalues = 255 / num;
+    double steps = size / num;
+    for (int i = 0; i < num; i++)
+    {
+        fill(i * grayvalues, num * 10, 0 % 255);
+        ellipse(xloc, yloc, size - i * steps, size - i * steps);
+    }
+
+    int radius = size / 2;
+    int h = random(0, 360);
+
+    for (int r = radius; r > 0; r-=1)
+    {
+        fill(h, 90, 90);
+        ellipse(xloc, yloc, r * 2, r * 2);
+        h = (h + 1) % 360;
+    }
+}

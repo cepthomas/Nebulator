@@ -149,7 +149,7 @@ namespace Nebulator.OSC
             // Sanity checks.
             if (msg.Length - start >= 4)
             {
-                var ss = msg.Subset(start, 4).ToList(); //TODOX not very efficient/smart...
+                var ss = msg.Subset(start, 4).ToList(); // not very efficient/smart...
                 ss.FixEndian();
 
                 val = BitConverter.ToInt32(ss.ToArray(), 0);

@@ -87,6 +87,8 @@ namespace Nebulator.VirtualKeyboard
         /// </summary>
         void CreateKeyMap()
         {
+            _keyMap.Clear();
+
             int indexOfMiddleC = _keys.IndexOf(_keys.Where(k => k.NoteId == MIDDLE_C).First());
 
             string[] keyDefs =

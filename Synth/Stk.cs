@@ -1,6 +1,23 @@
 
 using System;
 
+
+        // #region Fields
+        // #endregion
+
+        // #region Properties
+        // #endregion
+
+        // #region Lifecycle
+        // #endregion
+
+        // #region Public Functions
+        // #endregion
+
+        // #region Private functions
+        // #endregion
+
+
 namespace Nebulator.Synth
 {
     public enum ADSRState { ATTACK, DECAY, SUSTAIN, RELEASE, DONE }
@@ -11,6 +28,23 @@ namespace Nebulator.Synth
     {
         public ADSR()
         {
+        }
+
+        public override double Sample(double din = 0)
+        {
+            throw new Exception("Base method Sample");
+        }
+
+        /// Start a note with the given frequency and amplitude.
+        public override void NoteOn(double noteNumber, double amplitude)
+        {
+
+        }
+
+        /// Stop a note with the given amplitude (speed of decay).
+        public override void NoteOff(double noteNumber, double amplitude = 0.0)
+        {
+
         }
 
 

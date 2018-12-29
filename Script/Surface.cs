@@ -76,11 +76,14 @@ namespace Nebulator.Script
         /// <param name="script"></param>
         public void InitSurface(ScriptCore script)
         {
-            _script = script;
-            ClientSize = new System.Drawing.Size(_script.width, _script.height);
-            _script.focused = Focused;
-            _script.frameCount = 0;
-            _script.setup();
+            if(script != null)
+            {
+                _script = script;
+                ClientSize = new System.Drawing.Size(_script.width, _script.height);
+                _script.focused = Focused;
+                _script.frameCount = 0;
+                _script.setup();
+            }
         }
 
         /// <summary>

@@ -53,7 +53,7 @@ namespace Nebulator.Common
             {
                 List<string> parts = sl.SplitByToken("|");
 
-                if (parts.Count > 1)
+                if (parts.Count > 1 && !parts[0].StartsWith("#"))
                 {
                     switch (parts[0])
                     {

@@ -244,7 +244,7 @@
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(23, 22);
             this.btnAbout.Text = "toolStripButton1";
-            this.btnAbout.ToolTipText = "Info";
+            this.btnAbout.ToolTipText = "General info and a list of your devices";
             this.btnAbout.Click += new System.EventHandler(this.About_Click);
             // 
             // levers

@@ -41,7 +41,7 @@ namespace Nebulator
         {
             Console.WriteLine($"FILE: {fn}");
 
-            NebCompiler compiler = new NebCompiler();
+            NebCompiler compiler = new NebCompiler() { Min = false };
 
             // Compile now.
             ScriptCore _script = compiler.Execute(fn);

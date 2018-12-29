@@ -10,7 +10,7 @@ using NAudio.Wave;
 namespace Nebulator.Synth
 {
     /// <summary>Category types.</summary>
-//    public enum UGenType { Generator, Processor }
+    // public enum UGenType { Generator, Processor }
 
     public abstract class UGen // TODOX stereo out, maybe in
     {
@@ -56,16 +56,9 @@ namespace Nebulator.Synth
         //public UGen Input2 { get; set; } = null; // Right
 
 
-
-
-
-
         #region Fields
 
         #endregion
-
-
-
 
         #region Properties
         // /// <summary></summary>
@@ -87,39 +80,38 @@ namespace Nebulator.Synth
         }
         #endregion
 
-
         #region Public Functions - virtual
         // Process one sample
-        public virtual double Sample(double din = 0)
-        {
-            throw new Exception("Virtual method");
-            //return din * Gain1;
-        }
+        public abstract double Sample(double din = 0); // TODOX things like oscillators don't need input
+        //{
+        //    throw new Exception("Virtual method");
+        //    //return din * Gain1;
+        //}
 
-        // Process one sample with multiple inputs - mixer
-        public virtual double Sample(double din1, double din2)
-        {
-            throw new Exception("Virtual method");
-            //return (din1 + din2) * Gain1;
-        }
+        //// Process one sample with multiple inputs - mixer
+        //public virtual double Sample(double din1, double din2)
+        //{
+        //    throw new Exception("Virtual method");
+        //    //return (din1 + din2) * Gain1;
+        //}
 
         // a buffer of samples - was float
-        //        public abstract int Sample(double[] buffer, int offset, int count);
+        // public abstract int Sample(double[] buffer, int offset, int count);
 
         // Perform the control change specified by number and value.
-        //        public abstract void ControlChange(int controlId, object value);
+        // public abstract void ControlChange(int controlId, object value);
 
         /// Start a note with the given frequency and amplitude.
         public virtual void NoteOn(double noteNumber, double amplitude)
         {
-            throw new Exception("Virtual method");
+            throw new Exception("Virtual method NoteOn");
         }
 
 
         /// Stop a note with the given amplitude (speed of decay).
         public virtual void NoteOff(double noteNumber, double amplitude = 0.0)
         {
-            throw new Exception("Virtual method");
+            throw new Exception("Virtual method NoteOff");
         }
 
 
@@ -133,7 +125,7 @@ namespace Nebulator.Synth
         // implementation specific
         public virtual void Reset()
         {
-            throw new Exception("Virtual method");
+            throw new Exception("Virtual method Reset");
         }
         #endregion
 
