@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 namespace Nebulator.Synth
 {
-////// from ugen_xxx.* ///////
+    ////// from ugen_xxx.* ///////
 
-
-    public class Mix : UGen // TODOX
+    public class Mix : UGen
     {
         #region Fields
         #endregion
@@ -27,41 +26,25 @@ namespace Nebulator.Synth
         #region Private functions
         #endregion
 
-        public List<UGen> Inputs { get; set; } = new List<UGen>();
-
-
-        public override double Sample(double din = 0)
+        public double Next(params double[] din)
         {
-            throw new Exception("Base method Sample");
-        }
-
-        public double Sample(double din1, double din2)
-        {
-            return (din1 + din2) * Gain1;
-
-            // ??? // multi
-            // if( ugen->m_multi_chan_size )
-            // {
-            //     // set left
-            //     OBJ_MEMBER_UINT(SELF, stereo_offset_left) = (uint)(ugen->m_multi_chan[0]);
-            //     // set right
-            //     OBJ_MEMBER_UINT(SELF, stereo_offset_right) = (uint)(ugen->m_multi_chan[1]);
-            // }
-            // else // mono
-            // {
-            //     // set left and right to self
-            //     OBJ_MEMBER_UINT(SELF, stereo_offset_left) = (uint)ugen;
-            //     OBJ_MEMBER_UINT(SELF, stereo_offset_right) = (uint)ugen;
-            // }
+            double dout = 0;
+            for (int i = 0; i < din.Length; i++)
+            {
+                dout += din[i];
+            }
+            return dout * Gain;
         }
     }
 
-    public class Pan : UGen // TODOX
+    public class Pan : UGen
     {
         #region Fields
         #endregion
 
         #region Properties
+        // -1 to +1
+        public double Location { get; set; } = 0.0;
         #endregion
 
         #region Lifecycle
@@ -73,29 +56,18 @@ namespace Nebulator.Synth
         #region Private functions
         #endregion
 
-        // public double Pan1 { get; set; } = 0.0;
-        // public double Pan2 { get; set; } = 0.0;
-
         public Pan()
         {
-            // Chuck_UGen * ugen = (Chuck_UGen * )SELF;
-            // Chuck_UGen * left = ugen->m_multi_chan[0];
-            // Chuck_UGen * right = ugen->m_multi_chan[1];
-            // // get arg
-            // double pan = GET_CK_FLOAT(ARGS);
-            // // clip it
-            // if( pan < -1.0 ) pan = -1.0;
-            // else if( pan > 1.0 ) pan = 1.0;
-            // // set it
-            // OBJ_MEMBER_FLOAT(SELF, stereo_offset_pan) = pan;
-            // // pan it
-            // left->m_pan = pan < 0.0 ? 1.0 : 1.0 - pan;
-            // right->m_pan = pan > 0.0 ? 1.0 : 1.0 + pan;
         }
 
-        public override double Sample(double din)
+        public override Sample Next2(double din)
         {
-            return din * Gain1; // TODOX stereo
+            Sample dout = new Sample
+            {
+                Left = din * -Location,
+                Right = din * Location
+            };
+            return dout * Gain;
         }
     }
 }

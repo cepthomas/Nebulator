@@ -23,7 +23,10 @@ namespace Nebulator.Synth
     public class Voicer : UGen
     {
         #region Fields
+        /// <summary>Constituents</summary>
         List<Voice> _voices = new List<Voice>();
+
+        /// <summary>In sample clock ticks.</summary>
         int _muteTime;
         #endregion
 
@@ -31,6 +34,12 @@ namespace Nebulator.Synth
         #endregion
 
         #region Lifecycle
+        /// <summary>
+        /// Normal constructor.
+        /// </summary>
+        /// <param name="t">Type of UGen to create.</param>
+        /// <param name="num">How many voices.</param>
+        /// <param name="decayTime"></param>
         public Voicer(Type t, int num, double decayTime = 0.0)
         {
             bool ok = true;
@@ -59,7 +68,7 @@ namespace Nebulator.Synth
             }
         }
 
-        public override double Sample(double din)
+        public override double Next(double din)
         {
             double dout = 0;
 
@@ -68,15 +77,10 @@ namespace Nebulator.Synth
                 if (v.sounding != 0)
                 {
                     // Gen next sample(s).
-                    dout += v.ugen.Sample();
- 
-                    // // Update the output buffer.
-                    // for (uint j = 0; j < v.ugen.channelsOut(); j++)
-                    // {
-                    //     _lastFrame[j] += v.ugen.lastOut(j);
-                    // }
+                    double ds = v.ugen.Next(din);
+                    dout += ds;
                 }
- 
+
                 // Test for tail sound.
                 if (v.sounding < 0)
                 {
@@ -90,7 +94,7 @@ namespace Nebulator.Synth
                 }
             }
 
-            return dout;
+            return dout * Gain;
         }
 
         public void Clear()

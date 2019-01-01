@@ -2,7 +2,7 @@
 // Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
 // IO devices.
-string MY_OSC_OUT = "OSC:localhost:6449"; //"OSC:127.0.0.1:6449";
+string MY_OSC_OUT = "OSC:localhost:6449"; // 127.0.0.1:6449
 string MY_OSC_IN = "OSC:6448";
 string MY_VKEY = "VKEY:";
 string MY_MIDI_OUT = "MIDI:loopMIDI Port 1";
@@ -31,18 +31,29 @@ int[] _notesPlaying = new int[128];
 
 //////////////////////////////////////////////////////////////////
 /////////////////////// new stuff ////////////////////////////////
+//////////////////////////////////////////////////////////////////
 
 // The overall synthesizer.
 public class MySynth : UGen
 {
-    // components
-    Voicer vcr = new Voicer(typeof(MyVoice), 5);
-    LPF lpf = new LPF();
-    Pan pan = new Pan();
+    public Voicer vcr = new Voicer(typeof(MyVoice), 5, 0.2);
+    public LPF lpf = new LPF();
+    public ADSR adsr = new ADSR();
+    public Pan pan = new Pan();
 
-    public override double Sample(double din)
+    public override Sample Next2(double din)
     {
-        return pan.Sample(lpf.Sample(vcr.Sample(din)));
+        lpf.Freq = adsr.Next(0);
+        Sample dout = pan.Next2(lpf.Next(vcr.Next(din)));
+        return dout;
+    }
+
+    public override void NoteOn(double noteNumber, double amplitude) // TODOX
+    {
+    }
+
+    public override void NoteOff(double noteNumber, double amplitude = 0.0) // TODOX
+    {
     }
 }
 
@@ -60,12 +71,73 @@ public class MyVoice : UGen
         osc2.SyncWith = osc1;
     }
 
-    public override double Sample(double din)
+    public override double Next(double din)
     {
-        return adsr.Sample(mix1.Sample(osc1.Sample(), osc2.Sample()));
+        double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0))); //TODOX feed oscillators a value?
+        return dout;
     }
 }
 
+// The top singleton.
+MySynth syn = new MySynth();
+
+
+public void On_VKBD_NOTE()
+{
+    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
+
+    // Test for note on or off.
+    if(VKBD_NOTE.Value > 0)
+    {
+        sendNoteOn(SYNTH_1, VKBD_NOTE.Value, 0.9);
+    }
+    else
+    {
+        sendNoteOff(SYNTH_1, -VKBD_NOTE.Value);
+    }
+}
+
+public void On_MOD1()
+{
+    //print(MOD1.Name, "changed to", MOD1.Value);
+    // Send a controller change.
+    //sendController(SYNTH_1, Modulation, MOD1.Value);
+
+    syn.lpf.Freq = MOD1.Value;
+}
+
+public void On_CTL3()
+{
+    if(random(0, 10) == 0)
+    {
+        sendNote(SYNTH_1, 50 + CTL3.Value % 20, 0.7, 2.0);
+    }
+}
+
+public void On_CTL2()
+{
+
+}
+
+public void On_KBD_NOTE()
+{
+    //print("KBD_NOTE", "=", KBD_NOTE.Value);
+
+    // Test for note on or off.
+    if(KBD_NOTE.Value > 0)
+    {
+        //sendNoteOn(PIANO, KBD_NOTE.Value, 0.9);
+        sendNoteOn(SYNTH_1, KBD_NOTE.Value, 0.9);
+        //sendNote(SYNTH, KBD_NOTE.Value, 0.8, 2.0); // fixed duration
+    }
+    else
+    {
+        //sendNoteOff(PIANO, -KBD_NOTE.Value);
+        sendNoteOff(SYNTH_1, -KBD_NOTE.Value);
+    }
+}
+
+//////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
@@ -80,7 +152,17 @@ public override void setupNeb()
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // All the output channels.
-    SYNTH_1 = createChannel("synx", MY_SYNTH_OUT, 1, 0.2);
+    SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1, 0.2);
+
+
+
+// MySynth synth = new MySynth();
+// SynthOutput sout = new SynthOutput();
+// sout.Init("SYNTH:ASIO4ALL v2");
+// sout.SynthUGen = synth; ****????
+// SYNTH_1.Device is sout;
+// sout.Start();
+
 
     if(_local)
     {
@@ -92,7 +174,7 @@ public override void setupNeb()
         createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
         createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
         createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
-        createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
+        createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE); // noteOn/Off
     }
 
     // levers
@@ -104,6 +186,8 @@ public override void step()
 {
     if(tick == 0 && tock == 0 && _local)
     {
+        (SYNTH_1.Device as SynthOutput).SynthUGen = syn;
+
         // sendPatch(PIANO, AcousticGrandPiano);
         // sendPatch(BASS, AcousticBass);
         // sendPatch(SYNTH, Lead1Square);
@@ -118,7 +202,6 @@ public override void step()
     // }
 
 
-    //void randish()
     if(tock % 4 == 0 && random(7) == 0) // play with these for how often
     {
         int which = random(40, 80);
@@ -148,63 +231,6 @@ public void On_BACK_COLOR()
     //print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
 }
 
-public void On_CTL2()
-{
-    // 0 -> 127 in
-    int newval = (int)map(CTL2.Value, 0, 127, 0, 16383);
-    //print("On_CTL2:", newval);
-    sendController(SYNTH_1, PitchControl, newval);
-}
-
-public void On_CTL3()
-{
-//TODOX controllers!    lpf.ControlChange(Modulation, MOD1.Value);
-
-    if(random(0, 10) == 0)
-    {
-        sendNote(SYNTH_1, 50 + CTL3.Value % 20, 0.7, 2.0);
-    }
-}
-
-public void On_MOD1()
-{
-    //print(MOD1.Name, "changed to", MOD1.Value);
-    // Send a controller change.
-    sendController(SYNTH_1, Modulation, MOD1.Value);
-}
-
-public void On_VKBD_NOTE()
-{
-    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
-
-    // Test for note on or off.
-    if(VKBD_NOTE.Value > 0)
-    {
-        sendNoteOn(SYNTH_1, VKBD_NOTE.Value, 0.9);
-    }
-    else
-    {
-        sendNoteOff(SYNTH_1, -VKBD_NOTE.Value);
-    }
-}
-
-public void On_KBD_NOTE()
-{
-    //print("KBD_NOTE", "=", KBD_NOTE.Value);
-
-    // Test for note on or off.
-    if(KBD_NOTE.Value > 0)
-    {
-        //sendNoteOn(PIANO, KBD_NOTE.Value, 0.9);
-        sendNoteOn(SYNTH_1, KBD_NOTE.Value, 0.9);
-        //sendNote(SYNTH, KBD_NOTE.Value, 0.8, 2.0); // fixed duration
-    }
-    else
-    {
-        //sendNoteOff(PIANO, -KBD_NOTE.Value);
-        sendNoteOff(SYNTH_1, -KBD_NOTE.Value);
-    }
-}
 
 
 ////////////// processing stuff ////////////////////

@@ -403,132 +403,6 @@ namespace Nebulator
         }
         #endregion
 
-
-        //void CreateDevices_TODOX()
-        //{
-        //    // Clean up for company.
-        //    DeleteDevices();
-
-        //    // Add default.
-        //    _inputs.Add(VirtualKeyboard.VKeyboard.VKBD_NAME, _vk);
-        //    bool hasVk = false;
-
-        //    // Get requested inputs.
-        //    foreach (NController ctlr in _script.Controllers)
-        //    {
-        //        // Check.
-        //        hasVk |= ctlr.DeviceName == VirtualKeyboard.VKeyboard.VKBD_NAME;
-
-        //        // Have we seen it yet?
-        //        if (_inputs.ContainsKey(ctlr.DeviceName))
-        //        {
-        //            ctlr.Device = _inputs[ctlr.DeviceName];
-        //        }
-        //        else // nope
-        //        {
-        //            NInput nin = null;
-
-        //            // Is it midi?
-        //            if (nin == null)
-        //            {
-        //                for (int device = 0; device < MidiIn.NumberOfDevices && nin == null; device++)
-        //                {
-        //                    if (MidiIn.DeviceInfo(device).ProductName == ctlr.DeviceName)
-        //                    {
-        //                        nin = new MidiInput();
-        //                    }
-        //                }
-        //            }
-
-        //            // Is it OSC?
-        //            if (nin == null)
-        //            {
-        //                nin = new OscInput();
-        //            }
-
-        //            // Finish it up.
-        //            if (nin != null)
-        //            {
-        //                if (nin.Init(ctlr.DeviceName))
-        //                {
-        //                    nin.DeviceInputEvent += Device_InputEvent;
-        //                    nin.DeviceLogEvent += Device_LogEvent;
-        //                    ctlr.Device = nin;
-        //                    _inputs.Add(ctlr.DeviceName, nin);
-        //                }
-        //                else
-        //                {
-        //                    _logger.Error($"Failed to init controller: {ctlr.DeviceName}");
-        //                }
-        //            }
-        //            else
-        //            {
-        //                _logger.Error($"Invalid controller: {ctlr.DeviceName}");
-        //            }
-        //        }
-        //    }
-
-        //    // Get requested outputs.
-        //    foreach (NChannel chan in _script.Channels)
-        //    {
-        //        // Have we seen it yet?
-        //        if (_outputs.ContainsKey(chan.DeviceName))
-        //        {
-        //            chan.Device = _outputs[chan.DeviceName];
-        //        }
-        //        else // nope
-        //        {
-        //            NOutput nout = null;
-
-        //            // Is it midi?
-        //            for (int device = 0; device < MidiOut.NumberOfDevices && nout == null; device++)
-        //            {
-        //                if (MidiOut.DeviceInfo(device).ProductName == chan.DeviceName)
-        //                {
-        //                    nout = new MidiOutput();
-        //                }
-        //            }
-
-        //            // Is it OSC?
-        //            if (nout == null)
-        //            {
-        //                nout = new OscOutput();
-        //            }
-
-        //            // Finish it up.
-        //            if (nout != null)
-        //            {
-        //                if (nout.Init(chan.DeviceName))
-        //                {
-        //                    nout.DeviceLogEvent += Device_LogEvent;
-        //                    chan.Device = nout;
-        //                    _outputs.Add(chan.DeviceName, nout);
-        //                }
-        //                else
-        //                {
-        //                    _logger.Error($"Failed to init channel: {chan.DeviceName}");
-        //                }
-        //            }
-        //            else
-        //            {
-        //                _logger.Error($"Invalid channel: {chan.DeviceName}");
-        //            }
-        //        }
-        //    }
-
-        //    // Is the virtual keybard used?
-        //    if (hasVk)
-        //    {
-        //        _vk.Visible = true;
-        //        _vk.Show();
-        //    }
-        //    else
-        //    {
-        //        _vk.Visible = false;
-        //        _vk.Hide();
-        //    }
-        //}
-
         #region Server processing
         /// <summary>
         /// Process a request from the web api. Set the e.Result to a json string. 
@@ -1550,6 +1424,8 @@ namespace Nebulator
 
             // Always do this.
             timeMaster.CurrentTime = _stepTime;
+
+            _outputs.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }

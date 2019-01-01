@@ -15,6 +15,21 @@ using Nebulator.Common;
 using Nebulator.Device;
 
 
+// TODOX On the performance front, the killer is the .NET garbage collector. You have to hope that it
+//doesn't kick in during a callback. With ASIO you often run at super low latencies (<10ms), and
+//the garbage collector can cause a callback to be missed, meaning you'd hear a glitch in the audio output.
+// NOW (4.5) >>> While the SustainedLowLatency setting is in effect, generation 0, generation 1, and background generation 2 
+//collections still occur and do not typically cause noticeable pause times. A blocking generation 2 collection happens
+//only if the machine is low in memory or if the app induces a GC by calling GC.Collect(). It is critical that you deploy
+//apps that use the SustainedLowLatency setting onto machines that have adequate memory, so they will satisfy the resulting
+//growth in the heap while the setting is in effect.
+
+
+// void sendNote(NChannel channel, object note, double vol, double dur)
+// void sendNoteOn(NChannel channel, double note, double vol)
+// void sendNoteOff(NChannel channel, double note)
+
+
 namespace Nebulator.Synth
 {
     /// <summary>
@@ -55,7 +70,7 @@ namespace Nebulator.Synth
         /// </summary>
         public SynthOutput()
         {
-            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(SynthCommon.SAMPLE_RATE, SynthCommon.NUM_CHANNELS);
+            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(SynthCommon.SAMPLE_RATE, SynthCommon.NUM_OUTPUTS);
         }
 
         /// <inheritdoc />
@@ -111,22 +126,35 @@ namespace Nebulator.Synth
         {
             // TODOX all this:
             // Manually Stopping Playback
-            // You can stop audio playback any time by simply calling Stop. Depending on the implementation of IWavePlayer, playback may not stop instantaneously, but finish playing the currently queued buffer (usually no more than 100ms). So even when you call Stop, you should wait for the PlaybackStopped event to be sure that playback has actually stopped.
+            // You can stop audio playback any time by simply calling Stop. Depending on the implementation of IWavePlayer,
+            // playback may not stop instantaneously, but finish playing the currently queued buffer (usually no more
+            // than 100ms). So even when you call Stop, you should wait for the PlaybackStopped event to be sure that
+            // playback has actually stopped.
 
             // Reaching the end of the input audio
-            // In NAudio, the Read method on IWaveProvider is called every time the output device needs more audio to play. The Read method should normally return the requested number of bytes of audio (the count parameter). If Read returns less than count this means this is the last piece of audio in the input stream. If Read returns 0, the end has been reached.
+            // In NAudio, the Read method on IWaveProvider is called every time the output device needs more audio to play.
+            // The Read method should normally return the requested number of bytes of audio (the count parameter). If
+            // Read returns less than count this means this is the last piece of audio in the input stream. If Read
+            // returns 0, the end has been reached.
 
-            // NAudio playback devices will stop playing when the IWaveProvider's Read method returns 0. This will cause the PlaybackStopped event to get raised.
+            // NAudio playback devices will stop playing when the IWaveProvider's Read method returns 0. This will cause
+            // the PlaybackStopped event to get raised.
 
             // Output device error
-            // If there is any kind of audio error during playback, the PlaybackStopped event will be fired, and the Exception property set to whatever exception caused playback to stop. A very common cause of this would be playing to a USB device that has been removed during playback.
+            // If there is any kind of audio error during playback, the PlaybackStopped event will be fired, and the
+            // Exception property set to whatever exception caused playback to stop. A very common cause of this would
+            // be playing to a USB device that has been removed during playback.
 
             // Disposing resources
-            // Often when playback ends, you want to clean up some resources, such as disposing the output device, and closing any input files such as AudioFileReader. It is strongly recommended that you do this when you receive the PlaybackStopped event and not immediately after calling Stop. This is because in many IWavePlayer implementations, the audio playback code is on another thread, and you may be disposing resources that will still be used.
+            // Often when playback ends, you want to clean up some resources, such as disposing the output device, and
+            // closing any input files such as AudioFileReader. It is strongly recommended that you do this when you
+            // receive the PlaybackStopped event and not immediately after calling Stop. This is because in many
+            // IWavePlayer implementations, the audio playback code is on another thread, and you may be disposing
+            // resources that will still be used.
 
-            // Note that NAudio attempts to fire the PlaybackStopped event on the SynchronizationContext the device was created on. This means in a WinForms or WPF application it is safe to access the GUI in the handler.
+            // Note that NAudio attempts to fire the PlaybackStopped event on the SynchronizationContext the device was
+            // created on. This means in a WinForms or WPF application it is safe to access the GUI in the handler.
         }
-
 
         /// <summary>
         /// Resource clean up.
@@ -166,92 +194,48 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public bool Send(Step step)
+        public bool Send(Step step) //TODOX finish this - steps generated by sequences need to be processed at the script level
         {
             bool ret = true;
 
             // Critical code section.
             lock (_lock)
             {
-                // if (_udpClient != null)
-                // {
-                //     List<int> msgs = new List<int>();
-                //     Message msg = null;
-
-                //     switch (step)
-                //     {
-                //         case StepNoteOn non:
-                //             // /note/ channel notenum vel
-                //             msg = new Message() { Address = "/note" };
-                //             msg.Data.Add(non.ChannelNumber);
-                //             msg.Data.Add(non.NoteNumber);
-                //             msg.Data.Add(non.VelocityToPlay);
-
-                //             if (non.Duration.TotalTocks > 0) // specific duration
-                //             {
-                //                 // Remove any lingering note offs and add a fresh one.
-                //                 _stops.RemoveAll(s => s.NoteNumber == non.NoteNumber && s.ChannelNumber == non.ChannelNumber);
-
-                //                 _stops.Add(new StepNoteOff()
-                //                 {
-                //                     Device = non.Device,
-                //                     ChannelNumber = non.ChannelNumber,
-                //                     NoteNumber = Utils.Constrain(non.NoteNumber, 0, OscCommon.MAX_NOTE),
-                //                     Expiry = non.Duration.TotalTocks
-                //                 });
-                //             }
-                //             break;
-
-                //         case StepNoteOff noff:
-                //             // /note/ channel notenum 0
-                //             msg = new Message() { Address = "/note" };
-                //             msg.Data.Add(noff.ChannelNumber);
-                //             msg.Data.Add(noff.NoteNumber);
-                //             msg.Data.Add(0);
-
-                //             break;
-
-                //         case StepControllerChange ctl:
-                //             // /controller/ channel ctlnum val
-                //             msg = new Message() { Address = "/controller" };
-                //             msg.Data.Add(ctl.ChannelNumber);
-                //             msg.Data.Add(ctl.ControllerId);
-                //             msg.Data.Add(ctl.Value);
-                //             break;
-
-                //         case StepPatch stt:
-                //             // ignore n/a
-                //             break;
-
-                //         default:
-                //             break;
-                //     }
-
-                //     if (msg != null)
-                //     {
-                //         List<byte> bytes = msg.Pack();
-                //         if (bytes != null)
-                //         {
-                //             if (msg.Errors.Count == 0)
-                //             {
-                //                 _udpClient.Send(bytes.ToArray(), bytes.Count);
-                //                 LogMsg(DeviceLogEventArgs.LogCategory.Send, step.ToString());
-                //             }
-                //             else
-                //             {
-                //                 msg.Errors.ForEach(e => LogMsg(DeviceLogEventArgs.LogCategory.Error, e));
-                //             }
-                //         }
-                //         else
-                //         {
-                //             LogMsg(DeviceLogEventArgs.LogCategory.Error, step.ToString());
-                //         }
-                //     }
-                //     else
-                //     {
-                //         LogMsg(DeviceLogEventArgs.LogCategory.Error, step.ToString());
-                //     }
-                //}
+                if (_asioOut != null && SynthUGen != null)
+                {
+                    switch (step)
+                    {
+                        case StepNoteOn non:
+                            SynthUGen.NoteOn(non.NoteNumber, non.VelocityToPlay);
+ 
+                            if (non.Duration.TotalTocks > 0) // specific duration
+                            {
+                                // Remove any lingering note offs and add a fresh one.
+                                _stops.RemoveAll(s => s.NoteNumber == non.NoteNumber && s.ChannelNumber == non.ChannelNumber);
+ 
+                                _stops.Add(new StepNoteOff()
+                                {
+                                    Device = non.Device,
+                                    ChannelNumber = non.ChannelNumber,
+                                    NoteNumber = Utils.Constrain(non.NoteNumber, 0, SynthCommon.MAX_NOTE),
+                                    Expiry = non.Duration.TotalTocks
+                                });
+                            }
+                            break;
+ 
+                        case StepNoteOff noff:
+                            SynthUGen.NoteOff(noff.NoteNumber, 0);
+                            break;
+ 
+                        case StepControllerChange ctl:
+                        case StepPatch stt:
+                            // ignore n/a
+                            break;
+ 
+                        default:
+                            break;
+                    }
+                }
             }
 
             return ret;
@@ -266,67 +250,46 @@ namespace Nebulator.Synth
         public void Start()
         {
             _asioOut?.Play();
-           // _asioOut?.Stop();
         }
 
         /// <inheritdoc />
         public void Stop()
         {
             _asioOut?.Pause();
+           // _asioOut?.Stop();
         }
         #endregion
 
         #region ISampleProvider implementation
+        /// <summary></summary>
         public WaveFormat WaveFormat { get; }
 
-        // This gets called when output is needed.
+        /// <summary>
+        /// This ISampleProvider function gets called when output is needed.
+        /// </summary>
+        /// <param name="buffer">Stereo with interleaved L/R</param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public int Read(float[] buffer, int offset, int count)
         {
             if(SynthUGen != null)
             {
-                for (int n = 0; n < count; n++)
+                for (int n = 0; n < count; )
                 {
-                    buffer[n] = (float)SynthUGen.Sample();//TODOX stereo?
+                    Sample dout = SynthUGen.Next2(buffer[n]);
+                    buffer[n++] = (float)dout.Left;
+                    buffer[n++] = (float)dout.Right;
                 }
             }
             else
             {
-                count = 0;//?
+                count = 0;
             }
 
             return count;
         }
         #endregion
-
-        // stereo?
-        // public int Read(float[] buffer, int offset, int sampleCount)
-        // {
-        //     int samplesRead = source.Read(buffer, offset, sampleCount);
-        //     if (volume != 1f)
-        //     {
-        //         for (int n = 0; n < sampleCount; n++)
-        //         {
-        //             buffer[offset + n] *= volume;
-        //         }
-        //     }
-        //     return samplesRead;
-        // }
-
-
-        // public int Read(float[] buffer, int offset, int count)
-        // {
-        //     var sourceSamplesRequired = count / 2;
-        //     var outIndex = offset;
-        //     EnsureSourceBuffer(sourceSamplesRequired);
-        //     var sourceSamplesRead = source.Read(sourceBuffer, 0, sourceSamplesRequired);
-        //     for (var n = 0; n < sourceSamplesRead; n++)
-        //     {
-        //         buffer[outIndex++] = sourceBuffer[n] * LeftVolume;
-        //         buffer[outIndex++] = sourceBuffer[n] * RightVolume;
-        //     }
-        //     return sourceSamplesRead * 2;
-        // }
-
 
         #region Private functions
         /// <summary>Ask host to do something with this.</summary>

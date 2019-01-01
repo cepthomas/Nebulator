@@ -170,7 +170,7 @@ namespace Nebulator.Midi
                                 Device = this,
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                                Velocity = 0
+                                Velocity = 0.0
                             };
                         }
                         else
@@ -180,7 +180,7 @@ namespace Nebulator.Midi
                                 Device = this,
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = evt.NoteNumber,
-                                Velocity = evt.Velocity,
+                                Velocity = evt.Velocity / MidiUtils.MAX_MIDI,
                                 VelocityToPlay = evt.Velocity,
                                 Duration = new Time(0)
                             };
@@ -196,7 +196,7 @@ namespace Nebulator.Midi
                             Device = this,
                             ChannelNumber = evt.Channel,
                             NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                            Velocity = evt.Velocity
+                            Velocity = evt.Velocity / MidiUtils.MAX_MIDI
                         };
                     }
                     break;

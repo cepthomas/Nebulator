@@ -8,18 +8,6 @@ using Nebulator.Synth;
 
 
 
-// TODOX On the performance front, the killer is the .NET garbage collector. You have to hope that it
-//doesn't kick in during a callback. With ASIO you often run at super low latencies (<10ms), and
-//the garbage collector can cause a callback to be missed, meaning you'd hear a glitch in the audio output.
-// NOW (4.5) >>> While the SustainedLowLatency setting is in effect, generation 0, generation 1, and background generation 2 
-//collections still occur and do not typically cause noticeable pause times. A blocking generation 2 collection happens
-//only if the machine is low in memory or if the app induces a GC by calling GC.Collect(). It is critical that you deploy
-//apps that use the SustainedLowLatency setting onto machines that have adequate memory, so they will satisfy the resulting
-//growth in the heap while the setting is in effect.
-
-
-
-
 //------- hook modulators in!!!!
 ////// Sanford does this:
 // public class LiteWaveVoice : Voice
@@ -75,9 +63,16 @@ namespace Nebulator.Test
             if (ok)
             {
                 sout.SynthUGen = synth;
-
                 sout.Start();
-                System.Threading.Thread.Sleep(2000);
+
+                double val = 0.3;
+                while (val < 0.9)
+                {
+                    synth.lpf.Freq = val;
+                    System.Threading.Thread.Sleep(200);
+                    val += 0.1; 
+                }
+
                 sout.Stop();
             }
         }
@@ -86,14 +81,18 @@ namespace Nebulator.Test
         public class MySynth : UGen
         {
             // components
-            Voicer vcr = new Voicer(typeof(MyVoice), 5);
-            LPF lpf = new LPF();
-            Pan pan = new Pan();
+            public Voicer vcr = new Voicer(typeof(MyVoice), 5, 0.2);
+            public LPF lpf = new LPF();
+            public Pan pan = new Pan();
 
-            public override double Sample(double din)
+            public override Sample Next2(double din)
             {
-                return pan.Sample(lpf.Sample(vcr.Sample(din)));
+                return pan.Next2(lpf.Next(vcr.Next(din)));  // TODOX something like: din -> vcr -> lpf -> pan;
             }
+
+            // public virtual void NoteOn(double noteNumber, double amplitude)
+            // public virtual void NoteOff(double noteNumber, double amplitude = 0.0)
+
         }
 
         // A single voice in the generator.
@@ -101,7 +100,7 @@ namespace Nebulator.Test
         {
             // 2 oscs slightly detuned and synced
             SinOsc osc1 = new SinOsc();
-            SinOsc osc2 = new SinOsc();// TODOX { SyncWith = osc1; }
+            SinOsc osc2 = new SinOsc();
             Mix mix1 = new Mix();
             ADSR adsr = new ADSR();
 
@@ -110,9 +109,9 @@ namespace Nebulator.Test
                 osc2.SyncWith = osc1;
             }
 
-            public override double Sample(double din)
+            public override double Next(double din)
             {
-                return adsr.Sample(mix1.Sample(osc1.Sample(0), osc2.Sample(0)));
+                return adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0)));
             }
         }
     }

@@ -259,6 +259,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("Nebulator.Device.dll");
                 if(!Min)
                 {
+                    cp.ReferencedAssemblies.Add("NAudio.dll");
                     cp.ReferencedAssemblies.Add("Nebulator.Synth.dll");
                 }
 
@@ -438,6 +439,7 @@ namespace Nebulator.Script
                 "using Nebulator.Script;",
                 "using Nebulator.Device;",
                 Min ? "" : "using Nebulator.Synth;",
+                Min ? "" : "using NAudio;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : ScriptCore",

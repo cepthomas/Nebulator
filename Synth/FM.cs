@@ -2,6 +2,16 @@
 
 // ChucK/STK source code to be ported.
 
+// info: http://electro-music.com/forum/topic-18641.html
+// https://ccrma.stanford.edu/software/snd/snd/fm.html
+
+
+// SinOsc modulator => SinOsc carrier => dac; 
+// 2 => carrier.sync; // use carrier's input to modulate its frequency 
+// 330 => modulator.freq; // modulator's frequency 
+// 500 => modulator.gain; // modulation depth 
+// 220 => carrier.freq; // carrier's frequency 
+
 
 // FM functions
 

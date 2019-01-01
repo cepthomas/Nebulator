@@ -20,6 +20,21 @@ using System;
 
 namespace Nebulator.Synth
 {
+    #region Fields
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Lifecycle
+    #endregion
+
+    #region Public Functions
+    #endregion
+
+    #region Private functions
+    #endregion
+    
     public enum ADSRState { ATTACK, DECAY, SUSTAIN, RELEASE, DONE }
 
 
@@ -30,9 +45,10 @@ namespace Nebulator.Synth
         {
         }
 
-        public override double Sample(double din = 0)
+        public override double Next(double din)
         {
-            throw new Exception("Base method Sample");
+            return 0.5;
+            throw new Exception("Base method Next");
         }
 
         /// Start a note with the given frequency and amplitude.
