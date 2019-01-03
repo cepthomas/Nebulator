@@ -9,7 +9,7 @@ using NAudio.Wave;
 
 namespace Nebulator.Synth
 {
-    public struct Sample  //TODOX this or tuple?
+    public struct Sample  // TODOX2 - stereo - this or tuple?
     {
         public double Left;
         public double Right;
@@ -48,7 +48,6 @@ namespace Nebulator.Synth
         /// 0.0 to 1.0 - gain is applied to input signals firstly.
         /// </summary>
         public double Gain { get; set; } = 0.2;
-
         #endregion
 
         #region Lifecycle
@@ -106,23 +105,12 @@ namespace Nebulator.Synth
         //}
 
         /// <summary>
-        /// Start a note with the given frequency and amplitude.
-        /// Implementers may interpret as KeyOn().
+        /// Start or stop a note with the given frequency and amplitude.
+        /// Implementers may ignore or interpret as KeyOn().
         /// </summary>
-        /// <param name="noteNumber"></param>
-        /// <param name="amplitude"></param>
-        public virtual void NoteOn(double noteNumber, double amplitude)
-        {
-            // Non-implementers can ignore.
-        }
-
-        /// <summary>
-        /// Stop a note with the given amplitude (speed of decay).
-        /// Implementers may interpret as KeyOn().
-        /// </summary>
-        /// <param name="noteNumber"></param>
-        /// <param name="amplitude"></param>
-        public virtual void NoteOff(double noteNumber, double amplitude = 0.0)
+        /// <param name="noteNumber">Which note</param>
+        /// <param name="amplitude">If 0.o, stop, otherwise start - normalized</param>
+        public virtual void Note(double noteNumber, double amplitude)
         {
             // Non-implementers can ignore.
         }

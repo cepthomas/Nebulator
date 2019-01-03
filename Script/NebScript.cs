@@ -41,8 +41,11 @@ namespace Nebulator.Script
         #endregion
 
         #region Functions that can be overridden in the user script
-        /// <summary>Called to iniialize Nebulator stuff.</summary>
+        /// <summary>Called to initialize Nebulator stuff.</summary>
         public virtual void setupNeb() { }
+
+        /// <summary>Called if you need to do something with devices after they have been created.</summary>
+        public virtual void setupNeb2() { }
 
         /// <summary>Called every Nebulator Tock.</summary>
         public virtual void step() { }

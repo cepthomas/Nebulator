@@ -501,11 +501,14 @@ namespace Nebulator
                         // Surface area.
                         InitRuntime();
 
-                        // Setup.
+                        // Setup - first step.
                         _script.setupNeb();
 
                         // Devices specified in script setupNeb() - create now.
                         CreateDevices();
+
+                        // Setup - optional second step.
+                        _script.setupNeb2();
 
                         _surface.InitSurface(_script);
 

@@ -35,7 +35,7 @@ namespace Nebulator.Synth
     #region Private functions
     #endregion
     
-    public enum ADSRState { ATTACK, DECAY, SUSTAIN, RELEASE, DONE }
+    public enum ADSRState { ATTACK, DECAY, SUSTAIN, RELEASE, IDLE }
 
 
 
@@ -45,22 +45,27 @@ namespace Nebulator.Synth
         {
         }
 
+        public double Attack { get; set; }
+        public double Decay { get; set; }
+        public double Sustain { get; set; }
+        public double Release { get; set; }
+
+
         public override double Next(double din)
         {
             return 0.5;
             throw new Exception("Base method Next");
         }
 
-        /// Start a note with the given frequency and amplitude.
-        public override void NoteOn(double noteNumber, double amplitude)
+        public void KeyOn()
         {
-
+            // see below
+            
         }
 
-        /// Stop a note with the given amplitude (speed of decay).
-        public override void NoteOff(double noteNumber, double amplitude = 0.0)
+        public void KeyOff()
         {
-
+            
         }
 
 

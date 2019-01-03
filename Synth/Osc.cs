@@ -42,7 +42,7 @@ namespace Nebulator.Synth
         #region Fields
         protected double _phaseIncr = 0.0; // phase increment was _num
         protected double _freq = 0.0; // 0.0 means not playing
-        protected double _ampl = 0.0;
+        // protected double _ampl = 0.0;
         protected SyncType _sync = SyncType.Freq;
         protected double _width = 0.5;
         protected double _phase = 0.0;
@@ -58,7 +58,6 @@ namespace Nebulator.Synth
         #endregion
 
         #region Public Functions
-        // // TODOX handle all these at the level up I think
         // // Start a note with the given frequency and amplitude.
         // public override void NoteOn(double noteNumber, double amplitude)
         // {
@@ -75,7 +74,7 @@ namespace Nebulator.Synth
 
         public override void Reset()
         {
-            _ampl = 0.0;
+//            _ampl = 0.0;
             Freq = 0.0;
 
         }
@@ -84,7 +83,7 @@ namespace Nebulator.Synth
         #region Private functions
         #endregion
 
-        public UGen SyncWith { get; set; } = null; // TODOX
+        public UGen SyncWith { get; set; } = null; // TODOX2
 
         public double Freq
         {
@@ -166,7 +165,7 @@ namespace Nebulator.Synth
         }
 
 
-        public override double Next(double din)    // TODOX these overrides are sloppy - can be combined I think. Plus early return.
+        public override double Next(double din)    // TODOX2 these overrides are sloppy - can be combined I think. Plus early return.
         {
             if (_freq == 0.0)
             {

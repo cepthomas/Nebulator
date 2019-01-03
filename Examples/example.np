@@ -186,16 +186,19 @@ public override void setupNeb()
     _chordNotes = getNotes("C4.o7");
 }
 
-public override void step()
+public override void setupNeb2()
 {
-    if(tick == 0 && tock == 0 && _local)
+    if(_local)
     {
         sendPatch(KEYS, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Lead1Square);
         sendPatch(DRUMS, 32); // kit
     }
+}
 
+public override void step()
+{
     // Play a sequence periodically.
     if(tock == 0)
     {

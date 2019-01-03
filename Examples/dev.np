@@ -128,16 +128,19 @@ public override void setupNeb()
     //SECTION2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
 }
 
-public override void step()
+public override void setupNeb2()
 {
-    if(tick == 0 && tock == 0 && _local)
+    if(_local)
     {
         sendPatch(PIANO, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
         sendPatch(SYNTH, Lead1Square);
         sendPatch(DRUMS, 32);
     }
+}
 
+public override void step()
+{
     //sequenced();
     randish();
 }

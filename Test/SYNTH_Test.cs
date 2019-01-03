@@ -87,12 +87,8 @@ namespace Nebulator.Test
 
             public override Sample Next2(double din)
             {
-                return pan.Next2(lpf.Next(vcr.Next(din)));  // TODOX something like: din -> vcr -> lpf -> pan;
+                return pan.Next2(lpf.Next(vcr.Next(din)));  // TODOX2 ? something fancy like: din -> vcr -> lpf -> pan;
             }
-
-            // public virtual void NoteOn(double noteNumber, double amplitude)
-            // public virtual void NoteOff(double noteNumber, double amplitude = 0.0)
-
         }
 
         // A single voice in the generator.

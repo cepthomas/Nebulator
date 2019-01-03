@@ -29,7 +29,7 @@ class TapeLoop
 
 List<TapeLoop> loops = new List<TapeLoop>();
 
-public override void setupNeb()
+public override void initNeb()
 {
     ///// Variables /////
     COLOR = createVariable("color", 240, 0, 255); // change color
@@ -63,7 +63,7 @@ public override void setupNeb()
     loops.Add(new TapeLoop("F5",  20.00, 14.10));
 }
 
-public override void setup()
+public override void setup() // Processing setup
 {
     size(600, 600);
     print("setup()");

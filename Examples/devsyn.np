@@ -48,12 +48,9 @@ public class MySynth : UGen
         return dout;
     }
 
-    public override void NoteOn(double noteNumber, double amplitude) // TODOX
+    public void Note(double notenum, double ampl)
     {
-    }
 
-    public override void NoteOff(double noteNumber, double amplitude = 0.0) // TODOX
-    {
     }
 }
 
@@ -73,36 +70,37 @@ public class MyVoice : UGen
 
     public override double Next(double din)
     {
-        double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0))); //TODOX feed oscillators a value?
+        double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0))); //TODOX1 feed oscillators a value.
         return dout;
     }
 }
 
-// The top singleton.
+
+// like:
+// ADSR e = new ADSR() { Attack = 111, Decay = 111, Sustain = 111, Release = 111, Gain = 0.5 }
+// double Next(double din)
+// {
+//     double dout = e.Next(din);
+// }
+// void On_MOD1()
+// {
+//     s.Freq = MidiToFreq(MOD1.Value);
+// }
+
+
+
+// The topmost.
 MySynth syn = new MySynth();
 
 
 public void On_VKBD_NOTE()
 {
-    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
-
     // Test for note on or off.
-    if(VKBD_NOTE.Value > 0)
-    {
-        sendNoteOn(SYNTH_1, VKBD_NOTE.Value, 0.9);
-    }
-    else
-    {
-        sendNoteOff(SYNTH_1, -VKBD_NOTE.Value);
-    }
+    syn.Note(VKBD_NOTE.Value, VKBD_NOTE.Value > 0 ? 0.9 : 0.0);
 }
 
 public void On_MOD1()
 {
-    //print(MOD1.Name, "changed to", MOD1.Value);
-    // Send a controller change.
-    //sendController(SYNTH_1, Modulation, MOD1.Value);
-
     syn.lpf.Freq = MOD1.Value;
 }
 
@@ -110,7 +108,7 @@ public void On_CTL3()
 {
     if(random(0, 10) == 0)
     {
-        sendNote(SYNTH_1, 50 + CTL3.Value % 20, 0.7, 2.0);
+        // sendNote(SYNTH_1, 50 + CTL3.Value % 20, 0.7, 2.0);
     }
 }
 
@@ -121,20 +119,8 @@ public void On_CTL2()
 
 public void On_KBD_NOTE()
 {
-    //print("KBD_NOTE", "=", KBD_NOTE.Value);
-
     // Test for note on or off.
-    if(KBD_NOTE.Value > 0)
-    {
-        //sendNoteOn(PIANO, KBD_NOTE.Value, 0.9);
-        sendNoteOn(SYNTH_1, KBD_NOTE.Value, 0.9);
-        //sendNote(SYNTH, KBD_NOTE.Value, 0.8, 2.0); // fixed duration
-    }
-    else
-    {
-        //sendNoteOff(PIANO, -KBD_NOTE.Value);
-        sendNoteOff(SYNTH_1, -KBD_NOTE.Value);
-    }
+    syn.Note(KBD_NOTE.Value, KBD_NOTE.Value > 0 ? 0.9 : 0.0);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -154,16 +140,6 @@ public override void setupNeb()
     // All the output channels.
     SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1, 0.2);
 
-
-
-// MySynth synth = new MySynth();
-// SynthOutput sout = new SynthOutput();
-// sout.Init("SYNTH:ASIO4ALL v2");
-// sout.SynthUGen = synth; ****????
-// SYNTH_1.Device is sout;
-// sout.Start();
-
-
     if(_local)
     {
         createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
@@ -182,26 +158,19 @@ public override void setupNeb()
     createLever(MOD1);
 }
 
+public override void setupNeb2()
+{
+    (SYNTH_1.Device as SynthOutput).SynthUGen = syn; // TODOX1 ??
+    // MySynth synth = new MySynth();
+    // SynthOutput sout = new SynthOutput();
+    // sout.Init("SYNTH:ASIO4ALL v2");
+    // sout.SynthUGen = synth; ****????
+    // SYNTH_1.Device is sout;
+    // sout.Start();
+}
+
 public override void step()
 {
-    if(tick == 0 && tock == 0 && _local)
-    {
-        (SYNTH_1.Device as SynthOutput).SynthUGen = syn;
-
-        // sendPatch(PIANO, AcousticGrandPiano);
-        // sendPatch(BASS, AcousticBass);
-        // sendPatch(SYNTH, Lead1Square);
-        // sendPatch(DRUMS, 32);
-    }
-
-    // int n = 50;
-    // if(tock == 0)
-    // {
-    //     sendNote(SYNTH_1, n, 0.7, 1.0);
-    //     n++;
-    // }
-
-
     if(tock % 4 == 0 && random(7) == 0) // play with these for how often
     {
         int which = random(40, 80);
@@ -210,7 +179,8 @@ public override void step()
         {
             int dur = random(1, 8);
             _notesPlaying[which] = tick + dur;
-            sendNote(SYNTH_1, which, random(0.6, 0.9), dur);
+            //sendNote(SYNTH_1, which, random(0.6, 0.9), dur);
+            syn.Note(which.Value, random(0.6, 0.9));
         }
 
         // Remove any scheduled to stop now.
@@ -223,7 +193,6 @@ public override void step()
         }
     }
 }
-
 
 
 public void On_BACK_COLOR()
