@@ -250,7 +250,7 @@ namespace Nebulator.Script
                 height = this.height * width / this.width;
             }
 
-            var scaled = bmp.Resize(new SKImageInfo(width, height), SKBitmapResizeMethod.Lanczos3);
+            var scaled = bmp.Resize(new SKImageInfo(width, height), SKFilterQuality.High);
             bmp = scaled;
         }
     }

@@ -37,12 +37,14 @@ public override void initNeb()
     ///// Channels /////
     if(_local)
     {
-        SOUND = createChannel("sound", "Microsoft GS Wavetable Synth", 1, 0.1);
+        SOUND = createChannel("sound", "Microsoft GS Wavetable Synth", 1);
     }
     else
     {
-        SOUND = createChannel("sound", "Your favorite", 1, 0.1);
-    }    
+        SOUND = createChannel("sound", "Your favorite", 1);
+    }
+    
+    setWobbler(SOUND, 0.1);
 
     // levers
     createLever(COLOR);

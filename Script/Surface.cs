@@ -30,7 +30,7 @@ namespace Nebulator.Script
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>The embedded drawing control.</summary>
-        SKControl _skcontrol;
+        SKControl _skcontrol = null;
 
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
@@ -124,7 +124,7 @@ namespace Nebulator.Script
 
             var data = _bitmap.LockBits(new System.Drawing.Rectangle(0, 0, w, h), System.Drawing.Imaging.ImageLockMode.WriteOnly, _bitmap.PixelFormat);
 
-            using (var skSurface = SKSurface.Create(w, h, SKImageInfo.PlatformColorType, SKAlphaType.Premul, data.Scan0, w * 4))
+            using (var skSurface = SKSurface.Create(new SKImageInfo(w, h, SKImageInfo.PlatformColorType, SKAlphaType.Premul), data.Scan0, w * 4))
             {
                 // Note: Need exception handling here to protect from user script errors.
                 try

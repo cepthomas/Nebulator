@@ -1,322 +1,388 @@
 
 using System;
 
-
-        // #region Fields
-        // #endregion
-
-        // #region Properties
-        // #endregion
-
-        // #region Lifecycle
-        // #endregion
-
-        // #region Public Functions
-        // #endregion
-
-        // #region Private functions
-        // #endregion
-
-
 namespace Nebulator.Synth
 {
-    #region Fields
-    #endregion
-
-    #region Properties
-    #endregion
-
-    #region Lifecycle
-    #endregion
-
-    #region Public Functions
-    #endregion
-
-    #region Private functions
-    #endregion
-    
-    public enum ADSRState { ATTACK, DECAY, SUSTAIN, RELEASE, IDLE }
-
-
-
-    public class ADSR : UGen
+    // This Envelope subclass implements a
+    // traditional ADSR (Attack, Decay,
+    // Sustain, Release) envelope.  It
+    // responds to simple keyOn and keyOff
+    // messages, keeping track of its state.
+    // The \e state = ADSR::DONE after the
+    // envelope value reaches 0.0 in the
+    // ADSR::RELEASE state.
+    public class ADSR_o : UGen// Envelope
     {
-        public ADSR()
+        public enum ADSRState { IDLE, ATTACK, DECAY, SUSTAIN, RELEASE }
+
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        double _rate = 0.0;
+        double _target = 0.0;
+        double _value = 0.0;
+        double _attackRate = 0.001;
+        double _decayRate = 0.001;
+        double _sustainLevel = 0.5;
+        double _releaseRate = 0.01;
+        ADSRState _state = ADSRState.IDLE;
+
+        double m_decayTime = -1.0; // not used (chuck?) ????????????
+        double m_releaseTime = -1.0; // not used (chuck?) ????????????
+
+        public double AttackTime
         {
+            get { return 1.0 / (_attackRate * SynthCommon.SAMPLE_RATE); }
+            set { setAttackTime(value); }
         }
 
-        public double Attack { get; set; }
-        public double Decay { get; set; }
-        public double Sustain { get; set; }
-        public double Release { get; set; }
-
-
-        public override double Next(double din)
+        public double DecayTime
         {
-            return 0.5;
-            throw new Exception("Base method Next");
+            get { return (1.0 - _sustainLevel) / (_decayRate * SynthCommon.SAMPLE_RATE); }
+            set { setDecayTime(value); }
+        }
+
+        public double SustainLevel
+        {
+            get { return _sustainLevel; }
+            set { setSustainLevel(value); }
+        }
+
+        public double ReleaseTime
+        {
+            get { return _sustainLevel / (_releaseRate * SynthCommon.SAMPLE_RATE); }
+            set { setReleaseTime(value); }
+        }
+
+        public override double Next(double _)
+        {
+            switch(_state)
+            {
+                case ADSRState.ATTACK:
+                    _value += _rate;
+                    if (_value >= _target)
+                    {
+                        _value = _target;
+                        _rate = _decayRate;
+                        _target = _sustainLevel;
+                        _state = ADSRState.DECAY;
+
+                        // TODO: check this
+                        if( _decayRate >= double.MaxValue ) // big number
+                        {
+                            // go directly to sustain.
+                            _state = ADSRState.SUSTAIN;
+                            _value = _sustainLevel;
+                            _rate = 0.0;
+                        }
+                    }
+                    break;
+
+                case ADSRState.DECAY:
+                    _value -= _decayRate;
+                    if (_value <= _sustainLevel)
+                    {
+                        _value = _sustainLevel;
+                        _rate = 0.0;
+                        _state = ADSRState.SUSTAIN;
+                    }
+                    break;
+
+                case ADSRState.RELEASE:
+                    // WAS:
+                    // value -= releaseRate;
+
+                    // chuck
+                    _value -= _rate;
+
+                    if (_value <= 0.0)
+                    {
+                        _value = 0.0;
+                        _state = ADSRState.IDLE;
+                    }
+                    break;
+            }
+
+            return _value;
         }
 
         public void KeyOn()
         {
-            // see below
-            
+            _target = 1.0;
+            _rate = _attackRate;
+            _state = ADSRState.ATTACK;
         }
 
         public void KeyOff()
         {
-            
+            // chuck
+            if( m_releaseTime > 0 )
+            {
+                // in case release triggered before sustain
+                _rate = _value / (m_releaseTime * SynthCommon.SAMPLE_RATE);
+            }
+            else
+            {
+                // rate was set
+                _rate = _releaseRate;
+            }
+
+            _target = 0.0;
+            _state = ADSRState.RELEASE;
         }
 
+        ////////TODOX1 these - also check for valid values.
+        void setSustainLevel(double aLevel)
+        {
+            _sustainLevel = aLevel;
 
-        // /***************************************************/
-        // /*! \class ADSR
-        //     \brief STK ADSR envelope class.
+            // chuck: need to recompute decay and release rates
+            if( m_decayTime > 0.0 )
+            {
+                setDecayTime( m_decayTime );
+            }
+            if( m_releaseTime > 0.0 )
+            {
+                setReleaseTime( m_releaseTime );
+            }
+        }
 
-        //     This Envelope subclass implements a
-        //     traditional ADSR (Attack, Decay,
-        //     Sustain, Release) envelope.  It
-        //     responds to simple keyOn and keyOff
-        //     messages, keeping track of its state.
-        //     The \e state = ADSR::DONE after the
-        //     envelope value reaches 0.0 in the
-        //     ADSR::RELEASE state.
+        void setReleaseRate(double aRate)
+        {
+            _releaseRate = aRate;
 
-        //     by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
-        // */
-        // /***************************************************/
+            // chuck
+            m_releaseTime = -1.0;
+        }
 
-        // ADSR :: ADSR() : Envelope()
-        // {
-        //   target = (double) 0.0;
-        //   value = (double) 0.0;
-        //   attackRate = (double) 0.001;
-        //   decayRate = (double) 0.001;
-        //   sustainLevel = (double) 0.5;
-        //   releaseRate = (double) 0.01;
-        //   m_decayTime = (double) -1.0; // not used
-        //   m_releaseTime = (double) -1.0; // not used
-        //   state = DONE;
-        // }
+        void setAttackTime(double aTime)
+        {
+            _attackRate = 1.0 / ( aTime * SynthCommon.SAMPLE_RATE );
+        }
 
-        // void ADSR :: keyOn()
-        // {
-        //   target = (double) 1.0;
-        //   rate = attackRate;
-        //   state = ATTACK;
-        // }
+        void setDecayTime(double aTime)
+        {
+            if (aTime < 0.0)
+            {
+                _decayRate = (1.0 - _sustainLevel) / ( -aTime * SynthCommon.SAMPLE_RATE );
+            }
+            else if( aTime == 0.0 )
+            {
+                _decayRate = double.MaxValue; // a big number
+            }
+            else
+            {
+                _decayRate = (1.0 - _sustainLevel) / ( aTime * SynthCommon.SAMPLE_RATE );
+            }
 
-        // void ADSR :: keyOff()
-        // {
-        //   // chuck
-        //   if( m_releaseTime > 0 )
-        //   {
-        //       // in case release triggered before sustain
-        //       rate = value / (m_releaseTime * Stk::sampleRate());
-        //   }
-        //   else
-        //   {
-        //       // rate was set
-        //       rate = releaseRate;
-        //   }
+            // chuck
+            m_decayTime = aTime;
+        }
 
-        //   target = (double) 0.0;
-        //   state = RELEASE;
-        // }
+        void setReleaseTime(double aTime)
+        {
+            _releaseRate = _sustainLevel / ( aTime * SynthCommon.SAMPLE_RATE );
 
-        // void ADSR :: setAttackRate(double aRate)
-        // {
-        //   if (aRate < 0.0) {
-        //     printf("[chuck](via ADSR): negative rates not allowed ... correcting!\n");
-        //     attackRate = -aRate;
-        //   }
-        //   else attackRate = aRate;
-        // }
+            // chuck
+            m_releaseTime = aTime;
+        }
 
-        // void ADSR :: setDecayRate(double aRate)
-        // {
-        //   if (aRate < 0.0) {
-        //     printf("[chuck](via ADSR): negative rates not allowed ... correcting!\n");
-        //     decayRate = -aRate;
-        //   }
-        //   else decayRate = aRate;
+        void setTarget(double aTarget)
+        {
+            _target = aTarget;
 
-        //   // chuck
-        //   m_decayTime = -1.0;
-        // }
+            if (_value < _target)
+            {
+                _state = ADSRState.ATTACK;
+                setSustainLevel(_target);
+                _rate = _attackRate;
+            }
 
-        // void ADSR :: setSustainLevel(double aLevel)
-        // {
-        //   if (aLevel < 0.0 ) {
-        //     printf("[chuck](via ADSR): sustain level out of range ... correcting!\n");
-        //     sustainLevel = (double) 0.0;
-        //   }
-        //   else sustainLevel = aLevel;
+            if (_value > _target)
+            {
+                setSustainLevel(_target);
+                _state = ADSRState.DECAY;
+                _rate = _decayRate;
+            }
+        }
 
-        //   // chuck: need to recompute decay and release rates
-        //   if( m_decayTime > 0.0 ) setDecayTime( m_decayTime );
-        //   if( m_releaseTime > 0.0 ) setReleaseTime( m_releaseTime );
-        // }
-
-        // void ADSR :: setReleaseRate(double aRate)
-        // {
-        //   if (aRate < 0.0) {
-        //     printf("[chuck](via ADSR): negative rates not allowed ... correcting!\n");
-        //     releaseRate = -aRate;
-        //   }
-        //   else releaseRate = aRate;
-
-        //   // chuck
-        //   m_releaseTime = -1.0;
-        // }
-
-        // void ADSR :: setAttackTime(double aTime)
-        // {
-        //   if (aTime < 0.0) {
-        //     printf("[chuck](via ADSR): negative rates not allowed ... correcting!\n");
-        //     attackRate = 1.0 / ( -aTime * Stk::sampleRate() );
-        //   }
-        //   else attackRate = 1.0 / ( aTime * Stk::sampleRate() );
-        // }
-
-        // void ADSR :: setDecayTime(double aTime)
-        // {
-        //   if (aTime < 0.0) {
-        //     printf("[chuck](via ADSR): negative times not allowed ... correcting!\n");
-        //     // chuck: compute rate for 1.0 to sustain
-        //     decayRate = (1.0 - sustainLevel) / ( -aTime * Stk::sampleRate() );
-        //   }
-        //   else if( aTime == 0.0 ) {
-        //     // printf("[chuck](via ADSR): zero decay time not allowed ... correcting!\n");
-        //     decayRate = FLT_MAX; // a big number
-        //   }
-        //   else decayRate = (1.0 - sustainLevel) / ( aTime * Stk::sampleRate() );
-
-        //   // chuck
-        //   m_decayTime = aTime;
-        // }
-
-        // void ADSR :: setReleaseTime(double aTime)
-        // {
-        //   if (aTime < 0.0) {
-        //     printf("[chuck](via ADSR): negative times not allowed ... correcting!\n");
-        //     releaseRate = sustainLevel / ( -aTime * Stk::sampleRate() );
-        //   }
-        //   else releaseRate = sustainLevel / ( aTime * Stk::sampleRate() );
-
-        //   // chuck
-        //   m_releaseTime = aTime;
-        // }
-
-        // // chuck
-        // double ADSR :: getAttackTime() { return 1.0 / (attackRate*Stk::sampleRate()); }
-        // double ADSR :: getDecayTime()
-        // { return (1.0 - sustainLevel) / (decayRate*Stk::sampleRate()); }
-        // double ADSR :: getReleaseTime()
-        // { return sustainLevel / (releaseRate*Stk::sampleRate()); }
-
-        // void ADSR :: setAllTimes(double aTime, double dTime, double sLevel, double rTime)
-        // {
-        //   this->setAttackTime(aTime);
-        //   this->setDecayTime(dTime);
-        //   this->setSustainLevel(sLevel);
-        //   this->setReleaseTime(rTime);
-        // }
-
-        // void ADSR :: setTarget(double aTarget)
-        // {
-        //   target = aTarget;
-        //   if (value < target) {
-        //     state = ATTACK;
-        //     this->setSustainLevel(target);
-        //     rate = attackRate;
-        //   }
-        //   if (value > target) {
-        //     this->setSustainLevel(target);
-        //     state = DECAY;
-        //     rate = decayRate;
-        //   }
-        // }
-
-        // void ADSR :: setValue(double aValue)
-        // {
-        //   state = SUSTAIN;
-        //   target = aValue;
-        //   value = aValue;
-        //   this->setSustainLevel(aValue);
-        //   rate = (double)  0.0;
-        // }
-
-        // int ADSR :: getState(void) const
-        // {
-        //   return state;
-        // }
-
-        // double ADSR :: tick()
-        // {
-        //   switch(state)
-        //   {
-        //   case ATTACK:
-        //     value += rate;
-        //     if (value >= target)
-        //     {
-        //       value = target;
-        //       rate = decayRate;
-        //       target = sustainLevel;
-        //       state = DECAY;
-
-        //       // TODO: check this
-        //       if( decayRate >= FLT_MAX ) // big number
-        //       {
-        //           // go directly to sustain;
-        //           state = SUSTAIN;
-        //           value = sustainLevel;
-        //           rate = 0.0;
-        //       }
-        //     }
-        //     break;
-
-        //   case DECAY:
-        //     value -= decayRate;
-        //     if (value <= sustainLevel)
-        //     {
-        //       value = sustainLevel;
-        //       rate = (double) 0.0;
-        //       state = SUSTAIN;
-        //     }
-        //     break;
-
-        //   case RELEASE:
-        //     // WAS:
-        //     // value -= releaseRate;
-
-        //     // chuck
-        //     value -= rate;
-
-        //     if (value <= 0.0)
-        //     {
-        //       value = (double) 0.0;
-        //       state = DONE;
-        //     }
-        //   }
-
-        //   return value;
-        // }
-
-        // double *ADSR :: tick(double *vec, unsigned int vectorSize)
-        // {
-        //   for (unsigned int i=0; i<vectorSize; i++)
-        //     vec[i] = tick();
-
-        //   return vec;
-        // }
-
+        void setValue(double aValue)
+        {
+            _state = ADSRState.SUSTAIN;
+            _target = aValue;
+            _value = aValue;
+            setSustainLevel(aValue);
+            _rate = 0.0;
+        }
     }
 
+    /***************************************************/
+    /*! \class Envelope
+        \brief STK envelope base class.
+
+        This class implements a simple envelope
+        generator which is capable of ramping to
+        a target value by a specified \e rate.
+        It also responds to simple \e keyOn and
+        \e keyOff messages, ramping to 1.0 on
+        keyOn and to 0.0 on keyOff.
+
+        by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
+    */
+    /***************************************************/
+    public class Envelope : UGen
+    {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public Functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+
+        protected double _value = 0.0;
+        protected double _target = 0.0;
+        protected double _rate = 0.001;
+        int _state = 0; // is 0 or 1
+
+        protected double m_target = 1.0; // chuck ????????????
+        protected double m_time; // chuck ????????????
+
+        public Envelope()
+        {
+            m_time = m_target / (_rate * SynthCommon.SAMPLE_RATE);
+        }
+
+        public void KeyOn()
+        {
+            _target = m_target;
+            if (_value != _target)
+                _state = 1;
+            setTime( m_time );
+        }
+
+        public void KeyOff()
+        {
+            _target = 0.0;
+            if (_value != _target)
+                _state = 1;
+            setTime( m_time );
+        }
+
+        public override double Next(double _)
+        {
+            if (_state > 0)
+            {
+                if (_target > _value)
+                {
+                    _value += _rate;
+                    if (_value >= _target)
+                    {
+                        _value = _target;
+                        _state = 0;
+                    }
+                }
+                else
+                {
+                    _value -= _rate;
+                    if (_value <= _target)
+                    {
+                        _value = _target;
+                        _state = 0;
+                    }
+                }
+            }
+            return _value;
+        }
+
+        // double *tick(double *vec, unsigned int vectorSize)
+        // {
+        //     for (unsigned int i=0; i<vectorSize; i++)
+        //         vec[i] = tick();
+
+        //     return vec;
+        // }
+
+        ////////TODOX2 these - also check for valid values.
+
+        void setRate(double aRate)
+        {
+            _rate = aRate;
+
+            m_time = (_target - _value) / (_rate * SynthCommon.SAMPLE_RATE);
+
+            if( m_time < 0.0 )
+                m_time = -m_time;
+        }
+
+        void setTime(double aTime)
+        {
+            if( aTime == 0.0 )
+                _rate = double.MaxValue;
+            else
+                _rate = (_target - _value) / (aTime * SynthCommon.SAMPLE_RATE);
+
+            // rate
+            if( _rate < 0 )
+                _rate = -_rate;
+
+            // should >= 0
+            m_time = aTime;
+        }
+
+        void setTarget(double aTarget)
+        {
+            _target = aTarget;
+            m_target = aTarget;
+
+            if (_value != _target)
+                _state = 1;
+
+            // set time
+            setTime( m_time );
+        }
+
+        //void setValue(double aValue)
+        //{
+        //    _state = 0;
+        //    _target = aValue;
+        //    _value = aValue;
+        //}
+
+        //int getState()
+        //{
+        //    return _state;
+        //}
+
+        //double lastOut()
+        //{
+        //    return _value;
+        //}
+    }
 }
 
 
-#if TODOX_PORT_THIS
+#if TODOX2_PORT_ALL_THIS
 
 ////////////////////////////////////////////////////////
 // Source //
@@ -647,7 +713,7 @@ void Blit :: reset()
 
 void Blit :: setFrequency( double frequency )
 {
-    p_ = Stk::sampleRate() / frequency;
+    p_ = SynthCommon.SAMPLE_RATE / frequency;
     rate_ = ONE_PI / p_;
     this->updateHarmonics();
 }
@@ -744,7 +810,7 @@ void BlitSaw :: reset()
 
 void BlitSaw :: setFrequency( double frequency )
 {
-    p_ = Stk::sampleRate() / frequency;
+    p_ = SynthCommon.SAMPLE_RATE / frequency;
     C2_ = 1 / p_;
     rate_ = ONE_PI * C2_;
     this->updateHarmonics();
@@ -871,7 +937,7 @@ void BlitSquare :: setFrequency( double frequency )
     // By using an even value of the parameter M, we get a bipolar blit
     // waveform at half the blit frequency.  Thus, we need to scale the
     // frequency value here by 0.5. (GPS, 2006).
-    p_ = 0.5 * Stk::sampleRate() / frequency;
+    p_ = 0.5 * SynthCommon.SAMPLE_RATE / frequency;
     rate_ = ONE_PI / p_;
     this->updateHarmonics();
 }
@@ -1654,8 +1720,8 @@ void Drummer :: noteOn(double instrument, double amplitude)
         sounding[nSounding-1] = noteNum;
         // Concatenate the STK rawwave path to the rawwave file
         waves[nSounding-1] = new WvIn( (Stk::rawwavePath() + waveNames[genMIDIMap[noteNum]]).c_str(), TRUE );
-        if (Stk::sampleRate() != 22050.0)
-            waves[nSounding-1]->setRate( 22050.0 / Stk::sampleRate() );
+        if (SynthCommon.SAMPLE_RATE != 22050.0)
+            waves[nSounding-1]->setRate( 22050.0 / SynthCommon.SAMPLE_RATE );
         filters[nSounding-1]->setPole((double) 0.999 - (gain * 0.6) );
         filters[nSounding-1]->setGain( gain );
     }
@@ -1803,143 +1869,6 @@ double *Echo :: tick(double *vec, unsigned int vectorSize)
 }
 
 
-/***************************************************/
-/*! \class Envelope
-    \brief STK envelope base class.
-
-    This class implements a simple envelope
-    generator which is capable of ramping to
-    a target value by a specified \e rate.
-    It also responds to simple \e keyOn and
-    \e keyOff messages, ramping to 1.0 on
-    keyOn and to 0.0 on keyOff.
-
-    by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
-*/
-/***************************************************/
-
-
-Envelope :: Envelope(void) : Stk()
-{
-    target = (double) 0.0;
-    value = (double) 0.0;
-    rate = (double) 0.001;
-    m_target = 1.0;
-    m_time = m_target / (rate * Stk::sampleRate());
-    state = 0;
-}
-
-Envelope :: ~Envelope(void)
-{
-}
-
-void Envelope :: keyOn(void)
-{
-    target = (double) m_target;
-    if (value != target) state = 1;
-    setTime( m_time );
-}
-
-void Envelope :: keyOff(void)
-{
-    target = (double) 0.0;
-    if (value != target) state = 1;
-    setTime( m_time );
-}
-
-void Envelope :: setRate(double aRate)
-{
-    if (aRate < 0.0)
-    {
-        printf("[chuck](via Envelope): negative rates not allowed ... correcting!\n");
-        rate = -aRate;
-    }
-    else
-        rate = aRate;
-
-    m_time = (target - value) / (rate * Stk::sampleRate());
-    if( m_time < 0.0 ) m_time = -m_time;
-}
-
-void Envelope :: setTime(double aTime)
-{
-    if (aTime < 0.0)
-    {
-        printf("[chuck](via Envelope): negative times not allowed ... correcting!\n");
-        aTime = -aTime;
-    }
-
-    if( aTime == 0.0 )
-        rate = FLT_MAX;
-    else
-        rate = (target - value) / (aTime * Stk::sampleRate());
-
-    // rate
-    if( rate < 0 ) rate = -rate;
-
-    // should >= 0
-    m_time = aTime;
-}
-
-void Envelope :: setTarget(double aTarget)
-{
-    target = m_target = aTarget;
-    if (value != target) state = 1;
-
-    // set time
-    setTime( m_time );
-}
-
-void Envelope :: setValue(double aValue)
-{
-    state = 0;
-    target = aValue;
-    value = aValue;
-}
-
-int Envelope :: getState(void) const
-{
-    return state;
-}
-
-double Envelope :: tick(void)
-{
-    if (state)
-    {
-        if (target > value)
-        {
-            value += rate;
-            if (value >= target)
-            {
-                value = target;
-                state = 0;
-            }
-        }
-        else
-        {
-            value -= rate;
-            if (value <= target)
-            {
-                value = target;
-                state = 0;
-            }
-        }
-    }
-    return value;
-}
-
-double *Envelope :: tick(double *vec, unsigned int vectorSize)
-{
-    for (unsigned int i=0; i<vectorSize; i++)
-        vec[i] = tick();
-
-    return vec;
-}
-
-double Envelope :: lastOut(void) const
-{
-    return value;
-}
 
 
 /***************************************************/
@@ -2285,7 +2214,7 @@ void FormSwep :: setSweepRate(double aRate)
 
 void FormSwep :: setSweepTime(double aTime)
 {
-    sweepRate = 1.0 / ( aTime * Stk::sampleRate() );
+    sweepRate = 1.0 / ( aTime * SynthCommon.SAMPLE_RATE );
     if ( sweepRate > 1.0 ) sweepRate = 1.0;
     if ( sweepRate < 0.0 ) sweepRate = 0.0;
 }
@@ -2412,7 +2341,7 @@ JCRev :: JCRev(double T60)
 {
     // Delay lengths for 44100 Hz sample rate.
     int lengths[9] = {1777, 1847, 1993, 2137, 389, 127, 43, 211, 179};
-    double scaler = Stk::sampleRate() / 44100.0;
+    double scaler = SynthCommon.SAMPLE_RATE / 44100.0;
 
     int delay, i;
     if ( scaler != 1.0 )
@@ -2432,7 +2361,7 @@ JCRev :: JCRev(double T60)
     for (i=0; i<4; i++)
     {
         combDelays[i] = new Delay(lengths[i], lengths[i]);
-        combCoefficient[i] = pow(10.0,(-3 * lengths[i] / (T60 * Stk::sampleRate())));
+        combCoefficient[i] = pow(10.0,(-3 * lengths[i] / (T60 * SynthCommon.SAMPLE_RATE)));
     }
 
     outLeftDelay = new Delay(lengths[7], lengths[7]);
@@ -2708,8 +2637,8 @@ void Moog :: noteOn(double frequency, double amplitude)
     filters[0]->setTargets( frequency, temp );
     filters[1]->setTargets( frequency, temp );
 
-    filters[0]->setSweepRate( filterRate * 22050.0 / Stk::sampleRate() );
-    filters[1]->setSweepRate( filterRate * 22050.0 / Stk::sampleRate() );
+    filters[0]->setSweepRate( filterRate * 22050.0 / SynthCommon.SAMPLE_RATE );
+    filters[1]->setSweepRate( filterRate * 22050.0 / SynthCommon.SAMPLE_RATE );
 }
 
 void Moog :: setModulationSpeed(double mSpeed)
@@ -2799,7 +2728,7 @@ void Moog :: controlChange(int number, double value)
 NRev :: NRev(double T60)
 {
     int lengths[15] = {1433, 1601, 1867, 2053, 2251, 2399, 347, 113, 37, 59, 53, 43, 37, 29, 19};
-    double scaler = Stk::sampleRate() / 25641.0;
+    double scaler = SynthCommon.SAMPLE_RATE / 25641.0;
 
     int delay, i;
     for (i=0; i<15; i++)
@@ -2813,7 +2742,7 @@ NRev :: NRev(double T60)
     for (i=0; i<6; i++)
     {
         combDelays[i] = new Delay( lengths[i], lengths[i]);
-        combCoefficient[i] = pow(10.0, (-3 * lengths[i] / (T60 * Stk::sampleRate())));
+        combCoefficient[i] = pow(10.0, (-3 * lengths[i] / (T60 * SynthCommon.SAMPLE_RATE)));
     }
 
     for (i=0; i<8; i++)
@@ -3187,7 +3116,7 @@ PRCRev :: PRCRev(double T60)
 {
     // Delay lengths for 44100 Hz sample rate.
     int lengths[4]= {353, 1097, 1777, 2137};
-    double scaler = Stk::sampleRate() / 44100.0;
+    double scaler = SynthCommon.SAMPLE_RATE / 44100.0;
 
     // Scale the delay lengths if necessary.
     int delay, i;
@@ -3206,7 +3135,7 @@ PRCRev :: PRCRev(double T60)
     {
         allpassDelays[i] = new Delay( lengths[i], lengths[i] );
         combDelays[i] = new Delay( lengths[i+2], lengths[i+2] );
-        combCoefficient[i] = pow(10.0,(-3 * lengths[i+2] / (T60 * Stk::sampleRate())));
+        combCoefficient[i] = pow(10.0,(-3 * lengths[i+2] / (T60 * SynthCommon.SAMPLE_RATE)));
     }
 
     allpassCoefficient = 0.7;
@@ -3602,11 +3531,11 @@ void Resonate :: controlChange(int number, double value)
     }
 
     if (number == 2) // 2
-        setResonance( norm * Stk::sampleRate() * 0.5, poleRadius );
+        setResonance( norm * SynthCommon.SAMPLE_RATE * 0.5, poleRadius );
     else if (number == 4) // 4
         setResonance( poleFrequency, norm*0.9999 );
     else if (number == 11) // 11
-        this->setNotch( norm * Stk::sampleRate() * 0.5, zeroRadius );
+        this->setNotch( norm * SynthCommon.SAMPLE_RATE * 0.5, zeroRadius );
     else if (number == 1)
         this->setNotch( zeroFrequency, norm );
     else if (number == __SK_AfterTouch_Cont_) // 128
@@ -3841,7 +3770,7 @@ void Simple :: controlChange(int number, double value)
         loopGain = norm;
     else if (number == __SK_ModFrequency_)   // 11
     {
-        norm /= 0.2 * Stk::sampleRate();
+        norm /= 0.2 * SynthCommon.SAMPLE_RATE;
         adsr->setAttackRate( norm );
         adsr->setDecayRate( norm );
         adsr->setReleaseRate( norm );
@@ -3917,7 +3846,7 @@ void SingWave :: setFrequency(double frequency)
 {
     m_freq = frequency;
     double temp = rate;
-    rate = wave->getSize() * frequency / Stk::sampleRate();
+    rate = wave->getSize() * frequency / SynthCommon.SAMPLE_RATE;
     temp -= rate;
     if ( temp < 0) temp = -temp;
     pitchEnvelope->setTarget( rate );
@@ -4079,13 +4008,13 @@ void TwoPole :: setA2(double a2)
 void TwoPole :: setResonance(double frequency, double radius, bool normalize)
 {
     a[2] = radius * radius;
-    a[1] = (double) -2.0 * radius * cos(TWO_PI * frequency / Stk::sampleRate());
+    a[1] = (double) -2.0 * radius * cos(TWO_PI * frequency / SynthCommon.SAMPLE_RATE);
 
     if ( normalize )
     {
         // Normalize the filter gain ... not terribly efficient.
-        double real = 1 - radius + (a[2] - radius) * cos(TWO_PI * 2 * frequency / Stk::sampleRate());
-        double imag = (a[2] - radius) * sin(TWO_PI * 2 * frequency / Stk::sampleRate());
+        double real = 1 - radius + (a[2] - radius) * cos(TWO_PI * 2 * frequency / SynthCommon.SAMPLE_RATE);
+        double imag = (a[2] - radius) * sin(TWO_PI * 2 * frequency / SynthCommon.SAMPLE_RATE);
         b[0] = sqrt( pow(real, 2) + pow(imag, 2) );
     }
 }
@@ -4179,7 +4108,7 @@ void TwoZero :: setB2(double b2)
 void TwoZero :: setNotch(double frequency, double radius)
 {
     b[2] = radius * radius;
-    b[1] = (double) -2.0 * radius * cos(TWO_PI * (double) frequency / Stk::sampleRate());
+    b[1] = (double) -2.0 * radius * cos(TWO_PI * (double) frequency / SynthCommon.SAMPLE_RATE);
 
     // Normalize the filter gain.
     if (b[1] > 0.0) // Maximum at z = 0.
@@ -4779,7 +4708,7 @@ CK_DLL_CGET( DelayL_clear )
 CK_DLL_CTOR( Echo_ctor )
 {
     // initialize member object
-    OBJ_MEMBER_UINT(SELF, Echo_offset_data) = (t_CKUINT)new Echo( Stk::sampleRate() / 2.0 );
+    OBJ_MEMBER_UINT(SELF, Echo_offset_data) = (t_CKUINT)new Echo( SynthCommon.SAMPLE_RATE / 2.0 );
 }
 
 
@@ -4955,8 +4884,8 @@ CK_DLL_CGET( Envelope_cget_time )
 CK_DLL_CTRL( Envelope_ctrl_duration )
 {
     Envelope * d = (Envelope *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
-    d->setTime( GET_NEXT_FLOAT(ARGS) / Stk::sampleRate() );
-    RETURN->v_float = d->m_time * Stk::sampleRate();
+    d->setTime( GET_NEXT_FLOAT(ARGS) / SynthCommon.SAMPLE_RATE );
+    RETURN->v_float = d->m_time * SynthCommon.SAMPLE_RATE;
 }
 
 
@@ -4967,7 +4896,7 @@ CK_DLL_CTRL( Envelope_ctrl_duration )
 CK_DLL_CGET( Envelope_cget_duration )
 {
     Envelope * d = (Envelope *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
-    RETURN->v_float = d->m_time * Stk::sampleRate();
+    RETURN->v_float = d->m_time * SynthCommon.SAMPLE_RATE;
 }
 
 
@@ -5163,7 +5092,7 @@ CK_DLL_CTRL( ADSR_ctrl_attackTime )
 {
     ADSR * d = (ADSR *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
     t_CKDUR t = GET_NEXT_DUR(ARGS);
-    d->setAttackTime( t / Stk::sampleRate() );
+    d->setAttackTime( t / SynthCommon.SAMPLE_RATE );
     RETURN->v_dur = t;
 }
 
@@ -5175,7 +5104,7 @@ CK_DLL_CTRL( ADSR_ctrl_attackTime )
 CK_DLL_CGET( ADSR_cget_attackTime )
 {
     ADSR * d = (ADSR *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
-    RETURN->v_dur = d->getAttackTime() * Stk::sampleRate();
+    RETURN->v_dur = d->getAttackTime() * SynthCommon.SAMPLE_RATE;
 }
 
 
@@ -5210,7 +5139,7 @@ CK_DLL_CTRL( ADSR_ctrl_decayTime )
 {
     ADSR * d = (ADSR *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
     t_CKDUR t = GET_NEXT_DUR(ARGS);
-    d->setDecayTime( t / Stk::sampleRate() );
+    d->setDecayTime( t / SynthCommon.SAMPLE_RATE );
     RETURN->v_dur = t;
 }
 
@@ -5222,7 +5151,7 @@ CK_DLL_CTRL( ADSR_ctrl_decayTime )
 CK_DLL_CGET( ADSR_cget_decayTime )
 {
     ADSR * d = (ADSR *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
-    RETURN->v_dur = d->getDecayTime() * Stk::sampleRate();
+    RETURN->v_dur = d->getDecayTime() * SynthCommon.SAMPLE_RATE;
 }
 
 
@@ -5280,7 +5209,7 @@ CK_DLL_CTRL( ADSR_ctrl_releaseTime )
 {
     ADSR * d = (ADSR *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
     t_CKDUR t = GET_NEXT_DUR(ARGS);
-    d->setReleaseTime( t / Stk::sampleRate() );
+    d->setReleaseTime( t / SynthCommon.SAMPLE_RATE );
     RETURN->v_dur = t;
 }
 
@@ -5292,7 +5221,7 @@ CK_DLL_CTRL( ADSR_ctrl_releaseTime )
 CK_DLL_CGET( ADSR_cget_releaseTime )
 {
     ADSR * d = (ADSR *)OBJ_MEMBER_UINT(SELF, Envelope_offset_data);
-    RETURN->v_dur = d->getReleaseTime() * Stk::sampleRate();
+    RETURN->v_dur = d->getReleaseTime() * SynthCommon.SAMPLE_RATE;
 }
 
 
@@ -5359,10 +5288,10 @@ CK_DLL_CTRL( ADSR_ctrl_set2 )
     t_CKDUR d = GET_NEXT_DUR(ARGS);
     t_CKFLOAT s = GET_NEXT_FLOAT(ARGS);
     t_CKDUR r = GET_NEXT_DUR(ARGS);
-    e->setAttackTime( a / Stk::sampleRate() );
-    e->setDecayTime( d / Stk::sampleRate() );
+    e->setAttackTime( a / SynthCommon.SAMPLE_RATE );
+    e->setDecayTime( d / SynthCommon.SAMPLE_RATE );
     e->setSustainLevel( s );
-    e->setReleaseTime( r / Stk::sampleRate() );
+    e->setReleaseTime( r / SynthCommon.SAMPLE_RATE );
 }
 
 

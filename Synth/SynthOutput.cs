@@ -1,15 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-// using System.Text;
-// using System.Text.RegularExpressions;
-// using System.Threading.Tasks;
-// using System.IO;
-// using System.Net.Sockets;
-// using System.Net;
-// using System.Diagnostics;
-// using System.Threading;
-// using System.Drawing;
 using NAudio.Wave;
 using Nebulator.Common;
 using Nebulator.Device;
@@ -27,14 +18,14 @@ using Nebulator.Device;
 
 // AsioOut also has:
 // public void ShowControlPanel()
-// public int PlaybackLatency
-// public PlaybackState PlaybackState => playbackState;
-// public string DriverName => this.driverName;
-// public int NumberOfOutputChannels { get; private set; }
-// public int NumberOfInputChannels { get; private set; }
-// public int DriverInputChannelCount => driver.Capabilities.NbInputChannels;
-// public int DriverOutputChannelCount => driver.Capabilities.NbOutputChannels;
-// public int FramesPerBuffer
+// public int PlaybackLatency;
+// public PlaybackState;
+// public string DriverName;
+// public int NumberOfOutputChannels;}
+// public int NumberOfInputChannels;
+// public int DriverInputChannelCount;
+// public int DriverOutputChannelCount;
+// public int FramesPerBuffer;
 
 
 namespace Nebulator.Synth
@@ -49,7 +40,7 @@ namespace Nebulator.Synth
         AsioOut _asioOut = null;
 
         /// <summary>Access synchronizer.</summary>
-        object _lock = new object();
+        readonly object _lock = new object();
 
         /// <summary>Notes to stop later.</summary>
         List<StepNoteOff> _stops = new List<StepNoteOff>();
@@ -68,7 +59,7 @@ namespace Nebulator.Synth
         public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Main device to execute.</summary>
-        public UGen SynthUGen { get; set; } = null;
+        public UGen2 SynthUGen { get; set; } = null;
         #endregion
 
         #region Lifecycle
@@ -125,44 +116,6 @@ namespace Nebulator.Synth
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void AsioOut_PlaybackStopped(object sender, StoppedEventArgs e)
-        {
-            // Manually Stopping Playback
-            // You can stop audio playback any time by simply calling Stop. Depending on the implementation of IWavePlayer,
-            // playback may not stop instantaneously, but finish playing the currently queued buffer (usually no more
-            // than 100ms). So even when you call Stop, you should wait for the PlaybackStopped event to be sure that
-            // playback has actually stopped.
-
-            // Reaching the end of the input audio
-            // In NAudio, the Read method on IWaveProvider is called every time the output device needs more audio to play.
-            // The Read method should normally return the requested number of bytes of audio (the count parameter). If
-            // Read returns less than count this means this is the last piece of audio in the input stream. If Read
-            // returns 0, the end has been reached.
-
-            // NAudio playback devices will stop playing when the IWaveProvider's Read method returns 0. This will cause
-            // the PlaybackStopped event to get raised.
-
-            // Output device error
-            // If there is any kind of audio error during playback, the PlaybackStopped event will be fired, and the
-            // Exception property set to whatever exception caused playback to stop. A very common cause of this would
-            // be playing to a USB device that has been removed during playback.
-
-            // Disposing resources
-            // Often when playback ends, you want to clean up some resources, such as disposing the output device, and
-            // closing any input files such as AudioFileReader. It is strongly recommended that you do this when you
-            // receive the PlaybackStopped event and not immediately after calling Stop. This is because in many
-            // IWavePlayer implementations, the audio playback code is on another thread, and you may be disposing
-            // resources that will still be used.
-
-            // Note that NAudio attempts to fire the PlaybackStopped event on the SynchronizationContext the device was
-            // created on. This means in a WinForms or WPF application it is safe to access the GUI in the handler.
-        }
-
-        /// <summary>
         /// Resource clean up.
         /// </summary>
         public void Dispose()
@@ -200,10 +153,8 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public bool Send(Step step)
+        public bool Send(Step step) // TODOX2 Synth doesn't really fit in the current model. It's not an external device.
         {
-            return true; // TODOX2 Synth doesn't really fit in the current model.
-
             bool ret = true;
 
             // Critical code section.
@@ -261,8 +212,7 @@ namespace Nebulator.Synth
         /// <inheritdoc />
         public void Stop()
         {
-            _asioOut?.Pause();
-           // _asioOut?.Stop();
+            _asioOut?.Pause(); // ? or Stop();
         }
         #endregion
 
@@ -273,7 +223,7 @@ namespace Nebulator.Synth
         /// <summary>
         /// This ISampleProvider function gets called when output is needed.
         /// </summary>
-        /// <param name="buffer">Stereo with interleaved L/R</param>
+        /// <param name="buffer">Stereo with interleaved L/R.</param>
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <returns></returns>
@@ -283,7 +233,7 @@ namespace Nebulator.Synth
             {
                 for (int n = 0; n < count; )
                 {
-                    Sample dout = SynthUGen.Next2(buffer[n]);
+                    Sample dout = SynthUGen.Next(0);
                     buffer[n++] = (float)dout.Left;
                     buffer[n++] = (float)dout.Right;
                 }
@@ -298,6 +248,44 @@ namespace Nebulator.Synth
         #endregion
 
         #region Private functions
+        /// <summary>
+        /// Asio callback handler.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void AsioOut_PlaybackStopped(object sender, StoppedEventArgs e)
+        {
+            // Manually Stopping Playback
+            // You can stop audio playback any time by simply calling Stop. Depending on the implementation of IWavePlayer,
+            // playback may not stop instantaneously, but finish playing the currently queued buffer (usually no more
+            // than 100ms). So even when you call Stop, you should wait for the PlaybackStopped event to be sure that
+            // playback has actually stopped.
+
+            // Reaching the end of the input audio
+            // In NAudio, the Read method on IWaveProvider is called every time the output device needs more audio to play.
+            // The Read method should normally return the requested number of bytes of audio (the count parameter). If
+            // Read returns less than count this means this is the last piece of audio in the input stream. If Read
+            // returns 0, the end has been reached.
+
+            // NAudio playback devices will stop playing when the IWaveProvider's Read method returns 0. This will cause
+            // the PlaybackStopped event to get raised.
+
+            // Output device error
+            // If there is any kind of audio error during playback, the PlaybackStopped event will be fired, and the
+            // Exception property set to whatever exception caused playback to stop. A very common cause of this would
+            // be playing to a USB device that has been removed during playback.
+
+            // Disposing resources
+            // Often when playback ends, you want to clean up some resources, such as disposing the output device, and
+            // closing any input files such as AudioFileReader. It is strongly recommended that you do this when you
+            // receive the PlaybackStopped event and not immediately after calling Stop. This is because in many
+            // IWavePlayer implementations, the audio playback code is on another thread, and you may be disposing
+            // resources that will still be used.
+
+            // Note that NAudio attempts to fire the PlaybackStopped event on the SynchronizationContext the device was
+            // created on. This means in a WinForms or WPF application it is safe to access the GUI in the handler.
+        }
+
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>

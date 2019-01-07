@@ -117,37 +117,14 @@ namespace Nebulator.Script
         /// <summary>Current volume.</summary>
         public double Volume { get; set; } = 90;
 
-        /// <summary>Humanize factor for volume.</summary>
-        public double WobbleVolume
-        {
-            get { return _volWobbler.RangeHigh; }
-            set { _volWobbler.RangeHigh = value; }
-        }
+        /// <summary>Wobbler for time.</summary>
+        public Wobbler TimeWobbler { get; set; } = new Wobbler();
 
-        /// <summary>Humanize factor for time - before the tock.</summary>
-        public double WobbleTimeBefore
-        {
-            get { return _timeWobbler.RangeLow; }
-            set { _timeWobbler.RangeLow = value; }
-        }
-
-        /// <summary>Humanize factor for time - after the tock.</summary>
-        public double WobbleTimeAfter
-        {
-            get { return _timeWobbler.RangeHigh; }
-            set { _timeWobbler.RangeHigh = value; }
-        }
+        /// <summary>Wobbler for volume.</summary>
+        public Wobbler VolWobbler { get; set; } = new Wobbler();
 
         /// <summary>Current state for this channel.</summary>
         public ChannelState State { get; set; } = ChannelState.Normal;
-        #endregion
-
-        #region Fields
-        /// <summary>Wobbler for time.</summary>
-        Wobbler _timeWobbler = new Wobbler();
-
-        /// <summary>Wobbler for volume.</summary>
-        Wobbler _volWobbler = new Wobbler();
         #endregion
 
         /// <summary>
@@ -156,7 +133,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         public int NextTime()
         {
-            return (int)_timeWobbler.Next(0);
+            return (int)TimeWobbler.Next(0);
         }
 
         /// <summary>
@@ -166,7 +143,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         public double NextVol(double def)
         {
-            return _volWobbler.Next(def);
+            return VolWobbler.Next(def);
         }
 
         /// <summary>

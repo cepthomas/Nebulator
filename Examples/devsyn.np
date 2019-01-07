@@ -25,32 +25,31 @@ NChannel SYNTH_1;
 // Use win gm and virtual kbd.
 bool _local = true;
 
-// Index is integer note number, value is when to stop it.
-int[] _notesPlaying = new int[128];
-
 
 //////////////////////////////////////////////////////////////////
 /////////////////////// new stuff ////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
 // The overall synthesizer.
-public class MySynth : UGen
+public class MySynth : UGen2
 {
-    public Voicer vcr = new Voicer(typeof(MyVoice), 5, 0.2);
+    public Voicer vcr1 = new Voicer(typeof(MyVoice), 5, 0.2);
     public LPF lpf = new LPF();
-    public ADSR adsr = new ADSR();
+    ADSR adsrF = new ADSR() { AttackTime = 111, DecayTime = 111, SustainLevel = 111, ReleaseTime = 111, Gain = 0.5 };
     public Pan pan = new Pan();
 
-    public override Sample Next2(double din)
+    public override Sample Next(double _)
     {
-        lpf.Freq = adsr.Next(0);
-        Sample dout = pan.Next2(lpf.Next(vcr.Next(din)));
+        lpf.Freq = 200 + 500 * adsrF.Next(1);
+        Sample dout = pan.Next(lpf.Next(vcr1.Next(0)));
         return dout;
     }
 
-    public void Note(double notenum, double ampl)
+    public override void Note(double notenum, double ampl)
     {
-
+        adsrF.KeyOn();
+        // Pass along to the noisemakers.
+        vcr1.Note(notenum, ampl);
     }
 }
 
@@ -59,34 +58,27 @@ public class MyVoice : UGen
 {
     // 2 oscs slightly detuned and synced
     SinOsc osc1 = new SinOsc();
-    SinOsc osc2 = new SinOsc();// { SyncWith = osc1; }
+    SinOsc osc2 = new SinOsc();
     Mix mix1 = new Mix();
-    ADSR adsr = new ADSR();
+    ADSR adsr = new ADSR() { AttackTime = 111, DecayTime = 111, SustainLevel = 111, ReleaseTime = 111, Gain = 0.5 };
 
     public MyVoice()
     {
-        osc2.SyncWith = osc1;
     }
 
-    public override double Next(double din)
+    public override void Note(double notenum, double amplitude)
     {
-        double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0))); //TODOX1 feed oscillators a value.
+        osc1.Note(notenum, amplitude);
+        osc2.Note(notenum * 1.05, amplitude);
+        adsr.KeyOn();
+    }
+
+    public override double Next(double _)
+    {
+        double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0)));
         return dout;
     }
 }
-
-
-// like:
-// ADSR e = new ADSR() { Attack = 111, Decay = 111, Sustain = 111, Release = 111, Gain = 0.5 }
-// double Next(double din)
-// {
-//     double dout = e.Next(din);
-// }
-// void On_MOD1()
-// {
-//     s.Freq = MidiToFreq(MOD1.Value);
-// }
-
 
 
 // The topmost.
@@ -108,7 +100,7 @@ public void On_CTL3()
 {
     if(random(0, 10) == 0)
     {
-        // sendNote(SYNTH_1, 50 + CTL3.Value % 20, 0.7, 2.0);
+        syn.Note(50 + CTL3.Value % 20, 0.7);
     }
 }
 
@@ -123,9 +115,10 @@ public void On_KBD_NOTE()
     syn.Note(KBD_NOTE.Value, KBD_NOTE.Value > 0 ? 0.9 : 0.0);
 }
 
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+/////////////////// nebulator stuff //////////////////
+//////////////////////////////////////////////////////
 
 public override void setupNeb()
 {
@@ -138,7 +131,8 @@ public override void setupNeb()
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // All the output channels.
-    SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1, 0.2);
+    SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1);
+    setWobbler(SYNTH_1, 0.2);
 
     if(_local)
     {
@@ -160,40 +154,19 @@ public override void setupNeb()
 
 public override void setupNeb2()
 {
-    (SYNTH_1.Device as SynthOutput).SynthUGen = syn; // TODOX1 ??
-    // MySynth synth = new MySynth();
-    // SynthOutput sout = new SynthOutput();
-    // sout.Init("SYNTH:ASIO4ALL v2");
-    // sout.SynthUGen = synth; ****????
-    // SYNTH_1.Device is sout;
-    // sout.Start();
+    // Post device creation.
+    (SYNTH_1.Device as SynthOutput).SynthUGen = syn; // TODOX1 kinda clumsy...
 }
 
 public override void step()
 {
     if(tock % 4 == 0 && random(7) == 0) // play with these for how often
     {
-        int which = random(40, 80);
-
-        if(_notesPlaying[which] == 0) // don't play if already playing
-        {
-            int dur = random(1, 8);
-            _notesPlaying[which] = tick + dur;
-            //sendNote(SYNTH_1, which, random(0.6, 0.9), dur);
-            syn.Note(which.Value, random(0.6, 0.9));
-        }
-
-        // Remove any scheduled to stop now.
-        for(int i = 0;i < _notesPlaying.Length;i++)
-        {
-            if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
-            {
-                _notesPlaying[i] = 0;
-            }
-        }
+        int notenum = random(40, 80);
+        int dur = random(1, 8);
+        syn.Note(notenum, random(0.6, 0.9));
     }
 }
-
 
 public void On_BACK_COLOR()
 {
@@ -202,7 +175,9 @@ public void On_BACK_COLOR()
 
 
 
-////////////// processing stuff ////////////////////
+//////////////////////////////////////////////////////
+////////////////// processing stuff //////////////////
+//////////////////////////////////////////////////////
 
 public override void setup()
 {

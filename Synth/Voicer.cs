@@ -13,10 +13,10 @@ namespace Nebulator.Synth
     /// Represents one sounding voice.
     class Voice
     {
-        public UGen ugen = null;
+        public UGen ugen = null; // contained ugen
         public int birth = 0; // used for tracking oldest voice
-        public double noteNumber = -1; // current
-        public double frequency = 0.0; // current
+        public double noteNumber = -1.0; // current sounding
+        //public double frequency = 0.0; // current
         public int sounding = 0; // 0=no 1=yes <0=tail ticks
     }
 
@@ -27,10 +27,11 @@ namespace Nebulator.Synth
         List<Voice> _voices = new List<Voice>();
 
         /// <summary>In sample clock ticks.</summary>
-        int _muteTime;
+        readonly int _muteTime;
         #endregion
 
         #region Properties
+
         #endregion
 
         #region Lifecycle
@@ -48,10 +49,12 @@ namespace Nebulator.Synth
             {
                 for (int i = 0; i < num; i++)
                 {
-                    Voice voice = new Voice();
-                    voice.ugen = Activator.CreateInstance(t) as UGen;
-                    voice.birth = SynthCommon.NextId();
-                    voice.noteNumber = -1;
+                    Voice voice = new Voice
+                    {
+                        ugen = Activator.CreateInstance(t) as UGen,
+                        birth = SynthCommon.NextId(),
+                        noteNumber = -1.0
+                    };
                     _voices.Add(voice);
                 }
 
@@ -68,7 +71,36 @@ namespace Nebulator.Synth
             }
         }
 
-        public override double Next(double din)
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Clear()
+        {
+            _voices.Clear();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void Reset()
+        {
+            foreach (Voice v in _voices)
+            {
+                if (v.sounding > 0)
+                {
+                    v.ugen.Note(0.2, 0.0);
+                    v.ugen.Reset();
+                }
+            }
+        }
+        #endregion
+
+        #region Public Functions
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override double Next(double _)
         {
             double dout = 0;
 
@@ -77,7 +109,7 @@ namespace Nebulator.Synth
                 if (v.sounding != 0)
                 {
                     // Gen next sample(s).
-                    double ds = v.ugen.Next(din);
+                    double ds = v.ugen.Next(0);
                     dout += ds;
                 }
 
@@ -90,68 +122,77 @@ namespace Nebulator.Synth
                 // Test for done.
                 if (v.sounding == 0)
                 {
-                    v.noteNumber = -1;
+                    v.noteNumber = -1.0;
                 }
             }
 
             return dout * Gain;
         }
 
-        public void Clear()
-        {
-            _voices.Clear();
-        }
-
-        public override void Reset()
-        {
-            foreach(Voice v in _voices)
-            {
-                if (v.sounding > 0)
-                {
-                    v.ugen.Note(0.2, 0.0);
-                    v.ugen.Reset();
-                }
-            }
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="noteNumber"></param>
+        /// <param name="amplitude"></param>
         public override void Note(double noteNumber, double amplitude)
         {
             if(amplitude != 0.0)
             {
                 // start
-                double frequency = SynthCommon.NoteToFreq(noteNumber);
-                int found = -1;
+                //int found = -1;
                 int oldest = -1;
-                int index = 0;
+                int index = -1;
 
                 // Find a place to put this.
-                foreach(Voice v in _voices)
+                for(int i = 0; i < _voices.Count && index == -1; i++)
                 {
-                    if (v.noteNumber < 0) // available slot
+                    if (_voices[i].noteNumber < 0) // available slot
                     {
-                        found = index;
+                        index = i;
                     }
                     else // keep track of oldest sounding
                     {
-                        if(oldest == -1 || _voices[oldest].birth > v.birth)
+                        if (oldest == -1 || _voices[oldest].birth > _voices[i].birth)
                         {
-                            oldest = index;
+                            oldest = i;
                         }
                     }
-                    index++;
                 }
 
+                //foreach(Voice v in _voices)
+                //{
+                //    if (v.noteNumber < 0) // available slot
+                //    {
+                //        found = index;
+                //    }
+                //    else // keep track of oldest sounding
+                //    {
+                //        if(oldest == -1 || _voices[oldest].birth > v.birth)
+                //        {
+                //            oldest = index;
+                //        }
+                //    }
+                //    index++;
+                //}
+
                 // Update the slot.
-                int which = found != -1 ? found : oldest;
+                int which = index != -1 ? index : oldest;
+
+                // Voice management fields.
                 _voices[which].birth = SynthCommon.NextId();
                 _voices[which].noteNumber = noteNumber;
-                _voices[which].frequency = frequency;
-                _voices[which].ugen.Note(noteNumber, amplitude * SynthCommon.ONE_OVER_128);
                 _voices[which].sounding = 1;
+
+                // make noise
+                //double frequency = SynthCommon.NoteToFreq(noteNumber);
+
+                _voices[which].ugen.Note(noteNumber, amplitude);
+                //_voices[which].frequency = frequency;
+                //_voices[which].ugen.Freq = frequency;
+                //_voices[which].ugen.Note(noteNumber, amplitude * SynthCommon.ONE_OVER_128);
             }
-            else
+            else // stop
             {
-                // stop
                 foreach (Voice v in _voices)
                 {
                     if (SynthCommon.Close(v.noteNumber, noteNumber))
@@ -163,22 +204,5 @@ namespace Nebulator.Synth
             }
         }
         #endregion
-
-        #region Public Functions
-        #endregion
-
-        #region Private functions
-        #endregion
-
-        //void SetFrequency(double noteNumber)
-        //{
-        //    double frequency = SynthCommon.NoteToFreq(noteNumber);
-        //    foreach (Voice v in _voices)
-        //    {
-        //        v.noteNumber = noteNumber;
-        //        v.frequency = frequency;
-        //        v.ugen.SetFrequency(frequency);
-        //    }
-        //}
     }
 }

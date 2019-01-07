@@ -70,10 +70,16 @@ public override void setupNeb()
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // All the channels.
-    KEYS = createChannel("keys", MY_MIDI_OUT, 1, 0.1);
-    BASS = createChannel("bass", MY_MIDI_OUT, 2, 0.1);
-    SYNTH = createChannel("synth", MY_MIDI_OUT, 3, 0);
-    DRUMS = createChannel("drums", MY_MIDI_OUT, 10, 0.1);
+    KEYS = createChannel("keys", MY_MIDI_OUT, 1);
+    BASS = createChannel("bass", MY_MIDI_OUT, 2);
+    SYNTH = createChannel("synth", MY_MIDI_OUT, 3);
+    DRUMS = createChannel("drums", MY_MIDI_OUT, 10);
+
+    // Some wobblers.
+    setWobbler(KEYS, 0.1);
+    setWobbler(BASS, 0.1);
+    setWobbler(SYNTH, 0.1);
+    setWobbler(DRUMS, 0.1);
 
     // create set of notes (chord)
     createNotes("MY_CHORD", "1 4 6 b13");

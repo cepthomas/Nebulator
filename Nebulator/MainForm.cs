@@ -23,6 +23,7 @@ using NAudio.Wave;
 
 
 // TODO Remove Device dependency in Script project for NProcessing.
+// TODOX2 Something fun with small-mark1.bmp etc.
 
 
 namespace Nebulator
@@ -1412,11 +1413,7 @@ namespace Nebulator
                     break;
 
                 case PlayCommand.StopRewind:
-                    if (!userAction)
-                    {
-                        chkPlay.Checked = false;
-                    }
-
+                    chkPlay.Checked = false;
                     _stepTime.Reset();
                     break;
 

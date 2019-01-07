@@ -71,30 +71,40 @@ namespace Nebulator.Script
         /// Normal factory.
         /// </summary>
         /// <param name="name">UI name</param>
-        /// <param name="devName">Device device.</param>
+        /// <param name="devName">Device name</param>
         /// <param name="channelNum"></param>
-        /// <param name="wobvol"></param>
-        /// <param name="wobbefore"></param>
-        /// <param name="wobafter"></param>
-        protected NChannel createChannel(string name, string devName, int channelNum, double wobvol = 0, double wobbefore = 0, int wobafter = 0)
+        protected NChannel createChannel(string name, string devName, int channelNum)
         {
             NChannel nt = new NChannel()
             {
                 Name = name,
                 DeviceName = devName,
-                ChannelNumber = channelNum,
-                WobbleVolume = wobvol,
-                WobbleTimeBefore = wobbefore,
-                WobbleTimeAfter = wobafter
+                ChannelNumber = channelNum
             };
             Channels.Add(nt);
             return nt;
         }
 
         /// <summary>
+        /// Set some randomization options.
+        /// </summary>
+        /// <param name="channel">Associated channel.</param>
+        /// <param name="volMax">Value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
+        /// <param name="volMin">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
+        /// <param name="timeMin">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
+        /// <param name="timeMax">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
+        protected void setWobbler(NChannel channel, double volMax, double volMin = 0.0, double timeMin = 0.0, double timeMax = 0.0)
+        {
+            channel.VolWobbler.RangeHigh = volMax;
+            channel.VolWobbler.RangeLow = volMin;
+            channel.TimeWobbler.RangeHigh = timeMax;
+            channel.TimeWobbler.RangeLow = timeMin;
+        }
+
+        /// <summary>
         /// Create a controller input.
         /// </summary>
-        /// <param name="devName">Device device.</param>
+        /// <param name="devName">Device name.</param>
         /// <param name="channelNum">Which channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>

@@ -38,14 +38,9 @@ namespace Nebulator.Synth
         #endregion
 
         #region Lifecycle
-        protected Filter()
-        {
-            //...
-        }
         #endregion
 
         #region Public Functions
-
         #endregion
 
         #region Private functions
