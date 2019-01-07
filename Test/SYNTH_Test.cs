@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using PNUT;
-using Nebulator.Common;
+//using Nebulator.Controls;
 using Nebulator.Synth;
 
 
@@ -13,44 +13,51 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            Visualizer v = new Visualizer();
-
-            List<Color> colors = new List<Color>() { Color.Firebrick, Color.CornflowerBlue, Color.MediumSeaGreen, Color.MediumOrchid, Color.DarkOrange, Color.DarkGoldenrod, Color.DarkSlateGray, Color.Khaki, Color.PaleVioletRed };
-            // Unnamed sets from http://colorbrewer2.org qualitative:
-            // COLORS_DARK: Color.FromArgb(27, 158, 119), Color.FromArgb(217, 95, 2), Color.FromArgb(117, 112, 179), Color.FromArgb(231, 41, 138), Color.FromArgb(102, 166, 30), Color.FromArgb(230, 171, 2), Color.FromArgb(166, 118, 29), Color.FromArgb(102, 102, 102) <summary>Color definitions.</summary>
-            // COLORS_LIGHT: Color.FromArgb(141, 211, 199), Color.FromArgb(255, 255, 179), Color.FromArgb(190, 186, 218), Color.FromArgb(251, 128, 114), Color.FromArgb(128, 177, 211), Color.FromArgb(253, 180, 98), Color.FromArgb(179, 222, 105), Color.FromArgb(252, 205, 229)
-
-
-            // Give some data.
-            for (int i = 2; i < 7; i++)
+            Controls.Visualizer v = new Controls.Visualizer
             {
-                Visualizer.Series ser = new Visualizer.Series();
-                for(int j = 5; j < 100; j += 7)
-                {
-                    ser.Points.Add((i, j + i));
-                }
+                XMin = 0,
+                XMax = 10,
+                YMin = 2,
+                YMax = 110,
+                DotSize = 4,
+                LineSize = 1,
+                ChartType = Controls.Visualizer.ChartTypes.ScatterLine,
+                Dock = DockStyle.Fill
+            };
 
-                ser.Name = "opopp";
-                ser.Color = colors[i];
-                
+            // Make some data.
+            Random rand = new Random();
+            for (int y = 5; y < 100; y+=7)
+            {
+                Controls.Visualizer.Series ser = new Controls.Visualizer.Series();
+                for(int x = 1; x < 10; x++)
+                {
+                    double dr = rand.NextDouble() * 3;
+                    ser.Points.Add((x, y - (float)dr));
+                }
+                ser.Name = $"Series {y}";
                 v.AllSeries.Add(ser);
             }
 
-            v.XMin = 0;
-            v.XMax = 10;
-            v.YMin = 2;
-            v.YMax = 110;
-            v.DotSize = 4;
-            v.LineSize = 1;
-            v.ChartType = Visualizer.ChartTypes.ScatterLine;
+            Form f = new Form()
+            {
+                Text = "Visualizer",
+                Size = new Size(900, 600),
+                StartPosition = FormStartPosition.Manual,
+                Location = new Point(20, 20),
+                FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                ShowIcon = false,
+                ShowInTaskbar = false
+            };
+            f.Controls.Add(v);
 
-            new System.Threading.Thread(() => v.ShowDialog()).Start();
+            new System.Threading.Thread(() => f.ShowDialog()).Start();
 
-            System.Threading.Thread.Sleep(1000);
+            //System.Threading.Thread.Sleep(1000);
         }
     }
 
-    public class SYNTH_Basic : TestSuite
+    public class SYNTH_Basic : TestSuite //TODON1 debug
     {
         public override void RunSuite()
         {
@@ -91,7 +98,6 @@ namespace Nebulator.Test
 
             public override Sample Next(double _)
             {
-
                 double dd1 = osc1.Next(0);
                 double dd2 = osc2.Next(0);
                 double dd3 = mix1.Next(dd1, dd2);

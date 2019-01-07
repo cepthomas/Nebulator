@@ -6,7 +6,7 @@ using Nebulator.Common;
 using Nebulator.Device;
 
 
-// TODOX2 On the performance front, the killer is the .NET garbage collector. You have to hope that it
+// TODON2 On the performance front, the killer is the .NET garbage collector. You have to hope that it
 //doesn't kick in during a callback. With ASIO you often run at super low latencies (<10ms), and
 //the garbage collector can cause a callback to be missed, meaning you'd hear a glitch in the audio output.
 // NOW (4.5) >>> While the SustainedLowLatency setting is in effect, generation 0, generation 1, and background generation 2 
@@ -153,7 +153,7 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public bool Send(Step step) // TODOX2 Synth doesn't really fit in the current model. It's not an external device.
+        public bool Send(Step step) // TODON2 Synth doesn't really fit in the current model. It's not an external device.
         {
             bool ret = true;
 

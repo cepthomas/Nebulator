@@ -155,7 +155,7 @@ public override void setupNeb()
 public override void setupNeb2()
 {
     // Post device creation.
-    (SYNTH_1.Device as SynthOutput).SynthUGen = syn; // TODOX1 kinda clumsy...
+    (SYNTH_1.Device as SynthOutput).SynthUGen = syn; // TODON1 kinda clumsy...
 }
 
 public override void step()

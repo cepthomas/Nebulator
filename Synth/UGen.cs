@@ -9,7 +9,7 @@ using NAudio.Wave;
 
 namespace Nebulator.Synth
 {
-    public struct Sample  // TODOX2 - stereo - this or tuple?
+    public struct Sample  // TODON2 - stereo - this or tuple?
     {
         public double Left;
         public double Right;

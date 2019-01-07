@@ -11,17 +11,26 @@ using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 
 
-
-namespace Nebulator.Synth
+namespace Nebulator.Controls
 {
-    public partial class Visualizer : Form //TODOX2 move into common
+    /// <summary>
+    /// A simple display of numerical series. Probably will grow with some fancy features later.
+    /// </summary>
+    public partial class Visualizer : UserControl
     {
         public enum ChartTypes { Line, Scatter, ScatterLine };
 
+        /// <summary>Auto assigned colors.</summary>
+        List<Color> _colors = new List<Color>() { Color.Firebrick, Color.CornflowerBlue, Color.MediumSeaGreen, Color.MediumOrchid, Color.DarkOrange, Color.DarkGoldenrod, Color.DarkSlateGray, Color.Khaki, Color.PaleVioletRed };
+        // Or these sets from http://colorbrewer2.org qualitative:
+        // Dark: Color.FromArgb(27, 158, 119), Color.FromArgb(217, 95, 2), Color.FromArgb(117, 112, 179), Color.FromArgb(231, 41, 138), Color.FromArgb(102, 166, 30), Color.FromArgb(230, 171, 2), Color.FromArgb(166, 118, 29), Color.FromArgb(102, 102, 102) <summary>Color definitions.</summary>
+        // Light: Color.FromArgb(141, 211, 199), Color.FromArgb(255, 255, 179), Color.FromArgb(190, 186, 218), Color.FromArgb(251, 128, 114), Color.FromArgb(128, 177, 211), Color.FromArgb(253, 180, 98), Color.FromArgb(179, 222, 105), Color.FromArgb(252, 205, 229)
+        static int _currentColor = 0;
+
         public class Series
         {
-            public string Name { get; set; } = "???"; // TODOX2 DrawText(string text, float x, float y, SKPaint paint);
-            public Color Color { get; set; } = Color.Black;
+            public string Name { get; set; } = "No Name";
+            public Color Color { get; set; } = Color.Empty;
             public List<(float, float)> Points { get; set; } = new List<(float, float)>();
         }
 
@@ -57,6 +66,16 @@ namespace Nebulator.Synth
             IsAntialias = true
         };
 
+        /// <summary>Current font to draw with.</summary>
+        SKPaint _text = new SKPaint()
+        {
+            TextSize = 14,
+            Color = SKColors.Black,
+            Typeface = SKTypeface.FromFamilyName("Arial"),
+            TextAlign = SKTextAlign.Left,
+            IsAntialias = true
+        };
+
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -67,16 +86,14 @@ namespace Nebulator.Synth
             UpdateStyles();
         }
 
-        void Visualizer_Load(object sender, EventArgs e)
-        {
-        }
-
         void skControl_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             SKCanvas canvas = e.Surface.Canvas;
             canvas.Clear();
+            Init();
+            DrawText(canvas);
 
-            switch(ChartType)
+            switch (ChartType)
             {
                 case ChartTypes.Scatter:
                     DrawScatter(canvas);
@@ -90,6 +107,40 @@ namespace Nebulator.Synth
                     DrawLines(canvas);
                     DrawScatter(canvas);
                     break;
+            }
+        }
+
+        /// <summary>Do some fixups maybe.</summary>
+        void Init()
+        {
+            foreach (Series ser in AllSeries)
+            {
+                if(ser.Color == Color.Empty)
+                {
+                    ser.Color = _colors[_currentColor++ % _colors.Count];
+                }
+            }
+        }
+
+        void DrawText(SKCanvas canvas)
+        {
+            float xpos = 10;
+            float ypos = 20;
+            float yinc = 15;
+
+            _text.Color = SKColors.Black;
+            canvas.DrawText($"X range: {XMin} {XMax}", xpos, ypos, _text);
+            ypos += yinc;
+            canvas.DrawText($"Y range: {YMin} {YMax}", xpos, ypos, _text);
+            ypos += yinc;
+
+            ypos += yinc;
+
+            foreach (Series ser in AllSeries)
+            {
+                _text.Color = ser.Color.ToSKColor();
+                canvas.DrawText(ser.Name, xpos, ypos, _text);
+                ypos += yinc;
             }
         }
 
@@ -126,7 +177,7 @@ namespace Nebulator.Synth
                 }
 
                 SKPath path = new SKPath();
-                path.AddPoly(points);
+                path.AddPoly(points, false);
 
                 canvas.DrawPath(path, _pen);
             }

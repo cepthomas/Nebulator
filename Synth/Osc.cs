@@ -16,14 +16,14 @@ namespace Nebulator.Synth
         {
             Freq = 0,   // synch frequency to input // the input signal will set the frequency of the oscillator
             Phase = 1,  // synch phase to input // the input signal will set the phase of the oscillator
-            FM = 2      // the input signal will add to the oscillator's current frequency - TODOX2 see fm2.ck
+            FM = 2      // the input signal will add to the oscillator's current frequency - TODON2 see fm2.ck
         }
 
         #region Fields
         protected double _phaseIncr = 0.0; // phase increment was _num
         protected double _freq = 0.0; // 0.0 means not playing
         protected double _mod = 0.0; // modulation value - FM
-        // protected double _ampl = 0.0;  TODOX2 stk/chuck use gain instead of separate amplitude.
+        // protected double _ampl = 0.0;  TODON2 stk/chuck uses gain instead of separate amplitude.
         protected SyncType _sync = SyncType.Freq;
         protected double _width = 0.5;
         protected double _phase = 0.0;
@@ -31,7 +31,7 @@ namespace Nebulator.Synth
 
         #region Properties
         public SyncType Sync { get; set; }
-        //TODOX2 ?? if (_sync == SyncType.Freq && psync != _sync)
+        //TODON2 ?? if (_sync == SyncType.Freq && psync != _sync)
         //set: 
         //{
         //    // if we are switching to internal tick

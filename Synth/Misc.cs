@@ -105,7 +105,7 @@ namespace Nebulator.Synth
 
 
     ///////////////////////////////////////////////////////////////////////
-    public class ADSR_S : UGen
+    public class ADSR_Sanford : UGen
     {
         #region Fields
         // Coefficients for calculating the output.
@@ -115,7 +115,7 @@ namespace Nebulator.Synth
         double _output = 0.0;
         enum ADSRState { Idle, Attack, Decay, Sustain, Release }
         ADSRState _state = ADSRState.Idle;
-        //TODOX1 these?
+        //What are these?
         // Used as a scaler value to ensure output is in the range of [0, 1].
         const double CEILING = 0.63212;
         // Used as a scaler to scale up time parameters.

@@ -8,7 +8,7 @@ namespace Nebulator.Synth
 {
     public class SynthCommon
     {
-        // TODO could make these vars.
+        // TODON2 could make these vars.
         public const int SAMPLE_RATE = 44100;
         public const int NUM_OUTPUTS = 2;
 

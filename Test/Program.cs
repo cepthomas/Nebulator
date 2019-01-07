@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using PNUT;
 
-// TODOX2 - if you create an app with SkiaSharp, make sure to uncheck Build config box "Prefer 32 bit".
 
 namespace Nebulator.Test
 {

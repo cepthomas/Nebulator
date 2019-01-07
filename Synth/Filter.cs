@@ -45,7 +45,39 @@ namespace Nebulator.Synth
 
         #region Private functions
         // This was CK_DDN - dedenormal. Doesn't seem to do that to my eye.
-        protected double DDN(double f)
+        // Found!
+        /* denormals are very small floating point numbers that force FPUs into slow
+        mode. All lowpass filters using floats are suspectible to denormals unless
+        a small offset is added to avoid very small floating point numbers. */
+        //#define DENORMAL_OFFSET (1E-10)
+        ///
+//         When the value to be represented is too small to encode normally, it is encoded in denormalized form, indicated by an exponent value of Float.MIN_EXPONENT - 1 or Double.MIN_EXPONENT - 1. Denormalized floating-point numbers have an assumed 0 in the ones' place and have one or more leading zeros in the represented portion of their mantissa. These leading zero bits no longer function as significant bits of precision; consequently, the total precision of denormalized floating-point numbers is less than that of normalized floating-point numbers. Note that even using normalized numbers where precision is required can pose a risk. See rule NUM04-J. Do not use floating-point numbers if precise computation is required for more information.
+
+// Using denormalized numbers can severely impair the precision of floating-point calculations; as a result, denormalized numbers must not be used.
+
+// Detecting Denormalized Numbers
+// The following code tests whether a float value is denormalized in FP-strict mode or for platforms that lack extended range support. Testing for denormalized numbers in the presence of extended range support is platform-dependent; see rule NUM53-J. Use the strictfp modifier for floating-point calculation consistency across platforms for additional information.
+
+// strictfp public static boolean isDenormalized(float val) {
+//   if (val == 0) {
+//     return false;
+//   }
+//   if ((val > -Float.MIN_NORMAL) && (val < Float.MIN_NORMAL)) {
+//     return true;
+//   }
+//   return false;
+// }
+// Testing whether values of type double are denormalized is analogous.
+
+
+        ///// or:
+        // You can repair a denormal by checking flags in a floating point number and substituting zero. But that’s a lot of work. A simple way to avoid denormals is to add a tiny but normalized number to calculations that are at risk—1E-18, for instance is -200 dB down from unity, and won’t affect audio paths, but when added to denormals will result in 1E-18; this won’t affect audible samples at all, due to the way floating point works.
+        // While denormal protection could be built into the filter code, it’s more economical to use denormal protection on a more global level, instead of in each module. As an example of one possible solution, you could add a tiny constant (1E-18) to every incoming sample at the beginning of your processing chain, switching the sign of the constant (to -1E-18) after every buffer you process to avoid the possibility of a highpass filter in the chain removing the constant offset.
+        // Another variant in the x86/amd64 case is to set the FPU flush denormals to zero bit for the thread handling audio data. I’ve had an implementation with lots of parallell biquads that prior to that suffered from denormals, but with the bit set, works like a charm. The advantage is of course that you do not need to fiddle with the de-denormal constant.
+
+
+
+        protected double DDN(double f) // was a macro
         {
             double n;
             if(f >= 0)

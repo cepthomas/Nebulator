@@ -11,7 +11,7 @@ namespace Nebulator.Synth
     // The \e state = ADSR::DONE after the
     // envelope value reaches 0.0 in the
     // ADSR::RELEASE state.
-    public class ADSR_o : UGen// Envelope
+    public class ADSR_orig : UGen// Envelope
     {
         public enum ADSRState { IDLE, ATTACK, DECAY, SUSTAIN, RELEASE }
 
@@ -143,7 +143,7 @@ namespace Nebulator.Synth
             _state = ADSRState.RELEASE;
         }
 
-        ////////TODOX1 these - also check for valid values.
+        //////// these - also check for valid values.
         void setSustainLevel(double aLevel)
         {
             _sustainLevel = aLevel;
@@ -323,7 +323,7 @@ namespace Nebulator.Synth
         //     return vec;
         // }
 
-        ////////TODOX2 these - also check for valid values.
+        //////// these - also check for valid values.
 
         void setRate(double aRate)
         {
@@ -382,7 +382,7 @@ namespace Nebulator.Synth
 }
 
 
-#if TODOX2_PORT_ALL_THIS
+#if TODON2_PORT_ALL_THIS
 
 ////////////////////////////////////////////////////////
 // Source //
