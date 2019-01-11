@@ -92,6 +92,10 @@
       <Project>{72b15ad8-081b-4dc0-b6c5-35eaf016a67f}</Project>
       <Name>Synth</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Visualizer\Visualizer.csproj">
+      <Project>{0e511799-da3e-4d83-8b9f-e54df6410b3b}</Project>
+      <Name>Visualizer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Files\" />

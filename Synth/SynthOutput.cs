@@ -231,12 +231,31 @@ namespace Nebulator.Synth
         {
             if(SynthUGen != null)
             {
-                for (int n = 0; n < count; )
+
+                //float[] _dummy = new float[1024]; // this could stress GC too
+
+                for (int n = 0; n < count;)
                 {
                     Sample dout = SynthUGen.Next(0);
-                    buffer[n++] = (float)dout.Left;
-                    buffer[n++] = (float)dout.Right;
+                    buffer[n] = (float)dout.Left;
+                    //_dummy[n] = (float)dout.Left;
+                    n++;
+                    buffer[n] = (float)dout.Right;
+                    //_dummy[n] = (float)dout.Right;
+                    n++;
                 }
+
+                //for (int n = 0; n < count;)
+                //{
+                //    buffer[n++] = _fff;
+                //    buffer[n++] = _fff;
+
+                //    _fff += 0.01f;
+
+                //    if (_fff > 0.8)
+                //        _fff = 0;
+                //}
+
             }
             else
             {
@@ -246,6 +265,8 @@ namespace Nebulator.Synth
             return count;
         }
         #endregion
+
+        float _fff = 0;
 
         #region Private functions
         /// <summary>

@@ -14,7 +14,7 @@ namespace Nebulator.Test
         static void Main(string[] args)
         {
             TestRunner runner = new TestRunner(OutputFormat.Readable);
-            string[] cases = new string[] { "SYNTH_Vis" /*, "OSC", "MIDI", "SERVER"*/ };
+            string[] cases = new string[] { "SYNTH_Vis" }; // SYNTH_Basic  SYNTH_Vis  OSC  MIDI  SERVER
             runner.RunSuites(cases);
         }
     }

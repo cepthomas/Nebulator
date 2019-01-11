@@ -2,6 +2,31 @@
 using System;
 
 
+//From NAudio:
+// based on Cookbook formulae for audio EQ biquad filter coefficients
+// http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+// by Robert Bristow-Johnson  <rbj@audioimagination.com>
+
+//    alpha = sin(w0)/(2*Q)                                       (case: Q)
+//          = sin(w0)*sinh( ln(2)/2 * BW * w0/sin(w0) )           (case: BW)
+//          = sin(w0)/2 * sqrt( (A + 1/A)*(1/S - 1) + 2 )         (case: S)
+// Q: (the EE kind of definition, except for peakingEQ in which A*Q is
+// the classic EE Q.  That adjustment in definition was made so that
+// a boost of N dB followed by a cut of N dB for identical Q and
+// f0/Fs results in a precisely flat unity gain filter or "wire".)
+//
+// BW: the bandwidth in octaves (between -3 dB frequencies for BPF
+// and notch or between midpoint (dBgain/2) gain frequencies for
+// peaking EQ)
+//
+// S: a "shelf slope" parameter (for shelving EQ only).  When S = 1,
+// the shelf slope is as steep as it can be and remain monotonically
+// increasing or decreasing gain with frequency.  The shelf slope, in
+// dB/octave, remains proportional to S for all other values for a
+// fixed f0/Fs and dBgain.
+
+
+
 namespace Nebulator.Synth
 {
     /// <summary>

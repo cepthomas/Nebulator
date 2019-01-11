@@ -80,7 +80,7 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public override double Next(double _)
+        public override double Next(double _) // may use something for input TODON2
         {
             double dout = 0.0;
 

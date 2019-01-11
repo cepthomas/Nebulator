@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synth", "Synth\Synth.csproj", "{72B15AD8-081B-4DC0-B6C5-35EAF016A67F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visualizer", "Visualizer\Visualizer.csproj", "{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,10 @@ Global
 		{72B15AD8-081B-4DC0-B6C5-35EAF016A67F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72B15AD8-081B-4DC0-B6C5-35EAF016A67F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72B15AD8-081B-4DC0-B6C5-35EAF016A67F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

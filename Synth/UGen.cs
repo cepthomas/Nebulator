@@ -138,10 +138,6 @@ namespace Nebulator.Synth
         /// <param name="din">Input data - implementation specific.</param>
         /// <returns></returns>
         public abstract Sample Next(double din);
-        // public virtual Sample Next(double din)
-        // {
-        //     throw new Exception("You unexpectedly called virtual method Next2(double din)");
-        // }
 
         /// <summary>
         /// Start or stop a note with the given frequency and amplitude.
