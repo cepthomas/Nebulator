@@ -7,6 +7,7 @@ namespace Nebulator.Synth
     public class ADSR : UGen
     {
         #region Fields
+        // private enum
         enum ADSRState { Idle, Attack, Decay, Sustain, Release }
         ADSRState _state = ADSRState.Idle;
         double _step = 0; // how much to change output per Next().
@@ -33,7 +34,7 @@ namespace Nebulator.Synth
             if (_released && (_state == ADSRState.Decay || _state == ADSRState.Sustain))
             {
                 _state = ADSRState.Release;
-                _step = -((Amplitude - _level) / (ReleaseTime * SynthCommon.SAMPLE_RATE));
+                _step = -((Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate));
             }
 
             switch (_state)
@@ -44,7 +45,7 @@ namespace Nebulator.Synth
                     {
                         _level = Amplitude;
                         _state = ADSRState.Decay;
-                        _step = -((_level - SustainLevel) / (DecayTime * SynthCommon.SAMPLE_RATE));
+                        _step = -((_level - SustainLevel) / (DecayTime * SynthCommon.SampleRate));
                     }
                     _released = false;
                     break;
@@ -82,7 +83,7 @@ namespace Nebulator.Synth
         {
             _level = 0;
             _state = ADSRState.Attack;
-            _step = Amplitude / AttackTime / SynthCommon.SAMPLE_RATE;
+            _step = Amplitude / AttackTime / SynthCommon.SampleRate;
         }
 
         public void KeyOff()

@@ -8,6 +8,9 @@ namespace Nebulator.Device
     /// <summary>Device type.</summary>
     public enum DeviceType { Midi, OSC, ASIO, VirtualKeyboard }
 
+    /// <summary>Category types.</summary>
+    public enum DeviceLogCategory { Info, Send, Recv, Error }
+
     public class DeviceInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
@@ -16,11 +19,8 @@ namespace Nebulator.Device
 
     public class DeviceLogEventArgs : EventArgs
     {
-        /// <summary>Category types.</summary>
-        public enum LogCategory { Info, Send, Recv, Error }
-
         /// <summary>Category.</summary>
-        public LogCategory Category { get; set; } = LogCategory.Info;
+        public DeviceLogCategory DeviceLogCategory { get; set; } = DeviceLogCategory.Info;
 
         /// <summary>Text to log.</summary>
         public string Message { get; set; } = null;

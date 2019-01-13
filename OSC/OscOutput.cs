@@ -91,7 +91,7 @@ namespace Nebulator.OSC
             }
             catch (Exception ex)
             {
-                LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Init OSC out failed: {ex.Message}");
+                LogMsg(DeviceLogCategory.Error, $"Init OSC out failed: {ex.Message}");
                 inited = false;
             }
 
@@ -205,21 +205,21 @@ namespace Nebulator.OSC
                             if (msg.Errors.Count == 0)
                             {
                                 _udpClient.Send(bytes.ToArray(), bytes.Count);
-                                LogMsg(DeviceLogEventArgs.LogCategory.Send, step.ToString());
+                                LogMsg(DeviceLogCategory.Send, step.ToString());
                             }
                             else
                             {
-                                msg.Errors.ForEach(e => LogMsg(DeviceLogEventArgs.LogCategory.Error, e));
+                                msg.Errors.ForEach(e => LogMsg(DeviceLogCategory.Error, e));
                             }
                         }
                         else
                         {
-                            LogMsg(DeviceLogEventArgs.LogCategory.Error, step.ToString());
+                            LogMsg(DeviceLogCategory.Error, step.ToString());
                         }
                     }
                     else
                     {
-                        LogMsg(DeviceLogEventArgs.LogCategory.Error, step.ToString());
+                        LogMsg(DeviceLogCategory.Error, step.ToString());
                     }
                 }
             }
@@ -247,9 +247,9 @@ namespace Nebulator.OSC
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogCategory cat, string msg)
         {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
         #endregion
     }

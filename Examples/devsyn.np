@@ -155,7 +155,7 @@ public override void setupNeb()
 public override void setupNeb2()
 {
     // Post device creation.
-    (SYNTH_1.Device as SynthOutput).SynthUGen = syn; // TODON1 kinda clumsy...
+    (SYNTH_1.Device as SynthOutput).Synth = syn; // TODON1 kinda clumsy... add an optional object Context to NChannel probably
 }
 
 public override void step()

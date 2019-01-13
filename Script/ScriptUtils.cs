@@ -118,7 +118,7 @@ namespace Nebulator.Script
 
                 err = new ScriptError()
                 {
-                    ErrorType = ScriptError.ScriptErrorType.Runtime,
+                    ErrorType = ScriptErrorType.Runtime,
                     SourceFile = srcFile,
                     LineNumber = srcLine,
                     Message = args.Exception.Message
@@ -128,7 +128,7 @@ namespace Nebulator.Script
             {
                 err = new ScriptError()
                 {
-                    ErrorType = ScriptError.ScriptErrorType.Runtime,
+                    ErrorType = ScriptErrorType.Runtime,
                     SourceFile = "",
                     LineNumber = -1,
                     Message = args.Exception.Message

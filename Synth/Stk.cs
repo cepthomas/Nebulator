@@ -44,13 +44,13 @@ namespace Nebulator.Synth
 
         public double AttackTime
         {
-            get { return 1.0 / (_attackRate * SynthCommon.SAMPLE_RATE); }
+            get { return 1.0 / (_attackRate * SynthCommon.SampleRate); }
             set { setAttackTime(value); }
         }
 
         public double DecayTime
         {
-            get { return (1.0 - _sustainLevel) / (_decayRate * SynthCommon.SAMPLE_RATE); }
+            get { return (1.0 - _sustainLevel) / (_decayRate * SynthCommon.SampleRate); }
             set { setDecayTime(value); }
         }
 
@@ -62,7 +62,7 @@ namespace Nebulator.Synth
 
         public double ReleaseTime
         {
-            get { return _sustainLevel / (_releaseRate * SynthCommon.SAMPLE_RATE); }
+            get { return _sustainLevel / (_releaseRate * SynthCommon.SampleRate); }
             set { setReleaseTime(value); }
         }
 
@@ -131,7 +131,7 @@ namespace Nebulator.Synth
             if( m_releaseTime > 0 )
             {
                 // in case release triggered before sustain
-                _rate = _value / (m_releaseTime * SynthCommon.SAMPLE_RATE);
+                _rate = _value / (m_releaseTime * SynthCommon.SampleRate);
             }
             else
             {
@@ -169,14 +169,14 @@ namespace Nebulator.Synth
 
         void setAttackTime(double aTime)
         {
-            _attackRate = 1.0 / ( aTime * SynthCommon.SAMPLE_RATE );
+            _attackRate = 1.0 / ( aTime * SynthCommon.SampleRate );
         }
 
         void setDecayTime(double aTime)
         {
             if (aTime < 0.0)
             {
-                _decayRate = (1.0 - _sustainLevel) / ( -aTime * SynthCommon.SAMPLE_RATE );
+                _decayRate = (1.0 - _sustainLevel) / ( -aTime * SynthCommon.SampleRate );
             }
             else if( aTime == 0.0 )
             {
@@ -184,7 +184,7 @@ namespace Nebulator.Synth
             }
             else
             {
-                _decayRate = (1.0 - _sustainLevel) / ( aTime * SynthCommon.SAMPLE_RATE );
+                _decayRate = (1.0 - _sustainLevel) / ( aTime * SynthCommon.SampleRate );
             }
 
             // chuck
@@ -193,7 +193,7 @@ namespace Nebulator.Synth
 
         void setReleaseTime(double aTime)
         {
-            _releaseRate = _sustainLevel / ( aTime * SynthCommon.SAMPLE_RATE );
+            _releaseRate = _sustainLevel / ( aTime * SynthCommon.SampleRate );
 
             // chuck
             m_releaseTime = aTime;
@@ -270,7 +270,7 @@ namespace Nebulator.Synth
 
         public Envelope()
         {
-            m_time = m_target / (_rate * SynthCommon.SAMPLE_RATE);
+            m_time = m_target / (_rate * SynthCommon.SampleRate);
         }
 
         public void KeyOn()
@@ -329,7 +329,7 @@ namespace Nebulator.Synth
         {
             _rate = aRate;
 
-            m_time = (_target - _value) / (_rate * SynthCommon.SAMPLE_RATE);
+            m_time = (_target - _value) / (_rate * SynthCommon.SampleRate);
 
             if( m_time < 0.0 )
                 m_time = -m_time;
@@ -340,7 +340,7 @@ namespace Nebulator.Synth
             if( aTime == 0.0 )
                 _rate = double.MaxValue;
             else
-                _rate = (_target - _value) / (aTime * SynthCommon.SAMPLE_RATE);
+                _rate = (_target - _value) / (aTime * SynthCommon.SampleRate);
 
             // rate
             if( _rate < 0 )

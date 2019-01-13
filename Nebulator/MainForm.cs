@@ -489,7 +489,7 @@ namespace Nebulator
 
                 // Process errors. Some may be warnings.
                 _compileResults = compiler.Errors;
-                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptError.ScriptErrorType.Error);
+                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptErrorType.Error);
 
                 if (errorCount == 0 && _script != null)
                 {
@@ -540,7 +540,7 @@ namespace Nebulator
 
                 _compileResults.ForEach(r =>
                 {
-                    if (r.ErrorType == ScriptError.ScriptErrorType.Warning)
+                    if (r.ErrorType == ScriptErrorType.Warning)
                     {
                         _logger.Warn(r.ToString());
                     }
@@ -885,13 +885,13 @@ namespace Nebulator
         {
             bool logit = true;
 
-            switch(e.Category)
+            switch(e.DeviceLogCategory)
             {
-                case DeviceLogEventArgs.LogCategory.Recv:
+                case DeviceLogCategory.Recv:
                     logit = NebSettings.TheSettings.MonitorInput;
                     break;
 
-                case DeviceLogEventArgs.LogCategory.Send:
+                case DeviceLogCategory.Send:
                     logit = NebSettings.TheSettings.MonitorOutput;
                     break;
             }
@@ -901,7 +901,7 @@ namespace Nebulator
                 BeginInvoke((MethodInvoker)delegate ()
                 {
                     // Route all events through log.
-                    string s = $"{e.Category} {_stepTime} {e.Message}";
+                    string s = $"{e.DeviceLogCategory} {_stepTime} {e.Message}";
                     _logger.Info(s);
                 });
             }

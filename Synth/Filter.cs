@@ -76,23 +76,23 @@ namespace Nebulator.Synth
         a small offset is added to avoid very small floating point numbers. */
         //#define DENORMAL_OFFSET (1E-10)
         ///
-//         When the value to be represented is too small to encode normally, it is encoded in denormalized form, indicated by an exponent value of Float.MIN_EXPONENT - 1 or Double.MIN_EXPONENT - 1. Denormalized floating-point numbers have an assumed 0 in the ones' place and have one or more leading zeros in the represented portion of their mantissa. These leading zero bits no longer function as significant bits of precision; consequently, the total precision of denormalized floating-point numbers is less than that of normalized floating-point numbers. Note that even using normalized numbers where precision is required can pose a risk. See rule NUM04-J. Do not use floating-point numbers if precise computation is required for more information.
+        // When the value to be represented is too small to encode normally, it is encoded in denormalized form, indicated by an exponent value of Float.MIN_EXPONENT - 1 or Double.MIN_EXPONENT - 1. Denormalized floating-point numbers have an assumed 0 in the ones' place and have one or more leading zeros in the represented portion of their mantissa. These leading zero bits no longer function as significant bits of precision; consequently, the total precision of denormalized floating-point numbers is less than that of normalized floating-point numbers. Note that even using normalized numbers where precision is required can pose a risk. See rule NUM04-J. Do not use floating-point numbers if precise computation is required for more information.
 
-// Using denormalized numbers can severely impair the precision of floating-point calculations; as a result, denormalized numbers must not be used.
+        // Using denormalized numbers can severely impair the precision of floating-point calculations; as a result, denormalized numbers must not be used.
 
-// Detecting Denormalized Numbers
-// The following code tests whether a float value is denormalized in FP-strict mode or for platforms that lack extended range support. Testing for denormalized numbers in the presence of extended range support is platform-dependent; see rule NUM53-J. Use the strictfp modifier for floating-point calculation consistency across platforms for additional information.
+        // Detecting Denormalized Numbers
+        // The following code tests whether a float value is denormalized in FP-strict mode or for platforms that lack extended range support. Testing for denormalized numbers in the presence of extended range support is platform-dependent; see rule NUM53-J. Use the strictfp modifier for floating-point calculation consistency across platforms for additional information.
 
-// strictfp public static boolean isDenormalized(float val) {
-//   if (val == 0) {
-//     return false;
-//   }
-//   if ((val > -Float.MIN_NORMAL) && (val < Float.MIN_NORMAL)) {
-//     return true;
-//   }
-//   return false;
-// }
-// Testing whether values of type double are denormalized is analogous.
+        // strictfp public static boolean isDenormalized(float val) {
+        //   if (val == 0) {
+        //     return false;
+        //   }
+        //   if ((val > -Float.MIN_NORMAL) && (val < Float.MIN_NORMAL)) {
+        //     return true;
+        //   }
+        //   return false;
+        // }
+        // Testing whether values of type double are denormalized is analogous.
 
 
         ///// or:
@@ -166,11 +166,11 @@ namespace Nebulator.Synth
         void SetParams(double freq)
         {
             // implementation: adapted from SC3's LPF
-            double pfreq = freq * SynthCommon.RAD_PER_SAMPLE * 0.5;
+            double pfreq = freq * Math.PI * 2 / SynthCommon.SampleRate * 0.5;
             
             double C = 1.0 / Math.Tan(pfreq);
             double C2 = C * C;
-            double sqrt2C = C * SynthCommon.SQRT2;
+            double sqrt2C = C * Math.Sqrt(2);
             double next_a0 = 1.0 / (1.0 + sqrt2C + C2);
             double next_b1 = -2.0 * (1.0 - C2) * next_a0 ;
             double next_b2 = -(1.0 - sqrt2C + C2) * next_a0;
@@ -228,10 +228,10 @@ namespace Nebulator.Synth
         void SetParams(double freq)
         {
             // implementation: adapted from SC3's HPF
-            double pfreq = freq * SynthCommon.RAD_PER_SAMPLE * 0.5;
+            double pfreq = freq * Math.PI * 2 / SynthCommon.SampleRate * 0.5;
             double C = Math.Tan(pfreq);
             double C2 = C * C;
-            double sqrt2C = C * SynthCommon.SQRT2;
+            double sqrt2C = C * Math.Sqrt(2);
             double next_a0 = 1.0 / (1.0 + sqrt2C + C2);
             double next_b1 = 2.0 * (1.0 - C2) * next_a0 ;
             double next_b2 = -(1.0 - sqrt2C + C2) * next_a0;
@@ -294,7 +294,7 @@ namespace Nebulator.Synth
         #region Private functions
         void SetParams(double freq, double q)
         {
-            double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
+            double pfreq = freq * Math.PI * 2 / SynthCommon.SampleRate;
             double pbw = 1.0 / q * pfreq * .5;
 
             double C = 1.0 / Math.Tan(pbw);
@@ -363,7 +363,7 @@ namespace Nebulator.Synth
         #region Private functions
         void SetParams( double freq, double q )
         {
-            double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
+            double pfreq = freq * Math.PI * 2 / SynthCommon.SampleRate;
             double pbw = 1.0 / q * pfreq * .5;
             double C = Math.Tan(pbw);
             double D = 2.0 * Math.Cos(pfreq);
@@ -431,7 +431,7 @@ namespace Nebulator.Synth
         void SetParams( double freq, double q )
         {
             double qres = Math.Max( .001, 1.0 / q );
-            double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
+            double pfreq = freq * Math.PI * 2 / SynthCommon.SampleRate;
             double D = Math.Tan(pfreq * qres * 0.5);
             double C = (1.0 - D) / (1.0 + D);
             double cosf = Math.Cos(pfreq);
@@ -499,7 +499,7 @@ namespace Nebulator.Synth
         void SetParams( double freq, double q )
         {
             double qres = Math.Max( .001, 1.0 / q );
-            double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
+            double pfreq = freq * Math.PI * 2 / SynthCommon.SampleRate;
             double D = Math.Tan(pfreq * qres * 0.5);
             double C = (1.0 - D) / (1.0 + D);
             double cosf = Math.Cos(pfreq);
@@ -565,7 +565,7 @@ namespace Nebulator.Synth
         #region Private functions
         void SetParams( double freq, double q )
         {
-            double pfreq = freq * SynthCommon.RAD_PER_SAMPLE;
+            double pfreq = freq * Math.PI * 2 / SynthCommon.SampleRate;
             double B = pfreq / q;
             double R = 1.0 - B * 0.5;
             double R2 = 2.0 * R;
@@ -712,8 +712,8 @@ namespace Nebulator.Synth
         #region Private functions
         void SetResonance()
         {
-            _a2 = (_prad * _prad);
-            _a1 = (-2.0 * _prad * Math.Cos(2.0 * SynthCommon.ONE_PI * _pfreq / SynthCommon.SAMPLE_RATE));
+            _a2 = _prad * _prad;
+            _a1 = -2.0 * _prad * Math.Cos(2.0 * Math.PI * _pfreq / SynthCommon.SampleRate);
 
             if(_norm)
             {
@@ -726,8 +726,8 @@ namespace Nebulator.Synth
 
         void SetNotch()
         {
-            _b2 = (_zrad * _zrad);
-            _b1 = (-2.0 * _zrad * Math.Cos(2.0 * SynthCommon.ONE_PI * _zfreq / SynthCommon.SAMPLE_RATE));
+            _b2 = _zrad * _zrad;
+            _b1 = -2.0 * _zrad * Math.Cos(2.0 * Math.PI * _zfreq / SynthCommon.SampleRate);
         }
         #endregion
     }

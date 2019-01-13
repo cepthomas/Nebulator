@@ -8,18 +8,12 @@ namespace Nebulator.Synth
 {
     public class SynthCommon
     {
-        // TODON2 could make these vars.
-        public const int SAMPLE_RATE = 44100;
-        public const int NUM_OUTPUTS = 2;
+        #region General properties
+        public static int SampleRate { get; set; } = 44100;
+        public static int NumOutputs { get; set; } = 2;
+        #endregion
 
-        public const double ONE_OVER_128 = 0.0078125;
-        public const double ONE_PI = Math.PI;
-        public const double TWO_PI = Math.PI * 2;
-        public const double RAD_PER_SAMPLE = TWO_PI / SAMPLE_RATE;
-        public const double SQRT2 = 1.41421356237309504880;
-
-        public const int MAX_NOTE = 127;
-
+        #region General properties
         /// Compare two doubles "close enough".
         public static bool Close(double t1, double t2)
         {
@@ -32,5 +26,6 @@ namespace Nebulator.Synth
         {
             return _id++;
         }
+        #endregion
     }
 }

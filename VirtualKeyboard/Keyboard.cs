@@ -262,16 +262,16 @@ namespace Nebulator.VirtualKeyboard
                 }
 
                 DeviceInputEvent.Invoke(this, new DeviceInputEventArgs() { Step = step });
-                LogMsg(DeviceLogEventArgs.LogCategory.Recv, step.ToString());
+                LogMsg(DeviceLogCategory.Recv, step.ToString());
             }
         }
 
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogCategory cat, string msg)
         {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
         #endregion
 

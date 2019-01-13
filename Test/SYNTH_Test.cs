@@ -17,38 +17,19 @@ namespace Nebulator.Test
             {
                 DotSize = 4,
                 LineSize = 1,
-                ChartType = VisualizerForm.ChartTypes.ScatterLine,
-               // Dock = DockStyle.Fill
+                ChartType = ChartType.ScatterLine,
+                Location = new Point(50, 50),
+                StartPosition = FormStartPosition.Manual
             };
 
             int which = 0;
 
             switch(which)
             {
-                case 0:
-                    #region Bulk
-                    {
-                        Random rand = new Random();
-                        for (int y = 5; y < 100; y += 7)
-                        {
-                            VisualizerForm.DataSeries ser = new VisualizerForm.DataSeries();
-                            for (int x = 1; x < 10; x++)
-                            {
-                                double dr = rand.NextDouble() * 3;
-                                //ser.Points.Add((x, y + dr));
-                                ser.AddPoint(x, dr);
-                            }
-                            ser.Name = $"Series {y}";
-                            v.AllSeries.Add(ser);
-                        }
-                    }
-                    break;
-                    #endregion
-
                 case 1:
                     #region ADSR
                     {
-                        VisualizerForm.DataSeries seradsr = new VisualizerForm.DataSeries() { Name = "ADSR" };
+                        DataSeries seradsr = new DataSeries() { Name = "ADSR" };
                         ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Gain = 0.5 };
                         for (int i = 0; i < 100000; i++)
                         {
@@ -80,9 +61,9 @@ namespace Nebulator.Test
                         SinOsc osc2 = new SinOsc() { Freq = 500, Gain = 0.5 };
                         Mix mix1 = new Mix() { Gain = 0.5 };
 
-                        VisualizerForm.DataSeries serosc1 = new VisualizerForm.DataSeries() { Name = "OSC1" };
-                        VisualizerForm.DataSeries serosc2 = new VisualizerForm.DataSeries() { Name = "OSC2" };
-                        VisualizerForm.DataSeries sermix = new VisualizerForm.DataSeries() { Name = "MIX" };
+                        DataSeries serosc1 = new DataSeries() { Name = "OSC1" };
+                        DataSeries serosc2 = new DataSeries() { Name = "OSC2" };
+                        DataSeries sermix = new DataSeries() { Name = "MIX" };
                         for (int i = 0; i < 500; i++) // = 11.3 msec  400Hz = 2.5 msec 
                         {
                             double d1 = osc1.Next(1);
@@ -106,8 +87,8 @@ namespace Nebulator.Test
                         SinOsc osc = new SinOsc() { Freq = 400, Gain = 0.5 };
                         ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Gain = 0.5 };
 
-                        VisualizerForm.DataSeries serosc = new VisualizerForm.DataSeries() { Name = "OSC" };
-                        VisualizerForm.DataSeries seradsr = new VisualizerForm.DataSeries() { Name = "ADSR" };
+                        DataSeries serosc = new DataSeries() { Name = "OSC" };
+                        DataSeries seradsr = new DataSeries() { Name = "ADSR" };
 
                         for (int i = 0; i < 100000; i++)
                         {
@@ -133,7 +114,7 @@ namespace Nebulator.Test
 
                         //v.AllSeries.Add(serosc);
                         v.AllSeries.Add(seradsr);
-                        v.ChartType = VisualizerForm.ChartTypes.Line;
+                        v.ChartType = ChartType.Line;
                     }
                     break;
                     #endregion
@@ -155,7 +136,7 @@ namespace Nebulator.Test
             if (ok)
             {
                 MySynth ssynth = new MySynth() { Gain = 0.5 };
-                sout.SynthUGen = ssynth;
+                sout.Synth = ssynth;
                 sout.Start();
 
                 ssynth.adsr.KeyOn();
@@ -233,7 +214,7 @@ namespace Nebulator.Test
 
             if (ok)
             {
-                sout.SynthUGen = synth;
+                sout.Synth = synth;
                 sout.Start();
 
                 double val = 0.3;

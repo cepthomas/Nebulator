@@ -203,7 +203,7 @@ namespace Nebulator.Script
                         {
                             Errors.Add(new ScriptError()
                             {
-                                ErrorType = ScriptError.ScriptErrorType.Error,
+                                ErrorType = ScriptErrorType.Error,
                                 Message = $"Invalid $load: {fn}",
                                 SourceFile = pcont.SourceFile,
                                 LineNumber = pcont.LineNumber
@@ -326,7 +326,7 @@ namespace Nebulator.Script
                                 // Must be an internal error. Do the best we can.
                                 Errors.Add(new ScriptError()
                                 {
-                                    ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.Warning : ScriptError.ScriptErrorType.Error,
+                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
                                     SourceFile = err.FileName,
                                     LineNumber = err.Line,
                                     Message = $"InternalError: {err.ErrorText} in: {origLine}"
@@ -337,7 +337,7 @@ namespace Nebulator.Script
                                 int.TryParse(origLine.Substring(ind + 2), out origLineNum);
                                 Errors.Add(new ScriptError()
                                 {
-                                    ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.Warning : ScriptError.ScriptErrorType.Error,
+                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
                                     SourceFile = origFileName,
                                     LineNumber = origLineNum,
                                     Message = err.ErrorText
@@ -348,7 +348,7 @@ namespace Nebulator.Script
                         {
                             Errors.Add(new ScriptError()
                             {
-                                ErrorType = err.IsWarning ? ScriptError.ScriptErrorType.Warning : ScriptError.ScriptErrorType.Error,
+                                ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
                                 SourceFile = "NoSourceFile",
                                 LineNumber = -1,
                                 Message = err.ErrorText
@@ -361,7 +361,7 @@ namespace Nebulator.Script
             {
                 Errors.Add(new ScriptError()
                 {
-                    ErrorType = ScriptError.ScriptErrorType.Error,
+                    ErrorType = ScriptErrorType.Error,
                     Message = "Exception: " + ex.Message,
                     SourceFile = "",
                     LineNumber = 0
@@ -467,11 +467,12 @@ namespace Nebulator.Script
         #endregion
     }
 
+    /// <summary>General script error.</summary>
+    public enum ScriptErrorType { None, Warning, Error, Runtime }
+
     /// <summary>General script error container.</summary>
     public class ScriptError
     {
-        public enum ScriptErrorType { None, Warning, Error, Runtime }
-
         /// <summary>Where it came from.</summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;

@@ -58,7 +58,7 @@ namespace Nebulator.Synth
                     _voices.Add(voice);
                 }
 
-                _muteTime = decayTime <= 0.0 ? 0 : ((int)decayTime * SynthCommon.SAMPLE_RATE);
+                _muteTime = decayTime <= 0.0 ? 0 : ((int)decayTime * SynthCommon.SampleRate);
             }
             else
             {

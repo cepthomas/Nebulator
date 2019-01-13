@@ -6,19 +6,19 @@ namespace Nebulator.Synth
     // SawOsc is TriOsc with width=0.0 or width=1.0
     // SqrOsc is PulseOsc at width=0.5
 
+    public enum SyncType
+    {
+        Freq = 0,   // synch frequency to input // the input signal will set the frequency of the oscillator
+        Phase = 1,  // synch phase to input // the input signal will set the phase of the oscillator
+        FM = 2      // the input signal will add to the oscillator's current frequency - TODON2 see fm2.ck
+    }
+
 
     /// <summary>
     /// Oscillator base class.
     /// </summary>
     public abstract class Osc : UGen
     {
-        public enum SyncType
-        {
-            Freq = 0,   // synch frequency to input // the input signal will set the frequency of the oscillator
-            Phase = 1,  // synch phase to input // the input signal will set the phase of the oscillator
-            FM = 2      // the input signal will add to the oscillator's current frequency - TODON2 see fm2.ck
-        }
-
         #region Fields
         protected double _phaseIncr = 0.0; // phase increment was _num
         protected double _freq = 0.0; // 0.0 means not playing
@@ -48,7 +48,7 @@ namespace Nebulator.Synth
         public double Freq
         {
             get { return _freq; }
-            set { _freq = value; _phaseIncr = _freq / SynthCommon.SAMPLE_RATE; }
+            set { _freq = value; _phaseIncr = _freq / SynthCommon.SampleRate; }
         }
 
         public double Phase
@@ -92,7 +92,7 @@ namespace Nebulator.Synth
                 {
                     case SyncType.Freq: //Base
                         //_freq = din;
-                        _phaseIncr = _freq / SynthCommon.SAMPLE_RATE;
+                        _phaseIncr = _freq / SynthCommon.SampleRate;
                         break;
 
                     case SyncType.Phase: //Base
@@ -103,7 +103,7 @@ namespace Nebulator.Synth
                     case SyncType.FM: //Base
                         //double freq = _freq + din;
                         double freq = _freq + _mod;
-                        _phaseIncr = freq / SynthCommon.SAMPLE_RATE;
+                        _phaseIncr = freq / SynthCommon.SampleRate;
                         break;
                 }
 
@@ -148,7 +148,7 @@ namespace Nebulator.Synth
     {
         protected override double ComputeNext()
         {
-            return Math.Sin(_phase * SynthCommon.TWO_PI);
+            return Math.Sin(_phase * Math.PI * 2);
         }
     }
 

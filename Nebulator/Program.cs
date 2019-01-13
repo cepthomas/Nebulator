@@ -46,11 +46,11 @@ namespace Nebulator
             // Compile now.
             ScriptCore _script = compiler.Execute(fn);
 
-            int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptError.ScriptErrorType.Error);
+            int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptErrorType.Error);
 
             compiler.Errors.ForEach(r =>
             {
-                if (r.ErrorType == ScriptError.ScriptErrorType.Warning)
+                if (r.ErrorType == ScriptErrorType.Warning)
                 {
                     Console.WriteLine($"WRN: {r}");
                 }

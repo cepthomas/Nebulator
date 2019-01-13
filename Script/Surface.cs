@@ -56,7 +56,7 @@ namespace Nebulator.Script
             _skcontrol = new SKControl();
             Controls.Add(_skcontrol);
 
-           // ResizeRedraw = true;
+            // ResizeRedraw = true;
         }
 
         /// <summary>

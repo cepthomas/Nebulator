@@ -205,7 +205,7 @@ namespace Nebulator.Common
             return (ch, keyCodes);
         }
 
-        /// <summary>Key state query. Based on https://stackoverflow.com/a/9356006.</summary>
+        /// <summary>Key state query. Based on https://stackoverflow.com/a/9356006. </summary>
         /// <param name="key">Which key.</param>
         /// <returns></returns>
         public static KeyStates GetKeyState(Keys key)
@@ -228,6 +228,7 @@ namespace Nebulator.Common
 
             return state;
         }
+
         [Flags]
         public enum KeyStates { None = 0, Down = 1, Toggled = 2 }
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]

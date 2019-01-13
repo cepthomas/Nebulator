@@ -59,7 +59,7 @@ namespace Nebulator.Synth
         public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Main device to execute.</summary>
-        public UGen2 SynthUGen { get; set; } = null;
+        public UGen2 Synth { get; set; } = null;
         #endregion
 
         #region Lifecycle
@@ -68,7 +68,7 @@ namespace Nebulator.Synth
         /// </summary>
         public SynthOutput()
         {
-            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(SynthCommon.SAMPLE_RATE, SynthCommon.NUM_OUTPUTS);
+            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(SynthCommon.SampleRate, SynthCommon.NumOutputs);
         }
 
         /// <inheritdoc />
@@ -94,7 +94,7 @@ namespace Nebulator.Synth
 
                     if (ind < 0)
                     {
-                        LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid asio: {name}");
+                        LogMsg(DeviceLogCategory.Error, $"Invalid asio: {name}");
                     }
                     else
                     {
@@ -108,7 +108,7 @@ namespace Nebulator.Synth
             }
             catch (Exception ex)
             {
-                LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Init synth out failed: {ex.Message}");
+                LogMsg(DeviceLogCategory.Error, $"Init synth out failed: {ex.Message}");
                 inited = false;
             }
 
@@ -153,19 +153,19 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public bool Send(Step step) // TODON2 Synth doesn't really fit in the current model. It's not an external device.
+        public bool Send(Step step) // TODON1 Synth doesn't really fit in the current model. It's not an external device.
         {
             bool ret = true;
 
             // Critical code section.
             lock (_lock)
             {
-                if (_asioOut != null && SynthUGen != null)
+                if (_asioOut != null && Synth != null)
                 {
                     switch (step)
                     {
                         case StepNoteOn non:
-                            SynthUGen.Note(non.NoteNumber, non.VelocityToPlay);
+                            Synth.Note(non.NoteNumber, non.VelocityToPlay);
  
                             if (non.Duration.TotalTocks > 0) // specific duration
                             {
@@ -176,14 +176,14 @@ namespace Nebulator.Synth
                                 {
                                     Device = non.Device,
                                     ChannelNumber = non.ChannelNumber,
-                                    NoteNumber = Utils.Constrain(non.NoteNumber, 0, SynthCommon.MAX_NOTE),
+                                    NoteNumber = Utils.Constrain(non.NoteNumber, 0, 127 /*SynthCommon.MAX_NOTE*/),
                                     Expiry = non.Duration.TotalTocks
                                 });
                             }
                             break;
  
                         case StepNoteOff noff:
-                            SynthUGen.Note(noff.NoteNumber, 0);
+                            Synth.Note(noff.NoteNumber, 0);
                             break;
  
                         case StepControllerChange ctl:
@@ -229,14 +229,13 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public int Read(float[] buffer, int offset, int count)
         {
-            if(SynthUGen != null)
+            if(Synth != null)
             {
-
                 //float[] _dummy = new float[1024]; // this could stress GC too
 
                 for (int n = 0; n < count;)
                 {
-                    Sample dout = SynthUGen.Next(0);
+                    Sample dout = Synth.Next(0);
                     buffer[n] = (float)dout.Left;
                     //_dummy[n] = (float)dout.Left;
                     n++;
@@ -249,13 +248,10 @@ namespace Nebulator.Synth
                 //{
                 //    buffer[n++] = _fff;
                 //    buffer[n++] = _fff;
-
                 //    _fff += 0.01f;
-
                 //    if (_fff > 0.8)
                 //        _fff = 0;
                 //}
-
             }
             else
             {
@@ -265,8 +261,6 @@ namespace Nebulator.Synth
             return count;
         }
         #endregion
-
-        float _fff = 0;
 
         #region Private functions
         /// <summary>
@@ -310,9 +304,9 @@ namespace Nebulator.Synth
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogCategory cat, string msg)
         {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
         #endregion
     }

@@ -73,7 +73,7 @@ namespace Nebulator.Midi
 
                     if (ind < 0)
                     {
-                        LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Invalid midi: {parts[1]}");
+                        LogMsg(DeviceLogCategory.Error, $"Invalid midi: {parts[1]}");
                     }
                     else
                     {
@@ -85,7 +85,7 @@ namespace Nebulator.Midi
             }
             catch (Exception ex)
             {
-                LogMsg(DeviceLogEventArgs.LogCategory.Error, $"Init midi out failed: {ex.Message}");
+                LogMsg(DeviceLogCategory.Error, $"Init midi out failed: {ex.Message}");
                 inited = false;
             }
 
@@ -210,7 +210,7 @@ namespace Nebulator.Midi
                     if(msg != 0)
                     {
                         _midiOut.Send(msg);
-                        LogMsg(DeviceLogEventArgs.LogCategory.Send, step.ToString());
+                        LogMsg(DeviceLogCategory.Send, step.ToString());
                     }
                 }
             }
@@ -259,9 +259,9 @@ namespace Nebulator.Midi
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
-        void LogMsg(DeviceLogEventArgs.LogCategory cat, string msg)
+        void LogMsg(DeviceLogCategory cat, string msg)
         {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { Category = cat, Message = msg });
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
         #endregion
     }

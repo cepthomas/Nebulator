@@ -23,6 +23,7 @@ This project contains a bunch of components that are either recycled or created 
 - Virtual keyboard control based on Leslie Sanford's piano.
 - Synthesizer engine based on ChucK/STK.
 - Various utilities and extensions.
+- Simple plotting control.
 - Example of the use of [pnut unit tester](https://github.com/cepthomas/pnut) 
 
 # Third Party
@@ -37,7 +38,7 @@ This application uses these FOSS components:
 - Web server: [embedio](https://github.com/unosquare/embedio) (MIT).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
-- The synth component is ported from [ChucK](http://chuck.cs.princeton.edu/) (GPL)
+- The Synth component is ported from [ChucK](http://chuck.cs.princeton.edu/) (GPL)
 
 # License
 https://github.com/cepthomas/Nebulator/blob/master/LICENSE
