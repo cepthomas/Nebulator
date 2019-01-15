@@ -5,7 +5,7 @@ using Nebulator.Common;
 using Nebulator.Device;
 
 
-// TODO: Support microtonal notes with Pitch changes.
+// TODON2: Support microtonal notes with Pitch changes.
 // Pitch Bend Range can be set by sending MIDI controller messages. Specifically, you do it with Registered Parameters (cc# 100 and 101).
 // On the MIDI channel in question, you need to send:
 // MIDI cc101  = 0

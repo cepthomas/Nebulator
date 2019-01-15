@@ -73,13 +73,15 @@ namespace Nebulator.Script
         /// <param name="name">UI name</param>
         /// <param name="devName">Device name</param>
         /// <param name="channelNum"></param>
-        protected NChannel createChannel(string name, string devName, int channelNum)
+        /// <param name="context"></param>
+        protected NChannel createChannel(string name, string devName, int channelNum, object context = null)
         {
             NChannel nt = new NChannel()
             {
                 Name = name,
                 DeviceName = devName,
-                ChannelNumber = channelNum
+                ChannelNumber = channelNum,
+                Context = context
             };
             Channels.Add(nt);
             return nt;

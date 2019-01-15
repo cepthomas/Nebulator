@@ -12,6 +12,10 @@ using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 
 
+// TODON2 add live/oscope mode.
+// TODON2 Separate X/Y zooms.
+
+
 namespace Nebulator.Visualizer
 {
     /// <summary>Supported chart types.</summary>
@@ -27,7 +31,7 @@ namespace Nebulator.Visualizer
         public List<DataSeries> AllSeries { get; set; } = new List<DataSeries>();
 
         ///<summary></summary>
-        public ChartType ChartType { get; set; } = ChartType.Scatter;
+        public ChartType ChartType { get; set; } = ChartType.ScatterLine;
 
         ///<summary></summary>
         public double DotSize { get; set; } = 3;
@@ -91,7 +95,7 @@ namespace Nebulator.Visualizer
         /// <summary>Qualitative color set from http://colorbrewer2.org.</summary>
         List<Color> _colors1 = new List<Color>()
         {
-            Color.FromArgb(27, 158, 119), Color.FromArgb(217, 95, 2),
+            Color.FromArgb(217, 95, 2), Color.FromArgb(27, 158, 119),
             Color.FromArgb(117, 112, 179), Color.FromArgb(231, 41, 138),
             Color.FromArgb(102, 166, 30), Color.FromArgb(230, 171, 2),
             Color.FromArgb(166, 118, 29), Color.FromArgb(102, 102, 102)
@@ -174,14 +178,14 @@ namespace Nebulator.Visualizer
             // Intercept all keyboard events.
             KeyPreview = true;
 
+            // Colors.
             _colors.AddRange(_colors1);
             _colors.AddRange(_colors2);
+            //_colorIndex = new Random().Next(0, _colors.Count);
 
             // Hook up handlers.
             KeyPress += VisualizerForm_KeyPress;
-
             MouseWheel += VisualizerForm_MouseWheel;
-            
             skControl.Resize += SkControl_Resize;
             skControl.MouseDown += SkControl_MouseDown;
             skControl.MouseUp += SkControl_MouseUp;
@@ -374,35 +378,67 @@ namespace Nebulator.Visualizer
             // Draw axes first before clipping.
             DrawAxes(canvas);
 
-            // Create the transformer. or use math.net?
+            // Now clip to drawing region.
+            canvas.ClipRect(_dataRegion.ToSKRect());
+
+            // Map the data to UI space. or use math.net?
             // https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/transforms/matrix
             SKMatrix matrix = new SKMatrix();
             matrix.ScaleX = (float)(_zoom * (_dataRegion.Right - _dataRegion.Left) / (_xMax - _xMin));
             matrix.ScaleY = (float)(_zoom * (_dataRegion.Top - _dataRegion.Bottom) / (_yMax - _yMin));
-            // Scale first? tx·sx ty·sy
-            // matrix.TransX = (_dataOffset.X) * matrix.ScaleX;
-            // matrix.TransX = (_dataOffset.X + AXIS_SPACE) * matrix.ScaleX;
             matrix.TransX = _dataOffset.X + _dataRegion.Left;
             matrix.TransY = _dataOffset.Y + _dataRegion.Bottom;
             matrix.Persp2 = 1;
+            TransformData(matrix);
 
-            // Clip to drawing region.
-            canvas.ClipRect(_dataRegion.ToSKRect());
+            DrawData(canvas);
+        }
 
-            switch (ChartType)
+        /// <summary>
+        /// Calc the client points.
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="matrix"></param>
+        void TransformData(SKMatrix matrix)
+        {
+            foreach (DataSeries ser in AllSeries)
             {
-                case ChartType.Scatter:
-                    DrawScatter(canvas, matrix);
-                    break;
+                foreach(DataPoint dp in ser.Points)
+                {
+                    dp.ClientPoint = matrix.MapPoint(new SKPoint((float)(dp.X - _xMin), (float)(dp.Y - _yMin)));
+                }
+            }
+        }
 
-                case ChartType.Line:
-                    DrawLines(canvas, matrix);
-                    break;
+        /// <summary>
+        /// Draw line/scatter charts.
+        /// </summary>
+        /// <param name="canvas"></param>
+        void DrawData(SKCanvas canvas)
+        {
+            foreach (DataSeries ser in AllSeries)
+            {
+                _pen.Color = ser.Color.ToSKColor();
 
-                case ChartType.ScatterLine:
-                    DrawLines(canvas, matrix);
-                    DrawScatter(canvas, matrix);
-                    break;
+                if (ChartType == ChartType.Scatter || ChartType == ChartType.ScatterLine)
+                {
+                    _pen.StrokeWidth = (float)DotSize;
+                    ser.Points.ForEach(pt => canvas.DrawPoint(pt.ClientPoint, _pen));
+                }
+
+                if (ChartType == ChartType.Line || ChartType == ChartType.ScatterLine)
+                {
+                    _pen.StrokeWidth = (float)LineSize;
+                    SKPath path = new SKPath();
+                    SKPoint[] points = new SKPoint[ser.Points.Count];
+                    for (int i = 0; i < ser.Points.Count; i++)
+                    {
+                        points[i] = ser.Points[i].ClientPoint;
+                    }
+                    
+                    path.AddPoly(points, false);
+                    canvas.DrawPath(path, _pen);
+                }
             }
         }
 
@@ -410,88 +446,31 @@ namespace Nebulator.Visualizer
         /// Draw axes.
         /// </summary>
         /// <param name="canvas"></param>
-        void DrawAxes(SKCanvas canvas) // TODON1
+        void DrawAxes(SKCanvas canvas)
         {
             _pen.Color = SKColors.Black;
+            _pen.StrokeWidth = 0.6f;
+            _text.Color = SKColors.Black;
 
             // Draw area.
-            SKPoint[] points = new SKPoint[4];
-            points[0] = new SKPoint(_dataRegion.Left, _dataRegion.Top);
-            points[1] = new SKPoint(_dataRegion.Right, _dataRegion.Top);
-            points[2] = new SKPoint(_dataRegion.Right, _dataRegion.Bottom);
-            points[3] = new SKPoint(_dataRegion.Left, _dataRegion.Bottom);
-            SKPath path = new SKPath();
-            path.AddPoly(points, true);
-            _pen.StrokeWidth = 0.2f;
-            canvas.DrawPath(path, _pen);
-
-            // Axes.
-            _pen.StrokeWidth = 2;
-            // _xMax = (_xMax / XGrid + 1) * XGrid;
-            // _xMin = (_xMin / XGrid) * XGrid;
-            // _yMax = (_yMax / YGrid + 1) * YGrid;
-            // _yMin = (_yMin / YGrid) * YGrid;
+            float tick = 8;
+            canvas.DrawLine(_dataRegion.Left - tick, _dataRegion.Top, _dataRegion.Right, _dataRegion.Top, _pen);
+            canvas.DrawLine(_dataRegion.Left - tick, _dataRegion.Bottom, _dataRegion.Right, _dataRegion.Bottom, _pen);
+            canvas.DrawLine(_dataRegion.Left, _dataRegion.Top, _dataRegion.Left, _dataRegion.Bottom + tick, _pen);
+            canvas.DrawLine(_dataRegion.Right, _dataRegion.Top, _dataRegion.Right, _dataRegion.Bottom + tick, _pen);
 
             // Y axis
-            canvas.DrawLine(
-                _dataRegion.Left - AXIS_SPACE,
-                _dataRegion.Top,
-                _dataRegion.Left - AXIS_SPACE,
-                _dataRegion.Bottom + AXIS_SPACE,
-                _pen);
+            _text.TextAlign = SKTextAlign.Left;
+            float left = 2;
+            canvas.DrawText($"{YUnits}", left, _dataRegion.Top + _dataRegion.Height / 2 + _text.FontMetrics.XHeight / 2, _text);
+            canvas.DrawText($"{_yMin:0.00}", left, _dataRegion.Bottom + _text.FontMetrics.XHeight / 2, _text);
+            canvas.DrawText($"{_yMax:0.00}", left, _dataRegion.Top + +_text.FontMetrics.XHeight / 2, _text);
 
             // X axis
-            canvas.DrawLine(
-                _dataRegion.Left - AXIS_SPACE,
-                _dataRegion.Bottom + AXIS_SPACE,
-                _dataRegion.Right,
-                _dataRegion.Bottom + AXIS_SPACE,
-                _pen);
-        }
-
-        /// <summary>
-        /// Draw the scatter points.
-        /// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="matrix"></param>
-        void DrawScatter(SKCanvas canvas, SKMatrix matrix)
-        {
-            foreach (DataSeries ser in AllSeries)
-            {
-                _pen.Color = ser.Color.ToSKColor();
-                _pen.StrokeWidth = (float)DotSize;
-
-                foreach (DataPoint pt in ser.Points)
-                {
-                    pt.ClientPoint = matrix.MapPoint(new SKPoint((float)pt.X, (float)pt.Y));
-                    canvas.DrawPoint(pt.ClientPoint, _pen);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Draw line chart.
-        /// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="matrix"></param>
-        void DrawLines(SKCanvas canvas, SKMatrix matrix)
-        {
-            foreach (DataSeries ser in AllSeries)
-            {
-                _pen.Color = ser.Color.ToSKColor();
-                _pen.StrokeWidth = (float)LineSize;
-
-                SKPoint[] points = new SKPoint[ser.Points.Count];
-                for (int i = 0; i < ser.Points.Count; i++)
-                {
-                    ser.Points[i].ClientPoint = matrix.MapPoint(new SKPoint((float)ser.Points[i].X, (float)ser.Points[i].Y));
-                    points[i] = ser.Points[i].ClientPoint;
-                }
-
-                SKPath path = new SKPath();
-                path.AddPoly(points, false);
-                canvas.DrawPath(path, _pen);
-            }
+            _text.TextAlign = SKTextAlign.Center;
+            canvas.DrawText($"{XUnits}", _dataRegion.Left + _dataRegion.Width / 2, _dataRegion.Bottom + AXIS_SPACE, _text);
+            canvas.DrawText($"{_xMin:0.00}", _dataRegion.Left, _dataRegion.Bottom + AXIS_SPACE, _text);
+            canvas.DrawText($"{_xMax:0.00}", _dataRegion.Right, _dataRegion.Bottom + AXIS_SPACE, _text);
         }
 
         /// <summary>
@@ -504,12 +483,12 @@ namespace Nebulator.Visualizer
             SKCanvas canvas = e.Surface.Canvas;
             canvas.Clear();
 
-            //void DrawText(SKCanvas canvas)
             float xpos = 10;
             float ypos = 20;
             float yinc = 15;
 
             _text.Color = SKColors.Black;
+            _text.TextAlign = SKTextAlign.Left;
 
             //canvas.DrawText($"X:{_currentMousePos.X:0.00}  Y:{_currentMousePos.Y:0.00}", xpos, ypos, _text);
             //ypos += yinc;
@@ -517,14 +496,16 @@ namespace Nebulator.Visualizer
             //canvas.DrawText($"OS.X:{_dataOffset.X:0.00}  OS.Y:{_dataOffset.Y::0.00}", xpos, ypos, _text);
             //ypos += yinc;
 
-            canvas.DrawText($"Xmin:{_xMin:0.00}  Xmax:{_xMax:0.00}", xpos, ypos, _text);
-            ypos += yinc;
-            canvas.DrawText($"Ymin:{_yMin:0.00}  Ymax:{_yMax:0.00}", xpos, ypos, _text);
-            ypos += yinc;
+            //canvas.DrawText($"Xmin:{_xMin:0.00}  Xmax:{_xMax:0.00}", xpos, ypos, _text);
+            //ypos += yinc;
 
-            // space
-            ypos += yinc;
+            //canvas.DrawText($"Ymin:{_yMin:0.00}  Ymax:{_yMax:0.00}", xpos, ypos, _text);
+            //ypos += yinc;
 
+            //ypos += yinc;
+
+            canvas.DrawText($"Series:", xpos, ypos, _text);
+            ypos += yinc;
             foreach (DataSeries ser in AllSeries)
             {
                 _text.Color = ser.Color.ToSKColor();
@@ -546,12 +527,6 @@ namespace Nebulator.Visualizer
                 skControl.Top + BORDER_PAD,
                 skControl.Width - BORDER_PAD - BORDER_PAD - AXIS_SPACE,
                 skControl.Height - BORDER_PAD - BORDER_PAD - AXIS_SPACE);
-
-            //_axesRegion = new RectangleF(
-            //    skControl.Left + BORDER_PAD,
-            //    skControl.Top + BORDER_PAD,
-            //    skControl.Width - BORDER_PAD - BORDER_PAD,
-            //    skControl.Height - BORDER_PAD - BORDER_PAD);
         }
 
         /// <summary>

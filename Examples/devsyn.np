@@ -30,7 +30,11 @@ bool _local = true;
 /////////////////////// new stuff ////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-// The overall synthesizer.
+// The overall synthesizer. TODON2 Update from test code.
+// Make clone of class Moog - STK moog-like swept filter sampling synthesis class.
+// This instrument uses one attack wave, one looped wave, and an ADSR envelope (inherited from the Sampler class)
+// and adds two sweepable formant (FormSwep) filters.
+
 public class MySynth : UGen2
 {
     public Voicer vcr1 = new Voicer(typeof(MyVoice), 5, 0.2);
@@ -131,7 +135,7 @@ public override void setupNeb()
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // All the output channels.
-    SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1);
+    SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1, syn);
     setWobbler(SYNTH_1, 0.2);
 
     if(_local)
@@ -155,7 +159,6 @@ public override void setupNeb()
 public override void setupNeb2()
 {
     // Post device creation.
-    (SYNTH_1.Device as SynthOutput).Synth = syn; // TODON1 kinda clumsy... add an optional object Context to NChannel probably
 }
 
 public override void step()

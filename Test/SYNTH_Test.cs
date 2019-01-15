@@ -13,16 +13,9 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            VisualizerForm v = new VisualizerForm
-            {
-                DotSize = 4,
-                LineSize = 1,
-                ChartType = ChartType.ScatterLine,
-                Location = new Point(50, 50),
-                StartPosition = FormStartPosition.Manual
-            };
+            VisualizerForm v = new VisualizerForm();
 
-            int which = 0;
+            int which = 2;
 
             switch(which)
             {
@@ -64,6 +57,7 @@ namespace Nebulator.Test
                         DataSeries serosc1 = new DataSeries() { Name = "OSC1" };
                         DataSeries serosc2 = new DataSeries() { Name = "OSC2" };
                         DataSeries sermix = new DataSeries() { Name = "MIX" };
+
                         for (int i = 0; i < 500; i++) // = 11.3 msec  400Hz = 2.5 msec 
                         {
                             double d1 = osc1.Next(1);
@@ -74,6 +68,7 @@ namespace Nebulator.Test
                             serosc2.AddPoint(i, d2);
                             sermix.AddPoint(i, dm);
                         }
+
                         v.AllSeries.Add(serosc1);
                         v.AllSeries.Add(serosc2);
                         v.AllSeries.Add(sermix);
@@ -128,6 +123,8 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
+            VisualizerForm v = new VisualizerForm();
+
             SynthOutput sout = new SynthOutput();
             bool ok = sout.Init("SYNTH:ASIO4ALL v2");
 
@@ -139,28 +136,40 @@ namespace Nebulator.Test
                 sout.Synth = ssynth;
                 sout.Start();
 
-                ssynth.adsr.KeyOn();
-
                 for (int i = 0; i < 6; i++)
                 {
                     ssynth.lpf.Freq += 200;
 
                     System.Threading.Thread.Sleep(1000);
 
-                    if(i == 3)
+                    if (i == 1)
+                    {
+                        ssynth.adsr.KeyOn();
+                    }
+
+                    if (i == 4)
                     {
                         ssynth.adsr.KeyOff();
                     }
                 }
 
                 sout.Stop();
+
+                // Vis it
+                v.AllSeries.Add(ssynth.ser);
+                new System.Threading.Thread(() => v.ShowDialog()).Start();
             }
         }
 
         public class MySynth : UGen2
         {
-            PulseOsc osc1 = new PulseOsc() { Freq = 400, Gain = 0.5 };
-            PulseOsc osc2 = new PulseOsc() { Freq = 500, Gain = 0.5 };
+            public DataSeries ser = new DataSeries();
+            int serind = 0;
+
+            //PulseOsc osc1 = new PulseOsc() { Freq = 400, Gain = 0.5 };
+            //PulseOsc osc2 = new PulseOsc() { Freq = 500, Gain = 0.5 };
+            SinOsc osc1 = new SinOsc() { Freq = 400, Gain = 0.5 };
+            SinOsc osc2 = new SinOsc() { Freq = 500, Gain = 0.5 };
             Mix mix1 = new Mix() { Gain = 0.5 };
             public ADSR adsr = new ADSR() { AttackTime = 1.0, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.8, Gain = 0.5 };
             // Pan pan = new Pan();
@@ -169,17 +178,21 @@ namespace Nebulator.Test
 
             public override Sample Next(double _)
             {
-                //double dd1 = osc1.Next(0);
-                //double dd2 = osc2.Next(0);
-                //double dd3 = mix1.Next(dd1, dd2);
-                //double dd4 = adsr.Next(dd3);
-                //Sample dout = new Sample() { Left = dd1, Right = dd1 };
+                double dd1 = osc1.Next(0);
+                double dd2 = osc2.Next(0);
+                double dd3 = mix1.Next(dd1, dd2);
+                double dd4 = adsr.Next(dd3);
+                Sample dout = new Sample() { Left = dd4, Right = dd4 };
 
-                double dd = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0)));
+                //double dd = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0)));
+                //dd = lpf.Next(dd);
+                //Sample dout = new Sample() { Left = dd, Right = dd };
 
-                dd = lpf.Next(dd);
-
-                Sample dout = new Sample() { Left = dd, Right = dd };
+                if(serind++ % 500 == 0)
+                {
+                    //ser.AddPoint(serind, dd1);
+                    ser.AddPoint(serind, dout.Left);
+                }
 
                 return dout;
             }

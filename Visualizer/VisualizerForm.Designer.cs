@@ -141,7 +141,9 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStripMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Location = new System.Drawing.Point(50, 50);
             this.Name = "VisualizerForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Visualizer";
             this.Load += new System.EventHandler(this.VisualizerForm_Load);
             this.toolStripMain.ResumeLayout(false);

@@ -125,6 +125,9 @@ namespace Nebulator.Script
 
         /// <summary>Current state for this channel.</summary>
         public ChannelState State { get; set; } = ChannelState.Normal;
+
+        /// <summary>Optional extra info fr this channel.</summary>
+        public object Context { get; set; } = null;
         #endregion
 
         /// <summary>

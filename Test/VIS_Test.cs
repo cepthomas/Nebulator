@@ -13,14 +13,7 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            VisualizerForm v = new VisualizerForm
-            {
-                DotSize = 4,
-                LineSize = 1,
-                ChartType = ChartType.ScatterLine,
-                Location = new Point(50, 50),
-                StartPosition = FormStartPosition.Manual
-            };
+            VisualizerForm v = new VisualizerForm();
 
             //Random rand = new Random();
             //for (int y = 5; y < 100; y += 7)
@@ -38,7 +31,7 @@ namespace Nebulator.Test
             DataSeries ser = new DataSeries() { Name = "TRI" };
             for (int x = 0; x < 100; x++)
             {
-                double y = x % 25;
+                double y = x % 25 - 2;
                 ser.AddPoint(x, y);
             }
             v.AllSeries.Add(ser);

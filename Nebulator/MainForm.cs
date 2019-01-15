@@ -22,8 +22,8 @@ using Nebulator.Synth;
 using NAudio.Wave;
 
 
-// TODO Remove Device dependency in Script project for NProcessing.
-// TODON2 Something fun with small-mark1.bmp etc.
+// TODON2 Remove Device dependency in Script project for NProcessing.
+// TODON2 Something fun with small-mark1.bmp etc. Animated easter egg.
 
 
 namespace Nebulator
@@ -179,7 +179,7 @@ namespace Nebulator
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
-            // Init HTTP server. TODO use OSC instead now?
+            // Init HTTP server. TODON2 use OSC instead now?
             _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
@@ -376,7 +376,7 @@ namespace Nebulator
                                 break;
 
                             case "SYNTH":
-                                nout = new SynthOutput();
+                                nout = new SynthOutput() { Synth = chan.Context as UGen2 };
                                 break;
                         }
                     }

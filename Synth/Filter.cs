@@ -2,16 +2,17 @@
 using System;
 
 
-//From NAudio:
+/////// From NAudio:
 // based on Cookbook formulae for audio EQ biquad filter coefficients
 // http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
 // by Robert Bristow-Johnson  <rbj@audioimagination.com>
-
+//
 //    alpha = sin(w0)/(2*Q)                                       (case: Q)
 //          = sin(w0)*sinh( ln(2)/2 * BW * w0/sin(w0) )           (case: BW)
 //          = sin(w0)/2 * sqrt( (A + 1/A)*(1/S - 1) + 2 )         (case: S)
+//
 // Q: (the EE kind of definition, except for peakingEQ in which A*Q is
-// the classic EE Q.  That adjustment in definition was made so that
+// the classic EE Q. That adjustment in definition was made so that
 // a boost of N dB followed by a cut of N dB for identical Q and
 // f0/Fs results in a precisely flat unity gain filter or "wire".)
 //
@@ -19,9 +20,9 @@ using System;
 // and notch or between midpoint (dBgain/2) gain frequencies for
 // peaking EQ)
 //
-// S: a "shelf slope" parameter (for shelving EQ only).  When S = 1,
+// S: a "shelf slope" parameter (for shelving EQ only). When S = 1,
 // the shelf slope is as steep as it can be and remain monotonically
-// increasing or decreasing gain with frequency.  The shelf slope, in
+// increasing or decreasing gain with frequency. The shelf slope, in
 // dB/octave, remains proportional to S for all other values for a
 // fixed f0/Fs and dBgain.
 
@@ -34,7 +35,7 @@ namespace Nebulator.Synth
     /// </summary>
     public abstract class Filter : UGen
     {
-        #region Fields
+        #region Fields TODON3 clean up?
         protected double _a0;
         protected double _a1;
         protected double _a2;
@@ -43,12 +44,7 @@ namespace Nebulator.Synth
         protected double _b2;
         protected double _y1;
         protected double _y2;
-        protected double _input0;
-        protected double _input1;
-        protected double _input2;
-        protected double _output0;
-        protected double _output1;
-        protected double _output2;
+
         protected double _freq;
         protected double _pfreq;
         protected double _zfreq;
@@ -57,52 +53,18 @@ namespace Nebulator.Synth
         protected double _q;
         protected double _db;
         protected bool _norm;
-        #endregion
 
-        #region Properties
-        #endregion
-
-        #region Lifecycle
-        #endregion
-
-        #region Public Functions
+        protected double _input0;
+        protected double _input1;
+        protected double _input2;
+        protected double _output0;
+        protected double _output1;
+        protected double _output2;
         #endregion
 
         #region Private functions
-        // This was CK_DDN - dedenormal. Doesn't seem to do that to my eye.
-        // Found!
-        /* denormals are very small floating point numbers that force FPUs into slow
-        mode. All lowpass filters using floats are suspectible to denormals unless
-        a small offset is added to avoid very small floating point numbers. */
-        //#define DENORMAL_OFFSET (1E-10)
-        ///
-        // When the value to be represented is too small to encode normally, it is encoded in denormalized form, indicated by an exponent value of Float.MIN_EXPONENT - 1 or Double.MIN_EXPONENT - 1. Denormalized floating-point numbers have an assumed 0 in the ones' place and have one or more leading zeros in the represented portion of their mantissa. These leading zero bits no longer function as significant bits of precision; consequently, the total precision of denormalized floating-point numbers is less than that of normalized floating-point numbers. Note that even using normalized numbers where precision is required can pose a risk. See rule NUM04-J. Do not use floating-point numbers if precise computation is required for more information.
-
-        // Using denormalized numbers can severely impair the precision of floating-point calculations; as a result, denormalized numbers must not be used.
-
-        // Detecting Denormalized Numbers
-        // The following code tests whether a float value is denormalized in FP-strict mode or for platforms that lack extended range support. Testing for denormalized numbers in the presence of extended range support is platform-dependent; see rule NUM53-J. Use the strictfp modifier for floating-point calculation consistency across platforms for additional information.
-
-        // strictfp public static boolean isDenormalized(float val) {
-        //   if (val == 0) {
-        //     return false;
-        //   }
-        //   if ((val > -Float.MIN_NORMAL) && (val < Float.MIN_NORMAL)) {
-        //     return true;
-        //   }
-        //   return false;
-        // }
-        // Testing whether values of type double are denormalized is analogous.
-
-
-        ///// or:
-        // You can repair a denormal by checking flags in a floating point number and substituting zero. But that’s a lot of work. A simple way to avoid denormals is to add a tiny but normalized number to calculations that are at risk—1E-18, for instance is -200 dB down from unity, and won’t affect audio paths, but when added to denormals will result in 1E-18; this won’t affect audible samples at all, due to the way floating point works.
-        // While denormal protection could be built into the filter code, it’s more economical to use denormal protection on a more global level, instead of in each module. As an example of one possible solution, you could add a tiny constant (1E-18) to every incoming sample at the beginning of your processing chain, switching the sign of the constant (to -1E-18) after every buffer you process to avoid the possibility of a highpass filter in the chain removing the constant offset.
-        // Another variant in the x86/amd64 case is to set the FPU flush denormals to zero bit for the thread handling audio data. I’ve had an implementation with lots of parallell biquads that prior to that suffered from denormals, but with the bit set, works like a charm. The advantage is of course that you do not need to fiddle with the de-denormal constant.
-
-
-
-        protected double DDN(double f) // was a macro
+        // This was CK_DDN macro - dedenormal.
+        protected double DDN(double f)
         {
             double n;
             if(f >= 0)
@@ -123,9 +85,6 @@ namespace Nebulator.Synth
     /// </summary>
     public class LPF : Filter
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public double Freq
         {
@@ -188,9 +147,6 @@ namespace Nebulator.Synth
     /// </summary>
     public class HPF : Filter
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public double Freq
         {
@@ -249,9 +205,6 @@ namespace Nebulator.Synth
     /// </summary>
     public class BPF : Filter
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public double Freq
         {
@@ -317,9 +270,6 @@ namespace Nebulator.Synth
     /// </summary>
     public class BRF : Filter
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public double Freq
         {
@@ -385,9 +335,6 @@ namespace Nebulator.Synth
     /// </summary>
     public class RLPF : Filter
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public double Freq
         {
@@ -453,9 +400,6 @@ namespace Nebulator.Synth
     /// </summary>
     public class RHPF : Filter
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public double Freq
         {
@@ -521,9 +465,6 @@ namespace Nebulator.Synth
     /// </summary>
     public class ResonZ : Filter
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public double Freq
         {
@@ -602,9 +543,6 @@ namespace Nebulator.Synth
         // .norm (float, READ/WRITE) normalization
         // .eqzs (float, READ/WRITE) equal gain zeroes// 
 
-        #region Fields
-        #endregion
-
         #region Properties
         public double A0
         {
@@ -676,16 +614,24 @@ namespace Nebulator.Synth
         #region Lifecycle
         public BiQuad()
         {
-            _a0 = _b0 = 1.0;
-            _a1 = _a2 = 0.0;
+            _a0 = 1.0;
+            _b0 = 1.0;
+            _a1 = 0.0;
+            _a2 = 0.0;
             _b1 = 0.0;
             _b2 = 0.0;
 
-            _input0 = _input1 = _input2 = 0.0;
-            _output0 = _output1 = _output2 = 0.0;
+            _input0 = 0.0;
+            _input1 = 0.0;
+            _input2 = 0.0;
+            _output0 = 0.0;
+            _output1 = 0.0;
+            _output2 = 0.0;
 
-            _pfreq = _zfreq = 0.0;
-            _prad = _zrad = 0.0;
+            _pfreq = 0.0;
+            _zfreq = 0.0;
+            _prad = 0.0;
+            _zrad = 0.0;
             _norm = false;
         }
         #endregion
@@ -731,4 +677,131 @@ namespace Nebulator.Synth
         }
         #endregion
     }
+
+    #if TODON2_PORT_THIS
+
+/***************************************************/
+/*! \class FormSwep
+    \brief STK sweepable formant filter class.
+
+    This public BiQuad filter subclass implements
+    a formant (resonance) which can be "swept"
+    over time from one frequency setting to another.
+    It provides methods for controlling the sweep
+    rate and target frequency.
+
+    by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
+*/
+/***************************************************/
+
+
+FormSwep :: FormSwep() : BiQuad()
+{
+    frequency = (double) 0.0;
+    radius = (double) 0.0;
+    targetGain = (double) 1.0;
+    targetFrequency = (double) 0.0;
+    targetRadius = (double) 0.0;
+    deltaGain = (double) 0.0;
+    deltaFrequency = (double) 0.0;
+    deltaRadius = (double) 0.0;
+    sweepState = (double)  0.0;
+    sweepRate = (double) 0.002;
+    dirty = false;
+    this->clear();
 }
+
+FormSwep :: ~FormSwep()
+{
+}
+
+void FormSwep :: setResonance(double aFrequency, double aRadius)
+{
+    dirty = false;
+    radius = aRadius;
+    frequency = aFrequency;
+
+    BiQuad::setResonance( frequency, radius, true );
+}
+
+void FormSwep :: setStates(double aFrequency, double aRadius, double aGain)
+{
+    dirty = false;
+
+    if ( frequency != aFrequency || radius != aRadius )
+        BiQuad::setResonance( aFrequency, aRadius, true );
+
+    frequency = aFrequency;
+    radius = aRadius;
+    gain = aGain;
+    targetFrequency = aFrequency;
+    targetRadius = aRadius;
+    targetGain = aGain;
+}
+
+void FormSwep :: setTargets(double aFrequency, double aRadius, double aGain)
+{
+    dirty = true;
+    startFrequency = frequency;
+    startRadius = radius;
+    startGain = gain;
+    targetFrequency = aFrequency;
+    targetRadius = aRadius;
+    targetGain = aGain;
+    deltaFrequency = aFrequency - frequency;
+    deltaRadius = aRadius - radius;
+    deltaGain = aGain - gain;
+    sweepState = (double) 0.0;
+}
+
+void FormSwep :: setSweepRate(double aRate)
+{
+    sweepRate = aRate;
+    if ( sweepRate > 1.0 ) sweepRate = 1.0;
+    if ( sweepRate < 0.0 ) sweepRate = 0.0;
+}
+
+void FormSwep :: setSweepTime(double aTime)
+{
+    sweepRate = 1.0 / ( aTime * SynthCommon.SAMPLE_RATE );
+    if ( sweepRate > 1.0 ) sweepRate = 1.0;
+    if ( sweepRate < 0.0 ) sweepRate = 0.0;
+}
+
+double FormSwep :: tick(double sample)
+{
+    if (dirty)
+    {
+        sweepState += sweepRate;
+        if ( sweepState >= 1.0 )
+        {
+            sweepState = (double) 1.0;
+            dirty = false;
+            radius = targetRadius;
+            frequency = targetFrequency;
+            gain = targetGain;
+        }
+        else
+        {
+            radius = startRadius + (deltaRadius * sweepState);
+            frequency = startFrequency + (deltaFrequency * sweepState);
+            gain = startGain + (deltaGain * sweepState);
+        }
+        BiQuad::setResonance( frequency, radius, true );
+    }
+
+    return BiQuad::tick( sample );
+}
+
+double *FormSwep :: tick(double *vec, unsigned int vectorSize)
+{
+    for (unsigned int i=0; i<vectorSize; i++)
+        vec[i] = tick(vec[i]);
+
+    return vec;
+}
+#endif
+
+}
+
+
