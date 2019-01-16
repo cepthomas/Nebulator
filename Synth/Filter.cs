@@ -63,7 +63,9 @@ namespace Nebulator.Synth
         #endregion
 
         #region Private functions
-        // This was CK_DDN macro - dedenormal.
+        /// <summary>
+        /// Dedenormalize value. Was CK_DDN macro.
+        /// </summary>
         protected double DDN(double f)
         {
             double n;
@@ -81,7 +83,7 @@ namespace Nebulator.Synth
     }
 
     /// <summary>
-    /// Filter class.
+    /// 2nd order low pass Butterworth filter.
     /// </summary>
     public class LPF : Filter
     {
@@ -130,20 +132,20 @@ namespace Nebulator.Synth
             double C = 1.0 / Math.Tan(pfreq);
             double C2 = C * C;
             double sqrt2C = C * Math.Sqrt(2);
-            double next_a0 = 1.0 / (1.0 + sqrt2C + C2);
-            double next_b1 = -2.0 * (1.0 - C2) * next_a0 ;
-            double next_b2 = -(1.0 - sqrt2C + C2) * next_a0;
+            double nextA0 = 1.0 / (1.0 + sqrt2C + C2);
+            double nextB1 = -2.0 * (1.0 - C2) * nextA0 ;
+            double nextB2 = -(1.0 - sqrt2C + C2) * nextA0;
 
             _freq = freq;
-            _a0 = next_a0;
-            _b1 = next_b1;
-            _b2 = next_b2;
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
         }
         #endregion
     }
 
     /// <summary>
-    /// Filter class.
+    /// 2nd order high pass Butterworth filter.
     /// </summary>
     public class HPF : Filter
     {
@@ -188,20 +190,20 @@ namespace Nebulator.Synth
             double C = Math.Tan(pfreq);
             double C2 = C * C;
             double sqrt2C = C * Math.Sqrt(2);
-            double next_a0 = 1.0 / (1.0 + sqrt2C + C2);
-            double next_b1 = 2.0 * (1.0 - C2) * next_a0 ;
-            double next_b2 = -(1.0 - sqrt2C + C2) * next_a0;
+            double nextA0 = 1.0 / (1.0 + sqrt2C + C2);
+            double nextB1 = 2.0 * (1.0 - C2) * nextA0 ;
+            double nextB2 = -(1.0 - sqrt2C + C2) * nextA0;
 
             _freq = freq;
-            _a0 = next_a0;
-            _b1 = next_b1;
-            _b2 = next_b2;
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
         }
         #endregion
     }
 
     /// <summary>
-    /// Filter class.
+    /// 2nd order band pass Butterworth filter.
     /// </summary>
     public class BPF : Filter
     {
@@ -252,21 +254,21 @@ namespace Nebulator.Synth
 
             double C = 1.0 / Math.Tan(pbw);
             double D = 2.0 * Math.Cos(pfreq);
-            double next_a0 = 1.0 / (1.0 + C);
-            double next_b1 = C * D * next_a0 ;
-            double next_b2 = (1.0 - C) * next_a0;
+            double nextA0 = 1.0 / (1.0 + C);
+            double nextB1 = C * D * nextA0 ;
+            double nextB2 = (1.0 - C) * nextA0;
 
             _freq = freq;
             _q = q;
-            _a0 = next_a0;
-            _b1 = next_b1;
-            _b2 = next_b2;
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
         }
         #endregion
     }
 
     /// <summary>
-    /// Filter class.
+    /// 2nd order band reject pass Butterworth filter.
     /// </summary>
     public class BRF : Filter
     {
@@ -317,21 +319,21 @@ namespace Nebulator.Synth
             double pbw = 1.0 / q * pfreq * .5;
             double C = Math.Tan(pbw);
             double D = 2.0 * Math.Cos(pfreq);
-            double next_a0 = 1.0 / (1.0 + C);
-            double next_b1 = -D * next_a0 ;
-            double next_b2 = (1.0 - C) * next_a0;
+            double nextA0 = 1.0 / (1.0 + C);
+            double nextB1 = -D * nextA0 ;
+            double nextB2 = (1.0 - C) * nextA0;
 
             _freq = freq;
             _q = q;
-            _a0 = next_a0;
-            _b1 = next_b1;
-            _b2 = next_b2;
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
         }
         #endregion
     }
 
     /// <summary>
-    /// Filter class.
+    /// 2nd order low pass Butterworth filter with resonance.
     /// </summary>
     public class RLPF : Filter
     {
@@ -382,21 +384,21 @@ namespace Nebulator.Synth
             double D = Math.Tan(pfreq * qres * 0.5);
             double C = (1.0 - D) / (1.0 + D);
             double cosf = Math.Cos(pfreq);
-            double next_b1 = (1.0 + C) * cosf;
-            double next_b2 = -C;
-            double next_a0 = (1.0 + C - next_b1) * 0.25;
+            double nextB1 = (1.0 + C) * cosf;
+            double nextB2 = -C;
+            double nextA0 = (1.0 + C - nextB1) * 0.25;
 
             _freq = freq;
             _q = 1.0 / qres;
-            _a0 = next_a0;
-            _b1 = next_b1;
-            _b2 = next_b2;
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
         }
         #endregion
     }
 
     /// <summary>
-    /// Filter class.
+    /// 2nd order high pass Butterworth filter with resonance.
     /// </summary>
     public class RHPF : Filter
     {
@@ -447,21 +449,21 @@ namespace Nebulator.Synth
             double D = Math.Tan(pfreq * qres * 0.5);
             double C = (1.0 - D) / (1.0 + D);
             double cosf = Math.Cos(pfreq);
-            double next_b1 = (1.0 + C) * cosf;
-            double next_b2 = -C;
-            double next_a0 = (1.0 + C + next_b1) * 0.25;
+            double nextB1 = (1.0 + C) * cosf;
+            double nextB2 = -C;
+            double nextA0 = (1.0 + C + nextB1) * 0.25;
 
             _freq = freq;
             _q = 1.0 / qres;
-            _a0 = next_a0;
-            _b1 = next_b1;
-            _b2 = next_b2;
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
         }
         #endregion
     }
 
     /// <summary>
-    /// Filter class.
+    /// Resonance filter. Same as BiQuad with equal gain zeros.
     /// </summary>
     public class ResonZ : Filter
     {
@@ -512,15 +514,15 @@ namespace Nebulator.Synth
             double R2 = 2.0 * R;
             double R22 = R * R;
             double cost = (R2 * Math.Cos(pfreq)) / (1.0 + R22);
-            double next_b1 = R2 * cost;
-            double next_b2 = -R22;
-            double next_a0 = (1.0 - R22) * 0.5;
+            double nextB1 = R2 * cost;
+            double nextB2 = -R22;
+            double nextA0 = (1.0 - R22) * 0.5;
 
             _freq = freq;
             _q = q;
-            _a0 = next_a0;
-            _b1 = next_b1;
-            _b2 = next_b2;
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
         }
         #endregion
     }
@@ -678,7 +680,9 @@ namespace Nebulator.Synth
         #endregion
     }
 
-    #if TODON2_PORT_THIS
+
+
+#if TODON2_PORT_THIS_MAYBE
 
 /***************************************************/
 /*! \class FormSwep

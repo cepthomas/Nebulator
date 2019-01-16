@@ -13,7 +13,7 @@ using SkiaSharp.Views.Desktop;
 
 
 // TODON2 add live/oscope mode.
-// TODON2 Separate X/Y zooms.
+// TODON1 Separate X/Y zooms. Mouse zoom should use position as center.
 
 
 namespace Nebulator.Visualizer

@@ -195,7 +195,7 @@ namespace Nebulator.Synth
             {
                 foreach (Voice v in _voices)
                 {
-                    if (SynthCommon.Close(v.noteNumber, noteNumber))
+                    if(v.noteNumber.IsClose(noteNumber))
                     {
                         v.ugen.Note(noteNumber, 0.0);
                         v.sounding = -_muteTime;

@@ -7,19 +7,19 @@ namespace Nebulator.Synth
     {
         Freq = 0,   // synch frequency to input // the input signal will set the frequency of the oscillator
         Phase = 1,  // synch phase to input // the input signal will set the phase of the oscillator
-        FM = 2      // the input signal will add to the oscillator's current frequency - TODON2 see fm2.ck
+        FM = 2      // the input signal will add to the oscillator's current frequency - TODON1 see fm2.ck
     }
 
     /// <summary>
     /// Oscillator base class.
     /// </summary>
-    public abstract class Osc : UGen
+    public abstract class Oscillator : UGen
     {
         #region Fields
         protected double _phaseIncr = 0.0; // phase increment was _num
         protected double _freq = 0.0; // 0.0 means not playing
         protected double _mod = 0.0; // modulation value - FM
-        // protected double _ampl = 0.0;  TODON2 stk/chuck uses gain instead of separate amplitude.
+        // protected double _ampl = 0.0;  TODON1 stk/chuck uses gain instead of separate amplitude.
         protected SyncType _sync = SyncType.Freq;
         protected double _width = 0.5;
         protected double _phase = 0.0;
@@ -27,7 +27,7 @@ namespace Nebulator.Synth
 
         #region Properties
         public SyncType Sync { get; set; }
-        //TODON2 ?? if (_sync == SyncType.Freq && psync != _sync)
+        //TODON1 ?? if (_sync == SyncType.Freq && psync != _sync)
         //set: 
         //{
         //    // if we are switching to internal tick
@@ -76,7 +76,7 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public override double Next(double _) // may use something for input TODON2
+        public override double Next(double _) // may use something for input TODON1
         {
             double dout = 0.0;
 
@@ -132,7 +132,7 @@ namespace Nebulator.Synth
         #endregion
     }
 
-    public class Phasor : Osc
+    public class Phasor : Oscillator
     {
         protected override double ComputeNext()
         {
@@ -140,7 +140,7 @@ namespace Nebulator.Synth
         }
     }
 
-    public class SinOsc : Osc
+    public class SinOsc : Oscillator
     {
         protected override double ComputeNext()
         {
@@ -148,7 +148,7 @@ namespace Nebulator.Synth
         }
     }
 
-    public class TriOsc : Osc
+    public class TriOsc : Oscillator
     {
         protected override double ComputeNext()
         {
@@ -173,7 +173,7 @@ namespace Nebulator.Synth
         }
     }
 
-    public class PulseOsc : Osc
+    public class PulseOsc : Oscillator
     {
         protected override double ComputeNext()
         {
@@ -181,8 +181,8 @@ namespace Nebulator.Synth
         }
     }
 
-#if TODON2_BLIT_OSC
 
+#if TODON2_BLIT_OSC
 
 /***************************************************/
 /*! \class Blit
@@ -207,7 +207,7 @@ namespace Nebulator.Synth
 */
 /***************************************************/
 
-Blit:: Blit( double frequency )
+Blit:: Blit( double frequency )   : public BLT
 {
     nHarmonics_ = 0;
     this->setFrequency( frequency );
@@ -303,7 +303,7 @@ double Blit :: tick( void )
 */
 /***************************************************/
 
-BlitSaw:: BlitSaw( double frequency )
+BlitSaw:: BlitSaw( double frequency )   : public BLT
 {
     nHarmonics_ = 0;
     this->reset();
@@ -426,7 +426,7 @@ double BlitSaw :: tick( void )
 */
 /***************************************************/
 
-BlitSquare:: BlitSquare( double frequency )
+BlitSquare:: BlitSquare( double frequency )   : public BLT
 {
     nHarmonics_ = 0;
     this->setFrequency( frequency );

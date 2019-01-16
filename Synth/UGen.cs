@@ -9,28 +9,6 @@ using NAudio.Wave;
 
 namespace Nebulator.Synth
 {
-    public struct Sample  // TODON2 - stereo - this or tuple?
-    {
-        public double Left;
-        public double Right;
-
-        public static Sample operator +(Sample t1, Sample t2)
-        {
-            Sample ret;
-            ret.Left = t1.Left + t2.Left;
-            ret.Right = t1.Right + t2.Right;
-            return ret;
-        }
-
-        public static Sample operator *(Sample t1, double d)
-        {
-            Sample ret;
-            ret.Left = t1.Left * d;
-            ret.Right = t1.Right * d;
-            return ret;
-        }
-    }
-
     public abstract class UGen
     {
         #region Fields
@@ -54,10 +32,6 @@ namespace Nebulator.Synth
         /// <param name="din">Input data - implementation specific.</param>
         /// <returns></returns>
         public abstract double Next(double din);
-        //public virtual double Next(double din)
-        // {
-        //     throw new Exception("You unexpectedly called virtual method Next(double din)");
-        // }
 
         /// <param name="noteNumber">Which note</param>
         /// <param name="amplitude">If 0.0, stop, otherwise start - normalized</param>
@@ -65,17 +39,6 @@ namespace Nebulator.Synth
         {
             // Non-implementers can ignore.
         }
-
-        ///// <summary>
-        ///// Create a sound with the specified frequency and amplitude.
-        ///// Implementers may ignore or interpret as KeyOn().
-        ///// </summary>
-        ///// <param name="frequency">Which frequency</param>
-        ///// <param name="amplitude">If 0.0, stop, otherwise start - normalized</param>
-        // public virtual void Sound(double frequency, double amplitude)
-        // {
-        //     // Non-implementers can ignore.
-        // }
 
         /// <summary>
         /// Implementation specific.
@@ -109,7 +72,7 @@ namespace Nebulator.Synth
         }
 
         /// <summary>
-        /// Be within.
+        /// Be within 0.0 and 1.0 by wrapping.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
@@ -141,7 +104,7 @@ namespace Nebulator.Synth
 
         /// <summary>
         /// Start or stop a note with the given frequency and amplitude.
-        /// Implementers may ignore or interpret as KeyOn().
+        /// Implementers may ignore or interpret as key on/off.
         /// </summary>
         /// <param name="noteNumber">Which note</param>
         /// <param name="amplitude">If 0.0, stop, otherwise start - normalized</param>

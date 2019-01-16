@@ -71,7 +71,7 @@
     </Compile>
     <Compile Include="Filter.cs" />
     <Compile Include="Misc.cs" />
-    <Compile Include="Osc.cs" />
+    <Compile Include="Oscillator.cs" />
     <Compile Include="Stk.cs" />
     <Compile Include="SynthOutput.cs" />
     <Compile Include="UGen.cs" />

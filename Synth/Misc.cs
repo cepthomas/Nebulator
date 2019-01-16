@@ -79,16 +79,18 @@ namespace Nebulator.Synth
             return _level * din;
         }
 
-        public void KeyOn()
+        public void Key(bool on)
         {
-            _level = 0;
-            _state = ADSRState.Attack;
-            _step = Amplitude / AttackTime / SynthCommon.SampleRate;
-        }
-
-        public void KeyOff()
-        {
-            _released = true;
+            if(on)
+            {
+                _level = 0;
+                _state = ADSRState.Attack;
+                _step = Amplitude / AttackTime / SynthCommon.SampleRate;
+            }
+            else
+            {
+                _released = true;
+            }
         }
         #endregion
 
@@ -152,8 +154,8 @@ namespace Nebulator.Synth
         {
             Sample dout = new Sample
             {
-                Left = din * -Location,
-                Right = din * Location
+                Left = din * (1 - Location) / 2,
+                Right = din * (1 + Location) / 2
             };
             return dout * Gain;
         }

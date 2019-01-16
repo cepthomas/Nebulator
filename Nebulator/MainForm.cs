@@ -23,7 +23,7 @@ using NAudio.Wave;
 
 
 // TODON2 Remove Device dependency in Script project for NProcessing.
-// TODON2 Something fun with small-mark1.bmp etc. Animated easter egg.
+// TODON1 Something fun with small-mark1.bmp etc. Animated easter egg.
 
 
 namespace Nebulator

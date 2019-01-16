@@ -54,17 +54,9 @@ public class Envelope : UGen
         m_time = m_target / (_rate * SynthCommon.SampleRate);
     }
 
-    public void KeyOn()
+    public void Key(bool on)
     {
-        _target = m_target;
-        if (_value != _target)
-            _state = 1;
-        setTime( m_time );
-    }
-
-    public void KeyOff()
-    {
-        _target = 0.0;
+        _target = on ? m_target : 0.0;
         if (_value != _target)
             _state = 1;
         setTime( m_time );

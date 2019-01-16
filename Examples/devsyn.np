@@ -30,7 +30,7 @@ bool _local = true;
 /////////////////////// new stuff ////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-// The overall synthesizer. TODON2 Update from test code.
+// The overall synthesizer. TODON1 Update from test code.
 // Make clone of class Moog - STK moog-like swept filter sampling synthesis class.
 // This instrument uses one attack wave, one looped wave, and an ADSR envelope (inherited from the Sampler class)
 // and adds two sweepable formant (FormSwep) filters.
@@ -51,7 +51,7 @@ public class MySynth : UGen2
 
     public override void Note(double notenum, double ampl)
     {
-        adsrF.KeyOn();
+        adsrF.Key(true);
         // Pass along to the noisemakers.
         vcr1.Note(notenum, ampl);
     }
@@ -74,7 +74,7 @@ public class MyVoice : UGen
     {
         osc1.Note(notenum, amplitude);
         osc2.Note(notenum * 1.05, amplitude);
-        adsr.KeyOn();
+        adsr.Key(true);
     }
 
     public override double Next(double _)
