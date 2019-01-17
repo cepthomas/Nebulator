@@ -89,12 +89,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{FF958FAF-E474-4E58-B787-F166D9CAC80F}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Image1.png" />
   </ItemGroup>
   <ItemGroup>

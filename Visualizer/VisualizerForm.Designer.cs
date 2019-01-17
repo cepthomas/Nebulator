@@ -93,7 +93,6 @@
             this.btnPlus.Name = "btnPlus";
             this.btnPlus.Size = new System.Drawing.Size(23, 22);
             this.btnPlus.Text = "+";
-            this.btnPlus.Click += new System.EventHandler(this.BtnPlus_Click);
             // 
             // btnMinus
             // 
@@ -103,7 +102,6 @@
             this.btnMinus.Name = "btnMinus";
             this.btnMinus.Size = new System.Drawing.Size(23, 22);
             this.btnMinus.Text = "-";
-            this.btnMinus.Click += new System.EventHandler(this.BtnMinus_Click);
             // 
             // splitContainer1
             // 

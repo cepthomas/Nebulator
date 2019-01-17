@@ -217,13 +217,22 @@
   <data name="glyphicons_86_repeat" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\glyphicons-86-repeat.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="mark1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mark1.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mark2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mark2.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mark3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mark3.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mark4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mark4.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="medusa" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\medusa.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="medusa2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="medusa1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\medusa.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="small_mark1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\small-mark1.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

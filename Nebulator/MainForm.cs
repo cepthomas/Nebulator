@@ -22,8 +22,8 @@ using Nebulator.Synth;
 using NAudio.Wave;
 
 
-// TODON2 Remove Device dependency in Script project for NProcessing.
-// TODON1 Something fun with small-mark1.bmp etc. Animated easter egg.
+// TODON3 Remove Device dependency in Script project for NProcessing.
+// TODON2 Something fun with small-mark1.bmp etc. Animated easter egg.
 
 
 namespace Nebulator
@@ -1207,28 +1207,38 @@ namespace Nebulator
         /// </summary>
         void About_Click(object sender, EventArgs e)
         {
-            List<string> sinfo = new List<string>();
-            sinfo.Add("# Your Devices");
-            sinfo.Add("## Midi Input");
+            // Device info.
+            List<string> smd = new List<string>();
+            smd.Add("# Your Devices");
+            smd.Add("## Midi Input");
             for (int device = 0; device < MidiIn.NumberOfDevices; device++)
             {
-                sinfo.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
+                smd.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
             }
 
-            sinfo.Add("## Midi Output");
+            smd.Add("## Midi Output");
             for (int device = 0; device < MidiOut.NumberOfDevices; device++)
             {
-                sinfo.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
+                smd.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
             }
 
-            sinfo.Add("## Asio");
+            smd.Add("## Asio");
             foreach (string sdev in AsioOut.GetDriverNames())
             {
-                sinfo.Add($"- {sdev}");
+                smd.Add($"- {sdev}");
             }
 
-            About dlg = new About() { SysInfo = string.Join(Environment.NewLine, sinfo) };
-            dlg.ShowDialog();
+            // Main help file.
+            smd.Add(Markdig.Markdown.ToHtml(File.ReadAllText(@"Resources\README.md")));
+
+            // Put it together.
+            List<string> sinfo = new List<string>();
+            sinfo.Add($"<style>body {{ background-color: {UserSettings.TheSettings.BackColor.Name}; font-family: \"Arial\", Helvetica, sans-serif; }}</style>");
+            sinfo.Add(Markdig.Markdown.ToHtml(string.Join(Environment.NewLine, smd)));
+
+            string fn = Path.Combine(Path.GetTempPath(), "nebulator.html");
+            File.WriteAllText(fn, string.Join(Environment.NewLine, sinfo));
+            Process.Start(fn);
         }
         #endregion
 

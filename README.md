@@ -2,7 +2,7 @@
 # What This Is
 Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
 
-I played around with various scripting concepts (I do like Lua and it may reappear), but ended up realizing that C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
+I played around with various scripting concepts, but ended up realizing that C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
 
 It supports midi and OSC, and has a WIP native synthesizer engine.
 
@@ -23,7 +23,7 @@ This project contains a bunch of components that are either recycled or created 
 - Virtual keyboard control based on Leslie Sanford's piano.
 - Synthesizer engine based on ChucK/STK.
 - Various utilities and extensions.
-- Simple plotting control.
+- Simple charting control.
 - Example of the use of [pnut unit tester](https://github.com/cepthomas/pnut) 
 
 # Third Party

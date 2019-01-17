@@ -7,13 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Nebulator.Common;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 
 
 // TODON2 add live/oscope mode.
-// TODON1 Separate X/Y zooms. Mouse zoom should use position as center.
+// TODON2 Separate X/Y zooms. Also centering is not quite right.
 
 
 namespace Nebulator.Visualizer
@@ -27,7 +26,7 @@ namespace Nebulator.Visualizer
     public partial class VisualizerForm : Form
     {
         #region Properties for client customization
-        ///<summary></summary>
+        ///<summary>Data to chart.</summary>
         public List<DataSeries> AllSeries { get; set; } = new List<DataSeries>();
 
         ///<summary></summary>
@@ -47,8 +46,11 @@ namespace Nebulator.Visualizer
         #endregion
 
         #region Fields
-        ///<summary>Range for tooltips etc.</summary>
-        const int MOUSE_SELECT_RANGE = 3;
+        ///<summary>Current zoom ratio. 1 is all the way out aka home.</summary>
+        double _zoom = 1;
+
+        ///<summary>How much to zoom by.</summary>
+        const double ZOOM_INC = 0.2;
 
         ///<summary>Data range.</summary>
         double _xMin = double.MaxValue;
@@ -62,16 +64,11 @@ namespace Nebulator.Visualizer
         ///<summary>Data range.</summary>
         double _yMax = double.MinValue;
 
-        PointF _startMousePos = new PointF();
-        PointF _endMousePos = new PointF();
+        ///<summary>Mouse tracking.</summary>
         PointF _lastMousePos = new PointF();
-        PointF _currentMousePos = new PointF();
-        bool _mouseLeftDown = false;
-        bool _mouseRightDown = false;
-        //bool _firstPaint = true;
 
-        ///<summary>Zoom ratio. 1 is all the way out aka home.</summary>
-        double _zoom = 1;
+        ///<summary>Mouse tracking.</summary>
+        PointF _currentMousePos = new PointF();
         #endregion
 
         #region Geometry
@@ -83,9 +80,6 @@ namespace Nebulator.Visualizer
 
         /// <summary>UI region to draw the dots.</summary>
         RectangleF _dataRegion = new RectangleF();
-
-        ///// <summary>UI region to draw the axes.</summary>
-        //RectangleF _axesRegion = new RectangleF();
 
         /// <summary>Displayed data is this far away from actual center.</summary>
         PointF _dataOffset = new PointF();
@@ -187,7 +181,6 @@ namespace Nebulator.Visualizer
             KeyPress += VisualizerForm_KeyPress;
             MouseWheel += VisualizerForm_MouseWheel;
             skControl.Resize += SkControl_Resize;
-            skControl.MouseDown += SkControl_MouseDown;
             skControl.MouseUp += SkControl_MouseUp;
             skControl.MouseMove += SkControl_MouseMove;
             skControl.MouseClick += SkControl_MouseClick;
@@ -220,18 +213,6 @@ namespace Nebulator.Visualizer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SkControl_MouseDown(object sender, MouseEventArgs e)
-        {
-            _startMousePos = new Point(e.X, e.Y);
-            _mouseLeftDown = e.Button == MouseButtons.Left;
-            _mouseRightDown = !_mouseLeftDown;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SkControl_MouseUp(object sender, MouseEventArgs e)
         {
             PointF newPos = new PointF(e.X, e.Y);
@@ -239,7 +220,6 @@ namespace Nebulator.Visualizer
             if (e.Button == MouseButtons.Right)
             {
                 // TODON2 Set chart to selection area. Must update zoom values too.
-
                 Repaint();
             }
             else // Left
@@ -247,16 +227,12 @@ namespace Nebulator.Visualizer
                 // Finished dragging.
                 Repaint();
             }
-
-            // Reset stuff.
-            _mouseRightDown = false;
-            _mouseLeftDown = false;
-            _startMousePos = new Point();
-            _endMousePos = new Point();
         }
 
-        /// <summary>If the _mouseDown state is true then move the chart with the mouse.
-        /// If the mouse is over a data point, show its coordinates.</summary>
+        /// <summary>
+        /// If the _mouseDown state is true then move the chart with the mouse.
+        /// If the mouse is over a data point, show its coordinates.
+        /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void SkControl_MouseMove(object sender, MouseEventArgs e)
@@ -265,7 +241,7 @@ namespace Nebulator.Visualizer
 
             if(_lastMousePos != _currentMousePos) // Apparently a known issue is that showing a tooltip causes a MouseMove event to get generated.
             {
-                if (_mouseLeftDown) // move the chart
+                if (e.Button.HasFlag(MouseButtons.Left)) // move the chart
                 {
                     float xChange = _currentMousePos.X - _lastMousePos.X;
                     float yChange = _currentMousePos.Y - _lastMousePos.Y;
@@ -278,9 +254,8 @@ namespace Nebulator.Visualizer
                         Repaint();
                     }
                 }
-                else if(_mouseRightDown) // draw selection region TODON2
+                else if (e.Button.HasFlag(MouseButtons.Right)) // draw selection region TODON2
                 {
-                    _endMousePos = new Point(e.X, e.Y);
                     Repaint();
                 }
                 else // tooltip?
@@ -309,19 +284,11 @@ namespace Nebulator.Visualizer
         private void VisualizerForm_MouseWheel(object sender, MouseEventArgs e)
         {
             HandledMouseEventArgs hme = (HandledMouseEventArgs)e;
-            hme.Handled = true; // This prevents the mouse wheel event from getting back to the parent.
+            hme.Handled = true;
 
-            // If mouse is within control
             if (hme.X <= Width && hme.Y <= Height)
             {
-                if (hme.Delta > 0)
-                {
-                    Zoom(0.5);
-                }
-                else
-                {
-                    Zoom(-0.5);
-                }
+                Zoom(hme.Delta > 0 ? ZOOM_INC : -ZOOM_INC);
             }
         }
         #endregion
@@ -338,19 +305,18 @@ namespace Nebulator.Visualizer
             {
                 case '+':
                 case '=':
-                    Zoom(0.5);
+                    Zoom(ZOOM_INC);
                     break;
 
                 case '-':
                 case '_':
-                    Zoom(-0.5);
+                    Zoom(-ZOOM_INC);
                     break;
 
                 case 'h':
                 case 'H':
                     _dataOffset = new PointF();
                     Zoom(0);
-                    //_firstPaint = true;
                     break;
             }
         }
@@ -381,7 +347,16 @@ namespace Nebulator.Visualizer
             // Now clip to drawing region.
             canvas.ClipRect(_dataRegion.ToSKRect());
 
-            // Map the data to UI space. or use math.net?
+            TransformData();
+
+            DrawData(canvas);
+        }
+
+        /// <summary>
+        /// Map the data to UI space.
+        /// </summary>
+        void TransformData()
+        {
             // https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/transforms/matrix
             SKMatrix matrix = new SKMatrix();
             matrix.ScaleX = (float)(_zoom * (_dataRegion.Right - _dataRegion.Left) / (_xMax - _xMin));
@@ -389,18 +364,7 @@ namespace Nebulator.Visualizer
             matrix.TransX = _dataOffset.X + _dataRegion.Left;
             matrix.TransY = _dataOffset.Y + _dataRegion.Bottom;
             matrix.Persp2 = 1;
-            TransformData(matrix);
 
-            DrawData(canvas);
-        }
-
-        /// <summary>
-        /// Calc the client points.
-        /// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="matrix"></param>
-        void TransformData(SKMatrix matrix)
-        {
             foreach (DataSeries ser in AllSeries)
             {
                 foreach(DataPoint dp in ser.Points)
@@ -490,7 +454,7 @@ namespace Nebulator.Visualizer
             _text.Color = SKColors.Black;
             _text.TextAlign = SKTextAlign.Left;
 
-            //canvas.DrawText($"X:{_currentMousePos.X:0.00}  Y:{_currentMousePos.Y:0.00}", xpos, ypos, _text);
+            //canvas.DrawText($"M.X:{_currentMousePos.X:0.00}  M.Y:{_currentMousePos.Y:0.00}", xpos, ypos, _text);
             //ypos += yinc;
 
             //canvas.DrawText($"OS.X:{_dataOffset.X:0.00}  OS.Y:{_dataOffset.Y::0.00}", xpos, ypos, _text);
@@ -542,7 +506,7 @@ namespace Nebulator.Visualizer
             else
             {
                 _zoom += level;
-                _zoom = Utils.Constrain(_zoom, 1, 10);
+                _zoom = Constrain(_zoom, 1, 10);
             }
 
             Repaint();
@@ -553,8 +517,6 @@ namespace Nebulator.Visualizer
         /// </summary>
         void InitData()
         {
-            //_firstPaint = true;
-
             foreach (DataSeries ser in AllSeries)
             {
                 // Spec the color if not supplied.
@@ -596,12 +558,13 @@ namespace Nebulator.Visualizer
         DataPoint GetClosestPoint(PointF point)
         {
             DataPoint closestPoint = null;
+            const int SELECT_RANGE = 3;
 
             foreach (DataSeries series in AllSeries)
             {
                 foreach (DataPoint p in series.Points)
                 {
-                    if (Math.Abs(point.X - p.ClientPoint.X) < MOUSE_SELECT_RANGE && Math.Abs(point.Y - p.ClientPoint.Y) < MOUSE_SELECT_RANGE)
+                    if (Math.Abs(point.X - p.ClientPoint.X) < SELECT_RANGE && Math.Abs(point.Y - p.ClientPoint.Y) < SELECT_RANGE)
                     {
                         closestPoint = p;
                     }
@@ -610,19 +573,20 @@ namespace Nebulator.Visualizer
 
             return closestPoint;
         }
+
+        /// <summary>
+        /// Bounds limits a value.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        double Constrain(double val, double min, double max)
+        {
+            val = Math.Max(val, min);
+            val = Math.Min(val, max);
+            return val;
+        }
         #endregion
-
-
-
-        // probably get rid of these
-        private void BtnPlus_Click(object sender, EventArgs e)
-        {
-            Zoom(0.5);
-        }
-
-        private void BtnMinus_Click(object sender, EventArgs e)
-        {
-            Zoom(-0.5);
-        }
     }
 }

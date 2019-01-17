@@ -391,6 +391,46 @@ namespace Nebulator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap mark1 {
+            get {
+                object obj = ResourceManager.GetObject("mark1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap mark2 {
+            get {
+                object obj = ResourceManager.GetObject("mark2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap mark3 {
+            get {
+                object obj = ResourceManager.GetObject("mark3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap mark4 {
+            get {
+                object obj = ResourceManager.GetObject("mark4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon medusa {
@@ -403,19 +443,9 @@ namespace Nebulator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap medusa2 {
+        internal static System.Drawing.Bitmap medusa1 {
             get {
-                object obj = ResourceManager.GetObject("medusa2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap small_mark1 {
-            get {
-                object obj = ResourceManager.GetObject("small_mark1", resourceCulture);
+                object obj = ResourceManager.GetObject("medusa1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
