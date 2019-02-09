@@ -29,7 +29,7 @@ class TapeLoop
 
 List<TapeLoop> loops = new List<TapeLoop>();
 
-public override void initNeb()
+public override void setupNeb()
 {
     ///// Variables /////
     COLOR = createVariable("color", 240, 0, 255); // change color
@@ -37,7 +37,7 @@ public override void initNeb()
     ///// Channels /////
     if(_local)
     {
-        SOUND = createChannel("sound", "Microsoft GS Wavetable Synth", 1);
+        SOUND = createChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1);
     }
     else
     {

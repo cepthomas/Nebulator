@@ -27,11 +27,11 @@ namespace Nebulator.Synth
         List<Voice> _voices = new List<Voice>();
 
         /// <summary>In sample clock ticks.</summary>
-        readonly int _muteTime;
+        int _muteTime;
         #endregion
 
         #region Properties
-
+        public double DecayTime { set { _muteTime = value <= 0.0 ? 0 : ((int)value * SynthCommon.SampleRate); } }
         #endregion
 
         #region Lifecycle
@@ -40,8 +40,7 @@ namespace Nebulator.Synth
         /// </summary>
         /// <param name="t">Type of UGen to create.</param>
         /// <param name="num">How many voices.</param>
-        /// <param name="decayTime"></param>
-        public Voicer(Type t, int num, double decayTime = 0.0)
+        public Voicer(Type t, int num)
         {
             bool ok = true;
 
@@ -57,8 +56,6 @@ namespace Nebulator.Synth
                     };
                     _voices.Add(voice);
                 }
-
-                _muteTime = decayTime <= 0.0 ? 0 : ((int)decayTime * SynthCommon.SampleRate);
             }
             else
             {
@@ -126,7 +123,7 @@ namespace Nebulator.Synth
                 }
             }
 
-            return dout * Gain;
+            return dout * Volume;
         }
 
         /// <summary>
@@ -138,8 +135,6 @@ namespace Nebulator.Synth
         {
             if(amplitude != 0.0)
             {
-                // start
-                //int found = -1;
                 int oldest = -1;
                 int index = -1;
 
@@ -159,22 +154,6 @@ namespace Nebulator.Synth
                     }
                 }
 
-                //foreach(Voice v in _voices)
-                //{
-                //    if (v.noteNumber < 0) // available slot
-                //    {
-                //        found = index;
-                //    }
-                //    else // keep track of oldest sounding
-                //    {
-                //        if(oldest == -1 || _voices[oldest].birth > v.birth)
-                //        {
-                //            oldest = index;
-                //        }
-                //    }
-                //    index++;
-                //}
-
                 // Update the slot.
                 int which = index != -1 ? index : oldest;
 
@@ -182,14 +161,8 @@ namespace Nebulator.Synth
                 _voices[which].birth = SynthCommon.NextId();
                 _voices[which].noteNumber = noteNumber;
                 _voices[which].sounding = 1;
-
                 // make noise
-                //double frequency = SynthCommon.NoteToFreq(noteNumber);
-
                 _voices[which].ugen.Note(noteNumber, amplitude);
-                //_voices[which].frequency = frequency;
-                //_voices[which].ugen.Freq = frequency;
-                //_voices[which].ugen.Note(noteNumber, amplitude * SynthCommon.ONE_OVER_128);
             }
             else // stop
             {

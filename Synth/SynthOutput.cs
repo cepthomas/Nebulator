@@ -155,7 +155,7 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public bool Send(Step step) // TODON2 Synth doesn't really fit in the current model. It's not an external device.
+        public bool Send(Step step) // TODON1 Synth doesn't really fit in the current model. It's not an external device.
         {
             bool ret = true;
 

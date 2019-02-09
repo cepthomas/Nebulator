@@ -1,5 +1,85 @@
 
 
+
+class FilterStk : public Stk
+{
+public:
+  //! Default constructor creates a zero-order pass-through "filter".
+  FilterStk(void);
+
+  //! Overloaded constructor which takes filter coefficients.
+  /*!
+    An StkError can be thrown if either \e nb or \e na is less than
+    one, or if the a[0] coefficient is equal to zero.
+  */
+  FilterStk(int nb, MY_FLOAT *bCoefficients, int na, MY_FLOAT *aCoefficients);
+
+  //! Class destructor.
+  virtual ~FilterStk(void);
+
+  //! Clears all internal states of the filter.
+  void clear(void);
+
+  //! Set filter coefficients.
+  /*!
+    An StkError can be thrown if either \e nb or \e na is less than
+    one, or if the a[0] coefficient is equal to zero.  If a[0] is not
+    equal to 1, the filter coeffcients are normalized by a[0].
+  */
+  void setCoefficients(int nb, MY_FLOAT *bCoefficients, int na, MY_FLOAT *aCoefficients);
+
+  //! Set numerator coefficients.
+  /*!
+    An StkError can be thrown if \e nb is less than one.  Any
+    previously set denominator coefficients are left unaffected.
+    Note that the default constructor sets the single denominator
+    coefficient a[0] to 1.0.
+  */
+  void setNumerator(int nb, MY_FLOAT *bCoefficients);
+
+  //! Set denominator coefficients.
+  /*!
+    An StkError can be thrown if \e na is less than one or if the
+    a[0] coefficient is equal to zero.  Previously set numerator
+    coefficients are unaffected unless a[0] is not equal to 1, in
+    which case all coeffcients are normalized by a[0].  Note that the
+    default constructor sets the single numerator coefficient b[0]
+    to 1.0.
+  */
+  void setDenominator(int na, MY_FLOAT *aCoefficients);
+
+  //! Set the filter gain.
+  /*!
+    The gain is applied at the filter input and does not affect the
+    coefficient values.  The default gain value is 1.0.
+   */
+  virtual void setGain(MY_FLOAT theGain);
+
+  //! Return the current filter gain.
+  virtual MY_FLOAT getGain(void) const;
+
+  //! Return the last computed output value.
+  virtual MY_FLOAT lastOut(void) const;
+
+  //! Input one sample to the filter and return one output.
+  virtual MY_FLOAT tick(MY_FLOAT sample);
+
+  //! Input \e vectorSize samples to the filter and return an equal number of outputs in \e vector.
+  virtual MY_FLOAT *tick(MY_FLOAT *vector, unsigned int vectorSize);
+
+public:
+  MY_FLOAT gain;
+  int     nB;
+  int     nA;
+  MY_FLOAT *b;
+  MY_FLOAT *a;
+  MY_FLOAT *outputs;
+  MY_FLOAT *inputs;
+
+};
+
+
+
 /***************************************************/
 /*! \class Delay
     \brief STK non-interpolating delay line class.
@@ -19,6 +99,67 @@
     by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
 */
 /***************************************************/
+
+class Delay : public FilterStk
+{
+public:
+
+  //! Default constructor creates a delay-line with maximum length of 4095 samples and zero delay.
+  Delay();
+
+  //! Overloaded constructor which specifies the current and maximum delay-line lengths.
+  Delay(long theDelay, long maxDelay);
+
+  //! Class destructor.
+  virtual ~Delay();
+
+  //! Clears the internal state of the delay line.
+  void clear();
+
+  //! Set the delay-line length.
+  /*!
+    The valid range for \e theDelay is from 0 to the maximum delay-line length.
+  */
+  void setDelay(long theDelay);
+  void set( long delay, long max );
+
+  //! Return the current delay-line length.
+  MY_FLOAT getDelay(void) const;
+
+  //! Calculate and return the signal energy in the delay-line.
+  MY_FLOAT energy(void) const;
+
+  //! Return the value at \e tapDelay samples from the delay-line input.
+  /*!
+    The tap point is determined modulo the delay-line length and is
+    relative to the last input value (i.e., a tapDelay of zero returns
+    the last input value).
+  */
+  MY_FLOAT contentsAt(unsigned long tapDelay) const;
+
+  //! Return the last computed output value.
+  MY_FLOAT lastOut(void) const;
+
+  //! Return the value which will be output by the next call to tick().
+  /*!
+    This method is valid only for delay settings greater than zero!
+   */
+  virtual MY_FLOAT nextOut(void) const;
+
+  //! Input one sample to the delay-line and return one output.
+  virtual MY_FLOAT tick(MY_FLOAT sample);
+
+  //! Input \e vectorSize samples to the delay-line and return an equal number of outputs in \e vector.
+  virtual MY_FLOAT *tick(MY_FLOAT *vector, unsigned int vectorSize);
+
+public:
+  long inPoint;
+  long outPoint;
+  long length;
+  MY_FLOAT delay;
+};
+
+
 
 Delay :: Delay()
 {
@@ -195,6 +336,48 @@ double *Delay :: tick(double *vec, unsigned int vectorSize)
 */
 /***************************************************/
 
+class DelayA : public Delay
+{
+public:
+
+  //! Default constructor creates a delay-line with maximum length of 4095 samples and zero delay.
+  DelayA();
+
+  //! Overloaded constructor which specifies the current and maximum delay-line lengths.
+  
+  DelayA(MY_FLOAT theDelay, long maxDelay);
+
+  //! Class destructor.
+  ~DelayA();
+
+  //! Clears the internal state of the delay line.
+  void clear();
+
+  //! Set the delay-line length
+  /*!
+    The valid range for \e theDelay is from 0.5 to the maximum delay-line length.
+  */
+  void setDelay(MY_FLOAT theDelay);
+  void set( MY_FLOAT delay, long max );
+
+  //! Return the value which will be output by the next call to tick().
+  /*!
+    This method is valid only for delay settings greater than zero!
+   */
+  MY_FLOAT nextOut(void);
+
+  //! Input one sample to the delay-line and return one output.
+  MY_FLOAT tick(MY_FLOAT sample);
+
+public: // SWAP formerly protected  
+  MY_FLOAT alpha;
+  MY_FLOAT coeff;
+  MY_FLOAT apInput;
+  MY_FLOAT nextOutput;
+  bool doNextOut;
+};
+
+
 DelayA :: DelayA()
 {
     this->setDelay( 0.5 );
@@ -348,6 +531,44 @@ double DelayA :: tick(double sample)
 */
 /***************************************************/
 
+class DelayL : public Delay
+{
+public:
+
+  //! Default constructor creates a delay-line with maximum length of 4095 samples and zero delay.
+  DelayL();
+
+  //! Overloaded constructor which specifies the current and maximum delay-line lengths.
+  
+  DelayL(MY_FLOAT theDelay, long maxDelay);
+
+  //! Class destructor.
+  ~DelayL();
+
+  //! Set the delay-line length.
+  /*!
+    The valid range for \e theDelay is from 0 to the maximum delay-line length.
+  */
+  void setDelay(MY_FLOAT theDelay);
+  void set( MY_FLOAT delay, long max );
+
+  //! Return the value which will be output by the next call to tick().
+  /*!
+    This method is valid only for delay settings greater than zero!
+   */
+  MY_FLOAT nextOut(void);
+
+  //! Input one sample to the delay-line and return one output.
+  MY_FLOAT tick(MY_FLOAT sample);
+
+ public: // SWAP formerly protected  
+  MY_FLOAT alpha;
+  MY_FLOAT omAlpha;
+  MY_FLOAT nextOutput;
+  bool doNextOut;
+};
+
+
 DelayL :: DelayL()
 {
     doNextOut = true;
@@ -471,6 +692,42 @@ double DelayL :: tick(double sample)
 */
 /***************************************************/
 
+class Echo : public Stk
+{
+public:
+  //! Class constructor, taking the longest desired delay length.
+  Echo(MY_FLOAT longestDelay);
+
+  //! Class destructor.
+  ~Echo();
+
+  //! Reset and clear all internal state.
+  void clear();
+
+  //! Set the delay line length in samples.
+  void setDelay(MY_FLOAT delay);
+  void set(MY_FLOAT max);
+  MY_FLOAT getDelay();
+
+  //! Set the mixture of input and processed levels in the output (0.0 = input only, 1.0 = processed only). 
+  void setEffectMix(MY_FLOAT mix);
+
+  //! Return the last output value.
+  MY_FLOAT lastOut() const;
+
+  //! Compute one output sample.
+  MY_FLOAT tick(MY_FLOAT input);
+
+  //! Input \e vectorSize samples to the filter and return an equal number of outputs in \e vector.
+  MY_FLOAT *tick(MY_FLOAT *vector, unsigned int vectorSize);
+
+public:
+  Delay *delayLine;
+  long length;
+  MY_FLOAT lastOutput;
+  MY_FLOAT effectMix;
+
+};
 
 Echo :: Echo(double longestDelay)
 {
@@ -570,6 +827,57 @@ double *Echo :: tick(double *vec, unsigned int vectorSize)
     by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
 */
 /***************************************************/
+
+{
+ public:
+  //! Class constructor, taking the longest desired delay length.
+  Chorus(MY_FLOAT baseDelay);
+
+  //! Class destructor.
+  ~Chorus();
+
+  //! Set baseDelay and modDepth
+  void set(MY_FLOAT baseDelay, MY_FLOAT depth);
+
+  //! Reset and clear all internal state.
+  void clear();
+
+  //! Set base delay
+  void setDelay(MY_FLOAT baseDelay); // chuck
+
+  //! Set modulation depth.
+  void setModDepth(MY_FLOAT depth);
+
+  //! Set modulation frequency.
+  void setModFrequency(MY_FLOAT frequency);
+
+  //! Set the mixture of input and processed levels in the output (0.0 = input only, 1.0 = processed only). 
+  void setEffectMix(MY_FLOAT mix);
+
+  //! Return the last output value.
+  MY_FLOAT lastOut() const;
+
+  //! Return the last left output value.
+  MY_FLOAT lastOutLeft() const;
+
+  //! Return the last right output value.
+  MY_FLOAT lastOutRight() const;
+
+  //! Compute one output sample.
+  MY_FLOAT tick(MY_FLOAT input);
+
+  //! Take \e vectorSize inputs, compute the same number of outputs and return them in \e vector.
+  MY_FLOAT *tick(MY_FLOAT *vector, unsigned int vectorSize);
+
+ public: // SWAP formerly protected  
+  DelayL *delayLine[2];
+  WaveLoop *mods[2];
+  MY_FLOAT baseLength;
+  MY_FLOAT modDepth;
+  MY_FLOAT lastOutput[2];
+  MY_FLOAT effectMix;
+
+};
 
 Chorus :: Chorus(double baseDelay)
 {
@@ -699,6 +1007,46 @@ double *Chorus :: tick(double *vec, unsigned int vectorSize)
 */
 /***************************************************/
 
+class Reverb : public Stk
+{
+ public:
+  //! Class constructor.
+  Reverb();
+
+  //! Class destructor.
+  virtual ~Reverb();
+
+  //! Reset and clear all internal state.
+  virtual void clear() = 0;
+
+  //! Set the mixture of input and "reverberated" levels in the output (0.0 = input only, 1.0 = reverb only). 
+  void setEffectMix(MY_FLOAT mix);
+
+  //! Return the last output value.
+  MY_FLOAT lastOut() const;
+
+  //! Return the last left output value.
+  MY_FLOAT lastOutLeft() const;
+
+  //! Return the last right output value.
+  MY_FLOAT lastOutRight() const;
+
+  //! Abstract tick function ... must be implemented in subclasses.
+  virtual MY_FLOAT tick(MY_FLOAT input) = 0;
+
+  //! Take \e vectorSize inputs, compute the same number of outputs and return them in \e vector.
+  virtual MY_FLOAT *tick(MY_FLOAT *vector, unsigned int vectorSize);
+
+ public: // SWAP formerly protected
+
+  // Returns true if argument value is prime.
+  bool isPrime(int number);
+
+  MY_FLOAT lastOutput[2];
+  MY_FLOAT effectMix;
+
+};
+
 
 Reverb :: Reverb()
 {
@@ -765,6 +1113,30 @@ bool Reverb :: isPrime(int number)
 */
 /***************************************************/
 
+class JCRev : public Reverb
+{
+ public:
+  //! Class constructor taking a T60 decay time argument.
+  JCRev(MY_FLOAT T60);
+
+  //! Class destructor.
+  ~JCRev();
+
+  //! Reset and clear all internal state.
+  void clear();
+
+  //! Compute one output sample.
+  MY_FLOAT tick(MY_FLOAT input);
+
+ public: // SWAP formerly protected
+  Delay *allpassDelays[3];
+  Delay *combDelays[4];
+  Delay *outLeftDelay;
+  Delay *outRightDelay;
+  MY_FLOAT allpassCoefficient;
+  MY_FLOAT combCoefficient[4];
+
+};
 
 JCRev :: JCRev(double T60)
 {
@@ -909,6 +1281,29 @@ double JCRev :: tick(double input)
 */
 /***************************************************/
 
+class NRev : public Reverb
+{
+ public:
+  //! Class constructor taking a T60 decay time argument.
+  NRev(MY_FLOAT T60);
+
+  //! Class destructor.
+  ~NRev();
+
+  //! Reset and clear all internal state.
+  void clear();
+
+  //! Compute one output sample.
+  MY_FLOAT tick(MY_FLOAT input);
+
+ public: // SWAP formerly protected  
+  Delay *allpassDelays[8];
+  Delay *combDelays[6];
+  MY_FLOAT allpassCoefficient;
+  MY_FLOAT combCoefficient[6];
+    MY_FLOAT lowpassState;
+
+};
 
 NRev :: NRev(double T60)
 {
@@ -1035,6 +1430,28 @@ double NRev :: tick(double input)
 */
 /***************************************************/
 
+class PRCRev : public Reverb
+{
+public:
+  //! Class constructor taking a T60 decay time argument.
+  PRCRev(MY_FLOAT T60);
+
+  //! Class destructor.
+  ~PRCRev();
+
+  //! Reset and clear all internal state.
+  void clear();
+
+  //! Compute one output sample.
+  MY_FLOAT tick(MY_FLOAT input);
+
+public: // SWAP formerly protected  
+  Delay *allpassDelays[2];
+  Delay *combDelays[2];
+  MY_FLOAT allpassCoefficient;
+  MY_FLOAT combCoefficient[2];
+
+};
 
 PRCRev :: PRCRev(double T60)
 {
@@ -1135,6 +1552,48 @@ double PRCRev :: tick(double input)
     by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
 */
 /***************************************************/
+
+class PitShift : public Stk
+{
+ public:
+  //! Class constructor.
+  PitShift();
+
+  //! Class destructor.
+  ~PitShift();
+
+  //! Reset and clear all internal state.
+  void clear();
+
+  //! Set the pitch shift factor (1.0 produces no shift).
+  void setShift(MY_FLOAT shift);
+
+  //! Set the mixture of input and processed levels in the output (0.0 = input only, 1.0 = processed only). 
+  void setEffectMix(MY_FLOAT mix);
+
+  //! Return the last output value.
+  MY_FLOAT lastOut() const;
+
+  //! Compute one output sample.
+  MY_FLOAT tick(MY_FLOAT input);
+
+  //! Input \e vectorSize samples to the filter and return an equal number of outputs in \e vector.
+  MY_FLOAT *tick(MY_FLOAT *vector, unsigned int vectorSize);
+
+ public: // SWAP formerly protected  
+  //chuck
+  t_CKFLOAT m_vibratoGain;
+  t_CKFLOAT m_vibratoFreq;
+  t_CKFLOAT m_volume;
+
+  DelayL *delayLine[2];
+  MY_FLOAT lastOutput;
+  MY_FLOAT delay[2];
+  MY_FLOAT env[2];
+  MY_FLOAT effectMix;
+  MY_FLOAT rate;
+
+};
 
 
 PitShift :: PitShift()

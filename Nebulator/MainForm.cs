@@ -11,6 +11,7 @@ using NLog;
 using MoreLinq;
 using Newtonsoft.Json;
 using NAudio.Midi;
+using NAudio.Wave;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
@@ -19,11 +20,10 @@ using Nebulator.Server;
 using Nebulator.Midi;
 using Nebulator.OSC;
 using Nebulator.Synth;
-using NAudio.Wave;
 
 
 // TODON3 Remove Device dependency in Script project for NProcessing.
-// TODON2 Something fun with small-mark1.bmp etc. Animated easter egg.
+
 
 
 namespace Nebulator
@@ -1207,37 +1207,71 @@ namespace Nebulator
         /// </summary>
         void About_Click(object sender, EventArgs e)
         {
+            // Make some markdown.
+            List<string> mdText = new List<string>();
+
             // Device info.
-            List<string> smd = new List<string>();
-            smd.Add("# Your Devices");
-            smd.Add("## Midi Input");
-            for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+            mdText.Add("# Your Devices");
+            mdText.Add("## Midi Input");
+            if(MidiIn.NumberOfDevices > 0)
             {
-                smd.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
+                for (int device = 0; device < MidiIn.NumberOfDevices; device++)
+                {
+                    mdText.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
+                }
+            }
+            else
+            {
+                mdText.Add($"- None");
+            }
+            mdText.Add("## Midi Output");
+            if (MidiOut.NumberOfDevices > 0)
+            {
+                for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+                {
+                    mdText.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
+                }
+            }
+            else
+            {
+                mdText.Add($"- None");
             }
 
-            smd.Add("## Midi Output");
-            for (int device = 0; device < MidiOut.NumberOfDevices; device++)
+            mdText.Add("## Asio");
+            if (AsioOut.GetDriverNames().Count() > 0)
             {
-                smd.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
+                foreach (string sdev in AsioOut.GetDriverNames())
+                {
+                    mdText.Add($"- {sdev}");
+                }
+            }
+            else
+            {
+                mdText.Add($"- None");
             }
 
-            smd.Add("## Asio");
-            foreach (string sdev in AsioOut.GetDriverNames())
-            {
-                smd.Add($"- {sdev}");
-            }
-
-            // Main help file.
-            smd.Add(Markdig.Markdown.ToHtml(File.ReadAllText(@"Resources\README.md")));
+            // Main help file. TODON1 Markdeep?
+            mdText.Add(File.ReadAllText(@"Resources\README.md"));
 
             // Put it together.
-            List<string> sinfo = new List<string>();
-            sinfo.Add($"<style>body {{ background-color: {UserSettings.TheSettings.BackColor.Name}; font-family: \"Arial\", Helvetica, sans-serif; }}</style>");
-            sinfo.Add(Markdig.Markdown.ToHtml(string.Join(Environment.NewLine, smd)));
+            List<string> htmlText = new List<string>();
+
+            // Boilerplate
+            htmlText.Add($"<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+            // CSS
+            htmlText.Add($"<style>body {{ background-color: {UserSettings.TheSettings.BackColor.Name}; font-family: \"Arial\", Helvetica, sans-serif; }}");
+            htmlText.Add($"</style></head><body>");
+
+            // Meat.
+            string mdHtml = Markdig.Markdown.ToHtml(string.Join(Environment.NewLine, mdText));
+            //shtml = shtml.Replace("MarkS", "<a href=\"#\">MarkS<img src=\"/Dev/Nebulator/Nebulator/Resources/mark1.bmp\" alt=\"MarkS\" /></a>");
+            htmlText.Add(mdHtml);
+
+            // Done.
+            htmlText.Add($"</body></html>");
 
             string fn = Path.Combine(Path.GetTempPath(), "nebulator.html");
-            File.WriteAllText(fn, string.Join(Environment.NewLine, sinfo));
+            File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
             Process.Start(fn);
         }
         #endregion

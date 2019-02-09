@@ -119,7 +119,7 @@ namespace Nebulator.Synth
             DDN(_y1);
             DDN(_y2);
 
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 
@@ -178,7 +178,7 @@ namespace Nebulator.Synth
             DDN(_y1);
             DDN(_y2);
 
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 
@@ -242,7 +242,7 @@ namespace Nebulator.Synth
             DDN(_y1);
             DDN(_y2);
 
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 
@@ -308,7 +308,7 @@ namespace Nebulator.Synth
             DDN(_y1);
             DDN(_y2);
 
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 
@@ -372,7 +372,7 @@ namespace Nebulator.Synth
             DDN(_y1);
             DDN(_y2);
 
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 
@@ -437,7 +437,7 @@ namespace Nebulator.Synth
             DDN(_y1);
             DDN(_y2);
 
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 
@@ -501,7 +501,7 @@ namespace Nebulator.Synth
             DDN(_y1);
             DDN(_y2);
 
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 
@@ -653,7 +653,7 @@ namespace Nebulator.Synth
             DDN(_output1);
             DDN(_output2);
 
-            return _output0 * Gain;
+            return _output0 * Volume;
         }
         #endregion
 

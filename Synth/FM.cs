@@ -1,5 +1,8 @@
 
 
+//https://www.keithmcmillen.com/blog/simple-synthesis-part-10-frequency-modulation/
+
+
 // ChucK/STK source code to be ported. TODON2
 
 // info: http://electro-music.com/forum/topic-18641.html
@@ -13,239 +16,48 @@
 // 220 => carrier.freq; // carrier's frequency 
 
 
-// FM functions
-
-//-----------------------------------------------------------------------------
-// name: FM_ctor()
-// desc: CTOR function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTOR( FM_ctor  )
+class Instrmnt : public Stk
 {
-    OBJ_MEMBER_UINT(SELF, FM_offset_data) = 0;
-    // CK_FPRINTF_STDERR( "[chuck](via STK): error -- FM is virtual!\n" );
-}
+ public:
+  //! Default constructor.
+  Instrmnt();
 
+  //! Class destructor.
+  virtual ~Instrmnt();
 
-//-----------------------------------------------------------------------------
-// name: FM_dtor()
-// desc: DTOR function ...
-//-----------------------------------------------------------------------------
-CK_DLL_DTOR( FM_dtor  )
-{
-    // delete (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    // CK_FPRINTF_STDERR( "error -- FM is virtual!\n" );
-}
+  //! Start a note with the given frequency and amplitude.
+  virtual void noteOn(MY_FLOAT frequency, MY_FLOAT amplitude) = 0;
 
+  //! Stop a note with the given amplitude (speed of decay).
+  virtual void noteOff(MY_FLOAT amplitude) = 0;
 
-//-----------------------------------------------------------------------------
-// name: FM_tick()
-// desc: TICK function ...
-//-----------------------------------------------------------------------------
-CK_DLL_TICK( FM_tick )
-{
-    FM * m = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    CK_FPRINTF_STDERR( "[chuck](via STK): error -- FM tick is virtual!\n" );
-    *out = m->tick();
-    return TRUE;
-}
+  //! Set instrument parameters for a particular frequency.
+  virtual void setFrequency(MY_FLOAT frequency);
 
+  //! Return the last output value.
+  MY_FLOAT lastOut() const;
 
-//-----------------------------------------------------------------------------
-// name: FM_pmsg()
-// desc: PMSG function ...
-//-----------------------------------------------------------------------------
-CK_DLL_PMSG( FM_pmsg )
-{
-    return TRUE;
-}
+  //! Return the last left output value.
+  MY_FLOAT lastOutLeft() const;
 
+  //! Return the last right output value.
+  MY_FLOAT lastOutRight() const;
 
-//-----------------------------------------------------------------------------
-// name: FM_ctrl_modDepth()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_ctrl_modDepth )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    fm->setModulationDepth( f );
-    RETURN->v_float = f;
-}
+  //! Compute one output sample.
+  virtual MY_FLOAT tick() = 0;
 
+  //! Computer \e vectorSize outputs and return them in \e vector.
+  virtual MY_FLOAT *tick(MY_FLOAT *vector, unsigned int vectorSize);
+  
+  //! Perform the control change specified by \e number and \e value (0.0 - 128.0).
+  virtual void controlChange(int number, MY_FLOAT value);
 
-//-----------------------------------------------------------------------------
-// name: FM_cget_modDepth()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_cget_modDepth )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    RETURN->v_float = fm->modDepth;
-}
+public: // SWAP formerly protected
+  // chuck
+  t_CKFLOAT m_frequency;
 
-
-//-----------------------------------------------------------------------------
-// name: FM_ctrl_modSpeed()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_ctrl_modSpeed )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    fm->setModulationSpeed( f );
-    RETURN->v_float = fm->vibrato->m_freq;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FM_ctrl_modSpeed()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_cget_modSpeed )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    RETURN->v_float = fm->vibrato->m_freq;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FM_ctrl_control1()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_ctrl_control1 )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    fm->setControl1( f );
-    RETURN->v_float = fm->control1 / 2.0;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FM_cget_control1()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_cget_control1 )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    RETURN->v_float = fm->control1 / 2.0;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FM_ctrl_control2()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_ctrl_control2 )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    fm->setControl2( f );
-    RETURN->v_float = fm->control2 / 2.0;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FM_cget_control2()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_cget_control2 )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    RETURN->v_float = fm->control2 / 2.0;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FM_ctrl_afterTouch()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_ctrl_afterTouch )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    fm->controlChange( __SK_AfterTouch_Cont_, f * 128.0 );
-    RETURN->v_float = fm->adsr[1]->target;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FM_cget_afterTouch()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FM_cget_afterTouch )
-{
-    FM * fm = (FM *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    RETURN->v_float = fm->adsr[1]->target;
-}
-
-
-
-//-----------------------------------------------------------------------------
-// name: FMVoices_ctrl_vowel()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FMVoices_ctrl_vowel )
-{
-    FMVoices * voc= (FMVoices *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    voc->controlChange( __SK_Breath_, f * 128.0 );
-    RETURN->v_float = f;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FMVoices_cget_vowel()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FMVoices_cget_vowel )
-{
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FMVoices_ctrl_spectralTilt()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FMVoices_ctrl_spectralTilt )
-{
-    FMVoices * voc= (FMVoices *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    voc->controlChange( __SK_FootControl_, f * 128.0);
-    RETURN->v_float = f;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FMVoices_cget_spectralTilt()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FMVoices_cget_spectralTilt )
-{
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FMVoices_ctrl_adsrTarget()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FMVoices_ctrl_adsrTarget )
-{
-    FMVoices * voc= (FMVoices *)OBJ_MEMBER_UINT(SELF, FM_offset_data);
-    t_CKFLOAT f = GET_NEXT_FLOAT(ARGS);
-    voc->controlChange( __SK_AfterTouch_Cont_, f * 128.0);
-    RETURN->v_float = f;
-}
-
-
-//-----------------------------------------------------------------------------
-// name: FMVoices_cget_adsrTarget()
-// desc: CTRL function ...
-//-----------------------------------------------------------------------------
-CK_DLL_CTRL( FMVoices_cget_adsrTarget )
-{
-}
-
+  MY_FLOAT lastOutput;
+};
 
 
 
@@ -273,6 +85,76 @@ CK_DLL_CTRL( FMVoices_cget_adsrTarget )
     by Perry R. Cook and Gary P. Scavone, 1995 - 2002.
 */
 /***************************************************/
+
+
+class FM : public Instrmnt
+{
+ public:
+  //! Class constructor, taking the number of wave/envelope operators to control.
+  FM( int operators = 4 );
+
+  //! Class destructor.
+  virtual ~FM();
+
+  //! Reset and clear all wave and envelope states.
+  void clear();
+
+  //! Load the rawwave filenames in waves.
+  void loadWaves(const char **filenames);
+
+  //! Set instrument parameters for a particular frequency.
+  virtual void setFrequency(MY_FLOAT frequency);
+
+  //! Set the frequency ratio for the specified wave.
+  void setRatio(int waveIndex, MY_FLOAT ratio);
+
+  //! Set the gain for the specified wave.
+  void setGain(int waveIndex, MY_FLOAT gain);
+
+  //! Set the modulation speed in Hz.
+  void setModulationSpeed(MY_FLOAT mSpeed);
+
+  //! Set the modulation depth.
+  void setModulationDepth(MY_FLOAT mDepth);
+
+  //! Set the value of control1.
+  void setControl1(MY_FLOAT cVal);
+
+  //! Set the value of control1.
+  void setControl2(MY_FLOAT cVal);
+
+  //! Start envelopes toward "on" targets.
+  void keyOn();
+
+  //! Start envelopes toward "off" targets.
+  void keyOff();
+
+  //! Stop a note with the given amplitude (speed of decay).
+  void noteOff(MY_FLOAT amplitude);
+
+  //! Pure virtual function ... must be defined in subclasses.
+  virtual MY_FLOAT tick() = 0;
+
+  //! Perform the control change specified by \e number and \e value (0.0 - 128.0).
+  virtual void controlChange(int number, MY_FLOAT value);
+
+ public: // SWAP formerly protected  
+  ADSR     **adsr; 
+  WaveLoop **waves;
+  WaveLoop *vibrato;
+  TwoZero  *twozero;
+  int nOperators;
+  MY_FLOAT baseFrequency;
+  MY_FLOAT *ratios;
+  MY_FLOAT *gains;
+  MY_FLOAT modDepth;
+  MY_FLOAT control1;
+  MY_FLOAT control2;
+  MY_FLOAT __FM_gains[100];
+  MY_FLOAT __FM_susLevels[16];
+  MY_FLOAT __FM_attTimes[32];
+
+};
 
 
 FM :: FM(int operators)
@@ -483,6 +365,13 @@ void FM :: controlChange(int number, double value)
 #endif
 }
 
+
+
+
+
+
+
+
 /***************************************************/
 /*! \class FMVoices
     \brief STK singing FM synthesis instrument.
@@ -515,6 +404,33 @@ void FM :: controlChange(int number, double value)
 */
 /***************************************************/
 
+class FMVoices : public FM
+{
+ public:
+  //! Class constructor.
+  FMVoices();
+
+  //! Class destructor.
+  ~FMVoices();
+
+  //! Set instrument parameters for a particular frequency.
+  virtual void setFrequency(MY_FLOAT frequency);
+
+  //! Start a note with the given frequency and amplitude.
+  void noteOn(MY_FLOAT frequency, MY_FLOAT amplitude);
+  void noteOn( MY_FLOAT amplitude) { noteOn(baseFrequency, amplitude); }
+
+  //! Compute one output sample.
+  MY_FLOAT tick();
+
+  //! Perform the control change specified by \e number and \e value (0.0 - 128.0).
+  virtual void controlChange(int number, MY_FLOAT value);
+
+ public: // SWAP formerly protected
+  int currentVowel;
+  MY_FLOAT tilt[3];
+  MY_FLOAT mods[3];
+};
 
 FMVoices :: FMVoices()
     : FM()
@@ -709,6 +625,21 @@ void FMVoices :: controlChange(int number, double value)
 */
 /***************************************************/
 
+class BeeThree : public FM
+{
+ public:
+  //! Class constructor.
+  BeeThree();
+
+  //! Class destructor.
+  ~BeeThree();
+
+  //! Start a note with the given frequency and amplitude.
+  void noteOn(MY_FLOAT frequency, MY_FLOAT amplitude);
+  void noteOn( MY_FLOAT amplitude) { noteOn( baseFrequency, amplitude ); }
+  //! Compute one output sample.
+  MY_FLOAT tick();
+};
 
 BeeThree :: BeeThree()
     : FM()
@@ -802,6 +733,22 @@ double BeeThree :: tick()
 */
 /***************************************************/
 
+class HevyMetl : public FM
+{
+ public:
+  //! Class constructor.
+  HevyMetl();
+
+  //! Class destructor.
+  ~HevyMetl();
+
+  //! Start a note with the given frequency and amplitude.
+  void noteOn(MY_FLOAT frequency, MY_FLOAT amplitude);
+  void noteOn( MY_FLOAT amplitude) { noteOn(baseFrequency, amplitude); }
+
+  //! Compute one output sample.
+  MY_FLOAT tick();
+};
 
 HevyMetl :: HevyMetl()
     : FM()
@@ -910,6 +857,25 @@ double HevyMetl :: tick()
 */
 /***************************************************/
 
+class Rhodey : public FM
+{
+ public:
+  //! Class constructor.
+  Rhodey();
+
+  //! Class destructor.
+  ~Rhodey();
+
+  //! Set instrument parameters for a particular frequency.
+  void setFrequency(MY_FLOAT frequency);
+
+  //! Start a note with the given frequency and amplitude.
+  void noteOn(MY_FLOAT frequency, MY_FLOAT amplitude);
+  void noteOn(MY_FLOAT amplitude) { noteOn(baseFrequency * 0.5, amplitude ); } 
+
+  //! Compute one output sample.
+  MY_FLOAT tick();
+};
 
 Rhodey :: Rhodey()
     : FM()
@@ -1022,6 +988,22 @@ double Rhodey :: tick()
 */
 /***************************************************/
 
+class TubeBell : public FM
+{
+ public:
+  //! Class constructor.
+  TubeBell();
+
+  //! Class destructor.
+  ~TubeBell();
+
+  //! Start a note with the given frequency and amplitude.
+  void noteOn(MY_FLOAT frequency, MY_FLOAT amplitude);
+  void noteOn( MY_FLOAT amplitude) { noteOn(baseFrequency, amplitude); }
+
+  //! Compute one output sample.
+  MY_FLOAT tick();
+};
 
 TubeBell :: TubeBell()
     : FM()
@@ -1124,6 +1106,28 @@ double TubeBell :: tick()
 */
 /***************************************************/
 
+class Wurley : public FM
+{
+ public:
+  //! Class constructor.
+  Wurley();
+
+  //! Class destructor.
+  ~Wurley();
+
+  //! Set instrument parameters for a particular frequency.
+  void setFrequency(MY_FLOAT frequency);
+
+  //! Start a note with the given frequency and amplitude.
+  void noteOn(MY_FLOAT frequency, MY_FLOAT amplitude);
+  void noteOn(MY_FLOAT amplitude) { noteOn ( baseFrequency, amplitude ); }
+  
+  // CHUCK HACK:
+  virtual void controlChange( int which, MY_FLOAT value );
+
+  //! Compute one output sample.
+  MY_FLOAT tick();
+};
 
 Wurley :: Wurley()
     : FM()

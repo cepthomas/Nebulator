@@ -2,12 +2,8 @@
 // Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
 // IO devices.
-string MY_OSC_OUT = "OSC:localhost:6449"; // 127.0.0.1:6449
-string MY_OSC_IN = "OSC:6448";
 string MY_VKEY = "VKEY:";
-string MY_MIDI_OUT = "MIDI:loopMIDI Port 1";
 string MY_MIDI_IN = "MIDI:MPK mini";
-string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
 string MY_SYNTH_OUT = "SYNTH:ASIO4ALL v2";
 
 
@@ -26,34 +22,26 @@ NChannel SYNTH_1;
 bool _local = true;
 
 
-//////////////////////////////////////////////////////////////////
-/////////////////////// new stuff ////////////////////////////////
-//////////////////////////////////////////////////////////////////
-
-// The overall synthesizer. TODON1 Update from test code.
-// Make clone of class Moog - STK moog-like swept filter sampling synthesis class.
-// This instrument uses one attack wave, one looped wave, and an ADSR envelope (inherited from the Sampler class)
-// and adds two sweepable formant (FormSwep) filters.
-
+// The overall synthesizer.
 public class MySynth : UGen2
 {
-    public Voicer vcr1 = new Voicer(typeof(MyVoice), 5, 0.2);
-    public LPF lpf = new LPF();
-    ADSR adsrF = new ADSR() { AttackTime = 111, DecayTime = 111, SustainLevel = 111, ReleaseTime = 111, Gain = 0.5 };
-    public Pan pan = new Pan();
+    public Voicer vcr1 = new Voicer(typeof(MyVoice), 5) { DecayTime = 0.2, Volume = 0.8 };
+    public LPF lpf = new LPF() { Freq = 600, Volume = 0.8 };
+    public Pan pan = new Pan() { Location = 0.0, Volume = 0.8 };
+    ADSR adsrF = new ADSR() { AttackTime = 111, DecayTime = 111, SustainLevel = 111, ReleaseTime = 111, Volume = 0.8 };
 
     public override Sample Next(double _)
     {
-        lpf.Freq = 200 + 500 * adsrF.Next(1);
-        Sample dout = pan.Next(lpf.Next(vcr1.Next(0)));
+        double dd = vcr1.Next(0);
+        dd = lpf.Next(dd);
+        Sample dout = pan.Next(dd);
         return dout;
     }
 
-    public override void Note(double notenum, double ampl)
+    public override void Note(double notenum, double amplitude)
     {
-        adsrF.Key(true);
         // Pass along to the noisemakers.
-        vcr1.Note(notenum, ampl);
+        vcr1.Note(notenum, amplitude);
     }
 }
 
@@ -61,10 +49,10 @@ public class MySynth : UGen2
 public class MyVoice : UGen
 {
     // 2 oscs slightly detuned and synced
-    SinOsc osc1 = new SinOsc();
-    SinOsc osc2 = new SinOsc();
-    Mix mix1 = new Mix();
-    ADSR adsr = new ADSR() { AttackTime = 111, DecayTime = 111, SustainLevel = 111, ReleaseTime = 111, Gain = 0.5 };
+    public PulseOsc osc1 = new PulseOsc() { Freq = 400, Width = 0.1, Volume = 0.8 };
+    public PulseOsc osc2 = new PulseOsc() { Freq = 420, Width = 0.1, Volume = 0.8 };
+    public Mix mix1 = new Mix() { Volume = 0.8 };
+    public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.5, Volume = 0.8 };
 
     public MyVoice()
     {
@@ -74,7 +62,7 @@ public class MyVoice : UGen
     {
         osc1.Note(notenum, amplitude);
         osc2.Note(notenum * 1.05, amplitude);
-        adsr.Key(true);
+        adsr.Key(amplitude > 0);
     }
 
     public override double Next(double _)
@@ -84,10 +72,15 @@ public class MyVoice : UGen
     }
 }
 
-
 // The topmost.
 MySynth syn = new MySynth();
 
+
+public void On_KBD_NOTE()
+{
+    // Test for note on or off.
+    syn.Note(KBD_NOTE.Value, KBD_NOTE.Value > 0 ? 0.9 : 0.0);
+}
 
 public void On_VKBD_NOTE()
 {
@@ -111,12 +104,6 @@ public void On_CTL3()
 public void On_CTL2()
 {
 
-}
-
-public void On_KBD_NOTE()
-{
-    // Test for note on or off.
-    syn.Note(KBD_NOTE.Value, KBD_NOTE.Value > 0 ? 0.9 : 0.0);
 }
 
 
@@ -163,12 +150,12 @@ public override void setupNeb2()
 
 public override void step()
 {
-    if(tock % 4 == 0 && random(7) == 0) // play with these for how often
-    {
-        int notenum = random(40, 80);
-        int dur = random(1, 8);
-        syn.Note(notenum, random(0.6, 0.9));
-    }
+    // if(tock % 4 == 0 && random(7) == 0) // play with these for how often
+    // {
+    //     int notenum = random(40, 80);
+    //     int dur = random(1, 8);
+    //     syn.Note(notenum, random(0.6, 0.9));
+    // }
 }
 
 public void On_BACK_COLOR()

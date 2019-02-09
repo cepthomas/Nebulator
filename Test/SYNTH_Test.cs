@@ -23,7 +23,7 @@ namespace Nebulator.Test
                     #region ADSR
                     {
                         DataSeries seradsr = new DataSeries() { Name = "ADSR" };
-                        ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Gain = 0.5 };
+                        ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Volume = 0.5 };
                         for (int i = 0; i < 100000; i++)
                         {
                             double dd = adsr.Next(1);
@@ -50,9 +50,9 @@ namespace Nebulator.Test
                 case 2:
                     #region Osc
                     {
-                        SinOsc osc1 = new SinOsc() { Freq = 400, Gain = 0.5 };
-                        SinOsc osc2 = new SinOsc() { Freq = 500, Gain = 0.5 };
-                        Mix mix1 = new Mix() { Gain = 0.5 };
+                        SinOsc osc1 = new SinOsc() { Freq = 400, Volume = 0.5 };
+                        SinOsc osc2 = new SinOsc() { Freq = 500, Volume = 0.5 };
+                        Mix mix1 = new Mix() { Volume = 0.5 };
 
                         DataSeries serosc1 = new DataSeries() { Name = "OSC1" };
                         DataSeries serosc2 = new DataSeries() { Name = "OSC2" };
@@ -79,8 +79,8 @@ namespace Nebulator.Test
                 case 3:
                     #region Osc + ADSR
                     {
-                        SinOsc osc = new SinOsc() { Freq = 400, Gain = 0.5 };
-                        ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Gain = 0.5 };
+                        SinOsc osc = new SinOsc() { Freq = 400, Volume = 0.5 };
+                        ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Volume = 0.5 };
 
                         DataSeries serosc = new DataSeries() { Name = "OSC" };
                         DataSeries seradsr = new DataSeries() { Name = "ADSR" };
@@ -132,7 +132,7 @@ namespace Nebulator.Test
 
             if (ok)
             {
-                MySynth ssynth = new MySynth() { Gain = 0.8 };
+                MySynth ssynth = new MySynth() { Volume = 0.8 };
                 sout.Synth = ssynth;
                 ssynth.pan.Location = -1;
 
@@ -180,14 +180,14 @@ namespace Nebulator.Test
             public DataSeries ser = new DataSeries();
             int serind = 0;
 
-            public PulseOsc osc1 = new PulseOsc() { Freq = 400, Width = 0.1, Gain = 0.5 };
-            public PulseOsc osc2 = new PulseOsc() { Freq = 401, Width = 0.1, Gain = 0.5 };
+            public PulseOsc osc1 = new PulseOsc() { Freq = 400, Width = 0.1, Volume = 0.5 };
+            public PulseOsc osc2 = new PulseOsc() { Freq = 401, Width = 0.1, Volume = 0.5 };
             //public SinOsc osc1 = new SinOsc() { Freq = 400, Gain = 0.5 };
             //public SinOsc osc2 = new SinOsc() { Freq = 500, Gain = 0.5 };
-            public Mix mix1 = new Mix() { Gain = 0.5 };
-            public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.5, Gain = 0.5 };
-            public LPF lpf = new LPF() { Freq = 600, Gain = 0.8 };
-            public Pan pan = new Pan() { Location = 0.0, Gain = 0.8 };
+            public Mix mix1 = new Mix() { Volume = 0.5 };
+            public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.5, Volume = 0.5 };
+            public LPF lpf = new LPF() { Freq = 600, Volume = 0.8 };
+            public Pan pan = new Pan() { Location = 0.0, Volume = 0.8 };
 
             public override Sample Next(double _)
             {
@@ -225,7 +225,7 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            MySynth synth = new MySynth() { Gain = 0.5 };
+            MySynth synth = new MySynth() { Volume = 0.5 };
 
             SynthOutput sout = new SynthOutput();
             bool ok = sout.Init("SYNTH:ASIO4ALL v2");
@@ -253,9 +253,9 @@ namespace Nebulator.Test
         public class MySynth : UGen2
         {
             public Voicer vcr1 = new Voicer(typeof(MyVoice), 5, 0.2);
-            public LPF lpf = new LPF() { Gain = 0.5 };
-            ADSR adsrF = new ADSR() { AttackTime = 1.5, DecayTime = 0.3, SustainLevel = 0.4, ReleaseTime = 0.8, Gain = 0.5 };
-            public Pan pan = new Pan() { Gain = 0.5 };
+            public LPF lpf = new LPF() { Volume = 0.5 };
+            ADSR adsrF = new ADSR() { AttackTime = 1.5, DecayTime = 0.3, SustainLevel = 0.4, ReleaseTime = 0.8, Volume = 0.5 };
+            public Pan pan = new Pan() { Volume = 0.5 };
 
             public override Sample Next(double _)
             {
@@ -276,10 +276,10 @@ namespace Nebulator.Test
         public class MyVoice : UGen
         {
             // 2 oscs slightly detuned and synced
-            SinOsc osc1 = new SinOsc() { Freq = 400, Gain = 0.5 };
-            SinOsc osc2 = new SinOsc() { Freq = 500, Gain = 0.5 };
-            Mix mix1 = new Mix() { Gain = 0.5 };
-            ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.4, ReleaseTime = 0.8, Gain = 0.5 };
+            SinOsc osc1 = new SinOsc() { Freq = 400, Volume = 0.5 };
+            SinOsc osc2 = new SinOsc() { Freq = 500, Volume = 0.5 };
+            Mix mix1 = new Mix() { Volume = 0.5 };
+            ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.4, ReleaseTime = 0.8, Volume = 0.5 };
 
             public MyVoice()
             {

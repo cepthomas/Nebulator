@@ -120,7 +120,7 @@ namespace Nebulator.Synth
             {
                 dout += din[i];
             }
-            return dout * Gain;
+            return dout * Volume;
         }
 
         public override double Next(double din)
@@ -157,7 +157,7 @@ namespace Nebulator.Synth
                 Left = din * (1 - Location) / 2,
                 Right = din * (1 + Location) / 2
             };
-            return dout * Gain;
+            return dout * Volume;
         }
         #endregion
 

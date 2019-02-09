@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using NAudio.Wave;
 
 
@@ -16,10 +15,8 @@ namespace Nebulator.Synth
         #endregion
 
         #region Properties
-        /// <summary>
-        /// 0.0 to 1.0 - gain is applied to input signals firstly.
-        /// </summary>
-        public double Gain { get; set; } = 0.2;
+        /// <summary>0.0 to 1.0.</summary>
+        public double Volume { get; set; } = 0.2;
         #endregion
 
         #region Lifecycle
@@ -88,10 +85,8 @@ namespace Nebulator.Synth
         // Stereo output version of UGen.
 
         #region Properties
-        /// <summary>
-        /// 0.0 to 1.0 - gain is applied to input signals firstly.
-        /// </summary>
-        public double Gain { get; set; } = 0.2;
+        /// <summary>0.0 to 1.0.</summary>
+        public double Volume { get; set; } = 0.2;
         #endregion
 
         #region Public Functions - virtual

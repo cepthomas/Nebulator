@@ -5,9 +5,9 @@ namespace Nebulator.Synth
 {
     public enum SyncType
     {
-        Freq = 0,   // synch frequency to input // the input signal will set the frequency of the oscillator
-        Phase = 1,  // synch phase to input // the input signal will set the phase of the oscillator
-        FM = 2      // the input signal will add to the oscillator's current frequency - TODON1 see fm2.ck
+        Freq = 0,   // sync frequency to input // the input signal will set the frequency of the oscillator
+        Phase = 1,  // sync phase to input // the input signal will set the phase of the oscillator
+        FM = 2      // the input signal will add to the oscillator's current frequency - TODON1 see fm2.ck - Next()
     }
 
     /// <summary>
@@ -19,15 +19,14 @@ namespace Nebulator.Synth
         protected double _phaseIncr = 0.0; // phase increment was _num
         protected double _freq = 0.0; // 0.0 means not playing
         protected double _mod = 0.0; // modulation value - FM
-        // protected double _ampl = 0.0;  TODON1 stk/chuck uses gain instead of separate amplitude.
         protected SyncType _sync = SyncType.Freq;
         protected double _width = 0.5;
         protected double _phase = 0.0;
         #endregion
 
         #region Properties
-        public SyncType Sync { get; set; }
-        //TODON1 ?? if (_sync == SyncType.Freq && psync != _sync)
+        public SyncType Sync { get; set; } //TODON1 rethink this
+        // original ?? if (_sync == SyncType.Freq && psync != _sync)
         //set: 
         //{
         //    // if we are switching to internal tick
@@ -72,11 +71,11 @@ namespace Nebulator.Synth
         {
             double frequency = NoteToFreq(noteNumber);
             Freq = frequency;
-            Gain = amplitude;
+            Volume = amplitude;
         }
 
         /// <inheritdoc />
-        public override double Next(double _) // may use something for input TODON1
+        public override double Next(double _)
         {
             double dout = 0.0;
 
@@ -112,7 +111,7 @@ namespace Nebulator.Synth
                 }
             }
 
-            return dout * Gain;
+            return dout * Volume;
         }
 
         /// <inheritdoc />
