@@ -167,7 +167,7 @@ namespace Nebulator.Synth
                     switch (step)
                     {
                         case StepNoteOn non:
-                            Synth.Note(non.NoteNumber, non.VelocityToPlay);
+                            Synth.NoteOn(non.NoteNumber, non.VelocityToPlay);
  
                             if (non.Duration.TotalTocks > 0) // specific duration
                             {
@@ -185,7 +185,7 @@ namespace Nebulator.Synth
                             break;
  
                         case StepNoteOff noff:
-                            Synth.Note(noff.NoteNumber, 0);
+                            Synth.NoteOff(noff.NoteNumber);
                             break;
  
                         case StepControllerChange ctl:

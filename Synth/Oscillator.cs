@@ -67,11 +67,18 @@ namespace Nebulator.Synth
 
         #region Public Functions
         /// <inheritdoc />
-        public override void Note(double noteNumber, double amplitude)
+        public override void NoteOn(double noteNumber, double amplitude)
         {
-            double frequency = NoteToFreq(noteNumber);
-            Freq = frequency;
+            Freq = NoteToFreq(noteNumber);
             Volume = amplitude;
+            _phase = 0;
+        }
+
+        /// <inheritdoc />
+        public override void NoteOff(double noteNumber)
+        {
+            Freq = 0; //TODON1 needs zero-crossing
+            Volume = 0;
         }
 
         /// <inheritdoc />

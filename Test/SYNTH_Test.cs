@@ -9,6 +9,7 @@ using Nebulator.Visualizer;
 
 namespace Nebulator.Test
 {
+#if _TODON2
     public class SYNTH_Vis : TestSuite
     {
         public override void RunSuite()
@@ -20,7 +21,7 @@ namespace Nebulator.Test
             switch(which)
             {
                 case 1:
-                    #region ADSR
+#region ADSR
                     {
                         DataSeries seradsr = new DataSeries() { Name = "ADSR" };
                         ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Volume = 0.5 };
@@ -45,10 +46,10 @@ namespace Nebulator.Test
                         v.AllSeries.Add(seradsr);
                     }
                     break;
-                    #endregion
+#endregion
 
                 case 2:
-                    #region Osc
+#region Osc
                     {
                         SinOsc osc1 = new SinOsc() { Freq = 400, Volume = 0.5 };
                         SinOsc osc2 = new SinOsc() { Freq = 500, Volume = 0.5 };
@@ -74,10 +75,10 @@ namespace Nebulator.Test
                         v.AllSeries.Add(sermix);
                     }
                     break;
-                    #endregion
+#endregion
 
                 case 3:
-                    #region Osc + ADSR
+#region Osc + ADSR
                     {
                         SinOsc osc = new SinOsc() { Freq = 400, Volume = 0.5 };
                         ADSR adsr = new ADSR() { AttackTime = 0.5, DecayTime = 0.3, SustainLevel = 0.6, ReleaseTime = 0.4, Volume = 0.5 };
@@ -112,7 +113,7 @@ namespace Nebulator.Test
                         v.ChartType = ChartType.Line;
                     }
                     break;
-                    #endregion
+#endregion
             }
 
             new System.Threading.Thread(() => v.ShowDialog()).Start();
@@ -299,4 +300,5 @@ namespace Nebulator.Test
             }
         }
     }
+#endif
 }

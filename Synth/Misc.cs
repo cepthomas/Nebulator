@@ -79,22 +79,17 @@ namespace Nebulator.Synth
             return _level * din;
         }
 
-        public void Key(bool on)
+        public void KeyDown()
         {
-            if(on)
-            {
-                _level = 0;
-                _state = ADSRState.Attack;
-                _step = Amplitude / AttackTime / SynthCommon.SampleRate;
-            }
-            else
-            {
-                _released = true;
-            }
+            _level = 0;
+            _state = ADSRState.Attack;
+            _step = Amplitude / AttackTime / SynthCommon.SampleRate;
         }
-        #endregion
 
-        #region Private functions
+        public void KeyUp()
+        {
+            _released = true;
+        }
         #endregion
     }
 
@@ -128,9 +123,6 @@ namespace Nebulator.Synth
             return din;
         }
         #endregion
-
-        #region Private functions
-        #endregion
     }
 
     public class Pan : UGen2
@@ -159,9 +151,6 @@ namespace Nebulator.Synth
             };
             return dout * Volume;
         }
-        #endregion
-
-        #region Private functions
         #endregion
     }
 }

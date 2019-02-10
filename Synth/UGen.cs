@@ -30,9 +30,15 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public abstract double Next(double din);
 
-        /// <param name="noteNumber">Which note</param>
-        /// <param name="amplitude">If 0.0, stop, otherwise start - normalized</param>
-        public virtual void Note(double noteNumber, double amplitude)
+        /// <param name="noteNumber">Which note to start</param>
+        /// <param name="amplitude">Normalized</param>
+        public virtual void NoteOn(double noteNumber, double amplitude)
+        {
+            // Non-implementers can ignore.
+        }
+
+        /// <param name="noteNumber">Which note to stop</param>
+        public virtual void NoteOff(double noteNumber)
         {
             // Non-implementers can ignore.
         }
@@ -97,13 +103,15 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public abstract Sample Next(double din);
 
-        /// <summary>
-        /// Start or stop a note with the given frequency and amplitude.
-        /// Implementers may ignore or interpret as key on/off.
-        /// </summary>
-        /// <param name="noteNumber">Which note</param>
-        /// <param name="amplitude">If 0.0, stop, otherwise start - normalized</param>
-        public virtual void Note(double noteNumber, double amplitude)
+        /// <param name="noteNumber">Which note to start.</param>
+        /// <param name="amplitude">Normalized</param>
+        public virtual void NoteOn(double noteNumber, double amplitude)
+        {
+            // Non-implementers can ignore.
+        }
+
+        /// <param name="noteNumber">Which note to stop.</param>
+        public virtual void NoteOff(double noteNumber)
         {
             // Non-implementers can ignore.
         }

@@ -19,7 +19,7 @@ NVariable CTL3;
 NChannel SYNTH_1;
 
 // Use win gm and virtual kbd.
-bool _local = false;//true;
+bool _local = true;
 
 
 // The overall synthesizer.
@@ -32,18 +32,23 @@ public class MySynth : UGen2
 
     public override Sample Next(double _)
     {
-        double dd = vcr1.Next(0);
-        lpf.Freq = adsrF.Next(1) * 2000;
-        dd = lpf.Next(dd);
-        Sample dout = pan.Next(dd);
-        return dout;
+        double dout = vcr1.Next(0);
+        //lpf.Freq = adsrF.Next(1) * 2000;
+        //dout = lpf.Next(dout);
+        Sample sout = pan.Next(dout);
+        return sout;
     }
 
-    public override void Note(double notenum, double amplitude)
+    public override void NoteOn(double notenum, double amplitude)
     {
-        // Pass along to the noisemakers.
-        vcr1.Note(notenum, amplitude);
-        adsrF.Key(amplitude > 0);
+        vcr1.NoteOn(notenum, amplitude);
+        //adsrF.KeyDown();
+    }
+
+    public override void NoteOff(double notenum)
+    {
+        vcr1.NoteOff(notenum);
+        //adsrF.KeyUp();
     }
 }
 
@@ -56,20 +61,24 @@ public class MyVoice : UGen
     public Mix mix1 = new Mix() { Volume = 0.8 };
     public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.5, Volume = 0.8 };
 
-    public MyVoice()
+    public override void NoteOn(double notenum, double amplitude)
     {
+        osc1.NoteOn(notenum, amplitude);
+        osc2.NoteOn(notenum * 1.05, amplitude);
+        adsr.KeyDown();
     }
 
-    public override void Note(double notenum, double amplitude)
+    public override void NoteOff(double notenum)
     {
-        osc1.Note(notenum, amplitude);
-        osc2.Note(notenum * 1.05, amplitude);
-        adsr.Key(amplitude > 0);
+        osc1.NoteOff(notenum);
+        osc2.NoteOff(notenum * 1.05);
+        adsr.KeyUp();
     }
 
     public override double Next(double _)
     {
-        double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0)));
+        double dout = osc2.Next(0);
+        //double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0)));
         return dout;
     }
 }
@@ -81,13 +90,27 @@ MySynth syn = new MySynth();
 public void On_KBD_NOTE()
 {
     // Test for note on or off.
-    syn.Note(KBD_NOTE.Value, KBD_NOTE.Value > 0 ? 0.9 : 0.0);
+    if(KBD_NOTE.Value > 0)
+    {
+        syn.NoteOn(KBD_NOTE.Value, 0.9);
+    }
+    else
+    {
+        syn.NoteOff(KBD_NOTE.Value);
+    }
 }
 
 public void On_VKBD_NOTE()
 {
     // Test for note on or off.
-    syn.Note(VKBD_NOTE.Value, VKBD_NOTE.Value > 0 ? 0.9 : 0.0);
+    if(VKBD_NOTE.Value > 0)
+    {
+        syn.NoteOn(VKBD_NOTE.Value, 0.9);
+    }
+    else
+    {
+        syn.NoteOff(VKBD_NOTE.Value);
+    }
 }
 
 public void On_MOD1()
@@ -99,7 +122,7 @@ public void On_CTL3()
 {
     if(random(0, 10) == 0)
     {
-        syn.Note(50 + CTL3.Value % 20, 0.7);
+        syn.NoteOn(50 + CTL3.Value % 20, 0.7);
     }
 }
 

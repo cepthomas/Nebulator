@@ -13,17 +13,26 @@ namespace Nebulator.Synth
     /// Represents one sounding voice.
     class Voice
     {
-        public UGen ugen = null; // contained ugen
-        public int birth = 0; // used for tracking oldest voice
-        public double noteNumber = -1.0; // current sounding
-        //public double frequency = 0.0; // current
-        public int sounding = 0; // 0=no 1=yes <0=tail ticks
+        /// <summary>Contained ugen.</summary>
+        public UGen ugen = null;
+
+        /// <summary>Used for tracking oldest voice.</summary>
+        public int birth = 0;
+
+        /// <summary>Current sounding note.</summary>
+        public double noteNumber = -1.0;
+
+        /// <summary>Making noise.</summary>
+        public bool sounding = false;
+
+        /// <summary>After note off.</summary>
+        public int release = 0;
     }
 
     public class Voicer : UGen
     {
         #region Fields
-        /// <summary>Constituents</summary>
+        /// <summary>Constituents.</summary>
         List<Voice> _voices = new List<Voice>();
 
         /// <summary>In sample clock ticks.</summary>
@@ -31,6 +40,7 @@ namespace Nebulator.Synth
         #endregion
 
         #region Properties
+        /// <summary></summary>
         public double DecayTime { set { _muteTime = value <= 0.0 ? 0 : ((int)value * SynthCommon.SampleRate); } }
         #endregion
 
@@ -83,9 +93,9 @@ namespace Nebulator.Synth
         {
             foreach (Voice v in _voices)
             {
-                if (v.sounding > 0)
+                if (v.sounding)
                 {
-                    v.ugen.Note(0.2, 0.0);
+                    //v.ugen.NoteOff(0.0, 0.0);
                     v.ugen.Reset();
                 }
             }
@@ -103,76 +113,80 @@ namespace Nebulator.Synth
 
             foreach(Voice v in _voices)
             {
-                if (v.sounding != 0)
+                if (v.sounding)
                 {
-                    // Gen next sample(s).
+                    // Gen next sample.
                     double ds = v.ugen.Next(0);
                     dout += ds;
                 }
 
                 // Test for tail sound.
-                if (v.sounding < 0)
+                if (v.release > 0)
                 {
-                    v.sounding++;
+                    v.release--;
                 }
  
                 // Test for done.
-                if (v.sounding == 0)
+                if (v.release <= 0)
                 {
-                    v.noteNumber = -1.0;
+                    v.sounding = false;
                 }
             }
 
             return dout * Volume;
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="noteNumber"></param>
         /// <param name="amplitude"></param>
-        public override void Note(double noteNumber, double amplitude)
+        public override void NoteOn(double noteNumber, double amplitude)
         {
-            if(noteNumber > 0 && amplitude != 0.0) // noteon
-            {
-                int oldest = -1;
-                int index = -1;
+            // Find a place to put this.
+            int oldest = -1;
+            int index = -1;
 
-                // Find a place to put this.
-                for(int i = 0; i < _voices.Count && index == -1; i++)
+            for (int i = 0; i < _voices.Count && index == -1; i++)
+            {
+                if (!_voices[i].sounding) // available slot
                 {
-                    if (_voices[i].noteNumber < 0) // available slot
+                    index = i;
+                }
+                else // keep track of oldest sounding
+                {
+                    if (oldest == -1 || _voices[oldest].birth > _voices[i].birth)
                     {
-                        index = i;
-                    }
-                    else // keep track of oldest sounding
-                    {
-                        if (oldest == -1 || _voices[oldest].birth > _voices[i].birth)
-                        {
-                            oldest = i;
-                        }
+                        oldest = i;
                     }
                 }
-
-                // Update the slot.
-                int which = index != -1 ? index : oldest;
-
-                // Voice management fields.
-                _voices[which].birth = SynthCommon.NextId();
-                _voices[which].noteNumber = noteNumber;
-                _voices[which].sounding = 1;
-                // make noise
-                _voices[which].ugen.Note(noteNumber, amplitude);
             }
-            else // noteoff
+
+            // Update the slot.
+            int which = index != -1 ? index : oldest;
+
+            // Voice management fields.
+            _voices[which].birth = SynthCommon.NextId();
+            _voices[which].noteNumber = noteNumber;
+            _voices[which].sounding = true;
+            // make noise
+            _voices[which].ugen.NoteOn(noteNumber, amplitude);
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="noteNumber"></param>
+        public override void NoteOff(double noteNumber)
+        {
+            foreach (Voice v in _voices)
             {
-                foreach (Voice v in _voices)
+                if (v.noteNumber.IsClose(Math.Abs(noteNumber)))
                 {
-                    if(v.noteNumber.IsClose(Math.Abs(noteNumber)))
-                    {
-                        v.ugen.Note(noteNumber, 0.0);
-                        v.sounding = -_muteTime;
-                    }
+                    v.ugen.NoteOff(noteNumber);
+                    v.release = _muteTime;
                 }
             }
         }
