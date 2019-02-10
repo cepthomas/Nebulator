@@ -116,8 +116,8 @@ namespace Nebulator.Synth
             _y1 = y0;
 
             // be normal
-            DDN(_y1);
-            DDN(_y2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return dout * Volume;
         }
@@ -175,8 +175,8 @@ namespace Nebulator.Synth
             _y1 = y0;
 
             // be normal
-            DDN(_y1);
-            DDN(_y2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return dout * Volume;
         }
@@ -239,8 +239,8 @@ namespace Nebulator.Synth
             _y1 = y0;
 
             // be normal
-            DDN(_y1);
-            DDN(_y2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return dout * Volume;
         }
@@ -305,8 +305,8 @@ namespace Nebulator.Synth
             _y1 = y0;
 
             // be normal
-            DDN(_y1);
-            DDN(_y2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return dout * Volume;
         }
@@ -369,8 +369,8 @@ namespace Nebulator.Synth
             _y1 = y0;
 
             // be normal
-            DDN(_y1);
-            DDN(_y2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return dout * Volume;
         }
@@ -434,8 +434,8 @@ namespace Nebulator.Synth
             _y1 = y0;
 
             // be normal
-            DDN(_y1);
-            DDN(_y2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return dout * Volume;
         }
@@ -498,8 +498,8 @@ namespace Nebulator.Synth
             _y1 = y0;
 
             // be normal
-            DDN(_y1);
-            DDN(_y2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return dout * Volume;
         }
@@ -650,8 +650,8 @@ namespace Nebulator.Synth
             _output1 = _output0;
 
             // be normal
-            DDN(_output1);
-            DDN(_output2);
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
 
             return _output0 * Volume;
         }

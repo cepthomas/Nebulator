@@ -133,7 +133,7 @@ namespace Nebulator.Synth
         /// <param name="amplitude"></param>
         public override void Note(double noteNumber, double amplitude)
         {
-            if(amplitude != 0.0)
+            if(noteNumber > 0 && amplitude != 0.0) // noteon
             {
                 int oldest = -1;
                 int index = -1;
@@ -164,11 +164,11 @@ namespace Nebulator.Synth
                 // make noise
                 _voices[which].ugen.Note(noteNumber, amplitude);
             }
-            else // stop
+            else // noteoff
             {
                 foreach (Voice v in _voices)
                 {
-                    if(v.noteNumber.IsClose(noteNumber))
+                    if(v.noteNumber.IsClose(Math.Abs(noteNumber)))
                     {
                         v.ugen.Note(noteNumber, 0.0);
                         v.sounding = -_muteTime;

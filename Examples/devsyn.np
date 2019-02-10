@@ -19,7 +19,7 @@ NVariable CTL3;
 NChannel SYNTH_1;
 
 // Use win gm and virtual kbd.
-bool _local = true;
+bool _local = false;//true;
 
 
 // The overall synthesizer.
@@ -27,12 +27,13 @@ public class MySynth : UGen2
 {
     public Voicer vcr1 = new Voicer(typeof(MyVoice), 5) { DecayTime = 0.2, Volume = 0.8 };
     public LPF lpf = new LPF() { Freq = 600, Volume = 0.8 };
+    public ADSR adsrF = new ADSR() { AttackTime = 0.5, DecayTime = 0.5, SustainLevel = 0.5, ReleaseTime = 1.0, Volume = 0.8 };
     public Pan pan = new Pan() { Location = 0.0, Volume = 0.8 };
-    ADSR adsrF = new ADSR() { AttackTime = 111, DecayTime = 111, SustainLevel = 111, ReleaseTime = 111, Volume = 0.8 };
 
     public override Sample Next(double _)
     {
         double dd = vcr1.Next(0);
+        lpf.Freq = adsrF.Next(1) * 2000;
         dd = lpf.Next(dd);
         Sample dout = pan.Next(dd);
         return dout;
@@ -42,6 +43,7 @@ public class MySynth : UGen2
     {
         // Pass along to the noisemakers.
         vcr1.Note(notenum, amplitude);
+        adsrF.Key(amplitude > 0);
     }
 }
 
@@ -50,7 +52,7 @@ public class MyVoice : UGen
 {
     // 2 oscs slightly detuned and synced
     public PulseOsc osc1 = new PulseOsc() { Freq = 400, Width = 0.1, Volume = 0.8 };
-    public PulseOsc osc2 = new PulseOsc() { Freq = 420, Width = 0.1, Volume = 0.8 };
+    public PulseOsc osc2 = new PulseOsc() { Freq = 440, Width = 0.1, Volume = 0.8 };
     public Mix mix1 = new Mix() { Volume = 0.8 };
     public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.5, Volume = 0.8 };
 
