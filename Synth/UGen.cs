@@ -81,7 +81,7 @@ namespace Nebulator.Synth
 
     public abstract class UGen2
     {
-        // Stereo output version of UGen. TODON2 combine with UGen?
+        // Stereo output version of UGen. TODON1 combine with UGen? Also stereo -> stereo, stereo -> mono.
 
         #region Properties
         /// <summary>0.0 to 1.0.</summary>

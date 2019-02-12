@@ -30,7 +30,7 @@ namespace Nebulator.Synth
     }
 
     /// <summary>
-    /// Container for a stereo pair. TODON2 - this or tuple?
+    /// Container for a stereo pair.
     /// </summary>
     public struct Sample
     {

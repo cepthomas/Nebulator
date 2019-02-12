@@ -15,8 +15,6 @@ using Nebulator.Device;
 //apps that use the SustainedLowLatency setting onto machines that have adequate memory, so they will satisfy the resulting
 //growth in the heap while the setting is in effect.
 
-// TODON2 FBP? http://www.jpaulmorrison.com/fbp/  https://github.com/jpaulm
-//This approach to organizing and implementing signal flow through a synthesizer was very much inspired by J. Paul Morrison's website on flow-based programming. The idea is that you have a collection of components connected in some way with data flowing through them. It is easy to change and rearrange components to create new configurations. I'm a strong believer in this approach.
 
 // AsioOut also has:
 // public void ShowControlPanel()
@@ -155,7 +153,7 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public bool Send(Step step) // TODON1 Synth doesn't really fit in the current model. It's not an external device.
+        public bool Send(Step step) // Synth doesn't *really* fit in the current model. It's not an external device.
         {
             bool ret = true;
 

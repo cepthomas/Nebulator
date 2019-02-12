@@ -138,8 +138,23 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid NVariable for lever");
             }
 
-            NController lp = new NController() { BoundVar = bound };
-            Levers.Add(lp);
+            NController ctlr = new NController() { BoundVar = bound };
+            Levers.Add(ctlr);
+        }
+
+        /// <summary>
+        /// Create a UI meter.
+        /// </summary>
+        /// <param name="bound"></param>
+        protected void createMeter(NVariable bound, int type)
+        {
+            if (bound == null)
+            {
+                throw new Exception($"Invalid NVariable for meter");
+            }
+
+            //NController ctlr = new NController() { BoundVar = bound, TTT = parse_type };
+            //Meters.Add(ctlr);
         }
 
         /// <summary>

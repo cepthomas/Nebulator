@@ -7,7 +7,7 @@ namespace Nebulator.Synth
 {
 
 
-#if TODON2_PORT_THIS
+#if MAYBE_PORT_THIS
 
 /***************************************************/
 /*! \class Envelope

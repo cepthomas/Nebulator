@@ -14,11 +14,12 @@ NVariable KBD_NOTE;
 NVariable VKBD_NOTE;
 NVariable CTL2;
 NVariable CTL3;
+NVariable METER1;
 
 // All the output channels.
 NChannel SYNTH_1;
 
-// Use win gm and virtual kbd.
+// Use virtual kbd.
 bool _local = true;
 
 
@@ -30,11 +31,14 @@ public class MySynth : UGen2
     public ADSR adsrF = new ADSR() { AttackTime = 0.5, DecayTime = 0.5, SustainLevel = 0.5, ReleaseTime = 1.0, Volume = 0.8 };
     public Pan pan = new Pan() { Location = 0.0, Volume = 0.8 };
 
+    public Analyzer an1 = new Analyzer() { };
+
     public override Sample Next(double _)
     {
         double dout = vcr1.Next(0);
         //lpf.Freq = adsrF.Next(1) * 2000;
         dout = lpf.Next(dout);
+        dout = an1.Next(dout);
         Sample sout = pan.Next(dout);
         return sout;
     }
@@ -57,9 +61,9 @@ public class MyVoice : UGen
 {
     // 2 oscs slightly detuned and synced
     public PulseOsc osc1 = new PulseOsc() { Freq = 400, Width = 0.1, Volume = 0.8 };
-    public PulseOsc osc2 = new PulseOsc() { Freq = 400, Width = 0.1, Volume = 0.8 };
+    public PulseOsc osc2 = new PulseOsc() { Freq = 405, Width = 0.1, Volume = 0.8 };
     public Mix mix1 = new Mix() { Volume = 0.8 };
-    public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 1.0, Volume = 0.8 };
+    public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.2, Volume = 0.8 };
 
     public override void NoteOn(double notenum, double amplitude)
     {
@@ -113,9 +117,20 @@ public void On_VKBD_NOTE()
     }
 }
 
+// public void On_METER1()
+// {
+//     syn.NoteOn(50 + METER1.Value % 20, 0.7);
+// }
+
+
 public void On_MOD1()
 {
     syn.lpf.Freq = MOD1.Value;
+}
+
+public void On_CTL2()
+{
+
 }
 
 public void On_CTL3()
@@ -124,11 +139,6 @@ public void On_CTL3()
     {
         syn.NoteOn(50 + CTL3.Value % 20, 0.7);
     }
-}
-
-public void On_CTL2()
-{
-
 }
 
 public override void setupNeb()
@@ -140,6 +150,7 @@ public override void setupNeb()
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
+    METER1 = createVariable("meter1", 0, 0, 100);//, On_METER1_NOTE);
 
     // All the output channels.
     SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1, syn);
@@ -161,6 +172,9 @@ public override void setupNeb()
     // levers
     createLever(BACK_COLOR);
     createLever(MOD1);
+
+    // meters
+//    createMeter(METER1, Linear);
 }
 
 public override void setupNeb2()

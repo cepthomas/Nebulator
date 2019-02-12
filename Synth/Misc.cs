@@ -18,11 +18,11 @@ namespace Nebulator.Synth
         double _level = 0.0;
 
         /// <summary>xxx</summary>
-       //bool _released = false;
+        //bool _released = false;
         #endregion
 
         #region Properties
-        // make all times seconds
+        // all times seconds
         public double AttackTime { get; set; } = 0.1;
         public double DecayTime { get; set; } = 0.25;
         public double SustainLevel { get; set; } = 0.5;
@@ -30,10 +30,8 @@ namespace Nebulator.Synth
         public double Amplitude { get; set; } = 1.0;
         #endregion
 
-        #region Lifecycle
-        #endregion
-
         #region Public Functions
+        /// <inheritdoc />
         public override double Next(double din)
         {
             //// TODON2?? If note is released, go directly to Release state, except if still attacking.
@@ -85,6 +83,9 @@ namespace Nebulator.Synth
             return _level * din;
         }
 
+        /// <summary>
+        /// Start the envelope.
+        /// </summary>
         public void KeyDown()
         {
             _level = 0;
@@ -93,6 +94,9 @@ namespace Nebulator.Synth
             _step = Amplitude / (AttackTime * SynthCommon.SampleRate);
         }
 
+        /// <summary>
+        /// Finish the envelope and go to release.
+        /// </summary>
         public void KeyUp()
         {
             //_released = true;
@@ -106,19 +110,12 @@ namespace Nebulator.Synth
 
     public class Mix : UGen
     {
-        #region Fields
-        #endregion
-
-        #region Properties
-        #endregion
-
-        #region Lifecycle
-        public Mix()
-        {
-        }
-        #endregion
-
         #region Public Functions
+        /// <summary>
+        /// Vararg list of inputs to sum.
+        /// </summary>
+        /// <param name="din"></param>
+        /// <returns></returns>
         public double Next(params double[] din)
         {
             double dout = 0;
@@ -129,6 +126,7 @@ namespace Nebulator.Synth
             return dout * Volume;
         }
 
+        /// <inheritdoc />
         public override double Next(double din)
         {
             return din;
@@ -138,21 +136,15 @@ namespace Nebulator.Synth
 
     public class Pan : UGen2
     {
-        #region Fields
-        #endregion
-
         #region Properties
-        // -1 to +1
+        /// <summary>
+        /// Goes from -1 (left) to +1 (right).
+        /// </summary>
         public double Location { get; set; } = 0.0;
         #endregion
 
-        #region Lifecycle
-        public Pan()
-        {
-        }
-        #endregion
-
         #region Public Functions
+        /// <inheritdoc />
         public override Sample Next(double din)
         {
             Sample dout = new Sample
