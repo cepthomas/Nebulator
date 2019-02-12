@@ -71,15 +71,19 @@ namespace Nebulator.Synth
         {
             Freq = NoteToFreq(noteNumber);
             Volume = amplitude;
-            _phase = 0;
+            _phase = 0; // TODON1 correct??
         }
 
         /// <inheritdoc />
         public override void NoteOff(double noteNumber)
         {
-            Freq = 0; //TODON1 needs zero-crossing
+            Freq = 0; // TODON1 needs zero-crossing
             Volume = 0;
         }
+
+
+        int _cnt = 0;
+
 
         /// <inheritdoc />
         public override double Next(double _)
@@ -178,7 +182,7 @@ namespace Nebulator.Synth
             return dout;
         }
     }
-
+ 
     public class PulseOsc : Oscillator
     {
         protected override double ComputeNext()

@@ -10,16 +10,9 @@ namespace Nebulator.Synth
 {
     public abstract class UGen
     {
-        #region Fields
-
-        #endregion
-
         #region Properties
         /// <summary>0.0 to 1.0.</summary>
         public double Volume { get; set; } = 0.2;
-        #endregion
-
-        #region Lifecycle
         #endregion
 
         #region Public Functions - virtual
@@ -88,7 +81,7 @@ namespace Nebulator.Synth
 
     public abstract class UGen2
     {
-        // Stereo output version of UGen.
+        // Stereo output version of UGen. TODON2 combine with UGen?
 
         #region Properties
         /// <summary>0.0 to 1.0.</summary>

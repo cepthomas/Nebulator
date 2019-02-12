@@ -5,6 +5,8 @@ using Nebulator.Common;
 
 namespace Nebulator.Controls
 {
+    public enum MeterType { Linear, Log };
+
     /// <summary>
     /// Implements a rudimentary volume meter.
     /// </summary>
@@ -30,19 +32,24 @@ namespace Nebulator.Controls
         }
 
         /// <summary>
-        /// Minimum decibels.
+        /// How the meter responds.
         /// </summary>
-        public double MinDb { get; set; } = -60;
+        public MeterType MeterType { get; set; } = MeterType.Log;
 
         /// <summary>
-        /// Maximum decibels.
+        /// Minimum value. If Log type, this is db.
         /// </summary>
-        public double MaxDb { get; set; } = 18;
+        public double MinValue { get; set; } = -60;
+
+        /// <summary>
+        /// Maximum value. If Log type, this is db.
+        /// </summary>
+        public double MaxValue { get; set; } = 18;
 
         /// <summary>
         /// Meter orientation.
         /// </summary>
-        public Orientation Orientation { get; set; } = Orientation.Vertical;
+        public Orientation Orientation { get; set; } = Orientation.Horizontal;
         #endregion
 
         /// <summary>
@@ -59,14 +66,27 @@ namespace Nebulator.Controls
         /// </summary>
         protected override void OnPaint(PaintEventArgs pe)
         {
-            pe.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
+            double percent = 0;
 
-            double db = Utils.Constrain(20 * Math.Log10(Value), MinDb, MaxDb);
-            double percent = (db - MinDb) / (MaxDb - MinDb);
+            switch (MeterType)
+            {
+                case MeterType.Log:
+                    double db = Utils.Constrain(20 * Math.Log10(Value), MinValue, MaxValue);
+                    percent = (db - MinValue) / (MaxValue - MinValue);
+                    break;
+
+                case MeterType.Linear:
+                    double lval = Utils.Constrain(Value, MinValue, MaxValue);
+                    percent = (lval - MinValue) / (MaxValue - MinValue);
+                    break;
+            }
+
+            pe.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
 
             int width = Width - 2;
             int height = Height - 2;
             Brush brush = new SolidBrush(ControlColor);
+
             if (Orientation == Orientation.Horizontal)
             {
                 width = (int)(width * percent);

@@ -28,7 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // Meter
+            // 
+            this.Name = "Meter";
+            this.ResumeLayout(false);
+
         }
 
         #endregion

@@ -7,12 +7,18 @@ namespace Nebulator.Synth
     public class ADSR : UGen
     {
         #region Fields
-        // private enum
+        /// <summary>Where we are on the profile.</summary>
         enum ADSRState { Idle, Attack, Decay, Sustain, Release }
         ADSRState _state = ADSRState.Idle;
-        double _step = 0; // how much to change output per Next().
+
+        /// <summary>How much to change output per Next().</summary>
+        double _step = 0; // 
+
+        /// <summary>Current output.</summary>
         double _level = 0.0;
-        bool _released = false;
+
+        /// <summary>xxx</summary>
+       //bool _released = false;
         #endregion
 
         #region Properties
@@ -30,12 +36,13 @@ namespace Nebulator.Synth
         #region Public Functions
         public override double Next(double din)
         {
-            // If note is released, go directly to Release state, except if still attacking.
-            if (_released && (_state == ADSRState.Decay || _state == ADSRState.Sustain))
-            {
-                _state = ADSRState.Release;
-                _step = -((Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate));
-            }
+            //// TODON2?? If note is released, go directly to Release state, except if still attacking.
+            //if (_released && _state != ADSRState.Attack)
+            //{
+            //    _state = ADSRState.Release;
+            //    _step = (Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate);
+            //    _released = false;
+            //}
 
             switch (_state)
             {
@@ -45,13 +52,12 @@ namespace Nebulator.Synth
                     {
                         _level = Amplitude;
                         _state = ADSRState.Decay;
-                        _step = -((_level - SustainLevel) / (DecayTime * SynthCommon.SampleRate));
+                        _step = (_level - SustainLevel) / (DecayTime * SynthCommon.SampleRate);
                     }
-                    _released = false;
                     break;
 
                 case ADSRState.Decay:
-                    _level += _step;
+                    _level -= _step;
 
                     if (_level <= SustainLevel)
                     {
@@ -64,7 +70,7 @@ namespace Nebulator.Synth
                     break;
 
                 case ADSRState.Release:
-                    _level += _step;
+                    _level -= _step;
                     if (_level <= 0)
                     {
                         _level = 0;
@@ -83,12 +89,17 @@ namespace Nebulator.Synth
         {
             _level = 0;
             _state = ADSRState.Attack;
-            _step = Amplitude / AttackTime / SynthCommon.SampleRate;
+            //_released = false;
+            _step = Amplitude / (AttackTime * SynthCommon.SampleRate);
         }
 
         public void KeyUp()
         {
-            _released = true;
+            //_released = true;
+
+            // added:
+            _state = ADSRState.Release;
+            _step = (Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate);
         }
         #endregion
     }

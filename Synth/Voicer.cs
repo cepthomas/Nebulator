@@ -36,12 +36,12 @@ namespace Nebulator.Synth
         List<Voice> _voices = new List<Voice>();
 
         /// <summary>In sample clock ticks.</summary>
-        int _muteTime;
+        int _releaseTime;
         #endregion
 
         #region Properties
         /// <summary></summary>
-        public double DecayTime { set { _muteTime = value <= 0.0 ? 0 : ((int)value * SynthCommon.SampleRate); } }
+        public double DecayTime { set { _releaseTime = value <= 0.0 ? 0 : (int)(value * (double)SynthCommon.SampleRate); } }
         #endregion
 
         #region Lifecycle
@@ -124,18 +124,18 @@ namespace Nebulator.Synth
                 if (v.release > 0)
                 {
                     v.release--;
-                }
- 
-                // Test for done.
-                if (v.release <= 0)
-                {
-                    v.sounding = false;
+
+                    // Test for done.
+                    if (v.release <= 0)
+                    {
+                        v.sounding = false;
+                        v.release = 0;
+                    }
                 }
             }
 
             return dout * Volume;
         }
-
 
         /// <summary>
         /// 
@@ -172,7 +172,6 @@ namespace Nebulator.Synth
             _voices[which].sounding = true;
             // make noise
             _voices[which].ugen.NoteOn(noteNumber, amplitude);
-
         }
 
         /// <summary>
@@ -186,7 +185,7 @@ namespace Nebulator.Synth
                 if (v.noteNumber.IsClose(Math.Abs(noteNumber)))
                 {
                     v.ugen.NoteOff(noteNumber);
-                    v.release = _muteTime;
+                    v.release = _releaseTime;
                 }
             }
         }
