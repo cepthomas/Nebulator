@@ -87,10 +87,11 @@ namespace Nebulator.Synth
         /// </summary>
         public void KeyDown()
         {
-            _logger.Info("ADSR - KeyDown()");
             _level = 0;
             _state = ADSRState.Attack;
             _step = Amplitude / (AttackTime * SynthCommon.SampleRate);
+
+            //Trace("ADSR", $"KeyDown() {_step}");
         }
 
         /// <summary>
@@ -98,9 +99,11 @@ namespace Nebulator.Synth
         /// </summary>
         public void KeyUp()
         {
-            _logger.Info("ADSR - KeyUp()");
             _state = ADSRState.Release;
-            _step = (Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate);
+            //_step = (Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate);
+            _step = _level / (ReleaseTime * SynthCommon.SampleRate);
+
+            //Trace("ADSR", $"KeyUp() {_step}");
         }
         #endregion
     }

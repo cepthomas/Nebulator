@@ -76,6 +76,7 @@ public class MyVoice : UGen
     public override void NoteOff(double notenum)
     {
         s.print("script MyVoice - NoteOff()");
+        // Don't actually NoteOff - let the ADSR ramp down.
         // osc1.NoteOff(notenum);
         // osc2.NoteOff(notenum * 1.05);
         adsr.KeyUp();

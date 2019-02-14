@@ -4,18 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NAudio.Wave;
-using NLog;
 
 
 namespace Nebulator.Synth
 {
     public abstract class UGen
     {
-        #region Fields
-        /// <summary>My logger.</summary>
-        protected static Logger _logger = LogManager.GetCurrentClassLogger();
-        #endregion
-
         #region Properties
         /// <summary>0.0 to 1.0.</summary>
         public double Volume { get; set; } = 0.2;
@@ -81,6 +75,16 @@ namespace Nebulator.Synth
         protected double Wrap(double val)
         {
             return (val >= 1.0) || (val <= -1.0) ? val - Math.Floor(val) : val;
+        }
+
+        /// <summary>
+        /// Rudimentary debug helper.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="msg"></param>
+        protected void Trace(string type, string msg)
+        {
+            Console.WriteLine($"SYN {type} {msg}");
         }
         #endregion
     }

@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-using MoreLinq;
 
 
 namespace Nebulator.Common
@@ -514,3 +513,50 @@ namespace Nebulator.Common
         #endregion
     }
 }
+
+
+
+/* //TODON2 CPU usage meter?
+
+https://stackoverflow.com/questions/1277556/c-sharp-calculate-cpu-usage-for-a-specific-application/1277566
+
+
+using System;
+using System.Diagnostics;
+using System.Threading;
+
+namespace StackOverflow
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            PerformanceCounter myAppCpu = 
+                new PerformanceCounter(
+                    "Process", "% Processor Time", "OUTLOOK", true);
+
+            Console.WriteLine("Press the any key to stop...\n");
+            while (!Console.KeyAvailable)
+            {
+                double pct = myAppCpu.NextValue();
+                Console.WriteLine("OUTLOOK'S CPU % = " + pct);
+                Thread.Sleep(250);
+            }
+        }
+    }
+}
+
+On a multi core machine you have to divide the value from the performance counter with the number of processors (or cores). pct = pct / Environment.ProcessorCount. Otherwise, you may get values over 100%
+
+
+Notes for finding the instance based on Process ID:
+
+I do not know of any better way, and hopefully somebody does. If not, here is one way you can find the right instance name for your process given the Process ID and process name.
+
+There is another Performance Counter (PC) called "ID Process" under the "Process" family. It returns the PID for the instance. So, if you already know the name (i.e. "chrome" or "myapp"), you can then test each instance until you find the match for the PID.
+
+The naming is simple for each instance: "myapp" "myapp#1" "myapp#2" ... etc.
+
+...  new PerformanceCounter("Process", "ID Process", appName, true);
+Once the PC's value equals the PID, you found the right appName. You can then use that appName for the other counters.
+*/

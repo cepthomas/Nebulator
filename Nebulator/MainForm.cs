@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using NLog;
-using MoreLinq;
 using Newtonsoft.Json;
 using NAudio.Midi;
 using NAudio.Wave;
@@ -24,6 +23,8 @@ using Nebulator.Synth;
 
 // TODON3 Remove Device dependency in Script project for NProcessing.
 
+// TODON2 warning MSB3277: Found conflicts between different versions of "System.IO.Compression" that could not be resolved.
+// These reference conflicts are listed in the build log when log verbosity is set to detailed.
 
 
 namespace Nebulator
