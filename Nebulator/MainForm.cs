@@ -25,7 +25,10 @@ using Nebulator.Synth;
 
 // TODON2 warning MSB3277: Found conflicts between different versions of "System.IO.Compression" that could not be resolved.
 // These reference conflicts are listed in the build log when log verbosity is set to detailed.
+// ? https://stackoverflow.com/questions/47048438/missingmethodexception-when-referencing-microsoft-build-and-system-io-compressio
+// If I comment out the redirect, it builds ok.
 
+//TODON1 Smarter handling of run/stop for synths? and others?
 
 namespace Nebulator
 {

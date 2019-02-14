@@ -81,9 +81,6 @@ namespace Nebulator.Synth
             Volume = 0;
         }
 
-
-        int _cnt = 0;
-
         /// <inheritdoc />
         public override double Next(double _)
         {

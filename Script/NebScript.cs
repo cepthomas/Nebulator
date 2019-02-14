@@ -145,6 +145,7 @@ namespace Nebulator.Script
         /// Create a UI meter.
         /// </summary>
         /// <param name="bound"></param>
+        /// <param name="type"></param>
         protected void createMeter(NVariable bound, int type)
         {
             if (bound == null)
