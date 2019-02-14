@@ -13,14 +13,14 @@ namespace Nebulator.Synth
     public class Analyzer : UGen
     {
         /// <summary>
-        /// Raised periodically to inform the user of the max volume
+        /// Raised periodically to inform the user of things like max volume.
         /// </summary>
         public event EventHandler<AnalyzerEventArgs> AnalyzerEvent;
 
         /// <summary>
-        /// Avoid GC issues in Next().
+        /// Avoid GC issues in Next(). TODON2 and others?
         /// </summary>
-        private AnalyzerEventArgs args;
+        AnalyzerEventArgs args;
 
         #region Properties
         /// <summary>
@@ -46,12 +46,15 @@ namespace Nebulator.Synth
         int _buffIndex = 0;
         #endregion
 
+        #region Public Functions
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public Analyzer()
         {
             args = new AnalyzerEventArgs() { };
         }
 
-        #region Public Functions
         /// <inheritdoc />
         public override double Next(double din)
         {

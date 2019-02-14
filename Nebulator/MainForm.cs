@@ -179,7 +179,7 @@ namespace Nebulator
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
-            // Init HTTP server. TODON2 use OSC instead now?
+            // Init HTTP server. TODON3 use OSC instead now?
             _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
@@ -344,8 +344,6 @@ namespace Nebulator
                     vkey.Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height);
                     vkey.TopMost = false;
                     vkey.Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y);
-                    vkey.DeviceInputEvent += Device_InputEvent;
-                    vkey.DeviceLogEvent += Device_LogEvent;
                     vkey.Show();
                 }
             }
@@ -814,15 +812,15 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Process input midi event.
-        /// Is it a midi controller? Look it up in the inputs.
-        /// If not a ctlr or not found, send to the midi output, otherwise trigger listeners.
+        /// Process input event.
+        /// Is it a controller? Look it up in the inputs.
+        /// If not a ctlr or not found, send to the output, otherwise trigger listeners.
         /// </summary>
         void Device_InputEvent(object sender, DeviceInputEventArgs e)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (_script != null && e.Step != null)
+                if (chkPlay.Checked && _script != null && e.Step != null)
                 {
                     try
                     {
@@ -1250,7 +1248,7 @@ namespace Nebulator
                 mdText.Add($"- None");
             }
 
-            // Main help file. TODON2 Markdeep?
+            // Main help file. TODON3 Markdeep?
             mdText.Add(File.ReadAllText(@"Resources\README.md"));
 
             // Put it together.
@@ -1417,7 +1415,7 @@ namespace Nebulator
             switch (cmd)
             {
                 case PlayCommand.Start:
-                    if(userAction)
+                    if (userAction)
                     {
                         bool ok = _needCompile ? Compile() : true;
                         if (ok)

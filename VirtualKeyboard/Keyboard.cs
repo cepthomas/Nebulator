@@ -35,6 +35,9 @@ namespace Nebulator.VirtualKeyboard
 
         /// <summary>Map from Keys value to the index in _keys.</summary>
         Dictionary<Keys, int> _keyMap = new Dictionary<Keys, int>();
+
+        /// <summary>Known bug?</summary>
+        bool _keyDown = false;
         #endregion
 
         #region Properties
@@ -50,6 +53,9 @@ namespace Nebulator.VirtualKeyboard
         {
             CreateKeys();
             InitializeComponent();
+
+            // Intercept all keyboard events.
+            //KeyPreview = true;
         }
 
         /// <summary>
@@ -201,15 +207,19 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_KeyDown(object sender, KeyEventArgs e)
         {
-            //Console.WriteLine($"==={e.KeyCode.ToString()}");
-
-            if (_keyMap.ContainsKey(e.KeyCode))
+            if (!_keyDown)
             {
-                VKey pk = _keys[_keyMap[e.KeyCode]];
-                if (!pk.IsPressed)
+                if (_keyMap.ContainsKey(e.KeyCode))
                 {
-                    pk.PressVKey();
+                    VKey pk = _keys[_keyMap[e.KeyCode]];
+                    if (!pk.IsPressed)
+                    {
+                        pk.PressVKey();
+                        e.Handled = true;
+                    }
                 }
+
+                _keyDown = true;
             }
         }
 
@@ -220,10 +230,13 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_KeyUp(object sender, KeyEventArgs e)
         {
+            _keyDown = false;
+
             if (_keyMap.ContainsKey(e.KeyCode))
             {
                 VKey pk = _keys[_keyMap[e.KeyCode]];
                 pk.ReleaseVKey();
+                e.Handled = true;
             }
         }
 
@@ -234,7 +247,7 @@ namespace Nebulator.VirtualKeyboard
         /// <param name="e"></param>
         void Keyboard_VKeyEvent(object sender, VKey.VKeyEventArgs e)
         {
-            if(DeviceInputEvent != null)
+            if (DeviceInputEvent != null)
             {
                 Step step = null;
 
@@ -261,7 +274,7 @@ namespace Nebulator.VirtualKeyboard
                     };
                 }
 
-                DeviceInputEvent.Invoke(this, new DeviceInputEventArgs() { Step = step });
+                DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
                 LogMsg(DeviceLogCategory.Recv, step.ToString());
             }
         }

@@ -280,7 +280,7 @@ namespace Nebulator.Script
                     paths.Add(fullpath);
                 }
 
-                // Make it compile. TODON2 try Roslyn again. F# too?
+                // Make it compile. TODON3 try Roslyn again. F# too?
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
 
@@ -405,11 +405,14 @@ namespace Nebulator.Script
             List<string> codeLines = GenTopOfFile("");
 
             // The various defines.
+            codeLines.Add("///// General Midi Instruments");
             ScriptDefinitions.TheDefinitions.InstrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.InstrumentDefs[k]};"));
+            codeLines.Add("///// General Midi Drums");
             ScriptDefinitions.TheDefinitions.DrumDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.DrumDefs[k]};"));
+            codeLines.Add("///// Midi Controllers");
             ScriptDefinitions.TheDefinitions.ControllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.ControllerDefs[k]};"));
+            codeLines.Add("///// Device Types");
             Enum.GetValues(typeof(Device.DeviceType)).Cast<Device.DeviceType>().ForEach(e => codeLines.Add($"const int {e.ToString()} = {(int)e};"));
-//            Enum.GetValues(typeof(MeterType)).Cast<MeterType>().ForEach(e => codeLines.Add($"const int {e.ToString()} = {(int)e};"));
 
             // Bottom stuff.
             codeLines.AddRange(GenBottomOfFile());

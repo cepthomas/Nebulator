@@ -124,13 +124,13 @@ namespace Nebulator.Synth
                 if (v.release > 0)
                 {
                     v.release--;
+                }
 
-                    // Test for done.
-                    if (v.release <= 0)
-                    {
-                        v.sounding = false;
-                        v.release = 0;
-                    }
+                // Test for done.
+                if (v.release <= 0)
+                {
+                    v.sounding = false;
+                    v.release = 0;
                 }
             }
 
@@ -182,9 +182,10 @@ namespace Nebulator.Synth
         {
             foreach (Voice v in _voices)
             {
-                if (v.noteNumber.IsClose(Math.Abs(noteNumber)))
+                if (/*v.sounding &&*/ v.noteNumber.IsClose(Math.Abs(noteNumber)))
                 {
                     v.ugen.NoteOff(noteNumber);
+                    v.noteNumber = -1;
                     v.release = _releaseTime;
                 }
             }

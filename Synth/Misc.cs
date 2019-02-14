@@ -1,6 +1,8 @@
 
 using System;
 using System.Collections.Generic;
+using Nebulator.Device;
+
 
 namespace Nebulator.Synth
 {
@@ -16,17 +18,22 @@ namespace Nebulator.Synth
 
         /// <summary>Current output.</summary>
         double _level = 0.0;
-
-        /// <summary>xxx</summary>
-        //bool _released = false;
         #endregion
 
         #region Properties
-        // all times seconds
+        /// <summary>Time in seconds.</summary>
         public double AttackTime { get; set; } = 0.1;
+
+        /// <summary>Time in seconds.</summary>
         public double DecayTime { get; set; } = 0.25;
+
+        /// <summary>Normalized value.</summary>
         public double SustainLevel { get; set; } = 0.5;
+        
+        /// <summary>Time in seconds.</summary>
         public double ReleaseTime { get; set; } = 0.25;
+        
+        /// <summary>Max value.</summary>
         public double Amplitude { get; set; } = 1.0;
         #endregion
 
@@ -34,14 +41,6 @@ namespace Nebulator.Synth
         /// <inheritdoc />
         public override double Next(double din)
         {
-            //// TODON2?? If note is released, go directly to Release state, except if still attacking.
-            //if (_released && _state != ADSRState.Attack)
-            //{
-            //    _state = ADSRState.Release;
-            //    _step = (Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate);
-            //    _released = false;
-            //}
-
             switch (_state)
             {
                 case ADSRState.Attack:
@@ -88,9 +87,9 @@ namespace Nebulator.Synth
         /// </summary>
         public void KeyDown()
         {
+            _logger.Info("ADSR - KeyDown()");
             _level = 0;
             _state = ADSRState.Attack;
-            //_released = false;
             _step = Amplitude / (AttackTime * SynthCommon.SampleRate);
         }
 
@@ -99,9 +98,7 @@ namespace Nebulator.Synth
         /// </summary>
         public void KeyUp()
         {
-            //_released = true;
-
-            // added:
+            _logger.Info("ADSR - KeyUp()");
             _state = ADSRState.Release;
             _step = (Amplitude - _level) / (ReleaseTime * SynthCommon.SampleRate);
         }

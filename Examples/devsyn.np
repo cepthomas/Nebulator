@@ -67,6 +67,7 @@ public class MyVoice : UGen
 
     public override void NoteOn(double notenum, double amplitude)
     {
+        s.print("script MyVoice - NoteOn()");
         osc1.NoteOn(notenum, amplitude);
         osc2.NoteOn(notenum * 1.01, amplitude);
         adsr.KeyDown();
@@ -74,6 +75,7 @@ public class MyVoice : UGen
 
     public override void NoteOff(double notenum)
     {
+        s.print("script MyVoice - NoteOff()");
         // osc1.NoteOff(notenum);
         // osc2.NoteOff(notenum * 1.05);
         adsr.KeyUp();
@@ -90,7 +92,7 @@ public class MyVoice : UGen
 // The topmost.
 MySynth syn = new MySynth();
 
-
+///// Event handlers /////
 public void On_KBD_NOTE()
 {
     // Test for note on or off.
@@ -141,6 +143,13 @@ public void On_CTL3()
     }
 }
 
+public void On_BACK_COLOR()
+{
+    //print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
+}
+
+
+///// Start neb /////
 public override void setupNeb()
 {
     // All the neb variables.
@@ -177,11 +186,12 @@ public override void setupNeb()
 //    createMeter(METER1, Linear);
 }
 
-public override void setupNeb2()
-{
-    // Post device creation.
-}
+// public override void setupNeb2()
+// {
+//     // Post device creation.
+// }
 
+///// Neb runtime /////
 public override void step()
 {
     // if(tock % 4 == 0 && random(7) == 0) // play with these for how often
@@ -192,15 +202,10 @@ public override void step()
     // }
 }
 
-public void On_BACK_COLOR()
-{
-    //print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
-}
-
 
 
 //////////////////////////////////////////////////////
-////////////////// processing stuff //////////////////
+//////////////// processing UI stuff /////////////////
 //////////////////////////////////////////////////////
 
 public override void setup()

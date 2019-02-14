@@ -59,8 +59,6 @@ namespace Nebulator.VirtualKeyboard
             {
                 PressVKey();
             }
-
-            base.OnMouseEnter(e);
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -69,8 +67,6 @@ namespace Nebulator.VirtualKeyboard
             {
                 ReleaseVKey();
             }
-
-            base.OnMouseLeave(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -81,15 +77,11 @@ namespace Nebulator.VirtualKeyboard
             {
                 _owner.Focus();
             }
-
-            base.OnMouseDown(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
             ReleaseVKey();
-
-            base.OnMouseUp(e);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -98,8 +90,6 @@ namespace Nebulator.VirtualKeyboard
             {
                 Capture = false;
             }
-
-            base.OnMouseMove(e);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -114,8 +104,6 @@ namespace Nebulator.VirtualKeyboard
             }
 
             e.Graphics.DrawRectangle(Pens.Black, 0, 0, Size.Width - 1, Size.Height - 1);
-
-            base.OnPaint(e);
         }
     }
 }
