@@ -6,8 +6,11 @@ namespace Nebulator.Synth
 {
     public class AnalyzerEventArgs : EventArgs
     {
-        /// <summary>Received data.</summary>
-        public double MaxValue { get; set; } = 0;
+        /// <summary>Max value.</summary>
+        public double MaxLeft { get; set; } = 0;
+
+        /// <summary>Max value.</summary>
+        public double MaxRight { get; set; } = 0;
     }
 
     public class Analyzer : UGen
@@ -26,7 +29,12 @@ namespace Nebulator.Synth
         /// <summary>
         /// Collected max value.
         /// </summary>
-        public double MaxValue { get; set; } = 0;
+        public double MaxLeft { get; set; } = 0;
+
+        /// <summary>
+        /// Collected max value.
+        /// </summary>
+        public double MaxRight { get; set; } = 0;
         #endregion
 
         #region Fields
@@ -38,7 +46,7 @@ namespace Nebulator.Synth
         /// <summary>
         /// Allocate buffer now to minimize work during Read();
         /// </summary>
-        double[] _buff = new double[BUFF_SIZE];
+        Sample[] _buff = new Sample[BUFF_SIZE];
 
         /// <summary>
         /// Where we are in the buffer.
@@ -56,7 +64,7 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public override double Next(double din)
+        public override Sample Next2(Sample din)
         {
             if(AnalyzerEvent != null)
             {
@@ -65,19 +73,27 @@ namespace Nebulator.Synth
 
                 if (_buffIndex >= BUFF_SIZE)
                 {
-                    double max = 0;
+                    double maxL = 0;
+                    double maxR = 0;
 
                     for (int i = 0; i < BUFF_SIZE; i++)
                     {
-                        double val = Math.Abs(_buff[i]);
-                        _buff[i] = 0;
-                        max = Math.Max(max, val);
+                        double val = Math.Abs(_buff[i].Left);
+                        maxL = Math.Max(maxL, val);
+
+                        val = Math.Abs(_buff[i].Right);
+                        maxR = Math.Max(maxR, val);
+
+                        _buff[i].Left = 0;
+                        _buff[i].Right = 0;
                     }
 
-                    MaxValue = max;
+                    MaxLeft = maxL;
+                    MaxRight = maxR;
                     _buffIndex = 0;
 
-                    args.MaxValue = max;
+                    args.MaxLeft = maxL;
+                    args.MaxRight = maxR;
                     AnalyzerEvent(this, args);
                 }
             }

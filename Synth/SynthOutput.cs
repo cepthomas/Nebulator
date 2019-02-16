@@ -59,7 +59,7 @@ namespace Nebulator.Synth
         public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Main device to execute.</summary>
-        public UGen2 Synth { get; set; } = null;
+        public UGen Synth { get; set; } = null;
         #endregion
 
         #region Lifecycle
@@ -233,7 +233,7 @@ namespace Nebulator.Synth
             {
                 for (int n = 0; n < count;)
                 {
-                    Sample dout = Synth.Next(0);
+                    Sample dout = Synth.Next2();
                     buffer[n++] = (float)dout.Left;
                     buffer[n++] = (float)dout.Right;
                 }

@@ -62,7 +62,7 @@ public class Envelope : UGen
         setTime( m_time );
     }
 
-    public override double Next(double _)
+    public override double Next()
     {
         if (_state > 0)
         {

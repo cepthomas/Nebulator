@@ -134,7 +134,7 @@ namespace Nebulator.Synth
         #endregion
     }
 
-    public class Pan : UGen2
+    public class Pan : UGen
     {
         #region Properties
         /// <summary>
@@ -145,14 +145,20 @@ namespace Nebulator.Synth
 
         #region Public Functions
         /// <inheritdoc />
-        public override Sample Next(double din)
+        public Sample Next(double din)
         {
-            Sample dout = new Sample
-            {
-                Left = din * (1 - Location) / 2,
-                Right = din * (1 + Location) / 2
-            };
-            return dout * Volume;
+            //Sample dout = new Sample
+            //{
+            //    Left = din * (1 - Location) / 2,
+            //    Right = din * (1 + Location) / 2
+            //};
+
+            Sample dout;
+            dout.Left = din * Volume * (1 - Location) / 2;
+            dout.Right = din * Volume * (1 + Location) / 2;
+
+
+            return dout;
         }
         #endregion
     }

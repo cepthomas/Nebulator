@@ -110,35 +110,15 @@ namespace Nebulator.Synth
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double Next(double _ = 0)
+        public override double Next()
         {
             double dout = 0;
 
             foreach(VoiceDesc v in _voices)
             {
                 // Gen next sample.
-                double ds = v.ugen.Next(0);
+                double ds = v.ugen.Next();
                 dout += ds;
-
-                //if (v.sounding)
-                //{
-                //    // Gen next sample.
-                //    double ds = v.ugen.Next(0);
-                //    dout += ds;
-                //}
-
-                //// Test for tail sound.
-                //if (v.release > 0)
-                //{
-                //    v.release--;
-                //}
-
-                //// Test for done.
-                //if (v.release <= 0)
-                //{
-                //    v.sounding = false;
-                //    v.release = 0;
-                //}
             }
 
             return dout * Volume;
@@ -157,16 +137,9 @@ namespace Nebulator.Synth
 
             for (int i = 0; i < _voices.Count && index == -1; i++)
             {
-                //if (!_voices[i].sounding) // available slot
-                //{
-                //    index = i;
-                //}
-                //else // keep track of oldest sounding
+                if (oldest == -1 || _voices[oldest].birth > _voices[i].birth)
                 {
-                    if (oldest == -1 || _voices[oldest].birth > _voices[i].birth)
-                    {
-                        oldest = i;
-                    }
+                    oldest = i;
                 }
             }
 
@@ -176,7 +149,6 @@ namespace Nebulator.Synth
             // Voice management fields.
             _voices[which].birth = SynthCommon.NextId();
             _voices[which].noteNumber = noteNumber;
-//            _voices[which].sounding = true;
             // make noise
             _voices[which].ugen.NoteOn(noteNumber, amplitude);
         }
@@ -189,11 +161,10 @@ namespace Nebulator.Synth
         {
             foreach (VoiceDesc v in _voices)
             {
-                if (/*v.sounding &&*/ v.noteNumber.IsClose(Math.Abs(noteNumber)))
+                if (v.noteNumber.IsClose(Math.Abs(noteNumber)))
                 {
                     v.ugen.NoteOff(noteNumber);
                     v.noteNumber = -1;
- //                   v.release = _releaseTime;
                 }
             }
         }

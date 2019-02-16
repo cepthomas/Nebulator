@@ -24,7 +24,7 @@ bool _local = true;
 
 
 // The overall synthesizer.
-public class MySynth : UGen2
+public class MySynth : UGen
 {
     public Voicer vcr1 = new Voicer(typeof(MyVoice), 5) { DecayTime = 2.0, Volume = 0.8 };
     public LPF lpf = new LPF() { Freq = 1000, Volume = 0.8 };
@@ -33,7 +33,7 @@ public class MySynth : UGen2
 
     public Analyzer an1 = new Analyzer() { };
 
-    public override Sample Next(double _)
+    public override Sample Next2()
     {
         double dout = vcr1.Next();
         lpf.Freq = 400 + adsrF.Next() * 2000;
@@ -82,10 +82,10 @@ public class MyVoice : UGen
         adsr.KeyUp();
     }
 
-    public override double Next(double _)
+    public override double Next()
     {
-        //double dout = osc1.Next(0);
-        double dout = adsr.Next(mix1.Next(osc1.Next(0), osc2.Next(0)));
+        //double dout = osc1.Next();
+        double dout = adsr.Next(mix1.Next(osc1.Next(), osc2.Next(0)));
         return dout;
     }
 }

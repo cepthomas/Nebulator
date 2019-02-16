@@ -82,7 +82,7 @@ namespace Nebulator.Synth
         }
 
         /// <inheritdoc />
-        public override double Next(double _)
+        public override double Next()
         {
             double dout = 0.0;
 
