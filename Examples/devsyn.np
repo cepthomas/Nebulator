@@ -39,7 +39,7 @@ public class MySynth : UGen
         lpf.Freq = 400 + adsrF.Next() * 2000;
         dout = lpf.Next(dout); //TODON2 clicks when playing many notes fast
         dout = an1.Next(dout);
-        Sample sout = pan.Next(dout);
+        Sample sout = pan.Next2(dout);
         return sout;
     }
 
@@ -85,7 +85,7 @@ public class MyVoice : UGen
     public override double Next()
     {
         //double dout = osc1.Next();
-        double dout = adsr.Next(mix1.Next(osc1.Next(), osc2.Next(0)));
+        double dout = adsr.Next(mix1.Next(osc1.Next(), osc2.Next()));
         return dout;
     }
 }

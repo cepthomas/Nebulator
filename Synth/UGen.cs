@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,8 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual double Next()
         {
-            throw new NotImplementedException("Base Next() called");
+            RuntimeError("Base Next() called");
+            return 0;
         }
 
         /// <summary>
@@ -32,7 +34,8 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual double Next(double din)
         {
-            throw new NotImplementedException("Base Next() called");
+            RuntimeError("Base Next() called");
+            return 0;
         }
 
         /// <summary>
@@ -42,7 +45,8 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual Sample Next2(Sample din)
         {
-            throw new NotImplementedException("Base Next() called");
+            RuntimeError("Base Next() called");
+            return new Sample();
         }
 
         /// <summary>
@@ -51,7 +55,8 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual Sample Next2()
         {
-            throw new NotImplementedException("Base Next() called");
+            RuntimeError("Base Next() called");
+            return new Sample();
         }
 
         /// <summary>
@@ -61,7 +66,8 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual Sample Next2(double din)
         {
-            throw new NotImplementedException("Base Next() called");
+            RuntimeError("Base Next() called");
+            return new Sample();
         }
 
         /// <param name="noteNumber">Which note to start</param>
@@ -126,6 +132,19 @@ namespace Nebulator.Synth
         protected void Trace(string type, string msg)
         {
             Console.WriteLine($"SYN {type} {msg}");
+        }
+
+        /// <summary>
+        /// Handle a script error. Because we don't want to use exceptions.
+        /// </summary>
+        /// <param name="msg"></param>
+        protected void RuntimeError(string msg)
+        {
+            throw new NotImplementedException(msg);
+
+            //TODON2 handle like: ScriptError err = ScriptUtils.ProcessScriptRuntimeError(args, _compileTempDir);
+            //StackTrace st = new StackTrace();
+            //StackFrame sf = null;
         }
         #endregion
     }

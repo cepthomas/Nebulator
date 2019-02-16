@@ -39,7 +39,7 @@ namespace Nebulator.Synth
 
         #region Public Functions
         /// <inheritdoc />
-        public override double Next(double din = 1)
+        public override double Next(double din)
         {
             switch (_state)
             {
@@ -145,18 +145,11 @@ namespace Nebulator.Synth
 
         #region Public Functions
         /// <inheritdoc />
-        public Sample Next(double din)
+        public override Sample Next2(double din)
         {
-            //Sample dout = new Sample
-            //{
-            //    Left = din * (1 - Location) / 2,
-            //    Right = din * (1 + Location) / 2
-            //};
-
             Sample dout;
             dout.Left = din * Volume * (1 - Location) / 2;
             dout.Right = din * Volume * (1 + Location) / 2;
-
 
             return dout;
         }
