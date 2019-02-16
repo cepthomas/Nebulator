@@ -36,7 +36,7 @@ public class MySynth : UGen
     public override Sample Next2()
     {
         double dout = vcr1.Next();
-        lpf.Freq = 400 + adsrF.Next() * 2000;
+        lpf.Freq = 400 + adsrF.Next(1) * 2000;
         dout = lpf.Next(dout); //TODON2 clicks when playing many notes fast
         dout = an1.Next(dout);
         Sample sout = pan.Next2(dout);

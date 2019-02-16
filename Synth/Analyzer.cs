@@ -66,7 +66,7 @@ namespace Nebulator.Synth
         /// <inheritdoc />
         public override Sample Next2(Sample din)
         {
-            if(AnalyzerEvent != null)
+            if (AnalyzerEvent != null)
             {
                 _buff[_buffIndex] = din;
                 _buffIndex++;
@@ -96,6 +96,21 @@ namespace Nebulator.Synth
                     args.MaxRight = maxR;
                     AnalyzerEvent(this, args);
                 }
+            }
+
+            // Always pass value through.
+            return din;
+        }
+
+        /// <inheritdoc />
+        public override double Next(double din)
+        {
+            if (AnalyzerEvent != null)
+            {
+                Sample smpl;
+                smpl.Left = din;
+                smpl.Right = 0;
+                Next2(smpl);
             }
 
             // Always pass value through.
