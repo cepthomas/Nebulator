@@ -39,7 +39,7 @@ namespace Nebulator.Synth
 
         #region Public Functions
         /// <inheritdoc />
-        public override double Next(double din)
+        public override double Next(double din = 1)
         {
             switch (_state)
             {

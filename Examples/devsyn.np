@@ -28,16 +28,16 @@ public class MySynth : UGen2
 {
     public Voicer vcr1 = new Voicer(typeof(MyVoice), 5) { DecayTime = 2.0, Volume = 0.8 };
     public LPF lpf = new LPF() { Freq = 1000, Volume = 0.8 };
-    public ADSR adsrF = new ADSR() { AttackTime = 0.5, DecayTime = 0.5, SustainLevel = 0.5, ReleaseTime = 1.0, Volume = 0.8 };
+    public ADSR adsrF = new ADSR() { AttackTime = 0.5, DecayTime = 0.5, SustainLevel = 0.5, ReleaseTime = 0.2, Volume = 0.8 };
     public Pan pan = new Pan() { Location = 0.0, Volume = 0.8 };
 
     public Analyzer an1 = new Analyzer() { };
 
     public override Sample Next(double _)
     {
-        double dout = vcr1.Next(0);
-        //lpf.Freq = adsrF.Next(1) * 2000;
-        dout = lpf.Next(dout);
+        double dout = vcr1.Next();
+        lpf.Freq = 400 + adsrF.Next() * 2000;
+        dout = lpf.Next(dout); //TODON2 clicks when playing many notes fast
         dout = an1.Next(dout);
         Sample sout = pan.Next(dout);
         return sout;
@@ -46,13 +46,13 @@ public class MySynth : UGen2
     public override void NoteOn(double notenum, double amplitude)
     {
         vcr1.NoteOn(notenum, amplitude);
-        //adsrF.KeyDown();
+        adsrF.KeyDown();
     }
 
     public override void NoteOff(double notenum)
     {
         vcr1.NoteOff(notenum);
-        //adsrF.KeyUp();
+        adsrF.KeyUp();
     }
 }
 
@@ -187,10 +187,10 @@ public override void setupNeb()
 //    createMeter(METER1, Linear);
 }
 
-// public override void setupNeb2()
-// {
-//     // Post device creation.
-// }
+public override void setupNeb2()
+{
+    // Post device creation.
+}
 
 ///// Neb runtime /////
 public override void step()

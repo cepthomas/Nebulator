@@ -110,7 +110,7 @@ namespace Nebulator.Synth
         /// 
         /// </summary>
         /// <returns></returns>
-        public override double Next(double _)
+        public override double Next(double _ = 0)
         {
             double dout = 0;
 
