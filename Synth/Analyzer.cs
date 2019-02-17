@@ -21,7 +21,7 @@ namespace Nebulator.Synth
         public event EventHandler<AnalyzerEventArgs> AnalyzerEvent;
 
         /// <summary>
-        /// Avoid GC issues in Next(). TODON2 and others?
+        /// Static instance to avoid GC issues in Next(). TODON2 and others - look at all Next() impls for new?
         /// </summary>
         AnalyzerEventArgs args;
 

@@ -21,10 +21,10 @@
             this.sldVolume = new Nebulator.Controls.Slider();
             this.potSpeed = new Nebulator.Controls.Pot();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.btnCompile = new System.Windows.Forms.Button();
+            this.btnRewind = new System.Windows.Forms.Button();
+            this.chkPlay = new System.Windows.Forms.CheckBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.levers = new Nebulator.Levers();
-            this.timeMaster = new Nebulator.Controls.TimeControl();
-            this.textViewer = new Nebulator.Controls.TextViewer();
             this.fileDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -36,9 +36,10 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
-            this.btnCompile = new System.Windows.Forms.Button();
-            this.btnRewind = new System.Windows.Forms.Button();
-            this.chkPlay = new System.Windows.Forms.CheckBox();
+            this.levers = new Nebulator.Levers();
+            this.timeMaster = new Nebulator.Controls.TimeControl();
+            this.textViewer = new Nebulator.Controls.TextViewer();
+            this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,6 +82,50 @@
             this.toolTip.UseAnimation = false;
             this.toolTip.UseFading = false;
             // 
+            // btnCompile
+            // 
+            this.btnCompile.FlatAppearance.BorderSize = 0;
+            this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
+            this.btnCompile.Location = new System.Drawing.Point(78, 32);
+            this.btnCompile.Name = "btnCompile";
+            this.btnCompile.Size = new System.Drawing.Size(34, 32);
+            this.btnCompile.TabIndex = 38;
+            this.toolTip.SetToolTip(this.btnCompile, "Compile script file - lit indicates file changed externally");
+            this.btnCompile.UseVisualStyleBackColor = false;
+            this.btnCompile.Click += new System.EventHandler(this.Compile_Click);
+            // 
+            // btnRewind
+            // 
+            this.btnRewind.FlatAppearance.BorderSize = 0;
+            this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRewind.Image = global::Nebulator.Properties.Resources.glyphicons_172_fast_backward;
+            this.btnRewind.Location = new System.Drawing.Point(10, 32);
+            this.btnRewind.Name = "btnRewind";
+            this.btnRewind.Size = new System.Drawing.Size(34, 32);
+            this.btnRewind.TabIndex = 31;
+            this.toolTip.SetToolTip(this.btnRewind, "Reset to start");
+            this.btnRewind.UseVisualStyleBackColor = false;
+            this.btnRewind.Click += new System.EventHandler(this.Rewind_Click);
+            // 
+            // chkPlay
+            // 
+            this.chkPlay.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkPlay.BackColor = System.Drawing.SystemColors.Control;
+            this.chkPlay.FlatAppearance.BorderSize = 0;
+            this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkPlay.Image = global::Nebulator.Properties.Resources.glyphicons_174_play;
+            this.chkPlay.Location = new System.Drawing.Point(49, 32);
+            this.chkPlay.MaximumSize = new System.Drawing.Size(32, 32);
+            this.chkPlay.MinimumSize = new System.Drawing.Size(32, 32);
+            this.chkPlay.Name = "chkPlay";
+            this.chkPlay.Size = new System.Drawing.Size(32, 32);
+            this.chkPlay.TabIndex = 35;
+            this.toolTip.SetToolTip(this.chkPlay, "Play project");
+            this.chkPlay.UseVisualStyleBackColor = false;
+            this.chkPlay.Click += new System.EventHandler(this.Play_Click);
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -95,42 +140,6 @@
             this.toolStrip1.Size = new System.Drawing.Size(732, 25);
             this.toolStrip1.TabIndex = 39;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // levers
-            // 
-            this.levers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.levers.BackColor = System.Drawing.Color.AliceBlue;
-            this.levers.Location = new System.Drawing.Point(10, 78);
-            this.levers.Name = "levers";
-            this.levers.Size = new System.Drawing.Size(714, 42);
-            this.levers.TabIndex = 0;
-            // 
-            // timeMaster
-            // 
-            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
-            time1.Tick = 0;
-            time1.Tock = 0;
-            this.timeMaster.CurrentTime = time1;
-            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(231, 32);
-            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
-            this.timeMaster.MaxTick = 0;
-            this.timeMaster.Name = "timeMaster";
-            this.timeMaster.ShowProgress = true;
-            this.timeMaster.Size = new System.Drawing.Size(175, 34);
-            this.timeMaster.TabIndex = 37;
-            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
-            // 
-            // textViewer
-            // 
-            this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textViewer.Location = new System.Drawing.Point(10, 126);
-            this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(714, 412);
-            this.textViewer.TabIndex = 41;
             // 
             // fileDropDownButton
             // 
@@ -240,49 +249,46 @@
             this.btnAbout.ToolTipText = "General info and a list of your devices";
             this.btnAbout.Click += new System.EventHandler(this.About_Click);
             // 
-            // btnCompile
+            // levers
             // 
-            this.btnCompile.FlatAppearance.BorderSize = 0;
-            this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(78, 32);
-            this.btnCompile.Name = "btnCompile";
-            this.btnCompile.Size = new System.Drawing.Size(34, 32);
-            this.btnCompile.TabIndex = 38;
-            this.toolTip.SetToolTip(this.btnCompile, "Compile script file - lit indicates file changed externally");
-            this.btnCompile.UseVisualStyleBackColor = false;
-            this.btnCompile.Click += new System.EventHandler(this.Compile_Click);
+            this.levers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.levers.BackColor = System.Drawing.Color.AliceBlue;
+            this.levers.Location = new System.Drawing.Point(10, 78);
+            this.levers.Name = "levers";
+            this.levers.Size = new System.Drawing.Size(714, 42);
+            this.levers.TabIndex = 0;
             // 
-            // btnRewind
+            // timeMaster
             // 
-            this.btnRewind.FlatAppearance.BorderSize = 0;
-            this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRewind.Image = global::Nebulator.Properties.Resources.glyphicons_172_fast_backward;
-            this.btnRewind.Location = new System.Drawing.Point(10, 32);
-            this.btnRewind.Name = "btnRewind";
-            this.btnRewind.Size = new System.Drawing.Size(34, 32);
-            this.btnRewind.TabIndex = 31;
-            this.toolTip.SetToolTip(this.btnRewind, "Reset to start");
-            this.btnRewind.UseVisualStyleBackColor = false;
-            this.btnRewind.Click += new System.EventHandler(this.Rewind_Click);
+            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
+            time1.Tick = 0;
+            time1.Tock = 0;
+            this.timeMaster.CurrentTime = time1;
+            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeMaster.Location = new System.Drawing.Point(231, 32);
+            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
+            this.timeMaster.MaxTick = 0;
+            this.timeMaster.Name = "timeMaster";
+            this.timeMaster.ShowProgress = true;
+            this.timeMaster.Size = new System.Drawing.Size(175, 34);
+            this.timeMaster.TabIndex = 37;
+            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
-            // chkPlay
+            // textViewer
             // 
-            this.chkPlay.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkPlay.BackColor = System.Drawing.SystemColors.Control;
-            this.chkPlay.FlatAppearance.BorderSize = 0;
-            this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkPlay.Image = global::Nebulator.Properties.Resources.glyphicons_174_play;
-            this.chkPlay.Location = new System.Drawing.Point(49, 32);
-            this.chkPlay.MaximumSize = new System.Drawing.Size(32, 32);
-            this.chkPlay.MinimumSize = new System.Drawing.Size(32, 32);
-            this.chkPlay.Name = "chkPlay";
-            this.chkPlay.Size = new System.Drawing.Size(32, 32);
-            this.chkPlay.TabIndex = 35;
-            this.toolTip.SetToolTip(this.chkPlay, "Play project");
-            this.chkPlay.UseVisualStyleBackColor = false;
-            this.chkPlay.Click += new System.EventHandler(this.Play_Click);
+            this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textViewer.Location = new System.Drawing.Point(10, 126);
+            this.textViewer.Name = "textViewer";
+            this.textViewer.Size = new System.Drawing.Size(714, 412);
+            this.textViewer.TabIndex = 41;
+            // 
+            // timerHousekeep
+            // 
+            this.timerHousekeep.Interval = 10;
+            this.timerHousekeep.Tick += new System.EventHandler(this.timerHousekeep_Tick);
             // 
             // MainForm
             // 
@@ -335,6 +341,7 @@
         private System.Windows.Forms.ToolStripButton btnAbout;
         private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
         private Controls.TextViewer textViewer;
+        private System.Windows.Forms.Timer timerHousekeep;
     }
 }
 

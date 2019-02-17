@@ -103,6 +103,8 @@ namespace Nebulator.Synth
                         _asioOut.PlaybackStopped += AsioOut_PlaybackStopped;
                         inited = true;
                         DeviceName = parts[1];
+
+                        //Start(); //TODON2 enable disable separately from chkPlay?
                     }
                 }
             }
@@ -238,6 +240,7 @@ namespace Nebulator.Synth
                     buffer[n++] = (float)dout.Right;
                 }
 
+                //float[] _dummy = new float[1024]; // TODON2 this could stress-test GC too
                 //for (int n = 0; n < count;)
                 //{
                 //    _dummy[n] = buffer[n];
@@ -250,7 +253,6 @@ namespace Nebulator.Synth
 
             return count;
         }
-        float[] _dummy = new float[1024]; // TODON2 this could stress-test GC too
         #endregion
 
         #region Private functions

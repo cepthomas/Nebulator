@@ -23,8 +23,7 @@ using Nebulator.Synth;
 
 // TODON3 Remove Device dependency in Script project for NProcessing.
 
-
-//TODON1 Smarter handling of run/stop for synths? and others?
+// TODON1 Smarter handling of run/stop for synths? and others?
 
 namespace Nebulator
 {
@@ -38,6 +37,9 @@ namespace Nebulator
         #region Fields
         /// <summary>App logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
+
+        /// <summary>Measure how fast we be.</summary>
+        PerformanceCounter _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
         /// <summary>Fast timer.</summary>
         MmTimerEx _timer = new MmTimerEx();
@@ -170,6 +172,9 @@ namespace Nebulator
             _timer.TimerElapsedEvent += TimerElapsedEvent;
             _timer.Start();
 
+            timerHousekeep.Interval = 1000;
+            timerHousekeep.Start();
+
             KeyPreview = true; // for routing kbd strokes properly
 
             _watcher.FileChangeEvent += Watcher_Changed;
@@ -256,6 +261,21 @@ namespace Nebulator
             }
 
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Diagnostics.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void timerHousekeep_Tick(object sender, EventArgs e)
+        {
+            // the Processor (% Processor Time) counter will be out of 100 and will give the total usage across all processors/cores/etc
+            // in the computer. However, the Processor (% Process Time) is scaled by the number of logical processors. To get average
+            // usage across a computer, divide the result by Environment.ProcessorCount.
+
+            double pct = _cpuPerf.NextValue(); // TODON1 put in a meter.
+            //Console.WriteLine($">>>> CPU % = {pct}");
         }
         #endregion
 
@@ -820,7 +840,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (chkPlay.Checked && _script != null && e.Step != null)
+                if (chkPlay.Checked && _script != null && e.Step != null) //TODON2 enable disable separately from chkPlay?
                 {
                     try
                     {
