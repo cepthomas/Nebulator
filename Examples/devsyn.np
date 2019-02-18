@@ -14,7 +14,8 @@ NVariable KBD_NOTE;
 NVariable VKBD_NOTE;
 NVariable CTL2;
 NVariable CTL3;
-NVariable METER1;
+NVariable SYN_LVL;
+NVariable CPU_USG;
 
 // All the output channels.
 NChannel SYNTH_1;
@@ -120,12 +121,6 @@ public void On_VKBD_NOTE()
     }
 }
 
-// public void On_METER1()
-// {
-//     syn.NoteOn(50 + METER1.Value % 20, 0.7);
-// }
-
-
 public void On_MOD1()
 {
     syn.lpf.Freq = MOD1.Value;
@@ -160,7 +155,8 @@ public override void setupNeb()
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
-    METER1 = createVariable("meter1", 0, 0, 100);//, On_METER1_NOTE);
+    CPU_USG = createVariable("cpu", 0, 0, 100);
+    SYN_LVL = createVariable("synlvl", 0, 0, 100);
 
     // All the output channels.
     SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1, syn);
@@ -184,7 +180,8 @@ public override void setupNeb()
     createLever(MOD1);
 
     // meters
-//    createMeter(METER1, Linear);
+    createDisplay(CPU_USG, Chart);
+    createDisplay(SYN_LVL, LinearMeter);
 }
 
 public override void setupNeb2()

@@ -110,6 +110,7 @@ namespace Nebulator.Controls
                 LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Center
             };
+            
             string sval = _value.ToString("#0." + new string('0', DecPlaces));
 
             if (Label != "")

@@ -23,7 +23,6 @@ using Nebulator.Synth;
 
 // TODON3 Remove Device dependency in Script project for NProcessing.
 
-// TODON1 Smarter handling of run/stop for synths? and others?
 
 namespace Nebulator
 {
@@ -40,6 +39,8 @@ namespace Nebulator
 
         /// <summary>Measure how fast we be.</summary>
         PerformanceCounter _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+
+        NVariable _cpuVar = null;
 
         /// <summary>Fast timer.</summary>
         MmTimerEx _timer = new MmTimerEx();
@@ -179,8 +180,6 @@ namespace Nebulator
 
             _watcher.FileChangeEvent += Watcher_Changed;
 
-            levers.LeverChangeEvent += Levers_Changed;
-
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
@@ -274,8 +273,11 @@ namespace Nebulator
             // in the computer. However, the Processor (% Process Time) is scaled by the number of logical processors. To get average
             // usage across a computer, divide the result by Environment.ProcessorCount.
 
-            double pct = _cpuPerf.NextValue(); // TODON1 put in a meter.
-            //Console.WriteLine($">>>> CPU % = {pct}");
+            if(_cpuVar != null)
+            {
+                double pct = _cpuPerf.NextValue();
+                _cpuVar.Value = pct;
+            }
         }
         #endregion
 
@@ -652,8 +654,18 @@ namespace Nebulator
                     x += tctl.Width + CONTROL_SPACING;
                 }
 
-                // Levers.
-                levers.Init(_script.Levers);
+                // Levers and meters.
+                levers.Init(_script.Levers, _script.Displays);
+
+                // Dig out the cpu load meter. TODON2 kinda sloppy.
+                foreach(NVariable nvar in _script.Variables)
+                {
+                    // CPU_USG = createVariable("cpu", 0, 0, 100);
+                    if(nvar.Name.ToUpper().Contains("CPU"))
+                    {
+                        _cpuVar = nvar;
+                    }
+                }
             }
 
             ///// Init other controls.
@@ -840,7 +852,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (chkPlay.Checked && _script != null && e.Step != null) //TODON2 enable disable separately from chkPlay?
+                if (chkPlay.Checked && _script != null && e.Step != null) //TODON1 enable/disable separately from chkPlay?
                 {
                     try
                     {
@@ -949,15 +961,15 @@ namespace Nebulator
             }
         }
 
-        /// <summary>
-        /// UI change event.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Levers_Changed(object sender, Levers.LeverChangeEventArgs e)
-        {
+        ///// <summary>
+        ///// UI change event.
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //void Levers_Changed(object sender, Levers.LeverChangeEventArgs e)
+        //{
 
-        }
+        //}
 
         /// <summary>
         /// Package up the runtime stuff the script may need. Call this before any script updates.

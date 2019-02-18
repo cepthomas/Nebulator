@@ -7,12 +7,13 @@ using Nebulator.Common;
 
 namespace Nebulator.Controls
 {
+    /// <summary>Display types.</summary>
     public enum MeterType { Linear, Log, Continuous };
 
     /// <summary>
     /// Implements a rudimentary volume meter.
     /// </summary>
-    public partial class Meter : UserControl //TODON1 add to UI
+    public partial class Meter : UserControl
     {
         #region Fields
         /// <summary>
@@ -33,6 +34,11 @@ namespace Nebulator.Controls
 
         #region Properties
         /// <summary>
+        /// Optional label.
+        /// </summary>
+        public string Label { get; set; } = "";
+
+        /// <summary>
         /// For styling.
         /// </summary>
         public Color ControlColor { get; set; } = Color.Orange;
@@ -40,17 +46,17 @@ namespace Nebulator.Controls
         /// <summary>
         /// How the meter responds.
         /// </summary>
-        public MeterType MeterType { get; set; } = MeterType.Log;
+        public MeterType MeterType { get; set; } = MeterType.Linear;
 
         /// <summary>
-        /// Minimum value. If Log type, this is in db.
+        /// Minimum value. If Log type, this is in db - usually -60;
         /// </summary>
-        public double MinValue { get; set; } = -60;
+        public double Minimum { get; set; } = 0;
 
         /// <summary>
-        /// Maximum value. If Log type, this is in db.
+        /// Maximum value. If Log type, this is in db - usually +18.
         /// </summary>
-        public double MaxValue { get; set; } = 18;
+        public double Maximum { get; set; } = 100;
 
         /// <summary>
         /// Meter orientation.
@@ -69,28 +75,28 @@ namespace Nebulator.Controls
         }
 
         /// <summary>
-        /// Add a new data point.
+        /// Add a new data point. If Log, this will convert for you.
         /// </summary>
         /// <param name="val"></param>
         public void AddValue(double val)
         {
-            // Sometimes when you minimise, max samples can be set to 0.
+            // Sometimes when you minimize, max samples can be set to 0.
             if (_maxBuff != 0)
             {
                 switch (MeterType)
                 {
                     case MeterType.Log:
-                        double db = Utils.Constrain(20 * Math.Log10(val), MinValue, MaxValue);
+                        double db = Utils.Constrain(20 * Math.Log10(val), Minimum, Maximum);
                         _buff[0] = db;
                         break;
 
                     case MeterType.Linear:
-                        double lval = Utils.Constrain(val, MinValue, MaxValue);
+                        double lval = Utils.Constrain(val, Minimum, Maximum);
                         _buff[0] = lval;
                         break;
 
                     case MeterType.Continuous:
-                        double lvalc = Utils.Constrain(val, MinValue, MaxValue);
+                        double lvalc = Utils.Constrain(val, Minimum, Maximum);
 
                         if (_buff.Count <= _maxBuff)
                         {
@@ -128,7 +134,7 @@ namespace Nebulator.Controls
             {
                 case MeterType.Log:
                 case MeterType.Linear:
-                    percent = (_buff[0] - MinValue) / (MaxValue - MinValue);
+                    percent = _buff.Count > 0 ? (_buff[0] - Minimum) / (Maximum - Minimum) : 0;
 
                     if (Orientation == Orientation.Horizontal)
                     {
@@ -154,7 +160,17 @@ namespace Nebulator.Controls
                     break;
             }
 
-            //base.OnPaint(pe);
+            if (Label != "" && Orientation == Orientation.Horizontal)
+            {
+                StringFormat format = new StringFormat()
+                {
+                    LineAlignment = StringAlignment.Center,
+                    Alignment = StringAlignment.Center
+                };
+
+                Rectangle r = new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height / 2);
+                pe.Graphics.DrawString(Label, Font, Brushes.Black, r, format);
+            }
         }
 
         /// <summary>

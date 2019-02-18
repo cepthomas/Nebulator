@@ -104,7 +104,7 @@ namespace Nebulator.Synth
                         inited = true;
                         DeviceName = parts[1];
 
-                        //Start(); //TODON2 enable disable separately from chkPlay?
+                        //Start(); //TODON1 enable disable separately from chkPlay?
                     }
                 }
             }

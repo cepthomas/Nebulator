@@ -104,14 +104,17 @@ namespace Nebulator.Script
         #endregion
 
         #region Properties - things defined in the script that MainForm needs
+        /// <summary>All vars.</summary>
+        public List<NVariable> Variables { get; set; } = new List<NVariable>();
+
         /// <summary>Control inputs.</summary>
         public List<NController> Controllers { get; set; } = new List<NController>();
 
         /// <summary>Levers.</summary>
         public List<NController> Levers { get; set; } = new List<NController>();
 
-        /// <summary>Levers.</summary>
-        public List<NVariable> Variables { get; set; } = new List<NVariable>();
+        /// <summary>All displays.</summary>
+        public List<NDisplay> Displays { get; set; } = new List<NDisplay>();
 
         /// <summary>All sequences.</summary>
         public List<NSequence> Sequences { get; set; } = new List<NSequence>();

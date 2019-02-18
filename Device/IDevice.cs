@@ -38,7 +38,7 @@ namespace Nebulator.Device
         #endregion
     }
 
-    /// <summary>Input specific version.</summary>
+    /// <summary>Input specific version. Slight deviation from naming convention to fit our model.</summary>
     public interface NInput : IDevice
     {
         #region Events
@@ -47,7 +47,7 @@ namespace Nebulator.Device
         #endregion
     }
 
-    /// <summary>Output specific version.</summary>
+    /// <summary>Output specific version. Slight deviation from naming convention to fit our model.</summary>
     public interface NOutput : IDevice
     {
         #region Functions

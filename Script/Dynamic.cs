@@ -14,6 +14,9 @@ namespace Nebulator.Script
     /// <summary>Channel state.</summary>
     public enum ChannelState { Normal, Mute, Solo }
 
+    /// <summary>Display types.</summary>
+    public enum DisplayType { LinearMeter, LogMeter, Chart };
+
     /// <summary>
     /// One bound variable.
     /// </summary>
@@ -36,6 +39,7 @@ namespace Nebulator.Script
                 {
                     _value = value;
                     Changed?.Invoke();
+                    ValueChangeEvent?.Invoke(this, null);
                 }
             }
         }
@@ -46,12 +50,17 @@ namespace Nebulator.Script
 
         /// <summary>Max value - optional.</summary>
         public double Max { get; set; } = 100;
+
+        /// <summary>For extra info. Makes me feel dirty.</summary>
+        public object Tag { get; set; } = null;
         #endregion
 
         #region Events
-        /// <summary>Notify with new value.</summary>
-        //public event Action Changed;
+        /// <summary>Notify with new value. This represents a callback defined in a script.</summary>
         public Action Changed;
+
+        /// <summary>Reporting a change to internal listeners.</summary>
+        public event EventHandler ValueChangeEvent;
         #endregion
 
         /// <summary>
@@ -126,7 +135,7 @@ namespace Nebulator.Script
         /// <summary>Current state for this channel.</summary>
         public ChannelState State { get; set; } = ChannelState.Normal;
 
-        /// <summary>Optional extra info fr this channel.</summary>
+        /// <summary>Optional extra info for this channel.</summary>
         public object Context { get; set; } = null;
         #endregion
 
@@ -155,6 +164,29 @@ namespace Nebulator.Script
         public override string ToString()
         {
             return $"NChannel: Name:{Name} ChannelNumber:{ChannelNumber}";
+        }
+    }
+
+    /// <summary>
+    /// One display output.
+    /// </summary>
+    public class NDisplay
+    {
+        #region Properties
+        /// <summary>The type of display.</summary>
+        public DisplayType DisplayType { get; set; } = DisplayType.LinearMeter;
+
+        /// <summary>The bound var.</summary>
+        public NVariable BoundVar { get; set; } = null;
+        #endregion
+
+        /// <summary>
+        /// For viewing pleasure.
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder($"NDisplay: DisplayType:{DisplayType} BoundVar:{BoundVar.Name}");
+            return sb.ToString();
         }
     }
 

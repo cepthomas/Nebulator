@@ -72,7 +72,7 @@ namespace Nebulator.Script
         /// <param name="name">UI name</param>
         /// <param name="devName">Device name</param>
         /// <param name="channelNum"></param>
-        /// <param name="context"></param>
+        /// <param name="context">Optional - used by synth. TODON2 hide?</param>
         protected NChannel createChannel(string name, string devName, int channelNum, object context = null)
         {
             NChannel nt = new NChannel()
@@ -146,15 +146,20 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="bound"></param>
         /// <param name="type"></param>
-        protected void createMeter(NVariable bound, int type)
+        protected void createDisplay(NVariable bound, int type)
         {
             if (bound == null)
             {
                 throw new Exception($"Invalid NVariable for meter");
             }
 
-            //NController ctlr = new NController() { BoundVar = bound, TTT = parse_type };
-            //Meters.Add(ctlr);
+            NDisplay disp = new NDisplay()
+            {
+                BoundVar = bound,
+                DisplayType = (DisplayType)Enum.Parse(typeof(DisplayType), type.ToString())
+            };
+
+            Displays.Add(disp);
         }
 
         /// <summary>

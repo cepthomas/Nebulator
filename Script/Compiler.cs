@@ -412,6 +412,8 @@ namespace Nebulator.Script
             ScriptDefinitions.TheDefinitions.ControllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.ControllerDefs[k]};"));
             codeLines.Add("///// Device Types");
             Enum.GetValues(typeof(Device.DeviceType)).Cast<Device.DeviceType>().ForEach(e => codeLines.Add($"const int {e.ToString()} = {(int)e};"));
+            codeLines.Add("///// Meter Types");
+            Enum.GetValues(typeof(DisplayType)).Cast<DisplayType>().ForEach(e => codeLines.Add($"const int {e.ToString()} = {(int)e};"));
 
             // Bottom stuff.
             codeLines.AddRange(GenBottomOfFile());
