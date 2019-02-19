@@ -84,7 +84,7 @@ namespace Nebulator
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled domain exception:{e}{Environment.NewLine}{e.ExceptionObject}{Environment.NewLine}";
             LogManager.GetCurrentClassLogger().Error("Unhandled domain exception: " + s);
-            MessageBox.Show($"Unhandled domain exception:{Environment.NewLine}{s}{Environment.NewLine}Sorry, you are screwed - goodbye.");
+            MessageBox.Show($"Unhandled domain exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
     }
 }

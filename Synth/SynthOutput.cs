@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using NAudio.Wave;
 using Nebulator.Common;
 using Nebulator.Device;
@@ -21,7 +24,7 @@ using Nebulator.Device;
 // public int PlaybackLatency;
 // public PlaybackState;
 // public string DriverName;
-// public int NumberOfOutputChannels;}
+// public int NumberOfOutputChannels;
 // public int NumberOfInputChannels;
 // public int DriverInputChannelCount;
 // public int DriverOutputChannelCount;
@@ -104,7 +107,7 @@ namespace Nebulator.Synth
                         inited = true;
                         DeviceName = parts[1];
 
-                        //Start(); //TODON1 enable disable separately from chkPlay?
+                        //Start(); //TODON2 enable disable separately from chkPlay?
                     }
                 }
             }
@@ -214,13 +217,20 @@ namespace Nebulator.Synth
         /// <inheritdoc />
         public void Stop()
         {
-            _asioOut?.Pause(); // ? or Stop();
+            //_asioOut?.Pause();
+            _asioOut?.Stop();
         }
         #endregion
 
         #region ISampleProvider implementation
         /// <summary></summary>
         public WaveFormat WaveFormat { get; }
+
+
+
+        /// <summary>A brute force method of conveying error info back to the caller.</summary>
+        public string ErrMsg { get; set; } = "";
+
 
         /// <summary>
         /// This ISampleProvider function gets called when output is needed.
@@ -231,28 +241,74 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public int Read(float[] buffer, int offset, int count)
         {
-            if(Synth != null)
+            int retcnt = count;
+
+            if (Synth != null && ErrMsg.Length == 0)
             {
-                for (int n = 0; n < count;)
+                // According to my crude test, try/catch doesn't cause much overhead if no exception is thrown. Let's try it.
+                try
                 {
-                    Sample dout = Synth.Next2();
-                    buffer[n++] = (float)dout.Left;
-                    buffer[n++] = (float)dout.Right;
+                    for (int n = 0; n < count; n++)
+                    {
+                        Sample dout = Synth.Next2();
+                        buffer[n++] = (float)dout.Left;
+                        buffer[n++] = (float)dout.Right;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    // First stop. ??
+                    //Stop();
+                    //retcnt = 0;
 
-                //float[] _dummy = new float[1024]; // TODON2 this could stress-test GC too
-                //for (int n = 0; n < count;)
-                //{
-                //    _dummy[n] = buffer[n];
-                //}
-            }
-            else
-            {
-                count = 0; // this should stop the device
+                    // Locate the offending frame.
+                    string srcFile = Utils.UNKNOWN_STRING;
+                    int srcLine = -1;
+                    StackTrace st = new StackTrace(ex, true);
+                    StackFrame sf = null;
+
+                    for (int i = 0; i < st.FrameCount; i++)
+                    {
+                        StackFrame stf = st.GetFrame(i);
+                        if (stf.GetFileName() != null && stf.GetFileName().Contains("_src"))
+                        {
+                            sf = stf;
+                            break;
+                        }
+                    }
+
+                    if (sf != null)
+                    {
+                        // Dig out generated file parts.
+                        string genFile = sf.GetFileName();
+                        int genLine = sf.GetFileLineNumber() - 1;
+
+                        // Open the generated file and dig out the source file and line.
+                        string[] genLines = File.ReadAllLines(genFile);
+
+                        srcFile = genLines[0].Trim().Replace("//", "");
+
+                        int ind = genLines[genLine].LastIndexOf("//");
+                        if (ind != -1)
+                        {
+                            string sl = genLines[genLine].Substring(ind + 2);
+                            int.TryParse(sl, out srcLine);
+                        }
+
+                        ErrMsg = $"Synth runtime error {srcFile}({srcLine}): {ex.Message}";
+                    }
+                    else // unknown?
+                    {
+                        ErrMsg = $"Synth runtime error in unknown file: {ex.Message}";
+                    }
+
+                    DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = DeviceLogCategory.Error, Message = ErrMsg });
+                }
             }
 
-            return count;
+            return retcnt;
         }
+
         #endregion
 
         #region Private functions

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NAudio.Wave;
-
+using Nebulator.Common;
 
 namespace Nebulator.Synth
 {
@@ -13,7 +14,7 @@ namespace Nebulator.Synth
     {
         #region Properties
         /// <summary>0.0 to 1.0.</summary>
-        public double Volume { get; set; } = 0.2;
+        public double Volume { get; set; } = 0.1;
         #endregion
 
         #region Public Functions - virtual
@@ -23,7 +24,7 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual double Next()
         {
-            RuntimeError("Base Next() called");
+            NotImplementedError("Next()");
             return 0;
         }
 
@@ -34,7 +35,7 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual double Next(double din)
         {
-            RuntimeError("Base Next() called");
+            NotImplementedError("Next(double)");
             return 0;
         }
 
@@ -45,7 +46,7 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual Sample Next2(Sample din)
         {
-            RuntimeError("Base Next() called");
+            NotImplementedError("Next(Sample)");
             return new Sample();
         }
 
@@ -55,7 +56,7 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual Sample Next2()
         {
-            RuntimeError("Base Next() called");
+            NotImplementedError("Next2()");
             return new Sample();
         }
 
@@ -66,7 +67,7 @@ namespace Nebulator.Synth
         /// <returns></returns>
         public virtual Sample Next2(double din)
         {
-            RuntimeError("Base Next() called");
+            NotImplementedError("Next2(double)");
             return new Sample();
         }
 
@@ -135,16 +136,12 @@ namespace Nebulator.Synth
         }
 
         /// <summary>
-        /// Handle a script error. Because we don't want to use exceptions.
+        /// Handle a script error.
         /// </summary>
         /// <param name="msg"></param>
-        protected void RuntimeError(string msg)
+        protected void NotImplementedError(string msg)
         {
-            throw new NotImplementedException(msg);
-
-            //TODON1 handle like: ScriptError err = ScriptUtils.ProcessScriptRuntimeError(args, _compileTempDir);
-            //StackTrace st = new StackTrace();
-            //StackFrame sf = null;
+            throw new NotImplementedException($"{msg} function not implemented");
         }
         #endregion
     }

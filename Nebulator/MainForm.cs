@@ -852,7 +852,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (chkPlay.Checked && _script != null && e.Step != null) //TODON1 enable/disable separately from chkPlay?
+                if (chkPlay.Checked && _script != null && e.Step != null) //TODON2 enable/disable separately from chkPlay?
                 {
                     try
                     {

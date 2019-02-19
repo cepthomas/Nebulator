@@ -2,9 +2,10 @@
 // Akai kbd midi: Pad1-8 are notes 44-51, knob1-8 are controllers ctlr1-8.
 
 // IO devices.
-string MY_VKEY = "VKEY:";
-string MY_MIDI_IN = "MIDI:MPK mini";
-string MY_SYNTH_OUT = "SYNTH:ASIO4ALL v2";
+string VKEY_IN = "VKEY:";
+string MIDI_IN = "MIDI:MPK mini";
+string SYNTH_OUT1 = "SYNTH:ASIO4ALL v2";
+string SYNTH_OUT2 = "SYNTH:Mackie ASIO Driver";
 
 
 // All the neb variables.
@@ -18,17 +19,17 @@ NVariable SYN_LVL;
 NVariable CPU_USG;
 
 // All the output channels.
-NChannel SYNTH_1;
+NChannel SYNTH_MAIN;
 
 // Use virtual kbd.
-bool _local = true;
-
+bool _local = false;
 
 // The overall synthesizer.
 public class MySynth : UGen
 {
     public Voicer vcr1 = new Voicer(typeof(MyVoice), 5) { DecayTime = 2.0, Volume = 0.8 };
-    public LPF lpf = new LPF() { Freq = 1000, Volume = 0.8 };
+    public LPF lpf = new LPF() { Freq = 400, Q = 0.5, Volume = 0.8 };
+    public BPF bpf = new BPF() { Freq = 400, Q = 0.5, Volume = 0.8 };
     public ADSR adsrF = new ADSR() { AttackTime = 0.5, DecayTime = 0.5, SustainLevel = 0.5, ReleaseTime = 0.2, Volume = 0.8 };
     public Pan pan = new Pan() { Location = 0.0, Volume = 0.8 };
 
@@ -37,8 +38,9 @@ public class MySynth : UGen
     public override Sample Next2()
     {
         double dout = vcr1.Next();
-        lpf.Freq = 400 + adsrF.Next(1) * 2000;
-        dout = lpf.Next(dout); //TODON2 clicks when playing many notes fast
+//        bpf.Freq = 400 + adsrF.Next(1) * 2000;
+        dout = lpf.Next(dout);
+//        dout = bpf.Next(dout);
         dout = an1.Next(dout);
         Sample sout = pan.Next2(dout);
         return sout;
@@ -68,7 +70,6 @@ public class MyVoice : UGen
 
     public override void NoteOn(double notenum, double amplitude)
     {
-        s.print("script MyVoice - NoteOn()");
         osc1.NoteOn(notenum, amplitude);
         osc2.NoteOn(notenum * 1.01, amplitude);
         adsr.KeyDown();
@@ -76,7 +77,6 @@ public class MyVoice : UGen
 
     public override void NoteOff(double notenum)
     {
-        s.print("script MyVoice - NoteOff()");
         // Don't actually NoteOff - let the ADSR ramp down.
         // osc1.NoteOff(notenum);
         // osc2.NoteOff(notenum * 1.05);
@@ -123,7 +123,10 @@ public void On_VKBD_NOTE()
 
 public void On_MOD1()
 {
-    syn.lpf.Freq = MOD1.Value;
+    //print(MOD1.Value);
+
+    syn.lpf.Freq = 200 + MOD1.Value * 50;
+    //syn.bpf.Freq = 200 + MOD1.Value * 50;
 }
 
 public void On_CTL2()
@@ -159,21 +162,21 @@ public override void setupNeb()
     SYN_LVL = createVariable("synlvl", 0, 0, 100);
 
     // All the output channels.
-    SYNTH_1 = createChannel("syn", MY_SYNTH_OUT, 1, syn);
-    setWobbler(SYNTH_1, 0.2);
-
     if(_local)
     {
-        createController(MY_VKEY, 0, NoteControl, VKBD_NOTE);
+        SYNTH_MAIN = createChannel("syn", SYNTH_OUT1, 1, syn);
+        createController(VKEY_IN, 0, NoteControl, VKBD_NOTE);
     }
     else
     {
-        createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
-        createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-        createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
-        createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
-        createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE); // noteOn/Off
+        SYNTH_MAIN = createChannel("syn", SYNTH_OUT2, 1, syn);
+        createController(MIDI_IN, 1, 1, MOD1); // modulate eq
+        createController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+        createController(MIDI_IN, 1, 3, CTL3); // another controller
+        createController(MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+        createController(MIDI_IN, 1, NoteControl, KBD_NOTE); // noteOn/Off
     }
+    setWobbler(SYNTH_MAIN, 0.2);
 
     // levers
     createLever(BACK_COLOR);

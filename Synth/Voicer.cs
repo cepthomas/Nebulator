@@ -10,7 +10,7 @@ using NAudio.Wave;
 
 namespace Nebulator.Synth
 {
-    /// Represents one sounding voice. TODON2Runs continuously - ok??
+    /// Represents one sounding voice. TODON2 Runs continuously - ok??
     class VoiceDesc
     {
         /// <summary>Contained ugen.</summary>

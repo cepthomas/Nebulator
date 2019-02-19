@@ -77,7 +77,7 @@ namespace Nebulator.Synth
         /// <inheritdoc />
         public override void NoteOff(double noteNumber)
         {
-            Freq = 0; // TODON1 needs zero-crossing
+            Freq = 0; // TODON1 needs zero-crossing?
             Volume = 0;
         }
 

@@ -9,7 +9,7 @@ using Nebulator.Visualizer;
 
 namespace Nebulator.Test
 {
-#if _TODON2
+#if _TODON3
     public class SYNTH_Vis : TestSuite
     {
         public override void RunSuite()

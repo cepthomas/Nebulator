@@ -127,13 +127,13 @@ namespace Nebulator.Script
             ParseOneFile(pcont);
 
             // Add the generated internal code files.
-            _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileContext()
+            _filesToCompile.Add($"{_scriptName}_wrapper.cs", new FileContext()
             {
                 SourceFile = "",
                 CodeLines = GenMainFileContents()
             });
 
-            _filesToCompile.Add($"{_scriptName}_{_filesToCompile.Count}.cs", new FileContext()
+            _filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext()
             {
                 SourceFile = "",
                 CodeLines = GenDefFileContents()
@@ -167,7 +167,7 @@ namespace Nebulator.Script
 
             if (valid)
             {
-                string genFn = $"{_scriptName}_{_filesToCompile.Count}.cs".ToLower();
+                string genFn = $"{_scriptName}_src{_filesToCompile.Count}.cs".ToLower();
                 _filesToCompile.Add(genFn, pcont);
 
                 List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));

@@ -56,9 +56,182 @@ namespace Nebulator.Synth
     }
 
     /// <summary>
-    /// 2nd order low pass Butterworth filter.
+    /// 2nd order low pass Butterworth filter. From RLPF. TODON1 scratchy.
     /// </summary>
     public class LPF : Filter
+    {
+        #region Fields
+        double _a0;
+        double _b1;
+        double _b2;
+        double _y1;
+        double _y2;
+        double _freq;
+        double _q;
+        #endregion
+
+        #region Properties
+        public double Freq
+        {
+            get { return _freq; }
+            set { _freq = value; SetParams(); }
+        }
+
+        public double Q
+        {
+            get { return _q; }
+            set { _q = value; SetParams(); }
+        }
+        #endregion
+
+        #region Lifecycle
+        public LPF()
+        {
+            _a0 = 0;
+            _b1 = 0;
+            _b2 = 0;
+            _y1 = 0;
+            _y2 = 0;
+            _freq = 1.0;
+            _q = 1.0;
+        }
+        #endregion
+
+        #region Public Functions
+        public override double Next(double din)
+        {
+            double y0;
+            double dout;
+            
+            // go: adapted from SC3's LPF
+            y0 = _a0 * din + _b1 * _y1 + _b2 * _y2;
+            dout = y0 + 2 * _y1 + _y2;
+            _y2 = _y1;
+            _y1 = y0;
+
+            // be normal
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
+
+            return dout * Volume;
+        }
+        #endregion
+
+        #region Private functions
+        void SetParams()
+        {
+            // implementation: adapted from SC3's LPF
+            _freq = _freq > 0 ? _freq : 1; // don't allow 0.
+            _q = _q > 0 ? _q : 1; // don't allow 0.
+
+            double qres = Math.Max(.001, 1.0 / _q);
+            double pfreq = _freq * Math.PI * 2 / SynthCommon.SampleRate * 0.5;
+            
+            double D = Math.Tan(pfreq * qres * 0.5);
+            double C = (1.0 - D) / (1.0 + D);
+            double cosf = Math.Cos(pfreq);
+            double nextB1 = (1.0 + C) * cosf;
+            double nextB2 = -C;
+            double nextA0 = (1.0 + C - nextB1) * 0.25;
+
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
+            
+            _q = 1.0 / qres;
+        }
+        #endregion
+    }
+
+    /// <summary>
+    /// 2nd order high pass Butterworth filter. From RLPF.
+    /// </summary>
+    public class HPF : Filter
+    {
+        #region Fields
+        double _a0;
+        double _b1;
+        double _b2;
+        double _y1;
+        double _y2;
+        double _freq;
+        double _q;
+        #endregion
+
+        #region Properties
+        public double Freq
+        {
+            get { return _freq; }
+            set { _freq = value; SetParams(); }
+        }
+
+        public double Q
+        {
+            get { return _q; }
+            set { _q = value; SetParams(); }
+        }
+        #endregion
+
+        #region Lifecycle
+        public HPF()
+        {
+            _a0 = 0;
+            _b1 = 0;
+            _b2 = 0;
+            _y1 = 0;
+            _y2 = 0;
+            _freq = 1;
+            _q = 1.0;
+        }
+        #endregion
+
+        #region Public Functions
+        public override double Next(double din)
+        {
+            // go: adapted from SC3's HPF
+            double y0 = _a0 * din + _b1 * _y1 + _b2 * _y2;
+            double dout = y0 - 2 * _y1 + _y2;
+            _y2 = _y1;
+            _y1 = y0;
+
+            // be normal
+            _y1 = DDN(_y1);
+            _y2 = DDN(_y2);
+
+            return dout * Volume;
+        }
+        #endregion
+
+        #region Private functions
+        void SetParams()
+        {
+            // implementation: adapted from SC3's HPF
+            _freq = _freq > 0 ? _freq : 1; // don't allow 0.
+            _q = _q > 0 ? _q : 1; // don't allow 0.
+
+            double qres = Math.Max(.001, 1.0 / _q);
+            double pfreq = _freq * Math.PI * 2 / SynthCommon.SampleRate * 0.5;
+
+            double D = Math.Tan(pfreq * qres * 0.5);
+            double C = (1.0 - D) / (1.0 + D);
+            double cosf = Math.Cos(pfreq);
+            double nextB1 = (1.0 + C) * cosf;
+            double nextB2 = -C;
+            double nextA0 = (1.0 + C + nextB1) * 0.25;
+
+            _a0 = nextA0;
+            _b1 = nextB1;
+            _b2 = nextB2;
+
+            _q = 1.0 / qres;
+        }
+        #endregion
+    }
+
+    /// <summary>
+    /// 2nd order low pass Butterworth filter.
+    /// </summary>
+    public class LPF_TODON2_old : Filter
     {
         #region Fields
         double _a0;
@@ -78,7 +251,7 @@ namespace Nebulator.Synth
         #endregion
 
         #region Lifecycle
-        public LPF()
+        public LPF_TODON2_old()
         {
             _a0 = 0;
             _b1 = 0;
@@ -135,7 +308,7 @@ namespace Nebulator.Synth
     /// <summary>
     /// 2nd order high pass Butterworth filter.
     /// </summary>
-    public class HPF : Filter
+    public class HPF_TODON2_old : Filter
     {
         #region Fields
         double _a0;
@@ -155,7 +328,7 @@ namespace Nebulator.Synth
         #endregion
 
         #region Lifecycle
-        public HPF()
+        public HPF_TODON2_old()
         {
             _a0 = 0;
             _b1 = 0;
