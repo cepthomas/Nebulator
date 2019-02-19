@@ -19,17 +19,13 @@ namespace Nebulator.Controls
         /// <summary>
         /// Storage.
         /// </summary>
-        List<double> _buff = new List<double>(1000);
+        //List<double> _buff = null;
+        double[] _buff = { };
 
         /// <summary>
         /// Storage.
         /// </summary>
-        int _maxBuff;
-
-        /// <summary>
-        /// Storage.
-        /// </summary>
-        int _buffIndex;
+        int _buffIndex = 0;
         #endregion
 
         #region Properties
@@ -75,13 +71,20 @@ namespace Nebulator.Controls
         }
 
         /// <summary>
+        /// Init stuff.
+        /// </summary>
+        private void Meter_Load(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
         /// Add a new data point. If Log, this will convert for you.
         /// </summary>
         /// <param name="val"></param>
         public void AddValue(double val)
         {
-            // Sometimes when you minimize, max samples can be set to 0.
-            if (_maxBuff != 0)
+            // Sometimes when you minimize, samples can be set to 0.
+            if (_buff.Length != 0)
             {
                 switch (MeterType)
                 {
@@ -96,19 +99,10 @@ namespace Nebulator.Controls
                         break;
 
                     case MeterType.Continuous:
-                        double lvalc = Utils.Constrain(val, Minimum, Maximum);
-
-                        if (_buff.Count <= _maxBuff)
-                        {
-                            _buff.Add(lvalc);
-                        }
-                        else if (_buffIndex < _maxBuff)
-                        {
-                            _buff[_buffIndex] = lvalc;
-                        }
-
+                        // Bump ring index.
                         _buffIndex++;
-                        _buffIndex %= _maxBuff;
+                        _buffIndex %= _buff.Length;
+                        _buff[_buffIndex] = Utils.Constrain(val, Minimum, Maximum);
                         break;
                 }
 
@@ -123,50 +117,59 @@ namespace Nebulator.Controls
         /// </summary>
         protected override void OnPaint(PaintEventArgs pe)
         {
-            double percent = 0;
-            pe.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
-            int w = Width - 2;
-            int h = Height - 2;
+            // Setup.
+            pe.Graphics.Clear(UserSettings.TheSettings.BackColor);
             Brush brush = new SolidBrush(ControlColor);
             Pen pen = new Pen(ControlColor);
+
+            // Draw border.
+            int bw = Utils.BORDER_WIDTH;
+            Pen penBorder = new Pen(Color.Black, bw);
+            pe.Graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
+
+            // Draw data.
+            Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -bw, -bw);
 
             switch (MeterType)
             {
                 case MeterType.Log:
                 case MeterType.Linear:
-                    percent = _buff.Count > 0 ? (_buff[0] - Minimum) / (Maximum - Minimum) : 0;
+                    double percent = _buff.Length > 0 ? (_buff[0] - Minimum) / (Maximum - Minimum) : 0;
 
                     if (Orientation == Orientation.Horizontal)
                     {
-                        w = (int)(w * percent);
-                        pe.Graphics.FillRectangle(brush, 1, 1, w, h);
+                        int w = (int)(drawArea.Width * percent);
+                        int h = drawArea.Height;
+                        pe.Graphics.FillRectangle(brush, bw, bw, w, h);
                     }
                     else
                     {
-                        h = (int)(h * percent);
-                        pe.Graphics.FillRectangle(brush, 1, Height - 1 - h, w, h);
+                        int w = drawArea.Width;
+                        int h = (int)(drawArea.Height * percent);
+                        pe.Graphics.FillRectangle(brush, bw, Height - bw - h, w, h);
                     }
                     break;
 
                 case MeterType.Continuous:
-                    for (int x = 0; x < Width; x++)
+                    for (int i = 0; i < _buff.Length; i++)
                     {
-                        int index = x - Width + _buffIndex;
-                        double val = (index >= 0 & index < _buff.Count) ? _buff[index] : 0;
-                        float lineHeight = Height * (float)val;
-                        float y1 = (Height - lineHeight) / 2;
-                        pe.Graphics.DrawLine(pen, x, y1, x, y1 + lineHeight);
+                        int index = _buffIndex - i;
+                        index = index < 0 ? index + _buff.Length : index;
+
+                        double val = _buff[index];
+
+                        // Draw data point.
+                        double x = i + bw;
+                        double y = Utils.Map(val, 0, Maximum, Height - 2 * bw, bw);
+                        //pe.Graphics.FillRectangle(brush, (float)x, (float)y, 1, 1);
+                        pe.Graphics.DrawLine(pen, (float)x, (float)y, (float)x, Height - 2 * bw);
                     }
                     break;
             }
 
-            if (Label != "" && Orientation == Orientation.Horizontal)
+            if (Label.Length > 0 && Orientation == Orientation.Horizontal)
             {
-                StringFormat format = new StringFormat()
-                {
-                    LineAlignment = StringAlignment.Center,
-                    Alignment = StringAlignment.Center
-                };
+                StringFormat format = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
 
                 Rectangle r = new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height / 2);
                 pe.Graphics.DrawString(Label, Font, Brushes.Black, r, format);
@@ -178,8 +181,10 @@ namespace Nebulator.Controls
         /// </summary>
         protected override void OnResize(EventArgs e)
         {
-            _maxBuff = Width;
+            _buff = new double[Width - 2 * Utils.BORDER_WIDTH];
+            _buffIndex = 0;
             base.OnResize(e);
+            Invalidate();
         }
         #endregion
     }

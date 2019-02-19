@@ -59,34 +59,38 @@ namespace Nebulator.Controls
         /// </summary>
         protected override void OnPaint(PaintEventArgs pe)
         {
-            StringFormat format = new StringFormat()
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-            string panValue;
+            // Setup.
+            //pe.Graphics.Clear(UserSettings.TheSettings.BackColor);
             Brush brush = new SolidBrush(ControlColor);
+            //Pen pen = new Pen(ControlColor);
 
+            // Draw border.
+            int bw = Utils.BORDER_WIDTH;
+            Pen penBorder = new Pen(Color.Black, bw);
+            pe.Graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
+
+            // Draw data.
+            Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -bw, -bw);
+            string panValue;
             if (_value == 0.0)
             {
-                pe.Graphics.FillRectangle(brush, (Width / 2) - 1, 1, 3, Height - 2);
+                pe.Graphics.FillRectangle(brush, (Width / 2) - bw, bw, 2 * bw, Height - 2 * bw);
                 panValue = "C";
             }
             else if (_value > 0)
             {
-                pe.Graphics.FillRectangle(brush, (Width / 2), 1, (int)((Width / 2) * _value), Height - 2);
+                pe.Graphics.FillRectangle(brush, (Width / 2), bw, (int)((Width / 2) * _value), Height - 2 * bw);
                 panValue = $"{_value * 100:F0}%R";
             }
             else
             {
-                pe.Graphics.FillRectangle(brush, (int)((Width / 2) * (_value + 1)), 1, (int)((Width / 2) * (0 - _value)), Height - 2);
+                pe.Graphics.FillRectangle(brush, (int)((Width / 2) * (_value + bw)), bw, (int)((Width / 2) * (0 - _value)), Height - 2 * bw);
                 panValue = $"{_value * -100:F0}%L";
             }
-            pe.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
 
+            // Draw text.
+            StringFormat format = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
             pe.Graphics.DrawString(panValue, Font, Brushes.Black, ClientRectangle, format);
-
-            //base.OnPaint(pe);
         }
 
         /// <summary>

@@ -33,6 +33,7 @@
             // Meter
             // 
             this.Name = "Meter";
+            this.Load += new System.EventHandler(this.Meter_Load);
             this.ResumeLayout(false);
 
         }

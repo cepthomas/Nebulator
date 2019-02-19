@@ -96,21 +96,24 @@ namespace Nebulator.Controls
         /// </summary>
         protected override void OnPaint(PaintEventArgs pe)
         {
-            // Outline.
-            pe.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
-
-            // Internal.
+            // Setup.
+            pe.Graphics.Clear(UserSettings.TheSettings.BackColor);
             Brush brush = new SolidBrush(ControlColor);
+            Pen pen = new Pen(ControlColor);
+
+            // Draw border.
+            int bw = Utils.BORDER_WIDTH;
+            Pen penBorder = new Pen(Color.Black, bw);
+            pe.Graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
+
+            // Draw data.
+            Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -bw, -bw);
+
             double x = Width * (_value - Minimum) / (Maximum - Minimum);
-            pe.Graphics.FillRectangle(brush, 1, 1, (float)x - 2, Height - 2);
+            pe.Graphics.FillRectangle(brush, bw, bw, (float)x - 2 * bw, Height - 2 * bw);
 
             // Text.
-            StringFormat format = new StringFormat()
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-            
+            StringFormat format = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
             string sval = _value.ToString("#0." + new string('0', DecPlaces));
 
             if (Label != "")

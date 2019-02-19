@@ -22,6 +22,9 @@ namespace Nebulator.Common
         #region Constants
         /// <summary>General purpose marker.</summary>
         public const string UNKNOWN_STRING = "???";
+
+        /// <summary>General UI.</summary>
+        public const int BORDER_WIDTH = 1;
         #endregion
 
         #region UI helpers
@@ -335,7 +338,7 @@ namespace Nebulator.Common
         }
         #endregion
 
-        #region Colors - from Utils
+        #region Colors
         /// <summary>
         /// Mix two colors.
         /// </summary>

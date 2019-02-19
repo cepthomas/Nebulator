@@ -173,7 +173,7 @@ namespace Nebulator
             _timer.TimerElapsedEvent += TimerElapsedEvent;
             _timer.Start();
 
-            timerHousekeep.Interval = 1000;
+            timerHousekeep.Interval = 500;
             timerHousekeep.Start();
 
             KeyPreview = true; // for routing kbd strokes properly

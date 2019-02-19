@@ -102,14 +102,22 @@ namespace Nebulator.Controls
         /// </summary>
         protected override void OnPaint(PaintEventArgs pe)
         {
-            // Outline.
-            pe.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
-
-            // Internal.
+            // Setup.
+            pe.Graphics.Clear(UserSettings.TheSettings.BackColor);
             Brush brush = new SolidBrush(ControlColor);
+            Pen pen = new Pen(ControlColor);
+
+            // Draw border.
+            int bw = Utils.BORDER_WIDTH;
+            Pen penBorder = new Pen(Color.Black, bw);
+            pe.Graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
+
+            // Draw data.
+            Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -bw, -bw);
+
             if(ShowProgress && MaxTick != 0 && _current.Tick < _maxTick)
             {
-                pe.Graphics.FillRectangle(brush, 1, 1, ((Width - 2) * _current.Tick / _maxTick), Height - 2);
+                pe.Graphics.FillRectangle(brush, Utils.BORDER_WIDTH, Utils.BORDER_WIDTH, (Width - 2 * bw) * _current.Tick / _maxTick, Height - 2 * bw);
             }
 
             // Text.
