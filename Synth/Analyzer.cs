@@ -15,15 +15,12 @@ namespace Nebulator.Synth
 
     public class Analyzer : UGen
     {
+        #region Events
         /// <summary>
         /// Raised periodically to inform the user of things like max volume.
         /// </summary>
         public event EventHandler<AnalyzerEventArgs> AnalyzerEvent;
-
-        /// <summary>
-        /// Static instance to avoid GC issues in Next(). TODON2 and others - look at all Next() impls for new?
-        /// </summary>
-        AnalyzerEventArgs args;
+        #endregion
 
         #region Properties
         /// <summary>
@@ -52,6 +49,11 @@ namespace Nebulator.Synth
         /// Where we are in the buffer.
         /// </summary>
         int _buffIndex = 0;
+
+        /// <summary>
+        /// Static instance to avoid GC issues in Next(). TODON2 and others - look at all Next() impls for new?
+        /// </summary>
+        AnalyzerEventArgs _args;
         #endregion
 
         #region Public Functions
@@ -60,7 +62,7 @@ namespace Nebulator.Synth
         /// </summary>
         public Analyzer()
         {
-            args = new AnalyzerEventArgs() { };
+            _args = new AnalyzerEventArgs() { };
         }
 
         /// <inheritdoc />
@@ -92,9 +94,9 @@ namespace Nebulator.Synth
                     MaxRight = maxR;
                     _buffIndex = 0;
 
-                    args.MaxLeft = maxL;
-                    args.MaxRight = maxR;
-                    AnalyzerEvent(this, args);
+                    _args.MaxLeft = maxL;
+                    _args.MaxRight = maxR;
+                    AnalyzerEvent(this, _args);
                 }
             }
 
