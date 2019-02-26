@@ -115,7 +115,7 @@ namespace Nebulator
                         break;
 
                     case DisplayType.Chart:
-                        meter.MeterType = MeterType.Continuous;
+                        meter.MeterType = MeterType.ContinuousLine;
                         break;
                 }
 

@@ -256,7 +256,7 @@ namespace Nebulator.VirtualKeyboard
                     step = new StepNoteOn()
                     {
                         Device = this,
-                        ChannelNumber = 0,
+                        ChannelNumber = 1,
                         NoteNumber = e.NoteId,
                         Velocity = 100,
                         VelocityToPlay = 100,
@@ -268,7 +268,7 @@ namespace Nebulator.VirtualKeyboard
                     step = new StepNoteOff()
                     {
                         Device = this,
-                        ChannelNumber = 0,
+                        ChannelNumber = 1,
                         NoteNumber = e.NoteId,
                         Velocity = 0
                     };

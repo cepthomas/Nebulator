@@ -40,6 +40,7 @@ namespace Nebulator
         /// <summary>Measure how fast we be.</summary>
         PerformanceCounter _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
+        /// <summary>Show how fast we be.</summary>
         NVariable _cpuVar = null;
 
         /// <summary>Fast timer.</summary>

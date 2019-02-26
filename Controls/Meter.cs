@@ -8,7 +8,7 @@ using Nebulator.Common;
 namespace Nebulator.Controls
 {
     /// <summary>Display types.</summary>
-    public enum MeterType { Linear, Log, Continuous };
+    public enum MeterType { Linear, Log, ContinuousLine, ContinuousDots };
 
     /// <summary>
     /// Implements a rudimentary volume meter.
@@ -98,7 +98,8 @@ namespace Nebulator.Controls
                         _buff[0] = lval;
                         break;
 
-                    case MeterType.Continuous:
+                    case MeterType.ContinuousLine:
+                    case MeterType.ContinuousDots:
                         // Bump ring index.
                         _buffIndex++;
                         _buffIndex %= _buff.Length;
@@ -150,7 +151,8 @@ namespace Nebulator.Controls
                     }
                     break;
 
-                case MeterType.Continuous:
+                case MeterType.ContinuousLine:
+                case MeterType.ContinuousDots:
                     for (int i = 0; i < _buff.Length; i++)
                     {
                         int index = _buffIndex - i;
@@ -160,9 +162,16 @@ namespace Nebulator.Controls
 
                         // Draw data point.
                         double x = i + bw;
-                        double y = Utils.Map(val, 0, Maximum, Height - 2 * bw, bw);
-                        //pe.Graphics.FillRectangle(brush, (float)x, (float)y, 1, 1);
-                        pe.Graphics.DrawLine(pen, (float)x, (float)y, (float)x, Height - 2 * bw);
+                        double y = Utils.Map(val, Minimum, Maximum, Height - 2 * bw, bw);
+
+                        if(MeterType == MeterType.ContinuousLine)
+                        {
+                            pe.Graphics.DrawLine(pen, (float)x, (float)y, (float)x, Height - 2 * bw);
+                        }
+                        else
+                        {
+                            pe.Graphics.FillRectangle(brush, (float)x, (float)y, 2, 2);
+                        }
                     }
                     break;
             }
