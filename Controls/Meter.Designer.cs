@@ -1,4 +1,4 @@
-﻿namespace Nebulator.Controls
+﻿namespace NebSynth
 {
     partial class Meter
     {

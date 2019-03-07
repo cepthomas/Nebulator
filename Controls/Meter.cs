@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Nebulator.Common;
 
 
-namespace Nebulator.Controls
+namespace NebSynth
 {
     /// <summary>Display types.</summary>
     public enum MeterType { Linear, Log, ContinuousLine, ContinuousDots };
@@ -26,6 +25,11 @@ namespace Nebulator.Controls
         /// Storage.
         /// </summary>
         int _buffIndex = 0;
+
+        /// <summary>
+        /// A number.
+        /// </summary>
+        const int BORDER_WIDTH = 1;
         #endregion
 
         #region Properties
@@ -124,7 +128,7 @@ namespace Nebulator.Controls
             Pen pen = new Pen(ControlColor);
 
             // Draw border.
-            int bw = Utils.BORDER_WIDTH;
+            int bw = BORDER_WIDTH;
             Pen penBorder = new Pen(Color.Black, bw);
             pe.Graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
 
@@ -190,7 +194,7 @@ namespace Nebulator.Controls
         /// </summary>
         protected override void OnResize(EventArgs e)
         {
-            _buff = new double[Width - 2 * Utils.BORDER_WIDTH];
+            _buff = new double[Width - 2 * BORDER_WIDTH];
             _buffIndex = 0;
             base.OnResize(e);
             Invalidate();

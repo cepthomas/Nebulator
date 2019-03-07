@@ -1,4 +1,4 @@
-namespace Nebulator.Controls
+﻿namespace NebScope
 {
     partial class Pot
     {
@@ -35,7 +35,7 @@ namespace Nebulator.Controls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "Pot";
-            this.Size = new System.Drawing.Size(32, 32);
+            this.Size = new System.Drawing.Size(115, 86);
             this.ResumeLayout(false);
 
         }

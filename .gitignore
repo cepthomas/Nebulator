@@ -291,7 +291,7 @@ __pycache__/
 /packages
 temp
 /_old
-/neb.sublime-workspace
-/neb.sublime-project
+
+/*sublime*
 /Examples/*.npp
-/Synth/chuck
+
