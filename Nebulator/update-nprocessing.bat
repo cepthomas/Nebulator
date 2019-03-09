@@ -12,9 +12,9 @@ copy /Y "Nebulator.Device.dll" "..\..\..\NProcessing\lib" >NUL
 copy /Y "Nebulator.Device.xml" "..\..\..\NProcessing\lib" >NUL
 
 rem Copy doc files
-copy /Y "..\..\..\Nebulator.wiki\ScriptSyntax.md" "..\..\..\NProcessing.wiki" >NUL
-copy /Y "..\..\..\Nebulator.wiki\ScriptApiProcessing.md" "..\..\..\NProcessing.wiki" >NUL
-copy /Y "..\..\..\Nebulator.wiki\Porting.md" "..\..\..\NProcessing.wiki" >NUL
-copy /Y "..\..\..\Nebulator.wiki\Notes.md" "..\..\..\NProcessing.wiki" >NUL
+copy /Y "..\..\Nebulator.wiki\ScriptSyntax.md" "..\..\..\NProcessing.wiki" >NUL
+copy /Y "..\..\Nebulator.wiki\ScriptApiProcessing.md" "..\..\..\NProcessing.wiki" >NUL
+copy /Y "..\..\Nebulator.wiki\Porting.md" "..\..\..\NProcessing.wiki" >NUL
+copy /Y "..\..\Nebulator.wiki\Notes.md" "..\..\..\NProcessing.wiki" >NUL
 
 rem pause

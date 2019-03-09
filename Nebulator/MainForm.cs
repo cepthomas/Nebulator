@@ -1281,7 +1281,7 @@ namespace Nebulator
                 mdText.Add($"- None");
             }
 
-            // Main help file. TODON3 Markdeep?
+            // Main help file. TODON1 Markdeep?
             mdText.Add(File.ReadAllText(@"Resources\README.md"));
 
             // Put it together.
@@ -1294,11 +1294,12 @@ namespace Nebulator
             htmlText.Add($"</style></head><body>");
 
             // Meat.
-            string mdHtml = Markdig.Markdown.ToHtml(string.Join(Environment.NewLine, mdText));
-            //shtml = shtml.Replace("MarkS", "<a href=\"#\">MarkS<img src=\"/Dev/Nebulator/Nebulator/Resources/mark1.bmp\" alt=\"MarkS\" /></a>");
+            string mdHtml = string.Join(Environment.NewLine, mdText);
             htmlText.Add(mdHtml);
 
-            // Done.
+            // Bottom.
+            string ss = "<!-- Markdeep: --><style class=\"fallback\">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src=\"markdeep.min.js\" charset=\"utf-8\"></script><script src=\"https://casual-effects.com/markdeep/latest/markdeep.min.js\" charset=\"utf-8\"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility=\"visible\")</script>";
+            htmlText.Add(ss);
             htmlText.Add($"</body></html>");
 
             string fn = Path.Combine(Path.GetTempPath(), "nebulator.html");

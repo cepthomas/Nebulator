@@ -55,9 +55,6 @@
     <DocumentationFile>bin\Nebulator.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Markdig, Version=0.15.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Markdig.0.15.7\lib\net40\Markdig.dll</HintPath>
-    </Reference>
     <Reference Include="NAudio, Version=1.8.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.5\lib\net35\NAudio.dll</HintPath>
     </Reference>
@@ -98,7 +95,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <None Include="..\..\Nebulator.wiki\ScriptDefinitions.md">
+    <None Include="..\Nebulator.wiki\ScriptDefinitions.md">
       <Link>Resources\ScriptDefinitions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

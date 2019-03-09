@@ -1,4 +1,4 @@
-﻿namespace NebScope
+﻿namespace Nebulator.Controls
 {
     partial class Pot
     {

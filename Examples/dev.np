@@ -59,7 +59,7 @@ public override void setupNeb()
         DRUMS = createChannel("drums", GS_MIDI_OUT, 10);
 
         // All the inputs.
-        createController("VKEY:", 0, NoteControl, VKBD_NOTE);
+        createController("VKEY:", 1, NoteControl, VKBD_NOTE);
     }
     else
     {
@@ -73,7 +73,7 @@ public override void setupNeb()
         createController(MY_MIDI_IN, 1, 1, MOD1); // modulate eq
         createController(MY_MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
         createController(MY_MIDI_IN, 1, 3, CTL3); // another controller
-        createController(MY_MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+        createController(MY_MIDI_IN, 1, 4, BACK_COLOR); // change ui color
         createController(MY_MIDI_IN, 1, NoteControl, KBD_NOTE);
     }
 

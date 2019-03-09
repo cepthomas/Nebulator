@@ -7,8 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Nebulator.Common;
 
-namespace NebScope
+
+namespace Nebulator.Controls
 {
     /// <summary></summary>
     public enum Taper { Linear, Log } // TODON Log sort of works but needs more debug.
@@ -74,7 +76,7 @@ namespace NebScope
             get { return _value; }
             set
             {
-                _value = Common.Constrain(value, _minimum, _maximum);
+                _value = Utils.Constrain(value, _minimum, _maximum);
                 ValueChanged?.Invoke(this, EventArgs.Empty);
                 Invalidate();
             }
@@ -178,7 +180,7 @@ namespace NebScope
                 double min = Taper == Taper.Log ? Math.Log10(_minimum) : _minimum;
                 double max = Taper == Taper.Log ? Math.Log10(_maximum) : _maximum;
                 double delta = (max - min) * (ydiff / 100.0);
-                double newValue = Common.Constrain(_beginDragValue + delta, min, max);
+                double newValue = Utils.Constrain(_beginDragValue + delta, min, max);
                 Value = Taper == Taper.Log ? Math.Pow(newValue, 10) : newValue;
             }
             base.OnMouseMove(e);

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Nebulator.Common;
 
 
-namespace NebSynth
+namespace Nebulator.Controls
 {
     /// <summary>Display types.</summary>
     public enum MeterType { Linear, Log, ContinuousLine, ContinuousDots };

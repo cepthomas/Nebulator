@@ -49,6 +49,7 @@ public class MySynth : UGen
 
     public override void NoteOn(double notenum, double amplitude)
     {
+        s.print(amplitude);
         vcr1.NoteOn(notenum, amplitude/2);
         adsrF.KeyDown();
     }
@@ -73,7 +74,7 @@ public class MyVoice : UGen
 
     public override void NoteOn(double notenum, double amplitude)
     {
-        //s.print(amplitude);
+        s.print(amplitude);
         osc1.NoteOn(notenum, amplitude);
 //        osc2.NoteOn(notenum * 1.01, amplitude);
         adsr.KeyDown();
@@ -167,7 +168,7 @@ public override void setupNeb()
     if(_local)
     {
         SYNTH_MAIN = createChannel("syn", SYNTH_OUT1, 1, syn);
-        createController(VKEY_IN, 0, NoteControl, VKBD_NOTE);
+        createController(VKEY_IN, 1, NoteControl, VKBD_NOTE);
     }
     else
     {
@@ -175,7 +176,7 @@ public override void setupNeb()
         createController(MIDI_IN, 1, 1, MOD1); // modulate eq
         createController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
         createController(MIDI_IN, 1, 3, CTL3); // another controller
-        createController(MIDI_IN, 0, 4, BACK_COLOR); // change ui color
+        createController(MIDI_IN, 1, 4, BACK_COLOR); // change ui color
         createController(MIDI_IN, 1, NoteControl, KBD_NOTE); // noteOn/Off
     }
     setWobbler(SYNTH_MAIN, 0.2);
