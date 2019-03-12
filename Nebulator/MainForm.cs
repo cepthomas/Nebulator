@@ -18,7 +18,6 @@ using Nebulator.Device;
 using Nebulator.Server;
 using Nebulator.Midi;
 using Nebulator.OSC;
-using Nebulator.Synth;
 
 
 // TODON3 Remove Device dependency in Script project for NProcessing.
@@ -394,10 +393,6 @@ namespace Nebulator
 
                             case "OSC":
                                 nout = new OscOutput();
-                                break;
-
-                            case "SYNTH":
-                                nout = new SynthOutput() { Synth = chan.Context as UGen };
                                 break;
                         }
                     }

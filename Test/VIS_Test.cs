@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using PNUT;
-using Nebulator.Synth;
 using Nebulator.Visualizer;
 
 
