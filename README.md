@@ -4,7 +4,7 @@ Most music software uses piano roll midi editors. This is an alternative - writi
 
 I played around with various scripting concepts, but ended up realizing that C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
 
-It supports midi and OSC, and has a WIP native synthesizer engine.
+It supports midi and OSC.
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs, and display of whatever on the UI.
 
@@ -21,7 +21,6 @@ This project contains a bunch of components that are either recycled or created 
 - Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
 - Virtual keyboard control based on Leslie Sanford's piano.
-- Synthesizer engine based on ChucK/STK.
 - Various utilities and extensions.
 - Simple charting control.
 - Example of the use of [pnut unit tester](https://github.com/cepthomas/pnut) 
@@ -33,12 +32,10 @@ This application uses these FOSS components:
 - Modified multimedia timer and piano control: [Leslie Sanford's Midi Toolkit](https://github.com/tebjan/Sanford.Multimedia.Midi) (MIT).
 - Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause).
 - [MoreLinq](https://morelinq.github.io) (MIT).
-- Markdown processing: [Markdig](https://github.com/lunet-io/markdig) (BSD 2-Clause)
 - Json processor: [Newtonsoft](https://github.com/JamesNK/Newtonsoft.Json) (MIT) Note - uses 9.0.1 - don't update!
 - Web server: [embedio](https://github.com/unosquare/embedio) (MIT).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
-- The Synth component is ported from [ChucK](http://chuck.cs.princeton.edu/) (GPL)
 
 # License
 https://github.com/cepthomas/Nebulator/blob/master/LICENSE

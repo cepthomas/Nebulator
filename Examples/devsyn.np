@@ -4,7 +4,7 @@
 // IO devices.
 string VKEY_IN = "VKEY:";
 string MIDI_IN = "MIDI:MPK mini";
-string SYNTH_OUT1 = "SYNTH:ASIO4ALL v2";
+string SYNTH_OUT1 = "SYNTH:ASIO4ALL v2"; //TODON1 change all this now.
 string SYNTH_OUT2 = "SYNTH:Mackie ASIO Driver";
 
 

@@ -13,15 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{20180D64-A496-4D89-B025-1493E74B3F1F}"
 	ProjectSection(SolutionItems) = preProject
-		..\Nebulator.wiki\_Sidebar.md = ..\Nebulator.wiki\_Sidebar.md
-		..\Nebulator.wiki\Home.md = ..\Nebulator.wiki\Home.md
-		..\Nebulator.wiki\Notes.md = ..\Nebulator.wiki\Notes.md
-		..\Nebulator.wiki\Porting.md = ..\Nebulator.wiki\Porting.md
-		..\Nebulator.wiki\ScriptApiNeb.md = ..\Nebulator.wiki\ScriptApiNeb.md
-		..\Nebulator.wiki\ScriptApiProcessing.md = ..\Nebulator.wiki\ScriptApiProcessing.md
-		..\Nebulator.wiki\ScriptDefinitions.md = ..\Nebulator.wiki\ScriptDefinitions.md
-		..\Nebulator.wiki\ScriptSyntax.md = ..\Nebulator.wiki\ScriptSyntax.md
-		..\Nebulator.wiki\WebApi.md = ..\Nebulator.wiki\WebApi.md
+		Nebulator.wiki\_Sidebar.md = Nebulator.wiki\_Sidebar.md
+		Nebulator.wiki\Home.md = Nebulator.wiki\Home.md
+		Nebulator.wiki\Notes.md = Nebulator.wiki\Notes.md
+		Nebulator.wiki\Porting.md = Nebulator.wiki\Porting.md
+		Nebulator.wiki\ScriptApiNeb.md = Nebulator.wiki\ScriptApiNeb.md
+		Nebulator.wiki\ScriptApiProcessing.md = Nebulator.wiki\ScriptApiProcessing.md
+		Nebulator.wiki\ScriptDefinitions.md = Nebulator.wiki\ScriptDefinitions.md
+		Nebulator.wiki\ScriptSyntax.md = Nebulator.wiki\ScriptSyntax.md
+		Nebulator.wiki\WebApi.md = Nebulator.wiki\WebApi.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{FF958FAF-E474-4E58-B787-F166D9CAC80F}"
@@ -41,8 +41,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualKeyboard", "VirtualKeyboard\VirtualKeyboard.csproj", "{4F76FFFE-CD6F-4951-B74E-A7D4FFEB1A9F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{4B86DF45-449E-41F3-8620-4F7932146A33}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visualizer", "Visualizer\Visualizer.csproj", "{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,10 +88,6 @@ Global
 		{4B86DF45-449E-41F3-8620-4F7932146A33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B86DF45-449E-41F3-8620-4F7932146A33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B86DF45-449E-41F3-8620-4F7932146A33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E511799-DA3E-4D83-8B9F-E54DF6410B3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

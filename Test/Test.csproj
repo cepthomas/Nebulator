@@ -55,7 +55,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SERVER_Test.cs" />
-    <Compile Include="VIS_Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -84,14 +83,6 @@
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{8b7e58a4-4477-4223-a0c3-8be403ee5737}</Project>
       <Name>Server</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Synth\Synth.csproj">
-      <Project>{72b15ad8-081b-4dc0-b6c5-35eaf016a67f}</Project>
-      <Name>Synth</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Visualizer\Visualizer.csproj">
-      <Project>{0e511799-da3e-4d83-8b9f-e54df6410b3b}</Project>
-      <Name>Visualizer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
