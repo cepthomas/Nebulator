@@ -4,8 +4,8 @@
 // IO devices.
 string VKEY_IN = "VKEY:";
 string MIDI_IN = "MIDI:MPK mini";
-string SYNTH_OUT1 = "SYNTH:ASIO4ALL v2"; //TODON1 change all this to OSC now.
-string SYNTH_OUT2 = "SYNTH:Mackie ASIO Driver";
+//string SYNTH_OUT1 = "SYNTH:ASIO4ALL v2"; //TODON1 change all this to OSC now.
+//string SYNTH_OUT2 = "SYNTH:Mackie ASIO Driver";
 
 
 // All the neb variables.
@@ -30,11 +30,11 @@ public void On_KBD_NOTE()
     // Test for note on or off.
     if(KBD_NOTE.Value > 0)
     {
-        syn.NoteOn(KBD_NOTE.Value, 0.9);
+        //syn.NoteOn(KBD_NOTE.Value, 0.9);
     }
     else
     {
-        syn.NoteOff(KBD_NOTE.Value);
+        //syn.NoteOff(KBD_NOTE.Value);
     }
 }
 
@@ -43,11 +43,11 @@ public void On_VKBD_NOTE()
     // Test for note on or off.
     if(VKBD_NOTE.Value > 0)
     {
-        syn.NoteOn(VKBD_NOTE.Value, 0.9);
+        //syn.NoteOn(VKBD_NOTE.Value, 0.9);
     }
     else
     {
-        syn.NoteOff(VKBD_NOTE.Value);
+        //syn.NoteOff(VKBD_NOTE.Value);
     }
 }
 
@@ -55,7 +55,7 @@ public void On_MOD1()
 {
     //print(MOD1.Value);
 
-    syn.lpf.Freq = 200 + MOD1.Value * 50;
+    //syn.lpf.Freq = 200 + MOD1.Value * 50;
     //syn.bpf.Freq = 200 + MOD1.Value * 50;
 }
 
@@ -68,7 +68,7 @@ public void On_CTL3()
 {
     if(random(0, 10) == 0)
     {
-        syn.NoteOn(50 + CTL3.Value % 20, 0.7);
+        //syn.NoteOn(50 + CTL3.Value % 20, 0.7);
     }
 }
 
@@ -88,25 +88,25 @@ public override void setupNeb()
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
-    CPU_USG = createVariable("cpu", 0, 0, 100);
+    CPU_USG = createVariable("cpu", 0, 0, 100); // special
     SYN_LVL = createVariable("synlvl", 0, 0, 100);
 
     // All the output channels.
     if(_local)
     {
-        SYNTH_MAIN = createChannel("syn", SYNTH_OUT1, 1, syn);
+        //SYNTH_MAIN = createChannel("syn", SYNTH_OUT1, 1);
         createController(VKEY_IN, 1, NoteControl, VKBD_NOTE);
     }
     else
     {
-        SYNTH_MAIN = createChannel("syn", SYNTH_OUT2, 1, syn);
+        //SYNTH_MAIN = createChannel("syn", SYNTH_OUT2, 1);
         createController(MIDI_IN, 1, 1, MOD1); // modulate eq
         createController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
         createController(MIDI_IN, 1, 3, CTL3); // another controller
         createController(MIDI_IN, 1, 4, BACK_COLOR); // change ui color
         createController(MIDI_IN, 1, NoteControl, KBD_NOTE); // noteOn/Off
     }
-    setWobbler(SYNTH_MAIN, 0.2);
+    //setWobbler(SYNTH_MAIN, 0.2);
 
     // levers
     createLever(BACK_COLOR);

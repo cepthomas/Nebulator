@@ -65,6 +65,8 @@ public override void setupNeb()
     {
         // All the outputs.
         string MY_MIDI_OUT = "MIDI:loopMIDI Port 1";
+        string MY_MIDI_IN = "MIDI:MPK mini";
+
         PIANO = createChannel("piano", MY_MIDI_OUT, 1);
         BASS = createChannel("bass", MY_MIDI_OUT, 2);
         SYNTH = createChannel("synth", MY_MIDI_OUT, 3);

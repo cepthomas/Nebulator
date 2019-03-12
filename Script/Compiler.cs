@@ -259,7 +259,6 @@ namespace Nebulator.Script
                 if(!Min)
                 {
                     cp.ReferencedAssemblies.Add("NAudio.dll");
-                    cp.ReferencedAssemblies.Add("Nebulator.Synth.dll");
                 }
 
                 // Add the generated source files.
@@ -443,7 +442,6 @@ namespace Nebulator.Script
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "using Nebulator.Device;",
-                Min ? "" : "using Nebulator.Synth;",
                 Min ? "" : "using NAudio;",
                 "namespace Nebulator.UserScript",
                 "{",

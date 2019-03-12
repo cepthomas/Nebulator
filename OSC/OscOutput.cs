@@ -151,8 +151,8 @@ namespace Nebulator.OSC
                     switch (step)
                     {
                         case StepNoteOn non:
-                            // /note/ channel notenum vel
-                            msg = new Message() { Address = "/note" };
+                            // /noteon/ channel notenum vel
+                            msg = new Message() { Address = "/noteon" };
                             msg.Data.Add(non.ChannelNumber);
                             msg.Data.Add(non.NoteNumber);
                             msg.Data.Add(non.VelocityToPlay);
@@ -173,11 +173,10 @@ namespace Nebulator.OSC
                             break;
 
                         case StepNoteOff noff:
-                            // /note/ channel notenum 0
-                            msg = new Message() { Address = "/note" };
+                            // /noteoff/ channel notenum
+                            msg = new Message() { Address = "/noteoff" };
                             msg.Data.Add(noff.ChannelNumber);
                             msg.Data.Add(noff.NoteNumber);
-                            msg.Data.Add(0);
 
                             break;
 

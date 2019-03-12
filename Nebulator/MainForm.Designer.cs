@@ -36,10 +36,10 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
-            this.levers = new Nebulator.Levers();
-            this.timeMaster = new Nebulator.Controls.TimeControl();
             this.textViewer = new Nebulator.Controls.TextViewer();
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
+            this.levers = new Nebulator.Levers();
+            this.timeMaster = new Nebulator.Controls.TimeControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,12 +63,14 @@
             // 
             this.potSpeed.ControlColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
+            this.potSpeed.Label = "";
             this.potSpeed.Location = new System.Drawing.Point(117, 32);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
             this.potSpeed.Size = new System.Drawing.Size(32, 32);
             this.potSpeed.TabIndex = 33;
+            this.potSpeed.Taper = Nebulator.Controls.Taper.Linear;
             this.toolTip.SetToolTip(this.potSpeed, "Speed in Ticks per minute (sorta BPM)");
             this.potSpeed.Value = 100D;
             this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
@@ -249,6 +251,21 @@
             this.btnAbout.ToolTipText = "General info and a list of your devices";
             this.btnAbout.Click += new System.EventHandler(this.About_Click);
             // 
+            // textViewer
+            // 
+            this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textViewer.Location = new System.Drawing.Point(10, 126);
+            this.textViewer.Name = "textViewer";
+            this.textViewer.Size = new System.Drawing.Size(714, 412);
+            this.textViewer.TabIndex = 41;
+            // 
+            // timerHousekeep
+            // 
+            this.timerHousekeep.Interval = 10;
+            this.timerHousekeep.Tick += new System.EventHandler(this.timerHousekeep_Tick);
+            // 
             // levers
             // 
             this.levers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -274,21 +291,6 @@
             this.timeMaster.Size = new System.Drawing.Size(175, 34);
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
-            // 
-            // textViewer
-            // 
-            this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textViewer.Location = new System.Drawing.Point(10, 126);
-            this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(714, 412);
-            this.textViewer.TabIndex = 41;
-            // 
-            // timerHousekeep
-            // 
-            this.timerHousekeep.Interval = 10;
-            this.timerHousekeep.Tick += new System.EventHandler(this.timerHousekeep_Tick);
             // 
             // MainForm
             // 
