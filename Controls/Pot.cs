@@ -13,7 +13,7 @@ using Nebulator.Common;
 namespace Nebulator.Controls
 {
     /// <summary></summary>
-    public enum Taper { Linear, Log } // TODON Log sort of works but needs more debug.
+    public enum Taper { Linear, Log } // TODON2 Log sort of works but needs more debug.
 
     /// <summary>
     /// Control potentiometer.

@@ -4,7 +4,7 @@
 // IO devices.
 string VKEY_IN = "VKEY:";
 string MIDI_IN = "MIDI:MPK mini";
-string SYNTH_OUT1 = "SYNTH:ASIO4ALL v2"; //TODON1 change all this now.
+string SYNTH_OUT1 = "SYNTH:ASIO4ALL v2"; //TODON1 change all this to OSC now.
 string SYNTH_OUT2 = "SYNTH:Mackie ASIO Driver";
 
 
@@ -23,79 +23,6 @@ NChannel SYNTH_MAIN;
 
 // Use virtual kbd.
 bool _local = true;
-
-// The overall synthesizer.
-public class MySynth : UGen
-{
-    public Voicer vcr1 = new Voicer(typeof(MyVoice), 5) { Volume = 0.8 };
-    public LPF lpf = new LPF() { Freq = 400, Q = 0.5, Volume = 0.8 };
-    public BPF bpf = new BPF() { Freq = 400, Q = 0.5, Volume = 0.8 };
-    public ADSR adsrF = new ADSR() { AttackTime = 0.5, DecayTime = 0.5, SustainLevel = 0.5, ReleaseTime = 0.2, Volume = 0.8 };
-    public Pan pan = new Pan() { Location = 0.0, Volume = 0.8 };
-
-    public Analyzer an1 = new Analyzer() { };
-
-    public override Sample Next2()
-    {
-        double dout = vcr1.Next();
-//        bpf.Freq = 400 + adsrF.Next(1) * 2000;
-        lpf.Freq = 400 + adsrF.Next(1) * 2000;
-   //     dout = lpf.Next(dout);
-//        dout = bpf.Next(dout);
-        dout = an1.Next(dout);
-        Sample sout = pan.Next2(dout);
-        return sout;
-    }
-
-    public override void NoteOn(double notenum, double amplitude)
-    {
-        s.print(amplitude);
-        vcr1.NoteOn(notenum, amplitude/2);
-        adsrF.KeyDown();
-    }
-
-    public override void NoteOff(double notenum)
-    {
-        vcr1.NoteOff(notenum);
-        adsrF.KeyUp();
-    }
-}
-
-// A single voice in the generator.
-public class MyVoice : UGen
-{
-    // 2 oscs slightly detuned and synced
-    // public PulseOsc osc1 = new PulseOsc() { Freq = 400, Width = 0.1, Volume = 0.8 };
-    // public PulseOsc osc2 = new PulseOsc() { Freq = 405, Width = 0.1, Volume = 0.8 };
-    public SinOsc osc1 = new SinOsc() { Freq = 400, Volume = 0.5 };
-    public SinOsc osc2 = new SinOsc() { Freq = 405, Volume = 0.5 };
-    public Mix mix1 = new Mix() { Volume = 0.8 };
-    public ADSR adsr = new ADSR() { AttackTime = 0.2, DecayTime = 0.2, SustainLevel = 0.7, ReleaseTime = 0.2, Volume = 0.8 };
-
-    public override void NoteOn(double notenum, double amplitude)
-    {
-        s.print(amplitude);
-        osc1.NoteOn(notenum, amplitude);
-//        osc2.NoteOn(notenum * 1.01, amplitude);
-        adsr.KeyDown();
-    }
-
-    public override void NoteOff(double notenum)
-    {
-        // Don't actually NoteOff() the oscs - let the ADSR ramp down.
-        adsr.KeyUp();
-    }
-
-    public override double Next()
-    {
-        //double dout = adsr.Next(mix1.Next(osc1.Next(), osc2.Next()));
-        double dout = adsr.Next(osc1.Next());
-        return dout;
-    }
-}
-
-// The topmost.
-MySynth syn = new MySynth();
 
 ///// Event handlers /////
 public void On_KBD_NOTE()

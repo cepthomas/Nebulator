@@ -279,7 +279,7 @@ namespace Nebulator.Script
                     paths.Add(fullpath);
                 }
 
-                // Make it compile. TODON3 try Roslyn again. F# too?
+                // Make it compile. Maybe try Roslyn again?
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
 

@@ -72,16 +72,15 @@ namespace Nebulator.Script
         /// <param name="name">UI name</param>
         /// <param name="devName">Device name</param>
         /// <param name="channelNum"></param>
-        /// <param name="context">Optional - used by synth. TODON2 hide?</param>
-        protected NChannel createChannel(string name, string devName, int channelNum, object context = null)
+        protected NChannel createChannel(string name, string devName, int channelNum)
         {
             NChannel nt = new NChannel()
             {
                 Name = name,
                 DeviceName = devName,
-                ChannelNumber = channelNum,
-                Context = context
+                ChannelNumber = channelNum
             };
+            
             Channels.Add(nt);
             return nt;
         }

@@ -183,7 +183,7 @@ namespace Nebulator
             // Catches runtime errors during drawing.
             _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
-            // Init HTTP server. TODON3 use OSC instead now?
+            // Init HTTP server.
             _selfHost = new SelfHost();
             SelfHost.RequestEvent += SelfHost_RequestEvent;
             Task.Run(() => { _selfHost.Run(); });
@@ -653,7 +653,7 @@ namespace Nebulator
                 // Levers and meters.
                 levers.Init(_script.Levers, _script.Displays);
 
-                // Dig out the cpu load meter. TODON2 kinda sloppy.
+                // Dig out the cpu load meter. TODON1 kinda sloppy.
                 foreach(NVariable nvar in _script.Variables)
                 {
                     // CPU_USG = createVariable("cpu", 0, 0, 100);
@@ -848,7 +848,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (chkPlay.Checked && _script != null && e.Step != null) //TODON2 enable/disable separately from chkPlay?
+                if (chkPlay.Checked && _script != null && e.Step != null) //TODON1 enable/disable separately from chkPlay?
                 {
                     try
                     {
@@ -1276,7 +1276,7 @@ namespace Nebulator
                 mdText.Add($"- None");
             }
 
-            // Main help file. TODON1 Markdeep?
+            // Main help file.
             mdText.Add(File.ReadAllText(@"Resources\README.md"));
 
             // Put it together.
