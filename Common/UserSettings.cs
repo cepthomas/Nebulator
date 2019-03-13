@@ -36,6 +36,9 @@ namespace Nebulator.Common
 
         [DisplayName("Lock UI"), Description("Forces UI to always topmost."), Browsable(true)]
         public bool LockUi { get; set; } = false;
+
+        [DisplayName("CPU Meter"), Description("Show a CPU usage meter."), Browsable(true)]
+        public bool CpuMeter { get; set; } = true;
         #endregion
 
         #region Persisted non-editable properties

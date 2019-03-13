@@ -9,7 +9,7 @@ using Nebulator.Script;
 
 namespace Nebulator
 {
-    public partial class Levers : UserControl
+    public partial class Levers : UserControl//TODON1 wrong name for this
     {
         #region Fields
         /// <summary>Internal flag.</summary>

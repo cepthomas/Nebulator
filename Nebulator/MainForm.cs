@@ -36,11 +36,11 @@ namespace Nebulator
         /// <summary>App logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
 
-        /// <summary>Measure how fast we be.</summary>
-        PerformanceCounter _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+        /// <summary>Measure how fast we be. Delay instantiation as it is a slow process.</summary>
+        PerformanceCounter _cpuPerf = null;
 
         /// <summary>Show how fast we be.</summary>
-        NVariable _cpuVar = null;
+        NDisplay _cpuMeter = null;
 
         /// <summary>Fast timer.</summary>
         MmTimerEx _timer = new MmTimerEx();
@@ -273,10 +273,14 @@ namespace Nebulator
             // in the computer. However, the Processor (% Process Time) is scaled by the number of logical processors. To get average
             // usage across a computer, divide the result by Environment.ProcessorCount.
 
-            if(_cpuVar != null)
+            if(UserSettings.TheSettings.CpuMeter)
             {
-                double pct = _cpuPerf.NextValue();
-                _cpuVar.Value = pct;
+                if (_cpuPerf == null)
+                {
+                    _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                }
+
+                _cpuMeter.BoundVar.Value = _cpuPerf.NextValue();
             }
         }
         #endregion
@@ -651,17 +655,23 @@ namespace Nebulator
                 }
 
                 // Levers and meters.
-                levers.Init(_script.Levers, _script.Displays);
-
-                // Dig out the cpu load meter. TODON1 kinda sloppy.
-                foreach(NVariable nvar in _script.Variables)
+                if(UserSettings.TheSettings.CpuMeter)
                 {
-                    // CPU_USG = createVariable("cpu", 0, 0, 100);
-                    if(nvar.Name.ToUpper().Contains("CPU"))
+                    _cpuMeter = new NDisplay()
                     {
-                        _cpuVar = nvar;
-                    }
+                        DisplayType = DisplayType.Chart,
+                        BoundVar = new NVariable()
+                        {
+                            Min = 0,
+                            Max = 100,
+                            Name = "cpu",
+                            Value = 0
+                        }
+                    };
+
+                    _script.Displays.Insert(0, _cpuMeter);
                 }
+                levers.Init(_script.Levers, _script.Displays);
             }
 
             ///// Init other controls.

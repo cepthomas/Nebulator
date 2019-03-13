@@ -16,7 +16,6 @@ NVariable VKBD_NOTE;
 NVariable CTL2;
 NVariable CTL3;
 NVariable SYN_LVL;
-NVariable CPU_USG;
 
 // All the output channels.
 NChannel SYNTH_MAIN;
@@ -88,7 +87,6 @@ public override void setupNeb()
     MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
     KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
-    CPU_USG = createVariable("cpu", 0, 0, 100); // special
     SYN_LVL = createVariable("synlvl", 0, 0, 100);
 
     // All the output channels.
@@ -113,7 +111,6 @@ public override void setupNeb()
     createLever(MOD1);
 
     // meters
-    createDisplay(CPU_USG, Chart);
     createDisplay(SYN_LVL, LinearMeter);
 }
 
