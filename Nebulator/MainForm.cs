@@ -20,8 +20,6 @@ using Nebulator.Midi;
 using Nebulator.OSC;
 
 
-// TODON3 Remove Device dependency in Script project for NProcessing.
-
 
 namespace Nebulator
 {
@@ -858,7 +856,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (chkPlay.Checked && _script != null && e.Step != null) //TODON1 enable/disable separately from chkPlay?
+                if (chkPlay.Checked && _script != null && e.Step != null) //TODO enable/disable separately from chkPlay?
                 {
                     try
                     {

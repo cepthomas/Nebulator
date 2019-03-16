@@ -25,7 +25,7 @@ namespace Nebulator.Test
     {
         public override void RunSuite()
         {
-            // TODON3 this: Server debug stuff.
+            // TODO this: Server debug stuff. Or just use OSC?
             TestClient client = new TestClient();
             Task.Run(async () => { await client.Run(); });
 
