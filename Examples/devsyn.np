@@ -4,7 +4,7 @@
 // IO devices.
 string VKEY_IN = "VKEY:";
 string MIDI_IN = "MIDI:MPK mini";
-string SYNTH_OUT = "OSC:1234";
+string SYNTH_OUT = "OSC:127.0.0.1:1234";
 
 
 // All the neb variables.
@@ -19,7 +19,7 @@ NVariable CTL3;
 NChannel SYNTH_MAIN;
 
 // Use virtual kbd.
-bool _local = true;
+bool _minimal = true;
 
 ///// Event handlers /////
 public void On_KBD_NOTE()
@@ -91,7 +91,7 @@ public override void setupNeb()
     setWobbler(SYNTH_MAIN, 0.2);
 
     // All the inputs.
-    if(_local)
+    if(_minimal)
     {
         createController(VKEY_IN, 1, NoteControl, VKBD_NOTE);
     }

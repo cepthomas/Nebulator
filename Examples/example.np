@@ -56,13 +56,13 @@ double[] _scaleNotes;
 double[] _chordNotes;
 
 // Use wingm and virtual kbd only.
-bool _local = true;
+bool _minimal = true;
 
 
 ////// Nebulator midi stuff //////
 public override void setupNeb()
 {
-    string MY_MIDI_OUT = _local ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:yours";
+    string MY_MIDI_OUT = _minimal ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:yours";
 
     // All the neb variables.
     COL1 = createVariable("color", 200, 0, 255); // change color
@@ -194,7 +194,7 @@ public override void setupNeb()
 
 public override void setupNeb2()
 {
-    if(_local)
+    if(_minimal)
     {
         sendPatch(KEYS, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);

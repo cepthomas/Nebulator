@@ -402,9 +402,10 @@ namespace Nebulator
                     // Finish it up.
                     if (nout != null)
                     {
+                        nout.DeviceLogEvent += Device_LogEvent;
+
                         if (nout.Init(chan.DeviceName))
                         {
-                            nout.DeviceLogEvent += Device_LogEvent;
                             chan.Device = nout;
                             _outputs.Add(chan.DeviceName, nout);
                         }
@@ -917,28 +918,35 @@ namespace Nebulator
         /// </summary>
         void Device_LogEvent(object sender, DeviceLogEventArgs e)
         {
-            bool logit = true;
-
-            switch(e.DeviceLogCategory)
+            BeginInvoke((MethodInvoker)delegate ()
             {
-                case DeviceLogCategory.Recv:
-                    logit = NebSettings.TheSettings.MonitorInput;
-                    break;
+                // Route all events through log.
 
-                case DeviceLogCategory.Send:
-                    logit = NebSettings.TheSettings.MonitorOutput;
-                    break;
-            }
-
-            if(logit)
-            {
-                BeginInvoke((MethodInvoker)delegate ()
+                switch (e.DeviceLogCategory)
                 {
-                    // Route all events through log.
-                    string s = $"{e.DeviceLogCategory} {_stepTime} {e.Message}";
-                    _logger.Info(s);
-                });
-            }
+                    case DeviceLogCategory.Error:
+                        _logger.Error($"{_stepTime} {e.Message}");
+                        break;
+
+                    case DeviceLogCategory.Info:
+                        _logger.Info($"{_stepTime} {e.Message}");
+                        break;
+
+                    case DeviceLogCategory.Recv:
+                        if (NebSettings.TheSettings.MonitorInput)
+                        {
+                            _logger.Info($"RCV: {_stepTime} {e.Message}");
+                        }
+                        break;
+
+                    case DeviceLogCategory.Send:
+                        if (NebSettings.TheSettings.MonitorOutput)
+                        {
+                            _logger.Info($"SND: {_stepTime} {e.Message}");
+                        }
+                        break;
+                }
+            });
         }
 
         /// <summary>

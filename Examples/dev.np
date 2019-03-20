@@ -35,7 +35,10 @@ int[] _notesPlaying = new int[128];
 
 
 // Use win gm and virtual kbd only. Otherwise all midi.
-bool _local = true;
+bool _minimal = true;
+
+
+string SYNTH_OUT = "OSC:127.0.0.1:1234";
 
 
 public override void setupNeb()
@@ -49,7 +52,7 @@ public override void setupNeb()
     VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // IO devices.
-    if(_local)
+    if(_minimal)
     {
         // All the outputs.
         string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
@@ -134,7 +137,7 @@ public override void setupNeb()
 
 public override void setupNeb2()
 {
-    if(_local)
+    if(_minimal)
     {
         sendPatch(PIANO, AcousticGrandPiano);
         sendPatch(BASS, AcousticBass);
