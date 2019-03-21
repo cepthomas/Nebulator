@@ -50,6 +50,12 @@ namespace Nebulator.Script
         public virtual void step() { }
         #endregion
 
+
+
+
+
+
+
         #region Script callable functions
         /// <summary>
         /// Normal factory.
@@ -385,6 +391,15 @@ namespace Nebulator.Script
             List<double> notes = NoteUtils.GetScaleNotes(scale, key);
             return notes != null ? notes.ToArray() : new double[0];
         }
-        #endregion
+
+        /// <summary>Tests for the value in the following list.</summary>
+        /// <param name="val"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        protected bool isOneOf(int val, params int[] list)
+        {
+            return list.Contains(val);
+        }
+         #endregion
     }
 }

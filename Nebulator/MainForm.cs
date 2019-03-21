@@ -126,7 +126,7 @@ namespace Nebulator
             _surface.TopMost = UserSettings.TheSettings.LockUi;
 
             // The rest of the controls.
-            textViewer.Colors.Add("ERROR", Color.LightPink);
+            textViewer.Colors.Add("ERROR:", Color.LightPink);
             textViewer.Colors.Add("WARNING:", Color.Plum);
 
             btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
@@ -267,18 +267,23 @@ namespace Nebulator
         /// <param name="e"></param>
         void timerHousekeep_Tick(object sender, EventArgs e)
         {
-            // the Processor (% Processor Time) counter will be out of 100 and will give the total usage across all processors/cores/etc
-            // in the computer. However, the Processor (% Process Time) is scaled by the number of logical processors. To get average
-            // usage across a computer, divide the result by Environment.ProcessorCount.
+            // The Processor (% Processor Time) counter will be out of 100 and will give the total usage across all
+            // processors /cores/etc in the computer. However, the Processor (% Process Time) is scaled by the number
+            // of logical processors. To get average usage across a computer, divide the result by Environment.ProcessorCount.
 
             if(UserSettings.TheSettings.CpuMeter)
             {
-                if (_cpuPerf == null)
+                if(_cpuMeter != null && _cpuMeter.BoundVar != null)
                 {
-                    _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                    if (_cpuPerf == null)
+                    {
+                        _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                    }
+                    else
+                    {
+                        _cpuMeter.BoundVar.Value = _cpuPerf.NextValue();
+                    }
                 }
-
-                _cpuMeter.BoundVar.Value = _cpuPerf.NextValue();
             }
         }
         #endregion
