@@ -91,5 +91,68 @@ namespace Nebulator.Script
             }
         }
         #endregion
+
+        #region Utilities
+
+        /// <summary>
+        /// Generate steps from sequence notes.
+        /// </summary>
+        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="seq">Which notes to send.</param>
+        /// <param name="startTick">Which tick toB start at.</param>
+        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
+        {
+            StepCollection steps = new StepCollection();
+
+            foreach (NSequenceElement seqel in seq.Elements)
+            {
+                // Create the note start and stop times.
+                int toffset = startTick == -1 ? 0 : channel.NextTime();
+
+                Time startNoteTime = new Time(startTick, toffset) + seqel.When;
+                Time stopNoteTime = startNoteTime + seqel.Duration;
+
+                // Is it a function?
+                if (seqel.ScriptFunction != null)
+                {
+                    StepInternal step = new StepInternal()
+                    {
+                        Device = channel.Device,
+                        ChannelNumber = channel.ChannelNumber,
+                        ScriptFunction = seqel.ScriptFunction
+                    };
+                    steps.AddStep(startNoteTime, step);
+                }
+                else // plain ordinary
+                {
+                    // Process all note numbers.
+                    foreach (int noteNum in seqel.Notes)
+                    {
+                        ///// Note on.
+                        double vel = channel.NextVol(seqel.Volume);
+                        StepNoteOn step = new StepNoteOn()
+                        {
+                            Device = channel.Device,
+                            ChannelNumber = channel.ChannelNumber,
+                            NoteNumber = noteNum,
+                            Velocity = vel,
+                            VelocityToPlay = vel,
+                            Duration = seqel.Duration
+                        };
+                        steps.AddStep(startNoteTime, step);
+
+                        //// Maybe add a deferred stop note.
+                        //if (stopNoteTime != startNoteTime)
+                        //{
+                        //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
+                        //}
+                        //// else client is taking care of it.
+                    }
+                }
+            }
+
+            return steps;
+        }
+        #endregion
     }
 }

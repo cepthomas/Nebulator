@@ -235,7 +235,7 @@ public void On_BACK_COLOR()
 public void On_CTL2()
 {
     // 0 -> 127 in
-    int newval = (int)map(CTL2.Value, 0, 127, 0, 16383);
+    int newval = (int)Utils.Map(CTL2.Value, 0, 127, 0, 16383);
     //print("On_CTL2:", newval);
     sendController(SYNTH, PitchControl, newval);
 }
@@ -292,6 +292,6 @@ public void On_KBD_NOTE()
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
-    int sn = (int)map(mouseX, 0, width, 55, 70);
+    int sn = (int)Utils.Map(mouseX, 0, width, 55, 70);
     sendNote(SYNTH, sn, 0.8, 0.48);
 }

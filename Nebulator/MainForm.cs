@@ -584,7 +584,7 @@ namespace Nebulator
                         // Gen steps for each sequence.
                         foreach (NSequence seq in schannel.Sequences)
                         {
-                            StepCollection stepsToAdd = _script.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
+                            StepCollection stepsToAdd = ScriptCore.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
                             _compiledSteps.Add(stepsToAdd);
                             seqOffset += seq.Length;
                         }
