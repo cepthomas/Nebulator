@@ -10,7 +10,7 @@ namespace Nebulator
     /// <summary>
     /// Common channel controller.
     /// </summary>
-    public partial class ChannelControl : UserControl
+    public partial class ChannelControl : UserControl //TODO needs pan also.
     {
         #region Properties
         /// <summary>

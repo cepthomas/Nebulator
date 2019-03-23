@@ -14,10 +14,8 @@ namespace Nebulator.Controls
         Time _current = new Time();
         int _maxTick = 0;
         int _lastPos = 0;
-        // Main font.
-        Font _font1 = new Font("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
-        // Secondary font.
-        Font _font2 = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Point, 0);
+        Font _fontLarge = new Font("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
+        Font _fontSmall = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Point, 0);
         #endregion
 
         #region Properties
@@ -130,17 +128,17 @@ namespace Nebulator.Controls
 #if _SHOW_TOCK
             // Also need to make control 220px wide.
             string sval = $"{Major:000}.{Minor:00}";
-            pe.Graphics.DrawString(sval, _font1, Brushes.Black, ClientRectangle, format);
+            pe.Graphics.DrawString(sval, _fontLarge, Brushes.Black, ClientRectangle, format);
             Rectangle r2 = new Rectangle(ClientRectangle.X + 120, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
             sval = GetTimeDef(_current.Tick);
-            pe.Graphics.DrawString(sval, _font2, Brushes.Black, r2, format);
+            pe.Graphics.DrawString(sval, _fontSmall, Brushes.Black, r2, format);
 #else
             string sval = $"{_current.Tick:000}";
-            pe.Graphics.DrawString(sval, _font1, Brushes.Black, ClientRectangle, format);
+            pe.Graphics.DrawString(sval, _fontLarge, Brushes.Black, ClientRectangle, format);
 
             Rectangle r2 = new Rectangle(ClientRectangle.X + 66, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
             sval = GetTimeDef(_current.Tick);
-            pe.Graphics.DrawString(sval, _font2, Brushes.Black, r2, format);
+            pe.Graphics.DrawString(sval, _fontSmall, Brushes.Black, r2, format);
 #endif
         }
         #endregion

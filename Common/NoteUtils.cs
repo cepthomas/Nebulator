@@ -113,8 +113,8 @@ namespace Nebulator.Common
             }
             catch (Exception)
             {
-                //throw new Exception("Invalid note or chord: " + s);
                 notes.Clear();
+                throw new Exception("Invalid note or chord: " + noteString);
             }
 
             return notes;

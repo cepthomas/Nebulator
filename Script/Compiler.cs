@@ -252,14 +252,10 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("System.Drawing.dll");
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
-//                cp.ReferencedAssemblies.Add("SkiaSharp.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Device.dll");
-                // if(!Min)
-                // {
-                    cp.ReferencedAssemblies.Add("NAudio.dll");
-                // }
+                cp.ReferencedAssemblies.Add("NAudio.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -438,7 +434,6 @@ namespace Nebulator.Script
                 "using System.Linq;",
                 "using System.Drawing;",
                 "using System.Windows.Forms;",
-//                "using SkiaSharp;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "using Nebulator.Device;",

@@ -38,7 +38,9 @@ namespace Nebulator.Common
         public bool CpuMeter { get; set; } = true;
         #endregion
 
-
+        #region Persisted non-editable properties
+        [Browsable(false)]
+        public FormInfo MainFormInfo { get; set; } = new FormInfo();
 
         [Browsable(false)]
         public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
@@ -48,13 +50,6 @@ namespace Nebulator.Common
 
         [Browsable(false)]
         public bool MonitorOutput { get; set; } = false;
-
-
-
-
-        #region Persisted non-editable properties
-        [Browsable(false)]
-        public FormInfo MainFormInfo { get; set; } = new FormInfo();
 
         [Browsable(false)]
         public List<string> RecentFiles { get; set; } = new List<string>();
@@ -67,11 +62,6 @@ namespace Nebulator.Common
 
         /// <summary>Current global user settings.</summary>
         public static UserSettings TheSettings { get; set; } = new UserSettings();
-
-        /// <summary>Default constructor.</summary>
-        public UserSettings()
-        {
-        }
 
         #region Persistence
         /// <summary>Save object to file.</summary>

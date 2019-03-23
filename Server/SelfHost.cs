@@ -11,7 +11,7 @@ using Unosquare.Labs.EmbedIO.Modules;
 
 namespace Nebulator.Server
 {
-    public class SelfHost : IDisposable // TODO remove?
+    public class SelfHost : IDisposable // TODO remove? Or just use OSC?
     {
         #region Fields
         /// <summary>The internal server component.</summary>

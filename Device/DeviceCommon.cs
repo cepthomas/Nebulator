@@ -11,12 +11,14 @@ namespace Nebulator.Device
     /// <summary>Category types.</summary>
     public enum DeviceLogCategory { Info, Send, Recv, Error }
 
+    /// <summary>Device has received something.</summary>
     public class DeviceInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
         public Step Step { get; set; } = null;
     }
 
+    /// <summary>Device wants to say something.</summary>
     public class DeviceLogEventArgs : EventArgs
     {
         /// <summary>Category.</summary>

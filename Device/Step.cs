@@ -120,6 +120,7 @@ namespace Nebulator.Device
         }
     }
 
+    /// <summary>Used for patches.</summary>
     public class StepPatch : Step
     {
         /// <summary>Specific patch.</summary>

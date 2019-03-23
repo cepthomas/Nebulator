@@ -19,7 +19,6 @@ namespace Nebulator.Controls
         /// <summary>
         /// Storage.
         /// </summary>
-        //List<double> _buff = null;
         double[] _buff = { };
 
         /// <summary>
