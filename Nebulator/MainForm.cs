@@ -20,7 +20,6 @@ using Nebulator.Midi;
 using Nebulator.OSC;
 
 
-
 namespace Nebulator
 {
     public partial class MainForm : Form
@@ -42,9 +41,6 @@ namespace Nebulator
 
         /// <summary>Fast timer.</summary>
         MmTimerEx _timer = new MmTimerEx();
-
-        /// <summary>Surface form.</summary>
-        Surface _surface = new Surface();
 
         /// <summary>The current script.</summary>
         ScriptCore _script = null;
@@ -103,7 +99,6 @@ namespace Nebulator
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
             UserSettings.Load(appDir);
-            NebSettings.Load(appDir);
             InitializeComponent();
             toolStrip1.Renderer = new Common.CheckBoxRenderer(); // for checked color.
         }
@@ -120,11 +115,6 @@ namespace Nebulator
             WindowState = FormWindowState.Normal;
             BackColor = UserSettings.TheSettings.BackColor;
 
-            // Where we draw.
-            _surface.Visible = true;
-            _surface.Location = new Point(Right, Top);
-            _surface.TopMost = UserSettings.TheSettings.LockUi;
-
             // The rest of the controls.
             textViewer.Colors.Add("ERROR:", Color.LightPink);
             textViewer.Colors.Add("WARNING:", Color.Plum);
@@ -138,8 +128,8 @@ namespace Nebulator
             btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
             btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
 
-            btnMonIn.Checked = NebSettings.TheSettings.MonitorInput;
-            btnMonOut.Checked = NebSettings.TheSettings.MonitorOutput;
+            btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
+            btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
 
             chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
@@ -177,9 +167,6 @@ namespace Nebulator
             KeyPreview = true; // for routing kbd strokes properly
 
             _watcher.FileChangeEvent += Watcher_Changed;
-
-            // Catches runtime errors during drawing.
-            _surface.RuntimeErrorEvent += (object _, Surface.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
 
             // Init HTTP server.
             _selfHost = new SelfHost();
@@ -296,7 +283,7 @@ namespace Nebulator
         {
             // Save the vkbd position.
             _inputs.Values.Where(v => v.GetType() == typeof(VirtualKeyboard.VKeyboard)).ForEach
-                (k => NebSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as VirtualKeyboard.VKeyboard));
+                (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as VirtualKeyboard.VKeyboard));
 
             _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
             _inputs.Clear();
@@ -370,9 +357,9 @@ namespace Nebulator
                 if(vkey != null)
                 {
                     vkey.StartPosition = FormStartPosition.Manual;
-                    vkey.Size = new Size(NebSettings.TheSettings.VirtualKeyboardInfo.Width, NebSettings.TheSettings.VirtualKeyboardInfo.Height);
+                    vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
                     vkey.TopMost = false;
-                    vkey.Location = new Point(NebSettings.TheSettings.VirtualKeyboardInfo.X, NebSettings.TheSettings.VirtualKeyboardInfo.Y);
+                    vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
                     vkey.Show();
                 }
             }
@@ -520,6 +507,9 @@ namespace Nebulator
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 
+                    // Catches runtime errors. TODO not needed now?
+//                    _script.RuntimeErrorEvent += (object _, ScriptCore.RuntimeErrorEventArgs eargs) => { ScriptRuntimeError(eargs); };
+
                     // Note: Need exception handling here to protect from user script errors.
                     try
                     {
@@ -527,15 +517,13 @@ namespace Nebulator
                         InitRuntime();
 
                         // Setup - first step.
-                        _script.setupNeb();
+                        _script.setup();
 
                         // Devices specified in script setupNeb() - create now.
                         CreateDevices();
 
                         // Setup - optional second step.
-                        _script.setupNeb2();
-
-                        _surface.InitSurface(_script);
+                        _script.setup2();
 
                         ProcessRuntime();
 
@@ -548,7 +536,7 @@ namespace Nebulator
                     }
                     catch (Exception ex)
                     {
-                        ScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                        ProcessScriptRuntimeError(ex);
                         ok = false;
                     }
 
@@ -602,7 +590,7 @@ namespace Nebulator
                         // Gen steps for each sequence.
                         foreach (NSequence seq in schannel.Sequences)
                         {
-                            StepCollection stepsToAdd = ScriptUtils.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
+                            StepCollection stepsToAdd = _script.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
                             _compiledSteps.Add(stepsToAdd);
                             seqOffset += seq.Length;
                         }
@@ -748,7 +736,7 @@ namespace Nebulator
                 }
                 catch (Exception ex)
                 {
-                    ScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                    ProcessScriptRuntimeError(ex);
                 }
 
                 //if (_tan.Grab())
@@ -783,25 +771,25 @@ namespace Nebulator
             }
 
             ///// UI updates /////
-            if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && !_needCompile)
-            {
-                //_tan.Arm();
+            //if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && !_needCompile)
+            //{
+            //    //_tan.Arm();
 
-                // Note: Need exception handling here to protect from user script errors.
-                try
-                {
-                    _surface.UpdateSurface();
-                }
-                catch (Exception ex)
-                {
-                    ScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
-                }
+            //    // Note: Need exception handling here to protect from user script errors.
+            //    try
+            //    {
+            //        _surface.UpdateSurface();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        ScriptRuntimeError(new ScriptCore.RuntimeErrorEventArgs() { Exception = ex });
+            //    }
 
-                //if (_tan.Grab())
-                //{
-                //    _logger.Info("UI tan: " + _tan.ToString());
-                //}
-            }
+            //    //if (_tan.Grab())
+            //    //{
+            //    //    _logger.Info("UI tan: " + _tan.ToString());
+            //    //}
+            //}
 
             // Process whatever the script did.
             ProcessRuntime();
@@ -832,7 +820,7 @@ namespace Nebulator
                             }
                             catch (Exception ex)
                             {
-                                ScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                                ProcessScriptRuntimeError(ex);
                             }
                         }
                         else
@@ -862,7 +850,7 @@ namespace Nebulator
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (chkPlay.Checked && _script != null && e.Step != null) //TODO enable/disable separately from chkPlay?
+                if (_script != null && e.Step != null)
                 {
                     try
                     {
@@ -877,7 +865,7 @@ namespace Nebulator
                         }
                         else if (e.Step is StepControllerChange)
                         {
-                            // Control change
+                            // Control change.
                             StepControllerChange scc = e.Step as StepControllerChange;
                             handled = ProcessInput(sender as NInput, scc.ControllerId, scc.ChannelNumber, scc.Value);
                         }
@@ -912,7 +900,7 @@ namespace Nebulator
                     }
                     catch (Exception ex)
                     {
-                        ScriptRuntimeError(new Surface.RuntimeErrorEventArgs() { Exception = ex });
+                        ProcessScriptRuntimeError(ex);
                     }
                 }
             });
@@ -938,14 +926,14 @@ namespace Nebulator
                         break;
 
                     case DeviceLogCategory.Recv:
-                        if (NebSettings.TheSettings.MonitorInput)
+                        if (UserSettings.TheSettings.MonitorInput)
                         {
                             _logger.Info($"RCV: {_stepTime} {e.Message}");
                         }
                         break;
 
                     case DeviceLogCategory.Send:
-                        if (NebSettings.TheSettings.MonitorOutput)
+                        if (UserSettings.TheSettings.MonitorOutput)
                         {
                             _logger.Info($"SND: {_stepTime} {e.Message}");
                         }
@@ -978,16 +966,6 @@ namespace Nebulator
             }
         }
 
-        ///// <summary>
-        ///// UI change event.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //void Levers_Changed(object sender, Levers.LeverChangeEventArgs e)
-        //{
-
-        //}
-
         /// <summary>
         /// Package up the runtime stuff the script may need. Call this before any script updates.
         /// </summary>
@@ -998,7 +976,6 @@ namespace Nebulator
             _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
             _script.Speed = potSpeed.Value;
             _script.Volume = sldVolume.Value;
-            _script.FrameRate = _frameRate;
         }
 
         /// <summary>
@@ -1016,31 +993,84 @@ namespace Nebulator
             {
                 sldVolume.Value = _script.Volume;
             }
-
-            if (_script.FrameRate != _frameRate)
-            {
-                _frameRate = _script.FrameRate;
-                SetUiTimerPeriod();
-            }
         }
+        #endregion
 
         /// <summary>
         /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
         /// </summary>
-        /// <param name="args"></param>
-        void ScriptRuntimeError(Surface.RuntimeErrorEventArgs args)
+        /// <param name="ex"></param>
+        ScriptError ProcessScriptRuntimeError(Exception ex)
         {
             ProcessPlay(PlayCommand.Stop, false);
             SetCompileStatus(false);
 
-            ScriptError err = ScriptUtils.ProcessScriptRuntimeError(args, _compileTempDir);
+            ScriptError err = null;
 
-            if(err != null)
+            // Locate the offending frame.
+            string srcFile = Utils.UNKNOWN_STRING;
+            int srcLine = -1;
+            StackTrace st = new StackTrace(ex, true);
+            StackFrame sf = null;
+
+            for (int i = 0; i < st.FrameCount; i++)
+            {
+                StackFrame stf = st.GetFrame(i);
+                if (stf.GetFileName() != null && stf.GetFileName().ToUpper().Contains(_compileTempDir.ToUpper()))
+                {
+                    sf = stf;
+                    break;
+                }
+            }
+
+            if (sf != null)
+            {
+                // Dig out generated file parts.
+                string genFile = sf.GetFileName();
+                int genLine = sf.GetFileLineNumber() - 1;
+
+                // Open the generated file and dig out the source file and line.
+                string[] genLines = File.ReadAllLines(genFile);
+
+                srcFile = genLines[0].Trim().Replace("//", "");
+
+                int ind = genLines[genLine].LastIndexOf("//");
+                if (ind != -1)
+                {
+                    string sl = genLines[genLine].Substring(ind + 2);
+                    int.TryParse(sl, out srcLine);
+                }
+
+                err = new ScriptError()
+                {
+                    ErrorType = ScriptErrorType.Runtime,
+                    SourceFile = srcFile,
+                    LineNumber = srcLine,
+                    Message = ex.Message
+                };
+            }
+            else // unknown?
+            {
+                err = new ScriptError()
+                {
+                    ErrorType = ScriptErrorType.Runtime,
+                    SourceFile = "",
+                    LineNumber = -1,
+                    Message = ex.Message
+                };
+            }
+
+            if (err != null)
             {
                 _logger.Error(err.ToString());
             }
+
+            return err;
         }
-        #endregion
+
+
+
+
 
         #region File handling
         /// <summary>
@@ -1100,16 +1130,13 @@ namespace Nebulator
                         _fn = fn;
 
                         // This may be coming from the web service...
-                        if(InvokeRequired)
+                        Invoke((MethodInvoker)delegate
                         {
-                            Invoke((MethodInvoker)delegate
-                            {
-                                // Running on the UI thread.
-                                SetCompileStatus(true);
-                                AddToRecentDefs(fn);
-                                Compile();
-                            });
-                        }
+                            // Running on the UI thread.
+                            SetCompileStatus(true);
+                            AddToRecentDefs(fn);
+                            Compile();
+                        });
 
                         Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
                     }
@@ -1245,8 +1272,8 @@ namespace Nebulator
         /// </summary>
         private void Mon_Click(object sender, EventArgs e)
         {
-            NebSettings.TheSettings.MonitorInput = btnMonIn.Checked;
-            NebSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
+            UserSettings.TheSettings.MonitorInput = btnMonIn.Checked;
+            UserSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
         }
 
         /// <summary>
@@ -1398,8 +1425,6 @@ namespace Nebulator
         {
             UserSettings.TheSettings.MainFormInfo.FromForm(this);
             UserSettings.TheSettings.Save();
-
-            NebSettings.TheSettings.Save();
         }
 
         /// <summary>
@@ -1444,7 +1469,6 @@ namespace Nebulator
 
                 // Always safe to update these.
                 SetUiTimerPeriod();
-                _surface.TopMost = UserSettings.TheSettings.LockUi;
 
                 SaveSettings();
             }

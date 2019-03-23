@@ -34,12 +34,23 @@ namespace Nebulator.Common
         [DisplayName("Background Color"), Description("The color used for overall background."), Browsable(true)]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
-        [DisplayName("Lock UI"), Description("Forces UI to always topmost."), Browsable(true)]
-        public bool LockUi { get; set; } = false;
-
         [DisplayName("CPU Meter"), Description("Show a CPU usage meter."), Browsable(true)]
         public bool CpuMeter { get; set; } = true;
         #endregion
+
+
+
+        [Browsable(false)]
+        public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
+
+        [Browsable(false)]
+        public bool MonitorInput { get; set; } = false;
+
+        [Browsable(false)]
+        public bool MonitorOutput { get; set; } = false;
+
+
+
 
         #region Persisted non-editable properties
         [Browsable(false)]

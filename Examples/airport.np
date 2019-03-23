@@ -10,7 +10,7 @@ NVariable COLOR;
 ///// Channels /////
 NChannel SOUND;
 
-bool _local = true;
+bool _minimal = true;
 
 class TapeLoop
 {
@@ -29,13 +29,13 @@ class TapeLoop
 
 List<TapeLoop> loops = new List<TapeLoop>();
 
-public override void setupNeb()
+public override void setup()
 {
     ///// Variables /////
     COLOR = createVariable("color", 240, 0, 255); // change color
 
     ///// Channels /////
-    if(_local)
+    if(_minimal)
     {
         SOUND = createChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1);
     }
@@ -65,15 +65,15 @@ public override void setupNeb()
     loops.Add(new TapeLoop("F5",  20.00, 14.10));
 }
 
-public override void setup() // Processing setup
-{
-    size(600, 600);
-    print("setup()");
-}
+//public override void setup() // Processing setup
+//{
+//    size(600, 600);
+//    print("setup()");
+//}
 
 public override void step()
 {
-    if(tick == 0 && tock == 0 && _local)
+    if(tick == 0 && tock == 0 && _minimal)
     {
         sendPatch(SOUND, Pad2Warm);
     }
@@ -89,47 +89,47 @@ public override void step()
     }
 }
 
-public override void draw()
-{
-    background(COLOR.Value, 100, 200); // means redraw the whole thing
-    int dy = height / (loops.Count + 1);
-    strokeCap(ROUND);
-
-    for (int i = 0; i < loops.Count; i++)
-    {
-        TapeLoop loop = loops[i];
-        int y = (i + 1) * dy;
-
-        // Draw baseline.
-        stroke(128);
-        strokeWeight(2);
-        line(10, y, width - 10, y);
-
-        // Draw ball.
-        int radius = 20;
-        strokeWeight(3);
-
-        int total = (loop.duration + loop.delay).TotalTocks;
-        int pos = stepTime.TotalTocks % total;
-
-        if(pos >= 0)
-        {
-            double x = width * pos / total;
-
-            if(pos < loop.delay.TotalTocks)
-            {
-                fill(220);
-            }
-            else 
-            {
-                fill(20, 240, 100);
-            }
-
-            ellipse(x, y, radius, radius);
-
-            fill(40, 10, 200);
-            textSize(10); 
-            text(loop.snote, x - 15, y - 10);
-        }
-    }
-}
+//public override void draw()
+//{
+//    background(COLOR.Value, 100, 200); // means redraw the whole thing
+//    int dy = height / (loops.Count + 1);
+//    strokeCap(ROUND);
+//
+//    for (int i = 0; i < loops.Count; i++)
+//    {
+//        TapeLoop loop = loops[i];
+//        int y = (i + 1) * dy;
+//
+//        // Draw baseline.
+//        stroke(128);
+//        strokeWeight(2);
+//        line(10, y, width - 10, y);
+//
+//        // Draw ball.
+//        int radius = 20;
+//        strokeWeight(3);
+//
+//        int total = (loop.duration + loop.delay).TotalTocks;
+//        int pos = stepTime.TotalTocks % total;
+//
+//        if(pos >= 0)
+//        {
+//            double x = width * pos / total;
+//
+//            if(pos < loop.delay.TotalTocks)
+//            {
+//                fill(220);
+//            }
+//            else 
+//            {
+//                fill(20, 240, 100);
+//            }
+//
+//            ellipse(x, y, radius, radius);
+//
+//            fill(40, 10, 200);
+//            textSize(10); 
+//            text(loop.snote, x - 15, y - 10);
+//        }
+//    }
+//}

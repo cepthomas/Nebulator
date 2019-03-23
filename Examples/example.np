@@ -47,11 +47,6 @@ NSequence NULL_SEQ;
 
 
 ////// Simple variables for functions. ///////
-double _posX = 50;
-double _posY = 50;
-int _velX = 3;
-int _velY = 3;
-int _ballSize = 40;
 double[] _scaleNotes;
 double[] _chordNotes;
 
@@ -60,7 +55,7 @@ bool _minimal = true;
 
 
 ////// Nebulator midi stuff //////
-public override void setupNeb()
+public override void setup()
 {
     string MY_MIDI_OUT = _minimal ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:yours";
 
@@ -192,7 +187,7 @@ public override void setupNeb()
     _chordNotes = getNotes("C4.o7");
 }
 
-public override void setupNeb2()
+public override void setup2()
 {
     if(_minimal)
     {
@@ -265,84 +260,85 @@ public void On_VKBD_NOTE()
 }
 
 ////// Processing graphics stuff //////
-public override void setup()
-{
-    size(400, 400);
-    //print("setup()");
-}
-
-public override void draw()
-{
-    background(COL1.Value, COL1.Value, COL1.Value);
-
-    if(playing && moveBall())
-    {
-        int notenum = random(40, 70);
-        // sendNote(SYNTH, notenum, 0.8, 1.09);
-    }
-
-    // Draw the ball.
-    noStroke();
-    int x = (int)map(_posX, 0, width, 0, 255);
-    fill(x, (x + 100) % 256, (x + 200) % 256);
-    ellipse(_posX, _posY, _ballSize, _ballSize);
-
-    if (mouseIsPressed)
-    {
-        //print("mouse is pressed");
-        fill(random(255), random(255), random(255));
-        strokeWeight(2);
-        stroke(0, 100);
-        ellipse(mouseX, mouseY, 80, 80);
-    }
-}
-
-public override void mouseClicked()
-{
-    // Note selected based on mouse position.
-    int sn = (int)map(mouseX, 0, width, _scaleNotes[0], _scaleNotes[_scaleNotes.Length-1]);
-    sendNote(SYNTH, sn, 0.8, 0.32);
-}
-
-public override void keyPressed()
-{
-    //print("keyPressed:", key);
-
-    int v = key == 'c' ? 60 : 70;
-    sendNote(KEYS, v, KEYS_DEF_VOL, 1.32);
-}
-
-bool moveBall()
-{
-    bool edge = false;
-
-    ///// Move the ball. /////
-    _posX += _velX;
-    if (_posX <= _ballSize / 2)
-    {
-        _posX = _ballSize / 2;
-        _velX = -_velX;
-        edge = true;
-    }
-    else if (_posX >= width - _ballSize / 2)
-    {
-        _posX = width - _ballSize / 2;
-        _velX = -_velX;
-        edge = true;
-    }
-
-    _posY += _velY;
-    if (_posY <= _ballSize / 2)
-    {
-        _posY = _ballSize / 2;
-        _velY = -_velY;
-        edge = true;
-    }
-    else if (_posY >= height - _ballSize / 2)
-    {
-        _posY = height - _ballSize / 2;
-        _velY = -_velY;
-        edge = true;
-    }
-    return edge;
-}
+//public override void setup()
+//{
+//    size(400, 400);
+//    //print("setup()");
+//}
+//
+//public override void draw()
+//{
+//    background(COL1.Value, COL1.Value, COL1.Value);
+//
+//    if(playing && moveBall())
+//    {
+//        int notenum = random(40, 70);
+//        // sendNote(SYNTH, notenum, 0.8, 1.09);
+//    }
+//
+//    // Draw the ball.
+//    noStroke();
+//    int x = (int)map(_posX, 0, width, 0, 255);
+//    fill(x, (x + 100) % 256, (x + 200) % 256);
+//    ellipse(_posX, _posY, _ballSize, _ballSize);
+//
+//    if (mouseIsPressed)
+//    {
+//        //print("mouse is pressed");
+//        fill(random(255), random(255), random(255));
+//        strokeWeight(2);
+//        stroke(0, 100);
+//        ellipse(mouseX, mouseY, 80, 80);
+//    }
+//}
+//
+//public override void mouseClicked()
+//{
+//    // Note selected based on mouse position.
+//    int sn = (int)map(mouseX, 0, width, _scaleNotes[0], _scaleNotes[_scaleNotes.Length-1]);
+//    sendNote(SYNTH, sn, 0.8, 0.32);
+//}
+//
+//public override void keyPressed()
+//{
+//    //print("keyPressed:", key);
+//
+//    int v = key == 'c' ? 60 : 70;
+//    sendNote(KEYS, v, KEYS_DEF_VOL, 1.32);
+//}
+//
+//bool moveBall()
+//{
+//    bool edge = false;
+//
+//    ///// Move the ball. /////
+//    _posX += _velX;
+//    if (_posX <= _ballSize / 2)
+//    {
+//        _posX = _ballSize / 2;
+//        _velX = -_velX;
+//        edge = true;
+//    }
+//    else if (_posX >= width - _ballSize / 2)
+//    {
+//        _posX = width - _ballSize / 2;
+//        _velX = -_velX;
+//        edge = true;
+//    }
+//
+//    _posY += _velY;
+//    if (_posY <= _ballSize / 2)
+//    {
+//        _posY = _ballSize / 2;
+//        _velY = -_velY;
+//        edge = true;
+//    }
+//    else if (_posY >= height - _ballSize / 2)
+//    {
+//        _posY = height - _ballSize / 2;
+//        _velY = -_velY;
+//        edge = true;
+//    }
+//    return edge;
+//}
+//

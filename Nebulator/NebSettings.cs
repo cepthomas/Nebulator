@@ -17,14 +17,14 @@ namespace Nebulator
     public class NebSettings
     {
         #region Persisted non-editable properties
-        [Browsable(false)]
-        public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
+        // [Browsable(false)]
+        // public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
 
-        [Browsable(false)]
-        public bool MonitorInput { get; set; } = false;
+        // [Browsable(false)]
+        // public bool MonitorInput { get; set; } = false;
 
-        [Browsable(false)]
-        public bool MonitorOutput { get; set; } = false;
+        // [Browsable(false)]
+        // public bool MonitorOutput { get; set; } = false;
         #endregion
 
         #region Fields

@@ -41,10 +41,10 @@ namespace Nebulator.Script
 
         #region Functions that can be overridden in the user script
         /// <summary>Called to initialize Nebulator stuff.</summary>
-        public virtual void setupNeb() { }
+        public virtual void setup() { }
 
         /// <summary>Called if you need to do something with devices after they have been created.</summary>
-        public virtual void setupNeb2() { }
+        public virtual void setup2() { }
 
         /// <summary>Called every Nebulator Tock.</summary>
         public virtual void step() { }
@@ -53,6 +53,94 @@ namespace Nebulator.Script
 
 
 
+        //TODO these??
+        protected double map(double val, double start1, double stop1, double start2, double stop2)
+        {
+            return Utils.Map(val, start1, stop1, start2, stop2);
+        }
+
+
+        protected double random(double max) { return _rand.NextDouble() * max; }
+
+        protected double random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
+
+        protected int random(int max) { return _rand.Next(max); }
+
+        protected int random(int min, int max) { return _rand.Next(min, max); }
+
+        protected double randomGaussian()
+        {
+            double mean = 0;
+            double sigma = 1;
+            var u1 = _rand.NextDouble();
+            var u2 = _rand.NextDouble();
+            var randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+            var randNormal = mean + sigma * randStdNormal;
+            return randNormal;
+        }
+        
+        protected void randomSeed(int seed) { _rand = new Random(seed); }
+
+
+        /// <summary>
+        /// Generate steps from sequence notes.
+        /// </summary>
+        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="seq">Which notes to send.</param>
+        /// <param name="startTick">Which tick toB start at.</param>
+        public StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
+        {
+            StepCollection steps = new StepCollection();
+
+            foreach (NSequenceElement seqel in seq.Elements)
+            {
+                // Create the note start and stop times.
+                int toffset = startTick == -1 ? 0 : channel.NextTime();
+
+                Time startNoteTime = new Time(startTick, toffset) + seqel.When;
+                Time stopNoteTime = startNoteTime + seqel.Duration;
+
+                // Is it a function?
+                if (seqel.ScriptFunction != null)
+                {
+                    StepInternal step = new StepInternal()
+                    {
+                        Device = channel.Device,
+                        ChannelNumber = channel.ChannelNumber,
+                        ScriptFunction = seqel.ScriptFunction
+                    };
+                    steps.AddStep(startNoteTime, step);
+                }
+                else // plain ordinary
+                {
+                    // Process all note numbers.
+                    foreach (int noteNum in seqel.Notes)
+                    {
+                        ///// Note on.
+                        double vel = channel.NextVol(seqel.Volume);
+                        StepNoteOn step = new StepNoteOn()
+                        {
+                            Device = channel.Device,
+                            ChannelNumber = channel.ChannelNumber,
+                            NoteNumber = noteNum,
+                            Velocity = vel,
+                            VelocityToPlay = vel,
+                            Duration = seqel.Duration
+                        };
+                        steps.AddStep(startNoteTime, step);
+
+                        //// Maybe add a deferred stop note.
+                        //if (stopNoteTime != startNoteTime)
+                        //{
+                        //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
+                        //}
+                        //// else client is taking care of it.
+                    }
+                }
+            }
+
+            return steps;
+        }
 
 
 
@@ -359,7 +447,7 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid NChannel for note");
             }
 
-            StepCollection scoll = ScriptUtils.ConvertToSteps(channel, seq, StepTime.Tick);
+            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
             RuntimeSteps.Add(scoll);
         }
 
@@ -400,6 +488,9 @@ namespace Nebulator.Script
         {
             return list.Contains(val);
         }
-         #endregion
+        #endregion
+
+
+
     }
 }

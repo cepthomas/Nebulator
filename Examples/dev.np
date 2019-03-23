@@ -41,7 +41,7 @@ bool _minimal = true;
 string SYNTH_OUT = "OSC:127.0.0.1:1234";
 
 
-public override void setupNeb()
+public override void setup()
 {
     // All the neb variables.
     CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
@@ -135,7 +135,7 @@ public override void setupNeb()
     //SECTION2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
 }
 
-public override void setupNeb2()
+public override void setup2()
 {
     if(_minimal)
     {
@@ -289,119 +289,9 @@ public void On_KBD_NOTE()
     }
 }
 
-
-////////////// processing stuff ////////////////////
-
-public override void setup()
-{
-    // size(200, 400);
-    size(500, 500);
-
-    colorMode(HSB, 360, 100, 100);
-    noStroke(); // draw no lines
-    frameRate(2);
-
-    BACK_COLOR.Value = 100;
-}
-
-public override void keyPressed()
-{
-    print("keyPressed:", key);
-    // size(500, 500);
-}
-
-public override void draw()
-{
-    // drawFan();
-    drawTargets();
-}
-
-void drawFan()
-{
-    noStroke();
-    colorMode(HSB, 360, width, height);
-    background(160); // gray
-
-    double angleStep = 10;
-    int radius = 300;
-
-    for (double angle = 0; angle <= 360; angle += angleStep)
-    {
-        fill(angle, mouseX % width, mouseY % height);
-
-        beginShape();  // (TRIANGLE_FAN);
-        vertex(width / 2, height / 2); // center
-
-        double vx = width / 2 + cos(radians(angle)) * radius;
-        double vy = height / 2 + sin(radians(angle)) * radius;
-        vertex(vx, vy);
-        
-        vx -= 10;
-        vy -= 10;
-        vertex(vx, vy);
-    
-        endShape(CLOSE);
-    }
-}
-
-void drawTargets()
-{
-    //print("draw");
-    background(BACK_COLOR.Value, 100, 200);
-
-    drawTarget(width * 0.15f, height * 0.4f, 100, 10);
-    drawTarget(width * 0.5f, height * 0.5f, 300, 20);
-    drawTarget(width * 0.85f, height * 0.3f, 150, 12);    
-
-    if (mouseIsPressed)
-    {
-        //print("mouse is pressed");
-        fill(random(255), random(255), random(255));
-        strokeWeight(2);
-        stroke(0, 100);
-        ellipse(mouseX, mouseY, 80, 80);
-    }
-}
-
-void drawTarget(double xloc, double yloc, int size, int num)
-{
-    int grayvalues = 255 / num;
-    double steps = size / num;
-    for (int i = 0; i < num; i++)
-    {
-        fill(i * grayvalues, num * 10, 0 % 255);
-        ellipse(xloc, yloc, size - i * steps, size - i * steps);
-    }
-
-    int radius = size / 2;
-    int h = random(0, 360);
-
-    for (int r = radius; r > 0; r-=1)
-    {
-        fill(h, 90, 90);
-        ellipse(xloc, yloc, r * 2, r * 2);
-        h = (h + 1) % 360;
-    }
-}
-
 public override void mouseClicked()
 {
     // Note selected based on mouse position.
     int sn = (int)map(mouseX, 0, width, 55, 70);
     sendNote(SYNTH, sn, 0.8, 0.48);
-}
-
-// Recursive rendering.
-void drawRecursive(double x, double y, double squareSize, double minSize)
-{
-    rect(x, y, squareSize, squareSize);
-    rect(x + squareSize, y, squareSize, squareSize);
-    rect(x, y + squareSize, squareSize, squareSize);
-    
-    if (squareSize > minSize)
-    {
-        drawRecursive(x, y, squareSize / 2, minSize);
-        drawRecursive(x + squareSize, y, squareSize / 2, minSize);
-        drawRecursive(x, y + squareSize, squareSize / 2, minSize);
-    }
 }

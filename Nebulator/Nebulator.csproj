@@ -103,7 +103,6 @@
       <Link>Resources\README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="NebSettings.cs" />
     <Compile Include="TimeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
