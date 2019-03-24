@@ -75,9 +75,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="npfn">Fully qualified path to topmost file.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public ScriptCore Execute(string npfn)
+        public NebScript Execute(string npfn)
         {
-            ScriptCore script = null;
+            NebScript script = null;
 
             // Reset everything.
             _filesToCompile.Clear();
@@ -230,9 +230,9 @@ namespace Nebulator.Script
         /// Top level compiler.
         /// </summary>
         /// <returns>Compiled script</returns>
-        ScriptCore Compile()
+        NebScript Compile()
         {
-            ScriptCore script = null;
+            NebScript script = null;
 
             try // many ways to go wrong...
             {
@@ -285,11 +285,11 @@ namespace Nebulator.Script
                     // Bind to the script interface.
                     foreach (Type t in assy.GetTypes())
                     {
-                        if (t.BaseType != null && t.BaseType.Name == "ScriptCore")
+                        if (t.BaseType != null && t.BaseType.Name == "NebScript")
                         {
                             // We have a good script file. Create the executable object.
                             Object o = Activator.CreateInstance(t);
-                            script = o as ScriptCore;
+                            script = o as NebScript;
                         }
                     }
 
@@ -376,7 +376,7 @@ namespace Nebulator.Script
 
             // Collected init stuff goes in a constructor.
             // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack.
-            codeLines.Add("protected static ScriptCore s;");
+            codeLines.Add("protected static NebScript s;");
             codeLines.Add($"public {_scriptName}() : base()");
             codeLines.Add("{");
             codeLines.Add("s = this;");
@@ -440,7 +440,7 @@ namespace Nebulator.Script
                 "using NAudio;",
                 "namespace Nebulator.UserScript",
                 "{",
-                $"public partial class {_scriptName} : ScriptCore",
+                $"public partial class {_scriptName} : NebScript",
                 "{"
             };
 

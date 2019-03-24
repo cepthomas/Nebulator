@@ -7,11 +7,11 @@ using Nebulator.Common;
 using Nebulator.Device;
 
 
-// Nebulator API stuff.
+// Nebulator script API stuff.
 
 namespace Nebulator.Script
 {
-    public partial class ScriptCore
+    public partial class NebScript
     {
         #region User script properties
         /// <summary>Sound is playing.</summary>

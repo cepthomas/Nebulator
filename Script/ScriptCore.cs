@@ -5,15 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-//using SkiaSharp;
 using NLog;
 using Nebulator.Common;
 using Nebulator.Device;
 
 
+// The internal script stuff.
+
 namespace Nebulator.Script
 {
-    public partial class ScriptCore : IDisposable
+    public partial class NebScript : IDisposable
     {
         #region Fields - internal
         /// <summary>My logger.</summary>

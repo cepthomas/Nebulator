@@ -43,7 +43,7 @@ namespace Nebulator
         MmTimerEx _timer = new MmTimerEx();
 
         /// <summary>The current script.</summary>
-        ScriptCore _script = null;
+        NebScript _script = null;
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -584,7 +584,7 @@ namespace Nebulator
                         // Gen steps for each sequence.
                         foreach (NSequence seq in schannel.Sequences)
                         {
-                            StepCollection stepsToAdd = ScriptCore.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
+                            StepCollection stepsToAdd = NebScript.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
                             _compiledSteps.Add(stepsToAdd);
                             seqOffset += seq.Length;
                         }
@@ -776,7 +776,7 @@ namespace Nebulator
             //    }
             //    catch (Exception ex)
             //    {
-            //        ScriptRuntimeError(new ScriptCore.RuntimeErrorEventArgs() { Exception = ex });
+            //        ScriptRuntimeError(new NebScript.RuntimeErrorEventArgs() { Exception = ex });
             //    }
 
             //    //if (_tan.Grab())

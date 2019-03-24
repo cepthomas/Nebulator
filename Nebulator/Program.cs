@@ -44,7 +44,7 @@ namespace Nebulator
             NebCompiler compiler = new NebCompiler() { Min = false };
 
             // Compile now.
-            ScriptCore _script = compiler.Execute(fn);
+            NebScript _script = compiler.Execute(fn);
 
             int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptErrorType.Error);
 
