@@ -15,7 +15,7 @@ namespace Nebulator.Script
     public enum ChannelState { Normal, Mute, Solo }
 
     /// <summary>Display types.</summary>
-    public enum DisplayType { LinearMeter, LogMeter, Chart };
+    public enum DisplayType { LinearMeter, LogMeter, Chart }
 
     /// <summary>
     /// One bound variable.
@@ -187,6 +187,42 @@ namespace Nebulator.Script
         }
     }
 
+
+
+    public class NComposition
+    {
+        public List<NChannel> Instruments { get; set; } = new List<NChannel>();
+
+        public NComposition(List<string> instNames)
+        {
+
+        }
+
+        // class OneLine
+        // {
+        //     Time when;
+        //     List<NSequence>> what;
+        // }
+
+        public Dictionary<Time, List<NSequence>> Steps { get; set; } = new Dictionary<Time, List<NSequence>>();
+
+
+        public void Add(List<string> parts)
+        {
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+    /* TODO!!
     /// <summary>
     /// One top level section.
     /// </summary>
@@ -230,19 +266,33 @@ namespace Nebulator.Script
         public List<NSequence> Sequences { get; set; } = null;
         #endregion
     }
+    */
+
 
     /// <summary>
     /// One sequence definition in the composition.
     /// </summary>
-    public class NSequence
+    public class NSequence //TODO become part of new model?
     {
         #region Properties
         /// <summary>List of notes or other elements.</summary>
         public List<NSequenceElement> Elements { get; set; } = new List<NSequenceElement>();
 
-        /// <summary>Length in ticks.</summary>
-        public int Length { get; set; } = 1;
+        ///// <summary>Length in ticks.</summary>
+        //public int Length { get; set; } = 1;
         #endregion
+
+
+
+
+        public void Add(List<string> parts)
+        {
+
+        }
+
+
+
+
 
         /// <summary>
         /// Like: Z.Add(00.00, "G3", 90, 0.60).
@@ -321,7 +371,8 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSequence: Length:{Length}";
+            return $"NSequence: ";
+            //return $"NSequence: Length:{Length}";
         }
     }
 

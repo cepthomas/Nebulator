@@ -167,23 +167,23 @@ namespace Nebulator.Script
         /// <param name="length">Length in ticks.</param>
         protected NSequence createSequence(int length)
         {
-            NSequence nseq = new NSequence() { Length = length };
+            NSequence nseq = new NSequence();// { Length = length };
             Sequences.Add(nseq);
             return nseq;
         }
 
-        /// <summary>
-        /// Normal factory.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="start"></param>
-        /// <param name="length">Length in ticks.</param>
-        protected NSection createSection(string name, int start, int length)
-        {
-            NSection nsec = new NSection() { Name = name, Start = start, Length = length };
-            Sections.Add(nsec);
-            return nsec;
-        }
+        ///// <summary>
+        ///// Normal factory.
+        ///// </summary>
+        ///// <param name="name"></param>
+        ///// <param name="start"></param>
+        ///// <param name="length">Length in ticks.</param>
+        //protected NSection createSection(string name, int start, int length)
+        //{
+        //    NSection nsec = new NSection() { Name = name, Start = start, Length = length };
+        //    Sections.Add(nsec);
+        //    return nsec;
+        //}
 
         /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
         /// <param name="channel">Which channel to send it on.</param>
@@ -417,9 +417,5 @@ namespace Nebulator.Script
             return _rand.Next(min, max);
         }
         #endregion
-
-
-
-
     }
 }

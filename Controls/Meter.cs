@@ -8,7 +8,7 @@ using Nebulator.Common;
 namespace Nebulator.Controls
 {
     /// <summary>Display types.</summary>
-    public enum MeterType { Linear, Log, ContinuousLine, ContinuousDots };
+    public enum MeterType { Linear, Log, ContinuousLine, ContinuousDots }
 
     /// <summary>
     /// Implements a rudimentary volume meter.

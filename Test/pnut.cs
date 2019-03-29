@@ -21,7 +21,7 @@ using System.Diagnostics;
 namespace PNUT
 {
     /// <summary>Generate a human readable or junit format output.</summary>
-    public enum OutputFormat { Readable, Xml };
+    public enum OutputFormat { Readable, Xml }
 
     /// <summary>
     /// Accumulates general test info.

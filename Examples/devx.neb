@@ -42,8 +42,10 @@ int _noteNum = 0;
 // Index is integer note number, value is when to stop it.
 // int[] _notesPlaying = new int[128];
 
+// Current playing.
+string _section = "idle";
 
-
+// IO device names.
 string MIDI_IN = "MIDI:MPK mini";
 string MIDI_OUT = "MIDI:loopMIDI Port 1";
 string OSC_IN = "OSC:6448";
@@ -163,10 +165,15 @@ public override void setup2()
 
 
 
-string _section = "idle";
 
-void doState()
+public override void step()
 {
+    if(tock != 0) // not looking at tocks right now
+    {
+        return;
+    }
+
+    // doState();
     switch(tick)
     {
         case 0:  _section = "part1"; break;
@@ -176,16 +183,6 @@ void doState()
         case 52: _section = "idle";  break;
         default: /* no change */     break;
     }
-}
-
-public override void step()
-{
-    if(tock != 0) // not looking at tocks right now
-    {
-        return;
-    }
-
-    doState();
 
     // Sequence size in ticks.
     int NSEQ = 8;

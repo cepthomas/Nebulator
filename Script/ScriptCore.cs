@@ -60,11 +60,22 @@ namespace Nebulator.Script
         /// <summary>All displays.</summary>
         public List<NDisplay> Displays { get; set; } = new List<NDisplay>();
 
+
+
+
+        
+        /// <summary>The whole thing.</summary>
+        public NComposition Composition { get; set; } = new NComposition();
+
         /// <summary>All sequences.</summary>
         public List<NSequence> Sequences { get; set; } = new List<NSequence>();
 
-        /// <summary>All sections.</summary>
-        public List<NSection> Sections { get; set; } = new List<NSection>();
+        ///// <summary>All sections.</summary>
+        //public List<NSection> Sections { get; set; } = new List<NSection>();
+
+
+
+
 
         /// <summary>All channels.</summary>
         public List<NChannel> Channels { get; set; } = new List<NChannel>();

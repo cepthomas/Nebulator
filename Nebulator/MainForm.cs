@@ -568,33 +568,34 @@ namespace Nebulator
             // Convert compiled stuff to step collection.
             _compiledSteps.Clear();
 
-            foreach (NSection sect in _script.Sections)
-            {
-                // Collect important times.
-                timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
+            ////TODO!!  prob don't need this anymore?
+            //foreach (NSection sect in _script.Sections)
+            //{
+            //    // Collect important times.
+            //    timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
 
-                // Iterate through the sections channels.
-                foreach (NSectionChannel schannel in sect.SectionChannels)
-                {
-                    try
-                    {
-                        // For processing current Sequence.
-                        int seqOffset = sect.Start;
+            //    // Iterate through the sections channels.
+            //    foreach (NSectionChannel schannel in sect.SectionChannels)
+            //    {
+            //        try
+            //        {
+            //            // For processing current Sequence.
+            //            int seqOffset = sect.Start;
 
-                        // Gen steps for each sequence.
-                        foreach (NSequence seq in schannel.Sequences)
-                        {
-                            StepCollection stepsToAdd = NebScript.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
-                            _compiledSteps.Add(stepsToAdd);
-                            seqOffset += seq.Length;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception($"Error in the sequences for NChannel {schannel.ParentChannel.Name} : {ex.Message}");
-                    }
-                }
-            }
+            //            // Gen steps for each sequence.
+            //            foreach (NSequence seq in schannel.Sequences)
+            //            {
+            //                StepCollection stepsToAdd = NebScript.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
+            //                _compiledSteps.Add(stepsToAdd);
+            //                seqOffset += seq.Length;
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            throw new Exception($"Error in the sequences for NChannel {schannel.ParentChannel.Name} : {ex.Message}");
+            //        }
+            //    }
+            //}
 
             //Console.Write(_compiledSteps.Dump());
         }
@@ -1084,7 +1085,7 @@ namespace Nebulator
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
-                Filter = "Nebulator files (*.np)|*.np",
+                Filter = "Nebulator files (*.neb)|*.neb",
                 Title = "Select a Nebulator file"
             };
 
@@ -1116,7 +1117,7 @@ namespace Nebulator
                     if (File.Exists(fn))
                     {
                         _logger.Info($"Opening {fn}");
-                        _nppVals = Bag.Load(fn.Replace(".np", ".npp"));
+                        _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         _fn = fn;
 
                         // This may be coming from the web service...
@@ -1593,7 +1594,7 @@ namespace Nebulator
             {
                 Filter = "Midi files (*.mid)|*.mid",
                 Title = "Export to midi file",
-                FileName = _fn.Replace(".np", ".mid")
+                FileName = _fn.Replace(".neb", ".mid")
             };
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
