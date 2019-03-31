@@ -1,0 +1,3 @@
+[submodule "NStateMachine"]
+	path = Submodules/NStateMachine
+	url = https://github.com/cepthomas/NStateMachine.git

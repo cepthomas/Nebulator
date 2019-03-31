@@ -172,236 +172,20 @@ namespace Nebulator.Script
                 string genFn = $"{_scriptName}_src{_filesToCompile.Count}.cs".ToLower();
                 _filesToCompile.Add(genFn, pcont);
 
-                // Preamble.
+                ///// Preamble.
                 pcont.CodeLines.AddRange(GenTopOfFile(pcont.SourceFile));
 
-                List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
-
-                if (pcont.SourceFile.EndsWith(".nebc")) // .nebc composition file
+                ///// The content.
+                if (pcont.SourceFile.EndsWith(".nebc"))
                 {
-                    string parseState = "IDLE";
-                    string currentSeq = "";
-                    int numInst = 0;
-
-                    for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
-                    {
-                        string sline = sourceLines[pcont.LineNumber - 1].Trim();
-
-                        // Remove any comments.
-                        int pos = sline.IndexOf("//");
-                        string cline = pos >= 0 ? sline.Left(pos) : sline;
-                        List<string> inParts = cline.SplitByToken(" ");
-
-
-                        try
-                        {
-                            if (inParts.Count > 0)
-                            {
-
-                                // DEF KEYS_DEF_VOL 0.8
-                                // SEQ PIANO_MAIN
-                                // 00.00   G3     0.7   0.60
-                                // 
-                                // SEQ DRUMS_SIMPLE
-                                // x-------x-------x-------x-------   AcousticBassDrum   BASS_DRUM_VOL
-                                // 
-                                // COMP    DRUMS           PIANO          BASS
-                                // 15.00   SKIP            FuncPiano      BASS_VERSE
-                                // 16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
-                                // 32.00
-
-
-                                string sout = "";
-
-
-                                switch (inParts[0])
-                                {
-                                    case "DEF":
-                                        if (parseState == "IDLE")
-                                        {
-                                            sout = $"const double {inParts[1]} = {inParts[2]};";
-                                            parseState = "IDLE";
-                                        }
-                                        else
-                                        {
-                                            throw new Exception();
-                                        }
-                                        break;
-
-                                    case "SEQ":
-                                        if(parseState == "IDLE")
-                                        {
-                                            currentSeq = inParts[1];
-                                            sout = $"NSequence {inParts[1]};";
-                                            parseState = "SEQ";
-                                        }
-                                        else
-                                        {
-                                            throw new Exception();
-                                        }
-                                        break;
-
-                                    case "COMP":
-                                        if (parseState == "IDLE")
-                                        {
-                                            if(numInst > 0)
-                                            {
-                                                // Can't have more than one composition.
-                                                throw new Exception();
-                                            }
-
-                                            sout = $"NComposition comp = new NComposition();";
-
-                                            numInst = inParts.Count - 1;
-                                            for (int i = 1; i < numInst; i++)
-                                            {
-                                                sout += $"comp.Instruments.Add({inParts[i]});  ";
-                                            }
-
-                                            parseState = "COMP";
-                                        }
-                                        else
-                                        {
-                                            throw new Exception();
-                                        }
-                                        break;
-
-                                    case "":
-                                        parseState = "IDLE";
-                                        break;
-
-                                    default:
-                                        if (parseState == "SEQ")
-                                        {
-                                            //     PIANO_MAIN.Add("00.00", "G3", "0.7", "0.60");
-                                            //     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", "AcousticBassDrum", "BASS_DRUM_VOL");
-
-                                            sout = $"NSequence PIANO_MAIN;";
-                                        }
-                                        else if (parseState == "COMP")
-                                        {
-                                            sout = $"comp.Add({inParts.GetRange(1, inParts.Count - 1)});";
-                                        }
-                                        else
-                                        {
-                                            throw new Exception();
-                                        }
-                                        break;
-                                }
-
-
-
-                                // const double KEYS_DEF_VOL = 0.8;
-                                // const double BASS_DRUM_VOL = 0.8;
-
-                                // NSequence PIANO_MAIN;
-                                // NSequence DRUMS_SIMPLE;
-
-                                // public NComposition Init()
-                                // {
-                                //     NComposition comp = new NComposition();
-
-                                //     PIANO_MAIN = createSequence();
-                                //     PIANO_MAIN.Add("00.00", "G3", "0.7", "0.60");
-                                //     PIANO_MAIN.Add("01.00", "D3", "0.7", "0.60");
-                                //     PIANO_MAIN.Add("02.00", "A3.m7", "0.7", "0.60");
-                                //     PIANO_MAIN.Add("03.00", "66", "0.7", "0.60");
-                                //     PIANO_MAIN.Add("03.48", "F#", "0.7", "0.60");
-
-
-                                //     DRUMS_SIMPLE = createSequence();
-                                //     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", "AcousticBassDrum", "BASS_DRUM_VOL");
-                                //     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", "AcousticSnare", "0.6");
-                                //     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", "ClosedHiHat", "0.8");
-
-
-                                //     comp.Instruments.Add("DRUMS");
-                                //     comp.Instruments.Add("PIANO");
-                                //     comp.Instruments.Add("BASS");
-
-
-                                //     comp.Add("00.00", "DRUMS_SIMPLE", "PIANO_MAIN", "BASS_VERSE");
-                                //     // etc...
-                                //     comp.Add("15.00", "SKIP", "FuncPiano", "MUTE");
-                                //     // etc...
-                                //     comp.Add("32.00");
-
-                                //     return comp;
-                                // }
-
-
-                                if (sout != "")
-                                {
-                                    // Store the whole line with line number tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
-                                    pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
-                                }
-                            }
-                            else
-                            {
-                                // Nothing to do.
-                                parseState = "IDLE";
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Errors.Add(new ScriptError()
-                            {
-                                ErrorType = ScriptErrorType.Error,
-                                Message = $"Script error in {sline}",
-                                SourceFile = pcont.SourceFile,
-                                LineNumber = pcont.LineNumber
-                            });
-                        }
-                    }
+                    GenCompositionFile(pcont);
                 }
-                else // regular .neb script code file
+                else
                 {
-                    for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
-                    {
-                        string s = sourceLines[pcont.LineNumber - 1].Trim();
-
-                        // Remove any comments.
-                        int pos = s.IndexOf("//");
-                        string cline = pos >= 0 ? s.Left(pos) : s;
-
-                        // Test for nested files
-                        // #import "path\name.neb"
-                        // #import "include path\split file name.neb"
-                        if (s.StartsWith("#import"))
-                        {
-                            List<string> parts = s.SplitByTokens("\";");
-                            string fn = parts.Last();
-
-                            // Recursive call to parse this file
-                            FileContext subcont = new FileContext()
-                            {
-                                SourceFile = fn,
-                                LineNumber = 1
-                            };
-
-                            if (!ParseOneFile(subcont))
-                            {
-                                Errors.Add(new ScriptError()
-                                {
-                                    ErrorType = ScriptErrorType.Error,
-                                    Message = $"Invalid #import: {fn}",
-                                    SourceFile = pcont.SourceFile,
-                                    LineNumber = pcont.LineNumber
-                                });
-                            }
-                        }
-                        else
-                        {
-                            if (cline != "")
-                            {
-                                // Store the whole line with line number tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
-                                pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
-                            }
-                        }
-                    }
+                    GenScriptFile(pcont);
                 }
 
-                // Postamble.
+                ///// Postamble.
                 pcont.CodeLines.AddRange(GenBottomOfFile());
             }
 
@@ -548,16 +332,8 @@ namespace Nebulator.Script
         }
 
 
-        NComposition ParseNewTODO(FileContext pcont)
+        void GenScriptFile(FileContext pcont)
         {
-            NComposition comp = new NComposition();
-
-
-            List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
-
-            // Preamble.
-            pcont.CodeLines.AddRange(GenTopOfFile(pcont.SourceFile));
-
             for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
             {
                 string s = sourceLines[pcont.LineNumber - 1].Trim();
@@ -566,59 +342,227 @@ namespace Nebulator.Script
                 int pos = s.IndexOf("//");
                 string cline = pos >= 0 ? s.Left(pos) : s;
 
-                //// Test for nested files
-                //// #import "path\name.neb"
-                //// #import "include path\split file name.neb"
-                //if (s.StartsWith("#import"))
-                //{
-                //    List<string> parts = s.SplitByTokens("\";");
-                //    string fn = parts.Last();
-
-                //    // Recursive call to parse this file
-                //    FileContext subcont = new FileContext()
-                //    {
-                //        SourceFile = fn,
-                //        LineNumber = 1
-                //    };
-
-                //    if (!ParseOneFile(subcont))
-                //    {
-                //        Errors.Add(new ScriptError()
-                //        {
-                //            ErrorType = ScriptErrorType.Error,
-                //            Message = $"Invalid #import: {fn}",
-                //            SourceFile = pcont.SourceFile,
-                //            LineNumber = pcont.LineNumber
-                //        });
-                //    }
-                //}
-                //else
+                // Test for nested files
+                // #import "path\name.neb"
+                // #import "include path\split file name.neb"
+                if (s.StartsWith("#import"))
                 {
-                    List<string> parts = cline.SplitByToken(" ");
+                    List<string> parts = s.SplitByTokens("\";");
+                    string fn = parts.Last();
 
-                    if(parts.Count > 0)
+                    // Recursive call to parse this file
+                    FileContext subcont = new FileContext()
                     {
+                        SourceFile = fn,
+                        LineNumber = 1
+                    };
 
-
-
-
+                    if (!ParseOneFile(subcont))
+                    {
+                        Errors.Add(new ScriptError()
+                        {
+                            ErrorType = ScriptErrorType.Error,
+                            Message = $"Invalid #import: {fn}",
+                            SourceFile = pcont.SourceFile,
+                            LineNumber = pcont.LineNumber
+                        });
                     }
-
-
-
-
+                }
+                else
+                {
                     if (cline != "")
                     {
                         // Store the whole line with line number tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
                         pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
                     }
                 }
+            }   
+        }
+
+
+
+
+        NComposition GenCompositionFile(FileContext pcont)
+        {
+            NComposition comp = new NComposition();
+
+
+            List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
+
+            string parseState = "IDLE";
+            string currentSeq = "";
+            int numInst = 0;
+
+            for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
+            {
+                string sline = sourceLines[pcont.LineNumber - 1].Trim();
+
+                // Remove any comments.
+                int pos = sline.IndexOf("//");
+                string cline = pos >= 0 ? sline.Left(pos) : sline;
+                List<string> inParts = cline.SplitByToken(" ");
+
+
+                try
+                {
+                    if (inParts.Count > 0)
+                    {
+
+                        // DEF KEYS_DEF_VOL 0.8
+                        // SEQ PIANO_MAIN
+                        // 00.00   G3     0.7   0.60
+                        // 
+                        // SEQ DRUMS_SIMPLE
+                        // x-------x-------x-------x-------   AcousticBassDrum   BASS_DRUM_VOL
+                        // 
+                        // COMP    DRUMS           PIANO          BASS
+                        // 15.00   SKIP            FuncPiano      BASS_VERSE
+                        // 16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
+                        // 32.00
+
+
+                        string sout = "";
+
+
+                        switch (inParts[0])
+                        {
+                            case "DEF":
+                                if (parseState == "IDLE")
+                                {
+                                    sout = $"const double {inParts[1]} = {inParts[2]};";
+                                    parseState = "IDLE";
+                                }
+                                else
+                                {
+                                    throw new Exception();
+                                }
+                                break;
+
+                            case "SEQ":
+                                if(parseState == "IDLE")
+                                {
+                                    currentSeq = inParts[1];
+                                    sout = $"NSequence {inParts[1]};";
+                                    parseState = "SEQ";
+                                }
+                                else
+                                {
+                                    throw new Exception();
+                                }
+                                break;
+
+                            case "COMP":
+                                if (parseState == "IDLE")
+                                {
+                                    if(numInst > 0)
+                                    {
+                                        // Can't have more than one composition.
+                                        throw new Exception();
+                                    }
+
+                                    sout = $"NComposition comp = new NComposition();";
+
+                                    numInst = inParts.Count - 1;
+                                    for (int i = 1; i < numInst; i++)
+                                    {
+                                        sout += $"comp.Instruments.Add({inParts[i]});  ";
+                                    }
+
+                                    parseState = "COMP";
+                                }
+                                else
+                                {
+                                    throw new Exception();
+                                }
+                                break;
+
+                            case "":
+                                parseState = "IDLE";
+                                break;
+
+                            default:
+                                if (parseState == "SEQ")
+                                {
+                                    //     PIANO_MAIN.Add("00.00", "G3", "0.7", "0.60");
+                                    //     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", "AcousticBassDrum", "BASS_DRUM_VOL");
+
+                                    sout = $"NSequence PIANO_MAIN;";
+                                }
+                                else if (parseState == "COMP")
+                                {
+                                    sout = $"comp.Add({inParts.GetRange(1, inParts.Count - 1)});";
+                                }
+                                else
+                                {
+                                    throw new Exception();
+                                }
+                                break;
+                        }
+
+
+
+                        // const double KEYS_DEF_VOL = 0.8;
+                        // const double BASS_DRUM_VOL = 0.8;
+
+                        // NSequence PIANO_MAIN;
+                        // NSequence DRUMS_SIMPLE;
+
+                        // public NComposition Init()
+                        // {
+                        //     NComposition comp = new NComposition();
+
+                        //     PIANO_MAIN = createSequence();
+                        //     PIANO_MAIN.Add("00.00", "G3", "0.7", "0.60");
+                        //     PIANO_MAIN.Add("01.00", "D3", "0.7", "0.60");
+                        //     PIANO_MAIN.Add("02.00", "A3.m7", "0.7", "0.60");
+                        //     PIANO_MAIN.Add("03.00", "66", "0.7", "0.60");
+                        //     PIANO_MAIN.Add("03.48", "F#", "0.7", "0.60");
+
+
+                        //     DRUMS_SIMPLE = createSequence();
+                        //     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", "AcousticBassDrum", "BASS_DRUM_VOL");
+                        //     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", "AcousticSnare", "0.6");
+                        //     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", "ClosedHiHat", "0.8");
+
+
+                        //     comp.Instruments.Add("DRUMS");
+                        //     comp.Instruments.Add("PIANO");
+                        //     comp.Instruments.Add("BASS");
+
+
+                        //     comp.Add("00.00", "DRUMS_SIMPLE", "PIANO_MAIN", "BASS_VERSE");
+                        //     // etc...
+                        //     comp.Add("15.00", "SKIP", "FuncPiano", "MUTE");
+                        //     // etc...
+                        //     comp.Add("32.00");
+
+                        //     return comp;
+                        // }
+
+
+                        if (sout != "")
+                        {
+                            // Store the whole line with line number tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
+                            pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
+                        }
+                    }
+                    else
+                    {
+                        // Nothing to do.
+                        parseState = "IDLE";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Errors.Add(new ScriptError()
+                    {
+                        ErrorType = ScriptErrorType.Error,
+                        Message = $"Script error in {sline}",
+                        SourceFile = pcont.SourceFile,
+                        LineNumber = pcont.LineNumber
+                    });
+                }
             }
-
-
-
-
-
 
             return comp;
         }
