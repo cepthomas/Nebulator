@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NAudio.Midi;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -146,8 +147,8 @@ namespace Nebulator.Midi
                         case StepNoteOn stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOn,
-                                    (int)Utils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                                    (int)(Utils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
+                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                    (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
                                 msg = evt.GetAsShortMessage();
 
                                 if(stt.Duration.TotalTocks > 0) // specific duration
@@ -159,7 +160,7 @@ namespace Nebulator.Midi
                                     {
                                         Device = stt.Device,
                                         ChannelNumber = stt.ChannelNumber,
-                                        NoteNumber = Utils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                        NoteNumber = MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                         Expiry = stt.Duration.TotalTocks
                                     });
                                 }
@@ -169,7 +170,7 @@ namespace Nebulator.Midi
                         case StepNoteOff stt:
                             {
                                 NoteEvent evt = new NoteEvent(0, stt.ChannelNumber, MidiCommandCode.NoteOff,
-                                    (int)Utils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                     0);
                                 msg = evt.GetAsShortMessage();
                             }
@@ -184,13 +185,13 @@ namespace Nebulator.Midi
                                 else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                                 {
                                     PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0, stt.ChannelNumber,
-                                        (int)Utils.Constrain(stt.Value, 0, MidiUtils.MAX_PITCH));
+                                        (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_PITCH));
                                     msg = pevt.GetAsShortMessage();
                                 }
                                 else // CC
                                 {
                                     ControlChangeEvent nevt = new ControlChangeEvent(0, stt.ChannelNumber, (MidiController)stt.ControllerId,
-                                        (int)Utils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
+                                        (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
                                     msg = nevt.GetAsShortMessage();
                                 }
                             }

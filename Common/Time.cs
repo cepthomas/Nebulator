@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NBagOfTricks;
 
 
 namespace Nebulator.Common
@@ -114,7 +115,7 @@ namespace Nebulator.Common
                 throw new Exception("Negative value is invalid");
             }
 
-            var (integral, fractional) = Utils.SplitDouble(tts);
+            var (integral, fractional) = MathUtils.SplitDouble(tts);
             Tick = (int)integral;
             Tock = (int)(fractional * 100);
         }

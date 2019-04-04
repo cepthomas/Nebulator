@@ -10,6 +10,7 @@ using System.Net;
 using System.Diagnostics;
 using System.Threading;
 using System.Drawing;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -192,9 +193,9 @@ namespace Nebulator.OSC
                     case "/note/":
                         if(msg.Data.Count == 3)
                         {
-                            int channel = Utils.Constrain((int)msg.Data[0], 0, 100);
-                            double notenum = Utils.Constrain((int)msg.Data[1], 0, OscCommon.MAX_NOTE);
-                            double velocity = Utils.Constrain((int)msg.Data[2], 0, 1.0);
+                            int channel = MathUtils.Constrain((int)msg.Data[0], 0, 100);
+                            double notenum = MathUtils.Constrain((int)msg.Data[1], 0, OscCommon.MAX_NOTE);
+                            double velocity = MathUtils.Constrain((int)msg.Data[2], 0, 1.0);
 
                             if (velocity == 0)
                             {
@@ -224,9 +225,9 @@ namespace Nebulator.OSC
                     case "/controller/":
                         if (msg.Data.Count == 3)
                         {
-                            int channel = Utils.Constrain((int)msg.Data[0], 0, 100);
+                            int channel = MathUtils.Constrain((int)msg.Data[0], 0, 100);
                             int ctlnum = (int)msg.Data[1];
-                            double value = Utils.Constrain((int)msg.Data[2], 0, 10000);
+                            double value = MathUtils.Constrain((int)msg.Data[2], 0, 10000);
 
                             step = new StepControllerChange()
                             {

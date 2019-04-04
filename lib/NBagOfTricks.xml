@@ -527,6 +527,105 @@
             <summary>Dispose</summary>
             <param name="disposing"></param>
         </member>
+        <member name="T:NBagOfTricks.MiscUtils">
+            <summary>
+            Static general utility functions.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetVersionString">
+            <summary>
+            Returns a string with the application version information.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetAppDataDir(System.String)">
+            <summary>
+            Get the user app dir.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetExeDir">
+            <summary>
+            Get the executable dir.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
+            <summary>
+            Resize the image to the specified width and height.
+            </summary>
+            <param name="image">The image to resize.</param>
+            <param name="width">The width to resize to.</param>
+            <param name="height">The height to resize to.</param>
+            <returns>The resized image.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
+            <summary>
+            Colorize a bitmap.
+            </summary>
+            <param name="original"></param>
+            <param name="newcol"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetSequenceColor(System.Int32,System.Boolean)">
+            <summary>
+            Helper to get next contrast color in the sequence.
+            From http://colorbrewer2.org qualitative.
+            </summary>
+            <param name="i"></param>
+            <param name="dark">Dark or light series, usually dark.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            Mix two colors.
+            </summary>
+            <param name="one"></param>
+            <param name="two"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.FormatSourceCode(System.Collections.Generic.List{System.String})">
+            <summary>Rudimentary C# source code formatter to make generated files somewhat readable.</summary>
+            <param name="src">Lines to prettify.</param>
+            <returns>Formatted lines.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.DeepClone``1(``0)">
+            <summary>
+            Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
+            There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
+            The binary serialization is apparently slower but safer. Feel free to reimplement with a better way.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
+            <summary>
+            Get a subset of an array.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"></param>
+            <param name="start"></param>
+            <param name="length"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Immediately executes the given action on each element in the source sequence.
+            </summary>
+            <typeparam name="T">The type of the elements in the sequence</typeparam>
+            <param name="source">The sequence of elements</param>
+            <param name="action">The action to execute on each element</param>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
+            <summary>
+            Immediately executes the given action on each element in the source sequence.
+            Each element's index is used in the logic of the action.
+            </summary>
+            <typeparam name="T">The type of the elements in the sequence</typeparam>
+            <param name="source">The sequence of elements</param>
+            <param name="action">The action to execute on each element; the second parameter
+            of the action represents the index of the source element.</param>
+        </member>
         <member name="T:NBagOfTricks.StringUtils">
             <summary>
             Misc string extension methods.
@@ -1391,105 +1490,6 @@
             </summary>
             <param name="ticks"></param>
             <returns></returns>
-        </member>
-        <member name="T:NBagOfTricks.Utils">
-            <summary>
-            Static general utility functions.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.Utils.GetVersionString">
-            <summary>
-            Returns a string with the application version information.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.Utils.GetAppDataDir(System.String)">
-            <summary>
-            Get the user app dir.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.GetExeDir">
-            <summary>
-            Get the executable dir.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
-            <summary>
-            Resize the image to the specified width and height.
-            </summary>
-            <param name="image">The image to resize.</param>
-            <param name="width">The width to resize to.</param>
-            <param name="height">The height to resize to.</param>
-            <returns>The resized image.</returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
-            <summary>
-            Colorize a bitmap.
-            </summary>
-            <param name="original"></param>
-            <param name="newcol"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.GetSequenceColor(System.Int32,System.Boolean)">
-            <summary>
-            Helper to get next contrast color in the sequence.
-            From http://colorbrewer2.org qualitative.
-            </summary>
-            <param name="i"></param>
-            <param name="dark">Dark or light series, usually dark.</param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
-            <summary>
-            Mix two colors.
-            </summary>
-            <param name="one"></param>
-            <param name="two"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.FormatSourceCode(System.Collections.Generic.List{System.String})">
-            <summary>Rudimentary C# source code formatter to make generated files somewhat readable.</summary>
-            <param name="src">Lines to prettify.</param>
-            <returns>Formatted lines.</returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.DeepClone``1(``0)">
-            <summary>
-            Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
-            There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
-            The binary serialization is apparently slower but safer. Feel free to reimplement with a better way.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="obj"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.Subset``1(``0[],System.Int32,System.Int32)">
-            <summary>
-            Get a subset of an array.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="source"></param>
-            <param name="start"></param>
-            <param name="length"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Utils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
-            <summary>
-            Immediately executes the given action on each element in the source sequence.
-            </summary>
-            <typeparam name="T">The type of the elements in the sequence</typeparam>
-            <param name="source">The sequence of elements</param>
-            <param name="action">The action to execute on each element</param>
-        </member>
-        <member name="M:NBagOfTricks.Utils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
-            <summary>
-            Immediately executes the given action on each element in the source sequence.
-            Each element's index is used in the logic of the action.
-            </summary>
-            <typeparam name="T">The type of the elements in the sequence</typeparam>
-            <param name="source">The sequence of elements</param>
-            <param name="action">The action to execute on each element; the second parameter
-            of the action represents the index of the source element.</param>
         </member>
     </members>
 </doc>

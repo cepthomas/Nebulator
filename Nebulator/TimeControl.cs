@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using NBagOfTricks;
 using Nebulator.Common;
 
 
@@ -218,7 +219,7 @@ namespace Nebulator.Controls
         /// <param name="x"></param>
         private int GetValueFromMouse(int x)
         {
-            int val = Utils.Constrain(x * MaxTick / Width, 0, MaxTick);
+            int val = MathUtils.Constrain(x * MaxTick / Width, 0, MaxTick);
             return val;
         }
 

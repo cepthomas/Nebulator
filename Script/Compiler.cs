@@ -10,8 +10,9 @@ using System.Diagnostics;
 using NLog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using NBagOfTricks;
+using NBagOfTricks.StateMachine;
 using Nebulator.Common;
-using NStateMachine;
 
 namespace Nebulator.Script
 {
@@ -157,7 +158,7 @@ namespace Nebulator.Script
                     FileContext ci = _filesToCompile[genFn];
                     string fullpath = Path.Combine(TempDir, genFn);
                     File.Delete(fullpath);
-                    File.WriteAllLines(fullpath, Utils.FormatSourceCode(ci.CodeLines));
+                    File.WriteAllLines(fullpath, MiscUtils.FormatSourceCode(ci.CodeLines));
                     paths.Add(fullpath);
                 }
 
@@ -397,13 +398,14 @@ namespace Nebulator.Script
             // 16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
             // 32.00
 
-
+            NComposition comp = null;
 
             //           string parseState = "IDLE";
             string currentSeq = "";
             int numInst = 0;
 
 
+            SmEngine sm = new SmEngine();
 
 
             State[] states = new State[]
@@ -430,7 +432,6 @@ namespace Nebulator.Script
             };
 
 
-            StateMachine sm = new StateMachine();
             sm.Init(states, "IDLE");
 
 
@@ -536,7 +537,7 @@ namespace Nebulator.Script
 
                     if(!ok)
                     {
-                        sm.Errors.Count;
+                        // sm.Errors.Count;
                     }
 
                     string sout = "";

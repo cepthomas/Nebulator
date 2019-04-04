@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NAudio.Midi;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -169,7 +170,7 @@ namespace Nebulator.Midi
                             {
                                 Device = this,
                                 ChannelNumber = evt.Channel,
-                                NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                NoteNumber = MathUtils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                 Velocity = 0.0
                             };
                         }
@@ -195,7 +196,7 @@ namespace Nebulator.Midi
                         {
                             Device = this,
                             ChannelNumber = evt.Channel,
-                            NoteNumber = Utils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                            NoteNumber = MathUtils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                             Velocity = evt.Velocity / MidiUtils.MAX_MIDI
                         };
                     }
@@ -222,7 +223,7 @@ namespace Nebulator.Midi
                             Device = this,
                             ChannelNumber = evt.Channel,
                             ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
-                            Value = Utils.Constrain(evt.Pitch, 0, MidiUtils.MAX_PITCH),
+                            Value = MathUtils.Constrain(evt.Pitch, 0, MidiUtils.MAX_PITCH),
                         };
                     }
                     break;

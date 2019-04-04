@@ -37,6 +37,9 @@
     <DocumentationFile>bin\Nebulator.Controls.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NBagOfTricks">
+      <HintPath>..\lib\NBagOfTricks.dll</HintPath>
+    </Reference>
     <Reference Include="SkiaSharp, Version=1.68.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\SkiaSharp.1.68.0\lib\net45\SkiaSharp.dll</HintPath>
     </Reference>
@@ -79,45 +82,15 @@
     <Compile Include="Pan.Designer.cs">
       <DependentUpon>Pan.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pot.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Pot.Designer.cs">
-      <DependentUpon>Pot.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PropertyGridEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Meter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Meter.Designer.cs">
-      <DependentUpon>Meter.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Slider.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Slider.Designer.cs">
-      <DependentUpon>Slider.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Fader.resx">
       <DependentUpon>Fader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pan.resx">
       <DependentUpon>Pan.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pot.resx">
-      <DependentUpon>Pot.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Meter.resx">
-      <DependentUpon>Meter.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Slider.resx">
-      <DependentUpon>Slider.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextViewer.resx">
       <DependentUpon>TextViewer.cs</DependentUpon>

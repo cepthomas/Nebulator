@@ -11,6 +11,8 @@ using NLog;
 using Newtonsoft.Json;
 using NAudio.Midi;
 using NAudio.Wave;
+using NBagOfTricks;
+using NBagOfTricks.UI;
 using Nebulator.Common;
 using Nebulator.Controls;
 using Nebulator.Script;
@@ -92,7 +94,7 @@ namespace Nebulator
         public MainForm()
         {
             // Need to load settings before creating controls in MainForm_Load().
-            string appDir = Utils.GetAppDataDir();
+            string appDir = MiscUtils.GetAppDataDir("Nebulator");
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
             UserSettings.Load(appDir);
@@ -116,19 +118,19 @@ namespace Nebulator
             textViewer.Colors.Add("ERROR:", Color.LightPink);
             textViewer.Colors.Add("WARNING:", Color.Plum);
 
-            btnMonIn.Image = Utils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
-            btnMonOut.Image = Utils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
-            btnKillComm.Image = Utils.ColorizeBitmap(btnKillComm.Image, UserSettings.TheSettings.IconColor);
-            btnSettings.Image = Utils.ColorizeBitmap(btnSettings.Image, UserSettings.TheSettings.IconColor);
-            btnAbout.Image = Utils.ColorizeBitmap(btnAbout.Image, UserSettings.TheSettings.IconColor);
-            fileDropDownButton.Image = Utils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
-            btnRewind.Image = Utils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
-            btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+            btnMonIn.Image = MiscUtils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
+            btnMonOut.Image = MiscUtils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
+            btnKillComm.Image = MiscUtils.ColorizeBitmap(btnKillComm.Image, UserSettings.TheSettings.IconColor);
+            btnSettings.Image = MiscUtils.ColorizeBitmap(btnSettings.Image, UserSettings.TheSettings.IconColor);
+            btnAbout.Image = MiscUtils.ColorizeBitmap(btnAbout.Image, UserSettings.TheSettings.IconColor);
+            fileDropDownButton.Image = MiscUtils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
+            btnRewind.Image = MiscUtils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
+            btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
 
             btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
 
-            chkPlay.Image = Utils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
+            chkPlay.Image = MiscUtils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
@@ -171,7 +173,7 @@ namespace Nebulator
             Task.Run(() => { _selfHost.Run(); });
 
             #region System info
-            Text = $"Nebulator {Utils.GetVersionString()} - No file loaded";
+            Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
             #endregion
 
             #region Open file
@@ -279,8 +281,8 @@ namespace Nebulator
         void DeleteDevices()
         {
             // Save the vkbd position.
-            _inputs.Values.Where(v => v.GetType() == typeof(VirtualKeyboard.VKeyboard)).ForEach
-                (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as VirtualKeyboard.VKeyboard));
+            // TODO _inputs.Values.Where(v => v.GetType() == typeof(VirtualKeyboard.VKeyboard)).ForEach
+            //    (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as VirtualKeyboard.VKeyboard));
 
             _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
             _inputs.Clear();
@@ -297,7 +299,7 @@ namespace Nebulator
             DeleteDevices();
 
             // Get requested inputs.
-            VirtualKeyboard.VKeyboard vkey = null; // If used, requires special handling.
+            VirtualKeyboard vkey = null; // If used, requires special handling.
 
             foreach (NController ctlr in _script.Controllers)
             {
@@ -324,8 +326,8 @@ namespace Nebulator
                                 break;
 
                             case "VKEY":
-                                vkey = new VirtualKeyboard.VKeyboard();
-                                nin = vkey;
+                                // TODO vkey = new VirtualKeyboard.VKeyboard();
+                                //nin = vkey;
                                 break;
                         }
                     }
@@ -353,11 +355,11 @@ namespace Nebulator
 
                 if(vkey != null)
                 {
-                    vkey.StartPosition = FormStartPosition.Manual;
-                    vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
-                    vkey.TopMost = false;
-                    vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
-                    vkey.Show();
+                    // TODO vkey.StartPosition = FormStartPosition.Manual;
+                    //vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
+                    //vkey.TopMost = false;
+                    //vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
+                    //vkey.Show();
                 }
             }
 
@@ -677,12 +679,12 @@ namespace Nebulator
         {
             if (compileStatus)
             {
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+                btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
                 _needCompile = false;
             }
             else
             {
-                btnCompile.Image = Utils.ColorizeBitmap(btnCompile.Image, Color.Red);
+                btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, Color.Red);
                 _needCompile = true;
             }
 
@@ -1129,7 +1131,7 @@ namespace Nebulator
                             Compile();
                         });
 
-                        Text = $"Nebulator {Utils.GetVersionString()} - {fn}";
+                        Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
                     }
                     else
                     {
@@ -1348,7 +1350,7 @@ namespace Nebulator
         /// </summary>
         void InitLogging()
         { 
-            string appDir = Utils.GetAppDataDir();
+            string appDir = MiscUtils.GetAppDataDir("Nebulator");
 
             FileInfo fi = new FileInfo(Path.Combine(appDir, "log.txt"));
             if(fi.Exists && fi.Length > 100000)
@@ -1396,7 +1398,7 @@ namespace Nebulator
                 tv.Colors.Add(" ERROR ", Color.Plum);
                 tv.Colors.Add(" _WARN ", Color.LightPink);
 
-                string appDir = Utils.GetAppDataDir();
+                string appDir = MiscUtils.GetAppDataDir("Nebulator");
                 string logFilename = Path.Combine(appDir, "log.txt");
                 using (new WaitCursor())
                 {

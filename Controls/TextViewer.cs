@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NBagOfTricks;
 using Nebulator.Common;
 
 namespace Nebulator.Controls
@@ -40,8 +41,8 @@ namespace Nebulator.Controls
             txtView.BackColor = UserSettings.TheSettings.BackColor;
             txtView.WordWrap = false;
 
-            btnClear.Image = Utils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
-            btnWrap.Image = Utils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
+            btnClear.Image = MiscUtils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
+            btnWrap.Image = MiscUtils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
             btnWrap.Checked = false;
         }
 

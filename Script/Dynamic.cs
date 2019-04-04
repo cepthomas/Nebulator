@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -193,7 +194,7 @@ namespace Nebulator.Script
     {
         public List<NChannel> Instruments { get; set; } = new List<NChannel>();
 
-        public NComposition(List<string> instNames)
+        public NComposition()//List<string> instNames)
         {
 
         }

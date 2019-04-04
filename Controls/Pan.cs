@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using NBagOfTricks;
 using Nebulator.Common;
 
 namespace Nebulator.Controls
@@ -26,7 +27,7 @@ namespace Nebulator.Controls
             }
             set
             {
-                _value = Utils.Constrain(value, -1.0, 1.0);
+                _value = MathUtils.Constrain(value, -1.0, 1.0);
                 PanChanged?.Invoke(this, EventArgs.Empty);
                 Invalidate();
             }

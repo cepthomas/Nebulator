@@ -58,6 +58,9 @@
     <Reference Include="NAudio, Version=1.8.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.5\lib\net35\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="NBagOfTricks">
+      <HintPath>..\lib\NBagOfTricks.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -103,12 +106,21 @@
       <Link>Resources\README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="Keyboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Keyboard.Designer.cs">
+      <DependentUpon>Keyboard.cs</DependentUpon>
+    </Compile>
     <Compile Include="TimeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="TimeControl.Designer.cs">
       <DependentUpon>TimeControl.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Keyboard.resx">
+      <DependentUpon>Keyboard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TimeControl.resx">
       <DependentUpon>TimeControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -280,10 +292,6 @@
     <ProjectReference Include="..\OSC\OSC.csproj">
       <Project>{7c6b21d5-cf62-41f6-9188-7846e88d3dcd}</Project>
       <Name>OSC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VirtualKeyboard\VirtualKeyboard.csproj">
-      <Project>{4f76fffe-cd6f-4951-b74e-a7d4ffeb1a9f}</Project>
-      <Name>VirtualKeyboard</Name>
     </ProjectReference>
     <ProjectReference Include="..\Script\Script.csproj">
       <Project>{1202e3e2-7ff4-4132-9041-aade2aa9a584}</Project>

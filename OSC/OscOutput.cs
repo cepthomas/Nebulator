@@ -10,6 +10,7 @@ using System.Net;
 using System.Diagnostics;
 using System.Threading;
 using System.Drawing;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -166,7 +167,7 @@ namespace Nebulator.OSC
                                 {
                                     Device = non.Device,
                                     ChannelNumber = non.ChannelNumber,
-                                    NoteNumber = Utils.Constrain(non.NoteNumber, 0, OscCommon.MAX_NOTE),
+                                    NoteNumber = MathUtils.Constrain(non.NoteNumber, 0, OscCommon.MAX_NOTE),
                                     Expiry = non.Duration.TotalTocks
                                 });
                             }

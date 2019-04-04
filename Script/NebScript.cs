@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -204,7 +205,7 @@ namespace Nebulator.Script
             if (play)
             {
                 double vel = channel.NextVol(vol);
-                double notenum = Utils.Constrain(dnote, 0, 127);
+                double notenum = MathUtils.Constrain(dnote, 0, 127);
 
                 if (vol > 0)
                 {

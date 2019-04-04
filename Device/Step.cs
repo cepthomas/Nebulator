@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NBagOfTricks;
 using Nebulator.Common;
 
 
@@ -52,7 +53,7 @@ namespace Nebulator.Device
             {
                 NOutput nout = Device as NOutput;
                 double vel = Velocity * channelVolume * masterVolume;
-                VelocityToPlay = Utils.Constrain(vel, 0, 1.0);
+                VelocityToPlay = MathUtils.Constrain(vel, 0, 1.0);
             }
         }
 

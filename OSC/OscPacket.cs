@@ -10,6 +10,7 @@ using System.Net;
 using System.Diagnostics;
 using System.Threading;
 using System.Drawing;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 

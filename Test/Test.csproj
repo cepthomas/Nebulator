@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NBagOfTricks">
+      <HintPath>..\lib\NBagOfTricks.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -49,9 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Submodules\pnut.cs">
-      <Link>pnut.cs</Link>
-    </Compile>
     <Compile Include="MIDI_Test.cs" />
     <Compile Include="OSC_Test.cs" />
     <Compile Include="Program.cs" />

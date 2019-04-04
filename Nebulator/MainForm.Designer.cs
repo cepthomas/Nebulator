@@ -18,8 +18,8 @@
             this.components = new System.ComponentModel.Container();
             Nebulator.Common.Time time1 = new Nebulator.Common.Time();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.sldVolume = new Nebulator.Controls.Slider();
-            this.potSpeed = new Nebulator.Controls.Pot();
+            this.sldVolume = new NBagOfTricks.UI.Slider();
+            this.potSpeed = new NBagOfTricks.UI.Pot();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnCompile = new System.Windows.Forms.Button();
             this.btnRewind = new System.Windows.Forms.Button();
@@ -70,7 +70,7 @@
             this.potSpeed.Name = "potSpeed";
             this.potSpeed.Size = new System.Drawing.Size(32, 32);
             this.potSpeed.TabIndex = 33;
-            this.potSpeed.Taper = Nebulator.Controls.Taper.Linear;
+            this.potSpeed.Taper = NBagOfTricks.UI.Taper.Linear;
             this.toolTip.SetToolTip(this.potSpeed, "Speed in Ticks per minute (sorta BPM)");
             this.potSpeed.Value = 100D;
             this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
@@ -322,9 +322,9 @@
         }
 
         #endregion
-        private Controls.Slider sldVolume;
+        private NBagOfTricks.UI.Slider sldVolume;
         private System.Windows.Forms.CheckBox chkPlay;
-        private Controls.Pot potSpeed;
+        private NBagOfTricks.UI.Pot potSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
         private Levers levers;

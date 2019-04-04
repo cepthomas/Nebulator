@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NBagOfTricks;
 using Nebulator.Common;
 
 
@@ -35,7 +36,7 @@ namespace Nebulator.Script
                 double min = val + RangeLow;
                 double mean = min + (max - min) / 2;
                 double sigma = (max - min) / 3; // 3 sd
-                newVal = Utils.NextGaussian(_rand, mean, sigma);
+                newVal = MathUtils.NextGaussian(_rand, mean, sigma);
             }
             return newVal;
         }

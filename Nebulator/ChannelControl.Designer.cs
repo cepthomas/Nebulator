@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.chkMute = new System.Windows.Forms.CheckBox();
             this.chkSolo = new System.Windows.Forms.CheckBox();
-            this.sldVolume = new Nebulator.Controls.Slider();
+            this.sldVolume = new NBagOfTricks.UI.Slider();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
@@ -93,7 +93,7 @@
         #endregion
         private System.Windows.Forms.CheckBox chkMute;
         private System.Windows.Forms.CheckBox chkSolo;
-        private Controls.Slider sldVolume;
+        private NBagOfTricks.UI.Slider sldVolume;
         private System.Windows.Forms.ToolTip toolTip;
     }
 }
