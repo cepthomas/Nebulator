@@ -18,7 +18,7 @@ namespace Nebulator.Controls
     /// <summary>
     /// Control potentiometer.
     /// </summary>
-    public partial class Pot : UserControl
+    public partial class Pot : UserControl xxx
     {
         #region Fields
         double _minimum = 0.0;

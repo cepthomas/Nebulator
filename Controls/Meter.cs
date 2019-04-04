@@ -13,7 +13,7 @@ namespace Nebulator.Controls
     /// <summary>
     /// Implements a rudimentary volume meter.
     /// </summary>
-    public partial class Meter : UserControl
+    public partial class Meter : UserControl  xxx
     {
         #region Fields
         /// <summary>

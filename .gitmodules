@@ -1,0 +1,3 @@
+[submodule "NBagOfTricks"]
+	path = NBagOfTricks
+	url = https://github.com/cepthomas/NBagOfTricks.git

@@ -9,7 +9,7 @@ namespace Nebulator.Controls
     /// <summary>
     /// Slider control.
     /// </summary>
-    public partial class Slider : UserControl
+    public partial class Slider : UserControl  xxx
     {
         #region Fields
         double _value = 0.0;
