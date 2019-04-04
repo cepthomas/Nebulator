@@ -1,0 +1,1495 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NBagOfTricks</name>
+    </assembly>
+    <members>
+        <member name="T:NBagOfTricks.UI.MeterType">
+            <summary>Display types.</summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.Meter">
+            <summary>
+            Implements a rudimentary volume meter.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Meter._buff">
+            <summary>
+            Storage.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Meter._buffIndex">
+            <summary>
+            Storage.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Meter.BORDER_WIDTH">
+            <summary>
+            A number.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Meter.Label">
+            <summary>
+            Optional label.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Meter.ControlColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Meter.BackColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Meter.MeterType">
+            <summary>
+            How the meter responds.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Meter.Minimum">
+            <summary>
+            Minimum value. If Log type, this is in db - usually -60;
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Meter.Maximum">
+            <summary>
+            Maximum value. If Log type, this is in db - usually +18.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Meter.Orientation">
+            <summary>
+            Meter orientation.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Meter.#ctor">
+            <summary>
+            Basic volume meter.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Meter.Meter_Load(System.Object,System.EventArgs)">
+            <summary>
+            Init stuff.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Meter.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Meter.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.Meter.AddValue(System.Double)">
+            <summary>
+            Add a new data point. If Log, this will convert for you.
+            </summary>
+            <param name="val"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.Meter.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paints the volume meter.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Meter.OnResize(System.EventArgs)">
+            <summary>
+            Update drawing area.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.Taper">
+            <summary></summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.Pot">
+            <summary>
+            Control potentiometer.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.ControlColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.BackColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.Label">
+            <summary>
+            Name etc.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.Taper">
+            <summary>
+            Taper.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.DecPlaces">
+            <summary>
+            Number of decimal places to display.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.Minimum">
+            <summary>
+            Minimum Value of the Pot.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.Maximum">
+            <summary>
+            Maximum Value of the Pot.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pot.Value">
+            <summary>
+            The current value of the pot.
+            </summary>
+        </member>
+        <member name="E:NBagOfTricks.UI.Pot.ValueChanged">
+            <summary>
+            Value changed event.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pot.#ctor">
+            <summary>
+            Creates a new pot control.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Pot.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pot.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pot.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Draws the control.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pot.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the mouse down event to allow changing value by dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pot.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the mouse up event to allow changing value by dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pot.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the mouse down event to allow changing value by dragging.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.PropertyGridEx">
+            <summary>Extends the PropertyGrid to add some features.</summary>
+        </member>
+        <member name="E:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEvent">
+            <summary>The property grid is reporting something.</summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEventArgs">
+            <summary>General event for raising events not natively supported by the property grid.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEventArgs.EventType">
+            <summary>General info.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEventArgs.EventData">
+            <summary>General data.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.RaisePropertyGridExEvent(System.String,System.Object)">
+            <summary>Children can call this to send something back to the host.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.ToolStrip">
+            <summary>Gets the tool strip.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocComment">
+            <summary>Gets the doc comment.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocCommentTitle">
+            <summary>Gets the doc comment title.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocCommentDescription">
+            <summary>Gets the doc comment description.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocCommentImage">
+            <summary>Gets or sets the help comment image.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.PropertyGridEx.Dirty">
+            <summary>Edited flag.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.#ctor">
+            <summary>Initializes a new instance of the class.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.Edit_PropertyValueChanged(System.Object,System.Windows.Forms.PropertyValueChangedEventArgs)">
+            <summary>User edited something.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.AddButton(System.String,System.Drawing.Image,System.String,System.EventHandler)">
+            <summary>Add a custom button to the property grid.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.AddLabel(System.String,System.Drawing.Image,System.String)">
+            <summary>Add a label to the property grid.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.MoveSplitter(System.Int32)">
+            <summary>Moves the vertical splitter.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.ResizeDescriptionArea(System.Int32)">
+            <summary>Alter the bottom description area.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.ExpandGroup(System.String,System.Boolean)">
+            <summary>Expand or collapse the group.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.PropertyGridEx.ShowProperty(System.String,System.Boolean)">
+            <summary>Show or hide a named property.</summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.Slider">
+            <summary>
+            Slider control.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.Label">
+            <summary>
+            Optional label.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.ControlColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.BackColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.Maximum">
+            <summary>
+            Maximum value of this slider.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.Minimum">
+            <summary>
+            Minimum value of this slider.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.ResetValue">
+            <summary>
+            Reset value of this slider.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.Value">
+            <summary>
+            The value for this slider.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.DecPlaces">
+            <summary>
+            Number of decimal places to display.
+            </summary>
+        </member>
+        <member name="E:NBagOfTricks.UI.Slider.ValueChanged">
+            <summary>
+            Slider value changed event.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Slider.#ctor">
+            <summary>
+            Creates a new Slider control.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Slider.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Slider.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Slider.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Draw the slider.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Slider.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Slider.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Slider.SetValueFromMouse(System.Int32)">
+            <summary>
+            ommon updater.
+            </summary>
+            <param name="x"></param>
+        </member>
+        <member name="T:NBagOfTricks.UI.VirtualKeyboard">
+            <summary>
+            Virtual keyboard control borrowed from Leslie Sanford with extras.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs">
+            <summary>Device has received something.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.ChannelNumber">
+            <summary>Channel number. Client can set it.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.NoteId">
+            <summary>Midi note id.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.Velocity">
+            <summary>Midi velocity.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.VirtualKeyboard._keys">
+            <summary>All the created piano keys.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.VirtualKeyboard._keyMap">
+            <summary>Map from Keys value to the index in _keys.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.VirtualKeyboard._keyDown">
+            <summary>Known bug?</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_Load(System.Object,System.EventArgs)">
+            <summary>
+            Initialize everything.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:NBagOfTricks.UI.VirtualKeyboard.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.IsNatural(System.Int32)">
+            <summary>
+            Is it a white key?
+            </summary>
+            <param name="notenum">Which note</param>
+            <returns>True/false</returns>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.CreateKeyMap">
+            <summary>
+            Create the midi note/keyboard mapping.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_Resize(System.Object,System.EventArgs)">
+            <summary>
+            Event handler.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Use alpha keyboard to drive piano.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_KeyUp(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Use alpha keyboard to drive piano.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_VKeyEvent(System.Object,NBagOfTricks.UI.VirtualKey.VKeyEventArgs)">
+            <summary>
+            Pass along an event from a virtual key.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.CreateKeys">
+            <summary>
+            Create the key controls.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKeyboard.DrawKeys">
+            <summary>
+            Re/draw the keys.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.VirtualKey">
+            <summary>One individual key.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.VirtualKey._owner">
+            <summary>Hook to owner.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKey.IsPressed">
+            <summary>Key status.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKey.IsNatural">
+            <summary>Key status.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKey.NoteId">
+            <summary>Associated midi note.</summary>
+        </member>
+        <member name="E:NBagOfTricks.UI.VirtualKey.VKeyEvent">
+            <summary>Notify handlers of key change.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.#ctor(NBagOfTricks.UI.VirtualKeyboard,System.Boolean,System.Int32)">
+            <summary>
+            Normal constructor.
+            </summary>
+            <param name="owner"></param>
+            <param name="isNatural"></param>
+            <param name="noteId"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.PressVKey">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.ReleaseVKey">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseEnter(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseLeave(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="T:NBagOfTricks.UI.WaitCursor">
+            <summary>Class that provides a better wait cursor. Clients should use it with using (new WaitCursor()) { slow code }</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.WaitCursor.m_cursorOld">
+            <summary>Restore original cursor</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.WaitCursor._disposedValue">
+            <summary>To detect redundant call</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.WaitCursor._start">
+            <summary>For metrics</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.WaitCursor.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.WaitCursor.Dispose">
+            <summary>Dispose</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.WaitCursor.Dispose(System.Boolean)">
+            <summary>Dispose</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:NBagOfTricks.StringUtils">
+            <summary>
+            Misc string extension methods.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.IsInteger(System.String)">
+            <summary>
+            Test for integer string.
+            </summary>
+            <param name="sourceString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.IsAlpha(System.String)">
+            <summary>
+            Test for alpha string.
+            </summary>
+            <param name="sourceString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.IsReadable(System.Byte)">
+            <summary>
+            
+            </summary>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.Right(System.String,System.Int32)">
+            <summary>
+            Returns the rightmost characters of a string based on the number of characters specified.
+            </summary>
+            <param name="str">The source string to return characters from.</param>
+            <param name="numChars">The number of rightmost characters to return.</param>
+            <returns>The rightmost characters of a string.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.Left(System.String,System.Int32)">
+            <summary>
+            Returns the leftmost number of chars in the string.
+            </summary>
+            <param name="str">The source string .</param>
+            <param name="numChars">The number of characters to get from the source string.</param>
+            <returns>The leftmost number of characters to return from the source string supplied.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.SplitByTokens(System.String,System.String,System.Boolean)">
+            <summary>
+            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
+            </summary>
+            <param name="text">The string to split up.</param>
+            <param name="tokens">The char token(s) to split by.</param>
+            <param name="trim">Remove whitespace at each end.</param>
+            <returns>Return the parts as a list.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.SplitByToken(System.String,System.String,System.Boolean)">
+            <summary>
+            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
+            </summary>
+            <param name="text">The string to split up.</param>
+            <param name="splitby">The string to split by.</param>
+            <param name="trim">Remove whitespace at each end.</param>
+            <returns>Return the parts as a list.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Update the MRU.
+            </summary>
+            <param name="mruList">The MRU.</param>
+            <param name="newVal">New value(s) to perhaps insert.</param>
+        </member>
+        <member name="T:NBagOfTricks.KeyUtils">
+            <summary>
+            Static keyboard processing functions.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Generic UI helper. Allows user to enter only integer or double values.
+            s</summary>
+            <param name="sender">Sender control.</param>
+            <param name="e">Event args.</param>
+        </member>
+        <member name="M:NBagOfTricks.KeyUtils.TestForInteger_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Generic UI helper. Allows user to enter only integer values.
+            </summary>
+            <param name="sender">Sender control.</param>
+            <param name="e">Event args.</param>
+        </member>
+        <member name="M:NBagOfTricks.KeyUtils.TestForAlphanumeric_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Generic UI helper. Allows user to enter only alphanumeric values.
+            </summary>
+            <param name="sender">Sender control.</param>
+            <param name="e">Event args.</param>
+        </member>
+        <member name="M:NBagOfTricks.KeyUtils.KeyToChar(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
+            <summary>General purpose decoder for keys. Because windows makes it kind of difficult.</summary>
+            <param name="key"></param>
+            <param name="modifiers"></param>
+            <returns>Tuple of Converted char (0 if not convertible) and keyCode(s).</returns>
+        </member>
+        <member name="M:NBagOfTricks.KeyUtils.GetKeyState(System.Windows.Forms.Keys)">
+            <summary>Key state query. Based on https://stackoverflow.com/a/9356006. </summary>
+            <param name="key">Which key.</param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.MathUtils">
+            <summary>
+            Static math utility functions.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.InitRand(System.Int32)">
+            <summary>
+            Seed the randomizer.
+            </summary>
+            <param name="seed"></param>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.RandStr(System.Int32)">
+            <summary>
+            Get a random alphanumeric string.
+            </summary>
+            <param name="num">String length.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.RandRange(System.Int32,System.Int32)">
+            <summary>
+            Get the next random integer in the range.
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.RandRange(System.Double,System.Double)">
+            <summary>
+            Get the next random double in the range.
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.IsClose(System.Double,System.Double,System.Double)">
+            <summary>
+            Compare two doubles "close enough".
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.SplitDouble(System.Double)">
+            <summary>
+            Split a double into two parts: each side of the dp.
+            </summary>
+            <param name="val"></param>
+            <returns>tuple of integral and fractional</returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.DegreesToRadians(System.Double)">
+            <summary>Conversion.</summary>
+            <param name="angle"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.RadiansToDegrees(System.Double)">
+            <summary>Conversion.</summary>
+            <param name="angle"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Remap a value to new coordinates.
+            </summary>
+            <param name="val"></param>
+            <param name="start1"></param>
+            <param name="stop1"></param>
+            <param name="start2"></param>
+            <param name="stop2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.Map(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Remap a value to new coordinates.
+            </summary>
+            <param name="val"></param>
+            <param name="start1"></param>
+            <param name="stop1"></param>
+            <param name="start2"></param>
+            <param name="stop2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.StandardDeviation(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Calculate a Standard Deviation based on a List of doubles.
+            </summary>
+            <param name="inputArray">List of doubles</param>
+            <returns>Double value of the Standard Deviation</returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.SumOfSquares(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Calculate a Sum of Squares given a List of doubles.
+            </summary>
+            <param name="inputArray">List of doubles</param>
+            <returns>Double value of the Sum of Squares</returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.NextGaussian(System.Random,System.Double,System.Double)">
+            <summary>
+            Generates normally distributed numbers.
+            </summary>
+            <param name="r"></param>
+            <param name="mean">Mean</param>
+            <param name="sigma">Sigma</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Double,System.Double,System.Double)">
+            <summary>
+            Bounds limits a value.
+            </summary>
+            <param name="val"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Bounds limits a value.
+            </summary>
+            <param name="val"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.MmTimerEx">
+            <summary>
+            The win multimedia timer is erratic. This class attempts to reduce the error by running at one msec
+            and managing the requested periods manually. This is accomplished by using a Stopwatch to actually
+            measure the elapsed time rather than trust the mm timer period. It seems to be an improvement.
+            Also see "Microsecond and Millisecond C# Timer - CodeProject.html". Good accuracy at the expense of a whole core.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.period">
+            <summary>The time between events in msec.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.current">
+            <summary>Accumulated msec.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._timers">
+            <summary>All the timer instances. Key is id.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._sw">
+            <summary>Used for more accurate timing.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._running">
+            <summary>Indicates whether or not the timer is running.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._lastTicks">
+            <summary>Stopwatch support.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._disposed">
+            <summary>Indicates whether or not the timer has been disposed.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.MMTIMER_PERIOD">
+            <summary>Msec for mm timer tick.</summary>
+        </member>
+        <member name="E:NBagOfTricks.MmTimerEx.TimerElapsedEvent">
+            <summary>Occurs when the time period has elapsed.</summary>
+        </member>
+        <member name="T:NBagOfTricks.MmTimerEx.TimerEventArgs">
+            <summary>FastTimer event args.</summary>
+        </member>
+        <member name="P:NBagOfTricks.MmTimerEx.TimerEventArgs.ElapsedTimers">
+            <summary>Elapsed timers.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._timerID">
+            <summary>
+            Multimedia timer identifier.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._resolution">
+            <summary>
+            Timer resolution in milliseconds. The resolution increases with smaller values - a resolution of 0
+            indicates periodic events should occur with the greatest possible accuracy. To reduce system 
+            overhead, however, you should use the maximum value appropriate for your application.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.MmTimerEx.TimeProc">
+            <summary>
+            Called by Windows when a mm timer event occurs.
+            </summary>
+            <param name="id"></param>
+            <param name="msg"></param>
+            <param name="user"></param>
+            <param name="param1"></param>
+            <param name="param2"></param>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._timeProc">
+            <summary>
+            Called by Windows when a mm timer event occurs.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.timeSetEvent(System.Int32,System.Int32,NBagOfTricks.MmTimerEx.TimeProc,System.IntPtr,System.Int32)">
+            <summary>Start her up.</summary>
+            <param name="delay">Event delay, in milliseconds.If this value is not in the range of the minimum and maximum event delays supported by the timer, the function returns an error.</param>
+            <param name="resolution">Resolution of the timer event, in milliseconds. The resolution increases with smaller values; a resolution of 0 indicates periodic events should occur with the greatest possible accuracy. To reduce system overhead, however, you should use the maximum value appropriate for your application.</param>
+            <param name="proc">Pointer to a callback function that is called once upon expiration of a single event or periodically upon expiration of periodic events.</param>
+            <param name="user">User-supplied callback data.</param>
+            <param name="mode">Timer event type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.#ctor">
+            <summary>
+            Initializes a new instance of the Timer class.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Finalize">
+            <summary>
+            Destructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Dispose">
+            <summary>
+            Frees timer resources.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Dispose(System.Boolean)">
+            <summary>
+            Frees timer resources.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.String,System.Int32)">
+            <summary>
+            Add a new timer instance.
+            </summary>
+            <param name="id">Arbitrary id as string</param>
+            <param name="period"></param>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Start">
+            <summary>
+            Starts the periodic timer.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Stop">
+            <summary>
+            Stops timer.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.MmTimerCallback(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Multimedia timer callback. Don't trust the accuracy of the mm timer so measure actual using a stopwatch.
+            </summary>
+            <param name="id">The identifier of the timer. The identifier is returned by the timeSetEvent function.</param>
+            <param name="msg">Reserved.</param>
+            <param name="user">The value that was specified for the dwUser parameter of the timeSetEvent function.</param>
+            <param name="param1">Reserved.</param>
+            <param name="param2">Reserved.</param>
+        </member>
+        <member name="T:NBagOfTricks.MmTimerEx.TimerCaps">
+            <summary>
+            Represents information about the multimedia timer capabilities.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.TimerCaps.periodMin">
+            <summary>
+            Minimum supported period in milliseconds.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.TimerCaps.periodMax">
+            <summary>
+            Maximum supported period in milliseconds.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.MultiFileWatcher">
+            <summary>
+            A watcher for multiple file changes. The underlying FileSystemWatcher is a bit sensitive to OS file system ops.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.MultiFileWatcher.FileChangeEventArgs">
+            <summary>Reporting a change to listeners.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MultiFileWatcher._watchers">
+            <summary>Detect changed composition file.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MultiFileWatcher._timer">
+            <summary>Used to delay reporting to client as there can be multiple events for one file change.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MultiFileWatcher._touchedFiles">
+            <summary>Set by subordinate watchers.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MultiFileWatcher.DELAY">
+            <summary>The delay before reporting. Seems like a reasonable number for human edit interface.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MultiFileWatcher._disposed">
+            <summary>Resource clean up.</summary>
+        </member>
+        <member name="M:NBagOfTricks.MultiFileWatcher.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MultiFileWatcher.Timer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
+            <summary>
+            Handle timer tick. Sends event out if any constituents triggered.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.MultiFileWatcher.Add(System.String)">
+            <summary>
+            Add anew listener.
+            </summary>
+            <param name="path"></param>
+        </member>
+        <member name="M:NBagOfTricks.MultiFileWatcher.Clear">
+            <summary>
+            Remove all listeners.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MultiFileWatcher.Watcher_Changed(System.Object,System.IO.FileSystemEventArgs)">
+            <summary>
+            Handle underlying change notification.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.MultiFileWatcher.Dispose">
+            <summary>
+            Resource clean up.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MultiFileWatcher.Dispose(System.Boolean)">
+            <summary>
+            Resource clean up.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.OutputFormat">
+            <summary>
+            Generate a human readable or junit format output.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.TestContext">
+            <summary>
+            Accumulates general test info.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.Format">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentSuiteId">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentSuitePass">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumSuitesRun">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumSuitesFailed">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentCasePass">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumCasesRun">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumCasesFailed">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.OutputLines">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.PropertyLines">
+            <summary></summary>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.AssertException">
+            <summary>
+            Specific exception type.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.TestRunner">
+            <summary>
+            The orchestrator of the test execution.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.PNUT.TestRunner.TIME_FORMAT">
+            <summary>Format string.</summary>
+        </member>
+        <member name="F:NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT">
+            <summary>Format string.</summary>
+        </member>
+        <member name="F:NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT_MSEC">
+            <summary>Format string.</summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestRunner.Context">
+            <summary>The test context.</summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestRunner.#ctor(NBagOfTricks.PNUT.OutputFormat)">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestRunner.RunSuites(System.String[])">
+            <summary>
+            Run selected cases.
+            </summary>
+            <param name="which">List of names of test cases to run. If the test case names begin with these values they will run.</param>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.TestSuite">
+            <summary>
+            Defining class for an individual test suite.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestSuite.CaseCnt">
+            <summary>Accumulated count.</summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestSuite.Context">
+            <summary>Common context info.</summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RunSuite">
+            <summary>
+            All test case specifications must supply this.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordResult(System.Boolean,System.String,System.String,System.Int32)">
+            <summary>
+            Record a test result.
+            </summary>
+            <param name="pass"></param>
+            <param name="message"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordProperty(System.String,System.String)">
+            <summary>
+            Record a property into the report.
+            </summary>
+            <param name="name"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordVerbatim(System.String)">
+            <summary>
+            Record a verbatim text line into the report.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_INFO(System.String,System.Object[])">
+            <summary>
+            Print some info to the report.
+            </summary>
+            <param name="message">Info text</param>
+            <param name="vars">Optional vars to print</param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_PROPERTY``1(System.String,``0)">
+            <summary>
+            Add an element to the property collection.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_TRUE(System.Boolean,System.String,System.Int32)">
+            <summary>
+            Checks whether the given condition is true.
+            </summary>
+            <param name="condition"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_FALSE(System.Boolean,System.String,System.Int32)">
+            <summary>
+            Checks whether the given condition is false.
+            </summary>
+            <param name="condition"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_ASSERT``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Prints the condition and gens assert/exception.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_NOT_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is not equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_LESS``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is less than the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_LESS_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is less than or equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_GREATER``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is greater than the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_GREATER_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is greater than or equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_CLOSE(System.Double,System.Double,System.Double,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is within the given tolerance from the second parameter.
+            This is useful for comparing floating point values.
+            </summary>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="tolerance"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.StateMachine.SmFunc">
+            <summary>
+            Definition for transition/entry/exit functions.
+            </summary>
+            <param name="o"></param>
+        </member>
+        <member name="T:NBagOfTricks.StateMachine.SmEngine">
+            <summary>
+            A generalized implementation of a state machine.
+            </summary>
+            <remarks>
+            States:
+            - Each state must have a name.  TODO "" means default
+            - Each state must have one or more Transitions.
+            - Each state may have an enter and/or exit action executed on state changes.
+            
+            Transitions:
+             - Each transition must have an event name. TODO "" means default
+             - Each transition may have a next state name otherwise stays in the same state.
+             - Each transition may have a transition action.
+            </remarks>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.SmEngine._states">
+            <summary>All the states.</summary>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.SmEngine._eventQueue">
+            <summary>The event queue.</summary>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.SmEngine._locker">
+            <summary>Queue serializing access.</summary>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.SmEngine._processingEvents">
+            <summary>Flag to handle recursion in event processing.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.SmEngine.CurrentState">
+            <summary>The machine current state.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.SmEngine.Errors">
+            <summary>Accumulated list of errors.</summary>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.SmEngine.Init(NBagOfTricks.StateMachine.State[],System.String)">
+            <summary>
+            Init everything. Also does validation of the definitions at the same time.
+            </summary>
+            <param name="states">All the states.</param>
+            <param name="initialState">Initial state.</param>
+            <returns>Initialization success.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.SmEngine.ProcessEvent(System.String,System.Object)">
+            <summary>
+            Processes an event. Returns when event queue is empty.
+            Events can be coming on different threads so this method is locked.
+            </summary>
+            <param name="evt">Incoming event.</param>
+            <param name="o">Optional event data.</param>
+            <returns>Ok or error.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.SmEngine.GenerateDot">
+            <summary>
+            Generate DOT markup.
+            </summary>
+            <returns>Returns a string that contains the DOT markup.</returns>
+        </member>
+        <member name="T:NBagOfTricks.StateMachine.State">
+            <summary>Describes an individual state.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.State.StateName">
+            <summary>The state name.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.State.Transitions">
+            <summary>All the transitions possible for this state.</summary>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.State._defaultTransition">
+            <summary>Convenience reference to optional default transition.</summary>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.State._entryFunc">
+            <summary>Optional state entry action.</summary>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.State._exitFunc">
+            <summary>Optional state exit action.</summary>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.State.#ctor(System.String,NBagOfTricks.StateMachine.SmFunc,NBagOfTricks.StateMachine.SmFunc,NBagOfTricks.StateMachine.Transition[])">
+            <summary>Main constructor.</summary>
+            <param name="st">Associated state name</param>
+            <param name="entry">Optional state entry action</param>
+            <param name="exit">Optional state exit action</param>
+            <param name="transitions">Collection of transitions for this state</param>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.State.Init(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>Initialize the state and its transitions.</summary>
+            <param name="stateNames">All valid state names</param>
+            <returns>List of any errors.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.State.ProcessEvent(NBagOfTricks.StateMachine.EventInfo)">
+            <summary>Process the event.</summary>
+            <param name="ei">The event information.</param>
+            <returns>The next state.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.State.Enter(System.Object)">
+            <summary>Enter the state by executing the enter action</summary>
+            <param name="o">Optional data object</param>
+            <returns>void</returns>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.State.Exit(System.Object)">
+            <summary>Exit the state by executing the enter action</summary>
+            <param name="o">Optional data object</param>
+            <returns>void</returns>
+        </member>
+        <member name="T:NBagOfTricks.StateMachine.Transition">
+            <summary>Describes an individual transition.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.Transition.EventName">
+            <summary>The name of the event that triggers this transition.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.Transition.NextState">
+            <summary>Change state to this after execution action.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.Transition.TransitionFunc">
+            <summary>Optional action - executed before state change</summary>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.Transition.#ctor(System.String,System.String,NBagOfTricks.StateMachine.SmFunc)">
+            <summary>Constructor.</summary>
+            <param name="evt">Incoming event name</param>
+            <param name="nextState">Next state name</param>
+            <param name="trans">Optional transition action</param>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.Transition.Execute(NBagOfTricks.StateMachine.EventInfo)">
+            <summary>Execute transition action.</summary>
+            <param name="ei">Event information</param>
+            <returns>The next state</returns>
+        </member>
+        <member name="T:NBagOfTricks.StateMachine.EventInfo">
+            <summary>Data carrying class.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.EventInfo.Name">
+            <summary>Unique event name.</summary>
+        </member>
+        <member name="P:NBagOfTricks.StateMachine.EventInfo.Param">
+            <summary>Event data.</summary>
+        </member>
+        <member name="M:NBagOfTricks.StateMachine.EventInfo.ToString">
+            <summary>Generate a human readable string.</summary>
+        </member>
+        <member name="T:NBagOfTricks.TimingAnalyzer">
+            <summary>
+            Diagnostics for timing measurement.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.TimingAnalyzer._watch">
+            <summary>The internal timer.</summary>
+        </member>
+        <member name="F:NBagOfTricks.TimingAnalyzer._lastTicks">
+            <summary>Last grab time for calculating diff.</summary>
+        </member>
+        <member name="P:NBagOfTricks.TimingAnalyzer.SampleSize">
+            <summary>Number of data points to grab for statistics.</summary>
+        </member>
+        <member name="P:NBagOfTricks.TimingAnalyzer.Times">
+            <summary>Accumulated data points.</summary>
+        </member>
+        <member name="P:NBagOfTricks.TimingAnalyzer.Mean">
+            <summary>Mean in msec.</summary>
+        </member>
+        <member name="P:NBagOfTricks.TimingAnalyzer.Min">
+            <summary>Min in msec.</summary>
+        </member>
+        <member name="P:NBagOfTricks.TimingAnalyzer.Max">
+            <summary>Max in msec.</summary>
+        </member>
+        <member name="P:NBagOfTricks.TimingAnalyzer.SD">
+            <summary>SD in msec.</summary>
+        </member>
+        <member name="M:NBagOfTricks.TimingAnalyzer.ToString">
+            <summary>
+            Make readable.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.TimingAnalyzer.Stop">
+            <summary>
+            Stop accumulator.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.TimingAnalyzer.Arm">
+            <summary>
+            Execute this before measuring the duration of something.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.TimingAnalyzer.ReadOne">
+            <summary>
+            Do one read since Arm().
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.TimingAnalyzer.Grab">
+            <summary>
+            Grab a data point. Also auto starts the timer.
+            </summary>
+            <returns>New stats are available.</returns>
+        </member>
+        <member name="M:NBagOfTricks.TimingAnalyzer.TicksToMsec(System.Int64)">
+            <summary>
+            Conversion for stopwatch values.
+            </summary>
+            <param name="ticks"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.Utils">
+            <summary>
+            Static general utility functions.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Utils.GetVersionString">
+            <summary>
+            Returns a string with the application version information.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Utils.GetAppDataDir(System.String)">
+            <summary>
+            Get the user app dir.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.GetExeDir">
+            <summary>
+            Get the executable dir.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
+            <summary>
+            Resize the image to the specified width and height.
+            </summary>
+            <param name="image">The image to resize.</param>
+            <param name="width">The width to resize to.</param>
+            <param name="height">The height to resize to.</param>
+            <returns>The resized image.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
+            <summary>
+            Colorize a bitmap.
+            </summary>
+            <param name="original"></param>
+            <param name="newcol"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.GetSequenceColor(System.Int32,System.Boolean)">
+            <summary>
+            Helper to get next contrast color in the sequence.
+            From http://colorbrewer2.org qualitative.
+            </summary>
+            <param name="i"></param>
+            <param name="dark">Dark or light series, usually dark.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            Mix two colors.
+            </summary>
+            <param name="one"></param>
+            <param name="two"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.FormatSourceCode(System.Collections.Generic.List{System.String})">
+            <summary>Rudimentary C# source code formatter to make generated files somewhat readable.</summary>
+            <param name="src">Lines to prettify.</param>
+            <returns>Formatted lines.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.DeepClone``1(``0)">
+            <summary>
+            Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
+            There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
+            The binary serialization is apparently slower but safer. Feel free to reimplement with a better way.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.Subset``1(``0[],System.Int32,System.Int32)">
+            <summary>
+            Get a subset of an array.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"></param>
+            <param name="start"></param>
+            <param name="length"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Immediately executes the given action on each element in the source sequence.
+            </summary>
+            <typeparam name="T">The type of the elements in the sequence</typeparam>
+            <param name="source">The sequence of elements</param>
+            <param name="action">The action to execute on each element</param>
+        </member>
+        <member name="M:NBagOfTricks.Utils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
+            <summary>
+            Immediately executes the given action on each element in the source sequence.
+            Each element's index is used in the logic of the action.
+            </summary>
+            <typeparam name="T">The type of the elements in the sequence</typeparam>
+            <param name="source">The sequence of elements</param>
+            <param name="action">The action to execute on each element; the second parameter
+            of the action represents the index of the source element.</param>
+        </member>
+    </members>
+</doc>
