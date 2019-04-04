@@ -215,15 +215,7 @@ namespace Nebulator.Script
 
     }
 
-
-
-
-
-
-
-
-
-    /* TODO!!
+    /* TODO!! NSection
     /// <summary>
     /// One top level section.
     /// </summary>
@@ -283,17 +275,10 @@ namespace Nebulator.Script
         //public int Length { get; set; } = 1;
         #endregion
 
-
-
-
         public void Add(List<string> parts)
         {
 
         }
-
-
-
-
 
         /// <summary>
         /// Like: Z.Add(00.00, "G3", 90, 0.60).

@@ -188,10 +188,7 @@ namespace Nebulator
 
             if (sopen == "")
             {
-                if (Compile())
-                {
-                    ProcessPlay(PlayCommand.Stop, true);
-                }
+                ProcessPlay(PlayCommand.Stop, true);
             }
             else
             {
@@ -281,8 +278,8 @@ namespace Nebulator
         void DeleteDevices()
         {
             // Save the vkbd position.
-            // TODO _inputs.Values.Where(v => v.GetType() == typeof(VirtualKeyboard.VKeyboard)).ForEach
-            //    (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as VirtualKeyboard.VKeyboard));
+            _inputs.Values.Where(v => v.GetType() == typeof(Keyboard)).ForEach
+               (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as Keyboard));
 
             _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
             _inputs.Clear();
@@ -299,7 +296,7 @@ namespace Nebulator
             DeleteDevices();
 
             // Get requested inputs.
-            VirtualKeyboard vkey = null; // If used, requires special handling.
+            Keyboard vkey = null; // If used, requires special handling.
 
             foreach (NController ctlr in _script.Controllers)
             {
@@ -326,8 +323,8 @@ namespace Nebulator
                                 break;
 
                             case "VKEY":
-                                // TODO vkey = new VirtualKeyboard.VKeyboard();
-                                //nin = vkey;
+                                vkey = new Keyboard();
+                                nin = vkey;
                                 break;
                         }
                     }
@@ -355,11 +352,11 @@ namespace Nebulator
 
                 if(vkey != null)
                 {
-                    // TODO vkey.StartPosition = FormStartPosition.Manual;
-                    //vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
-                    //vkey.TopMost = false;
-                    //vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
-                    //vkey.Show();
+                    vkey.StartPosition = FormStartPosition.Manual;
+                    vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
+                    vkey.TopMost = false;
+                    vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
+                    vkey.Show();
                 }
             }
 

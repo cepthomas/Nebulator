@@ -140,10 +140,11 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("System.Drawing.dll");
                 cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
                 cp.ReferencedAssemblies.Add("System.Data.dll");
+                cp.ReferencedAssemblies.Add("NAudio.dll");
+                cp.ReferencedAssemblies.Add("NBagOfTricks.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Device.dll");
-                cp.ReferencedAssemblies.Add("NAudio.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();
@@ -647,10 +648,11 @@ namespace Nebulator.Script
                 "using System.Linq;",
                 "using System.Drawing;",
                 "using System.Windows.Forms;",
+                "using NAudio;",
+                "using NBagOfTricks;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "using Nebulator.Device;",
-                "using NAudio;",
                 "namespace Nebulator.UserScript",
                 "{",
                 $"public partial class {_scriptName} : NebScript",

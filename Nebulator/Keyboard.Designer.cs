@@ -47,6 +47,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "Keyboard";
             this.Text = "Keyboard";
+            this.Load += new System.EventHandler(this.Keyboard_Load);
             this.ResumeLayout(false);
 
         }
