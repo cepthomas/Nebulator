@@ -333,7 +333,10 @@ namespace Nebulator.Script
             return valid;
         }
 
-
+        /// <summary>
+        /// Process one plain script file.
+        /// </summary>
+        /// <param name="pcont"></param>
         void GenScriptFile(FileContext pcont)
         {
             List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
@@ -383,72 +386,40 @@ namespace Nebulator.Script
             }   
         }
 
-
-
-        NComposition GenCompositionFile(FileContext pcont)
+        /// <summary>
+        /// Process the composition file.
+        /// </summary>
+        /// <param name="pcont"></param>
+        void GenCompositionFile(FileContext pcont)
         {
-            // DEF KEYS_DEF_VOL 0.8
-            // SEQ PIANO_MAIN
-            // 00.00   G3     0.7   0.60
-            // 
-            // SEQ DRUMS_SIMPLE
-            // x-------x-------x-------x-------   AcousticBassDrum   BASS_DRUM_VOL
-            // 
-            // COMP    DRUMS           PIANO          BASS
-            // 15.00   SKIP            FuncPiano      BASS_VERSE
-            // 16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
-            // 32.00
-
-            NComposition comp = null;
-
-            //           string parseState = "IDLE";
-            string currentSeq = "";
-            int numInst = 0;
-
-
             SmEngine sm = new SmEngine();
 
+            string currentSeq = "";
+            int numInsts = 0;
+            int numComps = 0;
 
             State[] states = new State[]
             {
-                new State("IDLE", null, null,
+                new State("ST_IDLE", null, null,
                     new Transition("DEF", "",  DoDef),
-                    new Transition("SEQ", "SEQ",  StartSeq),
-                    new Transition("COMP", "COMP",  StartComp),
-                    new Transition("ERR", "",  ParseError)),
+                    new Transition("SEQ", "ST_SEQ",  StartSeq),
+                    new Transition("COMP", "ST_COMP",  StartComp)),
 
-                new State("SEQ", null, null,
-                    new Transition("DEF", "IDLE",  DoDef),
-                    new Transition("SEQ", "SEQ",  StartSeq),
-                    new Transition("COMP", "COMP",  StartComp),
-                    new Transition("ERR", "",  ParseError),
-                    new Transition("", "???",  AddToSeq)),
+                new State("ST_SEQ", null, null,
+                    new Transition("DEF", "",  DoDef),
+                    new Transition("SEQ", "",  StartSeq),
+                    new Transition("COMP", "ST_COMP",  StartComp),
+                    new Transition("", "",  AddToSeq)),
 
-                new State("COMP", null, null,
-                    new Transition("DEF", "IDLE",  DoDef),
-                    new Transition("SEQ", "SEQ",  StartSeq),
-                    // new Transition("COMP", "COMP",  StartComp),
-                    new Transition("ERR", "", ParseError),
-                    new Transition("", "???",  AddToComp)),
+                new State("ST_COMP", null, null,
+                    new Transition("DEF", "",  DoDef),
+                    new Transition("SEQ", "ST_SEQ",  StartSeq),
+                    new Transition("", "",  AddToComp)),
             };
 
+            sm.Init(states, "ST_IDLE");
 
-            sm.Init(states, "IDLE");
-
-
-            // Store the whole line with line number tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
-            void AddLine(string sline)
-            {
-                pcont.CodeLines.Add($"{sline} //{pcont.LineNumber}");
-
-            }
-
-            void ParseError(Object o) // TODO
-            {
-                //var inParts = o as List<string>;
-                //pcont.CodeLines.Add($"const double {inParts[1]} = {inParts[2]}; //{pcont.LineNumber}");
-            }
-
+            #region Local transition functions
             void DoDef(Object o)
             {
                 var inParts = o as List<string>;
@@ -459,125 +430,166 @@ namespace Nebulator.Script
             {
                 var inParts = o as List<string>;
                 currentSeq = inParts[1];
-                AddLine($"NSequence {inParts[1]};");
+                AddLine($"NSequence {inParts[1]} = createSequence();");
             }
 
             void AddToSeq(Object o)
             {
                 var inParts = o as List<string>;
-                //            //     PIANO_MAIN.Add("00.00", "G3", "0.7", "0.60");
-                //            //     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", "AcousticBassDrum", "BASS_DRUM_VOL");
-            }
 
-            //                sm.ProcessEvent("ERR");
-
-
-            void StartComp(Object o)
-            {
-                if(_filesToCompile != null)
+                if (currentSeq == "")
                 {
-                    // Can't have more than one composition.
-                    sm.ProcessEvent("ERR");
+                    throw new Exception("Missing SEQ statement.");
+                }
+
+                if(inParts.Count < 3)
+                {
+                    throw new Exception("Invalid SEQ line.");
+                }
+
+                StringBuilder sb = new StringBuilder($"{currentSeq}.Add(");
+
+                // Two general different styles.
+                if(inParts[0].IsFloat())
+                {
+                    sb.Append($"{inParts[0]}, ");
+                    sb.Append(inParts[1].IsInteger() ? $"{inParts[1]}, " : $"\"{inParts[1]}\", "); // TODO like "AcousticBassDrum"
+                }
+                else // string pattern
+                {
+                    sb.Append($"\"{inParts[0]}\", ");
+                    sb.Append($"{inParts[1]}, ");
+                }
+
+                // Rest is common.
+                if (inParts.Count > 3)
+                {
+                    sb.Append($"{inParts[2]}, {inParts[3]}");
                 }
                 else
                 {
-                    var inParts = o as List<string>;
-                    string sout = $"NComposition comp = new NComposition();  ";
+                    sb.Append($"{inParts[2]}");
+                }
+                sb.Append($");");
 
-                    numInst = inParts.Count - 1;
-                    for (int i = 1; i < numInst; i++)
+                AddLine(sb.ToString());
+
+                // public void Add(double when,    string what, double volume, double duration = 0)
+                // public void Add(double when,    int what,    double volume, double duration = 0)
+                // public void Add(double when,    Action func, double volume)
+                // public void Add(string pattern, int which,   double volume, double duration = 0)
+
+                //KEYS_VERSE2.Add(0.00, "F4", 0.7, 0.32);
+                //KEYS_VERSE2.Add(0.32, "D#4", KEYS_DEF_VOL, 0.32);
+                //KEYS_VERSE2.Add(1.00, 17, 0.7, CONSTX);
+                //DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 99);
+                //DRUMS_VERSE.Add(0.00, "AcousticBassDrum", DRUM_DEF_VOL);
+
+
+            }
+
+            void StartComp(Object o)
+            {
+                if (numComps == 0)
+                {
+                    var inParts = o as List<string>;
+                    AddLine($"NComposition comp = new NComposition();");
+
+                    numInsts = inParts.Count - 1;
+                    for (int i = 0; i < numInsts; i++)
                     {
-                        sout += $"comp.Instruments.Add({inParts[i]});  ";
+                        AddLine($"comp.Instruments.Add({inParts[i + 1]});");
                     }
 
-                    AddLine(sout);
+                    numComps++;
+                }
+                else
+                {
+                    throw new Exception("Can't have more than one composition.");
                 }
             }
 
             void AddToComp(Object o)
             {
                 var inParts = o as List<string>;
-                //            sout = $"comp.Add({inParts.GetRange(1, inParts.Count - 1)});";
 
+                if (inParts.Count != numInsts + 1)
+                {
+                    throw new Exception("Invalid COMP line.");
+                }
+
+                for (int i = 1; i < inParts.Count; i++)
+                {
+                    AddLine($"comp.Add(new Time({inParts[0]}), {inParts[i]});");
+                }
+
+                // TODO SKIP, MUTE
+                // SKIP means keep going, no new directive
+                // MUTE means mute
+                //COMP    DRUMS           PIANO          BASS
+                //00.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
+                //04.00
+                //15.00   SKIP            FuncPiano      BASS_VERSE
+                //17.00   SKIP            MUTE           SKIP
             }
 
-            //void AddLine(string cline)//, FileContext pcont)
-            //{
-            //    // Store the whole line with line number tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
-            //    pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
-            //}
-
-
-            List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
-
-
-            for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
+            // Store the whole line with source line number tacked on.
+            void AddLine(string sline)
             {
-                string sline = sourceLines[pcont.LineNumber - 1].Trim();
+                pcont.CodeLines.Add($"{sline} //{pcont.LineNumber}");
+            }
+            #endregion
+
+            // Preamble
+            pcont.CodeLines.Add("public override void InitComposition()"); //TODO need to call this
+            pcont.CodeLines.Add("{");
+            pcont.CodeLines.Add("NSequence SKIP = new NSequence();");
+            pcont.CodeLines.Add("NSequence MUTE = new NSequence();");
+
+            // Start parsing the source file.
+            pcont.LineNumber = 0;
+            foreach(string sin in File.ReadAllLines(pcont.SourceFile))
+            {
+                pcont.LineNumber++; // one-based
+
+                string sline = sin.Trim();
 
                 ///// Preprocess - remove any comments.
                 int pos = sline.IndexOf("//");
                 string cline = pos >= 0 ? sline.Left(pos) : sline;
+
                 List<string> inParts = cline.SplitByToken(" ");
-
-
-
-
-                /// <summary>
-                /// Processes an event. Returns when event queue is empty.
-                /// Events can be coming on different threads so this method is locked.
-                /// </summary>
-                /// <param name="evt">Incoming event.</param>
-                /// <param name="o">Optional event data.</param>
-                /// <returns>Ok or error.</returns>
-                ///public bool ProcessEvent(string evt, object o = null)
 
                 if (inParts.Count > 0)
                 {
-                    bool ok = sm.ProcessEvent(inParts[0], inParts);
-
-                    if(!ok)
+                    try
                     {
-                        // sm.Errors.Count;
+                        if (!sm.ProcessEvent(inParts[0], inParts))
+                        {
+                            throw new Exception("Process event error");
+                        }
                     }
-
-                    string sout = "";
-
-                    //if (sout != "")
-                    //{
-                    //}
+                    catch (Exception)
+                    {
+                        Errors.Add(new ScriptError()
+                        {
+                            ErrorType = ScriptErrorType.Error,
+                            Message = $"Script error in {sline}",
+                            SourceFile = pcont.SourceFile,
+                            LineNumber = pcont.LineNumber
+                        });
+                    }
                 }
                 else
                 {
-                    //// Nothing to do.
-                    //parseState = "IDLE";
-
-                   // sm.
-                }
-
-
-                try
-                {
-                }
-                catch (Exception ex)
-                {
-                    Errors.Add(new ScriptError()
-                    {
-                        ErrorType = ScriptErrorType.Error,
-                        Message = $"Script error in {sline}",
-                        SourceFile = pcont.SourceFile,
-                        LineNumber = pcont.LineNumber
-                    });
+                    // Nothing to do. Reset;
+                    currentSeq = "";
                 }
             }
 
-            ///            NComposition comp = new NComposition();
+            pcont.CodeLines.Add("}");
 
-
-            return comp;
         }
-
-
 
         /// <summary>
         /// Create the file containing all the nebulator glue.

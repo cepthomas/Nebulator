@@ -50,7 +50,12 @@ namespace Nebulator.Script
         /// <summary>Called every Nebulator Tock.</summary>
         public virtual void step() { }
         #endregion
-        
+
+        #region Internal overrides
+        /// <summary>If composition is included.</summary>
+        public virtual void InitComposition() { }
+        #endregion
+
         #region Script callable functions
         /// <summary>
         /// Normal factory.
@@ -165,10 +170,9 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal constructor.
         /// </summary>
-        /// <param name="length">Length in ticks.</param>
-        protected NSequence createSequence(int length)
+        protected NSequence createSequence()
         {
-            NSequence nseq = new NSequence();// { Length = length };
+            NSequence nseq = new NSequence();
             Sequences.Add(nseq);
             return nseq;
         }
@@ -205,15 +209,16 @@ namespace Nebulator.Script
             if (play)
             {
                 double vel = channel.NextVol(vol);
-                double notenum = MathUtils.Constrain(dnote, 0, 127);
+                double absnote = MathUtils.Constrain(Math.Abs(dnote), 0, 127);
 
-                if (vol > 0)
+                // If vol is positive and the note is not negative, it's note on, else note off.
+                if (vol > 0 && dnote > 0)
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
                         Device = channel.Device,
                         ChannelNumber = channel.ChannelNumber,
-                        NoteNumber = notenum,
+                        NoteNumber = absnote,
                         Velocity = vel,
                         VelocityToPlay = vel,
                         Duration = new Time(dur)
@@ -228,7 +233,7 @@ namespace Nebulator.Script
                     {
                         Device = channel.Device,
                         ChannelNumber = channel.ChannelNumber,
-                        NoteNumber = notenum
+                        NoteNumber = absnote
                     };
 
                     channel.Device.Send(step);
@@ -418,5 +423,18 @@ namespace Nebulator.Script
             return _rand.Next(min, max);
         }
         #endregion
+
+        public void print(params object[] vars)
+        {
+            _logger.Info(string.Join(" ", vars));
+        }
+        public void printArray(Array what)
+        {
+            for (int i = 0; i < what.Length; i++)
+            {
+                _logger.Info($"array[{i}]: {what.GetValue(i)}");
+            }
+        }
+
     }
 }

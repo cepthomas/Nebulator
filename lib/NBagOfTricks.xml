@@ -638,6 +638,13 @@
             <param name="sourceString"></param>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.StringUtils.IsFloat(System.String)">
+            <summary>
+            Test for float string.
+            </summary>
+            <param name="sourceString"></param>
+            <returns></returns>
+        </member>
         <member name="M:NBagOfTricks.StringUtils.IsAlpha(System.String)">
             <summary>
             Test for alpha string.

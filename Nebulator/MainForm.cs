@@ -135,6 +135,7 @@ namespace Nebulator
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
             potSpeed.ControlColor = UserSettings.TheSettings.IconColor;
+            potSpeed.BackColor = UserSettings.TheSettings.BackColor;
             potSpeed.Font = UserSettings.TheSettings.ControlFont;
             potSpeed.Invalidate();
 
@@ -567,8 +568,8 @@ namespace Nebulator
             // Convert compiled stuff to step collection.
             _compiledSteps.Clear();
 
-            ////TODO!!  prob don't need this anymore?
-            //foreach (NSection sect in _script.Sections)
+            
+            //foreach (NSection sect in _script.Sections) TODO need some of this, like timeMaster stuff
             //{
             //    // Collect important times.
             //    timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
@@ -684,7 +685,6 @@ namespace Nebulator
                 btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, Color.Red);
                 _needCompile = true;
             }
-
         }
         #endregion
 
@@ -853,7 +853,7 @@ namespace Nebulator
                         if (e.Step is StepNoteOn || e.Step is StepNoteOff)
                         {
                             int chanNum = (e.Step as Step).ChannelNumber;
-                            // Dig out the note number. Note sign change for note off.
+                            // Dig out the note number. !!! Note sign specifies note on/off.
                             double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : -(e.Step as StepNoteOff).NoteNumber;
                             handled = ProcessInput(sender as NInput, ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
                         }
@@ -1125,7 +1125,9 @@ namespace Nebulator
                             // Running on the UI thread.
                             SetCompileStatus(true);
                             AddToRecentDefs(fn);
-                            Compile();
+                            bool ok = Compile();
+                            SetCompileStatus(ok);
+                            InitScriptUi();
                         });
 
                         Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
@@ -1140,11 +1142,11 @@ namespace Nebulator
                     ret = $"Couldn't open the np file: {fn} because: {ex.Message}";
                     _logger.Error(ret);
                 }
-                finally
-                {
-                    SetCompileStatus(false);
-                    InitScriptUi();
-                }
+                //finally
+                //{
+                //    SetCompileStatus(false);
+                //    InitScriptUi();
+                //}
             }
 
             return ret;

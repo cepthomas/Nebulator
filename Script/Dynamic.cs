@@ -189,32 +189,6 @@ namespace Nebulator.Script
     }
 
 
-
-    public class NComposition
-    {
-        public List<NChannel> Instruments { get; set; } = new List<NChannel>();
-
-        public NComposition()//List<string> instNames)
-        {
-
-        }
-
-        // class OneLine
-        // {
-        //     Time when;
-        //     List<NSequence>> what;
-        // }
-
-        public Dictionary<Time, List<NSequence>> Steps { get; set; } = new Dictionary<Time, List<NSequence>>();
-
-
-        public void Add(List<string> parts)
-        {
-
-        }
-
-    }
-
     /* TODO!! NSection
     /// <summary>
     /// One top level section.
@@ -261,24 +235,41 @@ namespace Nebulator.Script
     }
     */
 
+    /// <summary>
+    /// The complete composition.
+    /// </summary>
+    public class NComposition // TODO all this
+    {
+        Dictionary<Time, List<NSequence>> _timeSeqs = new Dictionary<Time, List<NSequence>>();
+
+        //List<NChannel> _instruments = new List<NChannel>();
+
+
+
+        public List<NChannel> Instruments { get; set; } = new List<NChannel>();
+
+        public NComposition()  //List<string> instNames)
+        {
+        }
+
+        public void Add(Time when, NSequence seq)
+        {
+            _timeSeqs[when].Add(seq);
+        }
+
+//        public Dictionary<Time, List<NSequence>> Steps { get; set; } = new Dictionary<Time, List<NSequence>>();
+    }
+
 
     /// <summary>
     /// One sequence definition in the composition.
     /// </summary>
-    public class NSequence //TODO become part of new model?
+    public class NSequence
     {
         #region Properties
         /// <summary>List of notes or other elements.</summary>
         public List<NSequenceElement> Elements { get; set; } = new List<NSequenceElement>();
-
-        ///// <summary>Length in ticks.</summary>
-        //public int Length { get; set; } = 1;
         #endregion
-
-        public void Add(List<string> parts)
-        {
-
-        }
 
         /// <summary>
         /// Like: Z.Add(00.00, "G3", 90, 0.60).

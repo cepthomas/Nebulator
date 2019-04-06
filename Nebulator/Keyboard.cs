@@ -17,7 +17,7 @@ using Nebulator.Midi;
 namespace Nebulator
 {
     /// <summary>
-    /// Virtual keyboard borrowed from Leslie Sanford.
+    /// Wrapper to turn control into a device.
     /// </summary>
     public partial class Keyboard : Form, NInput
     {
@@ -69,12 +69,30 @@ namespace Nebulator
         }
         #endregion
 
+        #region Public functions
+        /// <inheritdoc />
+        public void Start()
+        {
+        }
+
+        /// <inheritdoc />
+        public void Stop()
+        {
+        }
+
+        /// <inheritdoc />
+        public void Housekeep()
+        {
+        }
+        #endregion
+
+        #region Events
         /// <summary>
         /// Handle key events.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Vkey_KeyboardEvent(object sender, VirtualKeyboard.KeyboardEventArgs e)
+        void Vkey_KeyboardEvent(object sender, VirtualKeyboard.KeyboardEventArgs e)
         {
             if (DeviceInputEvent != null)
             {
@@ -106,11 +124,10 @@ namespace Nebulator
                 DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
                 LogMsg(DeviceLogCategory.Recv, step.ToString());
             }
-
-
         }
+        #endregion
 
-
+        #region Private functions
         /// <summary>Ask host to do something with this.</summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
@@ -118,136 +135,6 @@ namespace Nebulator
         {
             DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
-
-
-        #region Public functions
-        /// <inheritdoc />
-        public void Start()
-        {
-        }
-
-        /// <inheritdoc />
-        public void Stop()
-        {
-        }
-
-        /// <inheritdoc />
-        public void Housekeep()
-        {
-        }
         #endregion
     }
 }
-
-
-/*
-
-
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Linq;
-using System.IO;
-using Nebulator.Common;
-using Nebulator.Device;
-using Nebulator.Midi;
-
-namespace Nebulator.VirtualKeyboard
-{
-    /// <summary>
-    /// Virtual keyboard control borrowed from Leslie Sanford with extras.
-    /// </summary>
-    public partial class VKeyboard : Form, NInput
-    {
-        #region Constants
-        const int LOW_NOTE = 21;
-        const int HIGH_NOTE = 109;
-        const int MIDDLE_C = 60;
-        #endregion
-
-
-        #region User input handlers
-        /// <summary>
-        /// Use alpha keyboard to drive piano.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Keyboard_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!_keyDown)
-            {
-                if (_keyMap.ContainsKey(e.KeyCode))
-                {
-                    VKey pk = _keys[_keyMap[e.KeyCode]];
-                    if (!pk.IsPressed)
-                    {
-                        pk.PressVKey();
-                        e.Handled = true;
-                    }
-                }
-
-                _keyDown = true;
-            }
-        }
-
-        /// <summary>
-        /// Use alpha keyboard to drive piano.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Keyboard_KeyUp(object sender, KeyEventArgs e)
-        {
-            _keyDown = false;
-
-            if (_keyMap.ContainsKey(e.KeyCode))
-            {
-                VKey pk = _keys[_keyMap[e.KeyCode]];
-                pk.ReleaseVKey();
-                e.Handled = true;
-            }
-        }
-
-        /// <summary>
-        /// Pass along an event from a virtual key.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Keyboard_VKeyEvent(object sender, VKey.VKeyEventArgs e)
-        {
-            if (DeviceInputEvent != null)
-            {
-                Step step = null;
-
-                if (e.Down)
-                {
-                    step = new StepNoteOn()
-                    {
-                        Device = this,
-                        ChannelNumber = 1,
-                        NoteNumber = e.NoteId,
-                        Velocity = 100,
-                        VelocityToPlay = 100,
-                        Duration = new Time(0)
-                    };
-                }
-                else // up
-                {
-                    step = new StepNoteOff()
-                    {
-                        Device = this,
-                        ChannelNumber = 1,
-                        NoteNumber = e.NoteId,
-                        Velocity = 0
-                    };
-                }
-
-                DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
-                LogMsg(DeviceLogCategory.Recv, step.ToString());
-            }
-        }
-
-        #endregion
-    }
-}
-*/

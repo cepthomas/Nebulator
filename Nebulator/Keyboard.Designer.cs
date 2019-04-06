@@ -33,9 +33,10 @@
             // 
             // vkey
             // 
-            this.vkey.Location = new System.Drawing.Point(77, 12);
+            this.vkey.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.vkey.Location = new System.Drawing.Point(0, 0);
             this.vkey.Name = "vkey";
-            this.vkey.Size = new System.Drawing.Size(574, 105);
+            this.vkey.Size = new System.Drawing.Size(660, 129);
             this.vkey.TabIndex = 0;
             // 
             // Keyboard
