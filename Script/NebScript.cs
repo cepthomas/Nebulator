@@ -165,9 +165,10 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal constructor.
         /// </summary>
-        protected NSequence createSequence()
+        /// <param name="len">Length.</param>
+        protected NSequence createSequence(int len)
         {
-            NSequence nseq = new NSequence();
+            NSequence nseq = new NSequence(len);
             Sequences.Add(nseq);
             return nseq;
         }
@@ -384,41 +385,12 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Math helpers TODO these?
-        protected double random(double max)
-        {
-            return _rand.NextDouble() * max;
-        }
-
-        protected double random(double min, double max)
-        {
-            return min + _rand.NextDouble() * (max - min);
-        }
-
-        protected int random(int max)
-        {
-            return _rand.Next(max);
-        }
-
-        protected int random(int min, int max)
-        {
-            return _rand.Next(min, max);
-        }
-        #endregion
-
-        #region helpers TODO these?
-        public void print(params object[] vars)
-        {
-            _logger.Info(string.Join(" ", vars));
-        }
-
-        public void printArray(Array what)
-        {
-            for (int i = 0; i < what.Length; i++)
-            {
-                _logger.Info($"array[{i}]: {what.GetValue(i)}");
-            }
-        }
+        #region Helpers from NProcessing TODO these?
+        protected double random(double max) { return _rand.NextDouble() * max; }
+        protected double random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
+        protected int random(int max) { return _rand.Next(max); }
+        protected int random(int min, int max) { return _rand.Next(min, max); }
+        public void print(params object[] vars) { _logger.Info(string.Join(" ", vars)); }
         #endregion
     }
 }

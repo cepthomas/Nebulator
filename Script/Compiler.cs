@@ -320,14 +320,14 @@ namespace Nebulator.Script
                 pcont.CodeLines.AddRange(GenTopOfFile(pcont.SourceFile));
 
                 ///// The content.
-                if (pcont.SourceFile.EndsWith(".nebc"))
-                {
-                    GenCompositionFile(pcont);
-                }
-                else
-                {
+                //if (pcont.SourceFile.EndsWith(".nebc"))
+                //{
+                //    GenCompositionFile(pcont);
+                //}
+                //else
+                //{
                     GenScriptFile(pcont);
-                }
+                //}
 
                 ///// Postamble.
                 pcont.CodeLines.AddRange(GenBottomOfFile());
