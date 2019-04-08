@@ -53,9 +53,6 @@ namespace Nebulator
         /// <summary>Current step time clock.</summary>
         Time _stepTime = new Time();
 
-        /// <summary>The compiled event sequence.</summary>
-        StepCollection _compiledSteps = new StepCollection();
-
         /// <summary>Script compile errors and warnings.</summary>
         List<ScriptError> _compileResults = new List<ScriptError>();
 
@@ -157,7 +154,6 @@ namespace Nebulator
             // Fast timer.
             _timer = new MmTimerEx();
             SetSpeedTimerPeriod();
-            SetUiTimerPeriod();
             _timer.TimerElapsedEvent += TimerElapsedEvent;
             _timer.Start();
 
@@ -521,8 +517,6 @@ namespace Nebulator
 
                         ProcessRuntime();
 
-                        ConvertToSteps();
-
                         SetSpeedTimerPeriod();
 
                         // Show everything.
@@ -558,46 +552,6 @@ namespace Nebulator
             }
 
             return ok;
-        }
-
-        /// <summary>
-        /// Convert the script output into steps for feeding output devices.
-        /// </summary>
-        void ConvertToSteps()
-        {
-            // Convert compiled stuff to step collection.
-            _compiledSteps.Clear();
-
-            
-            //foreach (NSection sect in _script.Sections) TODOx need some of this, like timeMaster stuff
-            //{
-            //    // Collect important times.
-            //    timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
-
-            //    // Iterate through the sections channels.
-            //    foreach (NSectionChannel schannel in sect.SectionChannels)
-            //    {
-            //        try
-            //        {
-            //            // For processing current Sequence.
-            //            int seqOffset = sect.Start;
-
-            //            // Gen steps for each sequence.
-            //            foreach (NSequence seq in schannel.Sequences)
-            //            {
-            //                StepCollection stepsToAdd = NebScript.ConvertToSteps(schannel.ParentChannel, seq, seqOffset);
-            //                _compiledSteps.Add(stepsToAdd);
-            //                seqOffset += seq.Length;
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            throw new Exception($"Error in the sequences for NChannel {schannel.ParentChannel.Name} : {ex.Message}");
-            //        }
-            //    }
-            //}
-
-            //Console.Write(_compiledSteps.Dump());
         }
 
         /// <summary>
@@ -666,7 +620,7 @@ namespace Nebulator
             double mv = Convert.ToDouble(_nppVals.GetValue("master", "volume"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
-            timeMaster.MaxTick = _compiledSteps.MaxTick;
+ //           timeMaster.MaxTick = _compiledSteps.MaxTick;
         }
 
         /// <summary>
@@ -742,30 +696,21 @@ namespace Nebulator
                 _script.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                 _script.RuntimeSteps.DeleteSteps(_stepTime);
 
-                // Now do the compiled steps.
-                _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-
-
-                // Do composition steps.
-                
-
-
-
                 ///// Bump time.
                 _stepTime.Advance();
 
                 ////// Check for end of play.
-                // If no steps or not selected, free running mode so always keep going.
-                if(_compiledSteps.Times.Count() != 0)
-                {
-                    // Check for end.
-                    if (_stepTime.Tick > _compiledSteps.MaxTick)
-                    {
-                        ProcessPlay(PlayCommand.StopRewind, false);
-                        _outputs.ForEach(o => o.Value?.Kill()); // just in case
-                    }
-                }
-                // else keep going
+                // // If no steps or not selected, free running mode so always keep going.
+                // if(_compiledSteps.Times.Count() != 0)
+                // {
+                //     // Check for end.
+                //     if (_stepTime.Tick > _compiledSteps.MaxTick)
+                //     {
+                //         ProcessPlay(PlayCommand.StopRewind, false);
+                //         _outputs.ForEach(o => o.Value?.Kill()); // just in case
+                //     }
+                // }
+                // // else keep going
 
                 ProcessPlay(PlayCommand.UpdateUiTime, false);
             }
@@ -1444,9 +1389,6 @@ namespace Nebulator
                     MessageBox.Show("UI changes require a restart to take effect.");
                 }
 
-                // Always safe to update these.
-                SetUiTimerPeriod();
-
                 SaveSettings();
             }
         }
@@ -1555,17 +1497,6 @@ namespace Nebulator
             double msecPerTock = 1 / tocksPerMsec;
             _timer.SetTimer("NEB", (int)msecPerTock);
         }
-
-        /// <summary>
-        /// Common func.
-        /// </summary>
-        void SetUiTimerPeriod()
-        {
-            //// Convert fps to msec per frame.
-            //double framesPerMsec = (double)_frameRate / 1000;
-            //double msecPerFrame = 1 / framesPerMsec;
-            //_timer.SetTimer("UI", (int)msecPerFrame);
-        }
         #endregion
 
         #region Midi utilities
@@ -1603,7 +1534,8 @@ namespace Nebulator
             double ticksPerSec = ticksPerMinute / 60;
             double secPerTick = 1 / ticksPerSec;
 
-            MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
+//TODOx ?            MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
+// use: StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
         }
 
         /// <summary>
