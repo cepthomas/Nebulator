@@ -569,7 +569,7 @@ namespace Nebulator
             _compiledSteps.Clear();
 
             
-            //foreach (NSection sect in _script.Sections) TODO need some of this, like timeMaster stuff
+            //foreach (NSection sect in _script.Sections) TODOx need some of this, like timeMaster stuff
             //{
             //    // Collect important times.
             //    timeMaster.TimeDefs.Add(new Time(sect.Start, 0), sect.Name);
@@ -745,6 +745,12 @@ namespace Nebulator
                 // Now do the compiled steps.
                 _compiledSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
 
+
+                // Do composition steps.
+                
+
+
+
                 ///// Bump time.
                 _stepTime.Advance();
 
@@ -763,27 +769,6 @@ namespace Nebulator
 
                 ProcessPlay(PlayCommand.UpdateUiTime, false);
             }
-
-            ///// UI updates /////
-            //if (e.ElapsedTimers.Contains("UI") && chkPlay.Checked && !_needCompile)
-            //{
-            //    //_tan.Arm();
-
-            //    // Note: Need exception handling here to protect from user script errors.
-            //    try
-            //    {
-            //        _surface.UpdateSurface();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ScriptRuntimeError(new NebScript.RuntimeErrorEventArgs() { Exception = ex });
-            //    }
-
-            //    //if (_tan.Grab())
-            //    //{
-            //    //    _logger.Info("UI tan: " + _tan.ToString());
-            //    //}
-            //}
 
             // Process whatever the script did.
             ProcessRuntime();

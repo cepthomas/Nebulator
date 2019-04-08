@@ -51,11 +51,6 @@ namespace Nebulator.Script
         public virtual void step() { }
         #endregion
 
-        #region Internal overrides
-        /// <summary>If composition is included.</summary>
-        public virtual void InitComposition() { }
-        #endregion
-
         #region Script callable functions
         /// <summary>
         /// Normal factory.
@@ -176,19 +171,6 @@ namespace Nebulator.Script
             Sequences.Add(nseq);
             return nseq;
         }
-
-        ///// <summary>
-        ///// Normal factory.
-        ///// </summary>
-        ///// <param name="name"></param>
-        ///// <param name="start"></param>
-        ///// <param name="length">Length in ticks.</param>
-        //protected NSection createSection(string name, int start, int length)
-        //{
-        //    NSection nsec = new NSection() { Name = name, Start = start, Length = length };
-        //    Sections.Add(nsec);
-        //    return nsec;
-        //}
 
         /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
         /// <param name="channel">Which channel to send it on.</param>
@@ -356,7 +338,7 @@ namespace Nebulator.Script
         {
             if (channel == null)
             {
-                throw new Exception($"Invalid NChannel for note");
+                throw new Exception($"Invalid NChannel for sequence");
             }
 
             StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
@@ -402,7 +384,7 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Math helpers
+        #region Math helpers TODO these?
         protected double random(double max)
         {
             return _rand.NextDouble() * max;
@@ -424,10 +406,12 @@ namespace Nebulator.Script
         }
         #endregion
 
+        #region helpers TODO these?
         public void print(params object[] vars)
         {
             _logger.Info(string.Join(" ", vars));
         }
+
         public void printArray(Array what)
         {
             for (int i = 0; i < what.Length; i++)
@@ -435,6 +419,6 @@ namespace Nebulator.Script
                 _logger.Info($"array[{i}]: {what.GetValue(i)}");
             }
         }
-
+        #endregion
     }
 }

@@ -68,6 +68,9 @@ namespace Nebulator.Script
 
         /// <summary>Products of file process. Key is generated file name.</summary>
         Dictionary<string, FileContext> _filesToCompile = new Dictionary<string, FileContext>();
+
+        /// <summary>All the definitions for internal use.</summary>
+        Dictionary<string, int> _defs = new Dictionary<string, int>();
         #endregion
 
         #region Public functions
@@ -260,15 +263,6 @@ namespace Nebulator.Script
         /// <param name="nebfn">Topmost file in collection.</param>
         void Parse(string nebfn)
         {
-            // Start parsing from the main file. ParseOneFile is a recursive function.
-            FileContext pcont = new FileContext()
-            {
-                SourceFile = nebfn,
-                LineNumber = 1
-            };
-
-            ParseOneFile(pcont);
-
             // Add the generated internal code files.
             _filesToCompile.Add($"{_scriptName}_wrapper.cs", new FileContext()
             {
@@ -281,6 +275,15 @@ namespace Nebulator.Script
                 SourceFile = "",
                 CodeLines = GenDefFileContents()
             });
+
+            // Start parsing from the main file. ParseOneFile is a recursive function.
+            FileContext pcont = new FileContext()
+            {
+                SourceFile = nebfn,
+                LineNumber = 1
+            };
+
+            ParseOneFile(pcont);
         }
 
         /// <summary>
@@ -379,7 +382,7 @@ namespace Nebulator.Script
                 {
                     if (cline != "")
                     {
-                        // Store the whole line with line number tacked on. This is easier than trying to maintain a bunch of source<>compiled mappings.
+                        // Store the whole line with line number tacked on.
                         pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
                     }
                 }
@@ -390,7 +393,7 @@ namespace Nebulator.Script
         /// Process the composition file.
         /// </summary>
         /// <param name="pcont"></param>
-        void GenCompositionFile(FileContext pcont)
+        void GenCompositionFile_TODO_delete(FileContext pcont)
         {
             SmEngine sm = new SmEngine();
 
@@ -449,11 +452,22 @@ namespace Nebulator.Script
 
                 StringBuilder sb = new StringBuilder($"{currentSeq}.Add(");
 
-                // Two general different styles.
+                // Different styles.
                 if(inParts[0].IsFloat())
                 {
                     sb.Append($"{inParts[0]}, ");
-                    sb.Append(inParts[1].IsInteger() ? $"{inParts[1]}, " : $"\"{inParts[1]}\", "); // TODO like "AcousticBassDrum"
+                    if(inParts[1].IsInteger())
+                    {
+                        sb.Append($"{inParts[1]}, ");
+                    }
+                    else if(_defs.ContainsKey(inParts[1]))
+                    {
+                        sb.Append($"{inParts[1]}, ");
+                    }
+                    else // string like "AcousticBassDrum"
+                    {
+                        sb.Append($"\"{inParts[1]}\", ");
+                    }
                 }
                 else // string pattern
                 {
@@ -493,12 +507,12 @@ namespace Nebulator.Script
                 if (numComps == 0)
                 {
                     var inParts = o as List<string>;
-                    AddLine($"NComposition comp = new NComposition();");
+                   // AddLine($"NComposition comp = new NComposition();");
 
                     numInsts = inParts.Count - 1;
                     for (int i = 0; i < numInsts; i++)
                     {
-                        AddLine($"comp.Instruments.Add({inParts[i + 1]});");
+                        AddLine($"Instruments.Add({inParts[i + 1]});");
                     }
 
                     numComps++;
@@ -520,17 +534,8 @@ namespace Nebulator.Script
 
                 for (int i = 1; i < inParts.Count; i++)
                 {
-                    AddLine($"comp.Add(new Time({inParts[0]}), {inParts[i]});");
+                    AddLine($"AddTimeSeq(new Time({inParts[0]}), {inParts[i]});");
                 }
-
-                // TODO SKIP, MUTE
-                // SKIP means keep going, no new directive
-                // MUTE means mute
-                //COMP    DRUMS           PIANO          BASS
-                //00.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
-                //04.00
-                //15.00   SKIP            FuncPiano      BASS_VERSE
-                //17.00   SKIP            MUTE           SKIP
             }
 
             // Store the whole line with source line number tacked on.
@@ -541,10 +546,10 @@ namespace Nebulator.Script
             #endregion
 
             // Preamble
-            pcont.CodeLines.Add("public override void InitComposition()"); //TODO need to call this
+            pcont.CodeLines.Add("public override void initComposition()");
             pcont.CodeLines.Add("{");
-            pcont.CodeLines.Add("NSequence SKIP = new NSequence();");
-            pcont.CodeLines.Add("NSequence MUTE = new NSequence();");
+            pcont.CodeLines.Add("NSequence SKIP = new NSequence();"); //TODOx SKIP means keep going, no new directive
+            pcont.CodeLines.Add("NSequence MUTE = new NSequence();"); //TODOx MUTE means mute
 
             // Start parsing the source file.
             pcont.LineNumber = 0;
@@ -588,7 +593,6 @@ namespace Nebulator.Script
             }
 
             pcont.CodeLines.Add("}");
-
         }
 
         /// <summary>
@@ -626,15 +630,44 @@ namespace Nebulator.Script
 
             // The various defines.
             codeLines.Add("///// General Midi Instruments");
-            ScriptDefinitions.TheDefinitions.InstrumentDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.InstrumentDefs[k]};"));
+            ScriptDefinitions.TheDefinitions.InstrumentDefs.Keys.ForEach(k =>
+            {
+                int val = int.Parse(ScriptDefinitions.TheDefinitions.InstrumentDefs[k]);
+                codeLines.Add($"const int {k} = {val};");
+                _defs.Add(k, val);
+            });
+
             codeLines.Add("///// General Midi Drums");
-            ScriptDefinitions.TheDefinitions.DrumDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.DrumDefs[k]};"));
+            ScriptDefinitions.TheDefinitions.DrumDefs.Keys.ForEach(k =>
+            {
+                int val = int.Parse(ScriptDefinitions.TheDefinitions.DrumDefs[k]);
+                codeLines.Add($"const int {k} = {val};");
+                _defs.Add(k, val);
+            });
+
             codeLines.Add("///// Midi Controllers");
-            ScriptDefinitions.TheDefinitions.ControllerDefs.Keys.ForEach(k => codeLines.Add($"const int {k} = {ScriptDefinitions.TheDefinitions.ControllerDefs[k]};"));
+            ScriptDefinitions.TheDefinitions.ControllerDefs.Keys.ForEach(k =>
+            {
+                int val = int.Parse(ScriptDefinitions.TheDefinitions.ControllerDefs[k]);
+                codeLines.Add($"const int {k} = {val};");
+                _defs.Add(k, val);
+            });
+
             codeLines.Add("///// Device Types");
-            Enum.GetValues(typeof(Device.DeviceType)).Cast<Device.DeviceType>().ForEach(e => codeLines.Add($"const int {e.ToString()} = {(int)e};"));
+            Enum.GetValues(typeof(Device.DeviceType)).Cast<Device.DeviceType>().ForEach(e =>
+            {
+                int val = (int)e;
+                codeLines.Add($"const int {e.ToString()} = {val};");
+                _defs.Add(e.ToString(), val);
+            });
+
             codeLines.Add("///// Meter Types");
-            Enum.GetValues(typeof(DisplayType)).Cast<DisplayType>().ForEach(e => codeLines.Add($"const int {e.ToString()} = {(int)e};"));
+            Enum.GetValues(typeof(DisplayType)).Cast<DisplayType>().ForEach(e =>
+            {
+                int val = (int)e;
+                codeLines.Add($"const int {e.ToString()} = {val};");
+                _defs.Add(e.ToString(), val);
+            });
 
             // Bottom stuff.
             codeLines.AddRange(GenBottomOfFile());

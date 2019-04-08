@@ -141,7 +141,7 @@ public override void setup()
     DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
     DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
 
-    // // TODO Sections needed?
+    // // Sections needed?
     // SECTION1 = createSection("section1", 0, 16);
     // SECTION1.Add(PIANO, SEQ1,         SEQ1);
     // SECTION1.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);

@@ -1303,18 +1303,23 @@
             </summary>
             <remarks>
             States:
-            - Each state must have a name.  TODO "" means default
+            - Each state must have a name, except the (optional) default state identified by null.
+              The default state is checked first, then the current state.
             - Each state must have one or more Transitions.
             - Each state may have an enter and/or exit action executed on state changes.
             
             Transitions:
-             - Each transition must have an event name. TODO "" means default
+             - Each transition must have an event name, except the (optional) default transition identified by null.
+               If a transition for the event name is not found, the default transition is executed.
              - Each transition may have a next state name otherwise stays in the same state.
              - Each transition may have a transition action.
             </remarks>
         </member>
         <member name="F:NBagOfTricks.StateMachine.SmEngine._states">
             <summary>All the states.</summary>
+        </member>
+        <member name="F:NBagOfTricks.StateMachine.SmEngine._defaultState">
+            <summary>The default state if used.</summary>
         </member>
         <member name="F:NBagOfTricks.StateMachine.SmEngine._eventQueue">
             <summary>The event queue.</summary>
@@ -1387,7 +1392,7 @@
         <member name="M:NBagOfTricks.StateMachine.State.ProcessEvent(NBagOfTricks.StateMachine.EventInfo)">
             <summary>Process the event.</summary>
             <param name="ei">The event information.</param>
-            <returns>The next state.</returns>
+            <returns>The next state name.</returns>
         </member>
         <member name="M:NBagOfTricks.StateMachine.State.Enter(System.Object)">
             <summary>Enter the state by executing the enter action</summary>

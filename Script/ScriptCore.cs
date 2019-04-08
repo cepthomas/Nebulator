@@ -60,12 +60,17 @@ namespace Nebulator.Script
         /// <summary>All displays.</summary>
         public List<NDisplay> Displays { get; set; } = new List<NDisplay>();
 
+        /// <summary>All channels.</summary>
+        public List<NChannel> Channels { get; set; } = new List<NChannel>();
 
 
 
-        
-        /// <summary>The whole thing.</summary>
-        public NComposition Composition { get; set; } = new NComposition();
+        ////////////////////////////////////////////////////////////////////
+        ///////////////////// Composition stuff ////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+
+        ///// <summary>The whole thing.</summary>
+        //public NComposition Composition { get; set; } = new NComposition();
 
         /// <summary>All sequences.</summary>
         public List<NSequence> Sequences { get; set; } = new List<NSequence>();
@@ -74,11 +79,34 @@ namespace Nebulator.Script
         //public List<NSection> Sections { get; set; } = new List<NSection>();
 
 
+        /// <summary>Collected sequences to play at specific times.</summary>
+        public Dictionary<Time, List<NSequence>> TimeSequences { get; set; } = new Dictionary<Time, List<NSequence>>();
+
+        /// <summary>All the instrument columns.</summary>
+        public List<NChannel> Instruments { get; set; } = new List<NChannel>();
+
+        /// <summary>
+        /// Add a sequence to the collection.
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="seq"></param>
+        public void AddTimeSeq(Time when, NSequence seq)
+        {
+            if(!TimeSequences.ContainsKey(when))
+            {
+                TimeSequences.Add(when, new List<NSequence>());
+            }
+            TimeSequences[when].Add(seq);
+        }
+
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
 
 
 
-        /// <summary>All channels.</summary>
-        public List<NChannel> Channels { get; set; } = new List<NChannel>();
+
+
         #endregion
 
         #region Lifecycle
@@ -105,7 +133,6 @@ namespace Nebulator.Script
         #endregion
 
         #region Utilities
-
         /// <summary>
         /// Generate steps from sequence notes.
         /// </summary>

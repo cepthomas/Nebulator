@@ -14,20 +14,15 @@ For lots more info see the [Wiki](https://github.com/cepthomas/Nebulator/wiki)
 
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.
-- A theoretically better multimedia timer with improved accuracy for sub 10 msec period.
 - Midi classes may be useful elsewhere in conjunction with NAudio.
 - Partial import of Yahama style (.sty) files.
-- Multiple file change watcher.
 - General purpose embedded C# in memory compiler.
-- Virtual keyboard control based on Leslie Sanford's piano.
-- Various utilities and extensions.
-- Simple charting control.
-- Example of the use of [pnut unit tester](https://github.com/cepthomas/pnut) 
+- Example of the use of [pnut unit tester](https://github.com/cepthomas/NBagOfTricks).
+- See [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks) for more goodies.
 
 # Third Party
 This application uses these FOSS components:
 - NAudio DLL including modified controls and midi file utilities: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License).
-- Modified multimedia timer and piano control: [Leslie Sanford's Midi Toolkit](https://github.com/tebjan/Sanford.Multimedia.Midi) (MIT).
 - Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause).
 - Json processor: [Newtonsoft](https://github.com/JamesNK/Newtonsoft.Json) (MIT) Note - uses 9.0.1 - don't update!
 - Web server: [embedio](https://github.com/unosquare/embedio) (MIT).

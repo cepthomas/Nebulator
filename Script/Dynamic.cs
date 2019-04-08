@@ -8,8 +8,6 @@ using Nebulator.Common;
 using Nebulator.Device;
 
 
-// A bunch of lightweight classes for runtime elements.
-
 namespace Nebulator.Script
 {
     /// <summary>Channel state.</summary>
@@ -188,88 +186,26 @@ namespace Nebulator.Script
         }
     }
 
-
-    /* TODO!! NSection
     /// <summary>
-    /// One top level section.
-    /// </summary>
-    public class NSection
-    {
-        #region Properties
-        /// <summary>The name for this section.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>Start Tick.</summary>
-        public int Start { get; set; } = 0;
-
-        /// <summary>Length in Ticks.</summary>
-        public int Length { get; set; } = 0;
-
-        /// <summary>Contained channel info.</summary>
-        public List<NSectionChannel> SectionChannels { get; set; } = new List<NSectionChannel>();
-        #endregion
-
-        /// <summary>
-        /// Script callable function.
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="seqs"></param>
-        public void Add(NChannel channel, params NSequence[] seqs)
-        {
-            SectionChannels.Add(new NSectionChannel() { ParentChannel = channel, Sequences = seqs.ToList() });
-        }
-    }
-
-    /// <summary>
-    /// One row in the Section. Describes the sequences associated with a channel in the section.
-    /// </summary>
-    public class NSectionChannel
-    {
-        #region Properties
-        /// <summary>The owner channel.</summary>
-        public NChannel ParentChannel { get; set; } = null;
-
-        /// <summary>The associated Sequences.</summary>
-        public List<NSequence> Sequences { get; set; } = null;
-        #endregion
-    }
-    */
-
-    /// <summary>
-    /// The complete composition.
-    /// </summary>
-    public class NComposition // TODO all this
-    {
-        Dictionary<Time, List<NSequence>> _timeSeqs = new Dictionary<Time, List<NSequence>>();
-
-        //List<NChannel> _instruments = new List<NChannel>();
-
-
-
-        public List<NChannel> Instruments { get; set; } = new List<NChannel>();
-
-        public NComposition()  //List<string> instNames)
-        {
-        }
-
-        public void Add(Time when, NSequence seq)
-        {
-            _timeSeqs[when].Add(seq);
-        }
-
-//        public Dictionary<Time, List<NSequence>> Steps { get; set; } = new Dictionary<Time, List<NSequence>>();
-    }
-
-
-    /// <summary>
-    /// One sequence definition in the composition.
+    /// One sequence definition.
     /// </summary>
     public class NSequence
     {
         #region Properties
         /// <summary>List of notes or other elements.</summary>
         public List<NSequenceElement> Elements { get; set; } = new List<NSequenceElement>();
+
+        /// <summary>Length in ticks.</summary>
+        public int Length { get; set; } = 1;
         #endregion
+
+        /// <summary>
+        /// Normal constructor.
+        /// </summary>
+        public NSequence(int len)
+        {
+            Length = len;
+        }
 
         /// <summary>
         /// Like: Z.Add(00.00, "G3", 90, 0.60).
@@ -348,8 +284,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSequence: ";
-            //return $"NSequence: Length:{Length}";
+            return $"NSequence: Length:{Length}";
         }
     }
 
