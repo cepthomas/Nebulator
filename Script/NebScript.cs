@@ -385,11 +385,11 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Helpers from NProcessing TODO these?
-        protected double random(double max) { return _rand.NextDouble() * max; }
-        protected double random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
-        protected int random(int max) { return _rand.Next(max); }
-        protected int random(int min, int max) { return _rand.Next(min, max); }
+        #region Helpers from NProcessing
+        public double random(double max) { return _rand.NextDouble() * max; }
+        public double random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
+        public int random(int max) { return _rand.Next(max); }
+        public int random(int min, int max) { return _rand.Next(min, max); }
         public void print(params object[] vars) { _logger.Info(string.Join(" ", vars)); }
         #endregion
     }

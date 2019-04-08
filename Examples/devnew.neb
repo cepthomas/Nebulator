@@ -35,7 +35,7 @@ double[] _chordNotes;
 double[] _scaleNotes;
 int _noteNum = 0;
 // Index is integer note number, value is when to stop it.
-int[] _notesPlaying = new int[128];
+// int[] _notesPlaying = new int[128];
 
 // Current playing.
 string _section = "idle";

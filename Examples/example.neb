@@ -30,11 +30,6 @@ NChannel BASS;
 NChannel DRUMS;
 NChannel SYNTH;
 
-////////// Sections //////////
-NSection SECTION1;
-NSection SECTION2;
-NSection SECTION3;
-
 ///// Sequences /////
 NSequence KEYS_VERSE1;
 NSequence KEYS_VERSE2;
@@ -49,6 +44,7 @@ NSequence NULL_SEQ;
 ////// Simple variables for functions. ///////
 double[] _scaleNotes;
 double[] _chordNotes;
+int _noteNum = 48;
 
 // Use wingm and virtual kbd only.
 bool _minimal = true;
@@ -165,23 +161,6 @@ public override void setup()
     NULL_SEQ = createSequence(8);
     NULL_SEQ.Add(00.00, algoNull, 0.75);
 
-    // Sections
-    SECTION1 = createSection("section1", WHEN1, WHEN2 - WHEN1);
-    SECTION1.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
-    SECTION1.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
-    SECTION1.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
-
-    SECTION2 = createSection("section2", WHEN2, WHEN3 - WHEN2);
-    SECTION2.Add(KEYS, KEYS_VERSE2, KEYS_VERSE2);
-    SECTION2.Add(DRUMS, DRUMS_SIMPLE, DRUMS_SIMPLE);
-    SECTION2.Add(BASS, BASS_VERSE, BASS_VERSE);
-    SECTION2.Add(SYNTH, NULL_SEQ, ALGO_SEQ);
-
-    SECTION3 = createSection("section3", WHEN3, WHEN4 - WHEN3);
-    SECTION3.Add(KEYS, KEYS_VERSE1, KEYS_VERSE1);
-    SECTION3.Add(DRUMS, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE, DRUMS_VERSE);
-    SECTION3.Add(BASS, BASS_VERSE, BASS_VERSE, BASS_VERSE, BASS_VERSE);
-
     // Get some stock chords and scales
     _scaleNotes = getScaleNotes("Algerian", "A3");
     _chordNotes = getNotes("C4.o7");
@@ -200,36 +179,82 @@ public override void setup2()
 
 public override void step()
 {
-    // Play a sequence periodically.
-    if(tock == 0)
+    if(tock != 0) // not looking at tocks right now
     {
-        // On the one - time to do something.
-        switch(tick)
-        {
-            case 0:
-                sendNote(SYNTH, "F3", 0.8, 0.48);
-                break;
-            case 16:
-                sendSequence(SYNTH, DYNAMIC_SEQ);
-                break;
-
-            case 8:
-                sendNoteOn(SYNTH, 62, 0.8); // numbered note on, no chase
-                break;
-
-            case 12:
-                sendNoteOff(SYNTH, 62); // numbered note off
-                break;
-
-            case 24:
-            case 25:
-            case 26:
-            case 27:
-                int notenum = random(40, 70);
-                sendNote(SYNTH, notenum, 0.8, 1.09);
-                break;
-        }
+        return;
     }
+
+    ///// drums /////
+    if(isOneOf(tick, 0, 8, 24))
+    {
+        sendSequence(DRUMS, DRUMS_SIMPLE);
+    }
+
+    if(isOneOf(tick, 16))
+    {
+        sendSequence(DRUMS, DRUMS_VERSE);
+    }
+
+    ///// piano /////
+    if(isOneOf(tick, 0, 8))
+    {
+        sendSequence(KEYS, KEYS_VERSE1);
+    }
+
+    if(isOneOf(tick, 16, 24))
+    {
+        sendSequence(KEYS, KEYS_VERSE2);
+    }
+
+    if(isOneOf(tick, 26))
+    {
+        double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
+        sendNote(KEYS, sn + tick % 24, 0.7, 0.28);
+
+        // foreach(int n in _chordNotes)
+        // {
+        //     sendNote(KEYS, n, 0.7, 1.0);
+        // }
+    }
+
+    ///// bass /////
+    if(isOneOf(tick % 16, 0, 7, 8))
+    {
+        sendNote(BASS, 50, 0.8, 2.0);
+    }
+
+    ///// synth /////
+    if(isOneOf(tick, 10))
+    {
+        sendSequence(SYNTH, ALGO_SEQ);
+    }
+
+    // // Play a sequence periodically.
+    // switch(tick)
+    // {
+    //     case 0:
+    //         sendNote(SYNTH, "F3", 0.8, 0.48);
+    //         break;
+    //     case 16:
+    //         sendSequence(SYNTH, DYNAMIC_SEQ);
+    //         break;
+
+    //     case 8:
+    //         sendNoteOn(SYNTH, 62, 0.8); // numbered note on, no chase
+    //         break;
+
+    //     case 12:
+    //         sendNoteOff(SYNTH, 62); // numbered note off
+    //         break;
+
+    //     case 24:
+    //     case 25:
+    //     case 26:
+    //     case 27:
+    //         int notenum = random(40, 70);
+    //         sendNote(SYNTH, notenum, 0.8, 1.09);
+    //         break;
+    // }
 }
 
 void algoDynamic()
