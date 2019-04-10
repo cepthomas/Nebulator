@@ -27,109 +27,58 @@ class TapeLoop
     }
 }
 
-List<TapeLoop> loops = new List<TapeLoop>();
+List<TapeLoop> _loops = new List<TapeLoop>();
 
-public override void setup()
+public override void Setup()
 {
     ///// Variables /////
-    COLOR = createVariable("color", 240, 0, 255); // change color
+    COLOR = CreateVariable("color", 240, 0, 255); // change color
 
     ///// Channels /////
     if(_minimal)
     {
-        SOUND = createChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1);
+        SOUND = CreateChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1);
     }
     else
     {
-        SOUND = createChannel("sound", "Your favorite", 1);
+        SOUND = CreateChannel("sound", "Your favorite", 1);
     }
     
-    setWobbler(SOUND, 0.1);
+    SetWobbler(SOUND, 0.1);
 
     // levers
-    createLever(COLOR);
+    CreateLever(COLOR);
 
-    // Set up the loops.
-    loops.Clear();
+    // Set up the _loops.
+    _loops.Clear();
     // Key is Ab.
-    loops.Add(new TapeLoop("Ab4", 17.80,  8.10));
-    loops.Add(new TapeLoop("Ab5", 17.70,  3.10));
+    _loops.Add(new TapeLoop("Ab4", 17.80,  8.10));
+    _loops.Add(new TapeLoop("Ab5", 17.70,  3.10));
     // 3rd
-    loops.Add(new TapeLoop("C5",  21.30,  5.60));
+    _loops.Add(new TapeLoop("C5",  21.30,  5.60));
     // 4th
-    loops.Add(new TapeLoop("Db5", 18.50, 12.60));
+    _loops.Add(new TapeLoop("Db5", 18.50, 12.60));
     // 5th
-    loops.Add(new TapeLoop("Eb5", 20.00,  9.20));
+    _loops.Add(new TapeLoop("Eb5", 20.00,  9.20));
     // 6th
-    loops.Add(new TapeLoop("F4",  19.70,  4.00));
-    loops.Add(new TapeLoop("F5",  20.00, 14.10));
+    _loops.Add(new TapeLoop("F4",  19.70,  4.00));
+    _loops.Add(new TapeLoop("F5",  20.00, 14.10));
 }
 
-//public override void setup() // Processing setup
-//{
-//    size(600, 600);
-//    print("setup()");
-//}
-
-public override void step()
+public override void Step()
 {
-    if(tick == 0 && tock == 0 && _minimal)
+    if(Tick == 0 && Tock == 0 && _minimal)
     {
-        sendPatch(SOUND, Pad2Warm);
+        SendPatch(SOUND, Pad2Warm);
     }
 
-    foreach(TapeLoop l in loops)
+    foreach(TapeLoop l in _loops)
     {
-        if(stepTime >= l.nextStart)
+        if(StepTime >= l.nextStart)
         {
-            sendNote(SOUND, l.snote, SOUND_DEF_VOL, l.duration);
+            SendNote(SOUND, l.snote, SOUND_DEF_VOL, l.duration);
             // Calc next time.
             l.nextStart = stepTime + l.delay + l.duration;
         }
     }
 }
-
-//public override void draw()
-//{
-//    background(COLOR.Value, 100, 200); // means redraw the whole thing
-//    int dy = height / (loops.Count + 1);
-//    strokeCap(ROUND);
-//
-//    for (int i = 0; i < loops.Count; i++)
-//    {
-//        TapeLoop loop = loops[i];
-//        int y = (i + 1) * dy;
-//
-//        // Draw baseline.
-//        stroke(128);
-//        strokeWeight(2);
-//        line(10, y, width - 10, y);
-//
-//        // Draw ball.
-//        int radius = 20;
-//        strokeWeight(3);
-//
-//        int total = (loop.duration + loop.delay).TotalTocks;
-//        int pos = stepTime.TotalTocks % total;
-//
-//        if(pos >= 0)
-//        {
-//            double x = width * pos / total;
-//
-//            if(pos < loop.delay.TotalTocks)
-//            {
-//                fill(220);
-//            }
-//            else 
-//            {
-//                fill(20, 240, 100);
-//            }
-//
-//            ellipse(x, y, radius, radius);
-//
-//            fill(40, 10, 200);
-//            textSize(10); 
-//            text(loop.snote, x - 15, y - 10);
-//        }
-//    }
-//}

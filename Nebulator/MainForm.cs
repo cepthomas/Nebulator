@@ -507,13 +507,13 @@ namespace Nebulator
                         InitRuntime();
 
                         // Setup - first step.
-                        _script.setup();
+                        _script.Setup();
 
                         // Devices specified in script setupNeb() - create now.
                         CreateDevices();
 
                         // Setup - optional second step.
-                        _script.setup2();
+                        _script.Setup2();
 
                         ProcessRuntime();
 
@@ -620,7 +620,7 @@ namespace Nebulator
             double mv = Convert.ToDouble(_nppVals.GetValue("master", "volume"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
- //           timeMaster.MaxTick = _compiledSteps.MaxTick;
+            timeMaster.MaxTick = _script.Length;
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ namespace Nebulator
                 // Kick the script. Note: Need exception handling here to protect from user script errors.
                 try
                 {
-                    _script.step();
+                    _script.Step();
                 }
                 catch (Exception ex)
                 {
@@ -696,21 +696,24 @@ namespace Nebulator
                 _script.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                 _script.RuntimeSteps.DeleteSteps(_stepTime);
 
+
+ //TODO timeMaster.TimeDefs = _script.scriptState;
+
                 ///// Bump time.
                 _stepTime.Advance();
 
-                ////// Check for end of play.
-                // // If no steps or not selected, free running mode so always keep going.
-                // if(_compiledSteps.Times.Count() != 0)
-                // {
-                //     // Check for end.
-                //     if (_stepTime.Tick > _compiledSteps.MaxTick)
-                //     {
-                //         ProcessPlay(PlayCommand.StopRewind, false);
-                //         _outputs.ForEach(o => o.Value?.Kill()); // just in case
-                //     }
-                // }
-                // // else keep going
+                ////// Check for end of play. TODO
+                //// If no steps or not selected, free running mode so always keep going.
+                //if(_compiledSteps.Times.Count() != 0)
+                //{
+                //    // Check for end.
+                //    if (_stepTime.Tick > _compiledSteps.MaxTick)
+                //    {
+                //        ProcessPlay(PlayCommand.StopRewind, false);
+                //        _outputs.ForEach(o => o.Value?.Kill()); // just in case
+                //    }
+                //}
+                //// else keep going
 
                 ProcessPlay(PlayCommand.UpdateUiTime, false);
             }

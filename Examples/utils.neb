@@ -7,18 +7,18 @@ const double VEL = 0.8;
 
 int notavar = 911;
 
-bool boing(double notenum = 0)
+bool Boing(double notenum = 0)
 {
     bool boinged = false;
 
-    // print("boing");
+    // Print("boing");
     if(notenum == 0)
     {
-        notenum = random(30, 80);
+        notenum = Random(30, 80);
         boinged = true;
     }
 
-    sendNote(SYNTH, notenum, VEL, 1.09);
+    SendNote(SYNTH, notenum, VEL, 1.09);
     return boinged;
 }
 

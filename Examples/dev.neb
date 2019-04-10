@@ -37,8 +37,6 @@ int _noteNum = 0;
 // Index is integer note number, value is when to stop it.
 int[] _notesPlaying = new int[128];
 
-// Current playing.
-string _section = "idle";
 
 // IO device names.
 string MIDI_IN = "MIDI:MPK mini";
@@ -48,62 +46,62 @@ string OSC_OUT = "OSC:127.0.0.1:1234";
 string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
 
 
-public override void setup()
+public override void Setup()
 {
     // All the neb variables.
-    CTL2 = createVariable("ctl2", 200, 0, 255, On_CTL2);
-    CTL3 = createVariable("ctl3", 200, 0, 255, On_CTL3);
-    BACK_COLOR = createVariable("color", 200, 0, 255, On_BACK_COLOR);
-    MOD1 = createVariable("mod", 127, 0, 255, On_MOD1);
-    KBD_NOTE = createVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
-    VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
+    CTL2 = CreateVariable("ctl2", 200, 0, 255, On_CTL2);
+    CTL3 = CreateVariable("ctl3", 200, 0, 255, On_CTL3);
+    BACK_COLOR = CreateVariable("color", 200, 0, 255, On_BACK_COLOR);
+    MOD1 = CreateVariable("mod", 127, 0, 255, On_MOD1);
+    KBD_NOTE = CreateVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
+    VKBD_NOTE = CreateVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // IO devices.
     if(_minimal)
     {
         // All the outputs.
-        PIANO = createChannel("piano", GS_MIDI_OUT, 1);
-        BASS = createChannel("bass", GS_MIDI_OUT, 2);
-        SYNTH = createChannel("synth", GS_MIDI_OUT, 3);
-        DRUMS = createChannel("drums", GS_MIDI_OUT, 10);
+        PIANO = CreateChannel("piano", GS_MIDI_OUT, 1);
+        BASS = CreateChannel("bass", GS_MIDI_OUT, 2);
+        SYNTH = CreateChannel("synth", GS_MIDI_OUT, 3);
+        DRUMS = CreateChannel("drums", GS_MIDI_OUT, 10);
 
         // All the inputs.
-        createController("VKEY:", 1, NoteControl, VKBD_NOTE);
+        CreateController("VKEY:", 1, NoteControl, VKBD_NOTE);
     }
     else
     {
         // All the outputs.
-        PIANO = createChannel("piano", MIDI_OUT, 1);
-        BASS = createChannel("bass", MIDI_OUT, 2);
-        SYNTH = createChannel("synth", MIDI_OUT, 3);
-        DRUMS = createChannel("drums", MIDI_OUT, 10);
+        PIANO = CreateChannel("piano", MIDI_OUT, 1);
+        BASS = CreateChannel("bass", MIDI_OUT, 2);
+        SYNTH = CreateChannel("synth", MIDI_OUT, 3);
+        DRUMS = CreateChannel("drums", MIDI_OUT, 10);
 
         // All the inputs.
-        createController(MIDI_IN, 1, 1, MOD1); // modulate eq
-        createController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-        createController(MIDI_IN, 1, 3, CTL3); // another controller
-        createController(MIDI_IN, 1, 4, BACK_COLOR); // change ui color
-        createController(MIDI_IN, 1, NoteControl, KBD_NOTE);
+        CreateController(MIDI_IN, 1, 1, MOD1); // modulate eq
+        CreateController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+        CreateController(MIDI_IN, 1, 3, CTL3); // another controller
+        CreateController(MIDI_IN, 1, 4, BACK_COLOR); // change ui color
+        CreateController(MIDI_IN, 1, NoteControl, KBD_NOTE);
     }
 
-    setWobbler(PIANO, 0.2);
-    setWobbler(BASS, 0.1);
-    setWobbler(DRUMS, 0.1);
+    SetWobbler(PIANO, 0.2);
+    SetWobbler(BASS, 0.1);
+    SetWobbler(DRUMS, 0.1);
 
     // levers
-    createLever(BACK_COLOR);
-    createLever(MOD1);
+    CreateLever(BACK_COLOR);
+    CreateLever(MOD1);
 
     // create set of notes (chord)
-    createNotes("CHORD", "1 4 6 b13");
-    createNotes("SCALE", "1 3 4 b7");
+    CreateNotes("CHORD", "1 4 6 b13");
+    CreateNotes("SCALE", "1 3 4 b7");
 
     // Get some stock chords and scales
-    _chordNotes = getNotes("C4.o7");
-    _scaleNotes = getScaleNotes("Algerian", "A3");
+    _chordNotes = GetNotes("C4.o7");
+    _scaleNotes = GetScaleNotes("Algerian", "A3");
 
     // Create sequences, add notes/chords/funcs.
-    PIANO_MAIN = createSequence(8);
+    PIANO_MAIN = CreateSequence(8);
     PIANO_MAIN.Add(00.00,  "G3",          0.7,  0.60);
     PIANO_MAIN.Add(01.00,  "D3",          0.7,  0.60);
     PIANO_MAIN.Add(02.00,  "A3.m7",       0.7,  0.60);
@@ -112,12 +110,12 @@ public override void setup()
     PIANO_MAIN.Add(05.50,  FuncPiano,     0.7);
     PIANO_MAIN.Add(06.24,  52,            0.7,  0.60);
 
-    DRUMS_SIMPLE = createSequence(8);
+    DRUMS_SIMPLE = CreateSequence(8);
     DRUMS_SIMPLE.Add("x-------x-------x-------x-------",  AcousticBassDrum, 0.7);
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-",  AcousticSnare,    0.6);
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx",  ClosedHiHat,      0.8);
 
-    DRUMS_VERSE = createSequence(8);
+    DRUMS_VERSE = CreateSequence(8);
     DRUMS_VERSE.Add(0.00,  AcousticBassDrum,  DRUM_DEF_VOL);
     DRUMS_VERSE.Add(1.00,  RideCymbal1,       DRUM_DEF_VOL);
     DRUMS_VERSE.Add(1.10,  RideCymbal1,       DRUM_DEF_VOL);
@@ -131,153 +129,173 @@ public override void setup()
     DRUMS_VERSE.Add(5.60,  HiMidTom,          DRUM_DEF_VOL);
     DRUMS_VERSE.Add(6.00,  AcousticBassDrum,  DRUM_DEF_VOL);
     DRUMS_VERSE.Add(7.00,  CrashCymbal2,      DRUM_DEF_VOL);
+
+    scriptLen = END;
+    scriptState = "idle";
 }
 
 
-public override void setup2()
+public override void Setup2()
 {
     if(_minimal)
     {
-        sendPatch(PIANO, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Lead1Square);
-        sendPatch(DRUMS, 32);
+        SendPatch(PIANO, AcousticGrandPiano);
+        SendPatch(BASS, AcousticBass);
+        SendPatch(SYNTH, Lead1Square);
+        SendPatch(DRUMS, 32);
     }
 }
 
 
 
+// When to play.
+// const int PART1 = 0;
+// const int PART2 = 32;
+// const int PART3 = 48;
+// const int PART4 = 80;
+// const int END = 90;
 
-public override void step()
+enum Section { PART1 = 0, PART2 = 32, PART3 = 48, PART4 = 80, END = 90 }
+
+public override void Step()
 {
     if(tock != 0) // not looking at tocks right now
     {
         return;
     }
 
-    // doState();
-    switch(tick)
+    switch(Tick)
     {
-        case 0:  _section = "part1"; break;
-        case 16: _section = "part2"; break;
-        case 32: _section = "part3"; break;
-        case 48: _section = "end";   break;
-        case 52: _section = "idle";  break;
-        default: /* no change */     break;
+        case PART1: scriptState = Tick; break;
+        case PART2: scriptState = Tick; break;
+        case PART3: scriptState = Tick; break;
+        case PART4: scriptState = Tick; break;
+        case END:   scriptState = Tick; break;
+        default:    /* no change */     break;
     }
 
-    // // Sequence size in ticks.
-    // int NSEQ = 8;
-    // // Total size in ticks.
-    // int NTOT = NSEQ * 4;
 
+    // Match(0, DRUMS, DRUMS_SIMPLE);
 
-    //Match(0, DRUMS, DRUMS_SIMPLE);
+// Tracker-like model.
+// SKIP means keep going, no new directive
+// MUTE means mute
+COMP    DRUMS           PIANO          BASS
+// SECT part1
+00.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
+08.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
+15.00   SKIP            PIANO_MAIN     BASS_VERSE
+// SECT part2
+16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
+17.00   SKIP            MUTE           SKIP
+24.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
+// SECT end
+32.00   MUTE            MUTE           MUTE
 
 
 
     ///// drums /////
-    if(isOneOf(tick, 0, 8, 24))
+    if(isOneOf(Tick, 0, 8, 24))
     {
-        sendSequence(DRUMS, DRUMS_SIMPLE);
+        SendSequence(DRUMS, DRUMS_SIMPLE);
     }
 
-    if(isOneOf(tick, 16))
+    if(isOneOf(Tick, 16))
     {
-        sendSequence(DRUMS, DRUMS_VERSE);
+        SendSequence(DRUMS, DRUMS_VERSE);
     }
 
     ///// piano /////
-    if(isOneOf(tick, 0, 8, 16))
+    if(isOneOf(Tick, 0, 8, 16))
     {
-        sendSequence(PIANO, PIANO_MAIN);
+        SendSequence(PIANO, PIANO_MAIN);
     }
 
-    if(isOneOf(tick, 26))
+    if(isOneOf(Tick, 26))
     {
         double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-        sendNote(PIANO, sn + tick % 24, 0.7, 0.28);
+        SendNote(PIANO, sn + Tick % 24, 0.7, 0.28);
 
         // foreach(int n in _chordNotes)
         // {
-        //     sendNote(PIANO, n, 0.7, 1.0);
+        //     SendNote(PIANO, n, 0.7, 1.0);
         // }
     }
 
     ///// bass /////
-    if(isOneOf(tick % 16, 0, 7, 8))
+    if(isOneOf(Tick % 16, 0, 7, 8))
     {
-        sendNote(BASS, 50, 0.8, 2.0);
+        SendNote(BASS, 50, 0.8, 2.0);
     }
 }
 
 // A called function.
 void FuncPiano()
 {
-    print("FuncPiano()");
+    Print("FuncPiano()");
 
     double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-    sendNote(PIANO, sn + tick % 24, 0.7, 0.28);
+    SendNote(PIANO, sn + Tick % 24, 0.7, 0.28);
 }
 
 public void On_BACK_COLOR()
 {
-    //print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
+    //Print(BACK_COLOR.Name, "changed to", BACK_COLOR.Value);
 }
 
 public void On_CTL2()
 {
     int newval = (int)MathUtils.Map(CTL2.Value, 0, 127, 0, 16383);
-    //print("On_CTL2:", newval);
-    sendController(SYNTH, PitchControl, newval);
+    //Print("On_CTL2:", newval);
+    SendController(SYNTH, PitchControl, newval);
 }
 
 public void On_CTL3()
 {
-    //print("On_CTL3:", CTL3.Value);
+    //Print("On_CTL3:", CTL3.Value);
     if(random(0, 10) == 0)
     {
-        sendNote(PIANO, 50 + CTL3.Value % 20, 0.7, 2.0);
+        SendNote(PIANO, 50 + CTL3.Value % 20, 0.7, 2.0);
     }
 }
 
 public void On_MOD1()
 {
-    //print(MOD1.Name, "changed to", MOD1.Value);
+    //Print(MOD1.Name, "changed to", MOD1.Value);
     // Send a controller change.
-    sendController(SYNTH, Modulation, MOD1.Value);
+    SendController(SYNTH, Modulation, MOD1.Value);
 }
 
 public void On_VKBD_NOTE()
 {
-    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
+    //Print("VKBD_NOTE", "=", VKBD_NOTE.Value);
 
     // Test for note on or off.
     if(VKBD_NOTE.Value > 0)
     {
-        sendNoteOn(SYNTH, VKBD_NOTE.Value, 0.9);
+        SendNoteOn(SYNTH, VKBD_NOTE.Value, 0.9);
     }
     else
     {
-        sendNoteOff(SYNTH, -VKBD_NOTE.Value);
+        SendNoteOff(SYNTH, -VKBD_NOTE.Value);
     }
 }
 
 public void On_KBD_NOTE()
 {
-    //print("KBD_NOTE", "=", KBD_NOTE.Value);
+    //Print("KBD_NOTE", "=", KBD_NOTE.Value);
 
     // Test for note on or off.
     if(KBD_NOTE.Value > 0)
     {
-        //sendNoteOn(PIANO, KBD_NOTE.Value, 0.9);
-        sendNoteOn(SYNTH, KBD_NOTE.Value, 0.9);
-        //sendNote(SYNTH, KBD_NOTE.Value, 0.8, 2.0); // fixed duration
+        //SendNoteOn(PIANO, KBD_NOTE.Value, 0.9);
+        SendNoteOn(SYNTH, KBD_NOTE.Value, 0.9);
+        //SendNote(SYNTH, KBD_NOTE.Value, 0.8, 2.0); // fixed duration
     }
     else
     {
-        //sendNoteOff(PIANO, -KBD_NOTE.Value);
-        sendNoteOff(SYNTH, -KBD_NOTE.Value);
+        //SendNoteOff(PIANO, -KBD_NOTE.Value);
+        SendNoteOff(SYNTH, -KBD_NOTE.Value);
     }
 }
 
@@ -291,14 +309,14 @@ void randish()
         if(_notesPlaying[which] == 0) // don't play if already playing
         {
             int dur = random(1, 8);
-            _notesPlaying[which] = tick + dur;
-            sendNote(PIANO, which, random(0.6, 0.9), dur);
+            _notesPlaying[which] = Tick + dur;
+            SendNote(PIANO, which, random(0.6, 0.9), dur);
         }
 
         // Remove any scheduled to stop now.
         for(int i = 0;i < _notesPlaying.Length;i++)
         {
-            if(_notesPlaying[i] != 0 && _notesPlaying[i] == tick)
+            if(_notesPlaying[i] != 0 && _notesPlaying[i] == Tick)
             {
                 _notesPlaying[i] = 0;
             }

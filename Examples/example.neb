@@ -51,39 +51,39 @@ bool _minimal = true;
 
 
 ////// Nebulator midi stuff //////
-public override void setup()
+public override void Setup()
 {
     string MY_MIDI_OUT = _minimal ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:yours";
 
     // All the neb variables.
-    COL1 = createVariable("color", 200, 0, 255); // change color
-    MODN = createVariable("modn", 0, -10, 10);
-    VKBD_NOTE = createVariable("note", 60, -127, 127, On_VKBD_NOTE);
+    COL1 = CreateVariable("color", 200, 0, 255); // change color
+    MODN = CreateVariable("modn", 0, -10, 10);
+    VKBD_NOTE = CreateVariable("note", 60, -127, 127, On_VKBD_NOTE);
 
     // All the channels.
-    KEYS = createChannel("keys", MY_MIDI_OUT, 1);
-    BASS = createChannel("bass", MY_MIDI_OUT, 2);
-    SYNTH = createChannel("synth", MY_MIDI_OUT, 3);
-    DRUMS = createChannel("drums", MY_MIDI_OUT, 10);
+    KEYS = CreateChannel("keys", MY_MIDI_OUT, 1);
+    BASS = CreateChannel("bass", MY_MIDI_OUT, 2);
+    SYNTH = CreateChannel("synth", MY_MIDI_OUT, 3);
+    DRUMS = CreateChannel("drums", MY_MIDI_OUT, 10);
 
     // Some wobblers.
-    setWobbler(KEYS, 0.1);
-    setWobbler(BASS, 0.1);
-    setWobbler(SYNTH, 0.1);
-    setWobbler(DRUMS, 0.1);
+    SetWobbler(KEYS, 0.1);
+    SetWobbler(BASS, 0.1);
+    SetWobbler(SYNTH, 0.1);
+    SetWobbler(DRUMS, 0.1);
 
-    // create set of notes (chord)
-    createNotes("MY_CHORD", "1 4 6 b13");
-    createNotes("MY_SCALE", "1 3 4 b7");
+    // Create set of notes (chord)
+    CreateNotes("MY_CHORD", "1 4 6 b13");
+    CreateNotes("MY_SCALE", "1 3 4 b7");
 
     // levers
-    createLever(COL1);
-    createLever(MODN);
+    CreateLever(COL1);
+    CreateLever(MODN);
 
-    createController("VKEY:", 0, NoteControl, VKBD_NOTE);
+    CreateController("VKEY:", 0, NoteControl, VKBD_NOTE);
 
     ///// Sequences /////
-    KEYS_VERSE1 = createSequence(16);
+    KEYS_VERSE1 = CreateSequence(16);
     KEYS_VERSE1.Add(0.00,  "G4.m7", 0.7, 1.32);
     KEYS_VERSE1.Add(1.60,  "G4.m7", 0.7, 0.20);
     KEYS_VERSE1.Add(2.00,  "G4.m7", 0.7, 0.20);
@@ -97,7 +97,7 @@ public override void setup()
     KEYS_VERSE1.Add(13.60, "G4.m6", 0.7, 0.20);
     KEYS_VERSE1.Add(14.00, "G4.m6", 0.7, 0.20);
 
-    KEYS_VERSE2 = createSequence(8);
+    KEYS_VERSE2 = CreateSequence(8);
     KEYS_VERSE2.Add(0.00, "F4",    0.7, 0.32);
     KEYS_VERSE2.Add(0.32, "D#4",   KEYS_DEF_VOL, 0.32);
     KEYS_VERSE2.Add(1.00, "C4",    0.7, 0.32);
@@ -116,7 +116,7 @@ public override void setup()
     KEYS_VERSE2.Add(7.32, "B2.m7", 0.7, 0.32);
 
     ////// Bass //////
-    BASS_VERSE = createSequence(8);
+    BASS_VERSE = CreateSequence(8);
     BASS_VERSE.Add(0.00, "C2",  0.75, 0.25);
     BASS_VERSE.Add(0.48, "C2",  0.75, 0.125);
     BASS_VERSE.Add(3.32, "E2",  0.75, 0.25);
@@ -126,7 +126,7 @@ public override void setup()
     ////// Drums //////
 
     // "musical"
-    DRUMS_VERSE = createSequence(8);
+    DRUMS_VERSE = CreateSequence(8);
     DRUMS_VERSE.Add(0.00, AcousticBassDrum, DRUM_DEF_VOL);
     DRUMS_VERSE.Add(1.00, RideCymbal1,      DRUM_DEF_VOL);
     DRUMS_VERSE.Add(1.10, RideCymbal1,      DRUM_DEF_VOL);
@@ -142,42 +142,42 @@ public override void setup()
     DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
 
     // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
-    DRUMS_SIMPLE = createSequence(8);
+    DRUMS_SIMPLE = CreateSequence(8);
     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 0.8);
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    0.7);
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat,      0.9);
 
     // Sequence triggered in script
-    DYNAMIC_SEQ = createSequence(8);
+    DYNAMIC_SEQ = CreateSequence(8);
     DYNAMIC_SEQ.Add(0.00, "G3 ", 0.75, 0.60);
     DYNAMIC_SEQ.Add(1.00, "A3 ", 0.75, 0.60);
     DYNAMIC_SEQ.Add(2.00, "Bb3", 0.75, 0.60);
     DYNAMIC_SEQ.Add(3.00, "C4 ", 0.75, 0.60);
 
     // Sequence that calls a script function.
-    ALGO_SEQ = createSequence(8);
+    ALGO_SEQ = CreateSequence(8);
     ALGO_SEQ.Add(00.00, algoDynamic, 0.75);
 
-    NULL_SEQ = createSequence(8);
+    NULL_SEQ = CreateSequence(8);
     NULL_SEQ.Add(00.00, algoNull, 0.75);
 
     // Get some stock chords and scales
-    _scaleNotes = getScaleNotes("Algerian", "A3");
-    _chordNotes = getNotes("C4.o7");
+    _scaleNotes = GetScaleNotes("Algerian", "A3");
+    _chordNotes = GetNotes("C4.o7");
 }
 
-public override void setup2()
+public override void Setup2()
 {
     if(_minimal)
     {
-        sendPatch(KEYS, AcousticGrandPiano);
-        sendPatch(BASS, AcousticBass);
-        sendPatch(SYNTH, Lead1Square);
-        sendPatch(DRUMS, 32); // kit
+        SendPatch(KEYS, AcousticGrandPiano);
+        SendPatch(BASS, AcousticBass);
+        SendPatch(SYNTH, Lead1Square);
+        SendPatch(DRUMS, 32); // kit
     }
 }
 
-public override void step()
+public override void Step()
 {
     if(tock != 0) // not looking at tocks right now
     {
@@ -185,66 +185,66 @@ public override void step()
     }
 
     ///// drums /////
-    if(isOneOf(tick, 0, 8, 24))
+    if(isOneOf(Tick, 0, 8, 24))
     {
-        sendSequence(DRUMS, DRUMS_SIMPLE);
+        SendSequence(DRUMS, DRUMS_SIMPLE);
     }
 
-    if(isOneOf(tick, 16))
+    if(isOneOf(Tick, 16))
     {
-        sendSequence(DRUMS, DRUMS_VERSE);
+        SendSequence(DRUMS, DRUMS_VERSE);
     }
 
     ///// piano /////
-    if(isOneOf(tick, 0, 8))
+    if(isOneOf(Tick, 0, 8))
     {
-        sendSequence(KEYS, KEYS_VERSE1);
+        SendSequence(KEYS, KEYS_VERSE1);
     }
 
-    if(isOneOf(tick, 16, 24))
+    if(isOneOf(Tick, 16, 24))
     {
-        sendSequence(KEYS, KEYS_VERSE2);
+        SendSequence(KEYS, KEYS_VERSE2);
     }
 
-    if(isOneOf(tick, 26))
+    if(isOneOf(Tick, 26))
     {
         double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-        sendNote(KEYS, sn + tick % 24, 0.7, 0.28);
+        SendNote(KEYS, sn + Tick % 24, 0.7, 0.28);
 
         // foreach(int n in _chordNotes)
         // {
-        //     sendNote(KEYS, n, 0.7, 1.0);
+        //     SendNote(KEYS, n, 0.7, 1.0);
         // }
     }
 
     ///// bass /////
-    if(isOneOf(tick % 16, 0, 7, 8))
+    if(isOneOf(Tick % 16, 0, 7, 8))
     {
-        sendNote(BASS, 50, 0.8, 2.0);
+        SendNote(BASS, 50, 0.8, 2.0);
     }
 
     ///// synth /////
-    if(isOneOf(tick, 10))
+    if(isOneOf(Tick, 10))
     {
-        sendSequence(SYNTH, ALGO_SEQ);
+        SendSequence(SYNTH, ALGO_SEQ);
     }
 
     // // Play a sequence periodically.
-    // switch(tick)
+    // switch(Tick)
     // {
     //     case 0:
-    //         sendNote(SYNTH, "F3", 0.8, 0.48);
+    //         SendNote(SYNTH, "F3", 0.8, 0.48);
     //         break;
     //     case 16:
-    //         sendSequence(SYNTH, DYNAMIC_SEQ);
+    //         SendSequence(SYNTH, DYNAMIC_SEQ);
     //         break;
 
     //     case 8:
-    //         sendNoteOn(SYNTH, 62, 0.8); // numbered note on, no chase
+    //         SendNoteOn(SYNTH, 62, 0.8); // numbered note on, no chase
     //         break;
 
     //     case 12:
-    //         sendNoteOff(SYNTH, 62); // numbered note off
+    //         SendNoteOff(SYNTH, 62); // numbered note off
     //         break;
 
     //     case 24:
@@ -252,118 +252,34 @@ public override void step()
     //     case 26:
     //     case 27:
     //         int notenum = random(40, 70);
-    //         sendNote(SYNTH, notenum, 0.8, 1.09);
+    //         SendNote(SYNTH, notenum, 0.8, 1.09);
     //         break;
     // }
 }
 
 void algoDynamic()
 {
-    // print("!!!! algoDynamic");
+    // Print("!!!! algoDynamic");
     int notenum = random(40, 70);
-    sendNote(SYNTH, notenum, 0.8, 0.30);
+    SendNote(SYNTH, notenum, 0.8, 0.30);
 }
 
 void algoNull()
 {
-    // print("!!!! algoNull");
+    // Print("!!!! algoNull");
 }
 
 public void On_VKBD_NOTE()
 {
-    //print("VKBD_NOTE", "=", VKBD_NOTE.Value);
+    //Print("VKBD_NOTE", "=", VKBD_NOTE.Value);
 
     // Test for note on or off.
     if(VKBD_NOTE.Value > 0)
     {
-        sendNoteOn(SYNTH, VKBD_NOTE.Value, 0.9);
+        SendNoteOn(SYNTH, VKBD_NOTE.Value, 0.9);
     }
     else
     {
-        sendNoteOff(SYNTH, -VKBD_NOTE.Value);
+        SendNoteOff(SYNTH, -VKBD_NOTE.Value);
     }
 }
-
-////// Processing graphics stuff //////
-//public override void setup()
-//{
-//    size(400, 400);
-//    //print("setup()");
-//}
-//
-//public override void draw()
-//{
-//    background(COL1.Value, COL1.Value, COL1.Value);
-//
-//    if(playing && moveBall())
-//    {
-//        int notenum = random(40, 70);
-//        // sendNote(SYNTH, notenum, 0.8, 1.09);
-//    }
-//
-//    // Draw the ball.
-//    noStroke();
-//    int x = (int)map(_posX, 0, width, 0, 255);
-//    fill(x, (x + 100) % 256, (x + 200) % 256);
-//    ellipse(_posX, _posY, _ballSize, _ballSize);
-//
-//    if (mouseIsPressed)
-//    {
-//        //print("mouse is pressed");
-//        fill(random(255), random(255), random(255));
-//        strokeWeight(2);
-//        stroke(0, 100);
-//        ellipse(mouseX, mouseY, 80, 80);
-//    }
-//}
-//
-//public override void mouseClicked()
-//{
-//    // Note selected based on mouse position.
-//    int sn = (int)map(mouseX, 0, width, _scaleNotes[0], _scaleNotes[_scaleNotes.Length-1]);
-//    sendNote(SYNTH, sn, 0.8, 0.32);
-//}
-//
-//public override void keyPressed()
-//{
-//    //print("keyPressed:", key);
-//
-//    int v = key == 'c' ? 60 : 70;
-//    sendNote(KEYS, v, KEYS_DEF_VOL, 1.32);
-//}
-//
-//bool moveBall()
-//{
-//    bool edge = false;
-//
-//    ///// Move the ball. /////
-//    _posX += _velX;
-//    if (_posX <= _ballSize / 2)
-//    {
-//        _posX = _ballSize / 2;
-//        _velX = -_velX;
-//        edge = true;
-//    }
-//    else if (_posX >= width - _ballSize / 2)
-//    {
-//        _posX = width - _ballSize / 2;
-//        _velX = -_velX;
-//        edge = true;
-//    }
-//
-//    _posY += _velY;
-//    if (_posY <= _ballSize / 2)
-//    {
-//        _posY = _ballSize / 2;
-//        _velY = -_velY;
-//        edge = true;
-//    }
-//    else if (_posY >= height - _ballSize / 2)
-//    {
-//        _posY = height - _ballSize / 2;
-//        _velY = -_velY;
-//        edge = true;
-//    }
-//    return edge;
-//}
-//

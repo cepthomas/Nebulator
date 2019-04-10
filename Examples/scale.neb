@@ -3,56 +3,56 @@
 
 public class Scale
 {
-    int count = 0;
-    double[] scaleNotes;
-    int[] noteWeights;
-    int totalWeight = 100;
-    int down = 0;
-    int up = 0;
+    int _count = 0;
+    double[] _scaleNotes;
+    int[] _noteWeights;
+    int _totalWeight = 100;
+    int _down = 0;
+    int _up = 0;
 
     public Scale(string scale, string root, int octDown, int octUp)
     {
-        scaleNotes = s.getScaleNotes(scale, root);
-        count = scaleNotes.Count();
-        noteWeights = new int[count];
-        down = octDown;
-        up = octUp;
+        _scaleNotes = s.GetScaleNotes(scale, root);
+        _count = _scaleNotes.Count();
+        _noteWeights = new int[_count];
+        _down = octDown;
+        _up = octUp;
 
         // Set default weights.
-        for(int i = 0; i < count; i++)
+        for(int i = 0; i < _count; i++)
         {
-            noteWeights[i] = 100 / count;
+            _noteWeights[i] = 100 / _count;
         }        
     }
 
     public void setWeight(int index, int weight)
     {
-        if(index < count)
+        if(index < _count)
         {
-            noteWeights[index] = weight;
+            _noteWeights[index] = weight;
         }
 
         // Recalc total weight.
-        totalWeight = 0;
-        for(int i = 0; i < count; i++)
+        _totalWeight = 0;
+        for(int i = 0; i < _count; i++)
         {
-            totalWeight += noteWeights[i];
+            _totalWeight += _noteWeights[i];
         }        
     }
 
     public double randomNote()
     {
         double note = 0;
-        double r = s.random(totalWeight);
+        double r = s.random(_totalWeight);
         
         int offset = 0;
 
-        for(int i = 0; i < count; i++)
+        for(int i = 0; i < _count; i++)
         {
-            offset += noteWeights[i];
+            offset += _noteWeights[i];
             if(r < offset)
             {
-                note = scaleNotes[i];
+                note = _scaleNotes[i];
                 break;
             }
         }

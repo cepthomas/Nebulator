@@ -28,21 +28,6 @@ namespace Nebulator.Script
         #endregion
 
         #region Properties - dynamic things shared between host and script at runtime
-        /// <summary>Main -> Script</summary>
-        public Time StepTime { get; set; } = new Time();
-
-        /// <summary>Main -> Script</summary>
-        public bool Playing { get; set; } = false;
-
-        /// <summary>Main -> Script</summary>
-        public double RealTime { get; set; } = 0.0;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public double Speed { get; set; } = 0.0;
-
-        /// <summary>Main -> Script -> Main</summary>
-        public double Volume { get; set; } = 0;
-
         /// <summary>Steps added by script functions at runtime e.g. sendSequence(). Script -> Main</summary>
         public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
         #endregion
