@@ -164,6 +164,8 @@ public override void Setup()
     // Get some stock chords and scales
     _scaleNotes = GetScaleNotes("Algerian", "A3");
     _chordNotes = GetNotes("C4.o7");
+
+    xxx do TimeDefs...
 }
 
 public override void Setup2()

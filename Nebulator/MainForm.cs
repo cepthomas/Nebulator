@@ -613,6 +613,12 @@ namespace Nebulator
                     _script.Displays.Insert(0, _cpuMeter);
                 }
                 levers.Init(_script.Levers, _script.Displays);
+
+                timeMaster.TimeDefs = _script.TimeDefs;
+                if (_script.TimeDefs.Count > 0)
+                {
+                    timeMaster.MaxTick = _script.TimeDefs.Last().Key.Tick;
+                }
             }
 
             ///// Init other controls.
@@ -620,7 +626,6 @@ namespace Nebulator
             double mv = Convert.ToDouble(_nppVals.GetValue("master", "volume"));
 
             sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
-            timeMaster.MaxTick = _script.Length;
         }
 
         /// <summary>
@@ -696,24 +701,20 @@ namespace Nebulator
                 _script.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
                 _script.RuntimeSteps.DeleteSteps(_stepTime);
 
-
- //TODO timeMaster.TimeDefs = _script.scriptState;
-
                 ///// Bump time.
                 _stepTime.Advance();
 
-                ////// Check for end of play. TODO
-                //// If no steps or not selected, free running mode so always keep going.
-                //if(_compiledSteps.Times.Count() != 0)
-                //{
-                //    // Check for end.
-                //    if (_stepTime.Tick > _compiledSteps.MaxTick)
-                //    {
-                //        ProcessPlay(PlayCommand.StopRewind, false);
-                //        _outputs.ForEach(o => o.Value?.Kill()); // just in case
-                //    }
-                //}
-                //// else keep going
+                // Check for end of play. If no steps or not selected, free running mode so always keep going.
+                if(_script.TimeDefs.Count() > 0)
+                {
+                   // Check for end.
+                   if (_stepTime.Tick > _script.TimeDefs.Last().Key.Tick)
+                   {
+                       ProcessPlay(PlayCommand.StopRewind, false);
+                       _outputs.ForEach(o => o.Value?.Kill()); // just in case
+                   }
+                }
+                // else keep going
 
                 ProcessPlay(PlayCommand.UpdateUiTime, false);
             }
@@ -1075,11 +1076,6 @@ namespace Nebulator
                     ret = $"Couldn't open the np file: {fn} because: {ex.Message}";
                     _logger.Error(ret);
                 }
-                //finally
-                //{
-                //    SetCompileStatus(false);
-                //    InitScriptUi();
-                //}
             }
 
             return ret;
@@ -1519,7 +1515,7 @@ namespace Nebulator
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
             {
-                ExportMidi(saveDlg.FileName);
+                ExportMidi(saveDlg.FileName);//TODO this
             }
         }
 

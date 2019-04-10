@@ -130,10 +130,12 @@ public override void Setup()
     DRUMS_VERSE.Add(6.00,  AcousticBassDrum,  DRUM_DEF_VOL);
     DRUMS_VERSE.Add(7.00,  CrashCymbal2,      DRUM_DEF_VOL);
 
-    scriptLen = END;
-    scriptState = "idle";
+    //enum Section { PART1 = 0, PART2 = 32, PART3 = 48, PART4 = 80, END = 90 }
+    foreach(e in Enum(Section).values)
+    {
+        TimeDefs.Add(e, e.string);
+    }
 }
-
 
 public override void Setup2()
 {
@@ -154,7 +156,6 @@ public override void Setup2()
 // const int PART3 = 48;
 // const int PART4 = 80;
 // const int END = 90;
-
 enum Section { PART1 = 0, PART2 = 32, PART3 = 48, PART4 = 80, END = 90 }
 
 public override void Step()
@@ -164,15 +165,18 @@ public override void Step()
         return;
     }
 
+    // Update state?
     switch(Tick)
     {
-        case PART1: scriptState = Tick; break;
-        case PART2: scriptState = Tick; break;
-        case PART3: scriptState = Tick; break;
-        case PART4: scriptState = Tick; break;
-        case END:   scriptState = Tick; break;
+        case PART1: State = Tick; break;
+        case PART2: State = Tick; break;
+        case PART3: State = Tick; break;
+        case PART4: State = Tick; break;
+        case END:   State = Tick; break;
         default:    /* no change */     break;
     }
+
+
 
 
     // Match(0, DRUMS, DRUMS_SIMPLE);

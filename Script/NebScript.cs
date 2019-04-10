@@ -15,12 +15,10 @@ namespace Nebulator.Script
     public partial class NebScript
     {
         #region User script properties
-        /// <summary>Current Nebulator step time.</summary>
-        /// <summary>Main -> Script</summary>
+        /// <summary>Current Nebulator step time. Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
 
-        /// <summary>Sound is playing.</summary>
-        /// <summary>Main -> Script</summary>
+        /// <summary>Sound is playing. Main -> Script</summary>
         public bool Playing { get; set; } = false;
 
         /// <summary>Tock subdivision.</summary>
@@ -32,25 +30,17 @@ namespace Nebulator.Script
         /// <summary>Current Nebulator Tock.</summary>
         public int Tock { get { return StepTime.Tock; } }
 
-        /// <summary>Actual time since start pressed.</summary>
-        /// <summary>Main -> Script</summary>
+        /// <summary>Actual time since start pressed. Main -> Script</summary>
         public double RealTime { get; set; } = 0.0;
 
-        /// <summary>Nebulator Speed in Ticks per minute (aka bpm).</summary>
-        /// <summary>Main -> Script -> Main</summary>
+        /// <summary>Nebulator Speed in Ticks per minute (aka bpm). Main -> Script ( -> Main)</summary>
         public double Speed { get; set; } = 0.0;
 
-        /// <summary>Nebulator master Volume.</summary>
-        /// <summary>Main -> Script -> Main</summary>
+        /// <summary>Nebulator master Volume. Main -> Script ( -> Main)</summary>
         public double Volume { get; set; } = 0;
 
-        /// <summary>Length in ticks determined by the script.</summary>
-        /// <summary>Script -> Main</summary>
-        public int Length { get; set; } = 0;
-
-        /// <summary>Current script state determined by the script.</summary>
-        /// <summary>Script -> Main</summary>
-        public string State { get; set; } = "???";
+        /// <summary>All the important time points with their names. Script -> Main</summary>
+        public Dictionary<Time, string> TimeDefs { get; set; } = new Dictionary<Time, string>();
         #endregion
 
         #region Functions that can be overridden in the user script
