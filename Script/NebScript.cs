@@ -14,7 +14,7 @@ namespace Nebulator.Script
 {
     public partial class NebScript
     {
-        #region User script properties
+        #region Properties referenced in the script
         /// <summary>Current Nebulator step time. Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
 
@@ -30,6 +30,9 @@ namespace Nebulator.Script
         /// <summary>Current Nebulator Tock.</summary>
         public int Tock { get { return StepTime.Tock; } }
 
+        /// <summary>Current section. Main -> Script</summary>
+        public int CurrentSection { get; set; } = 0;
+
         /// <summary>Actual time since start pressed. Main -> Script</summary>
         public double RealTime { get; set; } = 0.0;
 
@@ -38,9 +41,6 @@ namespace Nebulator.Script
 
         /// <summary>Nebulator master Volume. Main -> Script ( -> Main)</summary>
         public double Volume { get; set; } = 0;
-
-        /// <summary>All the important time points with their names. Script -> Main</summary>
-        public Dictionary<Time, string> TimeDefs { get; set; } = new Dictionary<Time, string>();
         #endregion
 
         #region Functions that can be overridden in the user script
@@ -90,7 +90,18 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Set some randomization options.
+        /// Optionally create a defined section. If using them, the last one is considered "the end".
+        /// Used to update the CurrentSection property and for display in the time control.
+        /// </summary>
+        /// <param name="tick">Which Tick it starts at.</param>
+        /// <param name="name">UI display.</param>
+        protected void CreateSection(int tick, string name)
+        {
+            SectionDefs.Add(tick, name);
+        }
+
+        /// <summary>
+        /// Set some randomization options for the channel.
         /// </summary>
         /// <param name="channel">Associated channel.</param>
         /// <param name="volMax">Value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
@@ -382,7 +393,7 @@ namespace Nebulator.Script
         /// <param name="val"></param>
         /// <param name="list"></param>
         /// <returns></returns>
-        protected bool isOneOf(int val, params int[] list)//TODO
+        protected bool isOneOf(int val, params int[] list) //TODO
         {
             return list.Contains(val);
         }

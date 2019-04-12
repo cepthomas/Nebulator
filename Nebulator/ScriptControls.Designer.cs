@@ -1,6 +1,6 @@
 ﻿namespace Nebulator
 {
-    partial class Levers
+    partial class ScriptControls
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,13 +30,13 @@
         {
             this.SuspendLayout();
             // 
-            // Levers
+            // ScriptControls
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Name = "Levers";
+            this.Name = "ScriptControls";
             this.Size = new System.Drawing.Size(438, 68);
-            this.Load += new System.EventHandler(this.Levers_Load);
+            this.Load += new System.EventHandler(this.ScriptControls_Load);
             this.ResumeLayout(false);
 
         }

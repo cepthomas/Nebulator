@@ -59,11 +59,11 @@ namespace Nebulator.Controls
         public bool ShowProgress { get; set; } = true;
 
         /// <summary>
-        /// All the important time points with their names. Used also by tooltip.
+        /// All the important Tick points with their names. Used also by tooltip.
         /// </summary>
         [ReadOnly(true)]
         [Browsable(false)]
-        public Dictionary<Time, string> TimeDefs { get; set; } = new Dictionary<Time, string>();
+        public Dictionary<int, string> TimeDefs { get; set; } = new Dictionary<int, string>();
         #endregion
 
         #region Events
@@ -232,9 +232,9 @@ namespace Nebulator.Controls
         {
             string s = "";
 
-            foreach(KeyValuePair<Time, string> kv in TimeDefs)
+            foreach(KeyValuePair<int, string> kv in TimeDefs)
             {
-                if(kv.Key.Tick > val)
+                if(kv.Key > val)
                 {
                     break;
                 }

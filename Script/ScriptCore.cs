@@ -27,12 +27,7 @@ namespace Nebulator.Script
         Random _rand = new Random();
         #endregion
 
-        #region Properties - dynamic things shared between host and script at runtime
-        /// <summary>Steps added by script functions at runtime e.g. sendSequence(). Script -> Main</summary>
-        public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
-        #endregion
-
-        #region Properties - things defined in the script that MainForm needs
+        #region Elements defined in the script that MainForm needs
         /// <summary>All vars.</summary>
         public List<NVariable> Variables { get; set; } = new List<NVariable>();
 
@@ -50,6 +45,12 @@ namespace Nebulator.Script
 
         /// <summary>All sequences.</summary>
         public List<NSequence> Sequences { get; set; } = new List<NSequence>();
+
+        /// <summary>All the important Tick section with their names. Script -> Main</summary>
+        public Dictionary<int, string> SectionDefs { get; set; } = new Dictionary<int, string>();
+
+        /// <summary>Steps added by script functions at runtime e.g. sendSequence(). Script -> Main</summary>
+        public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
         #endregion
 
         #region Lifecycle

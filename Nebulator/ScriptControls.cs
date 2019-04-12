@@ -11,7 +11,7 @@ using Nebulator.Script;
 
 namespace Nebulator
 {
-    public partial class Levers : UserControl //TODOx wrong name for this - LeversAndMeters?
+    public partial class ScriptControls : UserControl
     {
         #region Fields
         /// <summary>Internal flag.</summary>
@@ -21,7 +21,7 @@ namespace Nebulator
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Levers()
+        public ScriptControls()
         {
             InitializeComponent();
         }
@@ -31,7 +31,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Levers_Load(object sender, EventArgs e)
+        private void ScriptControls_Load(object sender, EventArgs e)
         {
             // Use double buffering to reduce flicker.
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);

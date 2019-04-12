@@ -35,6 +35,6 @@ public class Dummy
 
     public int GetThing(int value)
     {
-        return _thing * s.random(value);
+        return _thing * s.Random(value);
     }
 }

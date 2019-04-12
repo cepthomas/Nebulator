@@ -143,6 +143,21 @@ namespace Nebulator
 
             timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
             timeMaster.Invalidate();
+
+            if (UserSettings.TheSettings.CpuMeter)
+            {
+                _cpuMeter = new NDisplay()
+                {
+                    DisplayType = DisplayType.Chart,
+                    BoundVar = new NVariable()
+                    {
+                        Min = 0,
+                        Max = 100,
+                        Name = "cpu",
+                        Value = 0
+                    }
+                };
+            }
             #endregion
 
             InitLogging();
@@ -484,7 +499,7 @@ namespace Nebulator
                 // Compile script now.
                 _script = compiler.Execute(_fn);
 
-                // Update file watcher - keeps an eye in any included files too.
+                // Update file watcher - keeps an eye on any included files too.
                 _watcher.Clear();
                 compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
 
@@ -509,7 +524,7 @@ namespace Nebulator
                         // Setup - first step.
                         _script.Setup();
 
-                        // Devices specified in script setupNeb() - create now.
+                        // Devices are specified in script.Setup() - create now.
                         CreateDevices();
 
                         // Setup - optional second step.
@@ -596,28 +611,16 @@ namespace Nebulator
                 }
 
                 // Levers and meters.
-                if(UserSettings.TheSettings.CpuMeter)
+                if(_cpuMeter != null)
                 {
-                    _cpuMeter = new NDisplay()
-                    {
-                        DisplayType = DisplayType.Chart,
-                        BoundVar = new NVariable()
-                        {
-                            Min = 0,
-                            Max = 100,
-                            Name = "cpu",
-                            Value = 0
-                        }
-                    };
-
                     _script.Displays.Insert(0, _cpuMeter);
                 }
-                levers.Init(_script.Levers, _script.Displays);
+                scriptControls.Init(_script.Levers, _script.Displays);
 
-                timeMaster.TimeDefs = _script.TimeDefs;
-                if (_script.TimeDefs.Count > 0)
+                timeMaster.TimeDefs = _script.SectionDefs;
+                if (_script.SectionDefs.Count > 0)
                 {
-                    timeMaster.MaxTick = _script.TimeDefs.Last().Key.Tick;
+                    timeMaster.MaxTick = _script.SectionDefs.Keys.Max();
                 }
             }
 
@@ -682,6 +685,15 @@ namespace Nebulator
             {
                 //_tan.Arm();
 
+                // Update section.
+                if (_script.SectionDefs.Count > 0 && _stepTime.Tock == 0) // only on Ticks
+                {
+                    if(_script.SectionDefs.ContainsKey(_stepTime.Tick))
+                    {
+                        _script.CurrentSection = _stepTime.Tick;
+                    }
+                }
+
                 // Kick the script. Note: Need exception handling here to protect from user script errors.
                 try
                 {
@@ -705,10 +717,10 @@ namespace Nebulator
                 _stepTime.Advance();
 
                 // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                if(_script.TimeDefs.Count() > 0)
+                if(_script.SectionDefs.Count() > 0)
                 {
                    // Check for end.
-                   if (_stepTime.Tick > _script.TimeDefs.Last().Key.Tick)
+                   if (_stepTime.Tick > _script.SectionDefs.Last().Key)
                    {
                        ProcessPlay(PlayCommand.StopRewind, false);
                        _outputs.ForEach(o => o.Value?.Kill()); // just in case
@@ -1061,7 +1073,6 @@ namespace Nebulator
                             AddToRecentDefs(fn);
                             bool ok = Compile();
                             SetCompileStatus(ok);
-                            InitScriptUi();
                         });
 
                         Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
@@ -1515,7 +1526,7 @@ namespace Nebulator
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
             {
-                ExportMidi(saveDlg.FileName);//TODO this
+                ExportMidi(saveDlg.FileName);
             }
         }
 
@@ -1533,7 +1544,7 @@ namespace Nebulator
             double ticksPerSec = ticksPerMinute / 60;
             double secPerTick = 1 / ticksPerSec;
 
-//TODOx ?            MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
+//TODO?            MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
 // use: StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
         }
 

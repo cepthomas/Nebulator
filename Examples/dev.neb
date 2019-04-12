@@ -46,6 +46,17 @@ string OSC_OUT = "OSC:127.0.0.1:1234";
 string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
 
 
+// When to play sequences.
+const int PART1 = 0;
+const int PART2 = 32;
+const int PART3 = 48;
+const int PART4 = 80;
+const int END = 90;
+
+// Where we are now.
+int _section = 0;
+
+
 public override void Setup()
 {
     // All the neb variables.
@@ -77,11 +88,11 @@ public override void Setup()
         DRUMS = CreateChannel("drums", MIDI_OUT, 10);
 
         // All the inputs.
-        CreateController(MIDI_IN, 1, 1, MOD1); // modulate eq
-        CreateController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-        CreateController(MIDI_IN, 1, 3, CTL3); // another controller
-        CreateController(MIDI_IN, 1, 4, BACK_COLOR); // change ui color
-        CreateController(MIDI_IN, 1, NoteControl, KBD_NOTE);
+        // CreateController(MIDI_IN, 1, 1, MOD1); // modulate eq
+        // CreateController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
+        // CreateController(MIDI_IN, 1, 3, CTL3); // another controller
+        // CreateController(MIDI_IN, 1, 4, BACK_COLOR); // change ui color
+        // CreateController(MIDI_IN, 1, NoteControl, KBD_NOTE);
     }
 
     SetWobbler(PIANO, 0.2);
@@ -130,11 +141,12 @@ public override void Setup()
     DRUMS_VERSE.Add(6.00,  AcousticBassDrum,  DRUM_DEF_VOL);
     DRUMS_VERSE.Add(7.00,  CrashCymbal2,      DRUM_DEF_VOL);
 
-    //enum Section { PART1 = 0, PART2 = 32, PART3 = 48, PART4 = 80, END = 90 }
-    foreach(e in Enum(Section).values)
-    {
-        TimeDefs.Add(e, e.string);
-    }
+    // Important times/states.
+    CreateSection(PART1, "Beginning");
+    CreateSection(PART2, "Middle");
+    CreateSection(PART3, "Chorus");
+    CreateSection(PART4, "Ending");
+    CreateSection(END, "Finito");
 }
 
 public override void Setup2()
@@ -149,52 +161,62 @@ public override void Setup2()
 }
 
 
-
-// When to play.
-// const int PART1 = 0;
-// const int PART2 = 32;
-// const int PART3 = 48;
-// const int PART4 = 80;
-// const int END = 90;
-enum Section { PART1 = 0, PART2 = 32, PART3 = 48, PART4 = 80, END = 90 }
-
 public override void Step()
 {
-    if(tock != 0) // not looking at tocks right now
+    if(Tock != 0) // not looking at Tocks right now
     {
         return;
     }
 
-    // Update state?
-    switch(Tick)
+    // Offset from start of section.
+    int tickOffset = Tick - CurrentSection;
+
+    // Do work.
+    switch(CurrentSection)
     {
-        case PART1: State = Tick; break;
-        case PART2: State = Tick; break;
-        case PART3: State = Tick; break;
-        case PART4: State = Tick; break;
-        case END:   State = Tick; break;
-        default:    /* no change */     break;
+        case PART1: DoSect1(tickOffset); break;
+        case PART2: DoSect2(tickOffset); break;
+        case PART3: DoSect3(tickOffset); break;
+        case PART4: DoSect4(tickOffset); break;
+        case END:            break;
     }
 
+    // // Tracker-like model.
+    // // SKIP means keep going, no new directive
+    // // MUTE means mute
+    // COMP    DRUMS           PIANO          BASS
+    // // SECT part1
+    // 00.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
+    // 08.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
+    // 15.00   SKIP            PIANO_MAIN     BASS_VERSE
+    // // SECT part2
+    // 16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
+    // 17.00   SKIP            MUTE           SKIP
+    // 24.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
+    // // SECT end
+    // 32.00   MUTE            MUTE           MUTE
+    //
+    // if(CurrentSection == PART1)
+    // {
+    //     Play(00, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+    //     Play(08, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+    //     Play(15, SKIP,            PIANO_MAIN,     BASS_VERSE);
+    // }
+    // else if(CurrentSection == PART2)
+    // {
+    //     Play(16, DRUMS_VERSE,     PIANO_MAIN,     BASS_VERSE);
+    //     Play(17, SKIP,            MUTE,           SKIP);
+    //     Play(24, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+    // }
+    // else if(CurrentSection == PART3)
+    // {
 
+    // }
+    // else if(CurrentSection == PART4)
+    // {
 
+    // }
 
-    // Match(0, DRUMS, DRUMS_SIMPLE);
-
-// Tracker-like model.
-// SKIP means keep going, no new directive
-// MUTE means mute
-COMP    DRUMS           PIANO          BASS
-// SECT part1
-00.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
-08.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
-15.00   SKIP            PIANO_MAIN     BASS_VERSE
-// SECT part2
-16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
-17.00   SKIP            MUTE           SKIP
-24.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
-// SECT end
-32.00   MUTE            MUTE           MUTE
 
 
 
@@ -233,6 +255,47 @@ COMP    DRUMS           PIANO          BASS
     }
 }
 
+void DoSect1(int tick)
+{
+    switch(tick)
+    {
+        case 0:
+            SendSequence(DRUMS, DRUMS_SIMPLE);
+            SendSequence(PIANO, PIANO_MAIN);
+            break;
+
+
+    }
+
+        // Play(00, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+        // Play(08, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+        // Play(15, SKIP,            PIANO_MAIN,     BASS_VERSE);
+
+}
+
+void DoSect2(int tick)
+{
+        // Play(16, DRUMS_VERSE,     PIANO_MAIN,     BASS_VERSE);
+        // Play(17, SKIP,            MUTE,           SKIP);
+        // Play(24, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+
+
+}
+
+void DoSect3(int tick)
+{
+
+
+}
+
+void DoSect4(int tick)
+{
+
+
+}
+
+
+
 // A called function.
 void FuncPiano()
 {
@@ -257,7 +320,7 @@ public void On_CTL2()
 public void On_CTL3()
 {
     //Print("On_CTL3:", CTL3.Value);
-    if(random(0, 10) == 0)
+    if(Random(0, 10) == 0)
     {
         SendNote(PIANO, 50 + CTL3.Value % 20, 0.7, 2.0);
     }
@@ -304,17 +367,17 @@ public void On_KBD_NOTE()
 }
 
 //////////////////////////////////////////////////////////
-void randish()
+void Randish()
 {
-    if(tock % 4 == 0 && random(7) == 0) // play with these for how often
+    if(Tock % 4 == 0 && Random(7) == 0) // play with these for how often
     {
-        int which = random(40, 80);
+        int which = Random(40, 80);
 
         if(_notesPlaying[which] == 0) // don't play if already playing
         {
-            int dur = random(1, 8);
+            int dur = Random(1, 8);
             _notesPlaying[which] = Tick + dur;
-            SendNote(PIANO, which, random(0.6, 0.9), dur);
+            SendNote(PIANO, which, Random(0.6, 0.9), dur);
         }
 
         // Remove any scheduled to stop now.

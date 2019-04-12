@@ -132,11 +132,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Levers.cs">
+    <Compile Include="ScriptControls.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Levers.Designer.cs">
-      <DependentUpon>Levers.cs</DependentUpon>
+    <Compile Include="ScriptControls.Designer.cs">
+      <DependentUpon>ScriptControls.cs</DependentUpon>
     </Compile>
     <Compile Include="ChannelControl.cs">
       <SubType>UserControl</SubType>
@@ -157,8 +157,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Levers.resx">
-      <DependentUpon>Levers.cs</DependentUpon>
+    <EmbeddedResource Include="ScriptControls.resx">
+      <DependentUpon>ScriptControls.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ChannelControl.resx">
       <DependentUpon>ChannelControl.cs</DependentUpon>

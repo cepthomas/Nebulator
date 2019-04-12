@@ -38,7 +38,7 @@
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new Nebulator.Controls.TextViewer();
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
-            this.levers = new Nebulator.Levers();
+            this.scriptControls = new Nebulator.ScriptControls();
             this.timeMaster = new Nebulator.Controls.TimeControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -266,15 +266,15 @@
             this.timerHousekeep.Interval = 10;
             this.timerHousekeep.Tick += new System.EventHandler(this.timerHousekeep_Tick);
             // 
-            // levers
+            // scriptControls
             // 
-            this.levers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.scriptControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.levers.BackColor = System.Drawing.Color.AliceBlue;
-            this.levers.Location = new System.Drawing.Point(10, 78);
-            this.levers.Name = "levers";
-            this.levers.Size = new System.Drawing.Size(714, 42);
-            this.levers.TabIndex = 0;
+            this.scriptControls.BackColor = System.Drawing.Color.AliceBlue;
+            this.scriptControls.Location = new System.Drawing.Point(10, 78);
+            this.scriptControls.Name = "scriptControls";
+            this.scriptControls.Size = new System.Drawing.Size(714, 42);
+            this.scriptControls.TabIndex = 0;
             // 
             // timeMaster
             // 
@@ -301,7 +301,7 @@
             this.ClientSize = new System.Drawing.Size(732, 544);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.levers);
+            this.Controls.Add(this.scriptControls);
             this.Controls.Add(this.btnCompile);
             this.Controls.Add(this.timeMaster);
             this.Controls.Add(this.sldVolume);
@@ -327,7 +327,7 @@
         private NBagOfTricks.UI.Pot potSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
-        private Levers levers;
+        private ScriptControls scriptControls;
         private Controls.TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStrip toolStrip1;

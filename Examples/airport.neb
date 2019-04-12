@@ -78,7 +78,7 @@ public override void Step()
         {
             SendNote(SOUND, l.snote, SOUND_DEF_VOL, l.duration);
             // Calc next time.
-            l.nextStart = stepTime + l.delay + l.duration;
+            l.nextStart = StepTime + l.delay + l.duration;
         }
     }
 }

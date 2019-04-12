@@ -8,13 +8,14 @@
 
 
 ///// Constants /////
-// When to play.
+// When to play sequences.
 const int WHEN1 = 0;
 const int WHEN2 = 32;
 const int WHEN3 = 48;
 const int WHEN4 = 80;
 // Total length.
 const int TLEN = 128;
+
 // Volumes.
 const double KEYS_DEF_VOL = 0.8;
 const double DRUM_DEF_VOL = 0.8;
@@ -156,16 +157,21 @@ public override void Setup()
 
     // Sequence that calls a script function.
     ALGO_SEQ = CreateSequence(8);
-    ALGO_SEQ.Add(00.00, algoDynamic, 0.75);
+    ALGO_SEQ.Add(00.00, AlgoDynamic, 0.75);
 
     NULL_SEQ = CreateSequence(8);
-    NULL_SEQ.Add(00.00, algoNull, 0.75);
+    NULL_SEQ.Add(00.00, AlgoNull, 0.75);
 
     // Get some stock chords and scales
     _scaleNotes = GetScaleNotes("Algerian", "A3");
     _chordNotes = GetNotes("C4.o7");
 
-    xxx do TimeDefs...
+    // Important times/states.
+    CreateSection(WHEN1, "Beginning");
+    CreateSection(WHEN2, "Middle");
+    CreateSection(WHEN3, "Chorus");
+    CreateSection(WHEN4, "Ending");
+    CreateSection(TLEN, "Finito");
 }
 
 public override void Setup2()
@@ -181,7 +187,7 @@ public override void Setup2()
 
 public override void Step()
 {
-    if(tock != 0) // not looking at tocks right now
+    if(Tock != 0) // not looking at tocks right now
     {
         return;
     }
@@ -253,22 +259,22 @@ public override void Step()
     //     case 25:
     //     case 26:
     //     case 27:
-    //         int notenum = random(40, 70);
+    //         int notenum = Random(40, 70);
     //         SendNote(SYNTH, notenum, 0.8, 1.09);
     //         break;
     // }
 }
 
-void algoDynamic()
+void AlgoDynamic()
 {
-    // Print("!!!! algoDynamic");
-    int notenum = random(40, 70);
+    // Print("!!!! AlgoDynamic");
+    int notenum = Random(40, 70);
     SendNote(SYNTH, notenum, 0.8, 0.30);
 }
 
-void algoNull()
+void AlgoNull()
 {
-    // Print("!!!! algoNull");
+    // Print("!!!! AlgoNull");
 }
 
 public void On_VKBD_NOTE()
