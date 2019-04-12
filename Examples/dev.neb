@@ -180,121 +180,72 @@ public override void Step()
         case PART4: DoSect4(tickOffset); break;
         case END:            break;
     }
-
-    // // Tracker-like model.
-    // // SKIP means keep going, no new directive
-    // // MUTE means mute
-    // COMP    DRUMS           PIANO          BASS
-    // // SECT part1
-    // 00.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
-    // 08.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
-    // 15.00   SKIP            PIANO_MAIN     BASS_VERSE
-    // // SECT part2
-    // 16.00   DRUMS_VERSE     PIANO_MAIN     BASS_VERSE
-    // 17.00   SKIP            MUTE           SKIP
-    // 24.00   DRUMS_SIMPLE    PIANO_MAIN     BASS_VERSE
-    // // SECT end
-    // 32.00   MUTE            MUTE           MUTE
-    //
-    // if(CurrentSection == PART1)
-    // {
-    //     Play(00, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
-    //     Play(08, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
-    //     Play(15, SKIP,            PIANO_MAIN,     BASS_VERSE);
-    // }
-    // else if(CurrentSection == PART2)
-    // {
-    //     Play(16, DRUMS_VERSE,     PIANO_MAIN,     BASS_VERSE);
-    //     Play(17, SKIP,            MUTE,           SKIP);
-    //     Play(24, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
-    // }
-    // else if(CurrentSection == PART3)
-    // {
-
-    // }
-    // else if(CurrentSection == PART4)
-    // {
-
-    // }
-
-
-
-
-    ///// drums /////
-    if(isOneOf(Tick, 0, 8, 24))
-    {
-        SendSequence(DRUMS, DRUMS_SIMPLE);
-    }
-
-    if(isOneOf(Tick, 16))
-    {
-        SendSequence(DRUMS, DRUMS_VERSE);
-    }
-
-    ///// piano /////
-    if(isOneOf(Tick, 0, 8, 16))
-    {
-        SendSequence(PIANO, PIANO_MAIN);
-    }
-
-    if(isOneOf(Tick, 26))
-    {
-        double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-        SendNote(PIANO, sn + Tick % 24, 0.7, 0.28);
-
-        // foreach(int n in _chordNotes)
-        // {
-        //     SendNote(PIANO, n, 0.7, 1.0);
-        // }
-    }
-
-    ///// bass /////
-    if(isOneOf(Tick % 16, 0, 7, 8))
-    {
-        SendNote(BASS, 50, 0.8, 2.0);
-    }
 }
 
-void DoSect1(int tick)
+///// All the sections /////
+void DoSect1(int tickos)
 {
-    switch(tick)
+    switch(tickos)
     {
         case 0:
+        case 8:
+        case 16:
             SendSequence(DRUMS, DRUMS_SIMPLE);
             SendSequence(PIANO, PIANO_MAIN);
+            SendNote(BASS, 50, 0.8, 2.0);
             break;
 
+        case 7:            
+            SendNote(BASS, 43, 0.8, 0.5);
+            break;
 
+        case 24:
+            SendSequence(DRUMS, DRUMS_SIMPLE);
+            SendNote(BASS, 50, 0.8, 2.0);
+            break;
     }
 
-        // Play(00, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
-        // Play(08, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
-        // Play(15, SKIP,            PIANO_MAIN,     BASS_VERSE);
-
+    // Play(00, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+    // Play(08, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
+    // Play(15, SKIP,            PIANO_MAIN,     BASS_VERSE);
 }
 
-void DoSect2(int tick)
+void DoSect2(int tickos)
 {
         // Play(16, DRUMS_VERSE,     PIANO_MAIN,     BASS_VERSE);
         // Play(17, SKIP,            MUTE,           SKIP);
         // Play(24, DRUMS_SIMPLE,    PIANO_MAIN,     BASS_VERSE);
 
+    switch(tickos)
+    {
+        case 0:
+        case 8:
+        case 16:
+            SendSequence(DRUMS, DRUMS_VERSE);
+            SendNote(BASS, 50, 0.8, 2.0);
+    
+            double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
+            SendNote(PIANO, sn + Tick % 24, 0.7, 0.28);
+            break;
 
+        case 24:
+            SendSequence(DRUMS, DRUMS_VERSE);
+            SendNote(BASS, 40, 0.8, 2.0);
+            break;
+    }
 }
 
-void DoSect3(int tick)
+void DoSect3(int tickos)
 {
 
 
 }
 
-void DoSect4(int tick)
+void DoSect4(int tickos)
 {
 
 
 }
-
-
 
 // A called function.
 void FuncPiano()

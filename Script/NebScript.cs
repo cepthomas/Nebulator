@@ -388,15 +388,6 @@ namespace Nebulator.Script
             List<double> notes = NoteUtils.GetScaleNotes(scale, key);
             return notes != null ? notes.ToArray() : new double[0];
         }
-
-        /// <summary>Tests for the value in the following list.</summary>
-        /// <param name="val"></param>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        protected bool isOneOf(int val, params int[] list) //TODO
-        {
-            return list.Contains(val);
-        }
         #endregion
 
         #region Helpers from NProcessing

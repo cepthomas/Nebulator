@@ -9,12 +9,10 @@
 
 ///// Constants /////
 // When to play sequences.
-const int WHEN1 = 0;
-const int WHEN2 = 32;
-const int WHEN3 = 48;
-const int WHEN4 = 80;
-// Total length.
-const int TLEN = 128;
+const int PART1 = 0;  // len:32
+const int PART2 = 32; // len:16
+const int PART3 = 48; // len:32
+const int END = 80;
 
 // Volumes.
 const double KEYS_DEF_VOL = 0.8;
@@ -46,6 +44,8 @@ NSequence NULL_SEQ;
 double[] _scaleNotes;
 double[] _chordNotes;
 int _noteNum = 48;
+// Where we are now.
+int _section = 0;
 
 // Use wingm and virtual kbd only.
 bool _minimal = true;
@@ -167,11 +167,10 @@ public override void Setup()
     _chordNotes = GetNotes("C4.o7");
 
     // Important times/states.
-    CreateSection(WHEN1, "Beginning");
-    CreateSection(WHEN2, "Middle");
-    CreateSection(WHEN3, "Chorus");
-    CreateSection(WHEN4, "Ending");
-    CreateSection(TLEN, "Finito");
+    CreateSection(PART1, "Beginning");
+    CreateSection(PART2, "Middle");
+    CreateSection(PART3, "Ending");
+    CreateSection(END, "Finito");
 }
 
 public override void Setup2()
@@ -187,83 +186,77 @@ public override void Setup2()
 
 public override void Step()
 {
-    if(Tock != 0) // not looking at tocks right now
+    if(Tock != 0) // not looking at Tocks right now
     {
         return;
     }
 
-    ///// drums /////
-    if(isOneOf(Tick, 0, 8, 24))
+    // Offset from start of section.
+    int tickOffset = Tick - CurrentSection;
+
+    // Do work.
+    switch(CurrentSection)
     {
-        SendSequence(DRUMS, DRUMS_SIMPLE);
+        case PART1: DoSect1(tickOffset); break;
+        case PART2: DoSect2(tickOffset); break;
+        case PART3: DoSect3(tickOffset); break;
+        case END:            break;
     }
-
-    if(isOneOf(Tick, 16))
-    {
-        SendSequence(DRUMS, DRUMS_VERSE);
-    }
-
-    ///// piano /////
-    if(isOneOf(Tick, 0, 8))
-    {
-        SendSequence(KEYS, KEYS_VERSE1);
-    }
-
-    if(isOneOf(Tick, 16, 24))
-    {
-        SendSequence(KEYS, KEYS_VERSE2);
-    }
-
-    if(isOneOf(Tick, 26))
-    {
-        double sn = _scaleNotes[_noteNum++ % _scaleNotes.Count()];
-        SendNote(KEYS, sn + Tick % 24, 0.7, 0.28);
-
-        // foreach(int n in _chordNotes)
-        // {
-        //     SendNote(KEYS, n, 0.7, 1.0);
-        // }
-    }
-
-    ///// bass /////
-    if(isOneOf(Tick % 16, 0, 7, 8))
-    {
-        SendNote(BASS, 50, 0.8, 2.0);
-    }
-
-    ///// synth /////
-    if(isOneOf(Tick, 10))
-    {
-        SendSequence(SYNTH, ALGO_SEQ);
-    }
-
-    // // Play a sequence periodically.
-    // switch(Tick)
-    // {
-    //     case 0:
-    //         SendNote(SYNTH, "F3", 0.8, 0.48);
-    //         break;
-    //     case 16:
-    //         SendSequence(SYNTH, DYNAMIC_SEQ);
-    //         break;
-
-    //     case 8:
-    //         SendNoteOn(SYNTH, 62, 0.8); // numbered note on, no chase
-    //         break;
-
-    //     case 12:
-    //         SendNoteOff(SYNTH, 62); // numbered note off
-    //         break;
-
-    //     case 24:
-    //     case 25:
-    //     case 26:
-    //     case 27:
-    //         int notenum = Random(40, 70);
-    //         SendNote(SYNTH, notenum, 0.8, 1.09);
-    //         break;
-    // }
 }
+
+///// All the sections /////
+void DoSect1(int tickos)
+{
+    switch(tickos)
+    {
+        case 0:
+        case 16:
+            SendSequence(DRUMS, DRUMS_VERSE);
+            SendSequence(BASS, BASS_VERSE);
+            SendSequence(KEYS, KEYS_VERSE1);
+            break;
+
+        case 8:
+        case 24:
+            SendSequence(DRUMS, DRUMS_VERSE);
+            SendSequence(BASS, BASS_VERSE);
+            break;
+    }
+}
+
+void DoSect2(int tickos)
+{
+    switch(tickos)
+    {
+        case 0:
+        case 8:
+            SendSequence(DRUMS, DRUMS_SIMPLE);
+            SendSequence(BASS, BASS_VERSE);
+            SendSequence(KEYS, KEYS_VERSE2);
+            SendSequence(SYNTH, ALGO_SEQ);
+            break;
+    }
+}
+
+void DoSect3(int tickos)
+{
+    switch(tickos)
+    {
+        case 0:
+        case 16:
+            SendSequence(DRUMS, DRUMS_VERSE);
+            SendSequence(BASS, BASS_VERSE);
+            SendSequence(KEYS, KEYS_VERSE1);
+            break;
+
+        case 8:
+        case 24:
+            SendSequence(DRUMS, DRUMS_VERSE);
+            SendSequence(BASS, BASS_VERSE);
+            break;
+    }
+}
+
 
 void AlgoDynamic()
 {
