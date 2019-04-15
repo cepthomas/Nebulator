@@ -109,6 +109,4 @@ namespace Nebulator.Test
             return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : "Response failed";
         }
     }
-
-
 }

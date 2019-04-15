@@ -160,6 +160,9 @@ namespace Nebulator
             }
             #endregion
 
+            // TODO this is broken now.
+            exportMidiToolStripMenuItem.Visible = false;
+
             InitLogging();
 
             PopulateRecentMenu();
@@ -1531,9 +1534,9 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Output filename.
+        /// Export a midi file.
         /// </summary>
-        /// <param name="fn"></param>
+        /// <param name="fn">Output filename.</param>
         void ExportMidi(string fn)
         {
             Dictionary<int, string> channels = new Dictionary<int, string>();
@@ -1544,12 +1547,24 @@ namespace Nebulator
             double ticksPerSec = ticksPerMinute / 60;
             double secPerTick = 1 / ticksPerSec;
 
-//TODO?            MidiUtils.ExportMidi(_compiledSteps, fn, channels, secPerTick, "Converted from " + _fn);
-// use: StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
+            // Make the steps by pretending to run the script.
+            InitRuntime();
+            _script.RuntimeSteps.Clear();
+            _script.Setup();
+            _script.Setup2();
+
+            StepCollection steps = new StepCollection();
+
+            for (int i = 0; i < _script.SectionDefs.Keys.Max(); i++)
+            {
+                // use: StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
+            }
+
+            MidiUtils.ExportMidi(steps, fn, channels, secPerTick, "Converted from " + _fn);
         }
 
         /// <summary>
-        /// Import a midi or style file as np file lines.
+        /// Import a midi or style file as neb file lines.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1570,7 +1585,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// 
+        /// Kill em all.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
