@@ -1,70 +1,29 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.IO;
-using System.Net.Sockets;
-using System.Net;
-using System.Diagnostics;
-using System.Threading;
-using System.Drawing;
-using Nebulator.Common;
 using Nebulator.Device;
 
 
 namespace Nebulator.OSC
 {
     /// <summary>
-    /// Bunch of utilities for formatting and parsing. Not documented because they are self-explanatory.
+    /// Misc utilities.
     /// </summary>
     public static class OscCommon
     {
         public const int MAX_NOTE = 127;
 
-        #region Utilities
-        /// <summary>
-        /// Add 0s to make multiple of 4.
-        /// </summary>
-        /// <param name="bytes"></param>
-        public static void Pad(this List<byte> bytes)
+        public static DeviceLogCategory TranslateLogCategory(NebOsc.LogCategory cat)
         {
-            for (int i = 0; i < bytes.Count % 4; i++)
+            DeviceLogCategory dlog = DeviceLogCategory.Error;
+
+            switch (cat)
             {
-                bytes.Add(0);
+                case NebOsc.LogCategory.Error: dlog = DeviceLogCategory.Error; break;
+                case NebOsc.LogCategory.Info: dlog = DeviceLogCategory.Info; break;
+                case NebOsc.LogCategory.Recv: dlog = DeviceLogCategory.Recv; break;
+                case NebOsc.LogCategory.Send: dlog = DeviceLogCategory.Send; break;
             }
-        }
 
-        /// <summary>
-        /// Handle endianness.
-        /// </summary>
-        /// <param name="bytes">Data in place.</param>
-        public static void FixEndian(this List<byte> bytes)
-        {
-            if (BitConverter.IsLittleEndian)
-            {
-                bytes.Reverse();
-            }
+            return dlog;
         }
-
-        /// <summary>
-        /// Make readable string.
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <param name="delim"></param>
-        /// <returns></returns>
-        public static string Dump(this List<byte> bytes, string delim = "")
-        {
-            StringBuilder sb = new StringBuilder();
-            bytes.ForEach(b => { if (IsReadable(b)) sb.Append((char)b); else sb.AppendFormat(@"{0}{1:000}", delim, b); });
-            return sb.ToString();
-        }
-
-        public static bool IsReadable(byte b)
-        {
-            return b >= 32 && b <= 126;
-        }
-        #endregion
     }
 }

@@ -145,6 +145,7 @@ namespace Nebulator.Script
                 cp.ReferencedAssemblies.Add("System.Data.dll");
                 cp.ReferencedAssemblies.Add("NAudio.dll");
                 cp.ReferencedAssemblies.Add("NBagOfTricks.dll");
+                cp.ReferencedAssemblies.Add("NebOsc.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Device.dll");

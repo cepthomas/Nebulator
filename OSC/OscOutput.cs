@@ -1,15 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.IO;
-using System.Net.Sockets;
-using System.Net;
-using System.Diagnostics;
-using System.Threading;
-using System.Drawing;
 using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
@@ -24,10 +14,10 @@ namespace Nebulator.OSC
     {
         #region Fields
         /// <summary>OSC output device.</summary>
-        UdpClient _udpClient;
+        NebOsc.Output _oscOutput;
 
         /// <summary>Access synchronizer.</summary>
-        object _lock = new object();
+        readonly object _lock = new object();
 
         /// <summary>Notes to stop later.</summary>
         List<StepNoteOff> _stops = new List<StepNoteOff>();
@@ -44,12 +34,6 @@ namespace Nebulator.OSC
         #region Properties
         /// <inheritdoc />
         public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>Where to?</summary>
-        public string IP { get; private set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>Where to?</summary>
-        public int Port { get; private set; } = -1;
         #endregion
 
         #region Lifecycle
@@ -65,35 +49,33 @@ namespace Nebulator.OSC
         {
             bool inited = false;
 
-            DeviceName = "Invalid"; // default
-
-            try
+            if (_oscOutput != null)
             {
-                if (_udpClient != null)
-                {
-                    _udpClient.Close();
-                    _udpClient.Dispose();
-                    _udpClient = null;
-                }
+                _oscOutput.Dispose();
+                _oscOutput = null;
+            }
 
-                // Check for properly formed port.
-                List<string> parts = name.SplitByToken(":");
-                if(parts.Count == 3)
+            // Check for properly formed port.
+            List<string> parts = name.SplitByToken(":");
+            if (parts.Count == 3)
+            {
+                if (int.TryParse(parts[2], out int port))
                 {
-                    if (int.TryParse(parts[2], out int port))
+                    string ip = parts[1];
+                    _oscOutput = new NebOsc.Output() { RemoteIP = ip, RemotePort = port };
+
+                    if (_oscOutput.Init())
                     {
-                        IP = parts[1];
-                        Port = port;
-                        _udpClient = new UdpClient(IP, Port);
                         inited = true;
-                        DeviceName = $"{IP}:{Port}";
+                        DeviceName = _oscOutput.DeviceName;
+                        _oscOutput.LogEvent += OscOutput_LogEvent;
+                    }
+                    else
+                    {
+                        LogMsg(DeviceLogCategory.Error, $"Init OSC out failed");
+                        inited = false;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogMsg(DeviceLogCategory.Error, $"Init OSC out failed: {ex.Message}");
-                inited = false;
             }
 
             return inited;
@@ -116,9 +98,8 @@ namespace Nebulator.OSC
         {
             if (!_disposed && disposing)
             {
-                _udpClient?.Close();
-                _udpClient?.Dispose();
-                _udpClient = null;
+                _oscOutput?.Dispose();
+                _oscOutput = null;
 
                 _disposed = true;
             }
@@ -144,16 +125,16 @@ namespace Nebulator.OSC
             // Critical code section.
             lock (_lock)
             {
-                if (_udpClient != null)
+                if (_oscOutput != null)
                 {
                     List<int> msgs = new List<int>();
-                    Message msg = null;
+                    NebOsc.Message msg = null;
 
                     switch (step)
                     {
                         case StepNoteOn non:
                             // /noteon/ channel notenum vel
-                            msg = new Message() { Address = "/noteon" };
+                            msg = new NebOsc.Message() { Address = "/noteon" };
                             msg.Data.Add(non.ChannelNumber);
                             msg.Data.Add(non.NoteNumber);
                             msg.Data.Add(non.VelocityToPlay);
@@ -175,7 +156,7 @@ namespace Nebulator.OSC
 
                         case StepNoteOff noff:
                             // /noteoff/ channel notenum
-                            msg = new Message() { Address = "/noteoff" };
+                            msg = new NebOsc.Message() { Address = "/noteoff" };
                             msg.Data.Add(noff.ChannelNumber);
                             msg.Data.Add(noff.NoteNumber);
 
@@ -183,7 +164,7 @@ namespace Nebulator.OSC
 
                         case StepControllerChange ctl:
                             // /controller/ channel ctlnum val
-                            msg = new Message() { Address = "/controller" };
+                            msg = new NebOsc.Message() { Address = "/controller" };
                             msg.Data.Add(ctl.ChannelNumber);
                             msg.Data.Add(ctl.ControllerId);
                             msg.Data.Add(ctl.Value);
@@ -199,18 +180,9 @@ namespace Nebulator.OSC
 
                     if (msg != null)
                     {
-                        List<byte> bytes = msg.Pack();
-                        if (bytes != null)
+                        if(_oscOutput.Send(msg))
                         {
-                            if (msg.Errors.Count == 0)
-                            {
-                                _udpClient.Send(bytes.ToArray(), bytes.Count);
-                                LogMsg(DeviceLogCategory.Send, step.ToString());
-                            }
-                            else
-                            {
-                                msg.Errors.ForEach(e => LogMsg(DeviceLogCategory.Error, e));
-                            }
+                            LogMsg(DeviceLogCategory.Send, step.ToString());
                         }
                         else
                         {
@@ -244,7 +216,19 @@ namespace Nebulator.OSC
         #endregion
 
         #region Private functions
-        /// <summary>Ask host to do something with this.</summary>
+        /// <summary>
+        /// OSC has something to say.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OscOutput_LogEvent(object sender, NebOsc.LogEventArgs e)
+        {
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = OscCommon.TranslateLogCategory(e.LogCategory), Message = e.Message });
+        }
+
+        /// <summary>
+        /// Ask host to do something with this.
+        /// </summary>
         /// <param name="cat"></param>
         /// <param name="msg"></param>
         void LogMsg(DeviceLogCategory cat, string msg)

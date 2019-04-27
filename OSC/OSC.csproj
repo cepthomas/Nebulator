@@ -34,6 +34,9 @@
     <Reference Include="NBagOfTricks">
       <HintPath>..\lib\NBagOfTricks.dll</HintPath>
     </Reference>
+    <Reference Include="NebOsc">
+      <HintPath>..\lib\NebOsc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -48,13 +51,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="OscBundle.cs" />
     <Compile Include="OscCommon.cs" />
     <Compile Include="OscInput.cs" />
-    <Compile Include="OscMessage.cs" />
     <Compile Include="OscOutput.cs" />
-    <Compile Include="OscPacket.cs" />
-    <Compile Include="OscTimeTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

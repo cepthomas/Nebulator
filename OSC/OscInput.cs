@@ -1,15 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.IO;
-using System.Net.Sockets;
-using System.Net;
-using System.Diagnostics;
-using System.Threading;
-using System.Drawing;
 using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
@@ -24,7 +14,7 @@ namespace Nebulator.OSC
     {
         #region Fields
         /// <summary>OSC input device.</summary>
-        UdpClient _udpClient = null;
+        NebOsc.Input _oscInput = null;
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -41,9 +31,6 @@ namespace Nebulator.OSC
         #region Properties
         /// <inheritdoc />
         public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
-
-        /// <summary>The local port.</summary>
-        public int Port { get; set; } = -1;
         #endregion
 
         #region Lifecycle
@@ -63,11 +50,10 @@ namespace Nebulator.OSC
 
             try
             {
-                if (_udpClient != null)
+                if (_oscInput != null)
                 {
-                    _udpClient.Close();
-                    _udpClient.Dispose();
-                    _udpClient = null;
+                    _oscInput.Dispose();
+                    _oscInput = null;
                 }
 
                 // Check for properly formed port.
@@ -76,10 +62,11 @@ namespace Nebulator.OSC
                 {
                     if (int.TryParse(parts[1], out int port))
                     {
-                        Port = port;
-                        _udpClient = new UdpClient(Port);
+                        _oscInput = new NebOsc.Input() { LocalPort = port };
                         inited = true;
-                        DeviceName = $"{Port}";
+                        DeviceName = _oscInput.DeviceName;
+                        _oscInput.InputEvent += OscInput_InputEvent;
+                        _oscInput.LogEvent += OscInput_LogEvent;
                     }
                 }
             }
@@ -109,9 +96,8 @@ namespace Nebulator.OSC
         {
             if (!_disposed && disposing)
             {
-                _udpClient?.Close();
-                _udpClient?.Dispose();
-                _udpClient = null;
+                _oscInput?.Dispose();
+                _oscInput = null;
 
                 _disposed = true;
             }
@@ -122,13 +108,11 @@ namespace Nebulator.OSC
         /// <inheritdoc />
         public void Start()
         {
-            _udpClient.BeginReceive(new AsyncCallback(OscReceive), this);
         }
 
         /// <inheritdoc />
         public void Stop()
         {
-            _udpClient.Close();
         }
 
         /// <inheritdoc />
@@ -139,63 +123,38 @@ namespace Nebulator.OSC
 
         #region Private functions
         /// <summary>
+        /// OSC has something to say.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OscInput_LogEvent(object sender, NebOsc.LogEventArgs e)
+        {
+            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = OscCommon.TranslateLogCategory(e.LogCategory), Message = e.Message });
+        }
+
+        /// <summary>
         /// Handle a received message.
         /// </summary>
-        /// <param name="ares"></param>
-        void OscReceive(IAsyncResult ares)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OscInput_InputEvent(object sender, NebOsc.InputEventArgs e)
         {
-            //OscInput inputDev = ares.AsyncState as OscInput;
-            IPEndPoint sender = new IPEndPoint(0, 0);
+            // message could be:
+            // /note/ channel notenum vel
+            // /controller/ channel ctlnum val
 
-            // Process input.
-            byte[] bytes = _udpClient.EndReceive(ares, ref sender);
-
-            if (bytes != null && bytes.Length > 0)
+            e.Messages.ForEach(m =>
             {
-                // Unpack - check for bundle or message.
-                if (bytes[0] == '#')
-                {
-                    Bundle b = new Bundle();
-                    if(b.Unpack(bytes))
-                    {
-                        b.Messages.ForEach(m => ProcessMessage(m));
-                    }
-                    else
-                    {
-                        b.Errors.ForEach(e => LogMsg(DeviceLogCategory.Error, e));
-                    }
-                }
-                else
-                {
-                    Message m = new Message();
-                    if(m.Unpack(bytes))
-                    {
-                        ProcessMessage(m);
-                    }
-                    else
-                    {
-                        m.Errors.ForEach(e => LogMsg(DeviceLogCategory.Error, e));
-                    }
-                }
-            }
-
-            // Local message decoder. Not really needed but keep as example.
-            void ProcessMessage(Message msg)
-            {
-                // could be:
-                // /note/ channel notenum vel
-                // /controller/ channel ctlnum val
-
                 Step step = null;
 
-                switch(msg.Address)
+                switch (m.Address)
                 {
                     case "/note/":
-                        if(msg.Data.Count == 3)
+                        if (m.Data.Count == 3)
                         {
-                            int channel = MathUtils.Constrain((int)msg.Data[0], 0, 100);
-                            double notenum = MathUtils.Constrain((int)msg.Data[1], 0, OscCommon.MAX_NOTE);
-                            double velocity = MathUtils.Constrain((int)msg.Data[2], 0, 1.0);
+                            int channel = MathUtils.Constrain((int)m.Data[0], 0, 100);
+                            double notenum = MathUtils.Constrain((int)m.Data[1], 0, OscCommon.MAX_NOTE);
+                            double velocity = MathUtils.Constrain((int)m.Data[2], 0, 1.0);
 
                             if (velocity == 0)
                             {
@@ -223,11 +182,11 @@ namespace Nebulator.OSC
                         break;
 
                     case "/controller/":
-                        if (msg.Data.Count == 3)
+                        if (m.Data.Count == 3)
                         {
-                            int channel = MathUtils.Constrain((int)msg.Data[0], 0, 100);
-                            int ctlnum = (int)msg.Data[1];
-                            double value = MathUtils.Constrain((int)msg.Data[2], 0, 10000);
+                            int channel = MathUtils.Constrain((int)m.Data[0], 0, 100);
+                            int ctlnum = (int)m.Data[1];
+                            double value = MathUtils.Constrain((int)m.Data[2], 0, 10000);
 
                             step = new StepControllerChange()
                             {
@@ -240,7 +199,7 @@ namespace Nebulator.OSC
                         break;
 
                     default:
-                        LogMsg(DeviceLogCategory.Error, $"Invalid address: {msg.Address}");
+                        LogMsg(DeviceLogCategory.Error, $"Invalid address: {m.Address}");
                         break;
                 }
 
@@ -251,10 +210,8 @@ namespace Nebulator.OSC
                     DeviceInputEvent?.Invoke(this, args);
                     LogMsg(DeviceLogCategory.Recv, step.ToString());
                 }
-            }
 
-            // Listen again.
-            _udpClient.BeginReceive(new AsyncCallback(OscReceive), this);
+            });
         }
 
         /// <summary>Ask host to do something with this.</summary>
