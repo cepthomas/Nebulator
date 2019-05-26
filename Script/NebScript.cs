@@ -349,16 +349,27 @@ namespace Nebulator.Script
         /// <summary>Send a named sequence.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        /// <param name="tick">When to send the sequence. if -1, send immediately.</param>
-        public void SendSequence(NChannel channel, NSequence seq, int tick = -1)
+        /// <param name="ticks">When to send the sequence. If null or empty, send immediately.</param>
+        public void SendSequence(NChannel channel, NSequence seq, params int[] ticks)
         {
             if (channel == null)
             {
                 throw new Exception($"Invalid NChannel for sequence");
             }
 
-            StepCollection scoll = ConvertToSteps(channel, seq, tick < 0 ? StepTime.Tick : tick);
-            RuntimeSteps.Add(scoll);
+            if(ticks == null || ticks.Length <= 0) // now!
+            {
+                StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
+                RuntimeSteps.Add(scoll);
+            }
+            else
+            {
+                ticks.ForEach(t =>
+                {
+                    StepCollection scoll = ConvertToSteps(channel, seq, t);
+                    RuntimeSteps.Add(scoll);
+                });
+            }
         }
 
         /// <summary>
