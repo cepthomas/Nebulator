@@ -27,8 +27,6 @@ namespace Nebulator.Common
         public const int BORDER_WIDTH = 1;
         #endregion
 
-
-
         /// <summary>
         /// Endian support. TODO these should be handled like OSC endian.
         /// </summary>

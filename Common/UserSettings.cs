@@ -55,6 +55,28 @@ namespace Nebulator.Common
         public List<string> RecentFiles { get; set; } = new List<string>();
         #endregion
 
+        #region Classes
+        /// <summary>
+        /// General purpose container for persistence.
+        /// </summary>
+        [Serializable]
+        public class FormInfo
+        {
+            public int X { get; set; } = 50;
+            public int Y { get; set; } = 50;
+            public int Width { get; set; } = 1000;
+            public int Height { get; set; } = 700;
+
+            public void FromForm(Form f)
+            {
+                X = f.Location.X;
+                Y = f.Location.Y;
+                Width = f.Width;
+                Height = f.Height;
+            }
+        }
+        #endregion
+
         #region Fields
         /// <summary>The file name.</summary>
         string _fn = Utils.UNKNOWN_STRING;

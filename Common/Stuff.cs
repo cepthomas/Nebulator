@@ -9,31 +9,21 @@ using System.Windows.Forms;
 
 namespace Nebulator.Common
 {
-    /// <summary>
-    /// General purpose container for persistence.
-    /// </summary>
-    [Serializable]
-    public class FormInfo
-    {
-        public int X { get; set; } = 50;
-        public int Y { get; set; } = 50;
-        public int Width { get; set; } = 1000;
-        public int Height { get; set; } = 700;
-
-        public void FromForm(Form f)
-        {
-            X = f.Location.X;
-            Y = f.Location.Y;
-            Width = f.Width;
-            Height = f.Height;
-        }
-    }
 
     /// <summary>
     /// Custom renderer for toolstrip checkbox color.
     /// </summary>
     public class CheckBoxRenderer : ToolStripSystemRenderer
     {
+        /// <summary>
+        /// Color to use when check box is selected.
+        /// </summary>
+        public Color SelectedColor { get; set; }
+
+        /// <summary>
+        /// Override for drawing.
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
         {
             var btn = e.Item as ToolStripButton;
@@ -41,7 +31,7 @@ namespace Nebulator.Common
             if (!(btn is null) && btn.CheckOnClick && btn.Checked)
             {
                 Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
-                e.Graphics.FillRectangle(new SolidBrush(UserSettings.TheSettings.SelectedColor), bounds);
+                e.Graphics.FillRectangle(new SolidBrush(SelectedColor), bounds);
             }
             else
             {

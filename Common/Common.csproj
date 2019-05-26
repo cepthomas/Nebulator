@@ -72,7 +72,6 @@
     <Compile Include="NoteUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptDefinitions.cs" />
-    <Compile Include="Stuff.cs" />
     <Compile Include="UserSettings.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Utils.cs" />

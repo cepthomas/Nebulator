@@ -96,7 +96,7 @@ namespace Nebulator
             di.Create();
             UserSettings.Load(appDir);
             InitializeComponent();
-            toolStrip1.Renderer = new Common.CheckBoxRenderer(); // for checked color.
+            toolStrip1.Renderer = new NBagOfTricks.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
         }
 
         /// <summary>
@@ -112,6 +112,7 @@ namespace Nebulator
             BackColor = UserSettings.TheSettings.BackColor;
 
             // The rest of the controls.
+            textViewer.WordWrap = false;
             textViewer.Colors.Add("ERROR:", Color.LightPink);
             textViewer.Colors.Add("WARNING:", Color.Plum);
 
@@ -123,6 +124,8 @@ namespace Nebulator
             fileDropDownButton.Image = MiscUtils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
             btnRewind.Image = MiscUtils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
             btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+            btnClear.Image = MiscUtils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
+            btnWrap.Image = MiscUtils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
 
             btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
@@ -158,9 +161,12 @@ namespace Nebulator
                     }
                 };
             }
+
+            btnClear.Click += (object _, EventArgs __) => { textViewer.Clear(); };
+            btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
             #endregion
 
-            // TODO this is broken now.
+            // TODO this is broken now. maybe not...
             exportMidiToolStripMenuItem.Visible = false;
 
             InitLogging();
@@ -169,7 +175,7 @@ namespace Nebulator
 
             ScriptDefinitions.TheDefinitions.Init();
 
-            // Fast timer.
+            // Fast mm timer.
             _timer = new MmTimerEx();
             SetSpeedTimerPeriod();
             _timer.TimerElapsedEvent += TimerElapsedEvent;
@@ -1205,7 +1211,7 @@ namespace Nebulator
         /// <summary>
         /// Monitor comm messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
-        private void Mon_Click(object sender, EventArgs e)
+        void Mon_Click(object sender, EventArgs e)
         {
             UserSettings.TheSettings.MonitorInput = btnMonIn.Checked;
             UserSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
@@ -1328,23 +1334,31 @@ namespace Nebulator
             {
                 Text = "Log Viewer",
                 Size = new Size(900, 600),
+                Font = UserSettings.TheSettings.EditorFont,
+                BackColor = UserSettings.TheSettings.BackColor,
                 StartPosition = FormStartPosition.Manual,
                 Location = new Point(20, 20),
-                FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                FormBorderStyle = FormBorderStyle.SizableToolWindow,
                 ShowIcon = false,
                 ShowInTaskbar = false
             })
             {
-                TextViewer tv = new TextViewer() { Dock = DockStyle.Fill };
+                TextViewer tv = new TextViewer()
+                {
+                    Dock = DockStyle.Fill,
+                    WordWrap = true
+                };
+
                 f.Controls.Add(tv);
                 tv.Colors.Add(" ERROR ", Color.Plum);
                 tv.Colors.Add(" _WARN ", Color.LightPink);
+                //tv.Colors.Add(" SND:", Color.LightGreen);
 
                 string appDir = MiscUtils.GetAppDataDir("Nebulator");
                 string logFilename = Path.Combine(appDir, "log.txt");
                 using (new WaitCursor())
                 {
-                    File.ReadAllLines(logFilename).ForEach(l => tv.AddLine(l, false));
+                    File.ReadAllLines(logFilename).ForEach(l => tv.AddLine(l));
                 }
 
                 f.ShowDialog();

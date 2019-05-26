@@ -3,7 +3,7 @@
 
 
 // Use win gm and virtual kbd only. Otherwise all midi.
-bool _minimal = true;
+bool _minimal = false;
 
 
 // All the neb variables.

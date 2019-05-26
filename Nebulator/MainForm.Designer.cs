@@ -36,10 +36,12 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
-            this.textViewer = new Nebulator.Controls.TextViewer();
+            this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
             this.scriptControls = new Nebulator.ScriptControls();
             this.timeMaster = new Nebulator.Controls.TimeControl();
+            this.btnClear = new System.Windows.Forms.ToolStripButton();
+            this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -136,7 +138,9 @@
             this.btnMonOut,
             this.btnKillComm,
             this.btnSettings,
-            this.btnAbout});
+            this.btnAbout,
+            this.btnClear,
+            this.btnWrap});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(732, 25);
@@ -257,6 +261,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textViewer.Location = new System.Drawing.Point(10, 126);
+            this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
             this.textViewer.Size = new System.Drawing.Size(714, 412);
             this.textViewer.TabIndex = 41;
@@ -291,6 +296,27 @@
             this.timeMaster.Size = new System.Drawing.Size(175, 34);
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
+            // 
+            // btnClear
+            // 
+            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnClear.Image = global::Nebulator.Properties.Resources.glyphicons_551_erase;
+            this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(23, 22);
+            this.btnClear.Text = "toolStripButton1";
+            this.btnClear.ToolTipText = "Clear the display";
+            // 
+            // btnWrap
+            // 
+            this.btnWrap.CheckOnClick = true;
+            this.btnWrap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnWrap.Image = global::Nebulator.Properties.Resources.glyphicons_114_justify;
+            this.btnWrap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnWrap.Name = "btnWrap";
+            this.btnWrap.Size = new System.Drawing.Size(23, 22);
+            this.btnWrap.Text = "toolStripButton1";
+            this.btnWrap.ToolTipText = "Enable wordwrap";
             // 
             // MainForm
             // 
@@ -342,8 +368,10 @@
         private System.Windows.Forms.ToolStripButton btnSettings;
         private System.Windows.Forms.ToolStripButton btnAbout;
         private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
-        private Controls.TextViewer textViewer;
+        private NBagOfTricks.UI.TextViewer textViewer;
         private System.Windows.Forms.Timer timerHousekeep;
+        private System.Windows.Forms.ToolStripButton btnClear;
+        private System.Windows.Forms.ToolStripButton btnWrap;
     }
 }
 

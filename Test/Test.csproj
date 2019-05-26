@@ -66,10 +66,6 @@
       <Project>{ff958faf-e474-4e58-b787-f166d9cac80f}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Controls\Controls.csproj">
-      <Project>{433a6140-96c9-4fc8-9f3b-e937a4cf71e1}</Project>
-      <Name>Controls</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Device\Device.csproj">
       <Project>{dfb8fd27-c870-4bf6-1234-f44c13049fee}</Project>
       <Name>Device</Name>

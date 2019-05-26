@@ -4,6 +4,67 @@
         <name>NBagOfTricks</name>
     </assembly>
     <members>
+        <member name="T:NBagOfTricks.UI.Fader">
+            <summary>
+            Summary description for Fader.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Fader.Maximum">
+            <summary>
+            Maximum value of this fader
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Fader.Minimum">
+            <summary>
+            Minimum value of this fader
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Fader.Value">
+            <summary>
+            Current value of this fader
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Fader.Orientation">
+            <summary>
+            Fader orientation
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Fader.#ctor">
+            <summary>
+            Creates a new Fader control.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Fader.DrawSlider(System.Drawing.Graphics)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Fader.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Fader.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Fader.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Fader.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            </summary>        
+        </member>
+        <member name="F:NBagOfTricks.UI.Fader.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Fader.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
         <member name="T:NBagOfTricks.UI.MeterType">
             <summary>Display types.</summary>
         </member>
@@ -98,6 +159,63 @@
             <summary>
             Update drawing area.
             </summary>
+        </member>
+        <member name="T:NBagOfTricks.UI.Pan">
+            <summary>
+            Pan slider control
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pan.Value">
+            <summary>
+            The current Pan setting.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Pan.ControlColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="E:NBagOfTricks.UI.Pan.PanChanged">
+            <summary>
+            True when pan value changed.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.#ctor">
+            <summary>
+            Creates a new PanSlider control.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Draw control.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.SetValuePanFromMouse(System.Int32)">
+            <summary>
+            Calculate position.
+            </summary>
+            <param name="x"></param>
+        </member>
+        <member name="F:NBagOfTricks.UI.Pan.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
         <member name="T:NBagOfTricks.UI.Taper">
             <summary></summary>
@@ -334,6 +452,78 @@
             </summary>
             <param name="x"></param>
         </member>
+        <member name="P:NBagOfTricks.UI.TextViewer.Colors">
+            <summary>
+            The colors to display when text is matched.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TextViewer.BackColor">
+            <summary>
+            User selectable color.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TextViewer.Font">
+            <summary>
+            User selectable font.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TextViewer.WordWrap">
+            <summary>
+            User selection.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TextViewer.MaxText">
+            <summary>
+            Limit the size.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.TextViewer._rtb">
+            <summary>
+            Contained control. Could have just subclassed but this leaves it open to add other stuff easily.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.TextViewer.#ctor">
+            <summary>
+            Constructor sets some defaults.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.TextViewer.TextViewer_Load(System.Object,System.EventArgs)">
+            <summary>
+            Initialize everything.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.TextViewer.AddLine(System.String,System.Boolean)">
+            <summary>
+            A message to display to the user. Adds EOL.
+            </summary>
+            <param name="text">The message.</param>
+            <param name="trim">True to truncate continuous displays.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.TextViewer.Add(System.String,System.Boolean)">
+            <summary>
+            A message to display to the user. Doesn't add EOL.
+            </summary>
+            <param name="text">The message.</param>
+            <param name="trim">True to truncate continuous displays.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.TextViewer.Clear">
+            <summary>
+            Remove all text.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.TextViewer.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.TextViewer.Dispose(System.Boolean)">
+            <summary>5
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
         <member name="T:NBagOfTricks.UI.VirtualKeyboard">
             <summary>
             Virtual keyboard control borrowed from Leslie Sanford with extras.
@@ -350,6 +540,16 @@
         </member>
         <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.Velocity">
             <summary>Midi velocity. 0 means key up.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeySize">
+            <summary>
+            General width of the keyboard.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyHeight">
+            <summary>
+            General height of the keyboard.
+            </summary>
         </member>
         <member name="F:NBagOfTricks.UI.VirtualKeyboard._keys">
             <summary>All the created piano keys.</summary>
@@ -394,13 +594,6 @@
             <summary>
             Create the midi note/keyboard mapping.
             </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_Resize(System.Object,System.EventArgs)">
-            <summary>
-            Event handler.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
         </member>
         <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
@@ -459,15 +652,22 @@
             <param name="isNatural"></param>
             <param name="noteId"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.PressVKey">
+        <member name="M:NBagOfTricks.UI.VirtualKey.PressVKey(System.Int32)">
             <summary>
             
             </summary>
+            <param name="velocity"></param>
         </member>
         <member name="M:NBagOfTricks.UI.VirtualKey.ReleaseVKey">
             <summary>
             
             </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.VirtualKey.CalcVelocity">
+            <summary>
+            Calc velocity from Y position.
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseEnter(System.EventArgs)">
             <summary>
@@ -625,6 +825,22 @@
             <param name="source">The sequence of elements</param>
             <param name="action">The action to execute on each element; the second parameter
             of the action represents the index of the source element.</param>
+        </member>
+        <member name="T:NBagOfTricks.CheckBoxRenderer">
+            <summary>
+            Custom renderer for toolstrip checkbox color.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CheckBoxRenderer.SelectedColor">
+            <summary>
+            Color to use when check box is selected.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
+            <summary>
+            Override for drawing.
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="T:NBagOfTricks.StringUtils">
             <summary>

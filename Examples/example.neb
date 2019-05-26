@@ -48,13 +48,13 @@ int _noteNum = 48;
 int _section = 0;
 
 // Use wingm and virtual kbd only.
-bool _minimal = true;
+bool _minimal = false;
 
 
 ////// Nebulator midi stuff //////
 public override void Setup()
 {
-    string MY_MIDI_OUT = _minimal ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:yours";
+    string MY_MIDI_OUT = _minimal ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:loopMIDI Port 1"; // "MIDI:yours";
 
     // All the neb variables.
     COL1 = CreateVariable("color", 200, 0, 255); // change color

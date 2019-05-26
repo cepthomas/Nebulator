@@ -189,10 +189,10 @@ namespace Nebulator.Script
 
         /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
         /// <param name="channel">Which channel to send it on.</param>
-        /// <param name="dnote">Note number.</param>
+        /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
-        public void SendNote(NChannel channel, double dnote, double vol, double dur)
+        public void SendNote(NChannel channel, double notenum, double vol, double dur)
         {
             if (channel == null)
             {
@@ -206,10 +206,10 @@ namespace Nebulator.Script
             if (play)
             {
                 double vel = channel.NextVol(vol);
-                double absnote = MathUtils.Constrain(Math.Abs(dnote), 0, 127);
+                double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
 
                 // If vol is positive and the note is not negative, it's note on, else note off.
-                if (vol > 0 && dnote > 0)
+                if (vol > 0 && notenum > 0)
                 {
                     StepNoteOn step = new StepNoteOn()
                     {
@@ -240,21 +240,21 @@ namespace Nebulator.Script
 
         /// <summary>Send a note immediately. Respects solo/mute.</summary>
         /// <param name="channel">Which channel to send it on.</param>
-        /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
+        /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void SendNote(NChannel channel, string snote, double vol, double dur)
+        public void SendNote(NChannel channel, string notestr, double vol, double dur)
         {
             if (channel == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
 
-            NSequenceElement note = new NSequenceElement(snote);
+            NSequenceElement note = new NSequenceElement(notestr);
 
             if (note.Notes.Count == 0)
             {
-                _logger.Warn($"Invalid note: {snote}");
+                _logger.Warn($"Invalid note: {notestr}");
             }
             else
             {
@@ -264,44 +264,44 @@ namespace Nebulator.Script
 
         /// <summary>Send a note immediately. Respects solo/mute.</summary>
         /// <param name="channel">Which channel to send it on.</param>
-        /// <param name="snote">Note string using any form allowed in the script. Requires double quotes in the script.</param>
+        /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void SendNote(NChannel channel, string snote, double vol, Time dur)
+        public void SendNote(NChannel channel, string notestr, double vol, Time dur)
         {
             if (channel == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
 
-            SendNote(channel, snote, vol, dur.AsDouble);
+            SendNote(channel, notestr, vol, dur.AsDouble);
         }
 
         /// <summary>Send a note on immediately. Respects solo/mute.</summary>
         /// <param name="channel">Which channel to send it on.</param>
-        /// <param name="inote">Note number.</param>
+        /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
-        public void SendNoteOn(NChannel channel, double inote, double vol)
+        public void SendNoteOn(NChannel channel, double notenum, double vol)
         {
             if (channel == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
 
-            SendNote(channel, inote, vol, 0.0);
+            SendNote(channel, notenum, vol, 0.0);
         }
 
         /// <summary>Send a note off immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
-        /// <param name="inote">Note number.</param>
-        public void SendNoteOff(NChannel channel, double inote)
+        /// <param name="notenum">Note number.</param>
+        public void SendNoteOff(NChannel channel, double notenum)
         {
             if (channel == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
 
-            SendNote(channel, inote, 0, 0.0);
+            SendNote(channel, notenum, 0, 0.0);
         }
 
         /// <summary>Send a controller immediately.</summary>
@@ -349,14 +349,15 @@ namespace Nebulator.Script
         /// <summary>Send a named sequence.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        public void SendSequence(NChannel channel, NSequence seq)
+        /// <param name="tick">When to send the sequence. if -1, send immediately.</param>
+        public void SendSequence(NChannel channel, NSequence seq, int tick = -1)
         {
             if (channel == null)
             {
                 throw new Exception($"Invalid NChannel for sequence");
             }
 
-            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
+            StepCollection scoll = ConvertToSteps(channel, seq, tick < 0 ? StepTime.Tick : tick);
             RuntimeSteps.Add(scoll);
         }
 
@@ -390,7 +391,7 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Helpers from NProcessing
+        #region Utilities like Processing
         public double Random(double max) { return _rand.NextDouble() * max; }
         public double Random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
         public int Random(int max) { return _rand.Next(max); }

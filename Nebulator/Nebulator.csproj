@@ -281,10 +281,6 @@
       <Project>{dfb8fd27-c870-4bf6-1234-f44c13049fee}</Project>
       <Name>Device</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Controls\Controls.csproj">
-      <Project>{433a6140-96c9-4fc8-9f3b-e937a4cf71e1}</Project>
-      <Name>Controls</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Midi\Midi.csproj">
       <Project>{d797a9c7-cd82-49c1-8e9d-151c9f3e2320}</Project>
       <Name>Midi</Name>
