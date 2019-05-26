@@ -350,7 +350,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         /// <param name="ticks">When to send the sequence. If null or empty, send immediately.</param>
-        public void SendSequence(NChannel channel, NSequence seq, params int[] ticks)
+        public void SendSequence(NChannel channel, NSequence seq, params int[] ticks) //TODO ticks for SendNote() or just build a sequence as container?
         {
             if (channel == null)
             {
@@ -360,14 +360,14 @@ namespace Nebulator.Script
             if(ticks == null || ticks.Length <= 0) // now!
             {
                 StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
-                RuntimeSteps.Add(scoll);
+                Steps.Add(scoll);
             }
             else
             {
                 ticks.ForEach(t =>
                 {
                     StepCollection scoll = ConvertToSteps(channel, seq, t);
-                    RuntimeSteps.Add(scoll);
+                    Steps.Add(scoll);
                 });
             }
         }

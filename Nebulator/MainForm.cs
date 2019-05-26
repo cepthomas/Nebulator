@@ -166,8 +166,8 @@ namespace Nebulator
             btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
             #endregion
 
-            // TODO this is broken now. maybe not...
-            exportMidiToolStripMenuItem.Visible = false;
+            // TODO fix/test this.
+            importMidiToolStripMenuItem.Visible = false;
 
             InitLogging();
 
@@ -719,8 +719,8 @@ namespace Nebulator
                 //}
 
                 // Process any sequence steps the script added.
-                _script.RuntimeSteps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                _script.RuntimeSteps.DeleteSteps(_stepTime);
+                _script.Steps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                _script.Steps.DeleteSteps(_stepTime);
 
                 ///// Bump time.
                 _stepTime.Advance();
@@ -1538,7 +1538,7 @@ namespace Nebulator
             {
                 Filter = "Midi files (*.mid)|*.mid",
                 Title = "Export to midi file",
-                FileName = _fn.Replace(".neb", ".mid")
+                FileName = Path.GetFileName(_fn.Replace(".neb", ".mid"))
             };
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
@@ -1553,28 +1553,32 @@ namespace Nebulator
         /// <param name="fn">Output filename.</param>
         void ExportMidi(string fn)
         {
-            Dictionary<int, string> channels = new Dictionary<int, string>();
-            _script.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.Name));
+            bool ok = true;
 
-            // Convert speed/bpm to sec per tick.
-            double ticksPerMinute = potSpeed.Value; // bpm
-            double ticksPerSec = ticksPerMinute / 60;
-            double secPerTick = 1 / ticksPerSec;
-
-            // Make the steps by pretending to run the script.
-            InitRuntime();
-            _script.RuntimeSteps.Clear();
-            _script.Setup();
-            _script.Setup2();
-
-            StepCollection steps = new StepCollection();
-
-            for (int i = 0; i < _script.SectionDefs.Keys.Max(); i++)
+            if(_script != null)
             {
-                // use: StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
+                if(_needCompile)
+                {
+                    ok = Compile();
+                }
+            }
+            else
+            {
+                ok = false;
             }
 
-            MidiUtils.ExportMidi(steps, fn, channels, secPerTick, "Converted from " + _fn);
+            if(ok)
+            {
+                Dictionary<int, string> channels = new Dictionary<int, string>();
+                _script.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.Name));
+
+                // Convert speed/bpm to sec per tick.
+                double ticksPerMinute = potSpeed.Value; // bpm
+                double ticksPerSec = ticksPerMinute / 60;
+                double secPerTick = 1 / ticksPerSec;
+
+                MidiUtils.ExportMidi(_script.Steps, fn, channels, secPerTick, "Converted from " + _fn);
+            }
         }
 
         /// <summary>

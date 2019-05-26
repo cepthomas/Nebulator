@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using NAudio.Midi;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -17,7 +18,7 @@ namespace Nebulator.Midi
         public const int MAX_PITCH = 16383;
 
         /// <summary>
-        /// Convert neb steps to midi file.
+        /// Convert neb steps to midi file. TODO timing is still a bit wonky.
         /// </summary>
         /// <param name="steps"></param>
         /// <param name="midiFileName"></param>
@@ -76,11 +77,19 @@ namespace Nebulator.Midi
                     switch (step)
                     {
                         case StepNoteOn stt:
-                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOn, (int)stt.NoteNumber, (int)(stt.Velocity * MidiUtils.MAX_MIDI));
+                            evt = new NoteEvent(midiTime,
+                                stt.ChannelNumber,
+                                MidiCommandCode.NoteOn,
+                                (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
                             break;
 
                         case StepNoteOff stt:
-                            evt = new NoteEvent(midiTime, stt.ChannelNumber, MidiCommandCode.NoteOff, (int)stt.NoteNumber, (int)(stt.Velocity * MidiUtils.MAX_MIDI));
+                            evt = new NoteEvent(midiTime,
+                                stt.ChannelNumber,
+                                MidiCommandCode.NoteOff,
+                                (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                (int)(MathUtils.Constrain(stt.Velocity, 0, 1.0) * MidiUtils.MAX_MIDI));
                             break;
 
                         case StepControllerChange stt:
@@ -90,16 +99,23 @@ namespace Nebulator.Midi
                             }
                             else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                             {
-                                evt = new PitchWheelChangeEvent(midiTime, stt.ChannelNumber, (int)stt.Value);
+                                evt = new PitchWheelChangeEvent(midiTime,
+                                    stt.ChannelNumber,
+                                    (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
                             }
                             else // CC
                             {
-                                evt = new ControlChangeEvent(midiTime, stt.ChannelNumber, (MidiController)stt.ControllerId, (int)stt.Value);
+                                evt = new ControlChangeEvent(midiTime,
+                                    stt.ChannelNumber,
+                                    (MidiController)stt.ControllerId,
+                                    (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
                             }
                             break;
 
                         case StepPatch stt:
-                            evt = new PatchChangeEvent(midiTime, stt.ChannelNumber, stt.PatchNumber);
+                            evt = new PatchChangeEvent(midiTime,
+                                stt.ChannelNumber,
+                                stt.PatchNumber);
                             break;
 
                         default:

@@ -49,8 +49,8 @@ namespace Nebulator.Script
         /// <summary>All the important Tick section with their names. Script -> Main</summary>
         public Dictionary<int, string> SectionDefs { get; set; } = new Dictionary<int, string>();
 
-        /// <summary>Steps added by script functions at runtime e.g. sendSequence(). Script -> Main</summary>
-        public StepCollection RuntimeSteps { get; private set; } = new StepCollection();
+        /// <summary>The steps being executed. Script functions may add to it at runtime using e.g. SendSequence(). Script -> Main</summary>
+        public StepCollection Steps { get; private set; } = new StepCollection();
         #endregion
 
         #region Lifecycle
