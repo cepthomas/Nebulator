@@ -28,13 +28,20 @@ namespace Nebulator.Common
         #endregion
 
         /// <summary>
-        /// Endian support. TODO these should be handled like OSC endian.
+        /// Endian support.
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
-        public static uint SwapUInt32(uint i)
+        public static UInt32 FixEndian(UInt32 i)
         {
-            return ((i & 0xFF000000) >> 24) | ((i & 0x00FF0000) >> 8) | ((i & 0x0000FF00) << 8) | ((i & 0x000000FF) << 24);
+            if (BitConverter.IsLittleEndian)
+            {
+                return ((i & 0xFF000000) >> 24) | ((i & 0x00FF0000) >> 8) | ((i & 0x0000FF00) << 8) | ((i & 0x000000FF) << 24);
+            }
+            else
+            {
+                return i;
+            }
         }
 
         /// <summary>
@@ -42,11 +49,16 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
-        public static ushort SwapUInt16(ushort i)
+        public static UInt16 FixEndian(UInt16 i)
         {
-            return (ushort)(((i & 0xFF00) >> 8) | ((i & 0x00FF) << 8));
+            if (BitConverter.IsLittleEndian)
+            {
+                return (ushort)(((i & 0xFF00) >> 8) | ((i & 0x00FF) << 8));
+            }
+            else
+            {
+                return i;
+            }
         }
-
-
     }
 }

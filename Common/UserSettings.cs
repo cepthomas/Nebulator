@@ -17,7 +17,7 @@ namespace Nebulator.Common
     {
         #region Persisted editable properties
         [DisplayName("Editor Font"), Description("The font to use for editors etc."), Browsable(true)]
-        public Font EditorFont { get; set; } = new Font("Consolas", 9);
+        public Font EditorFont { get; set; } = new Font("Consolas", 10);
 
         [DisplayName("Control Font"), Description("The font to use for controls."), Browsable(true)]
         public Font ControlFont { get; set; } = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);

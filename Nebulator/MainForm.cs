@@ -113,6 +113,8 @@ namespace Nebulator
 
             // The rest of the controls.
             textViewer.WordWrap = false;
+            textViewer.BackColor = UserSettings.TheSettings.BackColor;
+            textViewer.Font = UserSettings.TheSettings.EditorFont;
             textViewer.Colors.Add("ERROR:", Color.LightPink);
             textViewer.Colors.Add("WARNING:", Color.Plum);
 
@@ -166,8 +168,7 @@ namespace Nebulator
             btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
             #endregion
 
-            // TODO fix/test this.
-            importMidiToolStripMenuItem.Visible = false;
+            importMidiToolStripMenuItem.Visible = false; // TODO fix this sometime.
 
             InitLogging();
 
