@@ -54,7 +54,7 @@ bool _minimal = false;
 ////// Nebulator midi stuff //////
 public override void Setup()
 {
-    string MY_MIDI_OUT = _minimal ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:loopMIDI Port 1"; // "MIDI:yours";
+    string MY_MIDI_OUT = _minimal ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:loopMIDI Port 1";
 
     // All the neb variables.
     COL1 = CreateVariable("color", 200, 0, 255); // change color
@@ -74,15 +74,44 @@ public override void Setup()
     SetWobbler(DRUMS, 0.1);
 
     // Create set of notes (chord)
-    CreateNotes("MY_CHORD", "1 4 6 b13");
+    CreateNotes("MY_CHORD", "1 -4 6 -b13");
     CreateNotes("MY_SCALE", "1 3 4 b7");
 
     // levers
     CreateLever(COL1);
     CreateLever(MODN);
 
-    CreateController("VKEY:", 0, NoteControl, VKBD_NOTE);
+    // CreateController("VKEY:", 0, NoteControl, VKBD_NOTE);
 
+    // Get some stock chords and scales
+    _scaleNotes = GetScaleNotes("Algerian", "A3");
+    _chordNotes = GetNotes("C4.o7");
+
+    // Important times/states.
+    CreateSection(PART1, "Beginning");
+    CreateSection(PART2, "Middle");
+    CreateSection(PART3, "Ending");
+    CreateSection(END, "Finito");
+}
+
+public override void Setup2()
+{
+    if(_minimal)
+    {
+        SendPatch(KEYS, AcousticGrandPiano);
+        SendPatch(BASS, AcousticBass);
+        SendPatch(SYNTH, Lead1Square);
+        SendPatch(DRUMS, 32); // kit
+    }
+
+    BuildSequences();
+
+    // Could do a pan:
+    // SendController(KEYS, Pan, 30);
+}
+
+void BuildSequences()
+{
     ///// Sequences /////
     KEYS_VERSE1 = CreateSequence(16);
     KEYS_VERSE1.Add(0.00,  "G4.m7", 0.7, 1.32);
@@ -162,27 +191,29 @@ public override void Setup()
     NULL_SEQ = CreateSequence(8);
     NULL_SEQ.Add(00.00, AlgoNull, 0.75);
 
-    // Get some stock chords and scales
-    _scaleNotes = GetScaleNotes("Algerian", "A3");
-    _chordNotes = GetNotes("C4.o7");
+    ///// Build the when to send /////////
+    // PART1 //
+    SendSequence(DRUMS, DRUMS_VERSE,  PART1 + 0,  PART1 + 16);
+    SendSequence(BASS, BASS_VERSE,    PART1 + 0,  PART1 + 16);
+    SendSequence(KEYS, KEYS_VERSE1,   PART1 + 0,  PART1 + 16);
+    SendSequence(DRUMS, DRUMS_VERSE,  PART1 + 8,  PART1 + 24);
+    SendSequence(BASS, BASS_VERSE,    PART1 + 8,  PART1 + 24);
 
-    // Important times/states.
-    CreateSection(PART1, "Beginning");
-    CreateSection(PART2, "Middle");
-    CreateSection(PART3, "Ending");
-    CreateSection(END, "Finito");
+    // PART2 //
+    SendSequence(DRUMS, DRUMS_SIMPLE, PART2 + 0,  PART2 + 8);
+    SendSequence(BASS, BASS_VERSE,    PART2 + 0,  PART2 + 8);
+    SendSequence(KEYS, KEYS_VERSE2,   PART2 + 0,  PART2 + 8);
+    SendSequence(SYNTH, ALGO_SEQ,     PART2 + 0,  PART2 + 4, PART2 + 8, PART2 + 12);
+
+    // PART3 //
+    SendSequence(DRUMS, DRUMS_VERSE,  PART3 + 0,  PART3 + 16);
+    SendSequence(BASS, BASS_VERSE,    PART3 + 0,  PART3 + 16);
+    SendSequence(KEYS, KEYS_VERSE1,   PART3 + 0,  PART3 + 16);
+    SendSequence(DRUMS, DRUMS_VERSE,  PART3 + 8,  PART3 + 24);
+    SendSequence(BASS, BASS_VERSE,    PART3 + 8,  PART3 + 24);
 }
 
-public override void Setup2()
-{
-    if(_minimal)
-    {
-        SendPatch(KEYS, AcousticGrandPiano);
-        SendPatch(BASS, AcousticBass);
-        SendPatch(SYNTH, Lead1Square);
-        SendPatch(DRUMS, 32); // kit
-    }
-}
+
 
 public override void Step()
 {
@@ -190,78 +221,12 @@ public override void Step()
     {
         return;
     }
-
-    // Offset from start of section.
-    int tickOffset = Tick - CurrentSection;
-
-    // Do work.
-    switch(CurrentSection)
-    {
-        case PART1: DoSect1(tickOffset); break;
-        case PART2: DoSect2(tickOffset); break;
-        case PART3: DoSect3(tickOffset); break;
-        case END:            break;
-    }
 }
-
-///// All the sections /////
-void DoSect1(int tickos)
-{
-    switch(tickos)
-    {
-        case 0:
-        case 16:
-            SendSequence(DRUMS, DRUMS_VERSE);
-            SendSequence(BASS, BASS_VERSE);
-            SendSequence(KEYS, KEYS_VERSE1);
-            break;
-
-        case 8:
-        case 24:
-            SendSequence(DRUMS, DRUMS_VERSE);
-            SendSequence(BASS, BASS_VERSE);
-            break;
-    }
-}
-
-void DoSect2(int tickos)
-{
-    switch(tickos)
-    {
-        case 0:
-        case 8:
-            SendSequence(DRUMS, DRUMS_SIMPLE);
-            SendSequence(BASS, BASS_VERSE);
-            SendSequence(KEYS, KEYS_VERSE2);
-            SendSequence(SYNTH, ALGO_SEQ);
-            break;
-    }
-}
-
-void DoSect3(int tickos)
-{
-    switch(tickos)
-    {
-        case 0:
-        case 16:
-            SendSequence(DRUMS, DRUMS_VERSE);
-            SendSequence(BASS, BASS_VERSE);
-            SendSequence(KEYS, KEYS_VERSE1);
-            break;
-
-        case 8:
-        case 24:
-            SendSequence(DRUMS, DRUMS_VERSE);
-            SendSequence(BASS, BASS_VERSE);
-            break;
-    }
-}
-
 
 void AlgoDynamic()
 {
     // Print("!!!! AlgoDynamic");
-    int notenum = Random(40, 70);
+    int notenum = Random(55, 70);
     SendNote(SYNTH, notenum, 0.8, 0.30);
 }
 

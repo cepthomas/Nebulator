@@ -719,9 +719,8 @@ namespace Nebulator
                 //    _logger.Info("NEB tan: " + _tan.ToString());
                 //}
 
-                // Process any sequence steps the script added.
+                // Process any sequence steps.
                 _script.Steps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
-                _script.Steps.DeleteSteps(_stepTime);
 
                 ///// Bump time.
                 _stepTime.Advance();
