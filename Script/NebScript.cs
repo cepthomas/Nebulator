@@ -180,9 +180,10 @@ namespace Nebulator.Script
         /// Normal constructor.
         /// </summary>
         /// <param name="len">Length.</param>
-        protected NSequence CreateSequence(int len)
+        /// <param name="isDrums">.</param>
+        protected NSequence CreateSequence(int len, bool isDrums = false)
         {
-            NSequence nseq = new NSequence(len);
+            NSequence nseq = new NSequence() { Length = len, IsDrums = isDrums };
             Sequences.Add(nseq);
             return nseq;
         }

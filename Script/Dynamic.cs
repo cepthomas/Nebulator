@@ -197,15 +197,15 @@ namespace Nebulator.Script
 
         /// <summary>Length in ticks.</summary>
         public int Length { get; set; } = 1;
+
+        /// <summary>Helper to add short default duration to each hit without needing to explicitly put in script.</summary>
+        public bool IsDrums { get; set; } = false;
         #endregion
 
-        /// <summary>
-        /// Normal constructor.
-        /// </summary>
-        public NSequence(int len)
-        {
-            Length = len;
-        }
+        #region Fields
+        /// <summary>Auto noteoff time.</summary>
+        const double DRUM_DUR = 0.02;
+        #endregion
 
         /// <summary>
         /// Like: Z.Add(00.00, "G3", 90, 0.60).
@@ -216,6 +216,9 @@ namespace Nebulator.Script
         /// <param name="duration"></param>
         public void Add(double when, string what, double volume, double duration = 0)
         {
+            // Check for drums.
+            duration = duration == 0 && IsDrums ? DRUM_DUR : duration;
+
             NSequenceElement sel = new NSequenceElement(what) { When = new Time(when), Volume = volume, Duration = new Time(duration) };
             Elements.Add(sel);
         }
@@ -229,6 +232,9 @@ namespace Nebulator.Script
         /// <param name="duration"></param>
         public void Add(double when, int what, double volume, double duration = 0)
         {
+            // Check for drums.
+            duration = duration == 0 && IsDrums ? DRUM_DUR : duration;
+
             NSequenceElement sel = new NSequenceElement(what) { When = new Time(when), Volume = volume, Duration = new Time(duration) };
             Elements.Add(sel);
         }
@@ -255,6 +261,9 @@ namespace Nebulator.Script
         /// <param name="duration"></param>
         public void Add(string pattern, int which, double volume, double duration = 0)
         {
+            // Check for drums.
+            duration = duration == 0 && IsDrums ? DRUM_DUR : duration;
+
             const int PATTERN_SIZE = 4; // quarter note
 
             for (int i = 0; i < pattern.Length; i++)

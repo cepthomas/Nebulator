@@ -156,7 +156,7 @@ void BuildSequences()
     ////// Drums //////
 
     // "musical"
-    DRUMS_VERSE = CreateSequence(8);
+    DRUMS_VERSE = CreateSequence(8, true);
     DRUMS_VERSE.Add(0.00, AcousticBassDrum, DRUM_DEF_VOL);
     DRUMS_VERSE.Add(1.00, RideCymbal1,      DRUM_DEF_VOL);
     DRUMS_VERSE.Add(1.10, RideCymbal1,      DRUM_DEF_VOL);
@@ -172,13 +172,13 @@ void BuildSequences()
     DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
 
     // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
-    DRUMS_SIMPLE = CreateSequence(8);
+    DRUMS_SIMPLE = CreateSequence(8, true);
     DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 0.8);
     DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    0.7);
     DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat,      0.9);
 
     // Sequence triggered in script
-    DYNAMIC_SEQ = CreateSequence(8);
+    DYNAMIC_SEQ = CreateSequence(8, true);
     DYNAMIC_SEQ.Add(0.00, "G3 ", 0.75, 0.60);
     DYNAMIC_SEQ.Add(1.00, "A3 ", 0.75, 0.60);
     DYNAMIC_SEQ.Add(2.00, "Bb3", 0.75, 0.60);
@@ -193,24 +193,20 @@ void BuildSequences()
 
     ///// Build the when to send /////////
     // PART1 //
-    SendSequence(DRUMS, DRUMS_VERSE,  PART1 + 0,  PART1 + 16);
-    SendSequence(BASS, BASS_VERSE,    PART1 + 0,  PART1 + 16);
-    SendSequence(KEYS, KEYS_VERSE1,   PART1 + 0,  PART1 + 16);
-    SendSequence(DRUMS, DRUMS_VERSE,  PART1 + 8,  PART1 + 24);
-    SendSequence(BASS, BASS_VERSE,    PART1 + 8,  PART1 + 24);
+    SendSequence(DRUMS, DRUMS_VERSE,  PART1+0,  PART1+8,  PART1+16,  PART1+24);
+    SendSequence(BASS,  BASS_VERSE,   PART1+0,  PART1+8,  PART1+16,  PART1+24);
+    SendSequence(KEYS,  KEYS_VERSE1,  PART1+0,  PART1+16  );
 
     // PART2 //
-    SendSequence(DRUMS, DRUMS_SIMPLE, PART2 + 0,  PART2 + 8);
-    SendSequence(BASS, BASS_VERSE,    PART2 + 0,  PART2 + 8);
-    SendSequence(KEYS, KEYS_VERSE2,   PART2 + 0,  PART2 + 8);
-    SendSequence(SYNTH, ALGO_SEQ,     PART2 + 0,  PART2 + 4, PART2 + 8, PART2 + 12);
+    SendSequence(DRUMS, DRUMS_SIMPLE, PART2+0,  PART2+8  );
+    SendSequence(BASS,  BASS_VERSE,   PART2+0,  PART2+8  );
+    SendSequence(KEYS,  KEYS_VERSE2,  PART2+0,  PART2+8  );
+    SendSequence(SYNTH, ALGO_SEQ,     PART2+0,  PART2+4,  PART2+8,   PART2+12);
 
     // PART3 //
-    SendSequence(DRUMS, DRUMS_VERSE,  PART3 + 0,  PART3 + 16);
-    SendSequence(BASS, BASS_VERSE,    PART3 + 0,  PART3 + 16);
-    SendSequence(KEYS, KEYS_VERSE1,   PART3 + 0,  PART3 + 16);
-    SendSequence(DRUMS, DRUMS_VERSE,  PART3 + 8,  PART3 + 24);
-    SendSequence(BASS, BASS_VERSE,    PART3 + 8,  PART3 + 24);
+    SendSequence(DRUMS, DRUMS_VERSE,  PART3+0,  PART3+8,  PART3+16,  PART3+24);
+    SendSequence(BASS,  BASS_VERSE,   PART3+0,  PART3+8,  PART3+16,  PART3+24);
+    SendSequence(KEYS,  KEYS_VERSE1,  PART3+0,  PART3+16  );
 }
 
 
