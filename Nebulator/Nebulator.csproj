@@ -98,10 +98,6 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <None Include="..\Nebulator.wiki\ScriptDefinitions.md">
-      <Link>Resources\ScriptDefinitions.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="..\README.md">
       <Link>Resources\README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -180,6 +176,9 @@
     <None Include="Resources\mark4.bmp" />
     <None Include="Resources\medusa.ico" />
     <None Include="Resources\medusa.png" />
+    <None Include="Resources\ScriptDefinitions.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\glyphicons-37-file.png" />

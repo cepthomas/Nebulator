@@ -13,14 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{20180D64-A496-4D89-B025-1493E74B3F1F}"
 	ProjectSection(SolutionItems) = preProject
-		Nebulator.wiki\_Sidebar.md = Nebulator.wiki\_Sidebar.md
-		Nebulator.wiki\Home.md = Nebulator.wiki\Home.md
-		Nebulator.wiki\Notes.md = Nebulator.wiki\Notes.md
-		Nebulator.wiki\Porting_not.md = Nebulator.wiki\Porting_not.md
-		Nebulator.wiki\ScriptApi.md = Nebulator.wiki\ScriptApi.md
-		Nebulator.wiki\ScriptDefinitions.md = Nebulator.wiki\ScriptDefinitions.md
-		Nebulator.wiki\ScriptSyntax.md = Nebulator.wiki\ScriptSyntax.md
-		Nebulator.wiki\WebApi.md = Nebulator.wiki\WebApi.md
+		..\Nebulator.wiki\_Sidebar.md = ..\Nebulator.wiki\_Sidebar.md
+		..\Nebulator.wiki\Home.md = ..\Nebulator.wiki\Home.md
+		..\Nebulator.wiki\Notes.md = ..\Nebulator.wiki\Notes.md
+		..\Nebulator.wiki\ScriptApi.md = ..\Nebulator.wiki\ScriptApi.md
+		..\Nebulator.wiki\ScriptDefinitions.md = ..\Nebulator.wiki\ScriptDefinitions.md
+		..\Nebulator.wiki\ScriptSyntax.md = ..\Nebulator.wiki\ScriptSyntax.md
+		..\Nebulator.wiki\WebApi.md = ..\Nebulator.wiki\WebApi.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{FF958FAF-E474-4E58-B787-F166D9CAC80F}"
