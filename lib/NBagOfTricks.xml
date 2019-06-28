@@ -4,67 +4,6 @@
         <name>NBagOfTricks</name>
     </assembly>
     <members>
-        <member name="T:NBagOfTricks.UI.Fader">
-            <summary>
-            Summary description for Fader.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.Fader.Maximum">
-            <summary>
-            Maximum value of this fader
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.Fader.Minimum">
-            <summary>
-            Minimum value of this fader
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.Fader.Value">
-            <summary>
-            Current value of this fader
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.Fader.Orientation">
-            <summary>
-            Fader orientation
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Fader.#ctor">
-            <summary>
-            Creates a new Fader control.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Fader.DrawSlider(System.Drawing.Graphics)">
-            <summary>
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Fader.OnPaint(System.Windows.Forms.PaintEventArgs)">
-            <summary>
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Fader.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
-            <summary>
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Fader.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
-            <summary>
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Fader.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
-            <summary>
-            </summary>        
-        </member>
-        <member name="F:NBagOfTricks.UI.Fader.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Fader.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
         <member name="T:NBagOfTricks.UI.MeterType">
             <summary>Display types.</summary>
         </member>
@@ -94,11 +33,6 @@
             </summary>
         </member>
         <member name="P:NBagOfTricks.UI.Meter.ControlColor">
-            <summary>
-            For styling.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.Meter.BackColor">
             <summary>
             For styling.
             </summary>
@@ -200,11 +134,17 @@
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.SetValuePanFromMouse(System.Int32)">
+        <member name="M:NBagOfTricks.UI.Pan.SetValueFromMouse(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Calculate position.
             </summary>
-            <param name="x"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handle the nudge key.
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="F:NBagOfTricks.UI.Pan.components">
             <summary>
@@ -226,11 +166,6 @@
             </summary>
         </member>
         <member name="P:NBagOfTricks.UI.Pot.ControlColor">
-            <summary>
-            For styling.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.Pot.BackColor">
             <summary>
             For styling.
             </summary>
@@ -305,6 +240,12 @@
             <summary>
             Handles the mouse down event to allow changing value by dragging.
             </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pot.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handle the nudge key.
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="T:NBagOfTricks.UI.PropertyGridEx">
             <summary>Extends the PropertyGrid to add some features.</summary>
@@ -381,9 +322,14 @@
             For styling.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.BackColor">
+        <member name="P:NBagOfTricks.UI.Slider.DecPlaces">
             <summary>
-            For styling.
+            Number of decimal places to display.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.Slider.Orientation">
+            <summary>
+            Fader orientation
             </summary>
         </member>
         <member name="P:NBagOfTricks.UI.Slider.Maximum">
@@ -404,11 +350,6 @@
         <member name="P:NBagOfTricks.UI.Slider.Value">
             <summary>
             The value for this slider.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.Slider.DecPlaces">
-            <summary>
-            Number of decimal places to display.
             </summary>
         </member>
         <member name="E:NBagOfTricks.UI.Slider.ValueChanged">
@@ -446,11 +387,17 @@
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.SetValueFromMouse(System.Int32)">
+        <member name="M:NBagOfTricks.UI.Slider.SetValueFromMouse(System.Windows.Forms.MouseEventArgs)">
             <summary>
             ommon updater.
             </summary>
-            <param name="x"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.Slider.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handle the nudge key.
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="P:NBagOfTricks.UI.TextViewer.Colors">
             <summary>
