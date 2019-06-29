@@ -173,9 +173,9 @@ void BuildSequences()
 
     // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
     DRUMS_SIMPLE = CreateSequence(8, true);
-    DRUMS_SIMPLE.Add("x-------x-------x-------x-------", AcousticBassDrum, 0.8);
-    DRUMS_SIMPLE.Add("----x-------x-x-----x-------x-x-", AcousticSnare,    0.7);
-    DRUMS_SIMPLE.Add("------xx------xx------xx------xx", ClosedHiHat,      0.9);
+    DRUMS_SIMPLE.Add("|x-------x-------|x-------x-------|", AcousticBassDrum, 0.8);
+    DRUMS_SIMPLE.Add("|----x-------x-x-|----x-------x-x-|", AcousticSnare,    0.7);
+    DRUMS_SIMPLE.Add("|------xx------xx|------xx------xx|", ClosedHiHat,      0.9);
 
     // Sequence triggered in script
     DYNAMIC_SEQ = CreateSequence(8, true);

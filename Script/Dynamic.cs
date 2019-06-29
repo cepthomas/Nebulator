@@ -252,27 +252,30 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add("x-------x-------x-------x-------", AcousticBassDrum, 90).
+        /// Like: Z.Add("|x-------x-------|x-------x-------|", AcousticBassDrum, 90).
         /// Each hit is 1/16 note - fixed res for now.
         /// </summary>
-        /// <param name="pattern"></param>
-        /// <param name="which"></param>
-        /// <param name="volume"></param>
-        /// <param name="duration"></param>
+        /// <param name="pattern">Ascii pattern string</param>
+        /// <param name="which">Specific instrument</param>
+        /// <param name="volume">Volume</param>
+        /// <param name="duration">Duration</param>
         public void Add(string pattern, int which, double volume, double duration = 0)
         {
             // Check for drums.
             duration = duration == 0 && IsDrums ? DRUM_DUR : duration;
 
-            const int PATTERN_SIZE = 4; // quarter note
+            const int HITS_PER_TICK = 4; // quarter note
 
-            for (int i = 0; i < pattern.Length; i++)
+            // Remove markers.
+            string s = pattern.Replace("|", "");
+
+            for (int i = 0; i < s.Length; i++)
             {
-                switch (pattern[i])
+                switch (s[i])
                 {
                     case 'x':
                         // Note on.
-                        Time t = new Time(i / PATTERN_SIZE, (i % PATTERN_SIZE) * Time.TOCKS_PER_TICK / PATTERN_SIZE);
+                        Time t = new Time(i / HITS_PER_TICK, i % HITS_PER_TICK * Time.TOCKS_PER_TICK / HITS_PER_TICK);
                         NSequenceElement ncl = new NSequenceElement(which) { When = t, Volume = volume, Duration = new Time(duration) };
                         Elements.Add(ncl);
                         break;
