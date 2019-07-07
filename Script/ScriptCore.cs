@@ -25,6 +25,9 @@ namespace Nebulator.Script
 
         /// <summary>Script randomizer.</summary>
         Random _rand = new Random();
+
+        /// <summary>Short duration for drum hits.</summary>
+        const double DRUM_DUR = 0.02;
         #endregion
 
         #region Elements defined in the script that MainForm needs
@@ -46,8 +49,8 @@ namespace Nebulator.Script
         /// <summary>All sequences.</summary>
         public List<NSequence> Sequences { get; set; } = new List<NSequence>();
 
-        /// <summary>All the important Tick section with their names. Script -> Main</summary>
-        public Dictionary<int, string> SectionDefs { get; set; } = new Dictionary<int, string>();
+        /// <summary>All sections.</summary>
+        public List<NSection> Sections { get; set; } = new List<NSection>();
 
         /// <summary>The steps being executed. Script functions may add to it at runtime using e.g. SendSequence(). Script -> Main</summary>
         public StepCollection Steps { get; private set; } = new StepCollection();
@@ -93,7 +96,7 @@ namespace Nebulator.Script
                 int toffset = startTick == -1 ? 0 : channel.NextTime();
 
                 Time startNoteTime = new Time(startTick, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + seqel.Duration;
+                Time stopNoteTime = startNoteTime + (channel.IsDrums ? new Time(DRUM_DUR) : seqel.Duration);
 
                 // Is it a function?
                 if (seqel.ScriptFunction != null)
@@ -135,6 +138,26 @@ namespace Nebulator.Script
             }
 
             return steps;
+        }
+
+        /// <summary>Send a named sequence at some future time.</summary>
+        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="seq">Which sequence to send.</param>
+        /// <param name="tick">When to send the sequence.</param>
+        public void AddSequence(NChannel channel, NSequence seq, int tick)
+        {
+            if (channel == null)
+            {
+                throw new Exception($"Invalid NChannel");
+            }
+
+            if (seq == null)
+            {
+                throw new Exception($"Invalid NSequence");
+            }
+
+            StepCollection scoll = ConvertToSteps(channel, seq, tick);
+            Steps.Add(scoll);
         }
         #endregion
     }

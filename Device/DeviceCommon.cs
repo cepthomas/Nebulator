@@ -6,7 +6,7 @@ using Nebulator.Common;
 namespace Nebulator.Device
 {
     /// <summary>Device type.</summary>
-    public enum DeviceType { Midi, OSC, ASIO, VirtualKeyboard }
+    public enum DeviceType { Midi, OSC, ASIO, VKey }
 
     /// <summary>Category types.</summary>
     public enum DeviceLogCategory { Info, Send, Recv, Error }

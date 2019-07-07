@@ -1,6 +1,10 @@
 
-// Example Nebulator composition file with some UI demo.
-// Warning: this is not actual music!
+// TODO1 1/16 notes ok? or 1/32? Make configurable? 1/8?
+// TODO1 Could use triplets.
+// TODO1 fills, intros, like that.
+
+// In 4/4 there are 4 beats per bar and 4 bars per measure. So this can change how many measures are in a song because one song has 4 bars per measure vs an 8/4 time song that has 8 beats per bar and 4 bars per measure or 6/5 time which has 6 beats per bar and 5 bars per measure.
+
 
 ///// Include other lib files. /////
 #import "utils.neb"
@@ -16,43 +20,37 @@ string OSC_IN = "OSC:6448";
 string OSC_OUT = "OSC:127.0.0.1:1234";
 string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
 
-// When to play sequences.
-const int PART1 = 0;  // len:32
-const int PART2 = 32; // len:16
-const int PART3 = 48; // len:32
-const int END = 80;
+// // When to play sequences.
+// const int PART1 = 0;  // len:32
+// const int PART2 = 32; // len:16
+// const int PART3 = 48; // len:32
+// const int END = 80;
 
-// Volumes.
-const double KEYS_DEF_VOL = 0.8;
-const double DRUM_DEF_VOL = 0.8;
-// const double DRUM_DUR = 0.01;
+const double KEYS_VOL = 0.8;
+const double DRUM_VOL = 0.8;
+
+// Conversion between ticks and measures.
+const int MEAS = 4;
 
 ///// Variables /////
-NVariable COL1;
-NVariable MODN;
-NVariable VKBD_NOTE;
+NVariable vColor;
+NVariable vModN;
+NVariable vVkeyNote;
 
-NVariable CTL2;
-NVariable CTL3;
-NVariable MOD1;
-NVariable KBD_NOTE;
+NVariable vCtl2;
+NVariable vCtl3;
+NVariable vMod1;
+NVariable vKeyNote;
 
 
 ///// Channels /////
-NChannel KEYS;
-NChannel BASS;
-NChannel DRUMS;
-NChannel SYNTH;
+NChannel chKeys;
+NChannel chBass;
+NChannel chDrums;
+NChannel chSynth;
 
 ///// Sequences /////
-NSequence KEYS_VERSE1;
-NSequence KEYS_VERSE2;
-NSequence BASS_VERSE;
-NSequence DRUMS_VERSE;
-NSequence DRUMS_SIMPLE;
-NSequence DYNAMIC_SEQ;
-NSequence ALGO_SEQ;
-NSequence NULL_SEQ;
+NSequence seqDynamic;
 
 
 ////// Simple variables for functions. ///////
@@ -60,193 +58,305 @@ double[] _scaleNotes;
 double[] _chordNotes;
 int _noteNum = 48;
 // Where we are now.
-int _section = 0;
+//int _section = 0;
 
 // Use wingm and virtual kbd only.
-bool _minimal = false;
+bool _local = true;
 
 
 ////// Nebulator midi stuff //////
 public override void Setup()
 {
     // All the neb variables.
-    COL1 = CreateVariable("color", 200, 0, 255); // change color
-    MODN = CreateVariable("modn", 0, -10, 10);
-    VKBD_NOTE = CreateVariable("note", 60, -127, 127, On_VKBD_NOTE);
-    CTL2 = CreateVariable("ctl2", 200, 0, 255, On_CTL2);
-    CTL3 = CreateVariable("ctl3", 200, 0, 255, On_CTL3);
-    MOD1 = CreateVariable("mod", 127, 0, 255, On_MOD1);
-    //KBD_NOTE = CreateVariable("note", 60, -127, 127, On_KBD_NOTE); // note neg number for note off encoding
+    vColor = CreateVariable("color", 200, 0, 255); // change color
+    vModN = CreateVariable("modn", 0, -10, 10);
+    vVkeyNote = CreateVariable("note", 60, -127, 127, On_vVkeyNote);
+    vCtl2 = CreateVariable("ctl2", 200, 0, 255, On_vCtl2);
+    vCtl3 = CreateVariable("ctl3", 200, 0, 255, On_vCtl3);
+    vMod1 = CreateVariable("mod", 127, 0, 255, On_vMod1);
+    //vKeyNote = CreateVariable("note", 60, -127, 127, On_vKeyNote); // note neg number for note off encoding
 
     // IO devices.
-    if(_minimal)
+    if(_local)
     {
         // All the outputs.
-        KEYS = CreateChannel("keys", GS_MIDI_OUT, 1);
-        BASS = CreateChannel("bass", GS_MIDI_OUT, 2);
-        SYNTH = CreateChannel("synth", GS_MIDI_OUT, 3);
-        DRUMS = CreateChannel("drums", GS_MIDI_OUT, 10);
+        chKeys = CreateChannel("keys", GS_MIDI_OUT, 1);
+        chBass = CreateChannel("bass", GS_MIDI_OUT, 2);
+        chSynth = CreateChannel("synth", GS_MIDI_OUT, 3);
+        chDrums = CreateChannel("drums", GS_MIDI_OUT, 10, true);
 
         // All the inputs.
-        CreateController("VKEY:", 1, NoteControl, VKBD_NOTE);
+        CreateController("VKEY:", 1, NoteControl, vVkeyNote);
     }
     else
     {
         // All the outputs.
-        KEYS = CreateChannel("keys", MIDI_OUT, 1);
-        BASS = CreateChannel("bass", MIDI_OUT, 2);
-        SYNTH = CreateChannel("synth", MIDI_OUT, 3);
-        DRUMS = CreateChannel("drums", MIDI_OUT, 10);
+        chKeys = CreateChannel("keys", MIDI_OUT, 1);
+        chBass = CreateChannel("bass", MIDI_OUT, 2);
+        chSynth = CreateChannel("synth", MIDI_OUT, 3);
+        chDrums = CreateChannel("drums", MIDI_OUT, 10, true);
 
         // All the inputs.
-        // CreateController(MIDI_IN, 1, 1, MOD1); // modulate eq
-        // CreateController(MIDI_IN, 1, 2, CTL2); // since I don't have a pitch knob, I'll use this instead
-        // CreateController(MIDI_IN, 1, 3, CTL3); // another controller
+        // CreateController(MIDI_IN, 1, 1, vMod1); // modulate eq
+        // CreateController(MIDI_IN, 1, 2, vCtl2); // since I don't have a pitch knob, I'll use this instead
+        // CreateController(MIDI_IN, 1, 3, vCtl3); // another controller
         // CreateController(MIDI_IN, 1, 4, BACK_COLOR); // change ui color
-        // CreateController(MIDI_IN, 1, NoteControl, KBD_NOTE);
+        // CreateController(MIDI_IN, 1, NoteControl, vKeyNote);
     }
 
     // Some wobblers.
-    SetWobbler(KEYS, 0.1);
-    SetWobbler(BASS, 0.1);
-    SetWobbler(SYNTH, 0.1);
-    SetWobbler(DRUMS, 0.1);
+    CreateWobbler(chKeys, 0.1);
+    CreateWobbler(chBass, 0.1);
+    CreateWobbler(chSynth, 0.1);
+    CreateWobbler(chDrums, 0.1, 0.0, 0.05);
 
     // Create set of notes (chord)
     CreateNotes("MY_CHORD", "1 -4 6 -b13");
     CreateNotes("MY_SCALE", "1 3 4 b7");
 
     // levers
-    CreateLever(COL1);
-    CreateLever(MODN);
+    CreateLever(vColor);
+    CreateLever(vModN);
 
-    // CreateController("VKEY:", 0, NoteControl, VKBD_NOTE);
+    // CreateController("VKEY:", 0, NoteControl, vVkeyNote);
 
     // Get some stock chords and scales
     _scaleNotes = GetScaleNotes("Algerian", "A3");
-    _chordNotes = GetNotes("C4.o7");
+    _chordNotes = GetChordNotes("C4.o7");
 
-    // Important times/states.
-    CreateSection(PART1, "Beginning");
-    CreateSection(PART2, "Middle");
-    CreateSection(PART3, "Ending");
-    CreateSection(END, "Finito");
+    // // Important times/states.
+    // CreateSection(PART1, "Beginning");
+    // CreateSection(PART2, "Middle");
+    // CreateSection(PART3, "Ending");
+    // CreateSection(END, "Finito");
 }
 
 public override void Setup2()
 {
-    if(_minimal)
+    if(_local)
     {
-        SendPatch(KEYS, AcousticGrandPiano);
-        SendPatch(BASS, AcousticBass);
-        SendPatch(SYNTH, Lead1Square);
-        SendPatch(DRUMS, 32); // kit
+        SendPatch(chKeys, AcousticGrandPiano);
+        SendPatch(chBass, AcousticBass);
+        SendPatch(chSynth, Lead1Square);
+        SendPatch(chDrums, 32); // kit
     }
 
-    BuildSequences();
+    BuildComp();
 
     // Could do a pan:
-    // SendController(KEYS, Pan, 30);
+    // SendController(chKeys, Pan, 30);
 }
 
-void BuildSequences()
+void BuildComp()
 {
-    ///// Sequences /////
-    KEYS_VERSE1 = CreateSequence(16);
-    KEYS_VERSE1.Add(0.00,  "G4.m7", 0.7, 1.32);
-    KEYS_VERSE1.Add(1.60,  "G4.m7", 0.7, 0.20);
-    KEYS_VERSE1.Add(2.00,  "G4.m7", 0.7, 0.20);
-    KEYS_VERSE1.Add(4.00,  "G4.m7", 0.7, 1.32);
-    KEYS_VERSE1.Add(5.60,  "G4.m7", 0.7, 0.20);
-    KEYS_VERSE1.Add(6.00,  "G4.m7", 0.7, 0.20);
-    KEYS_VERSE1.Add(8.00,  "G4.m6", 0.7, 1.32);
-    KEYS_VERSE1.Add(9.60,  "G4.m6", 0.7, 0.20);
-    KEYS_VERSE1.Add(10.00, "G4.m6", 0.7, 0.20);
-    KEYS_VERSE1.Add(12.00, "G4.m6", 0.7, 1.32);
-    KEYS_VERSE1.Add(13.60, "G4.m6", 0.7, 0.20);
-    KEYS_VERSE1.Add(14.00, "G4.m6", 0.7, 0.20);
 
-    KEYS_VERSE2 = CreateSequence(8);
-    KEYS_VERSE2.Add(0.00, "F4",    0.7, 0.32);
-    KEYS_VERSE2.Add(0.32, "D#4",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(1.00, "C4",    0.7, 0.32);
-    KEYS_VERSE2.Add(1.32, "B4.m7", 0.7, 0.32);
-    KEYS_VERSE2.Add(2.00, "F5",    0.7, 0.32);
-    KEYS_VERSE2.Add(2.32, "D#5",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(3.00, "C5",    0.7, 0.32);
-    KEYS_VERSE2.Add(3.32, "B5.m7", 0.7, 0.32);
-    KEYS_VERSE2.Add(4.00, "F3",    0.7, 0.32);
-    KEYS_VERSE2.Add(4.32, "D#3",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(5.00, "C3",    0.7, 0.32);
-    KEYS_VERSE2.Add(5.32, "B3.m7", 0.7, 0.32);
-    KEYS_VERSE2.Add(6.00, "F2",    0.7, 0.32);
-    KEYS_VERSE2.Add(6.32, "D#2",   KEYS_DEF_VOL, 0.32);
-    KEYS_VERSE2.Add(7.00, "C2",    0.7, 0.32);
-    KEYS_VERSE2.Add(7.32, "B2.m7", 0.7, 0.32);
+    /////////////////////// sequences /////////////////////////////////
 
-    ////// Bass //////
-    BASS_VERSE = CreateSequence(8);
-    BASS_VERSE.Add(0.00, "C2",  0.75, 0.25);
-    BASS_VERSE.Add(0.48, "C2",  0.75, 0.125);
-    BASS_VERSE.Add(3.32, "E2",  0.75, 0.25);
-    BASS_VERSE.Add(4.00, "C2",  0.75, 1.00);
-    BASS_VERSE.Add(7.48, "A#2", 0.75, 0.10);
+    NSequence seqKeysVerse = CreateSequence(2*MEAS, "Keys Verse", new NSequenceElements
+    {
+        { "|7-------7-------|7-------7-------|", "G4.m7", KEYS_VOL,     1.2 }, // 32 hits == 2 whole notes == 2 measure
+        { "|----4-------4-8-|----4-------4-8-|", "G4.m6", KEYS_VOL*0.9, 0.4 }
+    });
 
-    ////// Drums //////
+    NSequence seqKeysChorus = CreateSequence(2*MEAS, "Keys Chorus", new NSequenceElements
+    {
+        { 0.00, "F4",    0.7,      0.32 },
+        { 0.32, "D#4",   KEYS_VOL, 0.32 },
+        { 1.00, "C4",    0.7,      0.32 },
+        { 1.32, "B4.m7", 0.7,      0.32 },
+        { 2.00, "F5",    0.7,      0.32 },
+        { 2.32, "D#5",   KEYS_VOL, 0.32 },
+        { 3.00, "C5",    0.7,      0.32 },
+        { 3.32, "B5.m7", 0.7,      0.32 },
+        { 4.00, "F3",    0.7,      0.32 },
+        { 4.32, "D#3",   KEYS_VOL, 0.32 },
+        { 5.00, "C3",    0.7,      0.32 },
+        { 5.32, "B3.m7", 0.7,      0.32 },
+        { 6.00, "F2",    0.7,      0.32 },
+        { 6.32, "D#2",   KEYS_VOL, 0.32 },
+        { 7.00, "C2",    0.7,      0.32 },
+        { 7.32, "B2.m7", 0.7,      0.32 },
+    });
 
-    // "musical"
-    DRUMS_VERSE = CreateSequence(8, true);
-    DRUMS_VERSE.Add(0.00, AcousticBassDrum, DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(1.00, RideCymbal1,      DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(1.10, RideCymbal1,      DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(1.60, HiMidTom,         DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(2.00, AcousticBassDrum, DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(3.00, RideCymbal1,      DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(3.10, RideCymbal1,      DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(4.00, AcousticBassDrum, DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(5.00, RideCymbal1,      DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(5.10, RideCymbal1,      DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(5.60, HiMidTom,         DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
-    DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
+    NSequence seqDrumsSimple = CreateSequence(2*MEAS, "Drums Simple", new NSequenceElements
+    {
+        { 0.00, AcousticBassDrum,  DRUM_VOL },
+        { 1.00, RideCymbal1,       DRUM_VOL },
+        { 1.10, RideCymbal1,       DRUM_VOL },
+        { 1.60, HiMidTom,          DRUM_VOL },
+        { 2.00, AcousticBassDrum,  DRUM_VOL },
+        { 3.00, RideCymbal1,       DRUM_VOL },
+        { 3.10, RideCymbal1,       DRUM_VOL },
+        { 4.00, AcousticBassDrum,  DRUM_VOL },
+        { 5.00, RideCymbal1,       DRUM_VOL },
+        { 5.10, RideCymbal1,       DRUM_VOL },
+        { 5.60, HiMidTom,          DRUM_VOL },
+        { 6.00, AcousticBassDrum,  DRUM_VOL },
+        { 7.00, CrashCymbal2,      DRUM_VOL },
+    });
 
-    // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
-    DRUMS_SIMPLE = CreateSequence(8, true);
-    DRUMS_SIMPLE.Add("|x-------x-------|x-------x-------|", AcousticBassDrum, 0.8);
-    DRUMS_SIMPLE.Add("|----x-------x-x-|----x-------x-x-|", AcousticSnare,    0.7);
-    DRUMS_SIMPLE.Add("|------xx------xx|------xx------xx|", ClosedHiHat,      0.9);
+    NSequence seqDrumsVerse = CreateSequence(2*MEAS, "Drums Verse", new NSequenceElements
+    {
+        { "|8-------8-------|8-------8-------|", AcousticBassDrum, DRUM_VOL },
+        { "|----8-------8-8-|----8-------8-8-|", AcousticSnare,    DRUM_VOL*0.9 },
+        { "|------88------88|------88------88|", ClosedHiHat,      DRUM_VOL*1.1 },
+    });
 
-    // Sequence triggered in script
-    DYNAMIC_SEQ = CreateSequence(8);
-    DYNAMIC_SEQ.Add(0.00, "G3 ", 0.75, 0.60);
-    DYNAMIC_SEQ.Add(1.00, "A3 ", 0.75, 0.60);
-    DYNAMIC_SEQ.Add(2.00, "Bb3", 0.75, 0.60);
-    DYNAMIC_SEQ.Add(3.00, "C4 ", 0.75, 0.60);
+    NSequence seqBassVerse = CreateSequence(2*MEAS, "Big bottom", new NSequenceElements
+    {
+        { 0.00, "C2",  0.75, 0.25 },
+        { 0.48, "C2",  0.75, 0.125 },
+        { 3.32, "E2",  0.75, 0.25 },
+        { 4.00, "C2",  0.75, 1.00 },
+        { 7.48, "A#2", 0.75, 0.10 }
+    });
 
-    // Sequence that calls a script function.
-    ALGO_SEQ = CreateSequence(8);
-    ALGO_SEQ.Add(00.00, AlgoDynamic, 0.75);
+    // SendSequence(SYNTH, ALGO_SEQ,     PART2+0,  PART2+4,  PART2+8,   PART2+12);
+    // ALGO_SEQ = CreateSequence(8);
+    // ALGO_SEQ.Add(00.00, AlgoDynamic, 0.75);
 
-    NULL_SEQ = CreateSequence(8);
-    NULL_SEQ.Add(00.00, AlgoNull, 0.75);
+    NSequence seqAlgo = CreateSequence(1*MEAS, "Algo", new NSequenceElements
+    {
+        { 1.60, AlgoDynamic, 0.8 },
+    });
 
-    ///// Build the when to send /////////
-    // PART1 //
-    SendSequence(DRUMS, DRUMS_VERSE,  PART1+0,  PART1+8, PART1+16,  PART1+24);
-    SendSequence(BASS,  BASS_VERSE,   PART1+0,  PART1+8, PART1+16,  PART1+24);
-    SendSequence(KEYS,  KEYS_VERSE1,  PART1+0,  PART1+16 );
+    NSequence seqEmpty = CreateSequence(1*MEAS, "Quiet!", new NSequenceElements
+    {
+    });
 
-    // PART2 //
-    SendSequence(DRUMS, DRUMS_SIMPLE, PART2+0,  PART2+8  );
-    SendSequence(BASS,  BASS_VERSE,   PART2+0,  PART2+8  );
-    SendSequence(KEYS,  KEYS_VERSE2,  PART2+0,  PART2+8  );
-    SendSequence(SYNTH, ALGO_SEQ,     PART2+0,  PART2+4,  PART2+8,   PART2+12);
+    // Sequence triggered in script.
+    seqDynamic = CreateSequence(2*MEAS, "Dynomite", new NSequenceElements
+    {
+        { 0.00, "G3 ", 0.75, 0.60 },
+        { 1.00, "A3 ", 0.75, 0.60 },
+        { 2.00, "Bb3", 0.75, 0.60 },
+        { 3.00, "C4 ", 0.75, 0.60 },
+    });
 
-    // PART3 //
-    SendSequence(DRUMS, DRUMS_VERSE,  PART3+0,  PART3+8,  PART3+16,  PART3+24);
-    SendSequence(BASS,  BASS_VERSE,   PART3+0,  PART3+8,  PART3+16,  PART3+24);
-    SendSequence(KEYS,  KEYS_VERSE1,  PART3+0,  PART3+16  );
+
+    /////////////////////// sections /////////////////////////////////
+
+    CreateSection(8*MEAS, "Beginning", new NSectionElements
+    {
+        { chKeys,  Loop,  seqKeysVerse   },
+        { chDrums, Loop,  seqDrumsSimple },
+        { chBass,  Loop,  seqBassVerse   }
+    });
+
+    CreateSection(4*MEAS, "Middle", new NSectionElements
+    {
+        { chKeys,  Loop,  seqKeysChorus },
+        { chDrums, Loop,  seqDrumsVerse },
+        { chBass,  Loop,  seqBassVerse  },
+        { chSynth, Once,  seqAlgo,  seqEmpty, seqDynamic, seqEmpty }
+    });
+
+    CreateSection(8*MEAS, "Ending", new NSectionElements
+    {
+        { chKeys,  Loop,  seqKeysVerse   },
+        { chDrums, Loop,  seqDrumsSimple },
+        { chBass,  Loop,  seqBassVerse   }
+    });
 }
+
+// void BuildComp()
+// {
+//     ///// Sequences /////
+//     KEYS_VERSE1 = CreateSequence(16);
+//     KEYS_VERSE1.Add(0.00,  "G4.m7", 0.7, 1.32);
+//     KEYS_VERSE1.Add(1.60,  "G4.m7", 0.7, 0.20);
+//     KEYS_VERSE1.Add(2.00,  "G4.m7", 0.7, 0.20);
+//     KEYS_VERSE1.Add(4.00,  "G4.m7", 0.7, 1.32);
+//     KEYS_VERSE1.Add(5.60,  "G4.m7", 0.7, 0.20);
+//     KEYS_VERSE1.Add(6.00,  "G4.m7", 0.7, 0.20);
+//     KEYS_VERSE1.Add(8.00,  "G4.m6", 0.7, 1.32);
+//     KEYS_VERSE1.Add(9.60,  "G4.m6", 0.7, 0.20);
+//     KEYS_VERSE1.Add(10.00, "G4.m6", 0.7, 0.20);
+//     KEYS_VERSE1.Add(12.00, "G4.m6", 0.7, 1.32);
+//     KEYS_VERSE1.Add(13.60, "G4.m6", 0.7, 0.20);
+//     KEYS_VERSE1.Add(14.00, "G4.m6", 0.7, 0.20);
+
+//     KEYS_VERSE2 = CreateSequence(8);
+//     KEYS_VERSE2.Add(0.00, "F4",    0.7, 0.32);
+//     KEYS_VERSE2.Add(0.32, "D#4",   KEYS_DEF_VOL, 0.32);
+//     KEYS_VERSE2.Add(1.00, "C4",    0.7, 0.32);
+//     KEYS_VERSE2.Add(1.32, "B4.m7", 0.7, 0.32);
+//     KEYS_VERSE2.Add(2.00, "F5",    0.7, 0.32);
+//     KEYS_VERSE2.Add(2.32, "D#5",   KEYS_DEF_VOL, 0.32);
+//     KEYS_VERSE2.Add(3.00, "C5",    0.7, 0.32);
+//     KEYS_VERSE2.Add(3.32, "B5.m7", 0.7, 0.32);
+//     KEYS_VERSE2.Add(4.00, "F3",    0.7, 0.32);
+//     KEYS_VERSE2.Add(4.32, "D#3",   KEYS_DEF_VOL, 0.32);
+//     KEYS_VERSE2.Add(5.00, "C3",    0.7, 0.32);
+//     KEYS_VERSE2.Add(5.32, "B3.m7", 0.7, 0.32);
+//     KEYS_VERSE2.Add(6.00, "F2",    0.7, 0.32);
+//     KEYS_VERSE2.Add(6.32, "D#2",   KEYS_DEF_VOL, 0.32);
+//     KEYS_VERSE2.Add(7.00, "C2",    0.7, 0.32);
+//     KEYS_VERSE2.Add(7.32, "B2.m7", 0.7, 0.32);
+
+//     ////// Bass //////
+//     BASS_VERSE = CreateSequence(8);
+//     BASS_VERSE.Add(0.00, "C2",  0.75, 0.25);
+//     BASS_VERSE.Add(0.48, "C2",  0.75, 0.125);
+//     BASS_VERSE.Add(3.32, "E2",  0.75, 0.25);
+//     BASS_VERSE.Add(4.00, "C2",  0.75, 1.00);
+//     BASS_VERSE.Add(7.48, "A#2", 0.75, 0.10);
+
+//     ////// Drums //////
+
+//     // "musical"
+//     DRUMS_VERSE = CreateSequence(8, true);
+//     DRUMS_VERSE.Add(0.00, AcousticBassDrum, DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(1.00, RideCymbal1,      DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(1.10, RideCymbal1,      DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(1.60, HiMidTom,         DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(2.00, AcousticBassDrum, DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(3.00, RideCymbal1,      DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(3.10, RideCymbal1,      DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(4.00, AcousticBassDrum, DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(5.00, RideCymbal1,      DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(5.10, RideCymbal1,      DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(5.60, HiMidTom,         DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
+//     DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
+
+//     // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
+//     DRUMS_SIMPLE = CreateSequence(8, true);
+//     DRUMS_SIMPLE.Add("|x-------x-------|x-------x-------|", AcousticBassDrum, 0.8);
+//     DRUMS_SIMPLE.Add("|----x-------x-x-|----x-------x-x-|", AcousticSnare,    0.7);
+//     DRUMS_SIMPLE.Add("|------xx------xx|------xx------xx|", ClosedHiHat,      0.9);
+
+//     // Sequence triggered in script
+//     DYNAMIC_SEQ = CreateSequence(8);
+//     DYNAMIC_SEQ.Add(0.00, "G3 ", 0.75, 0.60);
+//     DYNAMIC_SEQ.Add(1.00, "A3 ", 0.75, 0.60);
+//     DYNAMIC_SEQ.Add(2.00, "Bb3", 0.75, 0.60);
+//     DYNAMIC_SEQ.Add(3.00, "C4 ", 0.75, 0.60);
+
+//     // Sequence that calls a script function.
+//     ALGO_SEQ = CreateSequence(8);
+//     ALGO_SEQ.Add(00.00, AlgoDynamic, 0.75);
+
+//     NULL_SEQ = CreateSequence(8);
+//     NULL_SEQ.Add(00.00, AlgoNull, 0.75);
+
+//     ///// Build the when to send /////////
+//     // PART1 //
+//     SendSequence(DRUMS, DRUMS_VERSE,  PART1+0,  PART1+8, PART1+16,  PART1+24);
+//     SendSequence(BASS,  BASS_VERSE,   PART1+0,  PART1+8, PART1+16,  PART1+24);
+//     SendSequence(KEYS,  KEYS_VERSE1,  PART1+0,  PART1+16 );
+
+//     // PART2 //
+//     SendSequence(DRUMS, DRUMS_SIMPLE, PART2+0,  PART2+8  );
+//     SendSequence(BASS,  BASS_VERSE,   PART2+0,  PART2+8  );
+//     SendSequence(KEYS,  KEYS_VERSE2,  PART2+0,  PART2+8  );
+//     SendSequence(SYNTH, ALGO_SEQ,     PART2+0,  PART2+4,  PART2+8,   PART2+12);
+
+//     // PART3 //
+//     SendSequence(DRUMS, DRUMS_VERSE,  PART3+0,  PART3+8,  PART3+16,  PART3+24);
+//     SendSequence(BASS,  BASS_VERSE,   PART3+0,  PART3+8,  PART3+16,  PART3+24);
+//     SendSequence(KEYS,  KEYS_VERSE1,  PART3+0,  PART3+16  );
+// }
 
 public override void Step()
 {
@@ -259,7 +369,7 @@ void AlgoDynamic()
 {
     // Print("!!!! AlgoDynamic");
     int notenum = Random(55, 70);
-    SendNote(SYNTH, notenum, 0.8, 0.30);
+    SendNote(chSynth, notenum, 0.8, 0.30);
 }
 
 void AlgoNull()
@@ -269,40 +379,40 @@ void AlgoNull()
 
 ////////////// event handlers ////////////////////
 
-public void On_CTL2()
+public void On_vCtl2()
 {
-    int newval = (int)MathUtils.Map(CTL2.Value, 0, 127, 0, 16383);
-    //Print("On_CTL2:", newval);
-    SendController(SYNTH, PitchControl, newval);
+    int newval = (int)MathUtils.Map(vCtl2.Value, 0, 127, 0, 16383);
+    //Print("On_vCtl2:", newval);
+    SendController(chSynth, PitchControl, newval);
 }
 
-public void On_CTL3()
+public void On_vCtl3()
 {
-    //Print("On_CTL3:", CTL3.Value);
+    //Print("On_vCtl3:", vCtl3.Value);
     if(Random(0, 10) == 0)
     {
-        SendNote(KEYS, 50 + CTL3.Value % 20, 0.7, 2.0);
+        SendNote(chKeys, 50 + vCtl3.Value % 20, 0.7, 2.0);
     }
 }
 
-public void On_MOD1()
+public void On_vMod1()
 {
-    //Print(MOD1.Name, "changed to", MOD1.Value);
+    //Print(vMod1.Name, "changed to", vMod1.Value);
     // Send a controller change.
-    SendController(SYNTH, Modulation, MOD1.Value);
+    SendController(chSynth, Modulation, vMod1.Value);
 }
 
-public void On_VKBD_NOTE()
+public void On_vVkeyNote()
 {
-    //Print("VKBD_NOTE", "=", VKBD_NOTE.Value);
+    //Print("vVkeyNote", "=", vVkeyNote.Value);
 
     // Test for note on or off.
-    if(VKBD_NOTE.Value > 0)
+    if(vVkeyNote.Value > 0)
     {
-        SendNoteOn(SYNTH, VKBD_NOTE.Value, 0.9);
+        SendNoteOn(chSynth, vVkeyNote.Value, 0.9);
     }
     else
     {
-        SendNoteOff(SYNTH, -VKBD_NOTE.Value);
+        SendNoteOff(chSynth, -vVkeyNote.Value);
     }
 }

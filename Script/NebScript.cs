@@ -30,9 +30,6 @@ namespace Nebulator.Script
         /// <summary>Current Nebulator Tock.</summary>
         public int Tock { get { return StepTime.Tock; } }
 
-        /// <summary>Current section. Main -> Script</summary>
-        public int CurrentSection { get; set; } = 0;
-
         /// <summary>Actual time since start pressed. Main -> Script</summary>
         public double RealTime { get; set; } = 0.0;
 
@@ -76,28 +73,19 @@ namespace Nebulator.Script
         /// <param name="name">UI name</param>
         /// <param name="devName">Device name</param>
         /// <param name="channelNum"></param>
-        protected NChannel CreateChannel(string name, string devName, int channelNum)
+        /// <param name="isDrums"></param>
+        protected NChannel CreateChannel(string name, string devName, int channelNum, bool isDrums = false)
         {
             NChannel nt = new NChannel()
             {
                 Name = name,
                 DeviceName = devName,
-                ChannelNumber = channelNum
+                ChannelNumber = channelNum,
+                IsDrums = isDrums
             };
             
             Channels.Add(nt);
             return nt;
-        }
-
-        /// <summary>
-        /// Optionally create a defined section. If using them, the last one is considered "the end".
-        /// Used to update the CurrentSection property and for display in the time control.
-        /// </summary>
-        /// <param name="tick">Which Tick it starts at.</param>
-        /// <param name="name">UI display.</param>
-        protected void CreateSection(int tick, string name)
-        {
-            SectionDefs.Add(tick, name);
         }
 
         /// <summary>
@@ -108,7 +96,7 @@ namespace Nebulator.Script
         /// <param name="volMin">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
         /// <param name="timeMin">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
         /// <param name="timeMax">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
-        protected void SetWobbler(NChannel channel, double volMax, double volMin = 0.0, double timeMin = 0.0, double timeMax = 0.0)
+        protected void CreateWobbler(NChannel channel, double volMax, double volMin = 0.0, double timeMin = 0.0, double timeMax = 0.0)
         {
             channel.VolWobbler.RangeHigh = volMax;
             channel.VolWobbler.RangeLow = volMin;
@@ -170,7 +158,7 @@ namespace Nebulator.Script
             NDisplay disp = new NDisplay()
             {
                 BoundVar = bound,
-                DisplayType = (DisplayType)Enum.Parse(typeof(DisplayType), type.ToString())
+                DisplayType = (DisplayType)type,
             };
 
             Displays.Add(disp);
@@ -180,12 +168,47 @@ namespace Nebulator.Script
         /// Normal constructor.
         /// </summary>
         /// <param name="len">Length.</param>
-        /// <param name="isDrums">.</param>
-        protected NSequence CreateSequence(int len, bool isDrums = false)
+        /// <param name="name">Name.</param>
+        /// <param name="elements">.</param>
+        protected NSequence CreateSequence(int len, string name, NSequenceElements elements)
         {
-            NSequence nseq = new NSequence() { Length = len, IsDrums = isDrums };
+            NSequence nseq = new NSequence()
+            {
+                Length = len,
+                Name = name,
+                Elements = elements
+            };
+
             Sequences.Add(nseq);
             return nseq;
+        }
+
+        /// <summary>
+        /// Create a defined section.
+        /// </summary>
+        /// <param name="len">How long in Ticks.</param>
+        /// <param name="name">For UI display.</param>
+        /// <param name="elements">Section info to add.</param>
+        protected NSection CreateSection(int len, string name, NSectionElements elements)
+        {
+            // Sanity check elements.
+            foreach (var el in elements)
+            {
+                if (el.Channel == null)
+                {
+                    throw new Exception($"Invalid NChannel at index {elements.IndexOf(el)}");
+                }
+            }
+
+            NSection nsect = new NSection()
+            {
+                Length = len,
+                Name = name,
+                Elements = elements,
+            };
+            
+            Sections.Add(nsect);
+            return nsect;
         }
 
         /// <summary>Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.</summary>
@@ -347,30 +370,23 @@ namespace Nebulator.Script
             channel.Device.Send(step);
         }
 
-        /// <summary>Send a named sequence.</summary>
+        /// <summary>Send a named sequence now.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        /// <param name="ticks">When to send the sequence. If null or empty, send immediately.</param>
-        public void SendSequence(NChannel channel, NSequence seq, params int[] ticks)
+        public void SendSequence(NChannel channel, NSequence seq)
         {
             if (channel == null)
             {
-                throw new Exception($"Invalid NChannel for sequence");
+                throw new Exception($"Invalid NChannel");
             }
 
-            if(ticks == null || ticks.Length <= 0) // now!
+            if (seq == null)
             {
-                StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
-                Steps.Add(scoll);
+                throw new Exception($"Invalid NSequence");
             }
-            else
-            {
-                ticks.ForEach(t =>
-                {
-                    StepCollection scoll = ConvertToSteps(channel, seq, t);
-                    Steps.Add(scoll);
-                });
-            }
+
+            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
+            Steps.Add(scoll);
         }
 
         /// <summary>
@@ -386,7 +402,7 @@ namespace Nebulator.Script
         /// <summary>Convert the argument into numbered notes.</summary>
         /// <param name="note">Note string using any form allowed in the script.</param>
         /// <returns>Array of notes or empty if invalid.</returns>
-        public double[] GetNotes(string note)
+        public double[] GetChordNotes(string note)
         {
             List<double> notes = NoteUtils.ParseNoteString(note);
             return notes != null ? notes.ToArray() : new double[0];

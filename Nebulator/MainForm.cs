@@ -540,6 +540,23 @@ namespace Nebulator
                         // Setup - optional second step.
                         _script.Setup2();
 
+                        // Build all the steps.
+                        int sectionTime = 0;
+                        foreach(NSection section in _script.Sections)
+                        {
+                            foreach((NChannel ch, NSequence seq, int tick) v in section)
+                            {
+                                // Check for skip/mute.
+                                if(v.seq != null)
+                                {
+                                    _script.AddSequence(v.ch, v.seq, sectionTime + v.tick);
+                                }
+                            }
+
+                            // Update accumulated time.
+                            sectionTime += section.Length;
+                        }
+
                         ProcessRuntime();
 
                         SetSpeedTimerPeriod();
@@ -627,10 +644,20 @@ namespace Nebulator
                 }
                 scriptControls.Init(_script.Levers, _script.Displays);
 
-                timeMaster.TimeDefs = _script.SectionDefs;
-                if (_script.SectionDefs.Count > 0)
+                // Calc the section times.
+                timeMaster.TimeDefs.Clear();
+                int start = 0;
+                foreach (NSection sect in _script.Sections)
                 {
-                    timeMaster.MaxTick = _script.SectionDefs.Keys.Max();
+                    timeMaster.TimeDefs.Add(start, sect.Name);
+                    start += sect.Length;
+                }
+                // Add the dummy end marker.
+                timeMaster.TimeDefs.Add(start, "");
+
+                if (timeMaster.TimeDefs.Count > 0)
+                {
+                    timeMaster.MaxTick = timeMaster.TimeDefs.Keys.Max();
                 }
             }
 
@@ -696,11 +723,12 @@ namespace Nebulator
                 //_tan.Arm();
 
                 // Update section.
-                if (_script.SectionDefs.Count > 0 && _stepTime.Tock == 0) // only on Ticks
+
+                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Tock == 0) // only on Ticks
                 {
-                    if(_script.SectionDefs.ContainsKey(_stepTime.Tick))
+                    if(timeMaster.TimeDefs.ContainsKey(_stepTime.Tick))
                     {
-                        _script.CurrentSection = _stepTime.Tick;
+                        // currentSection = _stepTime.Tick;
                     }
                 }
 
@@ -726,10 +754,10 @@ namespace Nebulator
                 _stepTime.Advance();
 
                 // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                if(_script.SectionDefs.Count() > 0)
+                if(timeMaster.TimeDefs.Count() > 1)
                 {
                    // Check for end.
-                   if (_stepTime.Tick > _script.SectionDefs.Last().Key)
+                   if (_stepTime.Tick > timeMaster.TimeDefs.Last().Key)
                    {
                        ProcessPlay(PlayCommand.StopRewind, false);
                        _outputs.ForEach(o => o.Value?.Kill()); // just in case
@@ -1223,12 +1251,14 @@ namespace Nebulator
         void About_Click(object sender, EventArgs e)
         {
             // Make some markdown.
-            List<string> mdText = new List<string>();
+            List<string> mdText = new List<string>
+            {
+                // Device info.
+                "# Your Devices",
+                "## Midi Input"
+            };
 
-            // Device info.
-            mdText.Add("# Your Devices");
-            mdText.Add("## Midi Input");
-            if(MidiIn.NumberOfDevices > 0)
+            if (MidiIn.NumberOfDevices > 0)
             {
                 for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                 {
@@ -1269,13 +1299,14 @@ namespace Nebulator
             mdText.Add(File.ReadAllText(@"Resources\README.md"));
 
             // Put it together.
-            List<string> htmlText = new List<string>();
-
-            // Boilerplate
-            htmlText.Add($"<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-            // CSS
-            htmlText.Add($"<style>body {{ background-color: {UserSettings.TheSettings.BackColor.Name}; font-family: \"Arial\", Helvetica, sans-serif; }}");
-            htmlText.Add($"</style></head><body>");
+            List<string> htmlText = new List<string>
+            {
+                // Boilerplate
+                $"<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+                // CSS
+                $"<style>body {{ background-color: {UserSettings.TheSettings.BackColor.Name}; font-family: \"Arial\", Helvetica, sans-serif; }}",
+                $"</style></head><body>"
+            };
 
             // Meat.
             string mdHtml = string.Join(Environment.NewLine, mdText);

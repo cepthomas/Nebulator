@@ -167,7 +167,7 @@ namespace Nebulator.Script
                     paths.Add(fullpath);
                 }
 
-                // Make it compile. Maybe try Roslyn again? For c#6+.
+                // Make it compile. TODO try Roslyn again.
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
                 CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
 
@@ -416,51 +416,44 @@ namespace Nebulator.Script
             // Create the supplementary file. Indicated by empty source file name.
             List<string> codeLines = GenTopOfFile("");
 
-            // The various defines.
-            codeLines.Add("///// General Midi Instruments");
-            ScriptDefinitions.TheDefinitions.InstrumentDefs.Keys.ForEach(k =>
-            {
-                int val = int.Parse(ScriptDefinitions.TheDefinitions.InstrumentDefs[k]);
-                codeLines.Add($"const int {k} = {val};");
-                _defs.Add(k, val);
-            });
+            // Various defines.
+            WriteDefValues(ScriptDefinitions.TheDefinitions.InstrumentDefs, "General Midi Instruments");
+            WriteDefValues(ScriptDefinitions.TheDefinitions.DrumDefs, "General Midi Drums");
+            WriteDefValues(ScriptDefinitions.TheDefinitions.ControllerDefs, "Midi Controllers");
 
-            codeLines.Add("///// General Midi Drums");
-            ScriptDefinitions.TheDefinitions.DrumDefs.Keys.ForEach(k =>
-            {
-                int val = int.Parse(ScriptDefinitions.TheDefinitions.DrumDefs[k]);
-                codeLines.Add($"const int {k} = {val};");
-                _defs.Add(k, val);
-            });
-
-            codeLines.Add("///// Midi Controllers");
-            ScriptDefinitions.TheDefinitions.ControllerDefs.Keys.ForEach(k =>
-            {
-                int val = int.Parse(ScriptDefinitions.TheDefinitions.ControllerDefs[k]);
-                codeLines.Add($"const int {k} = {val};");
-                _defs.Add(k, val);
-            });
-
-            codeLines.Add("///// Device Types");
-            Enum.GetValues(typeof(Device.DeviceType)).Cast<Device.DeviceType>().ForEach(e =>
-            {
-                int val = (int)e;
-                codeLines.Add($"const int {e.ToString()} = {val};");
-                _defs.Add(e.ToString(), val);
-            });
-
-            codeLines.Add("///// Meter Types");
-            Enum.GetValues(typeof(DisplayType)).Cast<DisplayType>().ForEach(e =>
-            {
-                int val = (int)e;
-                codeLines.Add($"const int {e.ToString()} = {val};");
-                _defs.Add(e.ToString(), val);
-            });
+            // Some enums.
+            WriteEnumValues<Device.DeviceType>();
+            WriteEnumValues<DisplayType>();
+            WriteEnumValues<SequenceMode>();
 
             // Bottom stuff.
             codeLines.AddRange(GenBottomOfFile());
 
             return codeLines;
+
+            #region Some DRY helpers
+            void WriteEnumValues<T>() where T : Enum
+            {
+                codeLines.Add($"///// {typeof(T).ToString()}");
+                Enum.GetValues(typeof(T)).Cast<T>().ForEach(e =>
+                {
+                    int val = Convert.ToInt32(e);
+                    codeLines.Add($"const int {e.ToString()} = {val};");
+                    _defs.Add(e.ToString(), val);
+                });
+            }
+
+            void WriteDefValues(Dictionary<string, string> vals, string txt)
+            {
+                codeLines.Add($"///// {txt}");
+                vals.Keys.ForEach(k =>
+                {
+                    int val = int.Parse(vals[k]);
+                    codeLines.Add($"const int {k} = {val};");
+                    _defs.Add(k, val);
+                });
+            }
+            #endregion
         }
 
         /// <summary>

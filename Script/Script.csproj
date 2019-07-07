@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>IDE1006, CS1591</NoWarn>
     <DocumentationFile>bin\Nebulator.Script.xml</DocumentationFile>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -86,6 +87,8 @@
     <Compile Include="NebScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptCore.cs" />
+    <Compile Include="Section.cs" />
+    <Compile Include="Sequence.cs" />
     <Compile Include="Wobbler.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -57,7 +57,7 @@ namespace Nebulator.Device
         /// <summary>
         /// Get the steps for the given time.
         /// </summary>
-        public IEnumerable<Step> GetSteps(Time time)
+        public IEnumerable<Step> GetSteps(Time time)//TODO1 iterator?
         {
             return _steps.ContainsKey(time) ? _steps[time] : new List<Step>();
         }
