@@ -222,6 +222,8 @@ void BuildComp()
 }
 
 
+////////////////// overrides /////////////////////////////
+
 public override void Step()
 {
     if(Tock != 0) // not looking at Tocks right now
@@ -229,6 +231,8 @@ public override void Step()
         return;
     }
 }
+
+////////////////// my functions /////////////////////////////
 
 void Algo()
 {
@@ -241,6 +245,8 @@ void AlgoNull()
 {
     // Print("!!!! AlgoNull");
 }
+
+////////////// event handlers ////////////////////
 
 public void On_vVkeyNote()
 {

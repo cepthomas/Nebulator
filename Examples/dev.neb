@@ -1,11 +1,4 @@
 
-// TODO1 1/16 notes ok? or 1/32? Make configurable? 1/8?
-// TODO1 Could use triplets.
-// TODO1 fills, intros, like that.
-
-// In 4/4 there are 4 beats per bar and 4 bars per measure. So this can change how many measures are in a song because one song has 4 bars per measure vs an 8/4 time song that has 8 beats per bar and 4 bars per measure or 6/5 time which has 6 beats per bar and 5 bars per measure.
-
-
 ///// Include other lib files. /////
 #import "utils.neb"
 #import "scale.neb"
@@ -20,12 +13,7 @@ string OSC_IN = "OSC:6448";
 string OSC_OUT = "OSC:127.0.0.1:1234";
 string GS_MIDI_OUT = "MIDI:Microsoft GS Wavetable Synth";
 
-// // When to play sequences.
-// const int PART1 = 0;  // len:32
-// const int PART2 = 32; // len:16
-// const int PART3 = 48; // len:32
-// const int END = 80;
-
+// Volumes
 const double KEYS_VOL = 0.8;
 const double DRUM_VOL = 0.8;
 
@@ -42,7 +30,6 @@ NVariable vCtl3;
 NVariable vMod1;
 NVariable vKeyNote;
 
-
 ///// Channels /////
 NChannel chKeys;
 NChannel chBass;
@@ -57,8 +44,6 @@ NSequence seqDynamic;
 double[] _scaleNotes;
 double[] _chordNotes;
 int _noteNum = 48;
-// Where we are now.
-//int _section = 0;
 
 // Use wingm and virtual kbd only.
 bool _local = true;
@@ -123,12 +108,6 @@ public override void Setup()
     // Get some stock chords and scales
     _scaleNotes = GetScaleNotes("Algerian", "A3");
     _chordNotes = GetChordNotes("C4.o7");
-
-    // // Important times/states.
-    // CreateSection(PART1, "Beginning");
-    // CreateSection(PART2, "Middle");
-    // CreateSection(PART3, "Ending");
-    // CreateSection(END, "Finito");
 }
 
 public override void Setup2()
@@ -211,10 +190,6 @@ void BuildComp()
         { 7.48, "A#2", 0.75, 0.10 }
     });
 
-    // SendSequence(SYNTH, ALGO_SEQ,     PART2+0,  PART2+4,  PART2+8,   PART2+12);
-    // ALGO_SEQ = CreateSequence(8);
-    // ALGO_SEQ.Add(00.00, AlgoDynamic, 0.75);
-
     NSequence seqAlgo = CreateSequence(1*MEAS, "Algo", new NSequenceElements
     {
         { 1.60, AlgoDynamic, 0.8 },
@@ -259,104 +234,7 @@ void BuildComp()
     });
 }
 
-// void BuildComp()
-// {
-//     ///// Sequences /////
-//     KEYS_VERSE1 = CreateSequence(16);
-//     KEYS_VERSE1.Add(0.00,  "G4.m7", 0.7, 1.32);
-//     KEYS_VERSE1.Add(1.60,  "G4.m7", 0.7, 0.20);
-//     KEYS_VERSE1.Add(2.00,  "G4.m7", 0.7, 0.20);
-//     KEYS_VERSE1.Add(4.00,  "G4.m7", 0.7, 1.32);
-//     KEYS_VERSE1.Add(5.60,  "G4.m7", 0.7, 0.20);
-//     KEYS_VERSE1.Add(6.00,  "G4.m7", 0.7, 0.20);
-//     KEYS_VERSE1.Add(8.00,  "G4.m6", 0.7, 1.32);
-//     KEYS_VERSE1.Add(9.60,  "G4.m6", 0.7, 0.20);
-//     KEYS_VERSE1.Add(10.00, "G4.m6", 0.7, 0.20);
-//     KEYS_VERSE1.Add(12.00, "G4.m6", 0.7, 1.32);
-//     KEYS_VERSE1.Add(13.60, "G4.m6", 0.7, 0.20);
-//     KEYS_VERSE1.Add(14.00, "G4.m6", 0.7, 0.20);
-
-//     KEYS_VERSE2 = CreateSequence(8);
-//     KEYS_VERSE2.Add(0.00, "F4",    0.7, 0.32);
-//     KEYS_VERSE2.Add(0.32, "D#4",   KEYS_DEF_VOL, 0.32);
-//     KEYS_VERSE2.Add(1.00, "C4",    0.7, 0.32);
-//     KEYS_VERSE2.Add(1.32, "B4.m7", 0.7, 0.32);
-//     KEYS_VERSE2.Add(2.00, "F5",    0.7, 0.32);
-//     KEYS_VERSE2.Add(2.32, "D#5",   KEYS_DEF_VOL, 0.32);
-//     KEYS_VERSE2.Add(3.00, "C5",    0.7, 0.32);
-//     KEYS_VERSE2.Add(3.32, "B5.m7", 0.7, 0.32);
-//     KEYS_VERSE2.Add(4.00, "F3",    0.7, 0.32);
-//     KEYS_VERSE2.Add(4.32, "D#3",   KEYS_DEF_VOL, 0.32);
-//     KEYS_VERSE2.Add(5.00, "C3",    0.7, 0.32);
-//     KEYS_VERSE2.Add(5.32, "B3.m7", 0.7, 0.32);
-//     KEYS_VERSE2.Add(6.00, "F2",    0.7, 0.32);
-//     KEYS_VERSE2.Add(6.32, "D#2",   KEYS_DEF_VOL, 0.32);
-//     KEYS_VERSE2.Add(7.00, "C2",    0.7, 0.32);
-//     KEYS_VERSE2.Add(7.32, "B2.m7", 0.7, 0.32);
-
-//     ////// Bass //////
-//     BASS_VERSE = CreateSequence(8);
-//     BASS_VERSE.Add(0.00, "C2",  0.75, 0.25);
-//     BASS_VERSE.Add(0.48, "C2",  0.75, 0.125);
-//     BASS_VERSE.Add(3.32, "E2",  0.75, 0.25);
-//     BASS_VERSE.Add(4.00, "C2",  0.75, 1.00);
-//     BASS_VERSE.Add(7.48, "A#2", 0.75, 0.10);
-
-//     ////// Drums //////
-
-//     // "musical"
-//     DRUMS_VERSE = CreateSequence(8, true);
-//     DRUMS_VERSE.Add(0.00, AcousticBassDrum, DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(1.00, RideCymbal1,      DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(1.10, RideCymbal1,      DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(1.60, HiMidTom,         DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(2.00, AcousticBassDrum, DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(3.00, RideCymbal1,      DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(3.10, RideCymbal1,      DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(4.00, AcousticBassDrum, DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(5.00, RideCymbal1,      DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(5.10, RideCymbal1,      DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(5.60, HiMidTom,         DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(6.00, AcousticBassDrum, DRUM_DEF_VOL);
-//     DRUMS_VERSE.Add(7.00, CrashCymbal2,     DRUM_DEF_VOL);
-
-//     // Using patterns. Each hit is 1/16 note - fixed resolution and volume for now.
-//     DRUMS_SIMPLE = CreateSequence(8, true);
-//     DRUMS_SIMPLE.Add("|x-------x-------|x-------x-------|", AcousticBassDrum, 0.8);
-//     DRUMS_SIMPLE.Add("|----x-------x-x-|----x-------x-x-|", AcousticSnare,    0.7);
-//     DRUMS_SIMPLE.Add("|------xx------xx|------xx------xx|", ClosedHiHat,      0.9);
-
-//     // Sequence triggered in script
-//     DYNAMIC_SEQ = CreateSequence(8);
-//     DYNAMIC_SEQ.Add(0.00, "G3 ", 0.75, 0.60);
-//     DYNAMIC_SEQ.Add(1.00, "A3 ", 0.75, 0.60);
-//     DYNAMIC_SEQ.Add(2.00, "Bb3", 0.75, 0.60);
-//     DYNAMIC_SEQ.Add(3.00, "C4 ", 0.75, 0.60);
-
-//     // Sequence that calls a script function.
-//     ALGO_SEQ = CreateSequence(8);
-//     ALGO_SEQ.Add(00.00, AlgoDynamic, 0.75);
-
-//     NULL_SEQ = CreateSequence(8);
-//     NULL_SEQ.Add(00.00, AlgoNull, 0.75);
-
-//     ///// Build the when to send /////////
-//     // PART1 //
-//     SendSequence(DRUMS, DRUMS_VERSE,  PART1+0,  PART1+8, PART1+16,  PART1+24);
-//     SendSequence(BASS,  BASS_VERSE,   PART1+0,  PART1+8, PART1+16,  PART1+24);
-//     SendSequence(KEYS,  KEYS_VERSE1,  PART1+0,  PART1+16 );
-
-//     // PART2 //
-//     SendSequence(DRUMS, DRUMS_SIMPLE, PART2+0,  PART2+8  );
-//     SendSequence(BASS,  BASS_VERSE,   PART2+0,  PART2+8  );
-//     SendSequence(KEYS,  KEYS_VERSE2,  PART2+0,  PART2+8  );
-//     SendSequence(SYNTH, ALGO_SEQ,     PART2+0,  PART2+4,  PART2+8,   PART2+12);
-
-//     // PART3 //
-//     SendSequence(DRUMS, DRUMS_VERSE,  PART3+0,  PART3+8,  PART3+16,  PART3+24);
-//     SendSequence(BASS,  BASS_VERSE,   PART3+0,  PART3+8,  PART3+16,  PART3+24);
-//     SendSequence(KEYS,  KEYS_VERSE1,  PART3+0,  PART3+16  );
-// }
+////////////////// overrides /////////////////////////////
 
 public override void Step()
 {
@@ -364,6 +242,8 @@ public override void Step()
     {
     }
 }
+
+////////////////// my functions /////////////////////////////
 
 void AlgoDynamic()
 {

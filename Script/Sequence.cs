@@ -121,7 +121,7 @@ namespace Nebulator.Script
         /// <param name="duration">Duration</param>
         public void Add(string pattern, double which, double volume, double duration = 0)
         {
-            const int HITS_PER_TICK = 4; // aka quarter note TODO1 make adjustable?
+            const int HITS_PER_TICK = 4; // tick aka quarter note
 
             // Remove visual markers.
             string s = pattern.Replace("|", "");
