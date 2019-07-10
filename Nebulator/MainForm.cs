@@ -809,7 +809,6 @@ namespace Nebulator
                                 {
                                     (step as StepNoteOn).Adjust(sldVolume.Value, channel.Volume);
                                 }
-
                                 (step.Device as NOutput).Send(step);
                             }
                         }

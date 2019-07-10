@@ -112,8 +112,8 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add("|x-------x-------|x-------x-------|", AcousticBassDrum, 90).
-        /// Each hit is 1/16 note - fixed res for now.
+        /// Like: Z.Add("|5-------8-------|7-------7-------|", AcousticBassDrum, 90).
+        /// Each hit is 1/16 note - fixed res for now. TODO Might want to make it adjustable.
         /// </summary>
         /// <param name="pattern">Ascii pattern string</param>
         /// <param name="which">Specific instrument</param>
