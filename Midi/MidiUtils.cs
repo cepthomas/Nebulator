@@ -147,12 +147,10 @@ namespace Nebulator.Midi
         /// <returns>Collection of strings for pasting into a neb file.</returns>
         public static List<string> ImportFile(string fileName)
         {
-            List<string> defs = new List<string>();
-            List<string> leftovers = new List<string>();
-
             FileParser fpars = new FileParser();
             fpars.ProcessFile(fileName);
 
+            List<string> defs = new List<string>();
             defs.Add($"Tempo:{fpars.Tempo}");
             defs.Add($"TimeSig:{fpars.TimeSig}");
             defs.Add($"DeltaTicksPerQuarterNote:{fpars.DeltaTicksPerQuarterNote}");
@@ -170,7 +168,6 @@ namespace Nebulator.Midi
 
                 // Current note on events that are waiting for corresponding note offs.
                 LinkedList<NoteOnEvent> ons = new LinkedList<NoteOnEvent>();
- //               HashSet<(int chnum, int notenum)> ons = new HashSet<(int chnum, int notenum)>();
 
                 // Collected and processed events.
                 List<NoteOnEvent> validEvents = new List<NoteOnEvent>();
@@ -204,7 +201,7 @@ namespace Nebulator.Midi
                                     else
                                     {
                                         // hmmm...
-                                        leftovers.Add($"NoteOff: NoteOnEvent with vel=0: {onevt}");
+                                        fpars.Leftovers.Add($"NoteOff: NoteOnEvent with vel=0: {onevt}");
                                     }
                                 }
                                 else
@@ -231,7 +228,7 @@ namespace Nebulator.Midi
                                     else
                                     {
                                         // hmmm... see below
-                                        leftovers.Add($"NoteOff: NoteEvent in part {nevt}");
+                                        fpars.Leftovers.Add($"NoteOff: NoteEvent in part {nevt}");
                                     }
                                 }
                                 // else ignore.
@@ -245,7 +242,7 @@ namespace Nebulator.Midi
                         if (on != null)
                         {
                             Time when = MidiTimeToInternal(on.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
-                            // TODO leftovers.Add($"Orphan NoteOn: {when} {on.Channel} {on.NoteNumber}");
+                            // TODO ? fpars.Leftovers.Add($"Orphan NoteOn: {when} {on.Channel} {on.NoteNumber}");
                         }
                     }
 
@@ -298,13 +295,14 @@ namespace Nebulator.Midi
 
             all.AddRange(defs);
 
-            if(leftovers.Count > 0)
+            if(fpars.Leftovers.Count > 0)
             {
-                leftovers.Add($"");
-                leftovers.Add($"================================================================================");
-                leftovers.Add($"====== Leftovers ");
-                leftovers.Add($"================================================================================");
-                all.AddRange(leftovers);
+                all.Add($"");
+                all.Add($"================================================================================");
+                all.Add($"====== Leftovers ");
+                all.Add($"================================================================================");
+
+                all.AddRange(fpars.Leftovers);
             }
 
             // Local functions

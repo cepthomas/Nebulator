@@ -215,10 +215,6 @@ namespace Nebulator.Midi
                         {
                             PatchChangeEvent evt = me as PatchChangeEvent;
                             chname = PatchChangeEvent.GetPatchName(evt.Patch);
-                            if(chnum > 0)
-                            {
-                                Channels[chnum] = chname;
-                            }
                             AddMidiEvent(evt);
                         }
                         break;
@@ -292,7 +288,7 @@ namespace Nebulator.Midi
 
                 if (!Channels.ContainsKey(evt.Channel))
                 {
-                    Channels.Add(evt.Channel, chname);
+                    Channels.Add(evt.Channel, evt.Channel == 10 ? "Drums" : chname);
                 }
 
                 _events[evt.Channel].Add(evt);
