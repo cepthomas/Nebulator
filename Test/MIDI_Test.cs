@@ -22,10 +22,12 @@ namespace Nebulator.Test
             MidiUtils.ExportMidi(steps, "midiFileName", channels, 1.0, "string info");
 
             ///// Import midi.
-            var v = MidiUtils.ImportFile(@"..\Files\Funk.sty"); //ambient.mid
+            var v = MidiUtils.ImportFile(@"C:\Users\cet\OneDrive\Audio\Midi\real-songs\WICKGAME.MID");
+            //..\Files\ambient.mid
+            //..\Files\Funk.sty
+            //C:\Users\cet\OneDrive\Audio\Midi\real-songs\WICKGAME.MID
 
             Clipboard.SetText(string.Join(Environment.NewLine, v));
-
         }
     }
 }

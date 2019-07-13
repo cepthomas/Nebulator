@@ -53,7 +53,7 @@ namespace Nebulator.Common
         {
             if (BitConverter.IsLittleEndian)
             {
-                return (ushort)(((i & 0xFF00) >> 8) | ((i & 0x00FF) << 8));
+                return (UInt16)(((i & 0xFF00) >> 8) | ((i & 0x00FF) << 8));
             }
             else
             {

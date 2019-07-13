@@ -12,12 +12,9 @@ namespace Nebulator.Midi
     /// <summary>Reads in and processes standard midi or yahama style files.</summary>
     public class FileParser
     {
-        #region Properties gleaned from the style file
-        /// <summary>All the part names.</summary>
-        public List<string> Parts { get { return _events.Keys.Select(e => e.part).Distinct().ToList(); } }
-
-        /// <summary>All the channel numbers.</summary>
-        public List<int> Channels { get { return _events.Keys.Select(e => e.channel).Distinct().ToList(); } }
+        #region Properties gleaned from the file
+        /// <summary>Channel info: key is number, value is name.</summary>
+        public Dictionary<int, string> Channels { get; private set; } = new Dictionary<int, string>();
 
         /// <summary>Resolution for all events.</summary>
         public int DeltaTicksPerQuarterNote { get; private set; } = 0;
@@ -30,14 +27,14 @@ namespace Nebulator.Midi
 
         /// <summary>Key signature, if supplied by file.</summary>
         public string KeySig { get; private set; } = "";
+
+        /// <summary>Bits of unimportant (maybe) info in the file.</summary>
+        public List<string> Leftovers { get; private set; } = new List<string>();
         #endregion
 
         #region Fields
         /// <summary>All the midi events by part/channel groups. This is the verbatim content of the file with no processing.</summary>
-        Dictionary<(string part, int channel), List<MidiEvent>> _events = new Dictionary<(string, int), List<MidiEvent>>();
-
-        /// <summary>Name of current part being processed.</summary>
-        string _currentPart = "DEF_PART";
+        Dictionary<int, List<MidiEvent>> _events = new Dictionary<int, List<MidiEvent>>();
         #endregion
 
         #region Public methods
@@ -105,12 +102,11 @@ namespace Nebulator.Midi
         /// <summary>
         /// Helper to get an event collection.
         /// </summary>
-        /// <param name="part"></param>
         /// <param name="channel"></param>
         /// <returns>The collection or null if invalid.</returns>
-        public IList<MidiEvent> GetEvents(string part, int channel)
+        public IList<MidiEvent> GetEvents(int channel)
         {
-            _events.TryGetValue((part, channel), out List<MidiEvent> ret);
+            _events.TryGetValue(channel, out List<MidiEvent> ret);
             return ret;
         }
         #endregion
@@ -122,7 +118,6 @@ namespace Nebulator.Midi
         /// <param name="br"></param>
         void ReadMidiSection(BinaryReader br)
         {
-            List<string> leftovers = new List<string>();
             int absoluteTime = 0;
 
             uint chunkSize = Utils.FixEndian(br.ReadUInt32());
@@ -137,21 +132,48 @@ namespace Nebulator.Midi
             DeltaTicksPerQuarterNote = Utils.FixEndian(br.ReadUInt16());
 
             // Style midi section is always type 0 - only one track.
-            if (fileFormat != 0 || tracks != 1)
+            //if (fileFormat != 0 || tracks != 1)
+            //{
+            //    throw new FormatException("Invalid file format for style");
+            //}
+
+            bool done = false;
+
+            while(!done)
             {
-                throw new FormatException("Invalid file format for style");
+                string chunkHeader = Encoding.UTF8.GetString(br.ReadBytes(4));
+
+                switch(chunkHeader)
+                {
+                    case "MTrk":
+                        chunkSize = Utils.FixEndian(br.ReadUInt32());
+                        long startPos = br.BaseStream.Position;
+                        absoluteTime = ReadMTrk(br, absoluteTime, chunkSize, startPos);
+                        break;
+
+                    default:
+                        Leftovers.Add($"Chunk:{chunkHeader} - goodbye");
+                        done = true;
+                        break;
+                }
             }
+        }
 
-            string chunkHeader = Encoding.UTF8.GetString(br.ReadBytes(4));
-            if (chunkHeader != "MTrk")
-            {
-                throw new FormatException("Invalid chunk header");
-            }
+        /// <summary>
+        /// Read a midi track chunk.
+        /// </summary>
+        /// <param name="br"></param>
+        /// <param name="absoluteTime"></param>
+        /// <param name="chunkSize"></param>
+        /// <param name="startPos"></param>
+        /// <returns></returns>
+        int ReadMTrk(BinaryReader br, int absoluteTime, uint chunkSize, long startPos)
+        {
+            // Defaults.
+            int chnum = 0;
+            string chname = "???";
 
-            chunkSize = Utils.FixEndian(br.ReadUInt32());
-            long startPos = br.BaseStream.Position;
-
-            // Read all midi events.
+            // Read all midi events. https://www.csie.ntu.edu.tw/~r92092/ref/midi/
             MidiEvent me = null; // current
             while (br.BaseStream.Position < startPos + chunkSize)
             {
@@ -161,15 +183,6 @@ namespace Nebulator.Midi
 
                 switch (me.CommandCode)
                 {
-                    case MidiCommandCode.MetaEvent when (me as MetaEvent).MetaEventType == MetaEventType.Marker:
-                        {
-                            // Indicates start of a new midi part. Bin per channel.
-                            _currentPart = (me as TextEvent).Text;
-                            absoluteTime = 0;
-                            //Console.WriteLine($">>>> part:{_currentPart}");
-                        }
-                        break;
-
                     case MidiCommandCode.NoteOn:
                         {
                             NoteOnEvent evt = me as NoteOnEvent;
@@ -201,21 +214,44 @@ namespace Nebulator.Midi
                     case MidiCommandCode.PatchChange:
                         {
                             PatchChangeEvent evt = me as PatchChangeEvent;
-                            leftovers.Add(evt.ToString());
+                            chname = PatchChangeEvent.GetPatchName(evt.Patch);
+                            if(chnum > 0)
+                            {
+                                Channels[chnum] = chname;
+                            }
+                            AddMidiEvent(evt);
+                        }
+                        break;
+
+                    case MidiCommandCode.MetaEvent when (me as MetaEvent).MetaEventType == MetaEventType.TrackSequenceNumber:
+                        {
+                            TrackSequenceNumberEvent evt = me as TrackSequenceNumberEvent;
+                            chnum = evt.Channel;
+                            Leftovers.Add($"TrackSequenceNumber:{evt.Channel}");
                         }
                         break;
 
                     case MidiCommandCode.MetaEvent when (me as MetaEvent).MetaEventType == MetaEventType.SequenceTrackName:
                         {
-                            // Indicates start of a new midi track.
-                            leftovers.Add(me.ToString());
+                            TextEvent evt = me as TextEvent;
+                            chname = evt.Text;
+                            Leftovers.Add($"SequenceTrackName:{evt.Text}  {evt.Channel}");
+                        }
+                        break;
+
+                    case MidiCommandCode.MetaEvent when (me as MetaEvent).MetaEventType == MetaEventType.Marker:
+                        {
+                            // Indicates start of a new midi part. Bin per channel.
+                            //_currentPart = (me as TextEvent).Text;
+                            Leftovers.Add(me.ToString());
+                            absoluteTime = 0;
                         }
                         break;
 
                     case MidiCommandCode.MetaEvent when (me as MetaEvent).MetaEventType == MetaEventType.EndTrack:
                         {
                             // Indicates end of current midi track.
-                            leftovers.Add(me.ToString());
+                            Leftovers.Add(me.ToString());
                         }
                         break;
 
@@ -241,15 +277,28 @@ namespace Nebulator.Midi
                         break;
 
                     default:
-                        leftovers.Add(me.ToString());
+                        Leftovers.Add(me.ToString());
                         break;
                 }
             }
 
-            if (br.BaseStream.Position != startPos + chunkSize)
+            // Local function.
+            void AddMidiEvent(MidiEvent evt)
             {
-                throw new Exception($"Read count error: {chunkSize}+{startPos}!={br.BaseStream.Position}");
+                if (!_events.ContainsKey(evt.Channel))
+                {
+                    _events.Add(evt.Channel, new List<MidiEvent>());
+                }
+
+                if (!Channels.ContainsKey(evt.Channel))
+                {
+                    Channels.Add(evt.Channel, chname);
+                }
+
+                _events[evt.Channel].Add(evt);
             }
+
+            return absoluteTime;
         }
 
         /// <summary>
@@ -320,27 +369,6 @@ namespace Nebulator.Midi
             uint chunkSize = Utils.FixEndian(br.ReadUInt32());
             // swallow for now
             br.ReadBytes((int)chunkSize);
-        }
-        #endregion
-
-        #region Private methods
-        /// <summary>
-        /// Helper function.
-        /// </summary>
-        /// <param name="evt"></param>
-        void AddMidiEvent(MidiEvent evt)
-        {
-            if (evt is NoteEvent)
-            {
-                NoteEvent nevt = evt as NoteEvent;
-            }
-
-            if (!_events.ContainsKey((_currentPart, evt.Channel)))
-            {
-                _events.Add((_currentPart, evt.Channel), new List<MidiEvent>());
-            }
-
-            _events[(_currentPart, evt.Channel)].Add(evt);
         }
         #endregion
     }

@@ -56,7 +56,7 @@ namespace Nebulator.Midi
             lhdr.Add(new MetaEvent(MetaEventType.EndTrack, 0, 0));
 
             ///// Make one midi event collection per track.
-            foreach(int channel in channels.Keys)
+            foreach (int channel in channels.Keys)
             {
                 IList<MidiEvent> le = events.AddTrack();
                 trackEvents.Add(channel, le);
@@ -148,182 +148,171 @@ namespace Nebulator.Midi
         public static List<string> ImportFile(string fileName)
         {
             List<string> defs = new List<string>();
-            List<string> sequences = new List<string>() { "///// Sequences /////" };
             List<string> leftovers = new List<string>();
 
             FileParser fpars = new FileParser();
             fpars.ProcessFile(fileName);
 
-            defs.Add("///// Channel definitions /////");
-            fpars.Channels.ForEach(ch => defs.Add($"NChannel {MakeChanName(ch)};"));
-            defs.Add("");
-
-            defs.Add("///// Sequence definitions /////");
-            fpars.Parts.ForEach(pt =>
+            defs.Add($"Tempo:{fpars.Tempo}");
+            defs.Add($"TimeSig:{fpars.TimeSig}");
+            defs.Add($"DeltaTicksPerQuarterNote:{fpars.DeltaTicksPerQuarterNote}");
+            defs.Add($"KeySig:{fpars.KeySig}");
+            
+            foreach (KeyValuePair<int, string> kv in fpars.Channels)
             {
-                fpars.Channels.ForEach(ch => defs.Add($"NSequence {MakeSeqName(pt, ch)};"));
-            });
+                int chnum = kv.Key;
+                string chname = kv.Value;
+
+                defs.Add("");
+                defs.Add($"================================================================================");
+                defs.Add($"====== Channel {chnum} {chname} ");
+                defs.Add($"================================================================================");
+
+                // Current note on events that are waiting for corresponding note offs.
+                LinkedList<NoteOnEvent> ons = new LinkedList<NoteOnEvent>();
+ //               HashSet<(int chnum, int notenum)> ons = new HashSet<(int chnum, int notenum)>();
+
+                // Collected and processed events.
+                List<NoteOnEvent> validEvents = new List<NoteOnEvent>();
+
+                foreach (MidiEvent evt in fpars.GetEvents(chnum))
+                {
+                    // Run through each group of events
+                    switch (evt)
+                    {
+                        case NoteOnEvent onevt:
+                            {
+                                if (onevt.OffEvent != null)
+                                {
+                                    // Self contained - just save it.
+                                    validEvents.Add(onevt);
+                                    // Reset it.
+                                    ons.AddLast(onevt);
+                                }
+                                else if (onevt.Velocity == 0)
+                                {
+                                    // It's actually a note off - handle as such. Locate the initiating note on.
+
+                                    var on = ons.First(o => o.NoteNumber == onevt.NoteNumber);
+                                    if (on != null)
+                                    {
+                                        // Found it.
+                                        on.OffEvent = new NoteEvent(onevt.AbsoluteTime, onevt.Channel, MidiCommandCode.NoteOff, onevt.NoteNumber, 0);
+                                        validEvents.Add(on);
+                                        ons.Remove(on); // reset
+                                    }
+                                    else
+                                    {
+                                        // hmmm...
+                                        leftovers.Add($"NoteOff: NoteOnEvent with vel=0: {onevt}");
+                                    }
+                                }
+                                else
+                                {
+                                    // True note on - save it until note off shows up.
+                                    ons.AddLast(onevt);
+                                }
+                            }
+                            break;
+
+                        case NoteEvent nevt:
+                            {
+                                if (nevt.CommandCode == MidiCommandCode.NoteOff || nevt.Velocity == 0)
+                                {
+                                    // It's actually a note off - handle as such. Locate the initiating note on.
+                                    var on = ons.First(o => o.NoteNumber == nevt.NoteNumber);
+                                    if (on != null)
+                                    {
+                                        // Found it.
+                                        on.OffEvent = new NoteEvent(nevt.AbsoluteTime, nevt.Channel, MidiCommandCode.NoteOff, nevt.NoteNumber, 0);
+                                        validEvents.Add(on);
+                                        ons.Remove(on); // reset
+                                    }
+                                    else
+                                    {
+                                        // hmmm... see below
+                                        leftovers.Add($"NoteOff: NoteEvent in part {nevt}");
+                                    }
+                                }
+                                // else ignore.
+                            }
+                            break;
+                    }
+
+                    // Check for note tracking leftovers.
+                    foreach (NoteOnEvent on in ons)
+                    {
+                        if (on != null)
+                        {
+                            Time when = MidiTimeToInternal(on.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
+                            // TODO leftovers.Add($"Orphan NoteOn: {when} {on.Channel} {on.NoteNumber}");
+                        }
+                    }
+
+                    // Process the collected valid events.
+                    if (validEvents.Count > 0)
+                    {
+                        validEvents.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
+                        long duration = validEvents.Last().AbsoluteTime; // - validEvents.First().AbsoluteTime;
+                        Time tdur = MidiTimeToInternal(duration, fpars.DeltaTicksPerQuarterNote);
+                        tdur.RoundUp();
+
+                        // Process each set of notes at each discrete play time.
+                        foreach (IEnumerable<NoteOnEvent> nevts in validEvents.GroupBy(e => e.AbsoluteTime))
+                        {
+                            List<int> notes = new List<int>(nevts.Select(n => n.NoteNumber));
+                            //notes.Sort();
+
+                            NoteOnEvent noevt = nevts.ElementAt(0);
+                            Time when = MidiTimeToInternal(noevt.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
+                            Time dur = MidiTimeToInternal(noevt.NoteLength, fpars.DeltaTicksPerQuarterNote);
+                            double vel = (double)noevt.Velocity / MAX_MIDI;
+
+                            if (chnum == 10)
+                            {
+                                // Drums - one line per hit.
+                                foreach (int d in notes)
+                                {
+                                    string sdrum = NoteUtils.FormatDrum(d);
+                                    defs.Add($"{{ {when}, {sdrum}, {vel:0.00} }},");
+                                }
+                            }
+                            else
+                            {
+                                // Instrument - note(s) or chord.
+                                foreach (string sn in NoteUtils.FormatNotes(notes))
+                                {
+                                    defs.Add($"{{ {when}, {sn}, {vel:0.00}, {dur} }},");
+                                }
+                            }
+                        }
+
+                        validEvents.Clear();
+                    }
+                }
+            }
+
             defs.Add("");
 
-            #region Local functions
+            List<string> all = new List<string>();
+
+            all.AddRange(defs);
+
+            if(leftovers.Count > 0)
+            {
+                leftovers.Add($"");
+                leftovers.Add($"================================================================================");
+                leftovers.Add($"====== Leftovers ");
+                leftovers.Add($"================================================================================");
+                all.AddRange(leftovers);
+            }
+
+            // Local functions
             Time MidiTimeToInternal(long mtime, int tpqn)
             {
                 //return new Time(mtime / tpqn);
                 return new Time(mtime * Time.TOCKS_PER_TICK / tpqn);
             }
-
-            string MakeSeqName(string part, int channel)
-            {
-                return $"{part.Replace(" ", "_")}_CH{channel}";
-            }
-
-            string MakeChanName(int channel)
-            {
-                return $"CH{channel}";
-            }
-            #endregion
-
-            // Collect sequence info.
-            foreach (var part in fpars.Parts)
-            {
-                foreach (int channel in fpars.Channels)
-                {
-                    var events = fpars.GetEvents(part, channel);
-
-                    if (events != null)
-                    {
-                        string seqName = MakeSeqName(part, channel);
-
-                        // Current note on events that are waiting for corresponding note offs.
-                        LinkedList<NoteOnEvent> ons = new LinkedList<NoteOnEvent>();
-
-                        // Collected and processed events.
-                        List<NoteOnEvent> validEvents = new List<NoteOnEvent>();
-
-                        // Run through each group of events
-                        foreach (var evt in events)
-                        {
-                            switch (evt)
-                            {
-                                case NoteOnEvent onevt:
-                                    {
-                                        if (onevt.OffEvent != null)
-                                        {
-                                            // Self contained - just save it.
-                                            validEvents.Add(onevt);
-                                            // Reset it.
-                                            ons.AddLast(onevt);
-                                        }
-                                        else if (onevt.Velocity == 0)
-                                        {
-                                            // It's actually a note off - handle as such. Locate the initiating note on.
-
-                                            var on = ons.First(o => o.NoteNumber == onevt.NoteNumber);
-                                            if (on != null)
-                                            {
-                                                // Found it.
-                                                on.OffEvent = new NoteEvent(onevt.AbsoluteTime, onevt.Channel, MidiCommandCode.NoteOff, onevt.NoteNumber, 0);
-                                                validEvents.Add(on);
-                                                ons.Remove(on); // reset
-                                            }
-                                            else
-                                            {
-                                                // hmmm...
-                                                leftovers.Add($"NoteOff: NoteOnEvent with vel=0 in part {part}:{onevt}");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // True note on - save it until note off shows up.
-                                            ons.AddLast(onevt);
-                                        }
-                                    }
-                                    break;
-
-                                case NoteEvent nevt:
-                                    {
-                                        if (nevt.CommandCode == MidiCommandCode.NoteOff || nevt.Velocity == 0)
-                                        {
-                                            // It's actually a note off - handle as such. Locate the initiating note on.
-                                            var on = ons.First(o => o.NoteNumber == nevt.NoteNumber);
-                                            if (on != null)
-                                            {
-                                                // Found it.
-                                                on.OffEvent = new NoteEvent(nevt.AbsoluteTime, nevt.Channel, MidiCommandCode.NoteOff, nevt.NoteNumber, 0);
-                                                validEvents.Add(on);
-                                                ons.Remove(on); // reset
-                                            }
-                                            else
-                                            {
-                                                // hmmm... see below
-                                                leftovers.Add($"NoteOff: NoteEvent in part {part}:{nevt}");
-                                            }
-                                        }
-                                        // else ignore.
-                                    }
-                                    break;
-                            }
-                        }
-
-                        // Check for note tracking leftovers. Error?
-                        foreach (NoteOnEvent on in ons)
-                        {
-                            if(on != null)
-                            {
-                                leftovers.Add($"Leftover NoteOnEvent in part {part}:{on}");
-                            }
-                        }
-
-                        // Process the collected valid events.
-                        if (validEvents.Count > 0)
-                        {
-                            validEvents.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
-                            long duration = validEvents.Last().AbsoluteTime; // - validEvents.First().AbsoluteTime;
-                            Time tdur = MidiTimeToInternal(duration, fpars.DeltaTicksPerQuarterNote);
-                            tdur.RoundUp();
-                            sequences.Add($"{seqName} = CreateSequence({tdur.Tick}); // !!! fix this number !!!");
-
-                            // Process each set of notes at each discrete play time.
-                            foreach (IEnumerable<NoteOnEvent> nevts in validEvents.GroupBy(e => e.AbsoluteTime))
-                            {
-                                List<int> notes = new List<int>(nevts.Select(n => n.NoteNumber));
-                                //notes.Sort();
-
-                                NoteOnEvent noevt = nevts.ElementAt(0);
-                                Time when = MidiTimeToInternal(noevt.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
-                                Time dur = MidiTimeToInternal(noevt.NoteLength, fpars.DeltaTicksPerQuarterNote);
-
-                                if (channel == 10)
-                                {
-                                    // Drums - one line per hit.
-                                    foreach(int d in notes)
-                                    {
-                                        string sdrum = NoteUtils.FormatDrum(d);
-                                        sequences.Add($"{seqName}.Add({when}, {sdrum}, {noevt.Velocity});");
-                                    }
-                                }
-                                else
-                                {
-                                    // Instrument - note(s) or chord.
-                                    foreach(string sn in NoteUtils.FormatNotes(notes))
-                                    {
-                                        sequences.Add($"{seqName}.Add({when}, {sn}, {noevt.Velocity}, {dur});");
-                                    }
-                                }
-                            }
-                            sequences.Add(""); // some space
-                        }
-                    }
-                    // else not a valid combination - ignore
-                }
-            }
-
-            List<string> all = new List<string>() { "///// Imported Style /////" };
-            all.Add("");
-
-            all.AddRange(defs);
-            all.AddRange(sequences);
-
             return all;
         }
     }
