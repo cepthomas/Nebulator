@@ -25,9 +25,17 @@ namespace Nebulator.Script
 
         /// <summary>Script randomizer.</summary>
         Random _rand = new Random();
+        #endregion
+
+        #region Properties
+        /// <summary>Short duration for drum hits.</summary>
+        public static double DrumDur { get; } = 0.02;
 
         /// <summary>Short duration for drum hits.</summary>
-        const double DRUM_DUR = 0.02;
+        public static int TicksPerMeasure { get; } = 4;
+
+        /// <summary>For patterns like |9---------------|-...  the number of hits per tick</summary>
+        public static int PatternResolution { get; } = 4;
         #endregion
 
         #region Elements defined in the script that MainForm needs
@@ -96,7 +104,7 @@ namespace Nebulator.Script
                 int toffset = startTick == -1 ? 0 : channel.NextTime();
 
                 Time startNoteTime = new Time(startTick, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + (channel.IsDrums ? new Time(DRUM_DUR) : seqel.Duration);
+                Time stopNoteTime = startNoteTime + (channel.IsDrums ? new Time(Script.NebScript.DrumDur) : seqel.Duration);
 
                 // Is it a function?
                 if (seqel.ScriptFunction != null)

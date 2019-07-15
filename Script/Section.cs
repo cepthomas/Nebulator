@@ -23,16 +23,17 @@ namespace Nebulator.Script
         /// <summary>List of sequences in this section.</summary>
         public NSectionElements Elements { get; set; } = new NSectionElements();
 
-        /// <summary>Length in ticks.</summary>
+        /// <summary>Length in measures.</summary>
         public int Length { get; set; } = 0;
 
         /// <summary>Readable.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
         #endregion
 
-
-        //kvp.Channel, kvp.Sequence, sectionTime
-
+        /// <summary>
+        /// Enumerator for section.
+        /// </summary>
+        /// <returns>Tuple of (channel, sequence, tick)</returns>
         public IEnumerator GetEnumerator()
         {
             // Flatten section into sequences.
@@ -50,15 +51,15 @@ namespace Nebulator.Script
                         foreach (NSequence seq in sect.Sequences)
                         {
                             yield return (sect.Channel, seq, seqTick);
-                            seqTick += seq.Length;
+                            seqTick += seq.Length * NebScript.TicksPerMeasure;
                         }
                     }
                     else // if (sect.Mode == SequenceMode.Loop)
                     {
-                        while (seqTick < Length)
+                        while (seqTick < Length * NebScript.TicksPerMeasure)
                         {
                             yield return (sect.Channel, sect.Sequences[0], seqTick);
-                            seqTick += sect.Sequences[0].Length;
+                            seqTick += sect.Sequences[0].Length * NebScript.TicksPerMeasure;
                         }
                     }
                 }

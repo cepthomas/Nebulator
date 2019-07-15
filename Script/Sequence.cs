@@ -22,7 +22,7 @@ namespace Nebulator.Script
         /// <summary>Readable.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
-        /// <summary>Length in ticks.</summary>
+        /// <summary>Length in measures.</summary>
         public int Length { get; set; } = 1;
         #endregion
 
@@ -97,7 +97,6 @@ namespace Nebulator.Script
 
         /// <summary>
         /// Like: Z.Add("|5-------8-------|7-------7-------|", "G4.m7", 90).
-        /// Each hit is 1/16 note - fixed res for now.
         /// </summary>
         /// <param name="pattern">Ascii pattern string</param>
         /// <param name="which">Specific note(s)</param>
@@ -113,7 +112,6 @@ namespace Nebulator.Script
 
         /// <summary>
         /// Like: Z.Add("|5-------8-------|7-------7-------|", AcousticBassDrum, 90).
-        /// Each hit is 1/16 note - fixed res for now. TODO Might want to make it adjustable.
         /// </summary>
         /// <param name="pattern">Ascii pattern string</param>
         /// <param name="which">Specific instrument</param>
@@ -121,8 +119,6 @@ namespace Nebulator.Script
         /// <param name="duration">Duration</param>
         public void Add(string pattern, double which, double volume, double duration = 0)
         {
-            const int HITS_PER_TICK = 4; // tick aka quarter note
-
             // Remove visual markers.
             string s = pattern.Replace("|", "");
 
@@ -146,7 +142,8 @@ namespace Nebulator.Script
                     case '9':
                         // Note on.
                         double volmod = (double)(s[i] - '0') / 10;
-                        Time t = new Time(i / HITS_PER_TICK, i % HITS_PER_TICK * Time.TOCKS_PER_TICK / HITS_PER_TICK);
+                        Time t = new Time(i / NebScript.PatternResolution,
+                            i % NebScript.PatternResolution * Time.TOCKS_PER_TICK / NebScript.PatternResolution);
                         NSequenceElement ncl = new NSequenceElement(which)
                         {
                             When = t,

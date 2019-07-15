@@ -167,7 +167,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal constructor.
         /// </summary>
-        /// <param name="len">Length.</param>
+        /// <param name="len">Length in measures.</param>
         /// <param name="name">Name.</param>
         /// <param name="elements">.</param>
         protected NSequence CreateSequence(int len, string name, NSequenceElements elements)
@@ -186,7 +186,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a defined section.
         /// </summary>
-        /// <param name="len">How long in Ticks.</param>
+        /// <param name="len">How long in measures.</param>
         /// <param name="name">For UI display.</param>
         /// <param name="elements">Section info to add.</param>
         protected NSection CreateSection(int len, string name, NSectionElements elements)

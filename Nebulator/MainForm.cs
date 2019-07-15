@@ -554,7 +554,7 @@ namespace Nebulator
                             }
 
                             // Update accumulated time.
-                            sectionTime += section.Length;
+                            sectionTime += section.Length * NebScript.TicksPerMeasure;
                         }
 
                         ProcessRuntime();
@@ -650,7 +650,7 @@ namespace Nebulator
                 foreach (NSection sect in _script.Sections)
                 {
                     timeMaster.TimeDefs.Add(start, sect.Name);
-                    start += sect.Length;
+                    start += sect.Length * NebScript.TicksPerMeasure;
                 }
                 // Add the dummy end marker.
                 timeMaster.TimeDefs.Add(start, "");
