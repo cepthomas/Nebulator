@@ -41,12 +41,12 @@ namespace Nebulator.Script
     public class NSequenceElements : List<NSequenceElement>
     {
         /// <summary>
-        /// Like: Z.Add(00.00, "G3", 90, 0.60).
+        /// Like: Z.Add(00.00, "G3", 90, 0.60);
         /// </summary>
-        /// <param name="when"></param>
-        /// <param name="what"></param>
-        /// <param name="volume"></param>
-        /// <param name="duration"></param>
+        /// <param name="when">Time to play at.</param>
+        /// <param name="what">What to play.</param>
+        /// <param name="volume">Base volume.</param>
+        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, string what, double volume, double duration = 0)
         {
             NSequenceElement sel = new NSequenceElement(what)
@@ -60,12 +60,12 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add(00.00, 66, 90, 0.60) or Z.Add(00.00, CrashCymbal1, 90, 0.60).
+        /// Like: Z.Add(00.00, 66, 90, 0.60) or Z.Add(00.00, CrashCymbal1, 90, 0.60);
         /// </summary>
-        /// <param name="when"></param>
-        /// <param name="what"></param>
-        /// <param name="volume"></param>
-        /// <param name="duration"></param>
+        /// <param name="when">Time to play at.</param>
+        /// <param name="what">What to play.</param>
+        /// <param name="volume">Base volume.</param>
+        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, int what, double volume, double duration = 0)
         {
             NSequenceElement sel = new NSequenceElement(what)
@@ -79,11 +79,11 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add(01.00, algoDynamic, 90).
+        /// Like: Z.Add(01.00, algoDynamic, 90);
         /// </summary>
-        /// <param name="when"></param>
-        /// <param name="func"></param>
-        /// <param name="volume"></param>
+        /// <param name="when">Time to play at.</param>
+        /// <param name="func">Function to execute.</param>
+        /// <param name="volume">Base volume.</param>
         public void Add(double when, Action func, double volume)
         {
             NSequenceElement sel = new NSequenceElement(func)
@@ -96,41 +96,66 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add("|5-------8-------|7-------7-------|", "G4.m7", 90).
+        /// Like: Z.Add("|5---    8       |7.......7654--- |", "G4.m7", 90);
         /// </summary>
-        /// <param name="pattern">Ascii pattern string</param>
-        /// <param name="which">Specific note(s)</param>
-        /// <param name="volume">Volume</param>
-        /// <param name="duration">Duration</param>
-        public void Add(string pattern, string which, double volume, double duration)
+        /// <param name="pattern">Ascii pattern string.</param>
+        /// <param name="which">Specific note(s).</param>
+        /// <param name="volume">Base volume.</param>
+        public void Add(string pattern, string which, double volume)
         {
-            foreach(double d in NoteUtils.ParseNoteString(which))
+            foreach (double d in NoteUtils.ParseNoteString(which))
             {
-                Add(pattern, d, volume, duration);
+                Add(pattern, d, volume);
             }
         }
 
         /// <summary>
-        /// Like: Z.Add("|5-------8-------|7-------7-------|", AcousticBassDrum, 90).
+        /// Like: Z.Add("|5---    8       |7.......7654--- |", 25, BASS_VOL);
         /// </summary>
-        /// <param name="pattern">Ascii pattern string</param>
-        /// <param name="which">Specific instrument</param>
-        /// <param name="volume">Volume</param>
-        /// <param name="duration">Duration</param>
-        public void Add(string pattern, double which, double volume, double duration = 0)
+        /// <param name="pattern">Ascii pattern string.</param>
+        /// <param name="which">Specific instrument or drum.</param>
+        /// <param name="volume">Volume.</param>
+        public void Add(string pattern, double which, double volume)
         {
             // Remove visual markers.
             string s = pattern.Replace("|", "");
+            char currentVol = ' '; // default, not sounding
+            int start = 0; // index in pattern of start
+
+            void EndCurrent(int index)
+            {
+                // Make a Note on.
+                double volmod = (double)(currentVol - '0') / 10;
+                double dur = index - start;
+                Time t = new Time(start / NebScript.PatternResolution,
+                    start % NebScript.PatternResolution * Time.TOCKS_PER_TICK / NebScript.PatternResolution);
+                NSequenceElement ncl = new NSequenceElement(which)
+                {
+                    When = t,
+                    Volume = volume * volmod,
+                    Duration = new Time(dur)
+                };
+
+                this.Add(ncl);
+            }
 
             for (int i = 0; i < s.Length; i++)
             {
                 switch (s[i])
                 {
-                    case '-':
-                    case '0':
-                        // No note, skip.
+                    case '-': // continue current note
+                        if(currentVol >= '1' && currentVol <= '9')
+                        {
+                            // ok, do nothing
+                        }
+                        else
+                        {
+                            // invalid condition
+                            throw new Exception("Invalid xxxx in pattern string");
+                        }
                         break;
 
+                    case '0':
                     case '1':
                     case '2':
                     case '3':
@@ -140,18 +165,24 @@ namespace Nebulator.Script
                     case '7':
                     case '8':
                     case '9':
-                        // Note on.
-                        double volmod = (double)(s[i] - '0') / 10;
-                        Time t = new Time(i / NebScript.PatternResolution,
-                            i % NebScript.PatternResolution * Time.TOCKS_PER_TICK / NebScript.PatternResolution);
-                        NSequenceElement ncl = new NSequenceElement(which)
+                        if (currentVol >= '1' && currentVol <= '9')
                         {
-                            When = t,
-                            Volume = volume * volmod,
-                            Duration = new Time(duration)
-                        };
+                            EndCurrent(i);
+                        }
 
-                        this.Add(ncl);
+                        // StartNew()
+                        currentVol = s[i];
+                        start = i;
+
+                        break;
+
+                    case '.': // whitespace
+                    case ' ': // whitespace
+                        if (currentVol >= '1' && currentVol <= '9')
+                        {
+                            EndCurrent(i);
+                            currentVol = ' ';
+                        }
                         break;
 
                     default:

@@ -141,8 +141,9 @@ void BuildComp()
 
     NSequence seqKeysVerse = CreateSequence(2, "Keys Verse", new NSequenceElements
     {
-        { "|7-------7-------|7-------7-------|", "G4.m7", KEYS_VOL,     1.2 }, // 32 hits == 2 whole notes == 2 measure
-        { "|----4-------4-8-|----4-------4-8-|", "G4.m6", KEYS_VOL*0.9, 0.4 }
+        // 16 ticks/meas: 32 hits == 8 ticks == 2 whole notes == 2 measure
+        { "|7-      7-      |7-      7-      |", "G4.m7", KEYS_VOL },
+        { "|    4-      4-8-|    4-      4-8-|", "G4.m6", KEYS_VOL*0.9 }
     });
 
     NSequence seqKeysChorus = CreateSequence(2, "Keys Chorus", new NSequenceElements
@@ -184,9 +185,9 @@ void BuildComp()
 
     NSequence seqDrumsVerse = CreateSequence(2, "Drums Verse", new NSequenceElements
     {
-        { "|8-------8-------|8-------8-------|", AcousticBassDrum, DRUM_VOL },
-        { "|----8-------8-8-|----8-------8-8-|", AcousticSnare,    DRUM_VOL*0.9 },
-        { "|------88------88|------88------88|", ClosedHiHat,      DRUM_VOL*1.1 },
+        { "|8       8       |8       8       |", AcousticBassDrum, DRUM_VOL },
+        { "|    8       8 8 |    8       8 8 |", AcousticSnare,    DRUM_VOL*0.9 },
+        { "|      88      88|      88      88|", ClosedHiHat,      DRUM_VOL*1.1 },
     });
 
     NSequence seqBassVerse = CreateSequence(2, "Big bottom", new NSequenceElements
