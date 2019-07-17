@@ -3,8 +3,6 @@
 #import "utils.neb"
 #import "scale.neb"
 
-//TODOX solo/mute not working.
-
 
 // Volumes
 const double KEYS_VOL = 0.8;
@@ -40,7 +38,7 @@ public override void Setup()
     CreateWobbler(chKeys, 0.1);
     CreateWobbler(chBass, 0.1);
     CreateWobbler(chSynth, 0.1);
-    CreateWobbler(chDrums, 0.1, 0.0, 0.05);
+    CreateWobbler(chDrums, 0.1, 0.1, 0.05);
 }
 
 public override void Setup2()

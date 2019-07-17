@@ -4,10 +4,10 @@
 #import "scale.neb"
 
 // TODOX - fills, intros, like that.
-
+// TODOX 1/32 notes?
 // TODOX time signature too. 3/4 means 3 beats per measure, each beat is 1/4 note.
-// void SetTimeSig(int bpmeas, int bnote) { }
-// Also determines TicksPerMeasure and PatternResolution.
+//   void SetTimeSig(int bpmeas, int bnote) { }
+//   Also determines TicksPerMeasure and PatternResolution.
 
 
 
