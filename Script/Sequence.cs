@@ -23,7 +23,7 @@ namespace Nebulator.Script
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
 
         /// <summary>Length in measures.</summary>
-        public int Length { get; set; } = 1;
+        public int Measures { get; set; } = 1;
         #endregion
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSequence: Length:{Length} Name:{Name} Elements:{Elements.Count}";
+            return $"NSequence: Measures:{Measures} Name:{Name} Elements:{Elements.Count}";
         }
     }
 
@@ -126,14 +126,17 @@ namespace Nebulator.Script
             {
                 // Make a Note on.
                 double volmod = (double)(currentVol - '0') / 10;
-                double dur = index - start;
-                Time t = new Time(start / NebScript.PatternResolution,
+
+                Time dur = new Time((index - start) / NebScript.PatternResolution,
+                    (index - start) % NebScript.PatternResolution * Time.TOCKS_PER_TICK / NebScript.PatternResolution);
+
+                Time when = new Time(start / NebScript.PatternResolution,
                     start % NebScript.PatternResolution * Time.TOCKS_PER_TICK / NebScript.PatternResolution);
                 NSequenceElement ncl = new NSequenceElement(which)
                 {
-                    When = t,
+                    When = when,
                     Volume = volume * volmod,
-                    Duration = new Time(dur)
+                    Duration = dur
                 };
 
                 this.Add(ncl);

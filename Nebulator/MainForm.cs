@@ -554,7 +554,7 @@ namespace Nebulator
                             }
 
                             // Update accumulated time.
-                            sectionTime += section.Length * NebScript.TicksPerMeasure;
+                            sectionTime += section.Measures * NebScript.TicksPerMeasure;
                         }
 
                         ProcessRuntime();
@@ -650,7 +650,7 @@ namespace Nebulator
                 foreach (NSection sect in _script.Sections)
                 {
                     timeMaster.TimeDefs.Add(start, sect.Name);
-                    start += sect.Length * NebScript.TicksPerMeasure;
+                    start += sect.Measures * NebScript.TicksPerMeasure;
                 }
                 // Add the dummy end marker.
                 timeMaster.TimeDefs.Add(start, "");
@@ -693,10 +693,10 @@ namespace Nebulator
         /// </summary>
         void TimerElapsedEvent(object sender, MmTimerEx.TimerEventArgs e)
         {
-            //// Do some stats gathering for measuring jitter.
-            //if ( _tan.Grab())
+            // Do some stats gathering for measuring jitter.
+            //if (_tan.Grab())
             //{
-            //    _logger.Info($"Midi timing: {stats}");
+            //    _logger.Info($"Midi timing: {_tan.Mean}");
             //}
 
             // Kick over to main UI thread.
@@ -722,9 +722,8 @@ namespace Nebulator
             {
                 //_tan.Arm();
 
-                // Update section.
-
-                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Tock == 0) // only on Ticks
+                // Update section - only on Ticks.
+                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Tock == 0)
                 {
                     if(timeMaster.TimeDefs.ContainsKey(_stepTime.Tick))
                     {
@@ -1546,12 +1545,10 @@ namespace Nebulator
         /// </summary>
         void SetSpeedTimerPeriod()
         {
-            // Convert speed/bpm to msec per tock.
-            double ticksPerMinute = potSpeed.Value; // sec/tick, aka bpm
-            double tocksPerMinute = ticksPerMinute * Time.TOCKS_PER_TICK;
-            double tocksPerSec = tocksPerMinute / 60;
-            double tocksPerMsec = tocksPerSec / 1000;
-            double msecPerTock = 1 / tocksPerMsec;
+            double secPerBeat = 60 / potSpeed.Value; // aka tick
+            double secPerMeas = 4 * secPerBeat;
+            double secPerTock = secPerBeat / Time.TOCKS_PER_TICK;
+            double msecPerTock = secPerTock * 1000;
             _timer.SetTimer("NEB", (int)msecPerTock);
         }
         #endregion

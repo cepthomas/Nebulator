@@ -24,7 +24,7 @@ namespace Nebulator.Script
         public NSectionElements Elements { get; set; } = new NSectionElements();
 
         /// <summary>Length in measures.</summary>
-        public int Length { get; set; } = 0;
+        public int Measures { get; set; } = 0;
 
         /// <summary>Readable.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
@@ -46,21 +46,23 @@ namespace Nebulator.Script
 
                 if(ok)
                 {
-                    if (sect.Mode == SequenceMode.Once)
+                    switch(sect.Mode)
                     {
-                        foreach (NSequence seq in sect.Sequences)
-                        {
-                            yield return (sect.Channel, seq, seqTick);
-                            seqTick += seq.Length * NebScript.TicksPerMeasure;
-                        }
-                    }
-                    else // if (sect.Mode == SequenceMode.Loop)
-                    {
-                        while (seqTick < Length * NebScript.TicksPerMeasure)
-                        {
-                            yield return (sect.Channel, sect.Sequences[0], seqTick);
-                            seqTick += sect.Sequences[0].Length * NebScript.TicksPerMeasure;
-                        }
+                        case SequenceMode.Once:
+                            foreach (NSequence seq in sect.Sequences)
+                            {
+                                yield return (sect.Channel, seq, seqTick);
+                                seqTick += seq.Measures * NebScript.TicksPerMeasure;
+                            }
+                            break;
+
+                        case SequenceMode.Loop:
+                            while (seqTick < Measures * NebScript.TicksPerMeasure)
+                            {
+                                yield return (sect.Channel, sect.Sequences[0], seqTick);
+                                seqTick += sect.Sequences[0].Measures * NebScript.TicksPerMeasure;
+                            }
+                            break;
                     }
                 }
 
@@ -76,7 +78,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSection: Length:{Length} Name:{Name} Elements:{Elements.Count}";
+            return $"NSection: Measures:{Measures} Name:{Name} Elements:{Elements.Count}";
         }
     }
 

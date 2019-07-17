@@ -31,7 +31,7 @@ namespace Nebulator.Script
         /// <summary>Short duration for drum hits.</summary>
         public static double DrumDur { get; } = 0.02;
 
-        /// <summary>Short duration for drum hits.</summary>
+        /// <summary>Size of a measure in ticks.</summary>
         public static int TicksPerMeasure { get; } = 4;
 
         /// <summary>For patterns like |9---------------|-...  the number of hits per tick</summary>

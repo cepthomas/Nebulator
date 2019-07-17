@@ -167,14 +167,14 @@ namespace Nebulator.Script
         /// <summary>
         /// Normal constructor.
         /// </summary>
-        /// <param name="len">Length in measures.</param>
+        /// <param name="meas">Length in measures.</param>
         /// <param name="name">Name.</param>
         /// <param name="elements">.</param>
-        protected NSequence CreateSequence(int len, string name, NSequenceElements elements)
+        protected NSequence CreateSequence(int meas, string name, NSequenceElements elements)
         {
             NSequence nseq = new NSequence()
             {
-                Length = len,
+                Measures = meas,
                 Name = name,
                 Elements = elements
             };
@@ -186,10 +186,10 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a defined section.
         /// </summary>
-        /// <param name="len">How long in measures.</param>
+        /// <param name="meas">How long in measures.</param>
         /// <param name="name">For UI display.</param>
         /// <param name="elements">Section info to add.</param>
-        protected NSection CreateSection(int len, string name, NSectionElements elements)
+        protected NSection CreateSection(int meas, string name, NSectionElements elements)
         {
             // Sanity check elements.
             foreach (var el in elements)
@@ -202,7 +202,7 @@ namespace Nebulator.Script
 
             NSection nsect = new NSection()
             {
-                Length = len,
+                Measures = meas,
                 Name = name,
                 Elements = elements,
             };
