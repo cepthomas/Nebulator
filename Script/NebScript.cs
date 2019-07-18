@@ -210,7 +210,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated. User has to turn it off explicitly.</param>
         public void SendNote(NChannel channel, double notenum, double vol, double dur)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
@@ -261,7 +261,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void SendNote(NChannel channel, string notestr, double vol, double dur)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
@@ -285,7 +285,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void SendNote(NChannel channel, string notestr, double vol, Time dur)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
@@ -299,7 +299,7 @@ namespace Nebulator.Script
         /// <param name="vol">Note volume.</param>
         public void SendNoteOn(NChannel channel, double notenum, double vol)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
@@ -312,7 +312,7 @@ namespace Nebulator.Script
         /// <param name="notenum">Note number.</param>
         public void SendNoteOff(NChannel channel, double notenum)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
@@ -326,7 +326,7 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         public void SendController(NChannel channel, int ctlnum, double val)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
@@ -347,7 +347,7 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         public void SendPatch(NChannel channel, int patch)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel for note");
             }
@@ -367,7 +367,7 @@ namespace Nebulator.Script
         /// <param name="seq">Which sequence to send.</param>
         public void SendSequence(NChannel channel, NSequence seq)
         {
-            if (channel == null)
+            if (channel == null || channel.Device == null)
             {
                 throw new Exception($"Invalid NChannel");
             }

@@ -1,4 +1,6 @@
 
+// Some ported parts of wicked games.
+
 ///// Include other lib files. /////
 #import "utils.neb"
 #import "scale.neb"

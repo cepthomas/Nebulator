@@ -10,8 +10,6 @@ NVariable vColor;
 ///// Channels /////
 NChannel chSound;
 
-bool _minimal = true;
-
 class TapeLoop
 {
     public string snote;
@@ -31,18 +29,11 @@ List<TapeLoop> _loops = new List<TapeLoop>();
 
 public override void Setup()
 {
-    ///// Variables /////
+    // Variables
     vColor = CreateVariable("color", 240, 0, 255); // change color
 
-    ///// Channels /////
-    if(_minimal)
-    {
-        chSound = CreateChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1, 0.1);
-    }
-    else
-    {
-        chSound = CreateChannel("sound", "Your favorite", 1, 0.1);
-    }
+    // Channels
+    chSound = CreateChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1, 0.1);
     
     // levers
     CreateLever(vColor);
@@ -63,17 +54,18 @@ public override void Setup()
     _loops.Add(new TapeLoop("F5",  20.00, 14.10));
 }
 
+public override void Setup2()
+{
+    SendPatch(chSound, Pad2Warm);
+}
+
 public override void Step()
 {
-    if(Tick == 0 && Tock == 0 && _minimal)
-    {
-        SendPatch(chSound, Pad2Warm);
-    }
-
     foreach(TapeLoop l in _loops)
     {
         if(StepTime >= l.nextStart)
         {
+            Print("!! Starting note", l.snote);
             SendNote(chSound, l.snote, SOUND_VOL, l.duration);
             // Calc next time.
             l.nextStart = StepTime + l.delay + l.duration;
