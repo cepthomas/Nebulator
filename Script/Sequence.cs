@@ -19,9 +19,6 @@ namespace Nebulator.Script
         /// <summary>List of notes or other elements.</summary>
         public NSequenceElements Elements { get; set; } = new NSequenceElements();
 
-        /// <summary>Readable.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
-
         /// <summary>Length in measures.</summary>
         public int Measures { get; set; } = 1;
         #endregion
@@ -31,7 +28,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSequence: Measures:{Measures} Name:{Name} Elements:{Elements.Count}";
+            return $"NSequence: Measures:{Measures} Elements:{Elements.Count}";
         }
     }
 

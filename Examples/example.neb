@@ -107,14 +107,14 @@ void BuildComp()
 
     /////////////////////// sequences /////////////////////////////////
 
-    NSequence seqKeysVerse = CreateSequence(2, "Keys Verse", new NSequenceElements
+    NSequence seqKeysVerse = CreateSequence(2, new NSequenceElements
     {
         // 16 ticks/meas: 32 hits == 8 ticks == 2 whole notes == 2 measure
         { "|7-      7-      |7-      7-      |", "G4.m7", KEYS_VOL },
         { "|    4-      4-8-|    4-      4-8-|", "G4.m6", KEYS_VOL*0.9 }
     });
 
-    NSequence seqKeysChorus = CreateSequence(2, "Keys Chorus", new NSequenceElements
+    NSequence seqKeysChorus = CreateSequence(2, new NSequenceElements
     {
         { 0.00, "F4",    0.7,      0.32 },
         { 0.32, "D#4",   KEYS_VOL, 0.32 },
@@ -134,7 +134,7 @@ void BuildComp()
         { 7.32, "B2.m7", 0.7,      0.32 },
     });
 
-    NSequence seqDrumsSimple = CreateSequence(2, "Drums Simple", new NSequenceElements
+    NSequence seqDrumsSimple = CreateSequence(2, new NSequenceElements
     {
         { 0.00, AcousticBassDrum,  DRUM_VOL },
         { 1.00, RideCymbal1,       DRUM_VOL },
@@ -151,14 +151,14 @@ void BuildComp()
         { 7.00, CrashCymbal2,      DRUM_VOL },
     });
 
-    NSequence seqDrumsVerse = CreateSequence(2, "Drums Verse", new NSequenceElements
+    NSequence seqDrumsVerse = CreateSequence(2, new NSequenceElements
     {
         { "|8       8       |8       8       |", AcousticBassDrum, DRUM_VOL },
         { "|    8       8 8 |    8       8 8 |", AcousticSnare,    DRUM_VOL*0.9 },
         { "|      88      88|      88      88|", ClosedHiHat,      DRUM_VOL*1.1 },
     });
 
-    NSequence seqBassVerse = CreateSequence(2, "Big bottom", new NSequenceElements
+    NSequence seqBassVerse = CreateSequence(2, new NSequenceElements
     {
         { 0.00, "C2",  0.75, 0.25 },
         { 0.48, "C2",  0.75, 0.125 },
@@ -167,17 +167,17 @@ void BuildComp()
         { 7.48, "A#2", 0.75, 0.10 }
     });
 
-    NSequence seqAlgo = CreateSequence(1, "Algo", new NSequenceElements
+    NSequence seqAlgo = CreateSequence(1, new NSequenceElements
     {
         { 1.60, Algo, 0.8 },
     });
 
-    NSequence seqEmpty = CreateSequence(1, "Quiet!", new NSequenceElements
+    NSequence seqEmpty = CreateSequence(1, new NSequenceElements
     {
     });
 
     // Sequence triggered in script.
-    seqDynamic = CreateSequence(2, "Dynomite", new NSequenceElements
+    seqDynamic = CreateSequence(2, new NSequenceElements
     {
         { 0.00, "G3 ", 0.75, 0.60 },
         { 1.00, "A3 ", 0.75, 0.60 },

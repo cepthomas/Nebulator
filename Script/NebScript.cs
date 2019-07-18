@@ -160,14 +160,12 @@ namespace Nebulator.Script
         /// Normal constructor.
         /// </summary>
         /// <param name="meas">Length in measures.</param>
-        /// <param name="name">Name.</param>
         /// <param name="elements">.</param>
-        protected NSequence CreateSequence(int meas, string name, NSequenceElements elements)
+        protected NSequence CreateSequence(int meas, NSequenceElements elements)
         {
             NSequence nseq = new NSequence()
             {
                 Measures = meas,
-                Name = name,
                 Elements = elements
             };
 

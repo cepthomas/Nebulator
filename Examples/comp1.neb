@@ -53,74 +53,35 @@ void BuildComp()
 
     /////////////////////// sequences /////////////////////////////////
 
-    NSequence seqKeysVerse = CreateSequence(4, "Keys Verse", new NSequenceElements
+    NSequence seqKeysVerse = CreateSequence(4, new NSequenceElements
     {
-        // 4 ticks/meas == 16 hits/meas == 4 qtr notes/meas
         { "|9-------------  |                |                |                |", "B4.m", KEYS_VOL },
         { "|                |9-------------  |                |                |", "A4.m", KEYS_VOL },
         { "|                |                |9---------------|----------      |", "E4.m", KEYS_VOL },
     });
 
-    NSequence seqDrumsVerse = CreateSequence(4, "Drums Verse", new NSequenceElements
+    NSequence seqDrumsVerse = CreateSequence(4, new NSequenceElements
     {
         { "|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|", RideCymbal1,      DRUM_VOL*0.8 },
         { "|....8.......8...|....8.......8...|....8.......8...|....8.......8...|", SideStick,        DRUM_VOL*0.9 },
         { "|8.....8.8.......|8.....8.8.......|8.....8.8.......|8.....8.8.......|", AcousticBassDrum, DRUM_VOL },
-        
-        // { "|8       8       |8       8       |8       8       |8       8       |", AcousticBassDrum, DRUM_VOL },
-        // { "|    8       8   |    8       8   |    8       8   |    8       8   |", SideStick,    DRUM_VOL*0.9 },
-        // { "|      8       8 |      8       8 |      8       8 |      8       8 |", RideCymbal1,      DRUM_VOL*1.1 },
     });
 
 
-    NSequence seqBassVerse = CreateSequence(4, "Big bottom", new NSequenceElements
+    NSequence seqBassVerse = CreateSequence(4, new NSequenceElements
     {
         { "|9----.9.9------.|................|................|................|", "B2", BASS_VOL },
         { "|................|9----.9.9------.|................|................|", "A2", BASS_VOL },
         { "|................|................|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
-        // { "|9------------...|... ...         |", "B2", BASS_VOL },
-        // { "|    ...      9- |9--     9876543 |", "D2", BASS_VOL },
     });
 
 
     /////////////////////// sections /////////////////////////////////
 
-    CreateSection(8, "Middle", new NSectionElements
+    CreateSection(8, "A thing", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysVerse },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse  },
     });
-
-
-    // CreateSection(8, "Beginning", new NSectionElements
-    // {
-    //     { chKeys,  Loop,  seqKeysVerse   },
-    //     { chDrums, Loop,  seqDrumsSimple },
-    //     { chBass,  Loop,  seqBassVerse   }
-    // });
-
-    // CreateSection(4, "Middle", new NSectionElements
-    // {
-    //     { chKeys,  Loop,  seqKeysChorus },
-    //     { chDrums, Loop,  seqDrumsVerse },
-    //     { chBass,  Loop,  seqBassVerse  },
-    //     { chSynth, Once,  seqAlgo,  seqEmpty, seqDynamic, seqEmpty }
-    // });
-
-    // CreateSection(8, "Ending", new NSectionElements
-    // {
-    //     { chKeys,  Loop,  seqKeysVerse   },
-    //     { chDrums, Loop,  seqDrumsSimple },
-    //     { chBass,  Loop,  seqBassVerse   }
-    // });
-}
-
-////////////////// overrides /////////////////////////////
-
-public override void Step()
-{
-    if(Tock != 0) // not looking at Tocks right now
-    {
-    }
 }
