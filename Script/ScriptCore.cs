@@ -101,10 +101,11 @@ namespace Nebulator.Script
             foreach (NSequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
-                int toffset = startTick == -1 ? 0 : channel.NextTime();
+                int toffset = 0;
+                //int toffset = startTick == -1 ? 0 : channel.NextTime();
 
                 Time startNoteTime = new Time(startTick, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + (channel.IsDrums ? new Time(Script.NebScript.DrumDur) : seqel.Duration);
+                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalTocks == 0 ? new Time(DrumDur) : seqel.Duration);
 
                 // Is it a function?
                 if (seqel.ScriptFunction != null)

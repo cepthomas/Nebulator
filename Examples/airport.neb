@@ -37,15 +37,13 @@ public override void Setup()
     ///// Channels /////
     if(_minimal)
     {
-        chSound = CreateChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1);
+        chSound = CreateChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1, 0.1);
     }
     else
     {
-        chSound = CreateChannel("sound", "Your favorite", 1);
+        chSound = CreateChannel("sound", "Your favorite", 1, 0.1);
     }
     
-    CreateWobbler(chSound, 0.1);
-
     // levers
     CreateLever(vColor);
 

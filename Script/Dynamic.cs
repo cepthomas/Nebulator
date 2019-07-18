@@ -122,30 +122,15 @@ namespace Nebulator.Script
         /// <summary>The associated numerical (midi) channel to use.</summary>
         public int ChannelNumber { get; set; } = -1;
 
-        /// <summary>Helper to add short default duration to each hit without needing to explicitly put in script.</summary>
-        public bool IsDrums { get; set; } = false;
-
         /// <summary>Current volume.</summary>
         public double Volume { get; set; } = 90;
 
-        /// <summary>Wobbler for time.</summary>
-        public Wobbler TimeWobbler { get; set; } = new Wobbler();
-
-        /// <summary>Wobbler for volume.</summary>
-        public Wobbler VolWobbler { get; set; } = new Wobbler();
+        /// <summary>Wobbler for volume (optional).</summary>
+        public Wobbler VolWobbler { get; set; } = null;
 
         /// <summary>Current state for this channel.</summary>
         public ChannelState State { get; set; } = ChannelState.Normal;
         #endregion
-
-        /// <summary>
-        /// Get the next time.
-        /// </summary>
-        /// <returns></returns>
-        public int NextTime()
-        {
-            return (int)TimeWobbler.Next(0);
-        }
 
         /// <summary>
         /// Get the next volume.
@@ -154,7 +139,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         public double NextVol(double def)
         {
-            return VolWobbler.Next(def);
+            return VolWobbler == null ? def : VolWobbler.Next(def);
         }
 
         /// <summary>

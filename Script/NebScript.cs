@@ -73,35 +73,27 @@ namespace Nebulator.Script
         /// <param name="name">UI name</param>
         /// <param name="devName">Device name</param>
         /// <param name="channelNum"></param>
-        /// <param name="isDrums"></param>
-        protected NChannel CreateChannel(string name, string devName, int channelNum, bool isDrums = false)
+        /// <param name="volWobble"></param>
+        protected NChannel CreateChannel(string name, string devName, int channelNum, double volWobble = 0.0)
         {
             NChannel nt = new NChannel()
             {
                 Name = name,
                 DeviceName = devName,
                 ChannelNumber = channelNum,
-                IsDrums = isDrums
             };
-            
+
+            if(volWobble != 0.0)
+            {
+                nt.VolWobbler = new Wobbler()
+                {
+                    RangeHigh = volWobble,
+                    RangeLow = volWobble
+                };
+            }
+
             Channels.Add(nt);
             return nt;
-        }
-
-        /// <summary>
-        /// Set some randomization options for the channel.
-        /// </summary>
-        /// <param name="channel">Associated channel.</param>
-        /// <param name="volMax">Value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
-        /// <param name="volMin">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
-        /// <param name="timeMin">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
-        /// <param name="timeMax">Optional value to set between 0.0 and 1.0. Set to 0 to ignore.</param>
-        protected void CreateWobbler(NChannel channel, double volMax, double volMin = 0.0, double timeMin = 0.0, double timeMax = 0.0)
-        {
-            channel.VolWobbler.RangeHigh = volMax;
-            channel.VolWobbler.RangeLow = volMin;
-            channel.TimeWobbler.RangeHigh = timeMax;
-            channel.TimeWobbler.RangeLow = timeMin;
         }
 
         /// <summary>

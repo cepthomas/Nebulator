@@ -9,8 +9,6 @@ const double KEYS_VOL = 0.8;
 const double DRUM_VOL = 1.0;
 const double BASS_VOL = 1.0;
 
-// July 15 - time renovate.
-
 
 ///// Channels /////
 NChannel chKeys;
@@ -29,16 +27,10 @@ public override void Setup()
 
     // IO devices.
     // All the outputs.
-    chKeys = CreateChannel("keys", midiout, 1);
-    chBass = CreateChannel("bass", midiout, 2);
-    chSynth = CreateChannel("synth", midiout, 3);
-    chDrums = CreateChannel("drums", midiout, 10, true);
-
-    // Some wobblers. TODOX incorporate with above?
-    CreateWobbler(chKeys, 0.1);
-    CreateWobbler(chBass, 0.1);
-    CreateWobbler(chSynth, 0.1);
-    CreateWobbler(chDrums, 0.1, 0.1, 0.05);
+    chKeys = CreateChannel("keys", midiout, 1, 0.1);
+    chBass = CreateChannel("bass", midiout, 2, 0.1);
+    chSynth = CreateChannel("synth", midiout, 3, 0.1);
+    chDrums = CreateChannel("drums", midiout, 10, 0.1);
 }
 
 public override void Setup2()
