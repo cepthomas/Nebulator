@@ -486,7 +486,7 @@
             <summary>Midi note id.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.Velocity">
-            <summary>Midi velocity. 0 means key up.</summary>
+            <summary>Midi velocity. 0 means note off.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeySize">
             <summary>

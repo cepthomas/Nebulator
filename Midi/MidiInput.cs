@@ -182,7 +182,7 @@ namespace Nebulator.Midi
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = evt.NoteNumber,
                                 Velocity = evt.Velocity / MidiUtils.MAX_MIDI,
-                                VelocityToPlay = evt.Velocity,
+                                VelocityToPlay = evt.Velocity / MidiUtils.MAX_MIDI,
                                 Duration = new Time(0)
                             };
                         }

@@ -59,11 +59,10 @@ public override void Setup()
     // All the neb variables.
     vColor = CreateVariable("color", 200, 0, 255); // change color
     vModN = CreateVariable("modn", 0, -10, 10);
-    vVkeyNote = CreateVariable("note", 60, -127, 127, On_vVkeyNote);
+    vVkeyNote = CreateVariable("note", 60, -127, 127, On_vVkeyNote); // note neg number for note off encoding
     vCtl2 = CreateVariable("ctl2", 200, 0, 255, On_vCtl2);
     vCtl3 = CreateVariable("ctl3", 200, 0, 255, On_vCtl3);
     vMod1 = CreateVariable("mod", 127, 0, 255, On_vMod1);
-    //vKeyNote = CreateVariable("note", 60, -127, 127, On_vKeyNote); // note neg number for note off encoding
 
     // IO devices.
     if(_local)

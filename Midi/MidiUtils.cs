@@ -89,7 +89,7 @@ namespace Nebulator.Midi
                                 stt.ChannelNumber,
                                 MidiCommandCode.NoteOff,
                                 (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                                (int)(MathUtils.Constrain(stt.Velocity, 0, 1.0) * MidiUtils.MAX_MIDI));
+                                0);
                             break;
 
                         case StepControllerChange stt:
