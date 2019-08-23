@@ -18,7 +18,7 @@ NChannel chDrums;
 NChannel chSynth;
 
 // Use wingm and virtual kbd only.
-bool _local = false;
+bool _local = true;
 
 
 ////// Nebulator midi stuff //////
@@ -49,6 +49,7 @@ public override void Setup2()
 
 void BuildComp()
 {
+    // One Tick is 1/16 note.
 
     /////////////////////// Keys sequences /////////////////////////////////
 
@@ -73,7 +74,7 @@ void BuildComp()
         { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },
     });
 
-    /////////////////////// Drums sequences /////////////////////////////////
+    /////////////////////// Drum sequences /////////////////////////////////
 
     NSequence seqDrumsVerse = CreateSequence(4, new NSequenceElements
     {

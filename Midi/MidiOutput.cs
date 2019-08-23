@@ -18,7 +18,7 @@ namespace Nebulator.Midi
         MidiOut _midiOut = null;
 
         /// <summary>Midi access synchronizer.</summary>
-        object _lock = new object();
+        readonly object _lock = new object();
 
         /// <summary>Notes to stop later.</summary>
         List<StepNoteOff> _stops = new List<StepNoteOff>();

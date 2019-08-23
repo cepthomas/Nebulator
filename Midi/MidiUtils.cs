@@ -18,7 +18,7 @@ namespace Nebulator.Midi
         public const int MAX_PITCH = 16383;
 
         /// <summary>
-        /// Convert neb steps to midi file. TODO timing is still a bit wonky.
+        /// Convert neb steps to midi file.
         /// </summary>
         /// <param name="steps"></param>
         /// <param name="midiFileName"></param>
@@ -64,6 +64,12 @@ namespace Nebulator.Midi
                 // >> 0 SequenceTrackName G.MIDI Acou Bass
             }
 
+            long InternalToMidiTime(Time time)
+            {
+                double d = ((double)time.Tick + (double)time.Tock / (double)Time.TOCKS_PER_TICK) * (double)deltaTicksPerQuarterNote;
+                return (long)d;
+            }
+
             // Run through the main steps and create a midi event per.
             foreach (Time time in steps.Times)
             {
@@ -71,25 +77,34 @@ namespace Nebulator.Midi
                 {
                     MidiEvent evt = null;
 
-                    double d = (time.Tick + time.Tock / Time.TOCKS_PER_TICK) * secPerTick * deltaTicksPerQuarterNote;
-                    long midiTime = (long)d;
-
                     switch (step)
                     {
                         case StepNoteOn stt:
-                            evt = new NoteEvent(midiTime,
+                            evt = new NoteEvent(InternalToMidiTime(time),
                                 stt.ChannelNumber,
                                 MidiCommandCode.NoteOn,
                                 (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                 (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
+                            trackEvents[step.ChannelNumber].Add(evt);
+
+                            if (stt.Duration.TotalTocks > 0) // specific duration
+                            {
+                                evt = new NoteEvent(InternalToMidiTime(time + stt.Duration),
+                                    stt.ChannelNumber,
+                                    MidiCommandCode.NoteOff,
+                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                    0);
+                                trackEvents[step.ChannelNumber].Add(evt);
+                            }
                             break;
 
                         case StepNoteOff stt:
-                            evt = new NoteEvent(midiTime,
+                            evt = new NoteEvent(InternalToMidiTime(time),
                                 stt.ChannelNumber,
                                 MidiCommandCode.NoteOff,
                                 (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                 0);
+                            trackEvents[step.ChannelNumber].Add(evt);
                             break;
 
                         case StepControllerChange stt:
@@ -99,32 +114,30 @@ namespace Nebulator.Midi
                             }
                             else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                             {
-                                evt = new PitchWheelChangeEvent(midiTime,
+                                evt = new PitchWheelChangeEvent(InternalToMidiTime(time),
                                     stt.ChannelNumber,
                                     (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
+                                trackEvents[step.ChannelNumber].Add(evt);
                             }
                             else // CC
                             {
-                                evt = new ControlChangeEvent(midiTime,
+                                evt = new ControlChangeEvent(InternalToMidiTime(time),
                                     stt.ChannelNumber,
                                     (MidiController)stt.ControllerId,
                                     (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
+                                trackEvents[step.ChannelNumber].Add(evt);
                             }
                             break;
 
                         case StepPatch stt:
-                            evt = new PatchChangeEvent(midiTime,
+                            evt = new PatchChangeEvent(InternalToMidiTime(time),
                                 stt.ChannelNumber,
                                 stt.PatchNumber);
+                            trackEvents[step.ChannelNumber].Add(evt);
                             break;
 
                         default:
                             break;
-                    }
-
-                    if (evt != null)
-                    {
-                        trackEvents[step.ChannelNumber].Add(evt);
                     }
                 }
             }
@@ -150,12 +163,14 @@ namespace Nebulator.Midi
             FileParser fpars = new FileParser();
             fpars.ProcessFile(fileName);
 
-            List<string> defs = new List<string>();
-            defs.Add($"Tempo:{fpars.Tempo}");
-            defs.Add($"TimeSig:{fpars.TimeSig}");
-            defs.Add($"DeltaTicksPerQuarterNote:{fpars.DeltaTicksPerQuarterNote}");
-            defs.Add($"KeySig:{fpars.KeySig}");
-            
+            List<string> defs = new List<string>
+            {
+                $"Tempo:{fpars.Tempo}",
+                $"TimeSig:{fpars.TimeSig}",
+                $"DeltaTicksPerQuarterNote:{fpars.DeltaTicksPerQuarterNote}",
+                $"KeySig:{fpars.KeySig}"
+            };
+
             foreach (KeyValuePair<int, string> kv in fpars.Channels)
             {
                 int chnum = kv.Key;
@@ -242,7 +257,7 @@ namespace Nebulator.Midi
                         if (on != null)
                         {
                             Time when = MidiTimeToInternal(on.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
-                            // TODO ? fpars.Leftovers.Add($"Orphan NoteOn: {when} {on.Channel} {on.NoteNumber}");
+                            // ? fpars.Leftovers.Add($"Orphan NoteOn: {when} {on.Channel} {on.NoteNumber}");
                         }
                     }
 
@@ -308,7 +323,6 @@ namespace Nebulator.Midi
             // Local functions
             Time MidiTimeToInternal(long mtime, int tpqn)
             {
-                //return new Time(mtime / tpqn);
                 return new Time(mtime * Time.TOCKS_PER_TICK / tpqn);
             }
             return all;

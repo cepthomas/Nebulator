@@ -19,13 +19,13 @@ namespace Nebulator.Device
 
         #region Properties
         ///<summary>Gets a collection of the list.</summary>
-        public IEnumerable<Time> Times { get { return (_steps.Keys); } }
+        public IEnumerable<Time> Times { get { return _steps.Keys.OrderBy(k => k.TotalTocks); } }
 
         ///<summary>The duration of the whole thing.</summary>
         public int MaxTick { get; private set; } = 0;
         #endregion
 
-        #region Methods
+        #region Functions
         /// <summary>
         /// Add a step at the given time.
         /// </summary>
@@ -85,10 +85,19 @@ namespace Nebulator.Device
         public string Dump()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (KeyValuePair<Time, List<Step>> kv in _steps)
+
+            foreach (Time time in Times)
             {
-                kv.Value.ForEach(s => sb.Append($"{kv.Key.ToString()} {s.ToString()}{Environment.NewLine}"));
+                foreach (Step step in GetSteps(time))
+                {
+                    sb.Append($"{time} {step}{Environment.NewLine}");
+                }
             }
+
+
+            //{
+            //    kv.Value.ForEach(s => sb.Append($"{kv.Key.ToString()} {s.ToString()}{Environment.NewLine}"));
+            //}
             return sb.ToString();
         }
 
