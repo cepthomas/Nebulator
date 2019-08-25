@@ -21,19 +21,19 @@ namespace Nebulator.Script
         /// <summary>Sound is playing. Main -> Script</summary>
         public bool Playing { get; set; } = false;
 
-        /// <summary>Tock subdivision.</summary>
-        public int TocksPerTick { get { return Time.TOCKS_PER_TICK; } }
+        /// <summary>Subdivision.</summary>
+        public int IncrsPerBeat { get { return Time.INCRS_PER_BEAT; } }
 
-        /// <summary>Current Nebulator Tick.</summary>
-        public int Tick { get { return StepTime.Tick; } }
+        /// <summary>Current Nebulator Beat.</summary>
+        public int Beat { get { return StepTime.Beat; } }
 
-        /// <summary>Current Nebulator Tock.</summary>
-        public int Tock { get { return StepTime.Tock; } }
+        /// <summary>Current Nebulator Incr.</summary>
+        public int Incr { get { return StepTime.Increment; } }
 
         /// <summary>Actual time since start pressed. Main -> Script</summary>
         public double RealTime { get; set; } = 0.0;
 
-        /// <summary>Nebulator Speed in Ticks per minute (aka bpm). Main -> Script ( -> Main)</summary>
+        /// <summary>Nebulator Speed in bpm. Main -> Script ( -> Main)</summary>
         public double Speed { get; set; } = 0.0;
 
         /// <summary>Nebulator master Volume. Main -> Script ( -> Main)</summary>
@@ -47,7 +47,7 @@ namespace Nebulator.Script
         /// <summary>Called if you need to do something with devices after they have been created.</summary>
         public virtual void Setup2() { }
 
-        /// <summary>Called every Nebulator Tock.</summary>
+        /// <summary>Called every Nebulator Incr.</summary>
         public virtual void Step() { }
         #endregion
 
@@ -375,7 +375,7 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid NSequence");
             }
 
-            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Tick);
+            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Beat);
             Steps.Add(scoll);
         }
 

@@ -73,7 +73,7 @@
             this.potSpeed.Size = new System.Drawing.Size(32, 32);
             this.potSpeed.TabIndex = 33;
             this.potSpeed.Taper = NBagOfTricks.UI.Taper.Linear;
-            this.toolTip.SetToolTip(this.potSpeed, "Speed in Ticks per minute (sorta BPM)");
+            this.toolTip.SetToolTip(this.potSpeed, "Speed in BPM");
             this.potSpeed.Value = 100D;
             this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
             // 
@@ -284,13 +284,13 @@
             // timeMaster
             // 
             this.timeMaster.ControlColor = System.Drawing.Color.Orange;
-            time1.Tick = 0;
-            time1.Tock = 0;
+            time1.Beat = 0;
+            time1.Increment = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.timeMaster.Location = new System.Drawing.Point(231, 32);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
-            this.timeMaster.MaxTick = 0;
+            this.timeMaster.MaxBeat = 0;
             this.timeMaster.Name = "timeMaster";
             this.timeMaster.ShowProgress = true;
             this.timeMaster.Size = new System.Drawing.Size(175, 34);

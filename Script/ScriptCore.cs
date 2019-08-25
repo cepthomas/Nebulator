@@ -29,13 +29,7 @@ namespace Nebulator.Script
 
         #region Properties
         /// <summary>Short duration for drum hits.</summary>
-        public static double DrumDur { get; } = 0.02;
-
-        /// <summary>Size of a measure in ticks.</summary>
-        public static int TicksPerMeasure { get; } = 4;
-
-        /// <summary>For patterns like |9---------------|-...  the number of hits per tick</summary>
-        public static int PatternResolution { get; } = 4;
+        public static double DrumDur { get; } = 0.1;
         #endregion
 
         #region Elements defined in the script that MainForm needs
@@ -93,8 +87,8 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
-        /// <param name="startTick">Which tick to start at.</param>
-        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startTick)
+        /// <param name="startBeat">Which beat to start at.</param>
+        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startBeat)
         {
             StepCollection steps = new StepCollection();
 
@@ -102,10 +96,10 @@ namespace Nebulator.Script
             {
                 // Create the note start and stop times.
                 int toffset = 0;
-                //int toffset = startTick == -1 ? 0 : channel.NextTime();
+                //int toffset = startBeat == -1 ? 0 : channel.NextTime();
 
-                Time startNoteTime = new Time(startTick, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalTocks == 0 ? new Time(DrumDur) : seqel.Duration);
+                Time startNoteTime = new Time(startBeat, toffset) + seqel.When;
+                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalIncrs == 0 ? new Time(DrumDur) : seqel.Duration);
 
                 // Is it a function?
                 if (seqel.ScriptFunction != null)
@@ -152,8 +146,8 @@ namespace Nebulator.Script
         /// <summary>Send a named sequence at some future time.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        /// <param name="tick">When to send the sequence.</param>
-        public void AddSequence(NChannel channel, NSequence seq, int tick)
+        /// <param name="beat">When to send the sequence.</param>
+        public void AddSequence(NChannel channel, NSequence seq, int beat)
         {
             if (channel == null)
             {
@@ -165,7 +159,7 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid NSequence");
             }
 
-            StepCollection scoll = ConvertToSteps(channel, seq, tick);
+            StepCollection scoll = ConvertToSteps(channel, seq, beat);
             Steps.Add(scoll);
         }
         #endregion

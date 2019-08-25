@@ -23,9 +23,9 @@ namespace Nebulator.Midi
         /// <param name="steps"></param>
         /// <param name="midiFileName"></param>
         /// <param name="channels">Map of channel number to channel name.</param>
-        /// <param name="secPerTick">Seconds per Tick (aka qtr note).</param>
+        /// <param name="secPerBeat">Seconds per beat.</param>
         /// <param name="info">Extra info to add to midi file.</param>
-        public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double secPerTick, string info)
+        public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double secPerBeat, string info)
         {
             // Events per track.
             Dictionary<int, IList<MidiEvent>> trackEvents = new Dictionary<int, IList<MidiEvent>>();
@@ -48,7 +48,7 @@ namespace Nebulator.Midi
             //  - major (0) or minor (1) key.
             //  - abs time.
 
-            lhdr.Add(new TempoEvent((int)(1000000.0 * secPerTick), 0));
+            lhdr.Add(new TempoEvent((int)(1000000.0 * secPerBeat), 0));
 
             lhdr.Add(new TextEvent("Midi file created by Nebulator.", MetaEventType.TextEvent, 0));
             lhdr.Add(new TextEvent(info, MetaEventType.TextEvent, 0));
@@ -66,7 +66,7 @@ namespace Nebulator.Midi
 
             long InternalToMidiTime(Time time)
             {
-                double d = ((double)time.Tick + (double)time.Tock / (double)Time.TOCKS_PER_TICK) * (double)deltaTicksPerQuarterNote;
+                double d = ((double)time.Beat + (double)time.Increment / (double)Time.INCRS_PER_BEAT) * (double)deltaTicksPerQuarterNote;
                 return (long)d;
             }
 
@@ -87,7 +87,7 @@ namespace Nebulator.Midi
                                 (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
                             trackEvents[step.ChannelNumber].Add(evt);
 
-                            if (stt.Duration.TotalTocks > 0) // specific duration
+                            if (stt.Duration.TotalIncrs > 0) // specific duration
                             {
                                 evt = new NoteEvent(InternalToMidiTime(time + stt.Duration),
                                     stt.ChannelNumber,
@@ -323,7 +323,7 @@ namespace Nebulator.Midi
             // Local functions
             Time MidiTimeToInternal(long mtime, int tpqn)
             {
-                return new Time(mtime * Time.TOCKS_PER_TICK / tpqn);
+                return new Time(mtime * Time.INCRS_PER_BEAT / tpqn);
             }
             return all;
         }

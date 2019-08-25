@@ -13,7 +13,7 @@ namespace Nebulator.Controls
     {
         #region Fields
         Time _current = new Time();
-        int _maxTick = 0;
+        int _maxBeat = 0;
         int _lastPos = 0;
         Font _fontLarge = new Font("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
         Font _fontSmall = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -32,7 +32,7 @@ namespace Nebulator.Controls
             set
             {
                 _current = new Time(value);
-                if (_current.Tock == 0)
+                if (_current.Increment == 0)
                 {
                     Invalidate();
                 }
@@ -40,12 +40,12 @@ namespace Nebulator.Controls
         }
 
         /// <summary>
-        /// Largest Tick value.
+        /// Largest beat value.
         /// </summary>
-        public int MaxTick
+        public int MaxBeat
         {
-            get { return _maxTick; }
-            set { _maxTick = value % 999; Invalidate(); }
+            get { return _maxBeat; }
+            set { _maxBeat = value % 999; Invalidate(); }
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Nebulator.Controls
         public bool ShowProgress { get; set; } = true;
 
         /// <summary>
-        /// All the important Tick points with their names. Used also by tooltip.
+        /// All the important beat points with their names. Used also by tooltip.
         /// </summary>
         [ReadOnly(true)]
         [Browsable(false)]
@@ -114,9 +114,9 @@ namespace Nebulator.Controls
             // Draw data.
             Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -bw, -bw);
 
-            if(ShowProgress && MaxTick != 0 && _current.Tick < _maxTick)
+            if(ShowProgress && MaxBeat != 0 && _current.Beat < _maxBeat)
             {
-                pe.Graphics.FillRectangle(brush, Utils.BORDER_WIDTH, Utils.BORDER_WIDTH, (Width - 2 * bw) * _current.Tick / _maxTick, Height - 2 * bw);
+                pe.Graphics.FillRectangle(brush, Utils.BORDER_WIDTH, Utils.BORDER_WIDTH, (Width - 2 * bw) * _current.Beat / _maxBeat, Height - 2 * bw);
             }
 
             // Text.
@@ -126,21 +126,12 @@ namespace Nebulator.Controls
                 Alignment = StringAlignment.Near
             };
 
-#if _SHOW_TOCK
-            // Also need to make control 220px wide.
-            string sval = $"{Major:000}.{Minor:00}";
-            pe.Graphics.DrawString(sval, _fontLarge, Brushes.Black, ClientRectangle, format);
-            Rectangle r2 = new Rectangle(ClientRectangle.X + 120, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
-            sval = GetTimeDef(_current.Tick);
-            pe.Graphics.DrawString(sval, _fontSmall, Brushes.Black, r2, format);
-#else
-            string sval = $"{_current.Tick:000}";
+            string sval = $"{_current.Beat:000}";
             pe.Graphics.DrawString(sval, _fontLarge, Brushes.Black, ClientRectangle, format);
 
             Rectangle r2 = new Rectangle(ClientRectangle.X + 66, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
-            sval = GetTimeDef(_current.Tick);
+            sval = GetTimeDef(_current.Beat);
             pe.Graphics.DrawString(sval, _fontSmall, Brushes.Black, r2, format);
-#endif
         }
         #endregion
 
@@ -188,13 +179,13 @@ namespace Nebulator.Controls
             {
                 case Keys.Add:
                 case Keys.Up:
-                    _current.Tick++;
+                    _current.Beat++;
                     e.IsInputKey = true;
                     break;
 
                 case Keys.Subtract:
                 case Keys.Down:
-                    _current.Tick--;
+                    _current.Beat--;
                     e.IsInputKey = true;
                     break;
             }
@@ -208,8 +199,8 @@ namespace Nebulator.Controls
         /// <param name="x"></param>
         private void SetValueFromMouse(int x)
         {
-            _current.Tick = GetValueFromMouse(x);
-            _current.Tock = 0;
+            _current.Beat = GetValueFromMouse(x);
+            _current.Increment = 0;
             ValueChanged?.Invoke(this, new EventArgs());
         }
 
@@ -219,7 +210,7 @@ namespace Nebulator.Controls
         /// <param name="x"></param>
         private int GetValueFromMouse(int x)
         {
-            int val = MathUtils.Constrain(x * MaxTick / Width, 0, MaxTick);
+            int val = MathUtils.Constrain(x * MaxBeat / Width, 0, MaxBeat);
             return val;
         }
 

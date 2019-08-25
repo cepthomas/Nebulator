@@ -19,10 +19,10 @@ namespace Nebulator.Device
 
         #region Properties
         ///<summary>Gets a collection of the list.</summary>
-        public IEnumerable<Time> Times { get { return _steps.Keys.OrderBy(k => k.TotalTocks); } }
+        public IEnumerable<Time> Times { get { return _steps.Keys.OrderBy(k => k.TotalIncrs); } }
 
         ///<summary>The duration of the whole thing.</summary>
-        public int MaxTick { get; private set; } = 0;
+        public int MaxBeat { get; private set; } = 0;
         #endregion
 
         #region Functions
@@ -39,7 +39,7 @@ namespace Nebulator.Device
             }
             _steps[time].Add(step);
 
-            MaxTick = Math.Max(MaxTick, time.Tick);
+            MaxBeat = Math.Max(MaxBeat, time.Beat);
         }
 
         /// <summary>

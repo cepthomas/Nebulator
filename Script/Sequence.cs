@@ -38,7 +38,7 @@ namespace Nebulator.Script
     public class NSequenceElements : List<NSequenceElement>
     {
         /// <summary>
-        /// Like: Z.Add(00.00, "G3", 90, 0.60);
+        /// Like: Z.Add(00.00, "G3", 90, 0.60);//TODO these docs
         /// </summary>
         /// <param name="when">Time to play at.</param>
         /// <param name="what">What to play.</param>
@@ -124,11 +124,9 @@ namespace Nebulator.Script
                 // Make a Note on.
                 double volmod = (double)(currentVol - '0') / 10;
 
-                Time dur = new Time((index - start) / NebScript.PatternResolution,
-                    (index - start) % NebScript.PatternResolution * Time.TOCKS_PER_TICK / NebScript.PatternResolution);
+                Time dur = new Time((index - start) / Time.INCRS_PER_BEAT, (index - start) % Time.INCRS_PER_BEAT);
 
-                Time when = new Time(start / NebScript.PatternResolution,
-                    start % NebScript.PatternResolution * Time.TOCKS_PER_TICK / NebScript.PatternResolution);
+                Time when = new Time(start / Time.INCRS_PER_BEAT, start % Time.INCRS_PER_BEAT);
                 NSequenceElement ncl = new NSequenceElement(which)
                 {
                     When = when,
@@ -203,7 +201,7 @@ namespace Nebulator.Script
         public double Volume { get; set; } = 90;
 
         /// <summary>When to play in Sequence.</summary>
-        public Time When { get; set; } = new Time() { Tick = 0, Tock = 0 };
+        public Time When { get; set; } = new Time();
 
         /// <summary>Time between note on/off. 0 (default) means not used.</summary>
         public Time Duration { get; set; } = new Time(0);

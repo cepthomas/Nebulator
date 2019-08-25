@@ -47,14 +47,32 @@ public override void Setup2()
     BuildComp();
 }
 
+
+
+//tock size = 32
+//7mspb = 81.5bpm
+//8mspb = 78bpm
+
+
+//tock size = 96
+//7mspb = 89bpm
+//8mspb = 78bpm
+
+
 void BuildComp()
 {
-    // One Tick is 1/16 note.
-
+    // Reaper Time is 1.1.0 to 1.4.99
+    // One beat is 1/4 note.
+    // One hit is 1/16 note.
+    // 0.0 to 3.3
+    // 0.0 0.1 0.2 0.3 1.0 1.1 1.2 1.3 2.0 2.1 2.2 2.3 3.0 3.1 3.2 3.3
+    // ? or 0.0 to 3.7
+    
     /////////////////////// Keys sequences /////////////////////////////////
 
     NSequence seqKeysIntro = CreateSequence(4, new NSequenceElements
     {
+        //"|m...............|b...b...b...b...|iiiiiiiiiiiiiiii|
         { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
         { "|                |                |                |        9 9     |", "D5.m", KEYS_VOL },
         { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },

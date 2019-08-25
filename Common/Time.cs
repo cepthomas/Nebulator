@@ -12,21 +12,24 @@ namespace Nebulator.Common
     {
         #region Constants
         /// <summary>Subdivision setting.</summary>
-        public const int TOCKS_PER_TICK = 32;
+        public const int BEATS_PER_MEAS = 4;//TODO needed?
+
+        /// <summary>Subdivision setting. Currently 1/16 notes.</summary>
+        public const int INCRS_PER_BEAT  = 4;
         #endregion
 
         #region Properties
         /// <summary>Left of the decimal point.</summary>
-        public int Tick { get; set; } = 0;
+        public int Beat { get; set; } = 0;
 
         /// <summary>Right of the decimal point.</summary>
-        public int Tock { get; set; } = 0;
+        public int Increment { get; set; } = 0;
 
-        /// <summary>Total Tocks for the unit of time.</summary>
-        public int TotalTocks { get { return Tick * TOCKS_PER_TICK + Tock; } }
+        /// <summary>Total subs for the unit of time.</summary>
+        public int TotalIncrs { get { return Beat * INCRS_PER_BEAT + Increment; } }
 
         /// <summary>Convert to double representation.</summary>
-        public double AsDouble { get { return Tick + Tock / 100.0; } }
+        public double AsDouble { get { return Beat + Increment / 100.0; } }
         #endregion
 
         #region Constructors
@@ -35,77 +38,77 @@ namespace Nebulator.Common
         /// </summary>
         public Time()
         {
-            Tick = 0;
-            Tock = 0;
+            Beat = 0;
+            Increment = 0;
         }
 
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        public Time(Time note)
+        public Time(Time other)
         {
-            Tick = note.Tick;
-            Tock = note.Tock;
+            Beat = other.Beat;
+            Increment = other.Increment;
         }
 
         /// <summary>
         /// Constructor from discrete components.
         /// </summary>
-        /// <param name="tick"></param>
-        /// <param name="tock">Tock to set - can be negative.</param>
-        public Time(int tick, int tock)
+        /// <param name="beat"></param>
+        /// <param name="incr">Sub to set - can be negative.</param>
+        public Time(int beat, int incr)
         {
-            if (tick < 0)
+            if (beat < 0)
             {
                 //throw new Exception("Negative value is invalid");
-                tick = 0;
+                beat = 0;
             }
 
-            if (tock >= 0)
+            if (incr >= 0)
             {
-                Tick = tick + tock / TOCKS_PER_TICK;
-                Tock = tock % TOCKS_PER_TICK;
+                Beat = beat + incr / INCRS_PER_BEAT;
+                Increment = incr % INCRS_PER_BEAT;
             }
             else
             {
-                int atock = Math.Abs(tock);
-                Tick = tick - (atock / TOCKS_PER_TICK) - 1;
-                Tock = TOCKS_PER_TICK - (atock % TOCKS_PER_TICK);
+                incr = Math.Abs(incr);
+                Beat = beat - (incr / INCRS_PER_BEAT) - 1;
+                Increment = INCRS_PER_BEAT - (incr % INCRS_PER_BEAT);
             }
         }
 
         /// <summary>
-        /// Constructor from tocks.
+        /// Constructor from total incrs.
         /// </summary>
-        /// <param name="tocks"></param>
-        public Time(int tocks)
+        /// <param name="incrs"></param>
+        public Time(int incrs)
         {
-            if (tocks < 0)
+            if (incrs < 0)
             {
                 throw new Exception("Negative value is invalid");
             }
 
-            Tick = tocks / TOCKS_PER_TICK;
-            Tock = tocks % TOCKS_PER_TICK;
+            Beat = incrs / INCRS_PER_BEAT;
+            Increment = incrs % INCRS_PER_BEAT;
         }
 
         /// <summary>
-        /// Constructor from tocks.
+        /// Constructor from total incrs.
         /// </summary>
-        /// <param name="tocks"></param>
-        public Time(long tocks)
+        /// <param name="incrs"></param>
+        public Time(long incrs)
         {
-            if(tocks < 0)
+            if(incrs < 0)
             {
                 throw new Exception("Negative value is invalid");
             }
 
-            Tick = (int)(tocks / TOCKS_PER_TICK);
-            Tock = (int)(tocks % TOCKS_PER_TICK);
+            Beat = (int)(incrs / INCRS_PER_BEAT);
+            Increment = (int)(incrs % INCRS_PER_BEAT);
         }
 
         /// <summary>
-        /// Constructor from Tick.Tock representation as a double.
+        /// Constructor from Beat.Incr representation as a double.
         /// </summary>
         /// <param name="tts"></param>
         public Time(double tts)
@@ -116,8 +119,8 @@ namespace Nebulator.Common
             }
 
             var (integral, fractional) = MathUtils.SplitDouble(tts);
-            Tick = (int)integral;
-            Tock = (int)(fractional * 100);
+            Beat = (int)integral;
+            Increment = (int)(fractional * 100);
         }
         #endregion
 
@@ -152,7 +155,7 @@ namespace Nebulator.Common
                 return true;
             }
 
-            return Tick.Equals(other.Tick) && Tock.Equals(other.Tock);
+            return Beat.Equals(other.Beat) && Increment.Equals(other.Increment);
         }
 
         public static bool operator ==(Time obj1, Time obj2)
@@ -172,7 +175,7 @@ namespace Nebulator.Common
                 return false;
             }
 
-            return (obj1.Tick == obj2.Tick && obj1.Tock == obj2.Tock);
+            return (obj1.Beat == obj2.Beat && obj1.Increment == obj2.Increment);
         }
 
         public static bool operator !=(Time obj1, Time obj2)
@@ -182,55 +185,55 @@ namespace Nebulator.Common
 
         public static bool operator >(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTocks > t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalIncrs > t2.TotalIncrs;
         }
 
         public static bool operator >=(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTocks >= t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalIncrs >= t2.TotalIncrs;
         }
 
         public static bool operator <(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTocks < t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalIncrs < t2.TotalIncrs;
         }
 
         public static bool operator <=(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTocks <= t2.TotalTocks;
+            return t1 is null || t2 is null || t1.TotalIncrs <= t2.TotalIncrs;
         }
 
         public static Time operator +(Time t1, Time t2)
         {
-            int tick = t1.Tick + t2.Tick + (t1.Tock + t2.Tock) / TOCKS_PER_TICK;
-            int tock = (t1.Tock + t2.Tock) % TOCKS_PER_TICK;
-            return new Time(tick, tock);
+            int beat = t1.Beat + t2.Beat + (t1.Increment + t2.Increment) / INCRS_PER_BEAT;
+            int incr = (t1.Increment + t2.Increment) % INCRS_PER_BEAT;
+            return new Time(beat, incr);
         }
 
         public override int GetHashCode()
         {
-            return TotalTocks;
+            return TotalIncrs;
         }
         #endregion
 
         #region Public functions
         /// <summary>
-        /// Move to the next tock and update clock.
+        /// Move to the next increment and update clock.
         /// </summary>
-        /// <returns>True if it's a new Tick.</returns>
+        /// <returns>True if it's a new beat.</returns>
         public bool Advance()
         {
-            bool newTick = false;
-            Tock++;
+            bool newIncr = false;
+            Increment++;
 
-            if(Tock >= TOCKS_PER_TICK)
+            if(Increment >= INCRS_PER_BEAT)
             {
-                Tick++;
-                Tock = 0;
-                newTick = true;
+                Beat++;
+                Increment = 0;
+                newIncr = true;
             }
 
-            return newTick;
+            return newIncr;
         }
 
         /// <summary>
@@ -238,19 +241,19 @@ namespace Nebulator.Common
         /// </summary>
         public void Reset()
         {
-            Tick = 0;
-            Tock = 0;
+            Beat = 0;
+            Increment = 0;
         }
 
         /// <summary>
-        /// Round up to next Tick.
+        /// Round up to next beat.
         /// </summary>
         public void RoundUp()
         {
-            if(Tock != 0)
+            if(Increment != 0)
             {
-                Tick++;
-                Tock = 0;
+                Beat++;
+                Increment = 0;
             }
         }
 
@@ -259,7 +262,7 @@ namespace Nebulator.Common
         /// </summary>
         public override string ToString()
         {
-            return $"{Tick:00}.{Tock:00}";
+            return $"{Beat:00}.{Increment:00}";
         }
         #endregion
     }

@@ -22,15 +22,6 @@ using Nebulator.Midi;
 using Nebulator.OSC;
 
 
-//tock size = 32
-//7mspb = 81.5bpm
-//8mspb = 78bpm
-
-
-//tock size = 96
-//7mspb = 89bpm
-//8mspb = 78bpm
-
 
 namespace Nebulator
 {
@@ -554,17 +545,17 @@ namespace Nebulator
                         int sectionTime = 0;
                         foreach(NSection section in _script.Sections)
                         {
-                            foreach((NChannel ch, NSequence seq, int tick) v in section)
+                            foreach((NChannel ch, NSequence seq, int beat) v in section)
                             {
                                 // Check for skip/mute.
                                 if(v.seq != null)
                                 {
-                                    _script.AddSequence(v.ch, v.seq, sectionTime + v.tick);
+                                    _script.AddSequence(v.ch, v.seq, sectionTime + v.beat);
                                 }
                             }
 
                             // Update accumulated time.
-                            sectionTime += section.Measures * NebScript.TicksPerMeasure;
+                            sectionTime += section.Measures * Time.BEATS_PER_MEAS;
                         }
 
                         ProcessRuntime();
@@ -660,14 +651,14 @@ namespace Nebulator
                 foreach (NSection sect in _script.Sections)
                 {
                     timeMaster.TimeDefs.Add(start, sect.Name);
-                    start += sect.Measures * NebScript.TicksPerMeasure;
+                    start += sect.Measures * Time.BEATS_PER_MEAS;
                 }
                 // Add the dummy end marker.
                 timeMaster.TimeDefs.Add(start, "");
 
                 if (timeMaster.TimeDefs.Count > 0)
                 {
-                    timeMaster.MaxTick = timeMaster.TimeDefs.Keys.Max();
+                    timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
                 }
             }
 
@@ -732,12 +723,12 @@ namespace Nebulator
             {
                 //_tan.Arm();
 
-                // Update section - only on Ticks.
-                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Tock == 0)
+                // Update section - only on beats.
+                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Increment == 0)
                 {
-                    if(timeMaster.TimeDefs.ContainsKey(_stepTime.Tick))
+                    if(timeMaster.TimeDefs.ContainsKey(_stepTime.Beat))
                     {
-                        // currentSection = _stepTime.Tick;
+                        // currentSection = _stepTime.Beat;
                     }
                 }
 
@@ -766,7 +757,7 @@ namespace Nebulator
                 if(timeMaster.TimeDefs.Count() > 1)
                 {
                    // Check for end.
-                   if (_stepTime.Tick > timeMaster.TimeDefs.Last().Key)
+                   if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
                    {
                        ProcessPlay(PlayCommand.StopRewind, false);
                        _outputs.ForEach(o => o.Value?.Kill()); // just in case
@@ -1555,9 +1546,9 @@ namespace Nebulator
         /// </summary>
         void SetSpeedTimerPeriod()
         {
-            double secPerTick = 60 / potSpeed.Value; // aka beat
-            double msecPerTock = 1000 * secPerTick / Time.TOCKS_PER_TICK;
-            _timer.SetTimer("NEB", (int)msecPerTock);
+            double secPerBeat = 60 / potSpeed.Value; // aka beat
+            double msecPerBeat = 1000 * secPerBeat / Time.INCRS_PER_BEAT;
+            _timer.SetTimer("NEB", (int)msecPerBeat);
         }
         #endregion
 
@@ -1607,12 +1598,11 @@ namespace Nebulator
                 Dictionary<int, string> channels = new Dictionary<int, string>();
                 _script.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.Name));
 
-                // Convert speed/bpm to sec per tick.
-                double ticksPerMinute = potSpeed.Value; // bpm
-                double ticksPerSec = ticksPerMinute / 60;
-                double secPerTick = 1 / ticksPerSec;
+                // Convert bpm to sec per beat.
+                double beatsPerSec = potSpeed.Value / 60;
+                double secPerBeat = 1 / beatsPerSec;
 
-                MidiUtils.ExportMidi(_script.Steps, fn, channels, secPerTick, "Converted from " + _fn);
+                MidiUtils.ExportMidi(_script.Steps, fn, channels, secPerBeat, "Converted from " + _fn);
             }
         }
 

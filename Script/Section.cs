@@ -33,13 +33,13 @@ namespace Nebulator.Script
         /// <summary>
         /// Enumerator for section.
         /// </summary>
-        /// <returns>Tuple of (channel, sequence, tick)</returns>
+        /// <returns>Tuple of (channel, sequence, beat)</returns>
         public IEnumerator GetEnumerator()
         {
             // Flatten section into sequences.
             foreach (NSectionElement sect in Elements)
             {
-                int seqTick = 0;
+                int seqBeat = 0;
                 NSequence seqnull = null; // default means ignore
 
                 bool ok = sect.Sequences != null && sect.Sequences.Count() > 0;
@@ -51,16 +51,16 @@ namespace Nebulator.Script
                         case SequenceMode.Once:
                             foreach (NSequence seq in sect.Sequences)
                             {
-                                yield return (sect.Channel, seq, seqTick);
-                                seqTick += seq.Measures * NebScript.TicksPerMeasure;
+                                yield return (sect.Channel, seq, seqBeat);
+                                seqBeat += seq.Measures * Time.BEATS_PER_MEAS;
                             }
                             break;
 
                         case SequenceMode.Loop:
-                            while (seqTick < Measures * NebScript.TicksPerMeasure)
+                            while (seqBeat < Measures * Time.BEATS_PER_MEAS)
                             {
-                                yield return (sect.Channel, sect.Sequences[0], seqTick);
-                                seqTick += sect.Sequences[0].Measures * NebScript.TicksPerMeasure;
+                                yield return (sect.Channel, sect.Sequences[0], seqBeat);
+                                seqBeat += sect.Sequences[0].Measures * Time.BEATS_PER_MEAS;
                             }
                             break;
                     }
@@ -68,7 +68,7 @@ namespace Nebulator.Script
 
                 if (!ok)
                 {
-                    yield return (sect.Channel, seqnull, seqTick);
+                    yield return (sect.Channel, seqnull, seqBeat);
                 }
             }
         }
