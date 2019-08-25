@@ -1,5 +1,4 @@
 
-// Some ported parts of wicked games.
 
 ///// Include other lib files. /////
 #import "utils.neb"
@@ -19,7 +18,7 @@ NChannel chDrums;
 NChannel chSynth;
 
 // Use wingm and virtual kbd only.
-bool _local = false;
+bool _local = true;
 
 
 ////// Nebulator midi stuff //////
@@ -50,8 +49,16 @@ public override void Setup2()
 
 void BuildComp()
 {
+    // One Tick is 1/16 note.
 
-    /////////////////////// sequences /////////////////////////////////
+    /////////////////////// Keys sequences /////////////////////////////////
+
+    NSequence seqKeysIntro = CreateSequence(4, new NSequenceElements
+    {
+        { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
+        { "|                |                |                |        9 9     |", "D5.m", KEYS_VOL },
+        { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },
+    });
 
     NSequence seqKeysVerse = CreateSequence(4, new NSequenceElements
     {
@@ -60,6 +67,15 @@ void BuildComp()
         { "|                |                |9---------------|----------      |", "E4.m", KEYS_VOL },
     });
 
+    NSequence seqKeysEnd = CreateSequence(4, new NSequenceElements
+    {
+        { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
+        { "|                |                |                |        9 9     |", "D5.m", KEYS_VOL },
+        { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },
+    });
+
+    /////////////////////// Drum sequences /////////////////////////////////
+
     NSequence seqDrumsVerse = CreateSequence(4, new NSequenceElements
     {
         { "|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|", RideCymbal1,      DRUM_VOL*0.8 },
@@ -67,6 +83,12 @@ void BuildComp()
         { "|8.....8.8.......|8.....8.8.......|8.....8.8.......|8.....8.8.......|", AcousticBassDrum, DRUM_VOL },
     });
 
+    /////////////////////// Bass sequences /////////////////////////////////
+
+    NSequence seqBassIntro = CreateSequence(4, new NSequenceElements
+    {
+        { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
+    });
 
     NSequence seqBassVerse = CreateSequence(4, new NSequenceElements
     {
@@ -75,13 +97,32 @@ void BuildComp()
         { "|................|................|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
 
+    NSequence seqBassEnd = CreateSequence(4, new NSequenceElements
+    {
+        { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
+    });
+
 
     /////////////////////// sections /////////////////////////////////
 
-    CreateSection(8, "A thing", new NSectionElements
+    CreateSection(8, "Intro", new NSectionElements
+    {
+        { chKeys,  Loop,  seqKeysIntro },
+        { chDrums, Loop,  seqDrumsVerse },
+        { chBass,  Loop,  seqBassIntro  },
+    });
+
+    CreateSection(16, "Middle", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysVerse },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse  },
+    });
+
+    CreateSection(8, "End", new NSectionElements
+    {
+        { chKeys,  Loop,  seqKeysEnd },
+        { chDrums, Loop,  seqDrumsVerse },
+        { chBass,  Loop,  seqBassEnd  },
     });
 }

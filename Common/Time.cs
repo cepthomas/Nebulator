@@ -12,7 +12,7 @@ namespace Nebulator.Common
     {
         #region Constants
         /// <summary>Subdivision setting.</summary>
-        public const int TOCKS_PER_TICK = 96;
+        public const int TOCKS_PER_TICK = 32;
         #endregion
 
         #region Properties

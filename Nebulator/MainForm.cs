@@ -22,6 +22,16 @@ using Nebulator.Midi;
 using Nebulator.OSC;
 
 
+//tock size = 32
+//7mspb = 81.5bpm
+//8mspb = 78bpm
+
+
+//tock size = 96
+//7mspb = 89bpm
+//8mspb = 78bpm
+
+
 namespace Nebulator
 {
     public partial class MainForm : Form
@@ -743,7 +753,7 @@ namespace Nebulator
 
                 //if (_tan.Grab())
                 //{
-                //    _logger.Info("NEB tan: " + _tan.ToString());
+                //    _logger.Info($"NEB tan: {_tan.Mean}");
                 //}
 
                 // Process any sequence steps.
@@ -1545,10 +1555,8 @@ namespace Nebulator
         /// </summary>
         void SetSpeedTimerPeriod()
         {
-            double secPerBeat = 60 / potSpeed.Value; // aka tick
-            double secPerMeas = 4 * secPerBeat;
-            double secPerTock = secPerBeat / Time.TOCKS_PER_TICK;
-            double msecPerTock = secPerTock * 1000;
+            double secPerTick = 60 / potSpeed.Value; // aka beat
+            double msecPerTock = 1000 * secPerTick / Time.TOCKS_PER_TICK;
             _timer.SetTimer("NEB", (int)msecPerTock);
         }
         #endregion
