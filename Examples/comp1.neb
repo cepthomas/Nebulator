@@ -47,18 +47,6 @@ public override void Setup2()
     BuildComp();
 }
 
-
-
-//tock size = 32
-//7mspb = 81.5bpm
-//8mspb = 78bpm
-
-
-//tock size = 96
-//7mspb = 89bpm
-//8mspb = 78bpm
-
-
 void BuildComp()
 {
     // Reaper Time is 1.1.0 to 1.4.99
@@ -70,7 +58,7 @@ void BuildComp()
     
     /////////////////////// Keys sequences /////////////////////////////////
 
-    NSequence seqKeysIntro = CreateSequence(4, new NSequenceElements
+    NSequence seqKeysIntro = CreateSequence(16, new NSequenceElements
     {
         //"|m...............|b...b...b...b...|iiiiiiiiiiiiiiii|
         { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
@@ -78,14 +66,14 @@ void BuildComp()
         { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },
     });
 
-    NSequence seqKeysVerse = CreateSequence(4, new NSequenceElements
+    NSequence seqKeysVerse = CreateSequence(16, new NSequenceElements
     {
         { "|9-------------  |                |                |                |", "B4.m", KEYS_VOL },
         { "|                |9-------------  |                |                |", "A4.m", KEYS_VOL },
         { "|                |                |9---------------|----------      |", "E4.m", KEYS_VOL },
     });
 
-    NSequence seqKeysEnd = CreateSequence(4, new NSequenceElements
+    NSequence seqKeysEnd = CreateSequence(16, new NSequenceElements
     {
         { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
         { "|                |                |                |        9 9     |", "D5.m", KEYS_VOL },
@@ -94,7 +82,7 @@ void BuildComp()
 
     /////////////////////// Drum sequences /////////////////////////////////
 
-    NSequence seqDrumsVerse = CreateSequence(4, new NSequenceElements
+    NSequence seqDrumsVerse = CreateSequence(16, new NSequenceElements
     {
         { "|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|", RideCymbal1,      DRUM_VOL*0.8 },
         { "|....8.......8...|....8.......8...|....8.......8...|....8.......8...|", SideStick,        DRUM_VOL*0.9 },
@@ -103,19 +91,19 @@ void BuildComp()
 
     /////////////////////// Bass sequences /////////////////////////////////
 
-    NSequence seqBassIntro = CreateSequence(4, new NSequenceElements
+    NSequence seqBassIntro = CreateSequence(16, new NSequenceElements
     {
         { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
 
-    NSequence seqBassVerse = CreateSequence(4, new NSequenceElements
+    NSequence seqBassVerse = CreateSequence(16, new NSequenceElements
     {
         { "|9----.9.9------.|................|................|................|", "B2", BASS_VOL },
         { "|................|9----.9.9------.|................|................|", "A2", BASS_VOL },
         { "|................|................|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
 
-    NSequence seqBassEnd = CreateSequence(4, new NSequenceElements
+    NSequence seqBassEnd = CreateSequence(16, new NSequenceElements
     {
         { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
@@ -123,21 +111,21 @@ void BuildComp()
 
     /////////////////////// sections /////////////////////////////////
 
-    CreateSection(8, "Intro", new NSectionElements
+    CreateSection(32, "Intro", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysIntro },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassIntro  },
     });
 
-    CreateSection(16, "Middle", new NSectionElements
+    CreateSection(64, "Middle", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysVerse },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse  },
     });
 
-    CreateSection(8, "End", new NSectionElements
+    CreateSection(32, "End", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysEnd },
         { chDrums, Loop,  seqDrumsVerse },

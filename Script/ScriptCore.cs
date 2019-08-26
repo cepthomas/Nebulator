@@ -99,7 +99,7 @@ namespace Nebulator.Script
                 //int toffset = startBeat == -1 ? 0 : channel.NextTime();
 
                 Time startNoteTime = new Time(startBeat, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalIncrs == 0 ? new Time(DrumDur) : seqel.Duration);
+                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalTicks == 0 ? new Time(DrumDur) : seqel.Duration);
 
                 // Is it a function?
                 if (seqel.ScriptFunction != null)

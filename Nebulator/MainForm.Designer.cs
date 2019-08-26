@@ -285,7 +285,7 @@
             // 
             this.timeMaster.ControlColor = System.Drawing.Color.Orange;
             time1.Beat = 0;
-            time1.Increment = 0;
+            time1.Tick = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.timeMaster.Location = new System.Drawing.Point(231, 32);

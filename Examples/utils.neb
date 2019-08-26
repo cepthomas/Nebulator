@@ -18,7 +18,7 @@ bool Boing(double notenum = 0)
         boinged = true;
     }
 
-    SendNote(chSynth, notenum, VEL, 1.09);
+    SendNote(chSynth, notenum, VEL, 1.0);
     return boinged;
 }
 

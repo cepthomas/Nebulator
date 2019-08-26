@@ -19,8 +19,8 @@ namespace Nebulator.Script
         /// <summary>List of notes or other elements.</summary>
         public NSequenceElements Elements { get; set; } = new NSequenceElements();
 
-        /// <summary>Length in measures.</summary>
-        public int Measures { get; set; } = 1;
+        /// <summary>Length in beats.</summary>
+        public int Beats { get; set; } = 1;
         #endregion
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSequence: Measures:{Measures} Elements:{Elements.Count}";
+            return $"NSequence: Beats:{Beats} Elements:{Elements.Count}";
         }
     }
 
@@ -38,7 +38,7 @@ namespace Nebulator.Script
     public class NSequenceElements : List<NSequenceElement>
     {
         /// <summary>
-        /// Like: Z.Add(00.00, "G3", 90, 0.60);//TODO these docs
+        /// Like: Z.Add(00.0, "G3", 90, 1.1);
         /// </summary>
         /// <param name="when">Time to play at.</param>
         /// <param name="what">What to play.</param>
@@ -57,7 +57,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add(00.00, 66, 90, 0.60) or Z.Add(00.00, CrashCymbal1, 90, 0.60);
+        /// Like: Z.Add(00.0, 66, 90, 1.1) or Z.Add(00.0, CrashCymbal1, 90, 1.1);
         /// </summary>
         /// <param name="when">Time to play at.</param>
         /// <param name="what">What to play.</param>
@@ -76,7 +76,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add(01.00, algoDynamic, 90);
+        /// Like: Z.Add(01.0, algoDynamic, 90);
         /// </summary>
         /// <param name="when">Time to play at.</param>
         /// <param name="func">Function to execute.</param>
@@ -124,9 +124,9 @@ namespace Nebulator.Script
                 // Make a Note on.
                 double volmod = (double)(currentVol - '0') / 10;
 
-                Time dur = new Time((index - start) / Time.INCRS_PER_BEAT, (index - start) % Time.INCRS_PER_BEAT);
+                Time dur = new Time((index - start) / Time.TICKS_PER_BEAT, (index - start) % Time.TICKS_PER_BEAT);
 
-                Time when = new Time(start / Time.INCRS_PER_BEAT, start % Time.INCRS_PER_BEAT);
+                Time when = new Time(start / Time.TICKS_PER_BEAT, start % Time.TICKS_PER_BEAT);
                 NSequenceElement ncl = new NSequenceElement(which)
                 {
                     When = when,

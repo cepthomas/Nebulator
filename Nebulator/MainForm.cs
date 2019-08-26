@@ -555,7 +555,7 @@ namespace Nebulator
                             }
 
                             // Update accumulated time.
-                            sectionTime += section.Measures * Time.BEATS_PER_MEAS;
+                            sectionTime += section.Beats;
                         }
 
                         ProcessRuntime();
@@ -651,7 +651,7 @@ namespace Nebulator
                 foreach (NSection sect in _script.Sections)
                 {
                     timeMaster.TimeDefs.Add(start, sect.Name);
-                    start += sect.Measures * Time.BEATS_PER_MEAS;
+                    start += sect.Beats;
                 }
                 // Add the dummy end marker.
                 timeMaster.TimeDefs.Add(start, "");
@@ -724,7 +724,7 @@ namespace Nebulator
                 //_tan.Arm();
 
                 // Update section - only on beats.
-                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Increment == 0)
+                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Tick == 0)
                 {
                     if(timeMaster.TimeDefs.ContainsKey(_stepTime.Beat))
                     {
@@ -1547,7 +1547,7 @@ namespace Nebulator
         void SetSpeedTimerPeriod()
         {
             double secPerBeat = 60 / potSpeed.Value; // aka beat
-            double msecPerBeat = 1000 * secPerBeat / Time.INCRS_PER_BEAT;
+            double msecPerBeat = 1000 * secPerBeat / Time.TICKS_PER_BEAT;
             _timer.SetTimer("NEB", (int)msecPerBeat);
         }
         #endregion

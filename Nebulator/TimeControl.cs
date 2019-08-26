@@ -32,7 +32,7 @@ namespace Nebulator.Controls
             set
             {
                 _current = new Time(value);
-                if (_current.Increment == 0)
+                if (_current.Tick == 0)
                 {
                     Invalidate();
                 }
@@ -200,7 +200,7 @@ namespace Nebulator.Controls
         private void SetValueFromMouse(int x)
         {
             _current.Beat = GetValueFromMouse(x);
-            _current.Increment = 0;
+            _current.Tick = 0;
             ValueChanged?.Invoke(this, new EventArgs());
         }
 

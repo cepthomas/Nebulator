@@ -17,14 +17,14 @@ namespace Nebulator.Script
     /// <summary>
     /// One section definition.
     /// </summary>
-    public class NSection : IEnumerable // Exposes an enumerator, which supports a simple iteration over a non-generic collection.
+    public class NSection : IEnumerable
     {
         #region Properties
         /// <summary>List of sequences in this section.</summary>
         public NSectionElements Elements { get; set; } = new NSectionElements();
 
-        /// <summary>Length in measures.</summary>
-        public int Measures { get; set; } = 0;
+        /// <summary>Length in beats.</summary>
+        public int Beats { get; set; } = 0;
 
         /// <summary>Readable.</summary>
         public string Name { get; set; } = Utils.UNKNOWN_STRING;
@@ -52,15 +52,15 @@ namespace Nebulator.Script
                             foreach (NSequence seq in sect.Sequences)
                             {
                                 yield return (sect.Channel, seq, seqBeat);
-                                seqBeat += seq.Measures * Time.BEATS_PER_MEAS;
+                                seqBeat += seq.Beats;
                             }
                             break;
 
                         case SequenceMode.Loop:
-                            while (seqBeat < Measures * Time.BEATS_PER_MEAS)
+                            while (seqBeat < Beats)
                             {
                                 yield return (sect.Channel, sect.Sequences[0], seqBeat);
-                                seqBeat += sect.Sequences[0].Measures * Time.BEATS_PER_MEAS;
+                                seqBeat += sect.Sequences[0].Beats;
                             }
                             break;
                     }
@@ -78,7 +78,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSection: Measures:{Measures} Name:{Name} Elements:{Elements.Count}";
+            return $"NSection: Beats:{Beats} Name:{Name} Elements:{Elements.Count}";
         }
     }
 

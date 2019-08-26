@@ -139,7 +139,7 @@ namespace Nebulator.OSC
                             msg.Data.Add(non.NoteNumber);
                             msg.Data.Add(non.VelocityToPlay);
 
-                            if (non.Duration.TotalIncrs > 0) // specific duration
+                            if (non.Duration.TotalTicks > 0) // specific duration
                             {
                                 // Remove any lingering note offs and add a fresh one.
                                 _stops.RemoveAll(s => s.NoteNumber == non.NoteNumber && s.ChannelNumber == non.ChannelNumber);
@@ -149,7 +149,7 @@ namespace Nebulator.OSC
                                     Device = non.Device,
                                     ChannelNumber = non.ChannelNumber,
                                     NoteNumber = MathUtils.Constrain(non.NoteNumber, 0, OscCommon.MAX_NOTE),
-                                    Expiry = non.Duration.TotalIncrs
+                                    Expiry = non.Duration.TotalTicks
                                 });
                             }
                             break;

@@ -66,7 +66,7 @@ namespace Nebulator.Midi
 
             long InternalToMidiTime(Time time)
             {
-                double d = ((double)time.Beat + (double)time.Increment / (double)Time.INCRS_PER_BEAT) * (double)deltaTicksPerQuarterNote;
+                double d = ((double)time.Beat + (double)time.Tick / (double)Time.TICKS_PER_BEAT) * (double)deltaTicksPerQuarterNote;
                 return (long)d;
             }
 
@@ -87,7 +87,7 @@ namespace Nebulator.Midi
                                 (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
                             trackEvents[step.ChannelNumber].Add(evt);
 
-                            if (stt.Duration.TotalIncrs > 0) // specific duration
+                            if (stt.Duration.TotalTicks > 0) // specific duration
                             {
                                 evt = new NoteEvent(InternalToMidiTime(time + stt.Duration),
                                     stt.ChannelNumber,
@@ -323,7 +323,7 @@ namespace Nebulator.Midi
             // Local functions
             Time MidiTimeToInternal(long mtime, int tpqn)
             {
-                return new Time(mtime * Time.INCRS_PER_BEAT / tpqn);
+                return new Time(mtime * Time.TICKS_PER_BEAT / tpqn);
             }
             return all;
         }

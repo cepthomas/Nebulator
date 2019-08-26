@@ -4,12 +4,6 @@
 #import "scale.neb"
 
 // TODO - fills, intros, like that.
-// TODO 1/32 notes for patterns? Maybe not need 96 ppm then.
-// TODO Time stuff:
-//   time signature: 3/4 means 3 beats per measure, each beat is 1/4 note. void SetTimeSig(int bpmeas, int bnote) { }
-//   Also determines TicksPerMeasure and PatternResolution.
-//   Time wobbler back?
-
 
 
 ///// IO device names.
@@ -127,95 +121,94 @@ void BuildComp()
 
     /////////////////////// sequences /////////////////////////////////
 
-    NSequence seqKeysVerse = CreateSequence(2, new NSequenceElements
+    NSequence seqKeysVerse = CreateSequence(8, new NSequenceElements
     {
-        // 16 ticks/meas: 32 hits == 8 ticks == 2 whole notes == 2 measure
         { "|7-      7-      |7-      7-      |", "G4.m7", KEYS_VOL },
         { "|    4-      4-8-|    4-      4-8-|", "G4.m6", KEYS_VOL*0.9 }
     });
 
-    NSequence seqKeysChorus = CreateSequence(2, new NSequenceElements
+    NSequence seqKeysChorus = CreateSequence(8, new NSequenceElements
     {
-        { 0.00, "F4",    0.7,      0.32 },
-        { 0.32, "D#4",   KEYS_VOL, 0.32 },
-        { 1.00, "C4",    0.7,      0.32 },
-        { 1.32, "B4.m7", 0.7,      0.32 },
-        { 2.00, "F5",    0.7,      0.32 },
-        { 2.32, "D#5",   KEYS_VOL, 0.32 },
-        { 3.00, "C5",    0.7,      0.32 },
-        { 3.32, "B5.m7", 0.7,      0.32 },
-        { 4.00, "F3",    0.7,      0.32 },
-        { 4.32, "D#3",   KEYS_VOL, 0.32 },
-        { 5.00, "C3",    0.7,      0.32 },
-        { 5.32, "B3.m7", 0.7,      0.32 },
-        { 6.00, "F2",    0.7,      0.32 },
-        { 6.32, "D#2",   KEYS_VOL, 0.32 },
-        { 7.00, "C2",    0.7,      0.32 },
-        { 7.32, "B2.m7", 0.7,      0.32 },
+        { 0.0, "F4",    0.7,      0.2 },
+        { 0.2, "D#4",   KEYS_VOL, 0.2 },
+        { 1.0, "C4",    0.7,      0.2 },
+        { 1.2, "B4.m7", 0.7,      0.2 },
+        { 2.0, "F5",    0.7,      0.2 },
+        { 2.2, "D#5",   KEYS_VOL, 0.2 },
+        { 3.0, "C5",    0.7,      0.2 },
+        { 3.2, "B5.m7", 0.7,      0.2 },
+        { 4.0, "F3",    0.7,      0.2 },
+        { 4.2, "D#3",   KEYS_VOL, 0.2 },
+        { 5.0, "C3",    0.7,      0.2 },
+        { 5.2, "B3.m7", 0.7,      0.2 },
+        { 6.0, "F2",    0.7,      0.2 },
+        { 6.2, "D#2",   KEYS_VOL, 0.2 },
+        { 7.0, "C2",    0.7,      0.2 },
+        { 7.2, "B2.m7", 0.7,      0.2 },
     });
 
-    NSequence seqDrumsSimple = CreateSequence(2, new NSequenceElements
+    NSequence seqDrumsSimple = CreateSequence(8, new NSequenceElements
     {
-        { 0.00, AcousticBassDrum,  DRUM_VOL },
-        { 1.00, RideCymbal1,       DRUM_VOL },
-        { 1.10, RideCymbal1,       DRUM_VOL },
-        { 1.60, HiMidTom,          DRUM_VOL },
-        { 2.00, AcousticBassDrum,  DRUM_VOL },
-        { 3.00, RideCymbal1,       DRUM_VOL },
-        { 3.10, RideCymbal1,       DRUM_VOL },
-        { 4.00, AcousticBassDrum,  DRUM_VOL },
-        { 5.00, RideCymbal1,       DRUM_VOL },
-        { 5.10, RideCymbal1,       DRUM_VOL },
-        { 5.60, HiMidTom,          DRUM_VOL },
-        { 6.00, AcousticBassDrum,  DRUM_VOL },
-        { 7.00, CrashCymbal2,      DRUM_VOL },
+        { 0.0, AcousticBassDrum,  DRUM_VOL },
+        { 1.0, RideCymbal1,       DRUM_VOL },
+        { 1.1, RideCymbal1,       DRUM_VOL },
+        { 1.2, HiMidTom,          DRUM_VOL },
+        { 2.0, AcousticBassDrum,  DRUM_VOL },
+        { 3.0, RideCymbal1,       DRUM_VOL },
+        { 3.1, RideCymbal1,       DRUM_VOL },
+        { 4.0, AcousticBassDrum,  DRUM_VOL },
+        { 5.0, RideCymbal1,       DRUM_VOL },
+        { 5.1, RideCymbal1,       DRUM_VOL },
+        { 5.2, HiMidTom,          DRUM_VOL },
+        { 6.0, AcousticBassDrum,  DRUM_VOL },
+        { 7.0, CrashCymbal2,      DRUM_VOL },
     });
 
-    NSequence seqDrumsVerse = CreateSequence(2, new NSequenceElements
+    NSequence seqDrumsVerse = CreateSequence(8, new NSequenceElements
     {
         { "|8       8       |8       8       |", AcousticBassDrum, DRUM_VOL },
         { "|    8       8 8 |    8       8 8 |", AcousticSnare,    DRUM_VOL*0.9 },
         { "|      88      88|      88      88|", ClosedHiHat,      DRUM_VOL*1.1 },
     });
 
-    NSequence seqBassVerse = CreateSequence(2, new NSequenceElements
+    NSequence seqBassVerse = CreateSequence(8, new NSequenceElements
     {
-        { 0.00, "C2",  0.75, 0.25 },
-        { 0.48, "C2",  0.75, 0.125 },
-        { 3.32, "E2",  0.75, 0.25 },
-        { 4.00, "C2",  0.75, 1.00 },
-        { 7.48, "A#2", 0.75, 0.10 }
+        { 0.0, "C2",  0.75, 0.2 },
+        { 0.2, "C2",  0.75, 0.1 },
+        { 3.3, "E2",  0.75, 0.2 },
+        { 4.0, "C2",  0.75, 1.0 },
+        { 7.2, "A#2", 0.75, 0.1 }
     });
 
-    NSequence seqAlgo = CreateSequence(1, new NSequenceElements
+    NSequence seqAlgo = CreateSequence(4, new NSequenceElements
     {
-        { 1.60, AlgoDynamic, 0.8 },
+        { 1.2, AlgoDynamic, 0.8 },
     });
 
-    NSequence seqEmpty = CreateSequence(1, new NSequenceElements
+    NSequence seqEmpty = CreateSequence(4, new NSequenceElements
     {
     });
 
     // Sequence triggered in script.
-    seqDynamic = CreateSequence(2, new NSequenceElements
+    seqDynamic = CreateSequence(8, new NSequenceElements
     {
-        { 0.00, "G3 ", 0.75, 0.60 },
-        { 1.00, "A3 ", 0.75, 0.60 },
-        { 2.00, "Bb3", 0.75, 0.60 },
-        { 3.00, "C4 ", 0.75, 0.60 },
+        { 0.0, "G3 ", 0.75, 0.2 },
+        { 1.0, "A3 ", 0.75, 0.2 },
+        { 2.0, "Bb3", 0.75, 0.2 },
+        { 3.0, "C4 ", 0.75, 0.2 },
     });
 
 
     /////////////////////// sections /////////////////////////////////
 
-    CreateSection(8, "Beginning", new NSectionElements
+    CreateSection(32, "Beginning", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysVerse   },
         { chDrums, Loop,  seqDrumsSimple },
         { chBass,  Loop,  seqBassVerse   }
     });
 
-    CreateSection(4, "Middle", new NSectionElements
+    CreateSection(16, "Middle", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysChorus },
         { chDrums, Loop,  seqDrumsVerse },
@@ -223,7 +216,7 @@ void BuildComp()
         { chSynth, Once,  seqAlgo,  seqEmpty, seqDynamic, seqEmpty }
     });
 
-    CreateSection(8, "Ending", new NSectionElements
+    CreateSection(32, "Ending", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysVerse   },
         { chDrums, Loop,  seqDrumsSimple },
@@ -235,7 +228,7 @@ void BuildComp()
 
 public override void Step()
 {
-    if(Tock != 0) // not looking at Tocks right now
+    if(Tick != 0) // not looking at Ticks right now
     {
     }
 }
@@ -246,7 +239,7 @@ void AlgoDynamic()
 {
     // Print("!!!! AlgoDynamic");
     int notenum = Random(55, 70);
-    SendNote(chSynth, notenum, 0.8, 0.30);
+    SendNote(chSynth, notenum, 0.8, 0.2);
 }
 
 void AlgoNull()
