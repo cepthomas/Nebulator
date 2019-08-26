@@ -16,12 +16,10 @@ namespace Nebulator.Common
         #endregion
 
         #region Properties
-        //TODO make Beat, Tick 1-based?
-
-        /// <summary>Left of the decimal point.</summary>
+        /// <summary>Left of the decimal point. From 0 to N.</summary>
         public int Beat { get; set; } = 0;
 
-        /// <summary>Right of the decimal point.</summary>
+        /// <summary>Right of the decimal point. From 0 to TICKS_PER_BEAT-1.</summary>
         public int Tick { get; set; } = 0;
 
         /// <summary>Total ticks for the unit of time.</summary>

@@ -188,6 +188,12 @@ namespace Nebulator.Script
                         throw new Exception("Invalid char in pattern string");
                 }
             }
+
+            // Stragglers?
+            if (currentVol >= '1' && currentVol <= '9')
+            {
+                EndCurrent(s.Length);
+            }
         }
     }
 

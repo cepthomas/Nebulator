@@ -3,8 +3,6 @@
 #import "utils.neb"
 #import "scale.neb"
 
-// TODO - fills, intros, like that.
-
 
 ///// IO device names.
 string MIDI_IN = "MIDI:MPK mini";

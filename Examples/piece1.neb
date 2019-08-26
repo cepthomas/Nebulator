@@ -9,6 +9,7 @@
 const double KEYS_VOL = 0.8;
 const double DRUM_VOL = 1.0;
 const double BASS_VOL = 1.0;
+const double SYNTH_VOL = 1.0;
 
 
 ///// Channels /////
@@ -18,7 +19,7 @@ NChannel chDrums;
 NChannel chSynth;
 
 // Use wingm and virtual kbd only.
-bool _local = true;
+bool _local = false;
 
 
 ////// Nebulator midi stuff //////
@@ -49,18 +50,13 @@ public override void Setup2()
 
 void BuildComp()
 {
-    // Reaper Time is 1.1.0 to 1.4.99
-    // One beat is 1/4 note.
-    // One hit is 1/16 note.
-    // 0.0 to 3.3
-    // 0.0 0.1 0.2 0.3 1.0 1.1 1.2 1.3 2.0 2.1 2.2 2.3 3.0 3.1 3.2 3.3
-    // ? or 0.0 to 3.7
+    // TODO - fills, intros, like that.
     
     /////////////////////// Keys sequences /////////////////////////////////
 
     NSequence seqKeysIntro = CreateSequence(16, new NSequenceElements
     {
-        //"|m...............|b...b...b...b...|iiiiiiiiiiiiiiii|
+        //"|m...............|b...b...b...b...|tttttttttttttttt|tttttttttttttttt|
         { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
         { "|                |                |                |        9 9     |", "D5.m", KEYS_VOL },
         { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },
@@ -109,6 +105,14 @@ void BuildComp()
     });
 
 
+    /////////////////////// Synth sequences /////////////////////////////////
+    NSequence seqSynth1 = CreateSequence(16, new NSequenceElements
+    {
+        { "|9---------------|................|................|................|", "B4", SYNTH_VOL },
+        { "|................|9---------------|................|................|", "A4", SYNTH_VOL },
+        { "|................|................|9---------------|----------------|", "E5", SYNTH_VOL },
+    });
+
     /////////////////////// sections /////////////////////////////////
 
     CreateSection(32, "Intro", new NSectionElements
@@ -123,6 +127,7 @@ void BuildComp()
         { chKeys,  Loop,  seqKeysVerse },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse  },
+        { chSynth, Loop,  seqSynth1  },
     });
 
     CreateSection(32, "End", new NSectionElements
