@@ -33,7 +33,7 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// Specialized container.
+    /// Specialized container. Has Add() to support initialization.
     /// </summary>
     public class NSequenceElements : List<NSequenceElement>
     {
@@ -149,7 +149,7 @@ namespace Nebulator.Script
                         else
                         {
                             // invalid condition
-                            throw new Exception("Invalid xxxx in pattern string");
+                            throw new Exception("Invalid \'-\'' in pattern string");
                         }
                         break;
 

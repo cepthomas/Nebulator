@@ -83,7 +83,7 @@ namespace Nebulator.Script
     }
 
     /// <summary>
-    /// Specialized container.
+    /// Specialized container. Has Add() to support initialization.
     /// </summary>
     public class NSectionElements : List<NSectionElement>
     {
