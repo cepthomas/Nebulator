@@ -19,7 +19,7 @@ NChannel chDrums;
 NChannel chSynth;
 
 // Use wingm and virtual kbd only.
-bool _local = false;
+bool _local = true;
 
 
 ////// Nebulator midi stuff //////

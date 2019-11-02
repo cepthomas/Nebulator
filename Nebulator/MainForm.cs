@@ -36,12 +36,6 @@ namespace Nebulator
         /// <summary>App logger.</summary>
         Logger _logger = LogManager.GetCurrentClassLogger();
 
-        /// <summary>Measure how fast we be. Delay instantiation as it is a slow process.</summary>
-        PerformanceCounter _cpuPerf = null;
-
-        /// <summary>Show how fast we be.</summary>
-        NDisplay _cpuMeter = null;
-
         /// <summary>Fast timer.</summary>
         MmTimerEx _timer = new MmTimerEx();
 
@@ -152,17 +146,16 @@ namespace Nebulator
 
             if (UserSettings.TheSettings.CpuMeter)
             {
-                _cpuMeter = new NDisplay()
+                CpuMeter cpuMeter = new CpuMeter()
                 {
-                    DisplayType = DisplayType.Chart,
-                    BoundVar = new NVariable()
-                    {
-                        Min = 0,
-                        Max = 100,
-                        Name = "cpu",
-                        Value = 0
-                    }
+                    Width = 50,
+                    Height = toolStrip1.Height,
+                    ControlColor = Color.Red
                 };
+                // This took way too long to find out:
+                //https://stackoverflow.com/questions/12823400/statusstrip-hosting-a-usercontrol-fails-to-call-usercontrols-onpaint-event
+                cpuMeter.MinimumSize = cpuMeter.Size;
+                toolStrip1.Items.Add(new ToolStripControlHost(cpuMeter));
             }
 
             btnClear.Click += (object _, EventArgs __) => { textViewer.Clear(); };
@@ -273,24 +266,6 @@ namespace Nebulator
         /// <param name="e"></param>
         void timerHousekeep_Tick(object sender, EventArgs e)
         {
-            // The Processor (% Processor Time) counter will be out of 100 and will give the total usage across all
-            // processors /cores/etc in the computer. However, the Processor (% Process Time) is scaled by the number
-            // of logical processors. To get average usage across a computer, divide the result by Environment.ProcessorCount.
-
-            if(UserSettings.TheSettings.CpuMeter)
-            {
-                if(_cpuMeter != null && _cpuMeter.BoundVar != null)
-                {
-                    if (_cpuPerf == null)
-                    {
-                        _cpuPerf = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-                    }
-                    else
-                    {
-                        _cpuMeter.BoundVar.Value = _cpuPerf.NextValue();
-                    }
-                }
-            }
         }
         #endregion
 
@@ -639,10 +614,6 @@ namespace Nebulator
                 }
 
                 // Levers and meters.
-                if(_cpuMeter != null)
-                {
-                    _script.Displays.Insert(0, _cpuMeter);
-                }
                 scriptControls.Init(_script.Levers, _script.Displays);
 
                 // Calc the section times.

@@ -4,6 +4,121 @@
         <name>NBagOfTricks</name>
     </assembly>
     <members>
+        <member name="F:NBagOfTricks.CpuMeter._cpuPerf">
+            <summary>
+            Total usage.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter._processesPerf">
+            <summary>
+            Logical processes.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CpuMeter._inited">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter._timer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter._min">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter._max">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter._processesBuffs">
+            <summary>
+            Storage.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter._cpuBuff">
+            <summary>
+            Storage.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter._buffIndex">
+            <summary>
+            Storage.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter.BORDER_WIDTH">
+            <summary>
+            A number.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CpuMeter.Label">
+            <summary>
+            If ther than default is wanted.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CpuMeter.UpdateFreq">
+            <summary>
+            Default is 500 msec. Change if you like.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CpuMeter.ControlColor">
+            <summary>
+            For styling.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CpuMeter.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.CpuMeter_Load(System.Object,System.EventArgs)">
+            <summary>
+            Initialize everything.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paints the volume meter.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.OnResize(System.EventArgs)">
+            <summary>
+            Update drawing area.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.SetBuffs">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.Timer_Tick(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.CpuMeter.InitPerf">
+            <summary>
+            Defer init as they are slow processes.
+            </summary>
+        </member>
         <member name="T:NBagOfTricks.Dumper">
             <summary>
             Dumps: objects, dictionaries of objects, or lists of objects.
