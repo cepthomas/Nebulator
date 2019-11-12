@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using NBagOfTricks;
+using NBagOfTricks.Utils;
 using Nebulator.Common;
 using Nebulator.Device;
 

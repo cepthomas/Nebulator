@@ -1,4 +1,4 @@
-﻿namespace Nebulator.Controls
+﻿namespace Nebulator
 {
     partial class TimeControl
     {

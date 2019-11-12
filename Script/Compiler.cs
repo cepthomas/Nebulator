@@ -10,8 +10,7 @@ using System.Diagnostics;
 using NLog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using NBagOfTricks;
-using NBagOfTricks.StateMachine;
+using NBagOfTricks.Utils;
 using Nebulator.Common;
 
 namespace Nebulator.Script
@@ -475,7 +474,7 @@ namespace Nebulator.Script
                 "using System.Drawing;",
                 "using System.Windows.Forms;",
                 "using NAudio;",
-                "using NBagOfTricks;",
+                "using NBagOfTricks.Utils;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "using Nebulator.Device;",

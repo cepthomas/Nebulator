@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using NBagOfTricks;
+using NBagOfTricks.Utils;
 using NBagOfTricks.UI;
 using Nebulator.Common;
-using Nebulator.Controls;
 using Nebulator.Script;
 
 

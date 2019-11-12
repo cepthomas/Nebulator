@@ -11,10 +11,9 @@ using NLog;
 using Newtonsoft.Json;
 using NAudio.Midi;
 using NAudio.Wave;
-using NBagOfTricks;
+using NBagOfTricks.Utils;
 using NBagOfTricks.UI;
 using Nebulator.Common;
-using Nebulator.Controls;
 using Nebulator.Script;
 using Nebulator.Device;
 using Nebulator.Server;
@@ -91,7 +90,7 @@ namespace Nebulator
             di.Create();
             UserSettings.Load(appDir);
             InitializeComponent();
-            toolStrip1.Renderer = new NBagOfTricks.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
+            toolStrip1.Renderer = new NBagOfTricks.UI.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
         }
 
         /// <summary>

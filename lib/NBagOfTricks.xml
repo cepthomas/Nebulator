@@ -4,165 +4,286 @@
         <name>NBagOfTricks</name>
     </assembly>
     <members>
-        <member name="F:NBagOfTricks.CpuMeter._cpuPerf">
+        <member name="T:NBagOfTricks.CommandProcessor.Arg">
+            <summary>Argument Options.</summary>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Param">
+            <summary>Parameter Options.</summary>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Processor">
+            <summary>Main processor.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Processor.ArgumentPrefixList">
+            <summary>Designate the set of values that are used to denote the start of an argument.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Processor.Commands">
+            <summary>All the commands.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Processor.Errors">
+            <summary>Missing args etc.</summary>
+        </member>
+        <member name="M:NBagOfTricks.CommandProcessor.Processor.Parse(System.String)">
+            <summary>
+            Parse the cmd string using our definitions.
+            </summary>
+            <param name="cmdString">String to parse.</param>
+            <returns>The main command name or empty if failed.</returns>
+        </member>
+        <member name="M:NBagOfTricks.CommandProcessor.Processor.GetUsage(System.String)">
+            <summary>Format the usage help text.</summary>
+            <param name="scmd">Specific command or list of commands if empty.</param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Command">
+            <summary>One possible command.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.Name">
+            <summary>The command name(s). The first one is the main command and aliases follow.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.Description">
+            <summary>For usage.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.Tail">
+            <summary>For usage. Optional</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.Args">
+            <summary>Possible arguments for this command.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.TailFunc">
+            <summary>Handler for stuff at the end.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.Errors">
+            <summary>Missing args etc.</summary>
+        </member>
+        <member name="M:NBagOfTricks.CommandProcessor.Command.Parse(System.Collections.Generic.List{System.String})">
+            <summary>Parse the argument collection.</summary>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Argument">
+            <summary>Client fills in specs and CommandParser does the rest.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.Name">
+            <summary>The command line value.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.Description">
+            <summary>For usage.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.ArgReq">
+            <summary>Argument requirement.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.ParamReq">
+            <summary>Parameter requirement.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.ArgFunc">
+            <summary>How to process the arg. Can include validation.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.Valid">
+            <summary>Does it appear in the command line.</summary>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Commands">
+            <summary>Specialized container. Has Add() to support initialization.</summary>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Arguments">
+            <summary>Specialized container. Has Add() to support initialization.</summary>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Consolette">
+            <summary>
+            Simple console with command history and a few other things.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CommandProcessor.Consolette._cmdHistory">
+            <summary>
+            Recent commands. Most recent is at [0].
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CommandProcessor.Consolette._currentCmd">
+            <summary>
+            Where we are in the command history.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CommandProcessor.Consolette.MAX_HISTORY">
+            <summary>
+            History capacity.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.CommandProcessor.Consolette._currentText">
+            <summary>
+            Copy of current line.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Consolette.Prompt">
+            <summary>
+            What you like.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Consolette.Colors">
+            <summary>
+            The colors to display when text is matched. TODO.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Consolette.ForegroundColor">
+            <summary>
+            User selectable color.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Consolette.BackgroundColor">
+            <summary>
+            User selectable color.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.CommandProcessor.Consolette.UserCommandArgs">
+            <summary>Device wants to say something.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Consolette.UserCommandArgs.Command">
+            <summary>Client handles this.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Consolette.UserCommandArgs.Response">
+            <summary>Client answers with this.</summary>
+        </member>
+        <member name="M:NBagOfTricks.CommandProcessor.Consolette.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CommandProcessor.Consolette.Run">
+            <summary>
+            Execute the loop forever.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.CommandProcessor.Consolette.Clear">
+            <summary>
+            Remove everything.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.CpuMeter._cpuPerf">
             <summary>
             Total usage.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter._processesPerf">
+        <member name="F:NBagOfTricks.UI.CpuMeter._processesPerf">
             <summary>
             Logical processes.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.CpuMeter._inited">
+        <member name="F:NBagOfTricks.UI.CpuMeter._inited">
             <summary>
             
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter._timer">
+        <member name="F:NBagOfTricks.UI.CpuMeter._timer">
             <summary>
             
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter._min">
+        <member name="F:NBagOfTricks.UI.CpuMeter._min">
             <summary>
             
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter._max">
+        <member name="F:NBagOfTricks.UI.CpuMeter._max">
             <summary>
             
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter._processesBuffs">
+        <member name="F:NBagOfTricks.UI.CpuMeter._processesBuffs">
             <summary>
             Storage.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter._cpuBuff">
+        <member name="F:NBagOfTricks.UI.CpuMeter._cpuBuff">
             <summary>
             Storage.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter._buffIndex">
+        <member name="F:NBagOfTricks.UI.CpuMeter._buffIndex">
             <summary>
             Storage.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter.BORDER_WIDTH">
+        <member name="F:NBagOfTricks.UI.CpuMeter.BORDER_WIDTH">
             <summary>
             A number.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.CpuMeter.Label">
+        <member name="P:NBagOfTricks.UI.CpuMeter.Label">
             <summary>
             If ther than default is wanted.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.CpuMeter.UpdateFreq">
+        <member name="P:NBagOfTricks.UI.CpuMeter.UpdateFreq">
             <summary>
             Default is 500 msec. Change if you like.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.CpuMeter.ControlColor">
+        <member name="P:NBagOfTricks.UI.CpuMeter.ControlColor">
             <summary>
             For styling.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CpuMeter.components">
+        <member name="F:NBagOfTricks.UI.CpuMeter.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.Dispose(System.Boolean)">
+        <member name="M:NBagOfTricks.UI.CpuMeter.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.#ctor">
+        <member name="M:NBagOfTricks.UI.CpuMeter.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.CpuMeter_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfTricks.UI.CpuMeter.CpuMeter_Load(System.Object,System.EventArgs)">
             <summary>
             Initialize everything.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfTricks.UI.CpuMeter.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paints the volume meter.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.OnResize(System.EventArgs)">
+        <member name="M:NBagOfTricks.UI.CpuMeter.OnResize(System.EventArgs)">
             <summary>
             Update drawing area.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.SetBuffs">
+        <member name="M:NBagOfTricks.UI.CpuMeter.SetBuffs">
             <summary>
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.Timer_Tick(System.Object,System.EventArgs)">
+        <member name="M:NBagOfTricks.UI.CpuMeter.Timer_Tick(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.CpuMeter.InitPerf">
+        <member name="M:NBagOfTricks.UI.CpuMeter.InitPerf">
             <summary>
             Defer init as they are slow processes.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.Dumper">
+        <member name="T:NBagOfTricks.UI.CheckBoxRenderer">
             <summary>
-            Dumps: objects, dictionaries of objects, or lists of objects.
-            Output format is modified json.
+            Custom renderer for toolstrip checkbox color.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.Dumper._writer">
-            <summary>Output writer.</summary>
-        </member>
-        <member name="F:NBagOfTricks.Dumper._indent">
-            <summary>Output indent.</summary>
-        </member>
-        <member name="F:NBagOfTricks.Dumper._indentSize">
-            <summary>Output indent size.</summary>
-        </member>
-        <member name="M:NBagOfTricks.Dumper.#ctor(System.IO.TextWriter)">
+        <member name="P:NBagOfTricks.UI.CheckBoxRenderer.SelectedColor">
             <summary>
-            Constructor
+            Color to use when check box is selected.
             </summary>
-            <param name="writer">Output stream</param>
         </member>
-        <member name="M:NBagOfTricks.Dumper.Write(System.Object)">
+        <member name="M:NBagOfTricks.UI.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
             <summary>
-            Top level writer.
+            Override for drawing.
             </summary>
-            <param name="obj"></param>
-        </member>
-        <member name="M:NBagOfTricks.Dumper.Write(System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            Write a dictionary of objects.
-            </summary>
-            <param name="obj"></param>
-        </member>
-        <member name="M:NBagOfTricks.Dumper.Write(System.Collections.Generic.List{System.Object})">
-            <summary>
-            Write a list of objects.
-            </summary>
-            <param name="obj"></param>
-        </member>
-        <member name="M:NBagOfTricks.Dumper.WriteIndented(System.String)">
-            <summary>
-            Common output formatter.
-            </summary>
-            <param name="s"></param>
+            <param name="e"></param>
         </member>
         <member name="T:NBagOfTricks.UI.MeterType">
             <summary>Display types.</summary>
@@ -559,6 +680,43 @@
             </summary>
             <param name="e"></param>
         </member>
+        <member name="T:NBagOfTricks.UI.KeyUtils">
+            <summary>
+            Static keyboard processing functions.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Generic UI helper. Allows user to enter only integer or double values.
+            s</summary>
+            <param name="sender">Sender control.</param>
+            <param name="e">Event args.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.KeyUtils.TestForInteger_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Generic UI helper. Allows user to enter only integer values.
+            </summary>
+            <param name="sender">Sender control.</param>
+            <param name="e">Event args.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.KeyUtils.TestForAlphanumeric_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Generic UI helper. Allows user to enter only alphanumeric values.
+            </summary>
+            <param name="sender">Sender control.</param>
+            <param name="e">Event args.</param>
+        </member>
+        <member name="M:NBagOfTricks.UI.KeyUtils.KeyToChar(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
+            <summary>General purpose decoder for keys. Because windows makes it kind of difficult.</summary>
+            <param name="key"></param>
+            <param name="modifiers"></param>
+            <returns>Tuple of Converted char (0 if not convertible) and keyCode(s).</returns>
+        </member>
+        <member name="M:NBagOfTricks.UI.KeyUtils.GetKeyState(System.Windows.Forms.Keys)">
+            <summary>Key state query. Based on https://stackoverflow.com/a/9356006. </summary>
+            <param name="key">Which key.</param>
+            <returns></returns>
+        </member>
         <member name="P:NBagOfTricks.UI.TextViewer.Colors">
             <summary>
             The colors to display when text is matched.
@@ -837,29 +995,74 @@
             <summary>Dispose</summary>
             <param name="disposing"></param>
         </member>
-        <member name="T:NBagOfTricks.MiscUtils">
+        <member name="T:NBagOfTricks.Utils.Dumper">
+            <summary>
+            Dumps: objects, dictionaries of objects, or lists of objects.
+            Output format is modified json.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.Utils.Dumper._writer">
+            <summary>Output writer.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Utils.Dumper._indent">
+            <summary>Output indent.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Utils.Dumper._indentSize">
+            <summary>Output indent size.</summary>
+        </member>
+        <member name="M:NBagOfTricks.Utils.Dumper.#ctor(System.IO.TextWriter)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="writer">Output stream</param>
+        </member>
+        <member name="M:NBagOfTricks.Utils.Dumper.Write(System.Object)">
+            <summary>
+            Top level writer.
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:NBagOfTricks.Utils.Dumper.Write(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Write a dictionary of objects.
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:NBagOfTricks.Utils.Dumper.Write(System.Collections.Generic.List{System.Object})">
+            <summary>
+            Write a list of objects.
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:NBagOfTricks.Utils.Dumper.WriteIndented(System.String)">
+            <summary>
+            Common output formatter.
+            </summary>
+            <param name="s"></param>
+        </member>
+        <member name="T:NBagOfTricks.Utils.MiscUtils">
             <summary>
             Static general utility functions.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetVersionString">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.GetVersionString">
             <summary>
             Returns a string with the application version information.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetAppDataDir(System.String)">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.GetAppDataDir(System.String)">
             <summary>
             Get the user app dir.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetExeDir">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.GetExeDir">
             <summary>
             Get the executable dir.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
             <summary>
             Resize the image to the specified width and height.
             </summary>
@@ -868,7 +1071,7 @@
             <param name="height">The height to resize to.</param>
             <returns>The resized image.</returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
             <summary>
             Colorize a bitmap.
             </summary>
@@ -876,7 +1079,7 @@
             <param name="newcol"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetSequenceColor(System.Int32,System.Boolean)">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.GetSequenceColor(System.Int32,System.Boolean)">
             <summary>
             Helper to get next contrast color in the sequence.
             From http://colorbrewer2.org qualitative.
@@ -885,7 +1088,7 @@
             <param name="dark">Dark or light series, usually dark.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
             <summary>
             Mix two colors.
             </summary>
@@ -893,12 +1096,12 @@
             <param name="two"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.FormatSourceCode(System.Collections.Generic.List{System.String})">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.FormatSourceCode(System.Collections.Generic.List{System.String})">
             <summary>Rudimentary C# source code formatter to make generated files somewhat readable.</summary>
             <param name="src">Lines to prettify.</param>
             <returns>Formatted lines.</returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.DeepClone``1(``0)">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.DeepClone``1(``0)">
             <summary>
             Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
             There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
@@ -908,7 +1111,7 @@
             <param name="obj"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
             <summary>
             Get a subset of an array.
             </summary>
@@ -918,7 +1121,7 @@
             <param name="length"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
             Immediately executes the given action on each element in the source sequence.
             </summary>
@@ -926,7 +1129,7 @@
             <param name="source">The sequence of elements</param>
             <param name="action">The action to execute on each element</param>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
+        <member name="M:NBagOfTricks.Utils.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
             <summary>
             Immediately executes the given action on each element in the source sequence.
             Each element's index is used in the logic of the action.
@@ -936,56 +1139,40 @@
             <param name="action">The action to execute on each element; the second parameter
             of the action represents the index of the source element.</param>
         </member>
-        <member name="T:NBagOfTricks.CheckBoxRenderer">
-            <summary>
-            Custom renderer for toolstrip checkbox color.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.CheckBoxRenderer.SelectedColor">
-            <summary>
-            Color to use when check box is selected.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
-            <summary>
-            Override for drawing.
-            </summary>
-            <param name="e"></param>
-        </member>
-        <member name="T:NBagOfTricks.StringUtils">
+        <member name="T:NBagOfTricks.Utils.StringUtils">
             <summary>
             Misc string extension methods.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsInteger(System.String)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.IsInteger(System.String)">
             <summary>
             Test for integer string.
             </summary>
             <param name="sourceString"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsFloat(System.String)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.IsFloat(System.String)">
             <summary>
             Test for float string.
             </summary>
             <param name="sourceString"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsAlpha(System.String)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.IsAlpha(System.String)">
             <summary>
             Test for alpha string.
             </summary>
             <param name="sourceString"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsReadable(System.Byte)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.IsReadable(System.Byte)">
             <summary>
             
             </summary>
             <param name="b"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.Right(System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.Right(System.String,System.Int32)">
             <summary>
             Returns the rightmost characters of a string based on the number of characters specified.
             </summary>
@@ -993,7 +1180,7 @@
             <param name="numChars">The number of rightmost characters to return.</param>
             <returns>The rightmost characters of a string.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.Left(System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.Left(System.String,System.Int32)">
             <summary>
             Returns the leftmost number of chars in the string.
             </summary>
@@ -1001,7 +1188,7 @@
             <param name="numChars">The number of characters to get from the source string.</param>
             <returns>The leftmost number of characters to return from the source string supplied.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitByTokens(System.String,System.String,System.Boolean)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.SplitByTokens(System.String,System.String,System.Boolean)">
             <summary>
             Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
             </summary>
@@ -1010,7 +1197,7 @@
             <param name="trim">Remove whitespace at each end.</param>
             <returns>Return the parts as a list.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitByToken(System.String,System.String,System.Boolean)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.SplitByToken(System.String,System.String,System.Boolean)">
             <summary>
             Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
             </summary>
@@ -1019,69 +1206,33 @@
             <param name="trim">Remove whitespace at each end.</param>
             <returns>Return the parts as a list.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String)">
+        <member name="M:NBagOfTricks.Utils.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
             <summary>
             Update the MRU.
             </summary>
             <param name="mruList">The MRU.</param>
             <param name="newVal">New value(s) to perhaps insert.</param>
+            <param name="mruSize">Optional max size.</param>
         </member>
-        <member name="T:NBagOfTricks.KeyUtils">
-            <summary>
-            Static keyboard processing functions.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
-            <summary>
-            Generic UI helper. Allows user to enter only integer or double values.
-            s</summary>
-            <param name="sender">Sender control.</param>
-            <param name="e">Event args.</param>
-        </member>
-        <member name="M:NBagOfTricks.KeyUtils.TestForInteger_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
-            <summary>
-            Generic UI helper. Allows user to enter only integer values.
-            </summary>
-            <param name="sender">Sender control.</param>
-            <param name="e">Event args.</param>
-        </member>
-        <member name="M:NBagOfTricks.KeyUtils.TestForAlphanumeric_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
-            <summary>
-            Generic UI helper. Allows user to enter only alphanumeric values.
-            </summary>
-            <param name="sender">Sender control.</param>
-            <param name="e">Event args.</param>
-        </member>
-        <member name="M:NBagOfTricks.KeyUtils.KeyToChar(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
-            <summary>General purpose decoder for keys. Because windows makes it kind of difficult.</summary>
-            <param name="key"></param>
-            <param name="modifiers"></param>
-            <returns>Tuple of Converted char (0 if not convertible) and keyCode(s).</returns>
-        </member>
-        <member name="M:NBagOfTricks.KeyUtils.GetKeyState(System.Windows.Forms.Keys)">
-            <summary>Key state query. Based on https://stackoverflow.com/a/9356006. </summary>
-            <param name="key">Which key.</param>
-            <returns></returns>
-        </member>
-        <member name="T:NBagOfTricks.MathUtils">
+        <member name="T:NBagOfTricks.Utils.MathUtils">
             <summary>
             Static math utility functions.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.InitRand(System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.InitRand(System.Int32)">
             <summary>
             Seed the randomizer.
             </summary>
             <param name="seed"></param>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RandStr(System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.RandStr(System.Int32)">
             <summary>
             Get a random alphanumeric string.
             </summary>
             <param name="num">String length.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RandRange(System.Int32,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.RandRange(System.Int32,System.Int32)">
             <summary>
             Get the next random integer in the range.
             </summary>
@@ -1089,7 +1240,7 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RandRange(System.Double,System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.RandRange(System.Double,System.Double)">
             <summary>
             Get the next random double in the range.
             </summary>
@@ -1097,29 +1248,29 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.IsClose(System.Double,System.Double,System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.IsClose(System.Double,System.Double,System.Double)">
             <summary>
             Compare two doubles "close enough".
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.SplitDouble(System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.SplitDouble(System.Double)">
             <summary>
             Split a double into two parts: each side of the dp.
             </summary>
             <param name="val"></param>
             <returns>tuple of integral and fractional</returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.DegreesToRadians(System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.DegreesToRadians(System.Double)">
             <summary>Conversion.</summary>
             <param name="angle"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RadiansToDegrees(System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.RadiansToDegrees(System.Double)">
             <summary>Conversion.</summary>
             <param name="angle"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
             <summary>
             Remap a value to new coordinates.
             </summary>
@@ -1130,7 +1281,7 @@
             <param name="stop2"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Map(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.Map(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             Remap a value to new coordinates.
             </summary>
@@ -1141,21 +1292,21 @@
             <param name="stop2"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.StandardDeviation(System.Collections.Generic.List{System.Double})">
+        <member name="M:NBagOfTricks.Utils.MathUtils.StandardDeviation(System.Collections.Generic.List{System.Double})">
             <summary>
             Calculate a Standard Deviation based on a List of doubles.
             </summary>
             <param name="inputArray">List of doubles</param>
             <returns>Double value of the Standard Deviation</returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.SumOfSquares(System.Collections.Generic.List{System.Double})">
+        <member name="M:NBagOfTricks.Utils.MathUtils.SumOfSquares(System.Collections.Generic.List{System.Double})">
             <summary>
             Calculate a Sum of Squares given a List of doubles.
             </summary>
             <param name="inputArray">List of doubles</param>
             <returns>Double value of the Sum of Squares</returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.NextGaussian(System.Random,System.Double,System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.NextGaussian(System.Random,System.Double,System.Double)">
             <summary>
             Generates normally distributed numbers.
             </summary>
@@ -1164,7 +1315,7 @@
             <param name="sigma">Sigma</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Double,System.Double,System.Double)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.Constrain(System.Double,System.Double,System.Double)">
             <summary>
             Bounds limits a value.
             </summary>
@@ -1173,7 +1324,7 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Int32,System.Int32,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MathUtils.Constrain(System.Int32,System.Int32,System.Int32)">
             <summary>
             Bounds limits a value.
             </summary>
@@ -1182,7 +1333,7 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx">
+        <member name="T:NBagOfTricks.Utils.MmTimerEx">
             <summary>
             The win multimedia timer is erratic. This class attempts to reduce the error by running at one msec
             and managing the requested periods manually. This is accomplished by using a Stopwatch to actually
@@ -1190,52 +1341,52 @@
             Also see "Microsecond and Millisecond C# Timer - CodeProject.html". Good accuracy at the expense of a whole core.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.period">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx.TimerInstance.period">
             <summary>The time between events in msec.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.current">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx.TimerInstance.current">
             <summary>Accumulated msec.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._timers">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._timers">
             <summary>All the timer instances. Key is id.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._sw">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._sw">
             <summary>Used for more accurate timing.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._running">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._running">
             <summary>Indicates whether or not the timer is running.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._lastTicks">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._lastTicks">
             <summary>Stopwatch support.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._disposed">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._disposed">
             <summary>Indicates whether or not the timer has been disposed.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.MMTIMER_PERIOD">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx.MMTIMER_PERIOD">
             <summary>Msec for mm timer tick.</summary>
         </member>
-        <member name="E:NBagOfTricks.MmTimerEx.TimerElapsedEvent">
+        <member name="E:NBagOfTricks.Utils.MmTimerEx.TimerElapsedEvent">
             <summary>Occurs when the time period has elapsed.</summary>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimerEventArgs">
+        <member name="T:NBagOfTricks.Utils.MmTimerEx.TimerEventArgs">
             <summary>FastTimer event args.</summary>
         </member>
-        <member name="P:NBagOfTricks.MmTimerEx.TimerEventArgs.ElapsedTimers">
+        <member name="P:NBagOfTricks.Utils.MmTimerEx.TimerEventArgs.ElapsedTimers">
             <summary>Elapsed timers.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._timerID">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._timerID">
             <summary>
             Multimedia timer identifier.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._resolution">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._resolution">
             <summary>
             Timer resolution in milliseconds. The resolution increases with smaller values - a resolution of 0
             indicates periodic events should occur with the greatest possible accuracy. To reduce system 
             overhead, however, you should use the maximum value appropriate for your application.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimeProc">
+        <member name="T:NBagOfTricks.Utils.MmTimerEx.TimeProc">
             <summary>
             Called by Windows when a mm timer event occurs.
             </summary>
@@ -1245,12 +1396,12 @@
             <param name="param1"></param>
             <param name="param2"></param>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._timeProc">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx._timeProc">
             <summary>
             Called by Windows when a mm timer event occurs.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.timeSetEvent(System.Int32,System.Int32,NBagOfTricks.MmTimerEx.TimeProc,System.IntPtr,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.timeSetEvent(System.Int32,System.Int32,NBagOfTricks.Utils.MmTimerEx.TimeProc,System.IntPtr,System.Int32)">
             <summary>Start her up.</summary>
             <param name="delay">Event delay, in milliseconds.If this value is not in the range of the minimum and maximum event delays supported by the timer, the function returns an error.</param>
             <param name="resolution">Resolution of the timer event, in milliseconds. The resolution increases with smaller values; a resolution of 0 indicates periodic events should occur with the greatest possible accuracy. To reduce system overhead, however, you should use the maximum value appropriate for your application.</param>
@@ -1259,44 +1410,44 @@
             <param name="mode">Timer event type.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.#ctor">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.#ctor">
             <summary>
             Initializes a new instance of the Timer class.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Finalize">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.Finalize">
             <summary>
             Destructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Dispose">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.Dispose">
             <summary>
             Frees timer resources.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Dispose(System.Boolean)">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.Dispose(System.Boolean)">
             <summary>
             Frees timer resources.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.SetTimer(System.String,System.Int32)">
             <summary>
             Add a new timer instance.
             </summary>
             <param name="id">Arbitrary id as string</param>
             <param name="period"></param>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Start">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.Start">
             <summary>
             Starts the periodic timer.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Stop">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.Stop">
             <summary>
             Stops timer.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.MmTimerCallback(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+        <member name="M:NBagOfTricks.Utils.MmTimerEx.MmTimerCallback(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             Multimedia timer callback. Don't trust the accuracy of the mm timer so measure actual using a stopwatch.
             </summary>
@@ -1306,84 +1457,148 @@
             <param name="param1">Reserved.</param>
             <param name="param2">Reserved.</param>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimerCaps">
+        <member name="T:NBagOfTricks.Utils.MmTimerEx.TimerCaps">
             <summary>
             Represents information about the multimedia timer capabilities.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerCaps.periodMin">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx.TimerCaps.periodMin">
             <summary>
             Minimum supported period in milliseconds.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerCaps.periodMax">
+        <member name="F:NBagOfTricks.Utils.MmTimerEx.TimerCaps.periodMax">
             <summary>
             Maximum supported period in milliseconds.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.MultiFileWatcher">
+        <member name="T:NBagOfTricks.Utils.MultiFileWatcher">
             <summary>
             A watcher for multiple file changes. The underlying FileSystemWatcher is a bit sensitive to OS file system ops.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.MultiFileWatcher.FileChangeEventArgs">
+        <member name="T:NBagOfTricks.Utils.MultiFileWatcher.FileChangeEventArgs">
             <summary>Reporting a change to listeners.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._watchers">
+        <member name="F:NBagOfTricks.Utils.MultiFileWatcher._watchers">
             <summary>Detect changed composition file.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._timer">
+        <member name="F:NBagOfTricks.Utils.MultiFileWatcher._timer">
             <summary>Used to delay reporting to client as there can be multiple events for one file change.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._touchedFiles">
+        <member name="F:NBagOfTricks.Utils.MultiFileWatcher._touchedFiles">
             <summary>Set by subordinate watchers.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher.DELAY">
+        <member name="F:NBagOfTricks.Utils.MultiFileWatcher.DELAY">
             <summary>The delay before reporting. Seems like a reasonable number for human edit interface.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._disposed">
+        <member name="F:NBagOfTricks.Utils.MultiFileWatcher._disposed">
             <summary>Resource clean up.</summary>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.#ctor">
+        <member name="M:NBagOfTricks.Utils.MultiFileWatcher.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Timer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
+        <member name="M:NBagOfTricks.Utils.MultiFileWatcher.Timer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
             <summary>
             Handle timer tick. Sends event out if any constituents triggered.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Add(System.String)">
+        <member name="M:NBagOfTricks.Utils.MultiFileWatcher.Add(System.String)">
             <summary>
             Add anew listener.
             </summary>
             <param name="path"></param>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Clear">
+        <member name="M:NBagOfTricks.Utils.MultiFileWatcher.Clear">
             <summary>
             Remove all listeners.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Watcher_Changed(System.Object,System.IO.FileSystemEventArgs)">
+        <member name="M:NBagOfTricks.Utils.MultiFileWatcher.Watcher_Changed(System.Object,System.IO.FileSystemEventArgs)">
             <summary>
             Handle underlying change notification.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Dispose">
+        <member name="M:NBagOfTricks.Utils.MultiFileWatcher.Dispose">
             <summary>
             Resource clean up.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Dispose(System.Boolean)">
+        <member name="M:NBagOfTricks.Utils.MultiFileWatcher.Dispose(System.Boolean)">
             <summary>
             Resource clean up.
             </summary>
             <param name="disposing"></param>
+        </member>
+        <member name="T:NBagOfTricks.Utils.TimingAnalyzer">
+            <summary>
+            Diagnostics for timing measurement.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.Utils.TimingAnalyzer._watch">
+            <summary>The internal timer.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Utils.TimingAnalyzer._lastTicks">
+            <summary>Last grab time for calculating diff.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Utils.TimingAnalyzer.SampleSize">
+            <summary>Number of data points to grab for statistics.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Utils.TimingAnalyzer.Times">
+            <summary>Accumulated data points.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Utils.TimingAnalyzer.Mean">
+            <summary>Mean in msec.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Utils.TimingAnalyzer.Min">
+            <summary>Min in msec.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Utils.TimingAnalyzer.Max">
+            <summary>Max in msec.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Utils.TimingAnalyzer.SD">
+            <summary>SD in msec.</summary>
+        </member>
+        <member name="M:NBagOfTricks.Utils.TimingAnalyzer.ToString">
+            <summary>
+            Make readable.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.TimingAnalyzer.Stop">
+            <summary>
+            Stop accumulator.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Utils.TimingAnalyzer.Arm">
+            <summary>
+            Execute this before measuring the duration of something.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Utils.TimingAnalyzer.ReadOne">
+            <summary>
+            Do one read since Arm().
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.TimingAnalyzer.Grab">
+            <summary>
+            Grab a data point. Also auto starts the timer.
+            </summary>
+            <returns>New stats are available.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.TimingAnalyzer.TicksToMsec(System.Int64)">
+            <summary>
+            Conversion for stopwatch values.
+            </summary>
+            <param name="ticks"></param>
+            <returns></returns>
         </member>
         <member name="T:NBagOfTricks.PNUT.OutputFormat">
             <summary>
@@ -1464,6 +1679,9 @@
             </summary>
         </member>
         <member name="P:NBagOfTricks.PNUT.TestSuite.CaseCnt">
+            <summary>Accumulated count.</summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestSuite.CaseFailCnt">
             <summary>Accumulated count.</summary>
         </member>
         <member name="P:NBagOfTricks.PNUT.TestSuite.Context">
@@ -1764,70 +1982,6 @@
         </member>
         <member name="M:NBagOfTricks.StateMachine.EventInfo.ToString">
             <summary>Generate a human readable string.</summary>
-        </member>
-        <member name="T:NBagOfTricks.TimingAnalyzer">
-            <summary>
-            Diagnostics for timing measurement.
-            </summary>
-        </member>
-        <member name="F:NBagOfTricks.TimingAnalyzer._watch">
-            <summary>The internal timer.</summary>
-        </member>
-        <member name="F:NBagOfTricks.TimingAnalyzer._lastTicks">
-            <summary>Last grab time for calculating diff.</summary>
-        </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.SampleSize">
-            <summary>Number of data points to grab for statistics.</summary>
-        </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Times">
-            <summary>Accumulated data points.</summary>
-        </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Mean">
-            <summary>Mean in msec.</summary>
-        </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Min">
-            <summary>Min in msec.</summary>
-        </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Max">
-            <summary>Max in msec.</summary>
-        </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.SD">
-            <summary>SD in msec.</summary>
-        </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.ToString">
-            <summary>
-            Make readable.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.Stop">
-            <summary>
-            Stop accumulator.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.Arm">
-            <summary>
-            Execute this before measuring the duration of something.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.ReadOne">
-            <summary>
-            Do one read since Arm().
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.Grab">
-            <summary>
-            Grab a data point. Also auto starts the timer.
-            </summary>
-            <returns>New stats are available.</returns>
-        </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.TicksToMsec(System.Int64)">
-            <summary>
-            Conversion for stopwatch values.
-            </summary>
-            <param name="ticks"></param>
-            <returns></returns>
         </member>
     </members>
 </doc>

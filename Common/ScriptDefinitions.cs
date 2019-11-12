@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using NBagOfTricks;
+using NBagOfTricks.Utils;
 
 
 namespace Nebulator.Common
@@ -49,7 +49,7 @@ namespace Nebulator.Common
             // Read the file.
             object section = null;
 
-            string fpath = Path.Combine(NBagOfTricks.MiscUtils.GetExeDir(), @"Resources\ScriptDefinitions.md");
+            string fpath = Path.Combine(MiscUtils.GetExeDir(), @"Resources\ScriptDefinitions.md");
             foreach (string sl in File.ReadAllLines(fpath))
             {
                 List<string> parts = sl.SplitByToken("|");

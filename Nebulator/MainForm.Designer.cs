@@ -39,7 +39,7 @@
             this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
             this.scriptControls = new Nebulator.ScriptControls();
-            this.timeMaster = new Nebulator.Controls.TimeControl();
+            this.timeMaster = new Nebulator.TimeControl();
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
@@ -354,7 +354,7 @@
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
         private ScriptControls scriptControls;
-        private Controls.TimeControl timeMaster;
+        private TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnMonIn;

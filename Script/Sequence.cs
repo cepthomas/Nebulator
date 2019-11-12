@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NBagOfTricks;
+using NBagOfTricks.Utils;
 using Nebulator.Common;
-using Nebulator.Device;
 
 
 namespace Nebulator.Script

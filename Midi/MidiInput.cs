@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NAudio.Midi;
-using NBagOfTricks;
+using NBagOfTricks.Utils;
 using Nebulator.Common;
 using Nebulator.Device;
 

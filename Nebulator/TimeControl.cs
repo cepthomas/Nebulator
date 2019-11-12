@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using NBagOfTricks;
+using NBagOfTricks.Utils;
 using Nebulator.Common;
 
 
-namespace Nebulator.Controls
+namespace Nebulator
 {
     public partial class TimeControl : UserControl
     {
