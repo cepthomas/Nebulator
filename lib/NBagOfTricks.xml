@@ -85,74 +85,22 @@
         <member name="T:NBagOfTricks.CommandProcessor.Arguments">
             <summary>Specialized container. Has Add() to support initialization.</summary>
         </member>
-        <member name="T:NBagOfTricks.CommandProcessor.Consolette">
+        <member name="T:NBagOfTricks.CommandProcessor.ConsoleEx">
             <summary>
-            Simple console with command history and a few other things.
+            Helpers for manipulating the system console, a creaky old win32 beast.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.CommandProcessor.Consolette._cmdHistory">
+        <member name="M:NBagOfTricks.CommandProcessor.ConsoleEx.GetPosition">
             <summary>
-            Recent commands. Most recent is at [0].
+            
             </summary>
+            <returns></returns>
         </member>
-        <member name="F:NBagOfTricks.CommandProcessor.Consolette._currentCmd">
+        <member name="M:NBagOfTricks.CommandProcessor.ConsoleEx.SetPosition(System.Drawing.Rectangle)">
             <summary>
-            Where we are in the command history.
+            
             </summary>
-        </member>
-        <member name="F:NBagOfTricks.CommandProcessor.Consolette.MAX_HISTORY">
-            <summary>
-            History capacity.
-            </summary>
-        </member>
-        <member name="F:NBagOfTricks.CommandProcessor.Consolette._currentText">
-            <summary>
-            Copy of current line.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Consolette.Prompt">
-            <summary>
-            What you like.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Consolette.Colors">
-            <summary>
-            The colors to display when text is matched. TODO.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Consolette.ForegroundColor">
-            <summary>
-            User selectable color.
-            </summary>
-        </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Consolette.BackgroundColor">
-            <summary>
-            User selectable color.
-            </summary>
-        </member>
-        <member name="T:NBagOfTricks.CommandProcessor.Consolette.UserCommandArgs">
-            <summary>Device wants to say something.</summary>
-        </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Consolette.UserCommandArgs.Command">
-            <summary>Client handles this.</summary>
-        </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Consolette.UserCommandArgs.Response">
-            <summary>Client answers with this.</summary>
-        </member>
-        <member name="M:NBagOfTricks.CommandProcessor.Consolette.#ctor">
-            <summary>
-            Constructor.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.CommandProcessor.Consolette.Run">
-            <summary>
-            Execute the loop forever.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.CommandProcessor.Consolette.Clear">
-            <summary>
-            Remove everything.
-            </summary>
+            <param name="rect"></param>
         </member>
         <member name="F:NBagOfTricks.UI.CpuMeter._cpuPerf">
             <summary>
