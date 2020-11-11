@@ -107,16 +107,23 @@ namespace Nebulator
             Pen pen = new Pen(ControlColor);
 
             // Draw border.
-            int bw = Utils.BORDER_WIDTH;
-            Pen penBorder = new Pen(Color.Black, bw);
-            pe.Graphics.DrawRectangle(penBorder, 0, 0, Width - 1, Height - 1);
+            Pen penBorder = new Pen(Color.Black, Utils.BORDER_WIDTH);
+            pe.Graphics.DrawRectangle(penBorder,
+                0,
+                0,
+                Width - 1, 
+                Height - 1);
 
             // Draw data.
-            Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -bw, -bw);
+            Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -Utils.BORDER_WIDTH, -Utils.BORDER_WIDTH);
 
             if(ShowProgress && MaxBeat != 0 && _current.Beat < _maxBeat)
             {
-                pe.Graphics.FillRectangle(brush, Utils.BORDER_WIDTH, Utils.BORDER_WIDTH, (Width - 2 * bw) * _current.Beat / _maxBeat, Height - 2 * bw);
+                pe.Graphics.FillRectangle(brush,
+                    Utils.BORDER_WIDTH,
+                    Utils.BORDER_WIDTH,
+                    (Width - 2 * Utils.BORDER_WIDTH) * _current.Beat / _maxBeat,
+                    Height - 2 * Utils.BORDER_WIDTH);
             }
 
             // Text.
