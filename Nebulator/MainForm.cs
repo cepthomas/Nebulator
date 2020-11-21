@@ -1516,9 +1516,9 @@ namespace Nebulator
         /// </summary>
         void SetSpeedTimerPeriod()
         {
-            double secPerBeat = 60 / potSpeed.Value; // aka beat
-            double msecPerBeat = 1000 * secPerBeat / Time.TICKS_PER_BEAT;
-            _timer.SetTimer("NEB", (int)msecPerBeat);
+            double secPerBeat = 60 / potSpeed.Value;
+            double msecPerTick = 1000 * secPerBeat / Time.TICKS_PER_BEAT;
+            _timer.SetTimer("NEB", (int)msecPerTick);
         }
         #endregion
 
