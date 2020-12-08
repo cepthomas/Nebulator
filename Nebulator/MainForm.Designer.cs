@@ -47,7 +47,7 @@
             // 
             // sldVolume
             // 
-            this.sldVolume.ControlColor = System.Drawing.Color.Orange;
+            this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.DecPlaces = 1;
             this.sldVolume.Label = "vol";
             this.sldVolume.Location = new System.Drawing.Point(158, 32);
@@ -63,7 +63,7 @@
             // 
             // potSpeed
             // 
-            this.potSpeed.ControlColor = System.Drawing.Color.Black;
+            this.potSpeed.DrawColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
             this.potSpeed.Label = "";
             this.potSpeed.Location = new System.Drawing.Point(117, 32);

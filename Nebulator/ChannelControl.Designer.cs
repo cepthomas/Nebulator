@@ -63,7 +63,7 @@
             // 
             // sldVolume
             // 
-            this.sldVolume.ControlColor = System.Drawing.Color.Orange;
+            this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "";
             this.sldVolume.Location = new System.Drawing.Point(9, 0);
             this.sldVolume.Maximum = 1.0;

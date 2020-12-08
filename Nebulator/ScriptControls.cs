@@ -72,7 +72,7 @@ namespace Nebulator
                 {
                     Location = new Point(x, y),
                     Label = l.BoundVar.Name,
-                    ControlColor = UserSettings.TheSettings.ControlColor,
+                    DrawColor = UserSettings.TheSettings.ControlColor,
                     Font = UserSettings.TheSettings.ControlFont,
                     Height = ClientSize.Height - SPACING * 2,
                     Width = WIDTH,
@@ -95,7 +95,7 @@ namespace Nebulator
                 {
                     Location = new Point(x, y),
                     Label = d.BoundVar.Name,
-                    ControlColor = UserSettings.TheSettings.ControlColor,
+                    DrawColor = UserSettings.TheSettings.ControlColor,
                     Font = UserSettings.TheSettings.ControlFont,
                     Height = ClientSize.Height - SPACING * 2,
                     Width = WIDTH,

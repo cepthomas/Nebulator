@@ -130,12 +130,12 @@ namespace Nebulator
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            potSpeed.ControlColor = UserSettings.TheSettings.IconColor;
+            potSpeed.DrawColor = UserSettings.TheSettings.IconColor;
             potSpeed.BackColor = UserSettings.TheSettings.BackColor;
             potSpeed.Font = UserSettings.TheSettings.ControlFont;
             potSpeed.Invalidate();
 
-            sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
             sldVolume.Font = UserSettings.TheSettings.ControlFont;
             sldVolume.DecPlaces = 2;
             sldVolume.Invalidate();
@@ -149,7 +149,7 @@ namespace Nebulator
                 {
                     Width = 50,
                     Height = toolStrip1.Height,
-                    ControlColor = Color.Red
+                    DrawColor = Color.Red
                 };
                 // This took way too long to find out:
                 //https://stackoverflow.com/questions/12823400/statusstrip-hosting-a-usercontrol-fails-to-call-usercontrols-onpaint-event

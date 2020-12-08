@@ -43,7 +43,7 @@ namespace Nebulator
         {
             chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
             chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-            sldVolume.ControlColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
             sldVolume.Font = UserSettings.TheSettings.ControlFont;
             sldVolume.DecPlaces = 2;
             sldVolume.Label = BoundChannel.Name;
