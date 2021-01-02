@@ -4,29 +4,30 @@
         <name>NBagOfTricks</name>
     </assembly>
     <members>
-        <member name="T:NBagOfTricks.CommandProcessor.Arg">
-            <summary>Argument Options.</summary>
-        </member>
-        <member name="T:NBagOfTricks.CommandProcessor.Param">
-            <summary>Parameter Options.</summary>
+        <member name="T:NBagOfTricks.CommandProcessor.ArgOptType">
+            <summary>Argument and value options: None, required, optional.</summary>
         </member>
         <member name="T:NBagOfTricks.CommandProcessor.Processor">
             <summary>Main processor.</summary>
         </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Processor.ArgumentPrefixList">
-            <summary>Designate the set of values that are used to denote the start of an argument.</summary>
+        <member name="P:NBagOfTricks.CommandProcessor.Processor.ArgumentPrefix">
+            <summary>Denotes the start of an argument name.</summary>
         </member>
         <member name="P:NBagOfTricks.CommandProcessor.Processor.Commands">
             <summary>All the commands.</summary>
         </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Processor.CommandName">
+            <summary>Selected command name.</summary>
+        </member>
         <member name="P:NBagOfTricks.CommandProcessor.Processor.Errors">
             <summary>Missing args etc.</summary>
         </member>
-        <member name="M:NBagOfTricks.CommandProcessor.Processor.Parse(System.String)">
+        <member name="M:NBagOfTricks.CommandProcessor.Processor.Parse(System.String,System.Boolean)">
             <summary>
             Parse the cmd string using our definitions.
             </summary>
             <param name="cmdString">String to parse.</param>
+            <param name="skipFirst">Ignore first string, usually the exe name.</param>
             <returns>The main command name or empty if failed.</returns>
         </member>
         <member name="M:NBagOfTricks.CommandProcessor.Processor.GetUsage(System.String)">
@@ -38,22 +39,25 @@
             <summary>One possible command.</summary>
         </member>
         <member name="P:NBagOfTricks.CommandProcessor.Command.Name">
-            <summary>The command name(s). The first one is the main command and aliases follow.</summary>
+            <summary>
+            The command name(s). The first one is the main command name and aliases follow.
+            If it's empty or null, there is no separate command name.
+            </summary>
         </member>
         <member name="P:NBagOfTricks.CommandProcessor.Command.Description">
             <summary>For usage.</summary>
         </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Command.Tail">
-            <summary>For usage. Optional</summary>
-        </member>
         <member name="P:NBagOfTricks.CommandProcessor.Command.Args">
             <summary>Possible arguments for this command.</summary>
         </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Command.TailFunc">
-            <summary>Handler for stuff at the end.</summary>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.FileFunc">
+            <summary>Handler for processing stuff at the end, typically file names.</summary>
         </member>
         <member name="P:NBagOfTricks.CommandProcessor.Command.Errors">
             <summary>Missing args etc.</summary>
+        </member>
+        <member name="P:NBagOfTricks.CommandProcessor.Command.NameParts">
+            <summary>Split version of Name.</summary>
         </member>
         <member name="M:NBagOfTricks.CommandProcessor.Command.Parse(System.Collections.Generic.List{System.String})">
             <summary>Parse the argument collection.</summary>
@@ -67,14 +71,14 @@
         <member name="P:NBagOfTricks.CommandProcessor.Argument.Description">
             <summary>For usage.</summary>
         </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Argument.ArgReq">
-            <summary>Argument requirement.</summary>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.ArgOpt">
+            <summary>Argument options.</summary>
         </member>
-        <member name="P:NBagOfTricks.CommandProcessor.Argument.ParamReq">
-            <summary>Parameter requirement.</summary>
+        <member name="P:NBagOfTricks.CommandProcessor.Argument.ValOpt">
+            <summary>Value options.</summary>
         </member>
         <member name="P:NBagOfTricks.CommandProcessor.Argument.ArgFunc">
-            <summary>How to process the arg. Can include validation.</summary>
+            <summary>How to process the arg. Can include validation - returns true/false.</summary>
         </member>
         <member name="P:NBagOfTricks.CommandProcessor.Argument.Valid">
             <summary>Does it appear in the command line.</summary>
@@ -84,23 +88,6 @@
         </member>
         <member name="T:NBagOfTricks.CommandProcessor.Arguments">
             <summary>Specialized container. Has Add() to support initialization.</summary>
-        </member>
-        <member name="T:NBagOfTricks.CommandProcessor.ConsoleEx">
-            <summary>
-            Helpers for manipulating the system console, a creaky old win32 beast.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.CommandProcessor.ConsoleEx.GetPosition">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.CommandProcessor.ConsoleEx.SetPosition(System.Drawing.Rectangle)">
-            <summary>
-            
-            </summary>
-            <param name="rect"></param>
         </member>
         <member name="T:NBagOfTricks.Properties.Resources">
             <summary>
@@ -118,40 +105,61 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._lengthTicks">
+        <member name="T:NBagOfTricks.UI.BarBar">
+            <summary>The control.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarBar._length">
             <summary>Total length.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._currentTick">
-            <summary>Current time/position.</summary>
+        <member name="F:NBagOfTricks.UI.BarBar._start">
+            <summary>First valid point.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarBar._end">
+            <summary>Last valid point.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarBar._current">
+            <summary>Current.</summary>
         </member>
         <member name="F:NBagOfTricks.UI.BarBar._lastXPos">
             <summary>For tracking mouse moves.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar.toolTip">
+        <member name="F:NBagOfTricks.UI.BarBar._toolTip">
             <summary>Tooltip for mousing.</summary>
-        </member>
-        <member name="F:NBagOfTricks.UI.BarBar._pen">
-            <summary>The pen.</summary>
         </member>
         <member name="F:NBagOfTricks.UI.BarBar._brush">
             <summary>The brush.</summary>
         </member>
+        <member name="F:NBagOfTricks.UI.BarBar._penMarker">
+            <summary>The pen.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarBar._format">
+            <summary>For drawing text.</summary>
+        </member>
         <member name="P:NBagOfTricks.UI.BarBar.BeatsPerBar">
-            <summary>Current bar from 0 to N.</summary>
+            <summary>Our signature. Only tested with 4.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.BarBar.TicksPerBeat">
-            <summary>Our ppq aka resolution.</summary>
+            <summary>Our resolution.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.BarBar.Snap">
-            <summary>Oh snap.</summary>
-        </member>
-        <member name="P:NBagOfTricks.UI.BarBar.CurrentTick">
-            <summary>Where we be now.</summary>
+            <summary>How to snap.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.BarBar.Length">
-            <summary>Where we be going.</summary>
+            <summary>Total length.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarBar.Start">
+            <summary>First valid point.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarBar.End">
+            <summary>Last valid point.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarBar.Current">
+            <summary>Where we be now.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.BarBar.ProgressColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarBar.MarkerColor">
             <summary>For styling.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.BarBar.FontLarge">
@@ -165,19 +173,7 @@
         </member>
         <member name="M:NBagOfTricks.UI.BarBar.#ctor">
             <summary>
-            Constructor.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.BarBar.BarBar_Load(System.Object,System.EventArgs)">
-            <summary>
-            
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="F:NBagOfTricks.UI.BarBar.components">
-            <summary> 
-            Required designer variable.
+            Normal constructor.
             </summary>
         </member>
         <member name="M:NBagOfTricks.UI.BarBar.Dispose(System.Boolean)">
@@ -188,8 +184,14 @@
         </member>
         <member name="M:NBagOfTricks.UI.BarBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
-            Draw the slider.
+            Draw the control.
             </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="M:NBagOfTricks.UI.BarBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
@@ -201,39 +203,102 @@
             Handle dragging.
             </summary>
         </member>
+        <member name="M:NBagOfTricks.UI.BarBar.IncrementCurrent(System.Int32)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:NBagOfTricks.UI.BarBar.GetTickFromMouse(System.Int32)">
             <summary>
             Convert x pos to tick.
             </summary>
             <param name="x"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.FormatTime(System.Int32)">
+        <member name="M:NBagOfTricks.UI.BarBar.Scale(NBagOfTricks.UI.BarSpan)">
             <summary>
-            Pretty print a time.
+            Map from time to UI pixels.
             </summary>
-            <param name="tick"></param>
-        </member>
-        <member name="M:NBagOfTricks.UI.BarBar.TickToTime(System.Int32)">
-            <summary>
-            Conversion.
-            </summary>
-            <param name="ticks"></param>
-            <returns>0-based</returns>
-        </member>
-        <member name="M:NBagOfTricks.UI.BarBar.TimeToTick(System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Conversion.
-            </summary>
-            <param name="bar">0-based</param>
-            <param name="beat">0-based</param>
-            <param name="tick">0-based</param>
+            <param name="val"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.DoSnap(System.Int32)">
+        <member name="T:NBagOfTricks.UI.BarSpan">
+            <summary>Sort of like TimeSpan.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarSpan.Zero">
+            <summary>A useful constant.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarSpan.OneTick">
+            <summary>A useful constant.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarSpan._id">
+            <summary>For hashing.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarSpan._all_ids">
+            <summary>Increment for unique value.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarSpan._beatsPerBar">
+            <summary>Global - set before using. Only tested with 4.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarSpan._ticksPerBeat">
+            <summary>Global - set before using. Our resolution.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.BarSpan._snapType">
+            <summary>Global - set before using.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarSpan.TotalTicks">
+            <summary>The core.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarSpan.Bar">
+            <summary>The bar.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarSpan.Beat">
+            <summary>The beat.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.BarSpan.Tick">
+            <summary>The tick.</summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructor from args.
+            </summary>
+            <param name="bar"></param>
+            <param name="beat"></param>
+            <param name="tick"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarSpan.#ctor(System.Int32)">
+            <summary>
+            Constructor from args.
+            </summary>
+            <param name="ticks"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarSpan.Reset">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarSpan.Constrain(NBagOfTricks.UI.BarSpan,NBagOfTricks.UI.BarSpan)">
+            <summary>
+            
+            </summary>
+            <param name="lower"></param>
+            <param name="upper"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarSpan.Increment(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="num"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarSpan.DoSnap(System.Int32)">
             <summary>
             Snap to closest boundary.
             </summary>
             <param name="tick"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.BarSpan.ToString">
+            <summary>
+            
+            </summary>
             <returns></returns>
         </member>
         <member name="T:NBagOfTricks.UI.ClickGrid">
@@ -265,9 +330,6 @@
         <member name="F:NBagOfTricks.UI.ClickGrid._defaultBackBrush">
             <summary>Used for unspecified states.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._pen">
-            <summary>The pen.</summary>
-        </member>
         <member name="E:NBagOfTricks.UI.ClickGrid.IndicatorEvent">
             <summary>ClickGrid value changed event.</summary>
         </member>
@@ -282,6 +344,11 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.ClickGrid.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
         </member>
         <member name="M:NBagOfTricks.UI.ClickGrid.AddIndicator(System.String,System.Int32)">
             <summary>
@@ -331,16 +398,6 @@
             
             </summary>
             <param name="e"></param>
-        </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
         </member>
         <member name="T:NBagOfTricks.UI.IndicatorEventArgs">
             <summary>
@@ -566,6 +623,9 @@
         <member name="F:NBagOfTricks.UI.CpuMeter._pen">
             <summary>The pen.</summary>
         </member>
+        <member name="F:NBagOfTricks.UI.CpuMeter._format">
+            <summary>For drawing text.</summary>
+        </member>
         <member name="P:NBagOfTricks.UI.CpuMeter.Label">
             <summary>User can change.</summary>
         </member>
@@ -578,17 +638,6 @@
         <member name="P:NBagOfTricks.UI.CpuMeter.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
         <member name="M:NBagOfTricks.UI.CpuMeter.#ctor">
             <summary>
             Constructor.
@@ -600,6 +649,12 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.CpuMeter.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
         <member name="M:NBagOfTricks.UI.CpuMeter.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
@@ -690,23 +745,35 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="T:NBagOfTricks.UI.TimeBar">
+            <summary>The control.</summary>
+        </member>
         <member name="F:NBagOfTricks.UI.TimeBar._length">
             <summary>Total length.</summary>
         </member>
         <member name="F:NBagOfTricks.UI.TimeBar._current">
             <summary>Current time/position.</summary>
         </member>
+        <member name="F:NBagOfTricks.UI.TimeBar._start">
+            <summary>One marker.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.TimeBar._end">
+            <summary>Other marker.</summary>
+        </member>
         <member name="F:NBagOfTricks.UI.TimeBar._lastXPos">
             <summary>For tracking mouse moves.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar.toolTip">
+        <member name="F:NBagOfTricks.UI.TimeBar._toolTip">
             <summary>Tooltip for mousing.</summary>
-        </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._pen">
-            <summary>The pen.</summary>
         </member>
         <member name="F:NBagOfTricks.UI.TimeBar._brush">
             <summary>The brush.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.TimeBar._penMarker">
+            <summary>The pen.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.TimeBar._format">
+            <summary>For drawing text.</summary>
         </member>
         <member name="F:NBagOfTricks.UI.TimeBar.LARGE_CHANGE">
             <summary>Constant.</summary>
@@ -714,13 +781,28 @@
         <member name="F:NBagOfTricks.UI.TimeBar.SMALL_CHANGE">
             <summary>Constant.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.CurrentTime">
+        <member name="F:NBagOfTricks.UI.TimeBar.TS_FORMAT">
+            <summary>For viewing purposes.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TimeBar.Current">
             <summary>Where we be now.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.TimeBar.Length">
-            <summary>Where we be going.</summary>
+            <summary>Total length.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TimeBar.Start">
+            <summary>One marker.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TimeBar.End">
+            <summary>Other marker.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TimeBar.SnapMsec">
+            <summary>Snap to this increment value.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.TimeBar.ProgressColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.TimeBar.MarkerColor">
             <summary>For styling.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.TimeBar.FontLarge">
@@ -737,28 +819,34 @@
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.TimeBar_Load(System.Object,System.EventArgs)">
-            <summary>
-            
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="F:NBagOfTricks.UI.TimeBar.components">
-            <summary> 
-            Required designer variable.
-            </summary>
-        </member>
         <member name="M:NBagOfTricks.UI.TimeBar.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
+        <member name="M:NBagOfTricks.UI.TimeBar.IncrementCurrent(System.Int32)">
+            <summary>
+            Offset current by msec.
+            </summary>
+            <param name="msec"></param>
+        </member>
         <member name="M:NBagOfTricks.UI.TimeBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draw the slider.
             </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.TimeBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.TimeBar.OnPreviewKeyDown(System.Windows.Forms.PreviewKeyDownEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="M:NBagOfTricks.UI.TimeBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
@@ -776,27 +864,28 @@
             </summary>
             <param name="x"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.AdjustTime(System.Int32)">
-            <summary>
-            Offset current by msec.
-            </summary>
-            <param name="msec"></param>
-        </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.FormatTime(System.TimeSpan)">
-            <summary>
-            Pretty print a TimeSpan.
-            </summary>
-            <param name="ts"></param>
-        </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.TimeBar_PreviewKeyDown(System.Object,System.Windows.Forms.PreviewKeyDownEventArgs)">
+        <member name="M:NBagOfTricks.UI.TimeBar.DoSnap(System.Int32)">
             <summary>
             
             </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
+            <param name="msec"></param>
+            <returns></returns>
         </member>
-        <member name="F:NBagOfTricks.UI.UiDefs.BORDER_WIDTH">
-            <summary>A number.</summary>
+        <member name="M:NBagOfTricks.UI.TimeBar.Constrain(System.TimeSpan,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            
+            </summary>
+            <param name="val"></param>
+            <param name="lower"></param>
+            <param name="upper"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.UI.TimeBar.Scale(System.TimeSpan)">
+            <summary>
+            Map from time to UI pixels.
+            </summary>
+            <param name="val"></param>
+            <returns></returns>
         </member>
         <member name="T:NBagOfTricks.UI.CheckBoxRenderer">
             <summary>Custom renderer for toolstrip checkbox color.</summary>
@@ -827,11 +916,14 @@
         <member name="F:NBagOfTricks.UI.WaveViewer._buff">
             <summary>Storage for display.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._pen">
-            <summary>The pen.</summary>
-        </member>
         <member name="F:NBagOfTricks.UI.WaveViewer._penDraw">
-            <summary>The other pen.</summary>
+            <summary>For drawing.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.WaveViewer._textFont">
+            <summary>For drawing text.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.WaveViewer._format">
+            <summary>For drawing text.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.WaveViewer.DrawColor">
             <summary>For styling.</summary>
@@ -848,11 +940,6 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
         <member name="M:NBagOfTricks.UI.WaveViewer.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
@@ -866,14 +953,14 @@
             <param name="vals"></param>
             <param name="max"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.Rescale">
-            <summary>
-            Scale raw values to fit in available space.
-            </summary>
-        </member>
         <member name="M:NBagOfTricks.UI.WaveViewer.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paints the waveform.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.UI.WaveViewer.Rescale">
+            <summary>
+            Scale raw values to fit in available space.
             </summary>
         </member>
         <member name="M:NBagOfTricks.UI.WaveViewer.OnResize(System.EventArgs)">
@@ -881,12 +968,19 @@
             Update drawing area.
             </summary>
         </member>
+        <member name="M:NBagOfTricks.UI.WaveViewer.Dump(System.Single[],System.String)">
+            <summary>
+            Simple utility.
+            </summary>
+            <param name="data"></param>
+            <param name="fn"></param>
+        </member>
         <member name="T:NBagOfTricks.UI.MeterType">
             <summary>Display types.</summary>
         </member>
         <member name="T:NBagOfTricks.UI.Meter">
             <summary>
-            Implements a rudimentary volume meter. TODO Feature Add damping?
+            Implements a rudimentary volume meter. TODO Add damping/vu and/or peak/hold?
             </summary>
         </member>
         <member name="F:NBagOfTricks.UI.Meter._buff">
@@ -900,6 +994,9 @@
         </member>
         <member name="F:NBagOfTricks.UI.Meter._brush">
             <summary>The brush.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Meter._format">
+            <summary>For drawing text.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.Meter.Label">
             <summary>Optional label.</summary>
@@ -927,11 +1024,6 @@
         <member name="M:NBagOfTricks.UI.Meter.Meter_Load(System.Object,System.EventArgs)">
             <summary>
             Init stuff.
-            </summary>
-        </member>
-        <member name="F:NBagOfTricks.UI.Meter.components">
-            <summary>
-            Required designer variable.
             </summary>
         </member>
         <member name="M:NBagOfTricks.UI.Meter.Dispose(System.Boolean)">
@@ -964,11 +1056,11 @@
         <member name="F:NBagOfTricks.UI.Pan._value">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pan._pen">
-            <summary>The pen.</summary>
-        </member>
         <member name="F:NBagOfTricks.UI.Pan._brush">
             <summary>The brush.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Pan._format">
+            <summary>For drawing text.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.Pan.Value">
             <summary>The current Pan setting.</summary>
@@ -990,6 +1082,12 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.Pan.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
         <member name="M:NBagOfTricks.UI.Pan.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
@@ -1018,17 +1116,6 @@
             </summary>
             <param name="e"></param>
         </member>
-        <member name="F:NBagOfTricks.UI.Pan.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.UI.Pan.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
         <member name="T:NBagOfTricks.UI.Taper">
             <summary></summary>
         </member>
@@ -1056,7 +1143,10 @@
             <summary> </summary>
         </member>
         <member name="F:NBagOfTricks.UI.Pot._pen">
-            <summary> </summary>
+            <summary>For drawing.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Pot._format">
+            <summary>For drawing text.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.Pot.DrawColor">
             <summary>For styling.</summary>
@@ -1093,11 +1183,6 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
-        </member>
-        <member name="F:NBagOfTricks.UI.Pot.components">
-            <summary> 
-            Required designer variable.
-            </summary>
         </member>
         <member name="M:NBagOfTricks.UI.Pot.Dispose(System.Boolean)">
             <summary> 
@@ -1202,11 +1287,11 @@
         <member name="F:NBagOfTricks.UI.Slider._resetVal">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Slider._pen">
-            <summary>The pen.</summary>
-        </member>
         <member name="F:NBagOfTricks.UI.Slider._brush">
             <summary>The brush.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.Slider._format">
+            <summary>For drawing text.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.Slider.Label">
             <summary>Optional label.</summary>
@@ -1248,11 +1333,6 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
-        </member>
-        <member name="F:NBagOfTricks.UI.Slider.components">
-            <summary>
-            Required designer variable.
-            </summary>
         </member>
         <member name="M:NBagOfTricks.UI.Slider.Dispose(System.Boolean)">
             <summary>
@@ -1372,11 +1452,6 @@
             Remove all text.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TextViewer.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
         <member name="M:NBagOfTricks.UI.TextViewer.Dispose(System.Boolean)">
             <summary>5
             Clean up any resources being used.
@@ -1430,11 +1505,6 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
-        </member>
-        <member name="F:NBagOfTricks.UI.VirtualKeyboard.components">
-            <summary>
-            Required designer variable.
-            </summary>
         </member>
         <member name="M:NBagOfTricks.UI.VirtualKeyboard.Dispose(System.Boolean)">
             <summary>
@@ -1827,6 +1897,15 @@
             <param name="splitby">The string to split by.</param>
             <param name="trim">Remove whitespace at each end.</param>
             <returns>Return the parts as a list.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.StringUtils.SplitQuotedString(System.String)">
+            <summary>
+            Specialized splitter, mainly for cmd line args.
+            Input: 12345 "I HAVE SPACES" aaa bbb  "me too" ccc ddd "  and the last  "
+            Output: 12345,I HAVE SPACES,aaa,bbb,me too,ccc,ddd,and the last
+            </summary>
+            <param name="text"></param>
+            <returns>Properly split values</returns>
         </member>
         <member name="M:NBagOfTricks.Utils.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
             <summary>
