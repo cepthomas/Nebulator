@@ -23,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>IDE1006, CS1591</NoWarn>
     <DocumentationFile>bin\Nebulator.Server.xml</DocumentationFile>
-    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
