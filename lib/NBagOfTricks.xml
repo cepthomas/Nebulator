@@ -948,10 +948,15 @@
         </member>
         <member name="M:NBagOfTricks.UI.WaveViewer.Init(System.Single[],System.Single)">
             <summary>
-            
+            Populate with data.
             </summary>
             <param name="vals"></param>
             <param name="max"></param>
+        </member>
+        <member name="M:NBagOfTricks.UI.WaveViewer.Reset">
+            <summary>
+            Hard reset.
+            </summary>
         </member>
         <member name="M:NBagOfTricks.UI.WaveViewer.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
