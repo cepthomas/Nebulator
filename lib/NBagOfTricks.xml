@@ -1779,6 +1779,13 @@
             <param name="ts"></param>
             <returns>Time in seconds.</returns>
         </member>
+        <member name="M:NBagOfTricks.Utils.MiscUtils.SniffBin(System.String)">
+            <summary>
+            Reports non-ascii characters in a file. UTF-8 only.
+            </summary>
+            <param name="fn"></param>
+            <returns></returns>
+        </member>
         <member name="M:NBagOfTricks.Utils.MiscUtils.FormatSourceCode(System.Collections.Generic.List{System.String})">
             <summary>Rudimentary C# source code formatter to make generated files somewhat readable.</summary>
             <param name="src">Lines to prettify.</param>
@@ -1911,6 +1918,14 @@
             </summary>
             <param name="text"></param>
             <returns>Properly split values</returns>
+        </member>
+        <member name="M:NBagOfTricks.Utils.StringUtils.Contains(System.String,System.Char)">
+            <summary>
+            Because .NET framework doesn't have this.
+            </summary>
+            <param name="s"></param>
+            <param name="c"></param>
+            <returns></returns>
         </member>
         <member name="M:NBagOfTricks.Utils.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
             <summary>
@@ -2539,6 +2554,158 @@
             <param name="file"></param>
             <param name="line"></param>
             <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.Parser.ParserCore.ParseType">
+            <summary>To capture or not.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Parser.ParserCore.Column">
+            <summary>Source file tracking.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Parser.ParserCore.Line">
+            <summary>Source file tracking.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Parser.ParserCore.TabWidth">
+            <summary>Source file tracking.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Parser.ParserCore.Current">
+            <summary>Current character being processed.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Parser.ParserCore.CaptureBuffer">
+            <summary>Current captured.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Parser.ParserCore.Errors">
+            <summary>Parse erros collected.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Parser.ParserCore._reader">
+            <summary>Raw file input.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Parser.ParserCore._inIndex">
+            <summary></summary>
+        </member>
+        <member name="F:NBagOfTricks.Parser.ParserCore.HEX_DIGITS">
+            <summary></summary>
+        </member>
+        <member name="F:NBagOfTricks.Parser.ParserCore.LINE_END">
+            <summary>Win uses "\r\n", nx uses "\n". This guarantees eol.</summary>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.#ctor(System.IO.TextReader)">
+            <summary>
+            Main constructor.
+            </summary>
+            <param name="reader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.Parse">
+            <summary>
+            Derived classes must implement.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.Advance(System.String)">
+            <summary>
+            Processes the input queue one char at a time. Does internal boilerplate stuff.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ClearCapture">
+            <summary>
+            Reset capture buffer.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.CaptureCurrent">
+            <summary>
+            Add the Current value to the capture buffer.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.Capture(System.Char)">
+            <summary>
+            Add the value to the capture buffer.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.Peek">
+            <summary>
+            Peekaboo one ahead.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.Expecting(System.String)">
+            <summary>
+            Test for Current matching one of the chars in the expecting string.
+            Throws an exception if not a match.
+            </summary>
+            <param name="expecting">Match values.</param>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ConsumeUntilChar(System.String,NBagOfTricks.Parser.ParserCore.ParseType)">
+            <summary>
+            Captures up to but not including one of the values in the chars string.
+            Current is left after the found char position.
+            </summary>
+            <param name="chars">Chars to match.</param>
+            <param name="pt">Capture or skip option.</param>
+            <returns>true if any found</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ConsumeUntilString(System.String,NBagOfTricks.Parser.ParserCore.ParseType)">
+            <summary>
+            Captures up to but not including the string.
+            Current is left after the found string position.
+            </summary>
+            <param name="str">String to match.</param>
+            <param name="pt">Capture or skip option.</param>
+            <returns>true if any found</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ConsumeQuotedString(System.Boolean)">
+            <summary>
+            Captures a quoted string including escaped values.
+            Current is left on value immediately after the string.
+            </summary>
+            <param name="inclQuotes">Option to keep or remove leading and trailing quotes.</param>
+            <returns>true if string found</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ConsumeWhiteSpace">
+            <summary>
+            Skip over any whitespace.
+            Current is left on value immediately after any.
+            </summary>
+            <returns>true if any found</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ConsumeCComment(NBagOfTricks.Parser.ParserCore.ParseType)">
+            <summary>
+            Capture or skip a C family comment. Supports single and multi line flavors.
+            Current is left on value immediately after any.
+            </summary>
+            <param name="pt">Capture or skip option.</param>
+            <returns>true if any found</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ConsumeLuaComment(NBagOfTricks.Parser.ParserCore.ParseType)">
+            <summary>
+            Capture or skip a Lua comment. Supports single and multi line flavors.
+            Current is left on value immediately after any.
+            </summary>
+            <param name="pt">Capture or skip option.</param>
+            <returns>true if any found</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.ConsumePythonComment(NBagOfTricks.Parser.ParserCore.ParseType)">
+            <summary>
+            Capture or skip a Python comment. Supports single and multi line flavors.
+            Current is left on value immediately after any.
+            </summary>
+            <param name="pt">Capture or skip option.</param>
+            <returns>true if any found</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.CleanAll">
+            <summary>
+            Remove all whitespace and C comments.
+            </summary>
+            <returns>Cleaned string.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Parser.ParserCore.IsHexChar(System.Char)">
+            <summary>
+            Test for hex value chars.
+            </summary>
+            <param name="hex">The char to test.</param>
+            <returns>true if hex</returns>
+        </member>
+        <member name="T:NBagOfTricks.Parser.ParseException">
+            <summary>Simple custom exception container.</summary>
         </member>
     </members>
 </doc>
