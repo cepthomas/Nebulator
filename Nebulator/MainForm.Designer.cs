@@ -36,26 +36,29 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
+            this.btnClear = new System.Windows.Forms.ToolStripButton();
+            this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
             this.scriptControls = new Nebulator.ScriptControls();
             this.timeMaster = new Nebulator.TimeControl();
-            this.btnClear = new System.Windows.Forms.ToolStripButton();
-            this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // sldVolume
             // 
-            this.sldVolume.DrawColor = System.Drawing.Color.Orange;
+            this.sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sldVolume.DecPlaces = 1;
+            this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
-            this.sldVolume.Location = new System.Drawing.Point(158, 32);
+            this.sldVolume.Location = new System.Drawing.Point(211, 39);
+            this.sldVolume.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.sldVolume.Maximum = 1D;
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
+            this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.sldVolume.ResetValue = 0D;
-            this.sldVolume.Size = new System.Drawing.Size(66, 34);
+            this.sldVolume.Size = new System.Drawing.Size(88, 42);
             this.sldVolume.TabIndex = 36;
             this.toolTip.SetToolTip(this.sldVolume, "Master volume");
             this.sldVolume.Value = 1D;
@@ -63,14 +66,15 @@
             // 
             // potSpeed
             // 
-            this.potSpeed.DrawColor = System.Drawing.Color.Black;
             this.potSpeed.DecPlaces = 0;
+            this.potSpeed.DrawColor = System.Drawing.Color.Black;
             this.potSpeed.Label = "";
-            this.potSpeed.Location = new System.Drawing.Point(117, 32);
+            this.potSpeed.Location = new System.Drawing.Point(156, 39);
+            this.potSpeed.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
-            this.potSpeed.Size = new System.Drawing.Size(32, 32);
+            this.potSpeed.Size = new System.Drawing.Size(43, 39);
             this.potSpeed.TabIndex = 33;
             this.potSpeed.Taper = NBagOfTricks.UI.Taper.Linear;
             this.toolTip.SetToolTip(this.potSpeed, "Speed in BPM");
@@ -91,9 +95,10 @@
             this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(78, 32);
+            this.btnCompile.Location = new System.Drawing.Point(104, 39);
+            this.btnCompile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnCompile.Name = "btnCompile";
-            this.btnCompile.Size = new System.Drawing.Size(34, 32);
+            this.btnCompile.Size = new System.Drawing.Size(45, 39);
             this.btnCompile.TabIndex = 38;
             this.toolTip.SetToolTip(this.btnCompile, "Compile script file - lit indicates file changed externally");
             this.btnCompile.UseVisualStyleBackColor = false;
@@ -104,9 +109,10 @@
             this.btnRewind.FlatAppearance.BorderSize = 0;
             this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRewind.Image = global::Nebulator.Properties.Resources.glyphicons_172_fast_backward;
-            this.btnRewind.Location = new System.Drawing.Point(10, 32);
+            this.btnRewind.Location = new System.Drawing.Point(13, 39);
+            this.btnRewind.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnRewind.Name = "btnRewind";
-            this.btnRewind.Size = new System.Drawing.Size(34, 32);
+            this.btnRewind.Size = new System.Drawing.Size(45, 39);
             this.btnRewind.TabIndex = 31;
             this.toolTip.SetToolTip(this.btnRewind, "Reset to start");
             this.btnRewind.UseVisualStyleBackColor = false;
@@ -120,11 +126,12 @@
             this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkPlay.Image = global::Nebulator.Properties.Resources.glyphicons_174_play;
-            this.chkPlay.Location = new System.Drawing.Point(49, 32);
-            this.chkPlay.MaximumSize = new System.Drawing.Size(32, 32);
-            this.chkPlay.MinimumSize = new System.Drawing.Size(32, 32);
+            this.chkPlay.Location = new System.Drawing.Point(65, 39);
+            this.chkPlay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkPlay.MaximumSize = new System.Drawing.Size(43, 39);
+            this.chkPlay.MinimumSize = new System.Drawing.Size(43, 39);
             this.chkPlay.Name = "chkPlay";
-            this.chkPlay.Size = new System.Drawing.Size(32, 32);
+            this.chkPlay.Size = new System.Drawing.Size(43, 39);
             this.chkPlay.TabIndex = 35;
             this.toolTip.SetToolTip(this.chkPlay, "Play project");
             this.chkPlay.UseVisualStyleBackColor = false;
@@ -132,6 +139,7 @@
             // 
             // toolStrip1
             // 
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileDropDownButton,
             this.btnMonIn,
@@ -143,7 +151,7 @@
             this.btnWrap});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(732, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(976, 27);
             this.toolStrip1.TabIndex = 39;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -159,41 +167,41 @@
             this.fileDropDownButton.Image = global::Nebulator.Properties.Resources.glyphicons_37_file;
             this.fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.fileDropDownButton.Name = "fileDropDownButton";
-            this.fileDropDownButton.Size = new System.Drawing.Size(29, 22);
+            this.fileDropDownButton.Size = new System.Drawing.Size(34, 24);
             this.fileDropDownButton.Text = "fileDropDownButton";
             this.fileDropDownButton.ToolTipText = "File operations";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // importMidiToolStripMenuItem
             // 
             this.importMidiToolStripMenuItem.Name = "importMidiToolStripMenuItem";
-            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
             this.importMidiToolStripMenuItem.Text = "Import Midi or Style";
             this.importMidiToolStripMenuItem.Click += new System.EventHandler(this.ImportMidi_Click);
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -205,7 +213,7 @@
             this.btnMonIn.Image = global::Nebulator.Properties.Resources.glyphicons_213_arrow_down;
             this.btnMonIn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMonIn.Name = "btnMonIn";
-            this.btnMonIn.Size = new System.Drawing.Size(23, 22);
+            this.btnMonIn.Size = new System.Drawing.Size(29, 24);
             this.btnMonIn.Text = "toolStripButton1";
             this.btnMonIn.ToolTipText = "Monitor messages in";
             this.btnMonIn.Click += new System.EventHandler(this.Mon_Click);
@@ -217,7 +225,7 @@
             this.btnMonOut.Image = global::Nebulator.Properties.Resources.glyphicons_214_arrow_up;
             this.btnMonOut.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMonOut.Name = "btnMonOut";
-            this.btnMonOut.Size = new System.Drawing.Size(23, 22);
+            this.btnMonOut.Size = new System.Drawing.Size(29, 24);
             this.btnMonOut.Text = "toolStripButton1";
             this.btnMonOut.ToolTipText = "Monitor messages out";
             this.btnMonOut.Click += new System.EventHandler(this.Mon_Click);
@@ -228,7 +236,7 @@
             this.btnKillComm.Image = global::Nebulator.Properties.Resources.glyphicons_206_electricity;
             this.btnKillComm.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnKillComm.Name = "btnKillComm";
-            this.btnKillComm.Size = new System.Drawing.Size(23, 22);
+            this.btnKillComm.Size = new System.Drawing.Size(29, 24);
             this.btnKillComm.Text = "toolStripButton1";
             this.btnKillComm.ToolTipText = "Instant stop all devices";
             this.btnKillComm.Click += new System.EventHandler(this.Kill_Click);
@@ -239,7 +247,7 @@
             this.btnSettings.Image = global::Nebulator.Properties.Resources.glyphicons_137_cogwheel;
             this.btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(23, 22);
+            this.btnSettings.Size = new System.Drawing.Size(29, 24);
             this.btnSettings.Text = "toolStripButton1";
             this.btnSettings.ToolTipText = "Settings";
             this.btnSettings.Click += new System.EventHandler(this.UserSettings_Click);
@@ -250,21 +258,44 @@
             this.btnAbout.Image = global::Nebulator.Properties.Resources.glyphicons_195_question_sign;
             this.btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAbout.Name = "btnAbout";
-            this.btnAbout.Size = new System.Drawing.Size(23, 22);
+            this.btnAbout.Size = new System.Drawing.Size(29, 24);
             this.btnAbout.Text = "toolStripButton1";
             this.btnAbout.ToolTipText = "General info and a list of your devices";
             this.btnAbout.Click += new System.EventHandler(this.About_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnClear.Image = global::Nebulator.Properties.Resources.glyphicons_551_erase;
+            this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(29, 24);
+            this.btnClear.Text = "toolStripButton1";
+            this.btnClear.ToolTipText = "Clear the display";
+            // 
+            // btnWrap
+            // 
+            this.btnWrap.CheckOnClick = true;
+            this.btnWrap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnWrap.Image = global::Nebulator.Properties.Resources.glyphicons_114_justify;
+            this.btnWrap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnWrap.Name = "btnWrap";
+            this.btnWrap.Size = new System.Drawing.Size(29, 24);
+            this.btnWrap.Text = "toolStripButton1";
+            this.btnWrap.ToolTipText = "Enable wordwrap";
             // 
             // textViewer
             // 
             this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textViewer.Location = new System.Drawing.Point(10, 126);
+            this.textViewer.Location = new System.Drawing.Point(13, 155);
+            this.textViewer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(714, 412);
+            this.textViewer.Size = new System.Drawing.Size(952, 507);
             this.textViewer.TabIndex = 41;
+            this.textViewer.WordWrap = true;
             // 
             // timerHousekeep
             // 
@@ -276,9 +307,10 @@
             this.scriptControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.scriptControls.BackColor = System.Drawing.Color.AliceBlue;
-            this.scriptControls.Location = new System.Drawing.Point(10, 78);
+            this.scriptControls.Location = new System.Drawing.Point(13, 96);
+            this.scriptControls.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.scriptControls.Name = "scriptControls";
-            this.scriptControls.Size = new System.Drawing.Size(714, 42);
+            this.scriptControls.Size = new System.Drawing.Size(952, 52);
             this.scriptControls.TabIndex = 0;
             // 
             // timeMaster
@@ -288,43 +320,22 @@
             time1.Tick = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(231, 32);
-            this.timeMaster.Margin = new System.Windows.Forms.Padding(9, 9, 9, 9);
+            this.timeMaster.Location = new System.Drawing.Point(308, 39);
+            this.timeMaster.Margin = new System.Windows.Forms.Padding(12, 11, 12, 11);
             this.timeMaster.MaxBeat = 0;
             this.timeMaster.Name = "timeMaster";
             this.timeMaster.ShowProgress = true;
-            this.timeMaster.Size = new System.Drawing.Size(175, 34);
+            this.timeMaster.Size = new System.Drawing.Size(233, 42);
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
-            // btnClear
-            // 
-            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnClear.Image = global::Nebulator.Properties.Resources.glyphicons_551_erase;
-            this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(23, 22);
-            this.btnClear.Text = "toolStripButton1";
-            this.btnClear.ToolTipText = "Clear the display";
-            // 
-            // btnWrap
-            // 
-            this.btnWrap.CheckOnClick = true;
-            this.btnWrap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnWrap.Image = global::Nebulator.Properties.Resources.glyphicons_114_justify;
-            this.btnWrap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnWrap.Name = "btnWrap";
-            this.btnWrap.Size = new System.Drawing.Size(23, 22);
-            this.btnWrap.Text = "toolStripButton1";
-            this.btnWrap.ToolTipText = "Enable wordwrap";
-            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(732, 544);
+            this.ClientSize = new System.Drawing.Size(976, 670);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.scriptControls);
@@ -335,6 +346,7 @@
             this.Controls.Add(this.btnRewind);
             this.Controls.Add(this.chkPlay);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "MainForm";
             this.Text = "Nebulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
