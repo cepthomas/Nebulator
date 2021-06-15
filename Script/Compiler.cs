@@ -10,7 +10,7 @@ using System.Diagnostics;
 using NLog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using NBagOfTricks.Utils;
+using NBagOfTricks;
 using Nebulator.Common;
 
 namespace Nebulator.Script
@@ -162,7 +162,7 @@ namespace Nebulator.Script
                     FileContext ci = _filesToCompile[genFn];
                     string fullpath = Path.Combine(TempDir, genFn);
                     File.Delete(fullpath);
-                    File.WriteAllLines(fullpath, MiscUtils.FormatSourceCode(ci.CodeLines));
+                    File.WriteAllLines(fullpath, Tools.FormatSourceCode(ci.CodeLines));
                     paths.Add(fullpath);
                 }
 
@@ -474,7 +474,7 @@ namespace Nebulator.Script
                 "using System.Drawing;",
                 "using System.Windows.Forms;",
                 "using NAudio;",
-                "using NBagOfTricks.Utils;",
+                "using NBagOfTricks;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "using Nebulator.Device;",

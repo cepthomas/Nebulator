@@ -11,7 +11,7 @@ using NLog;
 using Newtonsoft.Json;
 using NAudio.Midi;
 using NAudio.Wave;
-using NBagOfTricks.Utils;
+using NBagOfTricks;
 using NBagOfTricks.UI;
 using Nebulator.Common;
 using Nebulator.Script;
@@ -112,21 +112,21 @@ namespace Nebulator
             textViewer.Colors.Add("ERROR:", Color.LightPink);
             textViewer.Colors.Add("WARNING:", Color.Plum);
 
-            btnMonIn.Image = MiscUtils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
-            btnMonOut.Image = MiscUtils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
-            btnKillComm.Image = MiscUtils.ColorizeBitmap(btnKillComm.Image, UserSettings.TheSettings.IconColor);
-            btnSettings.Image = MiscUtils.ColorizeBitmap(btnSettings.Image, UserSettings.TheSettings.IconColor);
-            btnAbout.Image = MiscUtils.ColorizeBitmap(btnAbout.Image, UserSettings.TheSettings.IconColor);
-            fileDropDownButton.Image = MiscUtils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
-            btnRewind.Image = MiscUtils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
-            btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
-            btnClear.Image = MiscUtils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
-            btnWrap.Image = MiscUtils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
+            btnMonIn.Image = GraphicsUtils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
+            btnMonOut.Image = GraphicsUtils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
+            btnKillComm.Image = GraphicsUtils.ColorizeBitmap(btnKillComm.Image, UserSettings.TheSettings.IconColor);
+            btnSettings.Image = GraphicsUtils.ColorizeBitmap(btnSettings.Image, UserSettings.TheSettings.IconColor);
+            btnAbout.Image = GraphicsUtils.ColorizeBitmap(btnAbout.Image, UserSettings.TheSettings.IconColor);
+            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
+            btnRewind.Image = GraphicsUtils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
+            btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+            btnClear.Image = GraphicsUtils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
+            btnWrap.Image = GraphicsUtils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
 
             btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
 
-            chkPlay.Image = MiscUtils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
+            chkPlay.Image = GraphicsUtils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
@@ -648,12 +648,12 @@ namespace Nebulator
         {
             if (compileStatus)
             {
-                btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
                 _needCompile = false;
             }
             else
             {
-                btnCompile.Image = MiscUtils.ColorizeBitmap(btnCompile.Image, Color.Red);
+                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, Color.Red);
                 _needCompile = true;
             }
         }

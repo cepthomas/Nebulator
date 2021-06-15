@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NBagOfTricks.PNUT;
+using NBagOfTricks;
 using Nebulator.Common;
 
 namespace Nebulator.Test

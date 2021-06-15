@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using NBagOfTricks.Utils;
+using NBagOfTricks;
 
 
 namespace Nebulator.Common

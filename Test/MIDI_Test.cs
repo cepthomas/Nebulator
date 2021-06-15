@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using NBagOfTricks.PNUT;
+using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 using Nebulator.Midi;
