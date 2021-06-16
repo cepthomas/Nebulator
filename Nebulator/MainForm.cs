@@ -1266,30 +1266,9 @@ namespace Nebulator
             }
 
             // Main help file.
-            mdText.Add(File.ReadAllText(@"Resources\README.md"));
+            mdText.AddRange(File.ReadAllLines(@"Resources\README.md"));
 
-            // Put it together.
-            List<string> htmlText = new List<string>
-            {
-                // Boilerplate
-                $"<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
-                // CSS
-                $"<style>body {{ background-color: {UserSettings.TheSettings.BackColor.Name}; font-family: \"Arial\", Helvetica, sans-serif; }}",
-                $"</style></head><body>"
-            };
-
-            // Meat.
-            string mdHtml = string.Join(Environment.NewLine, mdText);
-            htmlText.Add(mdHtml);
-
-            // Bottom.
-            string ss = "<!-- Markdeep: --><style class=\"fallback\">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src=\"markdeep.min.js\" charset=\"utf-8\"></script><script src=\"https://casual-effects.com/markdeep/latest/markdeep.min.js\" charset=\"utf-8\"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility=\"visible\")</script>";
-            htmlText.Add(ss);
-            htmlText.Add($"</body></html>");
-
-            string fn = Path.Combine(Path.GetTempPath(), "nebulator.html");
-            File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
-            Process.Start(fn);
+            Tools.MarkdownToHtml(mdText, "lightcyan", "helvetica", true);
         }
         #endregion
 

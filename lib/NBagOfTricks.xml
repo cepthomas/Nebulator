@@ -21,10 +21,15 @@
             <param name="fn"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.String)">
+        <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.String,System.String,System.Boolean)">
             <summary>
-            
+            Convert list of markdown lines to html.
             </summary>
+            <param name="body">The md text.</param>
+            <param name="bgcolor">Background color for page.</param>
+            <param name="font">Main font-family.</param>
+            <param name="show">If true open in browser.</param>
+            <returns></returns>
         </member>
         <member name="T:NBagOfTricks.OutputFormat">
             <summary>
