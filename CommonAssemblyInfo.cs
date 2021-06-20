@@ -8,7 +8,7 @@ using System.Reflection;
 // Suppressing AssemblyFileVersion causes it to take the same value as AssemblyVersion.
 
 // To use it in your project, remove these lines from your AssemblyInfo.cs:
-[assembly: AssemblyCompany("Tyrell Corp")]
+[assembly: AssemblyCompany("Ephemera")]
 [assembly: AssemblyCopyright("MIT License")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

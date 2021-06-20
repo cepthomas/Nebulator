@@ -85,7 +85,7 @@ namespace Nebulator
         public MainForm()
         {
             // Need to load settings before creating controls in MainForm_Load().
-            string appDir = MiscUtils.GetAppDataDir("Nebulator");
+            string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
             UserSettings.Load(appDir);
@@ -1278,7 +1278,7 @@ namespace Nebulator
         /// </summary>
         void InitLogging()
         { 
-            string appDir = MiscUtils.GetAppDataDir("Nebulator");
+            string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
 
             FileInfo fi = new FileInfo(Path.Combine(appDir, "log.txt"));
             if(fi.Exists && fi.Length > 100000)
@@ -1334,7 +1334,7 @@ namespace Nebulator
                 tv.Colors.Add(" _WARN ", Color.LightPink);
                 //tv.Colors.Add(" SND:", Color.LightGreen);
 
-                string appDir = MiscUtils.GetAppDataDir("Nebulator");
+                string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
                 string logFilename = Path.Combine(appDir, "log.txt");
                 using (new WaitCursor())
                 {
