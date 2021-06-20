@@ -16,7 +16,6 @@ using NBagOfTricks.UI;
 using Nebulator.Common;
 using Nebulator.Script;
 using Nebulator.Device;
-using Nebulator.Server;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
@@ -67,9 +66,6 @@ namespace Nebulator
 
         /// <summary>Diagnostics for timing measurement.</summary>
         TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
-
-        /// <summary>Server host.</summary>
-        SelfHost _selfHost = null;
 
         /// <summary>Devices to use for send.</summary>
         Dictionary<string, NOutput> _outputs = new Dictionary<string, NOutput>();
@@ -183,11 +179,6 @@ namespace Nebulator
 
             _watcher.FileChangeEvent += Watcher_Changed;
 
-            // Init HTTP server.
-            _selfHost = new SelfHost();
-            SelfHost.RequestEvent += SelfHost_RequestEvent;
-            Task.Run(() => { _selfHost.Run(); });
-
             #region System info
             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
             #endregion
@@ -248,8 +239,6 @@ namespace Nebulator
                 _timer?.Stop();
                 _timer?.Dispose();
                 _timer = null;
-
-                _selfHost?.Dispose();
 
                 DeleteDevices();
 
@@ -406,59 +395,6 @@ namespace Nebulator
                     }
                 }
             }
-        }
-        #endregion
-
-        #region Server processing
-        /// <summary>
-        /// Process a request from the web api. Set the e.Result to a json string. 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void SelfHost_RequestEvent(object sender, SelfHost.RequestEventArgs e)
-        {
-            Console.WriteLine($"MainForm Web request:{e.Request}");
-
-            // What is wanted?
-            List<string> parts = e.Request.SplitByToken("/");
-            string[] validCmds = { "open", "compile", "start", "stop", "rewind" };
-
-            switch (parts[0])
-            {
-                case "open":
-                    string fn = string.Join("/", parts.GetRange(1, parts.Count - 1));
-                    string res = OpenFile(fn);
-                    e.Result = JsonConvert.SerializeObject(res == "" ? SelfHost.OK_NO_DATA : res, Formatting.Indented);
-                    break;
-
-                case "compile":
-                    bool compok = Compile();
-                    e.Result = JsonConvert.SerializeObject(_compileResults, Formatting.Indented);
-                    break;
-
-                case "start":
-                    bool playok = false;
-                    playok = ProcessPlay(PlayCommand.Start, false);
-                    e.Result = JsonConvert.SerializeObject(playok ? SelfHost.OK_NO_DATA : SelfHost.FAIL, Formatting.Indented);
-                    break;
-
-                case "stop":
-                    ProcessPlay(PlayCommand.Stop, false);
-                    e.Result = JsonConvert.SerializeObject(SelfHost.OK_NO_DATA, Formatting.Indented);
-                    break;
-
-                case "rewind":
-                    ProcessPlay(PlayCommand.Rewind, false);
-                    e.Result = JsonConvert.SerializeObject(SelfHost.OK_NO_DATA, Formatting.Indented);
-                    break;
-
-                default:
-                    // Invalid.
-                    e.Result = JsonConvert.SerializeObject(null, Formatting.Indented);
-                    break;
-            }
-
-            Console.WriteLine($"MainForm Result:{e.Result}");
         }
         #endregion
 

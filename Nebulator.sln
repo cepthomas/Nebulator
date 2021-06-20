@@ -19,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{20180D64-A
 		..\Nebulator.wiki\ScriptApi.md = ..\Nebulator.wiki\ScriptApi.md
 		..\Nebulator.wiki\ScriptDefinitions.md = ..\Nebulator.wiki\ScriptDefinitions.md
 		..\Nebulator.wiki\ScriptSyntax.md = ..\Nebulator.wiki\ScriptSyntax.md
-		..\Nebulator.wiki\WebApi.md = ..\Nebulator.wiki\WebApi.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{FF958FAF-E474-4E58-B787-F166D9CAC80F}"
@@ -27,8 +26,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midi", "Midi\Midi.csproj", "{D797A9C7-CD82-49C1-8E9D-151C9F3E2320}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Script", "Script\Script.csproj", "{1202E3E2-7FF4-4132-9041-AADE2AA9A584}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{8B7E58A4-4477-4223-A0C3-8BE403EE5737}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSC", "OSC\OSC.csproj", "{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}"
 EndProject

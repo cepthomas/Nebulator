@@ -37,6 +37,9 @@
     <Reference Include="NBagOfTricks">
       <HintPath>..\lib\NBagOfTricks.dll</HintPath>
     </Reference>
+    <Reference Include="NBagOfTricks.PNUT">
+      <HintPath>..\lib\NBagOfTricks.PNUT.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -60,7 +63,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SERVER_Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Nebulator\Resources\ScriptDefinitions.md">
@@ -86,10 +88,6 @@
     <ProjectReference Include="..\OSC\OSC.csproj">
       <Project>{7c6b21d5-cf62-41f6-9188-7846e88d3dcd}</Project>
       <Name>OSC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Server\Server.csproj">
-      <Project>{8b7e58a4-4477-4223-a0c3-8be403ee5737}</Project>
-      <Name>Server</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
