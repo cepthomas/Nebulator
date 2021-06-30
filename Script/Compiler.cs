@@ -162,7 +162,8 @@ namespace Nebulator.Script
                     FileContext ci = _filesToCompile[genFn];
                     string fullpath = Path.Combine(TempDir, genFn);
                     File.Delete(fullpath);
-                    File.WriteAllLines(fullpath, Tools.FormatSourceCode(ci.CodeLines));
+                    File.WriteAllLines(fullpath, ci.CodeLines);
+                    //File.WriteAllLines(fullpath, Tools.FormatSourceCode(ci.CodeLines));
                     paths.Add(fullpath);
                 }
 
@@ -339,9 +340,9 @@ namespace Nebulator.Script
 
             for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
             {
-                string s = sourceLines[pcont.LineNumber - 1].Trim();
+                string s = sourceLines[pcont.LineNumber - 1];
 
-                // Remove any comments.
+                // Remove any comments. TODO C style also?
                 int pos = s.IndexOf("//");
                 string cline = pos >= 0 ? s.Left(pos) : s;
 
@@ -376,7 +377,7 @@ namespace Nebulator.Script
                     if (cline != "")
                     {
                         // Store the whole line with line number tacked on.
-                        pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
+                        pcont.CodeLines.Add($"        {cline} //{pcont.LineNumber}");
                     }
                 }
             }   
@@ -393,12 +394,12 @@ namespace Nebulator.Script
 
             // Collected init stuff goes in a constructor.
             // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack.
-            codeLines.Add("protected static NebScript s;");
-            codeLines.Add($"public {_scriptName}() : base()");
-            codeLines.Add("{");
-            codeLines.Add("s = this;");
-            _initLines.ForEach(l => codeLines.Add(l));
-            codeLines.Add("}");
+            codeLines.Add($"        protected static NebScript s;");
+            codeLines.Add($"        public {_scriptName}() : base()");
+            codeLines.Add( "        {");
+            codeLines.Add( "            s = this;");
+            _initLines.ForEach(l => codeLines.Add("            " + l));
+            codeLines.Add( "        }");
 
             // Bottom stuff.
             codeLines.AddRange(GenBottomOfFile());
@@ -433,22 +434,22 @@ namespace Nebulator.Script
             #region Some DRY helpers
             void WriteEnumValues<T>() where T : Enum
             {
-                codeLines.Add($"///// {typeof(T).ToString()}");
+                codeLines.Add($"        ///// {typeof(T).ToString()}");
                 Enum.GetValues(typeof(T)).Cast<T>().ForEach(e =>
                 {
                     int val = Convert.ToInt32(e);
-                    codeLines.Add($"const int {e.ToString()} = {val};");
+                    codeLines.Add($"        const int {e.ToString()} = {val};");
                     _defs.Add(e.ToString(), val);
                 });
             }
 
             void WriteDefValues(Dictionary<string, string> vals, string txt)
             {
-                codeLines.Add($"///// {txt}");
+                codeLines.Add($"        ///// {txt}");
                 vals.Keys.ForEach(k =>
                 {
                     int val = int.Parse(vals[k]);
-                    codeLines.Add($"const int {k} = {val};");
+                    codeLines.Add($"        const int {k} = {val};");
                     _defs.Add(k, val);
                 });
             }
@@ -480,8 +481,8 @@ namespace Nebulator.Script
                 "using Nebulator.Device;",
                 "namespace Nebulator.UserScript",
                 "{",
-                $"public partial class {_scriptName} : NebScript",
-                "{"
+               $"    public partial class {_scriptName} : NebScript",
+                "    {"
             };
 
             return codeLines;
@@ -496,7 +497,7 @@ namespace Nebulator.Script
             // Create the common contents.
             List<string> codeLines = new List<string>
             {
-                "}",
+                "    }",
                 "}"
             };
 

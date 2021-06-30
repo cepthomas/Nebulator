@@ -9,16 +9,12 @@
             Higher level than Utils.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.Tools.FormatSourceCode(System.Collections.Generic.List{System.String})">
-            <summary>Rudimentary C# source code formatter to make generated files somewhat readable.</summary>
-            <param name="src">Lines to prettify.</param>
-            <returns>Formatted lines.</returns>
-        </member>
-        <member name="M:NBagOfTricks.Tools.SniffBin(System.String)">
+        <member name="M:NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
             <summary>
             Reports non-ascii characters in a file. UTF-8 only.
             </summary>
             <param name="fn"></param>
+            <param name="limit"></param>
             <returns></returns>
         </member>
         <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.String,System.String,System.Boolean)">
@@ -479,16 +475,18 @@
         </member>
         <member name="T:NBagOfTricks.MmTimerEx">
             <summary>
-            The win multimedia timer is erratic. This class attempts to reduce the error by running at one msec
-            and managing the requested periods manually. This is accomplished by using a Stopwatch to actually
-            measure the elapsed time rather than trust the mm timer period. It seems to be an improvement.
+            The win multimedia timer is erratic. Using a one msec tick (fastest), the measured interval is +-100 us.
+            Also note that it takes about 10 ticks to settle down after start.
+            This component attempts to reduce the error by running at one msec and managing the requested periods manually.
+            This is accomplished by using a Stopwatch to actually measure the elapsed time rather than trust the mm timer period.
+            It seems to be an improvement.
             </summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.period">
             <summary>The time between events in msec.</summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.current">
-            <summary>Accumulated msec.</summary>
+            <summary>Actual accumulated msec.</summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx._timers">
             <summary>All the timer instances. Key is id.</summary>
@@ -518,9 +516,7 @@
             <summary>Elapsed timers.</summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx._timerID">
-            <summary>
-            Multimedia timer identifier.
-            </summary>
+            <summary>Multimedia timer identifier. -1 is not inited, 0 is fail to init, other is valid id.</summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx._resolution">
             <summary>
@@ -558,11 +554,6 @@
             Initializes a new instance of the Timer class.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Finalize">
-            <summary>
-            Destructor.
-            </summary>
-        </member>
         <member name="M:NBagOfTricks.MmTimerEx.Dispose">
             <summary>
             Frees timer resources.
@@ -571,6 +562,11 @@
         <member name="M:NBagOfTricks.MmTimerEx.Dispose(System.Boolean)">
             <summary>
             Frees timer resources.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Finalize">
+            <summary>
+            Finalizer.
             </summary>
         </member>
         <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.String,System.Int32)">
@@ -690,8 +686,14 @@
         <member name="F:NBagOfTricks.TimingAnalyzer._lastTicks">
             <summary>Last grab time for calculating diff.</summary>
         </member>
+        <member name="F:NBagOfTricks.TimingAnalyzer._skipCount">
+            <summary>Delay at start.</summary>
+        </member>
         <member name="P:NBagOfTricks.TimingAnalyzer.SampleSize">
             <summary>Number of data points to grab for statistics.</summary>
+        </member>
+        <member name="P:NBagOfTricks.TimingAnalyzer.Skip">
+            <summary>Number of initial data points to exclude from stats.</summary>
         </member>
         <member name="P:NBagOfTricks.TimingAnalyzer.Times">
             <summary>Accumulated data points.</summary>

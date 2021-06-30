@@ -274,9 +274,9 @@ MuteTriangle | 80
 OpenTriangle | 81
 
 # Midi Controllers
-### http://www.nortonmusic.com/midi_cc.html
-### Undefined MIDI CCs: 3, 9, 14-15, 20-31, 85-90, 102-119
-### For most controllers marked on/off, on=127 and off=0
+- http://www.nortonmusic.com/midi_cc.html
+- Undefined MIDI CCs: 3, 9, 14-15, 20-31, 85-90, 102-119
+- For most controllers marked on/off, on=127 and off=0
 
 Controller | Number | Notes
 ---------- | ------ | -----
@@ -285,7 +285,7 @@ Modulation | 1 |
 BreathController | 2 |
 FootController | 4 | MSB
 PortamentoTime | 5 | MSB Only use this for portamento time use 65 to turn on/off
-### Volume | 7 | 7 and 11 both adjust the volume. Use 7 as your main control, set and forget
+Volume | 7 | 7 and 11 both adjust the volume. Use 7 as your main control, set and forget
 Balance | 8 | MSB Some synths use it
 Pan | 10 | MSB
 Expression | 11 | MSB See 7 - use 11 for volume changes during the track (crescendo, diminuendo, swells, etc.)
@@ -309,7 +309,5 @@ AllSoundOff | 120 |
 ResetAllControllers | 121 |
 LocalKeyboard | 122 |
 AllNotesOff | 123 |
-### Specials for internal use
-NoteControl | 250
-PitchControl | 251
-### Add the rest here...
+NoteControl | 250 | Special for internal use
+PitchControl | 251 | Special for internal use
