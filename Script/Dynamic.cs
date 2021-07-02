@@ -67,8 +67,8 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"NVariable: Name:{Name} Value:{Value} Min:{Min} Max:{Max}");
-            return sb.ToString();
+            var s = $"NVariable: Name:{Name} Value:{Value} Min:{Min} Max:{Max}";
+            return s;
         }
     }
 
@@ -99,8 +99,8 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"NController: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} ChannelNumber:{ChannelNumber}");
-            return sb.ToString();
+            var s = $"NController: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} ChannelNumber:{ChannelNumber}";
+            return s;
         }
     }
 
@@ -169,9 +169,8 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"NDisplay: DisplayType:{DisplayType} BoundVar:{BoundVar.Name}");
-            return sb.ToString();
+            var s = $"NDisplay: DisplayType:{DisplayType} BoundVar:{BoundVar.Name}";
+            return s;
         }
     }
-
 }

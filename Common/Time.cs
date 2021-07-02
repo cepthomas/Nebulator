@@ -7,6 +7,9 @@ namespace Nebulator.Common
 {
     /// <summary>
     /// Unit of time.
+    /// msec per tick = 1000/((bpm*TICKS_PER_BEAT)/60)
+    ///               = 60*1000/bpm*TICKS_PER_BEAT
+    /// At 100 bpm 4 TICKS_PER_BEAT gives note spacing of 150 msec.
     /// </summary>
     public class Time
     {

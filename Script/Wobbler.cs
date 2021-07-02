@@ -9,7 +9,7 @@ namespace Nebulator.Script
     /// <summary>
     /// Statistical randomizer for time and volume.
     /// </summary>
-    public class Wobbler
+    public class Wobbler //TODO useful/expensive???
     {
         /// <summary>Randomizer.</summary>
         readonly Random _rand = new Random();

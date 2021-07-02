@@ -1175,6 +1175,7 @@ namespace Nebulator
             {
                 mdText.Add($"- None");
             }
+
             mdText.Add("## Midi Output");
             if (MidiOut.NumberOfDevices > 0)
             {

@@ -30,8 +30,8 @@ namespace Nebulator.Common
         /// <summary>
         /// Endian support.
         /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
+        /// <param name="i">Number to fix.</param>
+        /// <returns>Fixed number.</returns>
         public static UInt32 FixEndian(UInt32 i)
         {
             if (BitConverter.IsLittleEndian)
@@ -47,8 +47,8 @@ namespace Nebulator.Common
         /// <summary>
         /// Endian support.
         /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
+        /// <param name="i">Number to fix.</param>
+        /// <returns>Fixed number.</returns>
         public static UInt16 FixEndian(UInt16 i)
         {
             if (BitConverter.IsLittleEndian)

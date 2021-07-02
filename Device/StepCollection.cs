@@ -94,10 +94,6 @@ namespace Nebulator.Device
                 }
             }
 
-
-            //{
-            //    kv.Value.ForEach(s => sb.Append($"{kv.Key.ToString()} {s.ToString()}{Environment.NewLine}"));
-            //}
             return sb.ToString();
         }
 

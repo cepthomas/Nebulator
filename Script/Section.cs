@@ -87,7 +87,6 @@ namespace Nebulator.Script
     /// </summary>
     public class NSectionElements : List<NSectionElement>
     {
-
         /// <summary>
         /// Add 0-N elements.
         /// </summary>
