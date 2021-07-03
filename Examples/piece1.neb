@@ -26,6 +26,7 @@ bool _local = true;
 public override void Setup()
 {
     string midiout = _local ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:loopMIDI Port 1";
+    // string midiout = "MIDI:VirtualMIDISynth #1";
 
     // IO devices.
     // All the outputs.
