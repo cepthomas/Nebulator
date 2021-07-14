@@ -167,7 +167,6 @@ namespace Nebulator
             ScriptDefinitions.TheDefinitions.Init();
 
             // Fast mm timer.
-            _timer = new MmTimerEx();
             SetSpeedTimerPeriod();
             _timer.TimerElapsedEvent += TimerElapsedEvent;
             _timer.Start();

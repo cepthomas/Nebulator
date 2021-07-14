@@ -19,14 +19,17 @@ NChannel chDrums;
 NChannel chSynth;
 
 // Use wingm and virtual kbd only.
-bool _local = true;
+//bool _local = true;
 
 
 ////// Nebulator midi stuff //////
 public override void Setup()
 {
-    string midiout = _local ? "MIDI:Microsoft GS Wavetable Synth" : "MIDI:loopMIDI Port 1";
-    // string midiout = "MIDI:VirtualMIDISynth #1";
+    //MIDI:VirtualMIDISynth #1
+    //MIDI:Microsoft GS Wavetable Synth
+    //MIDI:loopMIDI Port 1
+    //string midiout = _local ? "MIDI:VirtualMIDISynth #1" : "MIDI:loopMIDI Port 1";
+    string midiout = "MIDI:VirtualMIDISynth #1";
 
     // IO devices.
     // All the outputs.
@@ -35,15 +38,15 @@ public override void Setup()
     chSynth = CreateChannel("synth", midiout, 3, 0.1);
     chDrums = CreateChannel("drums", midiout, 10, 0.1);
 }
-
+ 
 public override void Setup2()
 {
-    if(_local)
+    //if(_local)
     {
         SendPatch(chKeys, AcousticGrandPiano);
         SendPatch(chBass, AcousticBass);
         SendPatch(chSynth, Lead1Square);
-        SendPatch(chDrums, 32); // kit
+        SendPatch(chDrums, 24); // kit
     }
 
     BuildComp();
