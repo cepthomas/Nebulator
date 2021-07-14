@@ -34,7 +34,7 @@ namespace Nebulator.Common
         [DisplayName("Background Color"), Description("The color used for overall background."), Browsable(true)]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
-        [DisplayName("CPU Meter"), Description("Show a CPU usage meter."), Browsable(true)]
+        [DisplayName("CPU Meter"), Description("Show a CPU usage meter. Note that this slows start up a bit."), Browsable(true)]
         public bool CpuMeter { get; set; } = true;
         #endregion
 

@@ -18,17 +18,11 @@ NChannel chBass;
 NChannel chDrums;
 NChannel chSynth;
 
-// Use wingm and virtual kbd only.
-//bool _local = true;
-
 
 ////// Nebulator midi stuff //////
 public override void Setup()
 {
-    //MIDI:VirtualMIDISynth #1
-    //MIDI:Microsoft GS Wavetable Synth
-    //MIDI:loopMIDI Port 1
-    //string midiout = _local ? "MIDI:VirtualMIDISynth #1" : "MIDI:loopMIDI Port 1";
+    //MIDI:VirtualMIDISynth #1   MIDI:Microsoft GS Wavetable Synth   MIDI:loopMIDI Port 1
     string midiout = "MIDI:VirtualMIDISynth #1";
 
     // IO devices.
@@ -41,13 +35,10 @@ public override void Setup()
  
 public override void Setup2()
 {
-    //if(_local)
-    {
-        SendPatch(chKeys, AcousticGrandPiano);
-        SendPatch(chBass, AcousticBass);
-        SendPatch(chSynth, Lead1Square);
-        SendPatch(chDrums, 24); // kit
-    }
+    SendPatch(chKeys, AcousticGrandPiano);
+    SendPatch(chBass, AcousticBass);
+    SendPatch(chSynth, Pad5Bowed);
+    SendPatch(chDrums, 32); // kit
 
     BuildComp();
 }
@@ -98,9 +89,9 @@ void BuildComp()
 
     NSequence seqBassVerse = CreateSequence(16, new NSequenceElements
     {
-        { "|9----.9.9------.|................|................|................|", "B2", BASS_VOL },
-        { "|................|9----.9.9------.|................|................|", "A2", BASS_VOL },
-        { "|................|................|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
+        { "|9----.9.9------.|                |                |                |", "B2", BASS_VOL },
+        { "|                |9----.9.9------.|                |                |", "A2", BASS_VOL },
+        { "|                |                |9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
 
     NSequence seqBassEnd = CreateSequence(16, new NSequenceElements
@@ -112,9 +103,9 @@ void BuildComp()
     /////////////////////// Synth sequences /////////////////////////////////
     NSequence seqSynth1 = CreateSequence(16, new NSequenceElements
     {
-        { "|9---------------|................|................|................|", "B4", SYNTH_VOL },
-        { "|................|9---------------|................|................|", "A4", SYNTH_VOL },
-        { "|................|................|9---------------|----------------|", "E5", SYNTH_VOL },
+        { "|9------        7|                |               7|                |", "B4", SYNTH_VOL },
+        { "|                |9-------       7|                |                |", "A4", SYNTH_VOL },
+        { "|                |                |9-------        |5------------  5|", "E5", SYNTH_VOL },
     });
 
     /////////////////////// sections /////////////////////////////////
@@ -124,6 +115,7 @@ void BuildComp()
         { chKeys,  Loop,  seqKeysIntro },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassIntro  },
+        // { chSynth, Loop,  seqSynth1  },
     });
 
     CreateSection(64, "Middle", new NSectionElements
