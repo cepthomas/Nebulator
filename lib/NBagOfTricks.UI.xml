@@ -1551,6 +1551,18 @@
             Static keyboard processing functions.
             </summary>
         </member>
+        <member name="T:NBagOfTricks.UI.KeyUtils.KeyState">
+            <summary>Api version of win32.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.KeyUtils.KeyState.NotPressed">
+            <summary>Nothing going on.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.KeyUtils.KeyState.Pressed">
+            <summary>Transient press.</summary>
+        </member>
+        <member name="F:NBagOfTricks.UI.KeyUtils.KeyState.Toggled">
+            <summary>e.g. caps lock.</summary>
+        </member>
         <member name="M:NBagOfTricks.UI.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
             <summary>
             Generic UI helper. Allows user to enter only integer or double values.

@@ -482,11 +482,20 @@
             It seems to be an improvement.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.period">
-            <summary>The time between events in msec.</summary>
+        <member name="T:NBagOfTricks.MmTimerEx.TimeProc">
+            <summary>Client callback occurs when the time period has elapsed.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.current">
-            <summary>Actual accumulated msec.</summary>
+        <member name="T:NBagOfTricks.MmTimerEx.TimerInstance">
+            <summary>Tracking instances of client timers.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.period">
+            <summary>The requested time between events in msec.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.handler">
+            <summary>User handler.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.elapsed">
+            <summary>Actual accumulated msec since last event.</summary> 
         </member>
         <member name="F:NBagOfTricks.MmTimerEx._timers">
             <summary>All the timer instances. Key is id.</summary>
@@ -494,8 +503,14 @@
         <member name="F:NBagOfTricks.MmTimerEx._sw">
             <summary>Used for more accurate timing.</summary>
         </member>
+        <member name="F:NBagOfTricks.MmTimerEx._timerID">
+            <summary>Multimedia timer identifier. -1 is not inited, 0 is fail to init, other is valid id.</summary>
+        </member>
         <member name="F:NBagOfTricks.MmTimerEx._running">
             <summary>Indicates whether or not the timer is running.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx._startTicks">
+            <summary>Stopwatch support.</summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx._lastTicks">
             <summary>Stopwatch support.</summary>
@@ -506,41 +521,19 @@
         <member name="F:NBagOfTricks.MmTimerEx.MMTIMER_PERIOD">
             <summary>Msec for mm timer tick.</summary>
         </member>
-        <member name="E:NBagOfTricks.MmTimerEx.TimerElapsedEvent">
-            <summary>Occurs when the time period has elapsed.</summary>
-        </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimerEventArgs">
-            <summary>FastTimer event args.</summary>
-        </member>
-        <member name="P:NBagOfTricks.MmTimerEx.TimerEventArgs.ElapsedTimers">
-            <summary>Elapsed timers.</summary>
-        </member>
-        <member name="F:NBagOfTricks.MmTimerEx._timerID">
-            <summary>Multimedia timer identifier. -1 is not inited, 0 is fail to init, other is valid id.</summary>
-        </member>
-        <member name="F:NBagOfTricks.MmTimerEx._resolution">
-            <summary>
-            Timer resolution in milliseconds. The resolution increases with smaller values - a resolution of 0
-            indicates periodic events should occur with the greatest possible accuracy. To reduce system 
-            overhead, however, you should use the maximum value appropriate for your application.
-            </summary>
-        </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimeProc">
-            <summary>
-            Called by Windows when a mm timer event occurs.
-            </summary>
-            <param name="id"></param>
-            <param name="msg"></param>
-            <param name="user"></param>
-            <param name="param1"></param>
-            <param name="param2"></param>
-        </member>
         <member name="F:NBagOfTricks.MmTimerEx._timeProc">
-            <summary>
-            Called by Windows when a mm timer event occurs.
-            </summary>
+            <summary>Called by Windows when a mm timer event occurs.</summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.timeSetEvent(System.Int32,System.Int32,NBagOfTricks.MmTimerEx.TimeProc,System.IntPtr,System.Int32)">
+        <member name="T:NBagOfTricks.MmTimerEx.NativeMethods">
+            <summary>Win32 Multimedia Timer Functions.</summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.NativeMethods.timeGetDevCaps(NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps@,System.Int32)">
+            <summary></summary>
+            <param name="caps"></param>
+            <param name="sizeOfTimerCaps"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.NativeMethods.timeSetEvent(System.Int32,System.Int32,NBagOfTricks.MmTimerEx.NativeMethods.TimeProc,System.IntPtr,System.Int32)">
             <summary>Start her up.</summary>
             <param name="delay">Event delay, in milliseconds.If this value is not in the range of the minimum and maximum event delays supported by the timer, the function returns an error.</param>
             <param name="resolution">Resolution of the timer event, in milliseconds. The resolution increases with smaller values; a resolution of 0 indicates periodic events should occur with the greatest possible accuracy. To reduce system overhead, however, you should use the maximum value appropriate for your application.</param>
@@ -548,6 +541,23 @@
             <param name="user">User-supplied callback data.</param>
             <param name="mode">Timer event type.</param>
             <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.NativeMethods.timeKillEvent(System.Int32)">
+            <summary></summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.MmTimerEx.NativeMethods.TimeProc">
+            <summary>Called by Windows when a mm timer event occurs.</summary>
+        </member>
+        <member name="T:NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps">
+            <summary>Represents information about the multimedia timer capabilities.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps.periodMin">
+            <summary>Minimum supported period in milliseconds.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps.periodMax">
+            <summary>Maximum supported period in milliseconds.</summary>
         </member>
         <member name="M:NBagOfTricks.MmTimerEx.#ctor">
             <summary>
@@ -569,12 +579,12 @@
             Finalizer.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.String,System.Int32)">
+        <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.Int32,NBagOfTricks.MmTimerEx.TimeProc)">
             <summary>
-            Add a new timer instance.
+            Add or update a timer instance.
             </summary>
-            <param name="id">Arbitrary id as string</param>
             <param name="period">Period in msec </param>
+            <param name="handler">Client callback</param>
         </member>
         <member name="M:NBagOfTricks.MmTimerEx.Start">
             <summary>
@@ -588,28 +598,13 @@
         </member>
         <member name="M:NBagOfTricks.MmTimerEx.MmTimerCallback(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
-            Multimedia timer callback. Don't trust the accuracy of the mm timer so measure actual using a stopwatch.
+            System multimedia timer callback. Don't trust the accuracy of the mm timer so measure actual using a stopwatch.
             </summary>
             <param name="id">The identifier of the timer. The identifier is returned by the timeSetEvent function.</param>
             <param name="msg">Reserved.</param>
             <param name="user">The value that was specified for the dwUser parameter of the timeSetEvent function.</param>
             <param name="param1">Reserved.</param>
             <param name="param2">Reserved.</param>
-        </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimerCaps">
-            <summary>
-            Represents information about the multimedia timer capabilities.
-            </summary>
-        </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerCaps.periodMin">
-            <summary>
-            Minimum supported period in milliseconds.
-            </summary>
-        </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerCaps.periodMax">
-            <summary>
-            Maximum supported period in milliseconds.
-            </summary>
         </member>
         <member name="T:NBagOfTricks.MultiFileWatcher">
             <summary>
