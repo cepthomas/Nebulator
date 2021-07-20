@@ -32,10 +32,10 @@ namespace Nebulator
 
         #region Fields
         /// <summary>App logger.</summary>
-        Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Fast timer.</summary>
-        MmTimerEx _timer = new MmTimerEx();
+        MmTimerEx _mmTimer = new MmTimerEx();
 
         /// <summary>The current script.</summary>
         NebScript _script = null;
@@ -53,7 +53,7 @@ namespace Nebulator
         string _fn = Utils.UNKNOWN_STRING;
 
         /// <summary>Detect changed script files.</summary>
-        MultiFileWatcher _watcher = new MultiFileWatcher();
+        readonly MultiFileWatcher _watcher = new MultiFileWatcher();
 
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
         bool _needCompile = false;
@@ -64,14 +64,14 @@ namespace Nebulator
         /// <summary>Persisted internal values for current script file.</summary>
         Bag _nppVals = new Bag();
 
-        /// <summary>Diagnostics for timing measurement.</summary>
-        TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
+        ///// <summary>Diagnostics for timing measurement.</summary>
+        //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
         /// <summary>Devices to use for send.</summary>
-        Dictionary<string, NOutput> _outputs = new Dictionary<string, NOutput>();
+        readonly Dictionary<string, NOutput> _outputs = new Dictionary<string, NOutput>();
 
         /// <summary>Devices to use for recv.</summary>
-        Dictionary<string, NInput> _inputs = new Dictionary<string, NInput>();
+        readonly Dictionary<string, NInput> _inputs = new Dictionary<string, NInput>();
         #endregion
 
         #region Lifecycle
@@ -168,8 +168,7 @@ namespace Nebulator
 
             // Fast mm timer.
             SetSpeedTimerPeriod();
-            _timer.TimerElapsedEvent += TimerElapsedEvent;
-            _timer.Start();
+            _mmTimer.Start();
 
             timerHousekeep.Interval = 500;
             timerHousekeep.Start();
@@ -194,7 +193,7 @@ namespace Nebulator
 
             if (sopen == "")
             {
-                ProcessPlay(PlayCommand.Stop, true);
+                ProcessPlay(PlayCommand.Stop);
             }
             else
             {
@@ -209,7 +208,7 @@ namespace Nebulator
         /// </summary>
         void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ProcessPlay(PlayCommand.Stop, false);
+            ProcessPlay(PlayCommand.Stop);
 
             // Just in case.
             _outputs.ForEach(o => o.Value?.Kill());
@@ -235,9 +234,9 @@ namespace Nebulator
         {
             if (disposing)
             {
-                _timer?.Stop();
-                _timer?.Dispose();
-                _timer = null;
+                _mmTimer?.Stop();
+                _mmTimer?.Dispose();
+                _mmTimer = null;
 
                 DeleteDevices();
 
@@ -487,7 +486,7 @@ namespace Nebulator
                 {
                     _logger.Error("Compile failed.");
                     ok = false;
-                    ProcessPlay(PlayCommand.StopRewind, false);
+                    ProcessPlay(PlayCommand.StopRewind);
                     SetCompileStatus(false);
                 }
 
@@ -598,7 +597,7 @@ namespace Nebulator
         /// <summary>
         /// Multimedia timer tick handler.
         /// </summary>
-        void TimerElapsedEvent(object sender, MmTimerEx.TimerEventArgs e)
+        void MmTimerCallback(double totalElapsed, double periodElapsed)
         {
             // Do some stats gathering for measuring jitter.
             //if (_tan.Grab())
@@ -611,7 +610,7 @@ namespace Nebulator
             {
                 if (_script != null)
                 {
-                    NextStep(e);
+                    NextStep();
                 }
             });
         }
@@ -619,13 +618,12 @@ namespace Nebulator
         /// <summary>
         /// Output next time/step.
         /// </summary>
-        /// <param name="e">Information about updates required.</param>
-        void NextStep(MmTimerEx.TimerEventArgs e)
+        void NextStep()
         {
             ////// Neb steps /////
             InitRuntime();
 
-            if (chkPlay.Checked && e.ElapsedTimers.Contains("NEB") && !_needCompile)
+            if (chkPlay.Checked && !_needCompile)
             {
                 //_tan.Arm();
 
@@ -665,13 +663,13 @@ namespace Nebulator
                    // Check for end.
                    if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
                    {
-                       ProcessPlay(PlayCommand.StopRewind, false);
+                       ProcessPlay(PlayCommand.StopRewind);
                        _outputs.ForEach(o => o.Value?.Kill()); // just in case
                    }
                 }
                 // else keep going
 
-                ProcessPlay(PlayCommand.UpdateUiTime, false);
+                ProcessPlay(PlayCommand.UpdateUiTime);
             }
 
             // Process whatever the script did.
@@ -883,13 +881,13 @@ namespace Nebulator
         /// <param name="ex"></param>
         ScriptError ProcessScriptRuntimeError(Exception ex)
         {
-            ProcessPlay(PlayCommand.Stop, false);
+            ScriptError err;
+
+            ProcessPlay(PlayCommand.Stop);
             SetCompileStatus(false);
 
-            ScriptError err = null;
-
             // Locate the offending frame.
-            string srcFile = Utils.UNKNOWN_STRING;
+            string srcFile;
             int srcLine = -1;
             StackTrace st = new StackTrace(ex, true);
             StackFrame sf = null;
@@ -956,7 +954,6 @@ namespace Nebulator
         /// </summary>
         void Recent_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem item = sender as ToolStripMenuItem;
             string fn = sender.ToString();
             string sopen = OpenFile(fn);
             if (sopen != "")
@@ -1007,15 +1004,10 @@ namespace Nebulator
                         _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         _fn = fn;
 
-                        // This may be coming from the web service...
-                        Invoke((MethodInvoker)delegate
-                        {
-                            // Running on the UI thread.
-                            SetCompileStatus(true);
-                            AddToRecentDefs(fn);
-                            bool ok = Compile();
-                            SetCompileStatus(ok);
-                        });
+                        SetCompileStatus(true);
+                        AddToRecentDefs(fn);
+                        bool ok = Compile();
+                        SetCompileStatus(ok);
 
                         Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
                     }
@@ -1095,7 +1087,7 @@ namespace Nebulator
         /// </summary>
         void Play_Click(object sender, EventArgs e)
         {
-            ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop, true);
+            ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop);
         }
 
         /// <summary>
@@ -1112,7 +1104,7 @@ namespace Nebulator
         /// </summary>
         void Rewind_Click(object sender, EventArgs e)
         {
-            ProcessPlay(PlayCommand.Rewind, true);
+            ProcessPlay(PlayCommand.Rewind);
         }
 
         /// <summary>
@@ -1129,7 +1121,7 @@ namespace Nebulator
         void Compile_Click(object sender, EventArgs e)
         {
             Compile();
-            ProcessPlay(PlayCommand.StopRewind, true);
+            ProcessPlay(PlayCommand.StopRewind);
         }
 
         /// <summary>
@@ -1138,7 +1130,7 @@ namespace Nebulator
         void Time_ValueChanged(object sender, EventArgs e)
         {
             _stepTime = timeMaster.CurrentTime;
-            ProcessPlay(PlayCommand.UpdateUiTime, true);
+            ProcessPlay(PlayCommand.UpdateUiTime);
         }
 
         /// <summary>
@@ -1342,45 +1334,31 @@ namespace Nebulator
         /// Update UI state per param.
         /// </summary>
         /// <param name="cmd">The command.</param>
-        /// <param name="userAction">Something the user did.</param>
         /// <returns>Indication of success.</returns>
-        bool ProcessPlay(PlayCommand cmd, bool userAction)
+        bool ProcessPlay(PlayCommand cmd)
         {
             bool ret = true;
 
             switch (cmd)
             {
                 case PlayCommand.Start:
-                    if (userAction)
+                    bool ok = !_needCompile || Compile();
+                    if (ok)
                     {
-                        bool ok = _needCompile ? Compile() : true;
-                        if (ok)
-                        {
-                            _startTime = DateTime.Now;
-                            chkPlay.Checked = true;
-                        }
-                        else
-                        {
-                            chkPlay.Checked = false;
-                            ret = false;
-                        }
+                        _startTime = DateTime.Now;
+                        chkPlay.Checked = true;
+                        _mmTimer.Start();
                     }
-                    else // from the server
+                    else
                     {
-                        if (_needCompile)
-                        {
-                            ret = false; // not yet
-                        }
-                        else
-                        {
-                            _startTime = DateTime.Now;
-                            chkPlay.Checked = true;
-                        }
+                        chkPlay.Checked = false;
+                        ret = false;
                     }
                     break;
 
                 case PlayCommand.Stop:
                     chkPlay.Checked = false;
+                    _mmTimer.Stop();
 
                     // Send midi stop all notes just in case.
                     _outputs.ForEach(o => o.Value?.Kill());
@@ -1420,7 +1398,7 @@ namespace Nebulator
             if(e.KeyCode == Keys.Space)
             {
                 // Handle start/stop toggle.
-                ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start, true);
+                ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start);
                 e.Handled = true;
             }
         }
@@ -1434,7 +1412,8 @@ namespace Nebulator
         {
             double secPerBeat = 60 / potSpeed.Value;
             double msecPerTick = 1000 * secPerBeat / Time.TICKS_PER_BEAT;
-            _timer.SetTimer("NEB", (int)msecPerTick);
+            int period = msecPerTick > 1.0 ? (int)Math.Round(msecPerTick) : 1;
+            _mmTimer.SetTimer(period, MmTimerCallback);
         }
         #endregion
 
