@@ -37,6 +37,7 @@ namespace Nebulator.Common
 
         /// <summary>
         /// Load chord and midi definitions from md doc file.
+        /// NOTE!! This is a local file copied from the wiki project - if that one is updated, recopy to the local.
         /// </summary>
         public void Init()
         {

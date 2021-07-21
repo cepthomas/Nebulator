@@ -17,7 +17,7 @@ namespace Nebulator.Test
             ScriptDefinitions.TheDefinitions.Init();
 
             TestRunner runner = new TestRunner(OutputFormat.Readable);
-            string[] cases = new string[] { "MIDI" }; // MIDI  SERVER
+            string[] cases = new string[] { "MIDI" };
             runner.RunSuites(cases);
         }
     }

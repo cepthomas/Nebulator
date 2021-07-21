@@ -5,8 +5,6 @@ using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Device;
 
-// TODO: Support microtonal notes with Pitch changes.
-
 namespace Nebulator.Midi
 {
     /// <summary>

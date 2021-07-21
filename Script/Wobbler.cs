@@ -7,9 +7,9 @@ using NBagOfTricks;
 namespace Nebulator.Script
 {
     /// <summary>
-    /// Statistical randomizer for time and volume.
+    /// Statistical randomizer for time and volume. Really useful??
     /// </summary>
-    public class Wobbler //TODO useful/expensive???
+    public class Wobbler
     {
         /// <summary>Randomizer.</summary>
         readonly Random _rand = new Random();

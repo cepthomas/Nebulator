@@ -288,7 +288,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Parse one file. This is recursive to support nested #import.
+        /// Parse one file. This is recursive to support nested #include.
         /// </summary>
         /// <param name="pcont">The parse context.</param>
         /// <returns>True if a valid file.</returns>
@@ -342,14 +342,14 @@ namespace Nebulator.Script
             {
                 string s = sourceLines[pcont.LineNumber - 1];
 
-                // Remove any comments. TODO C style also?
+                // Remove any comments. Single line type only.
                 int pos = s.IndexOf("//");
                 string cline = pos >= 0 ? s.Left(pos) : s;
 
                 // Test for nested files
-                // #import "path\name.neb"
-                // #import "include path\split file name.neb"
-                if (s.StartsWith("#import"))
+                // #include "path\name.neb"
+                // #include "include path\split file name.neb"
+                if (s.StartsWith("#include"))
                 {
                     List<string> parts = s.SplitByTokens("\";");
                     string fn = parts.Last();
@@ -366,7 +366,7 @@ namespace Nebulator.Script
                         Errors.Add(new ScriptError()
                         {
                             ErrorType = ScriptErrorType.Error,
-                            Message = $"Invalid #import: {fn}",
+                            Message = $"Invalid #include: {fn}",
                             SourceFile = pcont.SourceFile,
                             LineNumber = pcont.LineNumber
                         });

@@ -93,7 +93,7 @@ namespace Nebulator.Common
         public FormInfo MainFormInfo { get; set; } = new FormInfo();
 
         [Browsable(false)]
-        public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };//TODO not useful?
+        public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
 
         [Browsable(false)]
         public bool MonitorInput { get; set; } = false;
