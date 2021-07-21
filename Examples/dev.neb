@@ -77,13 +77,10 @@ public override void Setup()
 
 public override void Setup2()
 {
-    if(_local)
-    {
-        SendPatch(chKeys, AcousticGrandPiano);
-        SendPatch(chBass, AcousticBass);
-        SendPatch(chSynth, Lead1Square);
-        SendPatch(chDrums, 32); // kit
-    }
+    SendPatch(chKeys, AcousticGrandPiano);
+    SendPatch(chBass, AcousticBass);
+    SendPatch(chSynth, Lead1Square);
+    SendPatch(chDrums, 32); // kit
 
     BuildComp();
 }
