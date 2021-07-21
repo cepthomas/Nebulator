@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 namespace Nebulator.Common
 {
-
     /// <summary>
     /// Custom renderer for toolstrip checkbox color.
     /// </summary>

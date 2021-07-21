@@ -86,9 +86,6 @@ public override void Setup2()
     }
 
     BuildComp();
-
-    // Could do a pan:
-    // SendController(chKeys, Pan, 30);
 }
 
 void BuildComp()
