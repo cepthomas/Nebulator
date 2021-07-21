@@ -71,15 +71,20 @@ namespace Nebulator.Script
         /// Normal factory.
         /// </summary>
         /// <param name="name">UI name</param>
-        /// <param name="devName">Device name</param>
+        /// <param name="device">Device type</param>
         /// <param name="channelNum"></param>
         /// <param name="volWobble"></param>
-        protected NChannel CreateChannel(string name, string devName, int channelNum, double volWobble = 0.0)
+        protected NChannel CreateChannel(string name, DeviceType device, int channelNum, double volWobble = 0.0)
         {
+            if(device != DeviceType.MidiOut && device != DeviceType.OscOut)
+            {
+                throw new Exception($"Invalid device for channel {name} {device}");
+            }
+
             NChannel nt = new NChannel()
             {
                 Name = name,
-                DeviceName = devName,
+                DeviceType = device,
                 ChannelNumber = channelNum,
             };
 
@@ -99,20 +104,25 @@ namespace Nebulator.Script
         /// <summary>
         /// Create a controller input.
         /// </summary>
-        /// <param name="devName">Device name.</param>
+        /// <param name="device">Device type.</param>
         /// <param name="channelNum">Which channel.</param>
         /// <param name="controlId">Which</param>
         /// <param name="bound">NVariable</param>
-        protected void CreateController(string devName, int channelNum, int controlId, NVariable bound)
+        protected void CreateController(DeviceType device, int channelNum, int controlId, NVariable bound)
         {
+            if (device != DeviceType.MidiIn && device != DeviceType.OscIn && device != DeviceType.VkeyIn)
+            {
+                throw new Exception($"Invalid device for controller {device}");
+            }
+
             if (bound == null)
             {
-                throw new Exception($"Invalid NVariable for controller {devName}");
+                throw new Exception($"Invalid NVariable for controller {device}");
             }
 
             NController mp = new NController()
             {
-                DeviceName = devName,
+                DeviceType = device,
                 ChannelNumber = channelNum,
                 ControllerId = controlId,
                 BoundVar = bound

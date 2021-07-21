@@ -42,7 +42,7 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public bool Init(string name)
+        public bool Init(DeviceType device)
         {
             bool inited = false;
 
@@ -57,17 +57,13 @@ namespace Nebulator.OSC
                 }
 
                 // Check for properly formed port.
-                List<string> parts = name.SplitByToken(":");
-                if (parts.Count == 2)
+                if (int.TryParse(UserSettings.TheSettings.OscInDevice, out int port))
                 {
-                    if (int.TryParse(parts[1], out int port))
-                    {
-                        _oscInput = new NebOsc.Input() { LocalPort = port };
-                        inited = true;
-                        DeviceName = _oscInput.DeviceName;
-                        _oscInput.InputEvent += OscInput_InputEvent;
-                        _oscInput.LogEvent += OscInput_LogEvent;
-                    }
+                    _oscInput = new NebOsc.Input() { LocalPort = port };
+                    inited = true;
+                    DeviceName = _oscInput.DeviceName;
+                    _oscInput.InputEvent += OscInput_InputEvent;
+                    _oscInput.LogEvent += OscInput_LogEvent;
                 }
             }
             catch (Exception ex)

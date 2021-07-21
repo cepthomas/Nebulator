@@ -5,6 +5,9 @@ using Nebulator.Common;
 
 namespace Nebulator.Device
 {
+    /// <summary>The various devices.</summary>
+    public enum DeviceType { None, MidiIn, MidiOut, OscIn, OscOut, VkeyIn }
+
     /// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>
     public interface IDevice : IDisposable
     {
@@ -23,9 +26,9 @@ namespace Nebulator.Device
         /// Interfaces don't allow constructors so do this instead.
         /// Corresponds to the definition in the script.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="device">Specific device.</param>
         /// <returns></returns>
-        bool Init(string name);
+        bool Init(DeviceType device);
 
         /// <summary>Start operation.</summary>
         void Start();

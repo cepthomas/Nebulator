@@ -46,7 +46,7 @@ namespace Nebulator.Midi
         }
 
         /// <inheritdoc />
-        public bool Init(string name)
+        public bool Init(DeviceType device)
         {
             bool inited = false;
 
@@ -60,28 +60,24 @@ namespace Nebulator.Midi
                     _midiOut = null;
                 }
 
-                List<string> parts = name.SplitByToken(":");
-                if(parts.Count == 2)
+                // Figure out which device.
+                List<string> devices = new List<string>();
+                for (int i = 0; i < MidiOut.NumberOfDevices; i++)
                 {
-                    // Figure out which device.
-                    List<string> devices = new List<string>();
-                    for (int device = 0; device < MidiOut.NumberOfDevices; device++)
-                    {
-                        devices.Add(MidiOut.DeviceInfo(device).ProductName);
-                    }
+                    devices.Add(MidiOut.DeviceInfo(i).ProductName);
+                }
 
-                    int ind = devices.IndexOf(parts[1]);
+                int ind = devices.IndexOf(UserSettings.TheSettings.MidiOutDevice);
 
-                    if (ind < 0)
-                    {
-                        LogMsg(DeviceLogCategory.Error, $"Invalid midi: {parts[1]}");
-                    }
-                    else
-                    {
-                        _midiOut = new MidiOut(ind);
-                        inited = true;
-                        DeviceName = parts[1];
-                    }
+                if (ind < 0)
+                {
+                    LogMsg(DeviceLogCategory.Error, $"Invalid midi: {device}");
+                }
+                else
+                {
+                    _midiOut = new MidiOut(ind);
+                    inited = true;
+                    DeviceName = UserSettings.TheSettings.MidiOutDevice;
                 }
             }
             catch (Exception ex)

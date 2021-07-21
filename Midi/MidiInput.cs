@@ -44,7 +44,7 @@ namespace Nebulator.Midi
         }
 
         /// <inheritdoc />
-        public bool Init(string name)
+        public bool Init(DeviceType device)
         {
             bool inited = false;
 
@@ -59,31 +59,27 @@ namespace Nebulator.Midi
                     _midiIn = null;
                 }
 
-                List<string> parts = name.SplitByToken(":");
-                if(parts.Count == 2)
+                // Figure out which device.
+                List<string> devices = new List<string>();
+                for (int i = 0; i < MidiIn.NumberOfDevices; i++)
                 {
-                    // Figure out which device.
-                    List<string> devices = new List<string>();
-                    for (int device = 0; device < MidiIn.NumberOfDevices; device++)
-                    {
-                        devices.Add(MidiIn.DeviceInfo(device).ProductName);
-                    }
+                    devices.Add(MidiIn.DeviceInfo(i).ProductName);
+                }
 
-                    int ind = devices.IndexOf(parts[1]);
+                int ind = devices.IndexOf(UserSettings.TheSettings.MidiInDevice);
 
-                    if (ind < 0)
-                    {
-                        LogMsg(DeviceLogCategory.Error, $"Invalid midi: {parts[1]}");
-                    }
-                    else
-                    {
-                        _midiIn = new MidiIn(ind);
-                        _midiIn.MessageReceived += MidiIn_MessageReceived;
-                        _midiIn.ErrorReceived += MidiIn_ErrorReceived;
-                        _midiIn.Start();
-                        inited = true;
-                        DeviceName = parts[1];
-                    }
+                if (ind < 0)
+                {
+                    LogMsg(DeviceLogCategory.Error, $"Invalid midi: {device}");
+                }
+                else
+                {
+                    _midiIn = new MidiIn(ind);
+                    _midiIn.MessageReceived += MidiIn_MessageReceived;
+                    _midiIn.ErrorReceived += MidiIn_ErrorReceived;
+                    _midiIn.Start();
+                    inited = true;
+                    DeviceName = UserSettings.TheSettings.MidiInDevice;
                 }
             }
             catch (Exception ex)

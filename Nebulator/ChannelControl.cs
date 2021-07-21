@@ -11,8 +11,11 @@ namespace Nebulator
     /// <summary>
     /// Common channel controller.
     /// </summary>
-    public partial class ChannelControl : UserControl // TODO pan also?
+    public partial class ChannelControl : UserControl
     {
+        // TODO pan also? choose controller #10, Pan, 
+        // the center horizon line of the Controller Pane is center--64. All the way at the bottom, 0, is left, and all the way to the top, 127, is right.
+
         #region Properties
         /// <summary>
         /// Corresponding channel object.

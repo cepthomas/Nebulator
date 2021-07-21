@@ -45,7 +45,7 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public bool Init(string name)
+        public bool Init(DeviceType device)
         {
             bool inited = false;
 
@@ -55,13 +55,13 @@ namespace Nebulator.OSC
                 _oscOutput = null;
             }
 
-            // Check for properly formed port.
-            List<string> parts = name.SplitByToken(":");
-            if (parts.Count == 3)
+            // Check for properly formed url:port.
+            List<string> parts = UserSettings.TheSettings.OscOutDevice.SplitByToken(":");
+            if (parts.Count == 2)
             {
-                if (int.TryParse(parts[2], out int port))
+                if (int.TryParse(parts[1], out int port))
                 {
-                    string ip = parts[1];
+                    string ip = parts[0];
                     _oscOutput = new NebOsc.Output() { RemoteIP = ip, RemotePort = port };
 
                     if (_oscOutput.Init())

@@ -63,9 +63,9 @@ namespace Nebulator
         }
 
         /// <inheritdoc />
-        public bool Init(string _ = "")
+        public bool Init(DeviceType device)
         {
-            return true;
+            return device == DeviceType.VkeyIn;
         }
         #endregion
 

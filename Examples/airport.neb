@@ -33,7 +33,7 @@ public override void Setup()
     vColor = CreateVariable("color", 240, 0, 255); // change color
 
     // Channels
-    chSound = CreateChannel("sound", "MIDI:Microsoft GS Wavetable Synth", 1, 0.1);
+    chSound = CreateChannel("sound", DeviceType.MidiOut, 1, 0.1);
     
     // levers
     CreateLever(vColor);

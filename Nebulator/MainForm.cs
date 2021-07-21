@@ -68,10 +68,10 @@ namespace Nebulator
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
         /// <summary>Devices to use for send.</summary>
-        readonly Dictionary<string, NOutput> _outputs = new Dictionary<string, NOutput>();
+        readonly Dictionary<DeviceType, NOutput> _outputs = new Dictionary<DeviceType, NOutput>();
 
         /// <summary>Devices to use for recv.</summary>
-        readonly Dictionary<string, NInput> _inputs = new Dictionary<string, NInput>();
+        readonly Dictionary<DeviceType, NInput> _inputs = new Dictionary<DeviceType, NInput>();
         #endregion
 
         #region Lifecycle
@@ -177,9 +177,7 @@ namespace Nebulator
 
             _watcher.FileChangeEvent += Watcher_Changed;
 
-            #region System info
             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
-            #endregion
 
             #region Open file
             string sopen = "";
@@ -286,52 +284,48 @@ namespace Nebulator
             foreach (NController ctlr in _script.Controllers)
             {
                 // Have we seen it yet?
-                if (_inputs.ContainsKey(ctlr.DeviceName))
+                if (_inputs.ContainsKey(ctlr.DeviceType))
                 {
-                    ctlr.Device = _inputs[ctlr.DeviceName];
+                    ctlr.Device = _inputs[ctlr.DeviceType];
                 }
                 else // nope
                 {
                     NInput nin = null;
 
-                    List<string> parts = ctlr.DeviceName.SplitByToken(":");
-                    if (parts.Count >= 1)
+                    switch (ctlr.DeviceType)
                     {
-                        switch (parts[0].ToUpper())
-                        {
-                            case "MIDI":
-                                nin = new MidiInput();
-                                break;
+                        case DeviceType.MidiIn:
+                            nin = new MidiInput();
+                            break;
 
-                            case "OSC":
-                                nin = new OscInput();
-                                break;
+                        case DeviceType.OscIn:
+                            nin = new OscInput();
+                            break;
 
-                            case "VKEY":
-                                vkey = new Keyboard();
-                                nin = vkey;
-                                break;
-                        }
+                        case DeviceType.VkeyIn:
+                            vkey = new Keyboard();
+                            nin = vkey;
+                            break;
                     }
 
                     // Finish it up.
                     if (nin != null)
                     {
-                        if (nin.Init(ctlr.DeviceName))
+                        if (nin.Init(ctlr.DeviceType))
                         {
                             nin.DeviceInputEvent += Device_InputEvent;
                             nin.DeviceLogEvent += Device_LogEvent;
                             ctlr.Device = nin;
-                            _inputs.Add(ctlr.DeviceName, nin);
+                            _inputs.Add(ctlr.DeviceType, nin);
                         }
                         else
                         {
-                            _logger.Error($"Failed to init controller: {ctlr.DeviceName}");
+                            _logger.Error($"Failed to init controller: {ctlr.DeviceType}");
                         }
                     }
                     else
                     {
-                        _logger.Error($"Invalid controller: {ctlr.DeviceName}");
+                        _logger.Error($"Invalid controller: {ctlr.DeviceType}");
                     }
                 }
 
@@ -349,27 +343,23 @@ namespace Nebulator
             foreach (NChannel chan in _script.Channels)
             {
                 // Have we seen it yet?
-                if (_outputs.ContainsKey(chan.DeviceName))
+                if (_outputs.ContainsKey(chan.DeviceType))
                 {
-                    chan.Device = _outputs[chan.DeviceName];
+                    chan.Device = _outputs[chan.DeviceType];
                 }
                 else // nope
                 {
                     NOutput nout = null;
 
-                    List<string> parts = chan.DeviceName.SplitByToken(":");
-                    if (parts.Count >= 1)
+                    switch (chan.DeviceType)
                     {
-                        switch (parts[0].ToUpper())
-                        {
-                            case "MIDI":
-                                nout = new MidiOutput();
-                                break;
+                        case DeviceType.MidiOut:
+                            nout = new MidiOutput();
+                            break;
 
-                            case "OSC":
-                                nout = new OscOutput();
-                                break;
-                        }
+                        case DeviceType.OscOut:
+                            nout = new OscOutput();
+                            break;
                     }
 
                     // Finish it up.
@@ -377,19 +367,19 @@ namespace Nebulator
                     {
                         nout.DeviceLogEvent += Device_LogEvent;
 
-                        if (nout.Init(chan.DeviceName))
+                        if (nout.Init(chan.DeviceType))
                         {
                             chan.Device = nout;
-                            _outputs.Add(chan.DeviceName, nout);
+                            _outputs.Add(chan.DeviceType, nout);
                         }
                         else
                         {
-                            _logger.Error($"Failed to init channel: {chan.DeviceName}");
+                            _logger.Error($"Failed to init channel: {chan.DeviceType}");
                         }
                     }
                     else
                     {
-                        _logger.Error($"Invalid channel: {chan.DeviceName}");
+                        _logger.Error($"Invalid channel: {chan.DeviceType}");
                     }
                 }
             }

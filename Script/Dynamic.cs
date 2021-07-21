@@ -78,8 +78,8 @@ namespace Nebulator.Script
     public class NController
     {
         #region Properties
-        /// <summary>The associated comm device name.</summary>
-        public string DeviceName { get; set; } = Utils.UNKNOWN_STRING;
+        /// <summary>The various devices.</summary>
+        public DeviceType DeviceType { get; set; } = DeviceType.None;
 
         /// <summary>The associated comm device.</summary>
         public NInput Device { get; set; } = null;
@@ -110,8 +110,8 @@ namespace Nebulator.Script
     public class NChannel
     {
         #region Properties
-        /// <summary>The associated device name.</summary>
-        public string DeviceName { get; set; } = Utils.UNKNOWN_STRING;
+        /// <summary>The associated device.</summary>
+        public DeviceType DeviceType { get; set; } = DeviceType.None;
 
         /// <summary>The associated device.</summary>
         public NOutput Device { get; set; } = null;
