@@ -28,7 +28,6 @@
             this.fileDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnMonIn = new System.Windows.Forms.ToolStripButton();
@@ -161,7 +160,6 @@
             this.fileDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
             this.recentToolStripMenuItem,
-            this.importMidiToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
             this.viewLogToolStripMenuItem});
             this.fileDropDownButton.Image = global::Nebulator.Properties.Resources.glyphicons_37_file;
@@ -183,13 +181,6 @@
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
             this.recentToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
             this.recentToolStripMenuItem.Text = "Recent";
-            // 
-            // importMidiToolStripMenuItem
-            // 
-            this.importMidiToolStripMenuItem.Name = "importMidiToolStripMenuItem";
-            this.importMidiToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
-            this.importMidiToolStripMenuItem.Text = "Import Midi or Style";
-            this.importMidiToolStripMenuItem.Click += new System.EventHandler(this.ImportMidi_Click);
             // 
             // exportMidiToolStripMenuItem
             // 
@@ -374,7 +365,6 @@
         private System.Windows.Forms.ToolStripDropDownButton fileDropDownButton;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnKillComm;
         private System.Windows.Forms.ToolStripButton btnSettings;

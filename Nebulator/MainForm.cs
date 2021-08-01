@@ -158,8 +158,6 @@ namespace Nebulator
             btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
             #endregion
 
-            importMidiToolStripMenuItem.Visible = false; // TODO fix this sometime.
-
             InitLogging();
 
             PopulateRecentMenu();
