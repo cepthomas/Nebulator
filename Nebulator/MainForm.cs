@@ -616,7 +616,7 @@ namespace Nebulator
                 //_tan.Arm();
 
                 // Update section - only on beats.
-                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Tick == 0)
+                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Subdiv == 0)
                 {
                     if(timeMaster.TimeDefs.ContainsKey(_stepTime.Beat))
                     {
@@ -1399,8 +1399,8 @@ namespace Nebulator
         void SetSpeedTimerPeriod()
         {
             double secPerBeat = 60 / potSpeed.Value;
-            double msecPerTick = 1000 * secPerBeat / Time.TICKS_PER_BEAT;
-            int period = msecPerTick > 1.0 ? (int)Math.Round(msecPerTick) : 1;
+            double msecPerSubdiv = 1000 * secPerBeat / Time.SUBDIVS_PER_BEAT;
+            int period = msecPerSubdiv > 1.0 ? (int)Math.Round(msecPerSubdiv) : 1;
             _mmTimer.SetTimer(period, MmTimerCallback);
         }
         #endregion
@@ -1451,11 +1451,7 @@ namespace Nebulator
                 Dictionary<int, string> channels = new Dictionary<int, string>();
                 _script.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.Name));
 
-                // Convert bpm to sec per beat.
-                double beatsPerSec = potSpeed.Value / 60;
-                double secPerBeat = 1 / beatsPerSec;
-
-                MidiUtils.ExportMidi(_script.Steps, fn, channels, secPerBeat, "Converted from " + _fn);
+                MidiUtils.ExportMidi(_script.Steps, fn, channels, potSpeed.Value, "Converted from " + _fn);
             }
         }
 

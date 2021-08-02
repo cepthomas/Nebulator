@@ -75,7 +75,7 @@ namespace Nebulator.Device
         /// <summary>Velocity.</summary>
         public double Velocity { get; set; } = 64; // seems to be standard default.
 
-        /// <summary>When it's done in ticks - used by stop note chasing.</summary>
+        /// <summary>When it's done in subdivs - used by stop note chasing.</summary>
         public int Expiry { get; set; } = -1;
 
         /// <summary>For viewing pleasure.</summary>

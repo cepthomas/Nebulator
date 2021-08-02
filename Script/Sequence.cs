@@ -123,9 +123,9 @@ namespace Nebulator.Script
                 // Make a Note on.
                 double volmod = (double)(currentVol - '0') / 10;
 
-                Time dur = new Time((index - start) / Time.TICKS_PER_BEAT, (index - start) % Time.TICKS_PER_BEAT);
+                Time dur = new Time((index - start) / Time.SUBDIVS_PER_BEAT, (index - start) % Time.SUBDIVS_PER_BEAT);
 
-                Time when = new Time(start / Time.TICKS_PER_BEAT, start % Time.TICKS_PER_BEAT);
+                Time when = new Time(start / Time.SUBDIVS_PER_BEAT, start % Time.SUBDIVS_PER_BEAT);
                 NSequenceElement ncl = new NSequenceElement(which)
                 {
                     When = when,

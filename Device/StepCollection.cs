@@ -19,7 +19,7 @@ namespace Nebulator.Device
 
         #region Properties
         ///<summary>Gets a collection of the list.</summary>
-        public IEnumerable<Time> Times { get { return _steps.Keys.OrderBy(k => k.TotalTicks); } }
+        public IEnumerable<Time> Times { get { return _steps.Keys.OrderBy(k => k.TotalSubdivs); } }
 
         ///<summary>The duration of the whole thing.</summary>
         public int MaxBeat { get; private set; } = 0;

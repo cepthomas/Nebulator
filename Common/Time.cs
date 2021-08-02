@@ -6,27 +6,24 @@ using NBagOfTricks;
 namespace Nebulator.Common
 {
     /// <summary>
-    /// Unit of time.
-    /// msec per tick = 1000/((bpm*TICKS_PER_BEAT)/60)
-    ///               = 60*1000/bpm*TICKS_PER_BEAT
-    /// At 100 bpm 4 TICKS_PER_BEAT gives note spacing of 150 msec.
+    /// Unit of musical time.
     /// </summary>
     public class Time
     {
         #region Constants
-        /// <summary>Subdivision setting. 4 means 1/16 notes, 8 means 1/32 notes.</summary>
-        public const int TICKS_PER_BEAT  = 4;
+        /// <summary>Subdivision setting per beat. 4 means 1/16 note resolution, 8 means 1/32 note, etc.</summary>
+        public const int SUBDIVS_PER_BEAT  = 4;
         #endregion
 
         #region Properties
         /// <summary>Left of the decimal point. From 0 to N.</summary>
         public int Beat { get; set; } = 0;
 
-        /// <summary>Right of the decimal point. From 0 to TICKS_PER_BEAT-1.</summary>
-        public int Tick { get; set; } = 0;
+        /// <summary>Right of the decimal point. From 0 to SUBDIVS_PER_BEAT-1.</summary>
+        public int Subdiv { get; set; } = 0;
 
-        /// <summary>Total ticks for the unit of time.</summary>
-        public int TotalTicks { get { return Beat * TICKS_PER_BEAT + Tick; } }
+        /// <summary>Total subdivisions for the unit of time.</summary>
+        public int TotalSubdivs { get { return Beat * SUBDIVS_PER_BEAT + Subdiv; } }
         #endregion
 
         #region Constructors
@@ -36,7 +33,7 @@ namespace Nebulator.Common
         public Time()
         {
             Beat = 0;
-            Tick = 0;
+            Subdiv = 0;
         }
 
         /// <summary>
@@ -45,15 +42,15 @@ namespace Nebulator.Common
         public Time(Time other)
         {
             Beat = other.Beat;
-            Tick = other.Tick;
+            Subdiv = other.Subdiv;
         }
 
         /// <summary>
         /// Constructor from discrete parts.
         /// </summary>
         /// <param name="beat"></param>
-        /// <param name="tick">Sub to set - can be negative.</param>
-        public Time(int beat, int tick)
+        /// <param name="subdiv">Sub to set - can be negative.</param>
+        public Time(int beat, int subdiv)
         {
             if (beat < 0)
             {
@@ -61,44 +58,44 @@ namespace Nebulator.Common
                 beat = 0;
             }
 
-            if (tick >= 0)
+            if (subdiv >= 0)
             {
-                Beat = beat + tick / TICKS_PER_BEAT;
-                Tick = tick % TICKS_PER_BEAT;
+                Beat = beat + subdiv / SUBDIVS_PER_BEAT;
+                Subdiv = subdiv % SUBDIVS_PER_BEAT;
             }
             else
             {
-                tick = Math.Abs(tick);
-                Beat = beat - (tick / TICKS_PER_BEAT) - 1;
-                Tick = TICKS_PER_BEAT - (tick % TICKS_PER_BEAT);
+                subdiv = Math.Abs(subdiv);
+                Beat = beat - (subdiv / SUBDIVS_PER_BEAT) - 1;
+                Subdiv = SUBDIVS_PER_BEAT - (subdiv % SUBDIVS_PER_BEAT);
             }
         }
 
         /// <summary>
-        /// Constructor from total ticks.
+        /// Constructor from total subdivs.
         /// </summary>
-        /// <param name="ticks"></param>
-        public Time(int ticks)
+        /// <param name="subdivs"></param>
+        public Time(int subdivs)
         {
-            if (ticks < 0)
+            if (subdivs < 0)
             {
                 throw new Exception("Negative value is invalid");
             }
 
-            Beat = ticks / TICKS_PER_BEAT;
-            Tick = ticks % TICKS_PER_BEAT;
+            Beat = subdivs / SUBDIVS_PER_BEAT;
+            Subdiv = subdivs % SUBDIVS_PER_BEAT;
         }
 
         /// <summary>
-        /// Constructor from total ticks.
+        /// Constructor from total subdivs.
         /// </summary>
-        /// <param name="ticks"></param>
-        public Time(long ticks) : this((int)ticks)
+        /// <param name="subdivs"></param>
+        public Time(long subdivs) : this((int)subdivs)
         {
         }
 
         /// <summary>
-        /// Constructor from Beat.Tick representation as a double.
+        /// Constructor from Beat.Subdiv representation as a double.
         /// </summary>
         /// <param name="tts"></param>
         public Time(double tts)
@@ -111,19 +108,17 @@ namespace Nebulator.Common
             var (integral, fractional) = MathUtils.SplitDouble(tts);
             Beat = (int)integral;
 
-            if (fractional >= TICKS_PER_BEAT)
+            if (fractional >= SUBDIVS_PER_BEAT)
             {
-                throw new Exception("Invalid tick value");
+                throw new Exception("Invalid subdiv value");
             }
 
-            Tick = (int)(fractional * 100);
+            Subdiv = (int)(fractional * 100);
         }
         #endregion
 
         #region Overrides and operators for custom classess
-        // The Equality Operator (==) is the comparison operator and the Equals() method compares the contents of a string.
-        // The == Operator compares the reference identity while the Equals() method compares only contents.
-
+        // Compare contents.
         public override bool Equals(object other)
         {
             if (other is null)
@@ -139,6 +134,7 @@ namespace Nebulator.Common
             return other.GetType() == GetType() && Equals((Time)other);
         }
 
+        // Compare contents.
         public bool Equals(Time other)
         {
             if (other is null)
@@ -151,9 +147,10 @@ namespace Nebulator.Common
                 return true;
             }
 
-            return Beat.Equals(other.Beat) && Tick.Equals(other.Tick);
+            return Beat.Equals(other.Beat) && Subdiv.Equals(other.Subdiv);
         }
 
+        // Compare identity.
         public static bool operator ==(Time obj1, Time obj2)
         {
             if (ReferenceEquals(obj1, obj2))
@@ -171,65 +168,70 @@ namespace Nebulator.Common
                 return false;
             }
 
-            return (obj1.Beat == obj2.Beat && obj1.Tick == obj2.Tick);
+            return (obj1.Beat == obj2.Beat && obj1.Subdiv == obj2.Subdiv);
         }
 
+        // Compare identity.
         public static bool operator !=(Time obj1, Time obj2)
         {
             return !(obj1 == obj2);
         }
 
+        // Compare identity.
         public static bool operator >(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTicks > t2.TotalTicks;
+            return t1 is null || t2 is null || t1.TotalSubdivs > t2.TotalSubdivs;
         }
 
+        // Compare identity.
         public static bool operator >=(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTicks >= t2.TotalTicks;
+            return t1 is null || t2 is null || t1.TotalSubdivs >= t2.TotalSubdivs;
         }
 
+        // Compare identity.
         public static bool operator <(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTicks < t2.TotalTicks;
+            return t1 is null || t2 is null || t1.TotalSubdivs < t2.TotalSubdivs;
         }
 
+        // Compare identity.
         public static bool operator <=(Time t1, Time t2)
         {
-            return t1 is null || t2 is null || t1.TotalTicks <= t2.TotalTicks;
+            return t1 is null || t2 is null || t1.TotalSubdivs <= t2.TotalSubdivs;
         }
 
         public static Time operator +(Time t1, Time t2)
         {
-            int beat = t1.Beat + t2.Beat + (t1.Tick + t2.Tick) / TICKS_PER_BEAT;
-            int incr = (t1.Tick + t2.Tick) % TICKS_PER_BEAT;
+            int beat = t1.Beat + t2.Beat + (t1.Subdiv + t2.Subdiv) / SUBDIVS_PER_BEAT;
+            int incr = (t1.Subdiv + t2.Subdiv) % SUBDIVS_PER_BEAT;
             return new Time(beat, incr);
         }
 
         public override int GetHashCode()
         {
-            return TotalTicks;
+            return TotalSubdivs;
         }
         #endregion
 
         #region Public functions
         /// <summary>
-        /// Move to the next tick and update clock.
+        /// Move to the next subdiv and update clock.
         /// </summary>
         /// <returns>True if it's a new beat.</returns>
         public bool Advance()
         {
-            bool newTick = false;
-            Tick++;
+            bool newdiv = false;
+            Subdiv++;
 
-            if(Tick >= TICKS_PER_BEAT)
+            if(Subdiv >= SUBDIVS_PER_BEAT)
             {
                 Beat++;
-                Tick = 0;
-                newTick = true;
+                Subdiv = 0;
+                newdiv = true;
             }
 
-            return newTick;
+            return newdiv;
         }
 
         /// <summary>
@@ -238,7 +240,7 @@ namespace Nebulator.Common
         public void Reset()
         {
             Beat = 0;
-            Tick = 0;
+            Subdiv = 0;
         }
 
         /// <summary>
@@ -246,10 +248,10 @@ namespace Nebulator.Common
         /// </summary>
         public void RoundUp()
         {
-            if(Tick != 0)
+            if(Subdiv != 0)
             {
                 Beat++;
-                Tick = 0;
+                Subdiv = 0;
             }
         }
 
@@ -258,7 +260,7 @@ namespace Nebulator.Common
         /// </summary>
         public override string ToString()
         {
-            return $"{Beat:00}.{Tick:00}";
+            return $"{Beat:00}.{Subdiv:00}";
         }
         #endregion
     }

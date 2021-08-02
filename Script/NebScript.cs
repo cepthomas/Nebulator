@@ -22,13 +22,13 @@ namespace Nebulator.Script
         public bool Playing { get; set; } = false;
 
         /// <summary>Subdivision.</summary>
-        public int TicksPerBeat { get { return Time.TICKS_PER_BEAT; } }
+        public int SubdivsPerBeat { get { return Time.SUBDIVS_PER_BEAT; } }
 
         /// <summary>Current Nebulator Beat.</summary>
         public int Beat { get { return StepTime.Beat; } }
 
-        /// <summary>Current Nebulator Tick.</summary>
-        public int Tick { get { return StepTime.Tick; } }
+        /// <summary>Current Nebulator Subdiv.</summary>
+        public int Subdiv { get { return StepTime.Subdiv; } }
 
         /// <summary>Actual time since start pressed. Main -> Script</summary>
         public double RealTime { get; set; } = 0.0;

@@ -24,9 +24,9 @@ namespace Nebulator.Midi
         /// <param name="steps"></param>
         /// <param name="midiFileName"></param>
         /// <param name="channels">Map of channel number to channel name.</param>
-        /// <param name="secPerBeat">Seconds per beat.</param>
+        /// <param name="bpm">Beats per minute.</param>
         /// <param name="info">Extra info to add to midi file.</param>
-        public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double secPerBeat, string info)
+        public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double bpm, string info)
         {
             // Events per track.
             Dictionary<int, IList<MidiEvent>> trackEvents = new Dictionary<int, IList<MidiEvent>>();
@@ -48,8 +48,10 @@ namespace Nebulator.Midi
             //  - major (0) or minor (1) key.
             //  - abs time.
 
-            lhdr.Add(new TempoEvent((int)(1000000.0 * secPerBeat), 0));
+            // Tempo.
+            lhdr.Add(new TempoEvent(0, 0) { Tempo = bpm });
 
+            // General info.
             lhdr.Add(new TextEvent("Midi file created by Nebulator.", MetaEventType.TextEvent, 0));
             lhdr.Add(new TextEvent(info, MetaEventType.TextEvent, 0));
 
@@ -64,15 +66,19 @@ namespace Nebulator.Midi
                 // >> 0 SequenceTrackName G.MIDI Acou Bass
             }
 
-            long InternalToMidiTime(Time time)
+            // Make a transformer.
+            MidiTime mt = new MidiTime()
             {
-                double d = ((double)time.Beat + (double)time.Tick / (double)Time.TICKS_PER_BEAT) * (double)DELTA_TICKS_PER_QUARTER_NOTE;
-                return (long)d;
-            }
+                InternalPpq = Time.SUBDIVS_PER_BEAT,
+                MidiPpq = DELTA_TICKS_PER_QUARTER_NOTE,
+                Tempo = bpm
+            };
 
             // Run through the main steps and create a midi event per.
             foreach (Time time in steps.Times)
             {
+                long mtime = mt.InternalToMidi(time.TotalSubdivs);
+
                 foreach (Step step in steps.GetSteps(time))
                 {
                     MidiEvent evt = null;
@@ -80,16 +86,16 @@ namespace Nebulator.Midi
                     switch (step)
                     {
                         case StepNoteOn stt:
-                            evt = new NoteEvent(InternalToMidiTime(time),
+                            evt = new NoteEvent(mtime,
                                 stt.ChannelNumber,
                                 MidiCommandCode.NoteOn,
                                 (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
                                 (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
                             trackEvents[step.ChannelNumber].Add(evt);
 
-                            if (stt.Duration.TotalTicks > 0) // specific duration
+                            if (stt.Duration.TotalSubdivs > 0) // specific duration
                             {
-                                evt = new NoteEvent(InternalToMidiTime(time + stt.Duration),
+                                evt = new NoteEvent(mtime + mt.InternalToMidi(stt.Duration.TotalSubdivs),
                                     stt.ChannelNumber,
                                     MidiCommandCode.NoteOff,
                                     (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
@@ -99,7 +105,7 @@ namespace Nebulator.Midi
                             break;
 
                         case StepNoteOff stt:
-                            evt = new NoteEvent(InternalToMidiTime(time),
+                            evt = new NoteEvent(mtime,
                                 stt.ChannelNumber,
                                 MidiCommandCode.NoteOff,
                                 (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
@@ -114,14 +120,14 @@ namespace Nebulator.Midi
                             }
                             else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                             {
-                                evt = new PitchWheelChangeEvent(InternalToMidiTime(time),
+                                evt = new PitchWheelChangeEvent(mtime,
                                     stt.ChannelNumber,
                                     (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
                                 trackEvents[step.ChannelNumber].Add(evt);
                             }
                             else // CC
                             {
-                                evt = new ControlChangeEvent(InternalToMidiTime(time),
+                                evt = new ControlChangeEvent(mtime,
                                     stt.ChannelNumber,
                                     (MidiController)stt.ControllerId,
                                     (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
@@ -130,7 +136,7 @@ namespace Nebulator.Midi
                             break;
 
                         case StepPatch stt:
-                            evt = new PatchChangeEvent(InternalToMidiTime(time),
+                            evt = new PatchChangeEvent(mtime,
                                 stt.ChannelNumber,
                                 stt.PatchNumber);
                             trackEvents[step.ChannelNumber].Add(evt);
@@ -186,6 +192,14 @@ namespace Nebulator.Midi
 
                 // Collected and processed events.
                 List<NoteOnEvent> validEvents = new List<NoteOnEvent>();
+
+                // Make a transformer.
+                MidiTime mt = new MidiTime()
+                {
+                    InternalPpq = Time.SUBDIVS_PER_BEAT,
+                    MidiPpq = fpars.DeltaTicksPerQuarterNote,
+                    Tempo = fpars.Tempo
+                };
 
                 foreach (MidiEvent evt in fpars.GetEvents(chnum))
                 {
@@ -256,7 +270,7 @@ namespace Nebulator.Midi
                     {
                         if (on != null)
                         {
-                            Time when = MidiTimeToInternal(on.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
+                            Time when = new Time(mt.MidiToInternal(on.AbsoluteTime));
                             // ? fpars.Leftovers.Add($"Orphan NoteOn: {when} {on.Channel} {on.NoteNumber}");
                         }
                     }
@@ -266,7 +280,7 @@ namespace Nebulator.Midi
                     {
                         validEvents.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
                         long duration = validEvents.Last().AbsoluteTime; // - validEvents.First().AbsoluteTime;
-                        Time tdur = MidiTimeToInternal(duration, fpars.DeltaTicksPerQuarterNote);
+                        Time tdur = new Time(mt.MidiToInternal(duration));
                         tdur.RoundUp();
 
                         // Process each set of notes at each discrete play time.
@@ -276,8 +290,8 @@ namespace Nebulator.Midi
                             //notes.Sort();
 
                             NoteOnEvent noevt = nevts.ElementAt(0);
-                            Time when = MidiTimeToInternal(noevt.AbsoluteTime, fpars.DeltaTicksPerQuarterNote);
-                            Time dur = MidiTimeToInternal(noevt.NoteLength, fpars.DeltaTicksPerQuarterNote);
+                            Time when = new Time(mt.MidiToInternal(noevt.AbsoluteTime));
+                            Time dur = new Time(mt.MidiToInternal(noevt.NoteLength));
                             double vel = (double)noevt.Velocity / MAX_MIDI;
 
                             if (chnum == 10)
@@ -318,12 +332,6 @@ namespace Nebulator.Midi
                 all.Add($"================================================================================");
 
                 all.AddRange(fpars.Leftovers);
-            }
-
-            // Local functions
-            Time MidiTimeToInternal(long mtime, int tpqn)
-            {
-                return new Time(mtime * Time.TICKS_PER_BEAT / tpqn);
             }
             return all;
         }

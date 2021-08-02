@@ -32,7 +32,7 @@ namespace Nebulator
             set
             {
                 _current = new Time(value);
-                if (_current.Tick == 0)
+                if (_current.Subdiv == 0)
                 {
                     Invalidate();
                 }
@@ -207,7 +207,7 @@ namespace Nebulator
         private void SetValueFromMouse(int x)
         {
             _current.Beat = GetValueFromMouse(x);
-            _current.Tick = 0;
+            _current.Subdiv = 0;
             ValueChanged?.Invoke(this, new EventArgs());
         }
 

@@ -149,7 +149,7 @@ namespace Nebulator.Midi
                                     (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
                                 msg = evt.GetAsShortMessage();
 
-                                if (stt.Duration.TotalTicks > 0) // specific duration
+                                if (stt.Duration.TotalSubdivs > 0) // specific duration
                                 {
                                     // Remove any lingering note offs and add a fresh one.
                                     _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
@@ -159,7 +159,7 @@ namespace Nebulator.Midi
                                         Device = stt.Device,
                                         ChannelNumber = stt.ChannelNumber,
                                         NoteNumber = MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                                        Expiry = stt.Duration.TotalTicks
+                                        Expiry = stt.Duration.TotalSubdivs
                                     });
                                 }
                             }

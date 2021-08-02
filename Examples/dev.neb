@@ -197,7 +197,7 @@ void BuildComp()
 
 public override void Step()
 {
-    if(Tick != 0) // not looking at Ticks right now
+    if(Subdiv != 0) // not looking at these right now
     {
     }
 }
