@@ -1398,10 +1398,13 @@ namespace Nebulator
         /// </summary>
         void SetSpeedTimerPeriod()
         {
-            double secPerBeat = 60 / potSpeed.Value;
-            double msecPerSubdiv = 1000 * secPerBeat / Time.SUBDIVS_PER_BEAT;
-            int period = msecPerSubdiv > 1.0 ? (int)Math.Round(msecPerSubdiv) : 1;
-            _mmTimer.SetTimer(period, MmTimerCallback);
+            // Make a transformer.
+            MidiTime mt = new MidiTime()
+            {
+                InternalPpq = Time.SUBDIVS_PER_BEAT,
+                Tempo = potSpeed.Value
+            };
+            _mmTimer.SetTimer(mt.RoundedInternalPeriod(), MmTimerCallback);
         }
         #endregion
 

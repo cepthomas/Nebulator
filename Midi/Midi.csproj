@@ -71,7 +71,6 @@
     </Compile>
     <Compile Include="MidiInput.cs" />
     <Compile Include="MidiOutput.cs" />
-    <Compile Include="MidiTime.cs" />
     <Compile Include="MidiUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FileParser.cs" />
