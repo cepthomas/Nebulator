@@ -24,9 +24,9 @@ public override void Setup()
 {
     // IO devices.
     // All the outputs.
-    chKeys =  CreateChannel("keys", DeviceType.MidiOut, 1, 0.1);
-    chBass = CreateChannel("bass", DeviceType.MidiOut, 2, 0.1);
-    chSynth = CreateChannel("synth", DeviceType.MidiOut, 3, 0.1);
+    chKeys =  CreateChannel("keys",  DeviceType.MidiOut, 1,  0.1);
+    chBass =  CreateChannel("bass",  DeviceType.MidiOut, 2,  0.1);
+    chSynth = CreateChannel("synth", DeviceType.MidiOut, 3,  0.1);
     chDrums = CreateChannel("drums", DeviceType.MidiOut, 10, 0.1);
 
     // All the inputs.
@@ -35,13 +35,13 @@ public override void Setup()
  
 public override void Setup2()
 {
-    SendPatch(chKeys, ElectricGrandPiano); // ElectricGrandPiano AcousticGrandPiano
-    SendPatch(chBass, AcousticBass);
+    SendPatch(chKeys,  ElectricGrandPiano); // ElectricGrandPiano AcousticGrandPiano
+    SendPatch(chBass,  AcousticBass);
     SendPatch(chSynth, Pad5Bowed);
-    SendPatch(chDrums, 32); // kit
+    SendPatch(chDrums, 32); // drum kit
 
     // Do some panning. Apparently FluidR3 sf ignores CC for some patches like AcousticGrandPiano
-    SendController(chKeys, Pan, 30);
+    SendController(chKeys,  Pan, 30);
     SendController(chSynth, Pan, 100);
 
     BuildComp();
@@ -115,24 +115,24 @@ void BuildComp()
 
     CreateSection(32, "Intro", new NSectionElements
     {
-        { chKeys,  Loop,  seqKeysIntro },
+        { chKeys,  Loop,  seqKeysIntro  },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassIntro  },
-        // { chSynth, Loop,  seqSynth1  },
+      //{ chSynth, Loop,  seqSynth1     },
     });
 
     CreateSection(64, "Middle", new NSectionElements
     {
-        { chKeys,  Loop,  seqKeysVerse },
+        { chKeys,  Loop,  seqKeysVerse  },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse  },
-        { chSynth, Loop,  seqSynth1  },
+        { chSynth, Loop,  seqSynth1     },
     });
 
     CreateSection(32, "End", new NSectionElements
     {
-        { chKeys,  Loop,  seqKeysEnd },
+        { chKeys,  Loop,  seqKeysEnd    },
         { chDrums, Loop,  seqDrumsVerse },
-        { chBass,  Loop,  seqBassEnd  },
+        { chBass,  Loop,  seqBassEnd    },
     });
 }

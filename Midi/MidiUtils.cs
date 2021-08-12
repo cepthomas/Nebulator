@@ -16,7 +16,6 @@ namespace Nebulator.Midi
         public const int MAX_MIDI = 127;
         public const int MAX_CHANNELS = 16;
         public const int MAX_PITCH = 16383;
-        public const int DELTA_TICKS_PER_QUARTER_NOTE = 96;
 
         /// <summary>
         /// Convert neb steps to midi file.
@@ -28,11 +27,13 @@ namespace Nebulator.Midi
         /// <param name="info">Extra info to add to midi file.</param>
         public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double bpm, string info)
         {
+            int exportPpq = 96;
+
             // Events per track.
             Dictionary<int, IList<MidiEvent>> trackEvents = new Dictionary<int, IList<MidiEvent>>();
 
             ///// Meta file stuff.
-            MidiEventCollection events = new MidiEventCollection(1, DELTA_TICKS_PER_QUARTER_NOTE);
+            MidiEventCollection events = new MidiEventCollection(1, exportPpq);
 
             ///// Add Header chunk stuff.
             IList<MidiEvent> lhdr = events.AddTrack();
@@ -70,7 +71,7 @@ namespace Nebulator.Midi
             MidiTime mt = new MidiTime()
             {
                 InternalPpq = Time.SUBDIVS_PER_BEAT,
-                MidiPpq = DELTA_TICKS_PER_QUARTER_NOTE,
+                MidiPpq = exportPpq,
                 Tempo = bpm
             };
 

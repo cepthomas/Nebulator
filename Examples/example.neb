@@ -13,7 +13,6 @@ const double DRUM_VOL = 0.8;
 
 
 ///// Variables
-NVariable vColor;
 NVariable vModN;
 NVariable vVkeyNote;
 
@@ -37,15 +36,14 @@ int _noteNum = 48;
 public override void Setup()
 {
     // All the neb variables.
-    vColor = CreateVariable("color", 200, 0, 255); // change color
-    vModN = CreateVariable("modn", 0, -10, 10);
+    vModN =     CreateVariable("modn", 63, 0,    127, On_vModN);
     vVkeyNote = CreateVariable("note", 60, -127, 127, On_vVkeyNote); // note neg number for note off encoding
 
     // IO devices.
     // All the outputs.
-    chKeys = CreateChannel("keys", DeviceType.MidiOut, 1, 0.1);
-    chBass = CreateChannel("bass", DeviceType.MidiOut, 2, 0.1);
-    chSynth = CreateChannel("synth", DeviceType.MidiOut, 3, 0.1);
+    chKeys =  CreateChannel("keys",  DeviceType.MidiOut, 1,  0.1);
+    chBass =  CreateChannel("bass",  DeviceType.MidiOut, 2,  0.1);
+    chSynth = CreateChannel("synth", DeviceType.MidiOut, 3,  0.1);
     chDrums = CreateChannel("drums", DeviceType.MidiOut, 10, 0.1);
 
     // All the inputs.
@@ -59,7 +57,6 @@ public override void Setup()
     CreateNotes("MY_SCALE", "1 3 4 b7");
 
     // levers
-    CreateLever(vColor);
     CreateLever(vModN);
 
     // Get some stock chords and scales
@@ -174,7 +171,7 @@ void BuildComp()
         { chKeys,  Loop,  seqKeysChorus },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse  },
-        { chSynth, Once,  seqAlgo,  seqEmpty, seqDynamic, seqEmpty }
+        { chSynth, Once,  seqAlgo, seqEmpty, seqDynamic, seqEmpty }
     });
 
     NSection sectEnding = CreateSection(32, "Ending", new NSectionElements
@@ -211,6 +208,12 @@ void AlgoNull()
 }
 
 ////////////// event handlers ////////////////////
+
+public void On_vModN()
+{
+    //Print("vModN", "=", vModN.Value);
+    SendController(chSynth, Pan, vModN.Value);
+}
 
 public void On_vVkeyNote()
 {

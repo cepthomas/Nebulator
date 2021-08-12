@@ -80,7 +80,8 @@ namespace Nebulator
                     Minimum = l.BoundVar.Min,
                     ResetValue = l.BoundVar.Value,
                     Value = l.BoundVar.Value,
-                    Tag = l.BoundVar
+                    Tag = l.BoundVar,
+                    BorderStyle = BorderStyle.FixedSingle
                 };
 
                 slider.ValueChanged += Lever_ValueChanged;
@@ -101,6 +102,7 @@ namespace Nebulator
                     Width = WIDTH,
                     Maximum = d.BoundVar.Max,
                     Minimum = d.BoundVar.Min,
+                    BorderStyle = BorderStyle.FixedSingle
                 };
 
                 d.BoundVar.Tag = meter;

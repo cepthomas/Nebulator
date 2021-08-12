@@ -12,7 +12,7 @@ namespace Nebulator.Common
     {
         #region Constants
         /// <summary>Subdivision setting per beat. 4 means 1/16 note resolution, 8 means 1/32 note, etc.</summary>
-        public const int SUBDIVS_PER_BEAT  = 4;
+        public const int SUBDIVS_PER_BEAT  = 4; // TODO try 8, make optional in scripts?
         #endregion
 
         #region Properties

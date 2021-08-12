@@ -50,8 +50,8 @@
             this.sldVolume.DecPlaces = 1;
             this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
-            this.sldVolume.Location = new System.Drawing.Point(211, 39);
-            this.sldVolume.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.sldVolume.Location = new System.Drawing.Point(224, 39);
+            this.sldVolume.Margin = new System.Windows.Forms.Padding(4);
             this.sldVolume.Maximum = 1D;
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
@@ -68,8 +68,8 @@
             this.potSpeed.DecPlaces = 0;
             this.potSpeed.DrawColor = System.Drawing.Color.Black;
             this.potSpeed.Label = "";
-            this.potSpeed.Location = new System.Drawing.Point(156, 39);
-            this.potSpeed.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.potSpeed.Location = new System.Drawing.Point(169, 39);
+            this.potSpeed.Margin = new System.Windows.Forms.Padding(5);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
@@ -91,11 +91,10 @@
             // 
             // btnCompile
             // 
-            this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(104, 39);
-            this.btnCompile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCompile.Location = new System.Drawing.Point(116, 39);
+            this.btnCompile.Margin = new System.Windows.Forms.Padding(4);
             this.btnCompile.Name = "btnCompile";
             this.btnCompile.Size = new System.Drawing.Size(45, 39);
             this.btnCompile.TabIndex = 38;
@@ -105,11 +104,10 @@
             // 
             // btnRewind
             // 
-            this.btnRewind.FlatAppearance.BorderSize = 0;
             this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRewind.Image = global::Nebulator.Properties.Resources.glyphicons_172_fast_backward;
             this.btnRewind.Location = new System.Drawing.Point(13, 39);
-            this.btnRewind.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRewind.Margin = new System.Windows.Forms.Padding(4);
             this.btnRewind.Name = "btnRewind";
             this.btnRewind.Size = new System.Drawing.Size(45, 39);
             this.btnRewind.TabIndex = 31;
@@ -121,12 +119,11 @@
             // 
             this.chkPlay.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkPlay.BackColor = System.Drawing.SystemColors.Control;
-            this.chkPlay.FlatAppearance.BorderSize = 0;
             this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkPlay.Image = global::Nebulator.Properties.Resources.glyphicons_174_play;
             this.chkPlay.Location = new System.Drawing.Point(65, 39);
-            this.chkPlay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkPlay.Margin = new System.Windows.Forms.Padding(4);
             this.chkPlay.MaximumSize = new System.Drawing.Size(43, 39);
             this.chkPlay.MinimumSize = new System.Drawing.Size(43, 39);
             this.chkPlay.Name = "chkPlay";
@@ -172,27 +169,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(225, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -280,8 +277,9 @@
             this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textViewer.Location = new System.Drawing.Point(13, 155);
-            this.textViewer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textViewer.Margin = new System.Windows.Forms.Padding(4);
             this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
             this.textViewer.Size = new System.Drawing.Size(952, 507);
@@ -299,7 +297,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.scriptControls.BackColor = System.Drawing.Color.AliceBlue;
             this.scriptControls.Location = new System.Drawing.Point(13, 96);
-            this.scriptControls.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.scriptControls.Margin = new System.Windows.Forms.Padding(5);
             this.scriptControls.Name = "scriptControls";
             this.scriptControls.Size = new System.Drawing.Size(952, 52);
             this.scriptControls.TabIndex = 0;
@@ -311,7 +309,7 @@
             time1.Subdiv = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(308, 39);
+            this.timeMaster.Location = new System.Drawing.Point(321, 39);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(12, 11, 12, 11);
             this.timeMaster.MaxBeat = 0;
             this.timeMaster.Name = "timeMaster";
@@ -337,7 +335,7 @@
             this.Controls.Add(this.btnRewind);
             this.Controls.Add(this.chkPlay);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.Text = "Nebulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
