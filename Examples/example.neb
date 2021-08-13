@@ -81,8 +81,8 @@ void BuildComp()
 
     NSequence seqKeysVerse = CreateSequence(8, new NSequenceElements
     {
-        { "|7-      7-      |7-      7-      |", "G4.m7", KEYS_VOL },
-        { "|    4-      4-8-|    4-      4-8-|", "G4.m6", KEYS_VOL*0.9 }
+        { "|7-      7-      |7-      7-      |", 4, "G4.m7", KEYS_VOL },
+        { "|    4-      4-8-|    4-      4-8-|", 4, "G4.m6", KEYS_VOL*0.9 }
     });
 
     NSequence seqKeysChorus = CreateSequence(8, new NSequenceElements
@@ -124,18 +124,18 @@ void BuildComp()
 
     NSequence seqDrumsVerse = CreateSequence(8, new NSequenceElements
     {
-        { "|8       8       |8       8       |", AcousticBassDrum, DRUM_VOL },
-        { "|    8       8 8 |    8       8 8 |", AcousticSnare,    DRUM_VOL*0.9 },
-        { "|      88      88|      88      88|", ClosedHiHat,      DRUM_VOL*1.1 },
+        { "|8       8       |8       8       |", 4, AcousticBassDrum, DRUM_VOL },
+        { "|    8       8 8 |    8       8 8 |", 4, AcousticSnare,    DRUM_VOL*0.9 },
+        { "|      88      88|      88      88|", 4, ClosedHiHat,      DRUM_VOL*1.1 },
     });
 
     NSequence seqBassVerse = CreateSequence(8, new NSequenceElements
     {
-        { 0.0, "C2",  0.75, 0.2 },
-        { 0.2, "C2",  0.75, 0.1 },
-        { 3.3, "E2",  0.75, 0.2 },
-        { 4.0, "C2",  0.75, 1.0 },
-        { 7.2, "A#2", 0.75, 0.1 }
+        { 0.0, "C2",  0.7, 0.2 },
+        { 0.2, "C2",  0.7, 0.1 },
+        { 3.3, "E2",  0.7, 0.2 },
+        { 4.0, "C2",  0.7, 1.0 },
+        { 7.2, "A#2", 0.7, 0.1 }
     });
 
     NSequence seqAlgo = CreateSequence(4, new NSequenceElements
@@ -150,10 +150,10 @@ void BuildComp()
     // Sequence triggered in script.
     seqDynamic = CreateSequence(8, new NSequenceElements
     {
-        { 0.0, "G3 ", 0.75, 0.2 },
-        { 1.0, "A3 ", 0.75, 0.2 },
-        { 2.0, "Bb3", 0.75, 0.2 },
-        { 3.0, "C4 ", 0.75, 0.2 },
+        { 0.0, "G3 ", 0.7, 0.2 },
+        { 1.0, "A3 ", 0.7, 0.2 },
+        { 2.0, "Bb3", 0.7, 0.2 },
+        { 3.0, "C4 ", 0.7, 0.2 },
     });
 
 

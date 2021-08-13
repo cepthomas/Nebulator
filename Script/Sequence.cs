@@ -52,7 +52,7 @@ namespace Nebulator.Script
                 Duration = new Time(duration)
             };
 
-            this.Add(sel);
+            Add(sel);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Nebulator.Script
                 Duration = new Time(duration)
             };
 
-            this.Add(sel);
+            Add(sel);
         }
 
         /// <summary>
@@ -88,20 +88,21 @@ namespace Nebulator.Script
                 Volume = volume
             };
 
-            this.Add(sel);
+            Add(sel);
         }
 
         /// <summary>
         /// Like: Z.Add("|5---    8       |7.......7654--- |", "G4.m7", 90);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
+        /// <param name="subdivs">Subdivisions per beat.</param>
         /// <param name="which">Specific note(s).</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, string which, double volume)
+        public void Add(string pattern, int subdivs, string which, double volume)
         {
             foreach (double d in NoteUtils.ParseNoteString(which))
             {
-                Add(pattern, d, volume);
+                Add(pattern, subdivs, d, volume);
             }
         }
 
@@ -109,10 +110,22 @@ namespace Nebulator.Script
         /// Like: Z.Add("|5---    8       |7.......7654--- |", 25, BASS_VOL);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
+        /// <param name="subdivs">Subdivisions per beat.</param>
         /// <param name="which">Specific instrument or drum.</param>
         /// <param name="volume">Volume.</param>
-        public void Add(string pattern, double which, double volume)
+        public void Add(string pattern, int subdivs, double which, double volume)
         {
+            // Needs to be a multiple of 2 up to Time.SUBDIVS_PER_BEAT;
+            switch(subdivs)
+            {
+                case 2:
+                case 4:
+                case 8:
+                    break;
+                default:
+                    throw new Exception($"Invalid subdiv: {subdivs}");
+            }
+
             // Remove visual markers.
             string s = pattern.Replace("|", "");
             char currentVol = ' '; // default, not sounding
@@ -123,9 +136,9 @@ namespace Nebulator.Script
                 // Make a Note on.
                 double volmod = (double)(currentVol - '0') / 10;
 
-                Time dur = new Time((index - start) / Time.SUBDIVS_PER_BEAT, (index - start) % Time.SUBDIVS_PER_BEAT);
+                Time dur = new Time((index - start) / subdivs, (index - start) % subdivs);
 
-                Time when = new Time(start / Time.SUBDIVS_PER_BEAT, start % Time.SUBDIVS_PER_BEAT);
+                Time when = new Time(start / subdivs, start % subdivs);
                 NSequenceElement ncl = new NSequenceElement(which)
                 {
                     When = when,
@@ -133,7 +146,7 @@ namespace Nebulator.Script
                     Duration = dur
                 };
 
-                this.Add(ncl);
+                Add(ncl);
             }
 
             for (int i = 0; i < s.Length; i++)
@@ -211,7 +224,7 @@ namespace Nebulator.Script
         /// <summary>Time between note on/off. 0 (default) means not used.</summary>
         public Time Duration { get; set; } = new Time(0);
 
-        /// <summary>The 0th is the root note and other values comprise possible chord notes.</summary>
+        /// <summary>The 0th is the root note and other values comprise possible chord notes. TODO notes below the root.</summary>
         public List<double> Notes { get; private set; } = new List<double>();
 
         /// <summary>Call a script function.</summary>

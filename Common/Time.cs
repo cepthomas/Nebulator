@@ -11,8 +11,13 @@ namespace Nebulator.Common
     public class Time
     {
         #region Constants
-        /// <summary>Subdivision setting per beat. 4 means 1/16 note resolution, 8 means 1/32 note, etc.</summary>
-        public const int SUBDIVS_PER_BEAT  = 4; // TODO try 8, make optional in scripts?
+        /// <summary>
+        /// Subdivision setting per beat. 4 means 1/16 note resolution, 8 means 1/32 note, etc.
+        /// If we use ppq of 8 (32nd notes):
+        ///    100 bpm = 800 subdiv/min = 13.33 subdiv/sec = 0.01333 subdiv/msec = 75.0 msec/subdiv
+        ///    99 bpm = 792 subdiv/min = 13.20 subdiv/sec = 0.0132 subdiv/msec  = 75.757 msec/subdiv
+        /// </summary>
+        public const int SUBDIVS_PER_BEAT  = 8;
         #endregion
 
         #region Properties
@@ -95,22 +100,23 @@ namespace Nebulator.Common
         }
 
         /// <summary>
-        /// Constructor from Beat.Subdiv representation as a double.
+        /// Constructor from Beat.Subdiv representation as a double. TODO a bit crude but other ways (e.g. string) clutter the syntax.
         /// </summary>
         /// <param name="tts"></param>
         public Time(double tts)
         {
             if (tts < 0)
             {
-                throw new Exception("Negative value is invalid");
+                throw new Exception($"Negative value is invalid: {tts}");
             }
 
             var (integral, fractional) = MathUtils.SplitDouble(tts);
             Beat = (int)integral;
+            Subdiv = (int)Math.Round(fractional * 10.0);
 
-            if (fractional >= SUBDIVS_PER_BEAT)
+            if (Subdiv >= SUBDIVS_PER_BEAT)
             {
-                throw new Exception("Invalid subdiv value");
+                throw new Exception($"Invalid subdiv value: {tts}");
             }
 
             Subdiv = (int)(fractional * 100);
