@@ -12,11 +12,13 @@ namespace Nebulator.Common
     {
         #region Constants
         /// <summary>
-        /// Subdivision setting per beat. 4 means 1/16 note resolution, 8 means 1/32 note, etc.
-        /// If we use ppq of 8 (32nd notes):
-        ///    100 bpm = 800 subdiv/min = 13.33 subdiv/sec = 0.01333 subdiv/msec = 75.0 msec/subdiv
-        ///    99 bpm = 792 subdiv/min = 13.20 subdiv/sec = 0.0132 subdiv/msec  = 75.757 msec/subdiv
+        /// Subdivision setting per beat/quarter note. 4 means 1/16 note resolution, 8 means 1/32 note, etc.
         /// </summary>
+        /// <remarks>
+        /// If we use ppq of 8 (32nd notes):
+        ///   - 100 bpm = 800 subdiv/min = 13.33 subdiv/sec = 0.01333 subdiv/msec = 75.0 msec/subdiv
+        ///   - 99 bpm = 792 subdiv/min = 13.20 subdiv/sec = 0.0132 subdiv/msec  = 75.757 msec/subdiv
+        /// </remarks>
         public const int SUBDIVS_PER_BEAT  = 8;
         #endregion
 
@@ -266,7 +268,7 @@ namespace Nebulator.Common
         /// </summary>
         public override string ToString()
         {
-            return $"{Beat:00}.{Subdiv:00}";
+            return $"{Beat}.{Subdiv}";
         }
         #endregion
     }

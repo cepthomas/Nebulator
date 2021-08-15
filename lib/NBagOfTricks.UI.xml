@@ -76,7 +76,7 @@
         <member name="P:NBagOfTricks.UI.BarBar.BeatsPerBar">
             <summary>Our signature. Only tested with 4.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.TicksPerBeat">
+        <member name="P:NBagOfTricks.UI.BarBar.SubdivsPerBeat">
             <summary>Our resolution.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.BarBar.Snap">
@@ -146,9 +146,9 @@
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.GetTickFromMouse(System.Int32)">
+        <member name="M:NBagOfTricks.UI.BarBar.GetSubdivFromMouse(System.Int32)">
             <summary>
-            Convert x pos to tick.
+            Convert x pos to subdiv.
             </summary>
             <param name="x"></param>
         </member>
@@ -165,7 +165,7 @@
         <member name="F:NBagOfTricks.UI.BarSpan.Zero">
             <summary>A useful constant.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan.OneTick">
+        <member name="F:NBagOfTricks.UI.BarSpan.OneSubdiv">
             <summary>A useful constant.</summary>
         </member>
         <member name="F:NBagOfTricks.UI.BarSpan._id">
@@ -177,13 +177,13 @@
         <member name="F:NBagOfTricks.UI.BarSpan._beatsPerBar">
             <summary>Global - set before using. Only tested with 4.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan._ticksPerBeat">
+        <member name="F:NBagOfTricks.UI.BarSpan._subdivsPerBeat">
             <summary>Global - set before using. Our resolution.</summary>
         </member>
         <member name="F:NBagOfTricks.UI.BarSpan._snapType">
             <summary>Global - set before using.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarSpan.TotalTicks">
+        <member name="P:NBagOfTricks.UI.BarSpan.TotalSubdivs">
             <summary>The core.</summary>
         </member>
         <member name="P:NBagOfTricks.UI.BarSpan.Bar">
@@ -192,8 +192,8 @@
         <member name="P:NBagOfTricks.UI.BarSpan.Beat">
             <summary>The beat.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarSpan.Tick">
-            <summary>The tick.</summary>
+        <member name="P:NBagOfTricks.UI.BarSpan.Subdiv">
+            <summary>The subdiv.</summary>
         </member>
         <member name="M:NBagOfTricks.UI.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
@@ -201,13 +201,13 @@
             </summary>
             <param name="bar"></param>
             <param name="beat"></param>
-            <param name="tick"></param>
+            <param name="subdiv"></param>
         </member>
         <member name="M:NBagOfTricks.UI.BarSpan.#ctor(System.Int32)">
             <summary>
             Constructor from args.
             </summary>
-            <param name="ticks"></param>
+            <param name="subdivs"></param>
         </member>
         <member name="M:NBagOfTricks.UI.BarSpan.Reset">
             <summary>
@@ -231,7 +231,7 @@
             <summary>
             Snap to closest boundary.
             </summary>
-            <param name="tick"></param>
+            <param name="subdiv"></param>
         </member>
         <member name="M:NBagOfTricks.UI.BarSpan.ToString">
             <summary>

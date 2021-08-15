@@ -1,6 +1,6 @@
 
 // Example Nebulator composition file with some UI demo.
-// Warning: this is not actual music!
+//----- Warning: this is not actual music! --------
 
 ///// Include other lib files. /////
 #include "utils.neb"
@@ -60,7 +60,7 @@ public override void Setup()
     CreateLever(vModN);
 
     // Get some stock chords and scales
-    _scaleNotes = GetScaleNotes("Algerian", "A3");
+    _scaleNotes = GetScaleNotes("Algerian", "G3");
     _chordNotes = GetChordNotes("C4.o7");
 }
 
@@ -150,10 +150,10 @@ void BuildComp()
     // Sequence triggered in script.
     seqDynamic = CreateSequence(8, new NSequenceElements
     {
-        { 0.0, "G3 ", 0.7, 0.2 },
-        { 1.0, "A3 ", 0.7, 0.2 },
-        { 2.0, "Bb3", 0.7, 0.2 },
-        { 3.0, "C4 ", 0.7, 0.2 },
+        { 0.0, "G3 ", 0.7, 0.1 },
+        { 1.0, "A3 ", 0.7, 0.1 },
+        { 2.0, "Bb3", 0.7, 0.1 },
+        { 3.0, "C4 ", 0.7, 0.1 },
     });
 
 
@@ -171,7 +171,7 @@ void BuildComp()
         { chKeys,  Loop,  seqKeysChorus },
         { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse  },
-        { chSynth, Once,  seqAlgo, seqEmpty, seqDynamic, seqEmpty }
+        { chSynth, Once,  seqAlgo, seqDynamic, seqAlgo, seqDynamic }
     });
 
     NSection sectEnding = CreateSection(32, "Ending", new NSectionElements
@@ -197,9 +197,8 @@ public override void Step()
 
 void Algo()
 {
-    // Print("!!!! Algo");
-    int notenum = Random(55, 70);
-    SendNote(chSynth, notenum, 0.8, 0.2);
+    int notenum = Random(0, _scaleNotes.Count());
+    SendNote(chSynth, _scaleNotes[notenum], 0.7, 0.1);
 }
 
 void AlgoNull()

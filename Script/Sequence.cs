@@ -95,14 +95,14 @@ namespace Nebulator.Script
         /// Like: Z.Add("|5---    8       |7.......7654--- |", "G4.m7", 90);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="subdivs">Subdivisions per beat.</param>
+        /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
         /// <param name="which">Specific note(s).</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, int subdivs, string which, double volume)
+        public void Add(string pattern, int resolution, string which, double volume)
         {
             foreach (double d in NoteUtils.ParseNoteString(which))
             {
-                Add(pattern, subdivs, d, volume);
+                Add(pattern, resolution, d, volume);
             }
         }
 
@@ -110,35 +110,45 @@ namespace Nebulator.Script
         /// Like: Z.Add("|5---    8       |7.......7654--- |", 25, BASS_VOL);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="subdivs">Subdivisions per beat.</param>
+        /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
         /// <param name="which">Specific instrument or drum.</param>
         /// <param name="volume">Volume.</param>
-        public void Add(string pattern, int subdivs, double which, double volume)
+        public void Add(string pattern, int resolution, double which, double volume)
         {
-            // Needs to be a multiple of 2 up to Time.SUBDIVS_PER_BEAT;
-            switch(subdivs)
+            // Needs to be a multiple of 2 up to 32 (min note for Time.SUBDIVS_PER_BEAT).
+            switch(resolution)
             {
+                case 1:
                 case 2:
                 case 4:
                 case 8:
+                case 16:
+                case 32:
                     break;
                 default:
-                    throw new Exception($"Invalid subdiv: {subdivs}");
+                    throw new Exception($"Invalid resolution: {resolution}");
             }
 
-            // Remove visual markers.
-            string s = pattern.Replace("|", "");
-            char currentVol = ' '; // default, not sounding
-            int start = 0; // index in pattern of start
+            int scale = Time.SUBDIVS_PER_BEAT * 4 / resolution;
 
-            void EndCurrent(int index)
+            // Remove visual markers.
+            pattern = pattern.Replace("|", "");
+            int currentVol = 0; // default, not sounding
+            int startIndex = 0; // index in pattern for the start of the current note
+
+            // Local function to package an event.
+            void MakeNoteEvent(int index)
             {
                 // Make a Note on.
-                double volmod = (double)(currentVol - '0') / 10;
+                double volmod = (double)currentVol / 10;
 
-                Time dur = new Time((index - start) / subdivs, (index - start) % subdivs);
+                // Convert to internal resolution.
+                int startSubdivs = startIndex * scale;
+                int nowSubdivs = index * scale;
 
-                Time when = new Time(start / subdivs, start % subdivs);
+                Time dur = new Time(nowSubdivs - startSubdivs);
+                Time when = new Time(startSubdivs);
+
                 NSequenceElement ncl = new NSequenceElement(which)
                 {
                     When = when,
@@ -149,12 +159,13 @@ namespace Nebulator.Script
                 Add(ncl);
             }
 
-            for (int i = 0; i < s.Length; i++)
+            for (int patternIndex = 0; patternIndex < pattern.Length; patternIndex++)
             {
-                switch (s[i])
+                switch (pattern[patternIndex])
                 {
-                    case '-': // continue current note
-                        if(currentVol >= '1' && currentVol <= '9')
+                    case '-':
+                        ///// Continue current note.
+                        if(currentVol > 0)
                         {
                             // ok, do nothing
                         }
@@ -165,7 +176,6 @@ namespace Nebulator.Script
                         }
                         break;
 
-                    case '0':
                     case '1':
                     case '2':
                     case '3':
@@ -175,36 +185,39 @@ namespace Nebulator.Script
                     case '7':
                     case '8':
                     case '9':
-                        if (currentVol >= '1' && currentVol <= '9')
+                        ///// A new note starting.
+                        // Do we need to end the current note?
+                        if (currentVol > 0)
                         {
-                            EndCurrent(i);
+                            MakeNoteEvent(patternIndex);
                         }
 
-                        // StartNew()
-                        currentVol = s[i];
-                        start = i;
-
+                        // Start new note.
+                        currentVol = pattern[patternIndex] - '0';
+                        startIndex = patternIndex;
                         break;
 
-                    case '.': // whitespace
-                    case ' ': // whitespace
-                        if (currentVol >= '1' && currentVol <= '9')
+                    case '.':
+                    case ' ':
+                        ///// No sound.
+                        // Do we need to end the current note?
+                        if (currentVol > 0)
                         {
-                            EndCurrent(i);
-                            currentVol = ' ';
+                            MakeNoteEvent(patternIndex);
                         }
+                        currentVol = 0;
                         break;
 
                     default:
-                        // Invalid char.
-                        throw new Exception("Invalid char in pattern string");
+                        ///// Invalid char.
+                        throw new Exception($"Invalid char in pattern string:{pattern[patternIndex]}");
                 }
             }
 
-            // Stragglers?
-            if (currentVol >= '1' && currentVol <= '9')
+            // Straggler?
+            if (currentVol > 0)
             {
-                EndCurrent(s.Length);
+                MakeNoteEvent(pattern.Length);
             }
         }
     }
