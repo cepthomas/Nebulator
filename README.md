@@ -8,23 +8,21 @@ It supports midi and OSC.
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs.
 
-The script syntax is roughly based on that used by [Processing](https://processing.org/), combined with C# language features.
-
-For lots more info see the [Wiki](https://github.com/cepthomas/Nebulator/wiki)
+API, examples etc are in the [Wiki](https://github.com/cepthomas/Nebulator/wiki)
 
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.
+
 - Midi classes may be useful elsewhere in conjunction with NAudio.
 - Partial import of Yamaha style (.sty) files.
 - General purpose embedded C# in memory compiler.
-- Example of the use of [pnut unit tester](https://github.com/cepthomas/NBagOfTricks).
 - See [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks) for more goodies.
 
 # Third Party
-This application uses these FOSS components:
+This application uses these FOSS components.
+
 - NAudio DLL including modified controls and midi file utilities: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License).
 - Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause).
-- Json processor: [Newtonsoft](https://github.com/JamesNK/Newtonsoft.Json).
-- Web server: [embedio](https://github.com/unosquare/embedio) (MIT).
+- Json processor: [Newtonsoft](https://github.com/JamesNK/Newtonsoft.Json) (MIT).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
