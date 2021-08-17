@@ -60,24 +60,16 @@ namespace Nebulator.Midi
                 while (!done)
                 {
                     var sectionName = Encoding.UTF8.GetString(br.ReadBytes(4));
-                    Debug.WriteLine(">>>sectionName " + sectionName);
+                   // Debug.WriteLine(">>>sectionName " + sectionName);
 
                     switch (sectionName)
                     {
                         case "MThd":
                             ReadMidiSection(br);
-
-                            //// Put all in abs time order.
-                            //foreach(var evts in _events.Values)
-                            //{
-                            //    evts.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
-                            //}
-
                             break;
 
-
-                        case "Mtrk":
-
+                        case "MTrk":
+                            ReadMTrk(br);
                             break;
 
                         case "CASM":
@@ -128,8 +120,6 @@ namespace Nebulator.Midi
         /// <param name="br"></param>
         void ReadMidiSection(BinaryReader br)
         {
-            int absoluteTime = 0;
-
             uint chunkSize = Utils.FixEndian(br.ReadUInt32());
 
             if (chunkSize != 6)
@@ -138,51 +128,29 @@ namespace Nebulator.Midi
             }
 
             int fileFormat = Utils.FixEndian(br.ReadUInt16());
-            int tracks = Utils.FixEndian(br.ReadUInt16());
-            DeltaTicksPerQuarterNote = Utils.FixEndian(br.ReadUInt16());
-
             // Style midi section is always type 0 - only one track.
             //if (fileFormat != 0 || tracks != 1)
             //{
             //    throw new FormatException("Invalid file format for style");
             //}
-
-            bool done = false;
-
-            while(!done)
-            {
-                string chunkHeader = Encoding.UTF8.GetString(br.ReadBytes(4));
-                Debug.WriteLine(">>>chunkHeader " + chunkHeader);
-
-                switch (chunkHeader)
-                {
-                    case "MTrk":
-                        chunkSize = Utils.FixEndian(br.ReadUInt32());
-                        long startPos = br.BaseStream.Position;
-                        absoluteTime = ReadMTrk(br, absoluteTime, chunkSize, startPos);
-                        break;
-
-                    default:
-                        Leftovers.Add($"Chunk:{chunkHeader} - goodbye");
-                        done = true;
-                        break;
-                }
-            }
+            int tracks = Utils.FixEndian(br.ReadUInt16());
+            DeltaTicksPerQuarterNote = Utils.FixEndian(br.ReadUInt16());
         }
 
         /// <summary>
         /// Read a midi track chunk.
         /// </summary>
         /// <param name="br"></param>
-        /// <param name="absoluteTime"></param>
-        /// <param name="chunkSize"></param>
-        /// <param name="startPos"></param>
         /// <returns></returns>
-        int ReadMTrk(BinaryReader br, int absoluteTime, uint chunkSize, long startPos)
+        int ReadMTrk(BinaryReader br)
         {
             // Defaults.
             int chnum = 0;
             string chname = "???";
+
+            uint chunkSize = Utils.FixEndian(br.ReadUInt32());
+            long startPos = br.BaseStream.Position;
+            int absoluteTime = 0;
 
             // Read all midi events. https://www.csie.ntu.edu.tw/~r92092/ref/midi/
             MidiEvent me = null; // current
@@ -230,6 +198,14 @@ namespace Nebulator.Midi
                         }
                         break;
 
+                    case MidiCommandCode.Sysex:
+                        {
+                            SysexEvent evt = me as SysexEvent;
+                            string s = evt.ToString().Replace(Environment.NewLine, " ");
+                            Leftovers.Add($"Sysex:{s}");
+                        }
+                        break;
+
                     case MidiCommandCode.MetaEvent when (me as MetaEvent).MetaEventType == MetaEventType.TrackSequenceNumber:
                         {
                             TrackSequenceNumberEvent evt = me as TrackSequenceNumberEvent;
@@ -242,7 +218,7 @@ namespace Nebulator.Midi
                         {
                             TextEvent evt = me as TextEvent;
                             chname = evt.Text;
-                            Leftovers.Add($"SequenceTrackName:{evt.Text}  {evt.Channel}");
+                            Leftovers.Add($"SequenceTrackName:{evt.Text} Channel:{evt.Channel}");
                         }
                         break;
 
@@ -250,7 +226,7 @@ namespace Nebulator.Midi
                         {
                             // Indicates start of a new midi part. Bin per channel.
                             //_currentPart = (me as TextEvent).Text;
-                            Leftovers.Add(me.ToString());
+                            Leftovers.Add($"Marker:{me}");
                             absoluteTime = 0;
                         }
                         break;
@@ -258,7 +234,7 @@ namespace Nebulator.Midi
                     case MidiCommandCode.MetaEvent when (me as MetaEvent).MetaEventType == MetaEventType.EndTrack:
                         {
                             // Indicates end of current midi track.
-                            Leftovers.Add(me.ToString());
+                            Leftovers.Add($"EndTrack:{me}");
                         }
                         break;
 
@@ -284,7 +260,7 @@ namespace Nebulator.Midi
                         break;
 
                     default:
-                        Leftovers.Add(me.ToString());
+                        Leftovers.Add($"Other:{me}");
                         break;
                 }
             }
