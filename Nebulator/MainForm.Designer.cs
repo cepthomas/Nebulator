@@ -41,6 +41,7 @@
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
             this.scriptControls = new Nebulator.ScriptControls();
             this.timeMaster = new Nebulator.TimeControl();
+            this.importMidiStyleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -158,7 +159,8 @@
             this.openToolStripMenuItem,
             this.recentToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
-            this.viewLogToolStripMenuItem});
+            this.viewLogToolStripMenuItem,
+            this.importMidiStyleToolStripMenuItem});
             this.fileDropDownButton.Image = global::Nebulator.Properties.Resources.glyphicons_37_file;
             this.fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.fileDropDownButton.Name = "fileDropDownButton";
@@ -169,28 +171,28 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
-            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
-            this.viewLogToolStripMenuItem.Text = "Show Log";
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
             // 
@@ -318,6 +320,13 @@
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
+            // importMidiStyleToolStripMenuItem
+            // 
+            this.importMidiStyleToolStripMenuItem.Name = "importMidiStyleToolStripMenuItem";
+            this.importMidiStyleToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.importMidiStyleToolStripMenuItem.Text = "Import Midi or Style...";
+            this.importMidiStyleToolStripMenuItem.Click += new System.EventHandler(this.ImportMidi_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -372,6 +381,7 @@
         private System.Windows.Forms.Timer timerHousekeep;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
+        private System.Windows.Forms.ToolStripMenuItem importMidiStyleToolStripMenuItem;
     }
 }
 

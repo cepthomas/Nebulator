@@ -957,7 +957,7 @@ namespace Nebulator
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
-                Filter = "Nebulator files (*.neb)|*.neb",
+                Filter = "Nebulator files | *.neb",
                 Title = "Select a Nebulator file"
             };
 
@@ -1467,9 +1467,11 @@ namespace Nebulator
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
-                Filter = "Midi files (*.mid)|*.mid|Style files (*.sty)|*.sty|All files (*.*)|*.*",
+                Filter = "Midi files | *.mid; *.sty",
                 Title = "Import from midi or style file"
             };
+
+            //Clip Files | *.mid; *.sty; *.wav; *.mp3; *.m4a; *.flac; 
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {

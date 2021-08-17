@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 using NAudio.Midi;
 using Nebulator.Common;
 
@@ -58,16 +59,25 @@ namespace Nebulator.Midi
 
                 while (!done)
                 {
-                    switch (Encoding.UTF8.GetString(br.ReadBytes(4)))
+                    var sectionName = Encoding.UTF8.GetString(br.ReadBytes(4));
+                    Debug.WriteLine(">>>sectionName " + sectionName);
+
+                    switch (sectionName)
                     {
                         case "MThd":
                             ReadMidiSection(br);
 
-                            // Put all in abs time order.
-                            foreach(var evts in _events.Values)
-                            {
-                                evts.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
-                            }
+                            //// Put all in abs time order.
+                            //foreach(var evts in _events.Values)
+                            //{
+                            //    evts.Sort((a, b) => a.AbsoluteTime.CompareTo(b.AbsoluteTime));
+                            //}
+
+                            break;
+
+
+                        case "Mtrk":
+
                             break;
 
                         case "CASM":
@@ -142,8 +152,9 @@ namespace Nebulator.Midi
             while(!done)
             {
                 string chunkHeader = Encoding.UTF8.GetString(br.ReadBytes(4));
+                Debug.WriteLine(">>>chunkHeader " + chunkHeader);
 
-                switch(chunkHeader)
+                switch (chunkHeader)
                 {
                     case "MTrk":
                         chunkSize = Utils.FixEndian(br.ReadUInt32());
