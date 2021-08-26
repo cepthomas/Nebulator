@@ -41,7 +41,6 @@
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
             this.scriptControls = new Nebulator.ScriptControls();
             this.timeMaster = new Nebulator.TimeControl();
-            this.importMidiStyleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -159,8 +158,7 @@
             this.openToolStripMenuItem,
             this.recentToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
-            this.viewLogToolStripMenuItem,
-            this.importMidiStyleToolStripMenuItem});
+            this.viewLogToolStripMenuItem});
             this.fileDropDownButton.Image = global::Nebulator.Properties.Resources.glyphicons_37_file;
             this.fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.fileDropDownButton.Name = "fileDropDownButton";
@@ -320,13 +318,6 @@
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
-            // importMidiStyleToolStripMenuItem
-            // 
-            this.importMidiStyleToolStripMenuItem.Name = "importMidiStyleToolStripMenuItem";
-            this.importMidiStyleToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.importMidiStyleToolStripMenuItem.Text = "Import Midi or Style...";
-            this.importMidiStyleToolStripMenuItem.Click += new System.EventHandler(this.ImportMidi_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -381,7 +372,6 @@
         private System.Windows.Forms.Timer timerHousekeep;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
-        private System.Windows.Forms.ToolStripMenuItem importMidiStyleToolStripMenuItem;
     }
 }
 

@@ -1459,27 +1459,6 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Import a midi file as neb file lines.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void ImportMidi_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openDlg = new OpenFileDialog()
-            {
-                Filter = "Midi files | *.mid",
-                Title = "Import from midi file"
-            };
-
-            if (openDlg.ShowDialog() == DialogResult.OK)
-            {
-                var v = MidiUtils.ImportFile(openDlg.FileName);
-                Clipboard.SetText(string.Join(Environment.NewLine, v));
-                MessageBox.Show("File content is in the clipboard");
-            }
-        }
-
-        /// <summary>
         /// Kill em all.
         /// </summary>
         /// <param name="sender"></param>

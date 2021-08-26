@@ -73,7 +73,6 @@
     <Compile Include="MidiOutput.cs" />
     <Compile Include="MidiUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FileParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

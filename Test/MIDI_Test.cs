@@ -22,12 +22,6 @@ namespace Nebulator.Test
             new List<int>() { 1, 2, 3 }.ForEach(i => channels.Add(i, $"CHANNEL_{i}"));
 
             MidiUtils.ExportMidi(steps, "midiFileName", channels, 1.0, "string info");
-
-            ///// Import midi.
-            var v = MidiUtils.ImportFile(@"C:\Users\cet\OneDrive\Audio\Midi\real-songs\WICKGAME.MID");
-            //C:\Users\cet\OneDrive\Audio\Midi\real-songs\WICKGAME.MID
-
-            Clipboard.SetText(string.Join(Environment.NewLine, v));
         }
     }
 }
