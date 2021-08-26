@@ -1,6 +1,6 @@
 
 
-// Define some Neb style vars.
+// Define some Neb vars.
 const double VEL = 0.8;
 
 ///// Functions /////

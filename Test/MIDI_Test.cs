@@ -25,8 +25,6 @@ namespace Nebulator.Test
 
             ///// Import midi.
             var v = MidiUtils.ImportFile(@"C:\Users\cet\OneDrive\Audio\Midi\real-songs\WICKGAME.MID");
-            //..\Files\ambient.mid
-            //..\Files\Funk.sty
             //C:\Users\cet\OneDrive\Audio\Midi\real-songs\WICKGAME.MID
 
             Clipboard.SetText(string.Join(Environment.NewLine, v));

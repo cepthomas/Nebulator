@@ -14,7 +14,6 @@ API, examples etc are in the [Wiki](https://github.com/cepthomas/Nebulator/wiki)
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.
 
 - Midi classes may be useful elsewhere in conjunction with NAudio.
-- Partial import of Yamaha style (.sty) files.
 - General purpose embedded C# in memory compiler.
 - See [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks) for more goodies.
 

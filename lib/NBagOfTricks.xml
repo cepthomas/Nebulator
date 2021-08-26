@@ -504,6 +504,13 @@
             <param name="inputArray">List of doubles</param>
             <returns>Double value of the Sum of Squares</returns>
         </member>
+        <member name="M:NBagOfTricks.MathUtils.RMS(System.Single[])">
+            <summary>
+            The root mean square value of a quantity is the square root of the mean value of the squared values of the quantity taken over an interval.
+            </summary>
+            <param name="inputArray"></param>
+            <returns></returns>
+        </member>
         <member name="M:NBagOfTricks.MathUtils.NextGaussian(System.Random,System.Double,System.Double)">
             <summary>
             Generates normally distributed numbers.

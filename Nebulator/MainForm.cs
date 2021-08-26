@@ -1459,7 +1459,7 @@ namespace Nebulator
         }
 
         /// <summary>
-        /// Import a midi or style file as neb file lines.
+        /// Import a midi file as neb file lines.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1467,11 +1467,9 @@ namespace Nebulator
         {
             OpenFileDialog openDlg = new OpenFileDialog()
             {
-                Filter = "Midi files | *.mid; *.sty",
-                Title = "Import from midi or style file"
+                Filter = "Midi files | *.mid",
+                Title = "Import from midi file"
             };
-
-            //Clip Files | *.mid; *.sty; *.wav; *.mp3; *.m4a; *.flac; 
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {

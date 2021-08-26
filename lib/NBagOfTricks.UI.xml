@@ -843,8 +843,20 @@
         <member name="F:NBagOfTricks.UI.WaveViewer._format">
             <summary>For drawing text.</summary>
         </member>
+        <member name="F:NBagOfTricks.UI.WaveViewer._smplPerPixel">
+            <summary>Ratio of data point to visual point.</summary>
+        </member>
         <member name="P:NBagOfTricks.UI.WaveViewer.DrawColor">
             <summary>For styling.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.WaveViewer.Mode">
+            <summary>How to draw.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.WaveViewer.Marker1">
+            <summary>Marker 1.</summary>
+        </member>
+        <member name="P:NBagOfTricks.UI.WaveViewer.Marker2">
+            <summary>Marker 2.</summary>
         </member>
         <member name="M:NBagOfTricks.UI.WaveViewer.#ctor">
             <summary>

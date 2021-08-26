@@ -160,7 +160,7 @@ namespace Nebulator.Midi
         }
 
         /// <summary>
-        /// Read a midi or style file into text that can be placed in a neb file.
+        /// Read a midi file into text that can be placed in a neb file.
         /// It attempts to clean up any issues in the midi event data e.g. note on/off mismatches.
         /// </summary>
         /// <param name="fileName"></param>
