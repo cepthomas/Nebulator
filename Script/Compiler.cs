@@ -186,7 +186,7 @@ namespace Nebulator.Script
                         }
                     }
 
-                    if (script == null)
+                    if (script is null)
                     {
                         throw new Exception("Could not instantiate script");
                     }

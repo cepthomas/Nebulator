@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebulator", "Nebulator\Nebulator.csproj", "{3212E8CF-DB99-4C4A-99CC-1020A11BDC1D}"
 EndProject
@@ -15,7 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{20180D64-A
 	ProjectSection(SolutionItems) = preProject
 		..\Nebulator.wiki\_Sidebar.md = ..\Nebulator.wiki\_Sidebar.md
 		..\Nebulator.wiki\Home.md = ..\Nebulator.wiki\Home.md
-		..\Nebulator.wiki\Notes.md = ..\Nebulator.wiki\Notes.md
 		..\Nebulator.wiki\ScriptApi.md = ..\Nebulator.wiki\ScriptApi.md
 		..\Nebulator.wiki\ScriptDefinitions.md = ..\Nebulator.wiki\ScriptDefinitions.md
 		..\Nebulator.wiki\ScriptSyntax.md = ..\Nebulator.wiki\ScriptSyntax.md
@@ -55,10 +54,6 @@ Global
 		{1202E3E2-7FF4-4132-9041-AADE2AA9A584}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1202E3E2-7FF4-4132-9041-AADE2AA9A584}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1202E3E2-7FF4-4132-9041-AADE2AA9A584}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B7E58A4-4477-4223-A0C3-8BE403EE5737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B7E58A4-4477-4223-A0C3-8BE403EE5737}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B7E58A4-4477-4223-A0C3-8BE403EE5737}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B7E58A4-4477-4223-A0C3-8BE403EE5737}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C6B21D5-CF62-41F6-9188-7846E88D3DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU

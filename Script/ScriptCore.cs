@@ -149,12 +149,12 @@ namespace Nebulator.Script
         /// <param name="beat">When to send the sequence.</param>
         public void AddSequence(NChannel channel, NSequence seq, int beat)
         {
-            if (channel == null)
+            if (channel is null)
             {
                 throw new Exception($"Invalid NChannel");
             }
 
-            if (seq == null)
+            if (seq is null)
             {
                 throw new Exception($"Invalid NSequence");
             }

@@ -139,7 +139,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         public double NextVol(double def)
         {
-            return VolWobbler == null ? def : VolWobbler.Next(def);
+            return VolWobbler is null ? def : VolWobbler.Next(def);
         }
 
         /// <summary>

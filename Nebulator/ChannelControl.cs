@@ -14,9 +14,7 @@ namespace Nebulator
     public partial class ChannelControl : UserControl
     {
         #region Properties
-        /// <summary>
-        /// Corresponding channel object.
-        /// </summary>
+        /// <summary>Corresponding channel object.</summary>
         public NChannel BoundChannel { get; set; }
         #endregion
 

@@ -115,7 +115,7 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid device for controller {device}");
             }
 
-            if (bound == null)
+            if (bound is null)
             {
                 throw new Exception($"Invalid NVariable for controller {device}");
             }
@@ -136,7 +136,7 @@ namespace Nebulator.Script
         /// <param name="bound"></param>
         protected void CreateLever(NVariable bound)
         {
-            if (bound == null)
+            if (bound is null)
             {
                 throw new Exception($"Invalid NVariable for lever");
             }
@@ -152,7 +152,7 @@ namespace Nebulator.Script
         /// <param name="type"></param>
         protected void CreateDisplay(NVariable bound, int type)
         {
-            if (bound == null)
+            if (bound is null)
             {
                 throw new Exception($"Invalid NVariable for meter");
             }
@@ -194,7 +194,7 @@ namespace Nebulator.Script
             // Sanity check elements.
             foreach (var el in elements)
             {
-                if (el.Channel == null)
+                if (el.Channel is null)
                 {
                     throw new Exception($"Invalid NChannel at index {elements.IndexOf(el)}");
                 }
@@ -211,58 +211,51 @@ namespace Nebulator.Script
             return nsect;
         }
 
-        /// <summary>Send a note immediately. Lowest level sender. Respects solo/mute. Adds a note off to play after dur time.</summary>
+        /// <summary>Send a note immediately. Lowest level sender. Adds a note off to play after dur time.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         public void SendNote(NChannel channel, double notenum, double vol, Time dur)
         {
-            if (channel == null || channel.Device == null)
+            if (channel is null || channel.Device is null)
             {
                 throw new Exception($"Invalid NChannel");
             }
 
-            bool _anySolo = Channels.Where(ch => ch.State == ChannelState.Solo).Count() > 0;
+            double vel = channel.NextVol(vol);
+            double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
 
-            bool play = (channel.State == ChannelState.Solo) || (channel.State == ChannelState.Normal && !_anySolo);
-
-            if (play)
+            // If vol is positive and the note is not negative, it's note on, else note off.
+            if (vol > 0 && notenum > 0)
             {
-                double vel = channel.NextVol(vol);
-                double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
-
-                // If vol is positive and the note is not negative, it's note on, else note off.
-                if (vol > 0 && notenum > 0)
+                StepNoteOn step = new StepNoteOn()
                 {
-                    StepNoteOn step = new StepNoteOn()
-                    {
-                        Device = channel.Device,
-                        ChannelNumber = channel.ChannelNumber,
-                        NoteNumber = absnote,
-                        Velocity = vel,
-                        VelocityToPlay = vel,
-                        Duration = dur
-                    };
+                    Device = channel.Device,
+                    ChannelNumber = channel.ChannelNumber,
+                    NoteNumber = absnote,
+                    Velocity = vel,
+                    VelocityToPlay = vel,
+                    Duration = dur
+                };
 
-                    step.Adjust(Volume, channel.Volume);
-                    channel.Device.Send(step);
-                }
-                else
+                step.Adjust(Volume, channel.Volume);
+                channel.Device.Send(step);
+            }
+            else
+            {
+                StepNoteOff step = new StepNoteOff()
                 {
-                    StepNoteOff step = new StepNoteOff()
-                    {
-                        Device = channel.Device,
-                        ChannelNumber = channel.ChannelNumber,
-                        NoteNumber = absnote
-                    };
+                    Device = channel.Device,
+                    ChannelNumber = channel.ChannelNumber,
+                    NoteNumber = absnote
+                };
 
-                    channel.Device.Send(step);
-                }
+                channel.Device.Send(step);
             }
         }
 
-        /// <summary>Send one or more named notes immediately. Respects solo/mute.</summary>
+        /// <summary>Send one or more named notes immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
@@ -281,7 +274,7 @@ namespace Nebulator.Script
             }
         }
 
-        /// <summary>Send a note immediately. Lowest level sender. Respects solo/mute. Adds a note off to play after dur time.</summary>
+        /// <summary>Send a note immediately. Lowest level sender. Adds a note off to play after dur time.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
@@ -291,7 +284,7 @@ namespace Nebulator.Script
             SendNote(channel, notenum, vol, new Time(dur));
         }
 
-        /// <summary>Send one or more named notes immediately. Respects solo/mute.</summary>
+        /// <summary>Send one or more named notes immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
@@ -301,7 +294,7 @@ namespace Nebulator.Script
             SendNote(channel, notestr, vol, new Time(dur));
         }
 
-        /// <summary>Send a note on immediately. Respects solo/mute.</summary>
+        /// <summary>Send a note on immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
@@ -324,7 +317,7 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         public void SendController(NChannel channel, int ctlnum, double val)
         {
-            if (channel == null || channel.Device == null)
+            if (channel is null || channel.Device is null)
             {
                 throw new Exception($"Invalid NChannel");
             }
@@ -345,7 +338,7 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         public void SendPatch(NChannel channel, int patch)
         {
-            if (channel == null || channel.Device == null)
+            if (channel is null || channel.Device is null)
             {
                 throw new Exception($"Invalid NChannel");
             }
@@ -365,12 +358,12 @@ namespace Nebulator.Script
         /// <param name="seq">Which sequence to send.</param>
         public void SendSequence(NChannel channel, NSequence seq)
         {
-            if (channel == null || channel.Device == null)
+            if (channel is null || channel.Device is null)
             {
                 throw new Exception($"Invalid NChannel");
             }
 
-            if (seq == null)
+            if (seq is null)
             {
                 throw new Exception($"Invalid NSequence");
             }

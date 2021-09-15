@@ -565,7 +565,7 @@ namespace Nebulator
         /// <summary>
         /// Update system statuses.
         /// </summary>
-        /// <param name="compileStatus"></param>
+        /// <param name="compileStatus">True if compile is clean.</param>
         void SetCompileStatus(bool compileStatus)
         {
             if (compileStatus)
@@ -640,7 +640,49 @@ namespace Nebulator
                 //}
 
                 // Process any sequence steps.
-                _script.Steps.GetSteps(_stepTime).ForEach(s => PlayStep(s));
+                bool anySolo = _script.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
+                bool anyMute = _script.Channels.Where(t => t.State == ChannelState.Mute).Count() > 0;
+                lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
+                lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
+
+                var steps = _script.Steps.GetSteps(_stepTime);
+                foreach(var step in steps)
+                {
+                    NChannel channel = _script.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
+
+                    // Is it ok to play now?
+                    bool play = channel != null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !anySolo));
+
+                    if (play)
+                    {
+                        switch(step)
+                        {
+                            case StepInternal si:
+                                // Note: Need exception handling here to protect from user script errors.
+                                try
+                                {
+                                    si.ScriptFunction();
+                                }
+                                catch (Exception ex)
+                                {
+                                    ProcessScriptRuntimeError(ex);
+                                }
+                                break;
+
+                            default:
+                                if (step.Device is NOutput)
+                                {
+                                    // Maybe tweak values.
+                                    if (step is StepNoteOn)
+                                    {
+                                        (step as StepNoteOn).Adjust(sldVolume.Value, channel.Volume);
+                                    }
+                                    (step.Device as NOutput).Send(step);
+                                }
+                                break;
+                        }
+                    }
+                }
 
                 ///// Bump time.
                 _stepTime.Advance();
@@ -666,47 +708,6 @@ namespace Nebulator
             // Process any lingering noteoffs etc.
             _outputs.ForEach(o => o.Value?.Housekeep());
             _inputs.ForEach(i => i.Value?.Housekeep());
-
-            ///// Local common function /////
-            void PlayStep(Step step)
-            {
-                if(_script.Channels.Count > 0)
-                {
-                    NChannel channel = _script.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
-
-                    // Is it ok to play now?
-                    bool _anySolo = _script.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
-                    bool play = channel != null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !_anySolo));
-
-                    if (play)
-                    {
-                        if (step is StepInternal)
-                        {
-                            // Note: Need exception handling here to protect from user script errors.
-                            try
-                            {
-                                (step as StepInternal).ScriptFunction();
-                            }
-                            catch (Exception ex)
-                            {
-                                ProcessScriptRuntimeError(ex);
-                            }
-                        }
-                        else
-                        {
-                            if (step.Device is NOutput)
-                            {
-                                // Maybe tweak values.
-                                if (step is StepNoteOn)
-                                {
-                                    (step as StepNoteOn).Adjust(sldVolume.Value, channel.Volume);
-                                }
-                                (step.Device as NOutput).Send(step);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -819,18 +820,12 @@ namespace Nebulator
             _nppVals.SetValue(ch.BoundChannel.Name, "volume", ch.BoundChannel.Volume);
 
             // Check for solos.
-            bool _anySolo = _script.Channels.Where(c => c.State == ChannelState.Solo).Count() > 0;
+            bool anySolo = _script.Channels.Where(c => c.State == ChannelState.Solo).Count() > 0;
 
-            if (_anySolo)
+            if (anySolo)
             {
                 // Kill any not solo.
-                _script.Channels.ForEach(c =>
-                {
-                    if (c.State != ChannelState.Solo && c.Device != null)
-                    {
-                        c.Device.Kill(c.ChannelNumber);
-                    }
-                });
+                _script.Channels.Where(c => c.State != ChannelState.Solo).ForEach(c => c.Device?.Kill(c.ChannelNumber));
             }
         }
 
@@ -1052,7 +1047,14 @@ namespace Nebulator
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker)delegate ()
             {
-                SetCompileStatus(false);
+                if(UserSettings.TheSettings.AutoCompile)
+                {
+                    Compile();
+                }
+                else
+                {
+                    SetCompileStatus(false);
+                }
             });
         }
 

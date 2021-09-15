@@ -81,9 +81,15 @@ namespace Nebulator.Common
         [TypeConverter(typeof(FixedListTypeConverter))]
         public string OscOutDevice { get; set; } = "127.0.0.1:1234";
 
+        [DisplayName("Auto Compile")]
+        [Description("Compile current file when change detected.")]
+        [Category("Functionality")]
+        [Browsable(true)]
+        public bool AutoCompile { get; set; } = true;
+
         [DisplayName("CPU Meter")]
         [Description("Show a CPU usage meter. Note that this slows start up a bit.")]
-        [Category("Devices")]
+        [Category("Functionality")]
         [Browsable(true)]
         public bool CpuMeter { get; set; } = true;
         #endregion

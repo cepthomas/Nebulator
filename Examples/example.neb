@@ -124,9 +124,9 @@ void BuildComp()
 
     NSequence seqDrumsVerse = CreateSequence(8, new NSequenceElements
     {
-        { "|8       8       |8       8       |", 4, AcousticBassDrum, DRUM_VOL },
-        { "|    8       8 8 |    8       8 8 |", 4, AcousticSnare,    DRUM_VOL*0.9 },
-        { "|      88      88|      88      88|", 4, ClosedHiHat,      DRUM_VOL*1.1 },
+        { "|8       8       |8       8       |", 8, AcousticBassDrum, DRUM_VOL },
+        { "|    8       8 8 |    8       8 8 |", 8, AcousticSnare,    DRUM_VOL*0.9 },
+        { "|      88      88|      88      88|", 8, ClosedHiHat,      DRUM_VOL*1.1 },
     });
 
     NSequence seqBassVerse = CreateSequence(8, new NSequenceElements
@@ -162,7 +162,7 @@ void BuildComp()
     NSection sectBeginning = CreateSection(32, "Beginning", new NSectionElements
     {
         { chKeys,  Loop,  seqKeysVerse   },
-        { chDrums, Loop,  seqDrumsSimple },
+        { chDrums, Loop,  seqDrumsVerse },
         { chBass,  Loop,  seqBassVerse   }
     });
 

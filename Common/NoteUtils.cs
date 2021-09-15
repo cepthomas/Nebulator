@@ -80,7 +80,7 @@ namespace Nebulator.Common
                     // It's a chord. M, M7, m, m7, etc. Determine the constituents. Start with the stock collection then try user defs.
                     var chordParts = ScriptDefinitions.TheDefinitions.ChordDefs[parts[1]];
 
-                    if(chordParts == null)
+                    if(chordParts is null)
                     {
                         chordParts = _scriptNoteDefs[parts[1]];
                     }
@@ -139,7 +139,7 @@ namespace Nebulator.Common
                 // Start with the stock collection then try user defs.
                 var scaleDef = ScriptDefinitions.TheDefinitions.ScaleDefs[scale];
 
-                if (scaleDef == null)
+                if (scaleDef is null)
                 {
                     scaleDef = _scriptNoteDefs[scale];
                 }

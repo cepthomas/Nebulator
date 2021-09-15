@@ -39,6 +39,8 @@
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
+            this.lblSolo = new System.Windows.Forms.Label();
+            this.lblMute = new System.Windows.Forms.Label();
             this.scriptControls = new Nebulator.ScriptControls();
             this.timeMaster = new Nebulator.TimeControl();
             this.toolStrip1.SuspendLayout();
@@ -169,27 +171,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -291,6 +293,24 @@
             this.timerHousekeep.Interval = 10;
             this.timerHousekeep.Tick += new System.EventHandler(this.timerHousekeep_Tick);
             // 
+            // lblSolo
+            // 
+            this.lblSolo.AutoSize = true;
+            this.lblSolo.Location = new System.Drawing.Point(919, 102);
+            this.lblSolo.Name = "lblSolo";
+            this.lblSolo.Size = new System.Drawing.Size(36, 17);
+            this.lblSolo.TabIndex = 42;
+            this.lblSolo.Text = "Solo";
+            // 
+            // lblMute
+            // 
+            this.lblMute.AutoSize = true;
+            this.lblMute.Location = new System.Drawing.Point(919, 127);
+            this.lblMute.Name = "lblMute";
+            this.lblMute.Size = new System.Drawing.Size(39, 17);
+            this.lblMute.TabIndex = 43;
+            this.lblMute.Text = "Mute";
+            // 
             // scriptControls
             // 
             this.scriptControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -325,6 +345,8 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(976, 670);
+            this.Controls.Add(this.lblMute);
+            this.Controls.Add(this.lblSolo);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.scriptControls);
@@ -372,6 +394,8 @@
         private System.Windows.Forms.Timer timerHousekeep;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
+        private System.Windows.Forms.Label lblSolo;
+        private System.Windows.Forms.Label lblMute;
     }
 }
 

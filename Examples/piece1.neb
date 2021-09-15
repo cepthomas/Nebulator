@@ -45,6 +45,7 @@ public override void Setup2()
     SendController(chSynth, Pan, 100);
 
     BuildComp();
+    
 }
 
 void BuildComp()
