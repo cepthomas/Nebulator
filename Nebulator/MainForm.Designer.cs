@@ -38,7 +38,6 @@
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new NBagOfTricks.UI.TextViewer();
-            this.timerHousekeep = new System.Windows.Forms.Timer(this.components);
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
             this.scriptControls = new Nebulator.ScriptControls();
@@ -288,11 +287,6 @@
             this.textViewer.TabIndex = 41;
             this.textViewer.WordWrap = true;
             // 
-            // timerHousekeep
-            // 
-            this.timerHousekeep.Interval = 10;
-            this.timerHousekeep.Tick += new System.EventHandler(this.timerHousekeep_Tick);
-            // 
             // lblSolo
             // 
             this.lblSolo.AutoSize = true;
@@ -391,7 +385,6 @@
         private System.Windows.Forms.ToolStripButton btnAbout;
         private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
         private NBagOfTricks.UI.TextViewer textViewer;
-        private System.Windows.Forms.Timer timerHousekeep;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
         private System.Windows.Forms.Label lblSolo;
