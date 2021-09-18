@@ -30,7 +30,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ScriptControls_Load(object sender, EventArgs e)
+        void ScriptControls_Load(object sender, EventArgs e)
         {
             // Use double buffering to reduce flicker.
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
@@ -148,7 +148,7 @@ namespace Nebulator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Lever_ValueChanged(object sender, EventArgs e)
+        void Lever_ValueChanged(object sender, EventArgs e)
         {
             if(_init && sender is Slider)
             {

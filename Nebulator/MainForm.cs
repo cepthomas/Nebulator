@@ -7,6 +7,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 using NLog;
 using Newtonsoft.Json;
 using NAudio.Midi;
@@ -18,8 +19,6 @@ using Nebulator.Script;
 using Nebulator.Device;
 using Nebulator.Midi;
 using Nebulator.OSC;
-
-
 
 namespace Nebulator
 {
@@ -154,6 +153,9 @@ namespace Nebulator
                 toolStrip1.Items.Add(new ToolStripControlHost(cpuMeter));
             }
 
+            lblSolo.Hide();
+            lblMute.Hide();
+
             btnClear.Click += (object _, EventArgs __) => { textViewer.Clear(); };
             btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
             #endregion
@@ -206,12 +208,12 @@ namespace Nebulator
             // Just in case.
             _outputs.ForEach(o => o.Value?.Kill());
 
-            DeleteDevices();
+            DestroyDevices();
 
             if (_script != null)
             {
                 // Save the project.
-                SaveProjectValues();
+                DestroyControls();
                 _script.Dispose();
             }
 
@@ -231,7 +233,7 @@ namespace Nebulator
                 _mmTimer?.Dispose();
                 _mmTimer = null;
 
-                DeleteDevices();
+                DestroyDevices();
 
                 components?.Dispose();
             }
@@ -240,29 +242,100 @@ namespace Nebulator
         }
         #endregion
 
-        #region Device management xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        #region Manage controls
         /// <summary>
-        /// Dispose of all current devices.
+        /// Create the main UI parts from the script.
         /// </summary>
-        void DeleteDevices()
+        void CreateControls()
         {
-            // Save the vkbd position.
-            _inputs.Values.Where(v => v.GetType() == typeof(Keyboard)).ForEach
-               (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as Keyboard));
+            ///// Set up UI.
+            const int CONTROL_SPACING = 10;
+            int x = timeMaster.Right + CONTROL_SPACING;
 
-            _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
-            _inputs.Clear();
-            _outputs.ForEach(o => { o.Value?.Stop(); o.Value?.Dispose(); });
-            _outputs.Clear();
+            ///// The channel controls.
+
+            // Create new controls.
+            foreach (NChannel t in _script.Channels)
+            {
+                // Init from persistence.
+                double vt = Convert.ToDouble(_nppVals.GetValue(t.Name, "volume"));
+                t.Volume = vt == 0.0 ? 0.5 : vt; // in case it's new
+
+                int state = Convert.ToInt32(_nppVals.GetValue(t.Name, "state"));
+                t.State = (ChannelState)state;
+
+                ChannelControl tctl = new ChannelControl()
+                {
+                    Location = new Point(x, timeMaster.Top),
+                    BoundChannel = t
+                };
+                tctl.ChannelChangeEvent += ChannelChange_Event;
+                Controls.Add(tctl);
+                x += tctl.Width + CONTROL_SPACING;
+            }
+
+            // Levers and meters.
+            scriptControls.Init(_script.Levers, _script.Displays);
+
+            // Calc the section times.
+            timeMaster.TimeDefs.Clear();
+            int start = 0;
+            foreach (NSection sect in _script.Sections)
+            {
+                timeMaster.TimeDefs.Add(start, sect.Name);
+                start += sect.Beats;
+            }
+            // Add the dummy end marker.
+            timeMaster.TimeDefs.Add(start, "");
+
+            if (timeMaster.TimeDefs.Count > 0)
+            {
+                timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
+            }
+
+            ///// Init other controls.
+            potSpeed.Value = Convert.ToInt32(_nppVals.GetValue("master", "speed"));
+            double mv = Convert.ToDouble(_nppVals.GetValue("master", "volume"));
+
+            sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
         }
 
         /// <summary>
-        /// Create all devices from user script.
+        /// 
+        /// </summary>
+        void DestroyControls()
+        {
+            // Save values.
+            _nppVals.Clear();
+            _nppVals.SetValue("master", "volume", sldVolume.Value);
+            _nppVals.SetValue("master", "speed", potSpeed.Value);
+            _script?.Channels?.ForEach(c =>
+            {
+                _nppVals.SetValue(c.Name, "volume", c.Volume);
+                _nppVals.SetValue(c.Name, "state", c.State);
+            });
+            _nppVals.Save();
+
+            // Remove current controls.
+            foreach (Control ctl in Controls)
+            {
+                if (ctl is ChannelControl)
+                {
+                    ChannelControl tctl = ctl as ChannelControl;
+                    tctl.ChannelChangeEvent -= ChannelChange_Event;
+                    tctl.Dispose();
+                    Controls.Remove(tctl);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create all devices from user script. NController, Keyboard
         /// </summary>
         void CreateDevices()
         {
             // Clean up for company.
-            DeleteDevices();
+            DestroyDevices();
 
             // Get requested inputs.
             Keyboard vkey = null; // If used, requires special handling.
@@ -370,6 +443,21 @@ namespace Nebulator
                 }
             }
         }
+
+        /// <summary>
+        /// Dispose of all current devices.
+        /// </summary>
+        void DestroyDevices()
+        {
+            // Save the vkbd position.
+            _inputs.Values.Where(v => v.GetType() == typeof(Keyboard)).ForEach
+               (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as Keyboard));
+
+            _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
+            _inputs.Clear();
+            _outputs.ForEach(o => { o.Value?.Stop(); o.Value?.Dispose(); });
+            _outputs.Clear();
+        }
         #endregion
 
         #region Compile
@@ -448,7 +536,7 @@ namespace Nebulator
                         SetSpeedTimerPeriod();
 
                         // Show everything.
-                        InitControls();
+                        CreateControls();
                     }
                     catch (Exception ex)
                     {
@@ -482,7 +570,6 @@ namespace Nebulator
             return ok;
         }
 
-
         /// <summary>
         /// Update system statuses.
         /// </summary>
@@ -501,83 +588,6 @@ namespace Nebulator
             }
         }
         #endregion
-
-
-
-        void DestroyControls()
-        {
-
-
-        }
-
-
-
-        /// <summary>
-        /// Create the main UI parts from the script.
-        /// </summary>
-        void InitControls()
-        {
-            ///// Set up UI.
-            const int CONTROL_SPACING = 10;
-            int x = timeMaster.Right + CONTROL_SPACING;
-
-            ///// The channel controls.
-
-            // Clean up current controls.
-            foreach (Control ctl in Controls)
-            {
-                if (ctl is ChannelControl)
-                {
-                    ChannelControl tctl = ctl as ChannelControl;
-                    tctl.ChannelChangeEvent -= ChannelChange_Event;
-                    tctl.Dispose();
-                    Controls.Remove(tctl);
-                }
-            }
-
-            // Create new controls.
-            foreach (NChannel t in _script.Channels)
-            {
-                // Init from persistence.
-                double vt = Convert.ToDouble(_nppVals.GetValue(t.Name, "volume"));
-                t.Volume = vt == 0.0 ? 0.5 : vt; // in case it's new
-
-                ChannelControl tctl = new ChannelControl()
-                {
-                    Location = new Point(x, timeMaster.Top),
-                    BoundChannel = t
-                };
-                tctl.ChannelChangeEvent += ChannelChange_Event;
-                Controls.Add(tctl);
-                x += tctl.Width + CONTROL_SPACING;
-            }
-
-            // Levers and meters.
-            scriptControls.Init(_script.Levers, _script.Displays);
-
-            // Calc the section times.
-            timeMaster.TimeDefs.Clear();
-            int start = 0;
-            foreach (NSection sect in _script.Sections)
-            {
-                timeMaster.TimeDefs.Add(start, sect.Name);
-                start += sect.Beats;
-            }
-            // Add the dummy end marker.
-            timeMaster.TimeDefs.Add(start, "");
-
-            if (timeMaster.TimeDefs.Count > 0)
-            {
-                timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
-            }
-
-            ///// Init other controls.
-            potSpeed.Value = Convert.ToInt32(_nppVals.GetValue("master", "speed"));
-            double mv = Convert.ToDouble(_nppVals.GetValue("master", "volume"));
-
-            sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
-        }
-
 
         #region Realtime handling
         /// <summary>
@@ -820,7 +830,9 @@ namespace Nebulator
             // Kill any not solo.
             _script.Channels.Where(c => c.State != ChannelState.Solo).ForEach(c => c.Device?.Kill(c.ChannelNumber));
         }
+        #endregion
 
+        #region Runtime interop
         /// <summary>
         /// Package up the runtime stuff the script may need. Call this before any script updates.
         /// </summary>
@@ -971,8 +983,6 @@ namespace Nebulator
             {
                 try
                 {
-                    SaveProjectValues();
-
                     if (File.Exists(fn))
                     {
                         _logger.Info($"Opening {fn}");
@@ -1048,22 +1058,6 @@ namespace Nebulator
                     SetCompileStatus(false);
                 }
             });
-        }
-
-        /// <summary>
-        /// Self documenting.
-        /// </summary>
-        void SaveProjectValues()
-        {
-            _nppVals.Clear();
-            _nppVals.SetValue("master", "volume", sldVolume.Value);
-            _nppVals.SetValue("master", "speed", potSpeed.Value);
-            _script?.Channels?.ForEach(c =>
-            {
-                _nppVals.SetValue(c.Name, "volume", c.Volume);
-                _nppVals.SetValue(c.Name, "state", c.State);
-            });
-            _nppVals.Save();
         }
         #endregion
 

@@ -12,7 +12,7 @@ using System.Reflection;
 [assembly: AssemblyCopyright("MIT License")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("0.9.*")]
+[assembly: AssemblyVersion("1.0.0")]
 
 // Add a note: Version information is supplied by CommonAssemblyInfo.cs.
 
