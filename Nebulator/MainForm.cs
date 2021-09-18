@@ -8,8 +8,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using NLog;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using NAudio.Midi;
 using NAudio.Wave;
 using NBagOfTricks;
@@ -31,7 +31,7 @@ namespace Nebulator
 
         #region Fields
         /// <summary>App logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = new Logger("MainForm");
 
         /// <summary>Fast timer.</summary>
         MmTimerEx _mmTimer = new MmTimerEx();
@@ -1196,7 +1196,7 @@ namespace Nebulator
             }
 
             // Hook to client window.
-            LogClientNotificationTarget.ClientNotification += Log_ClientNotification;
+ //           LogClientNotificationTarget.ClientNotification += Log_ClientNotification;
         }
 
         /// <summary>

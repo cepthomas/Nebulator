@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 
@@ -70,8 +71,8 @@ namespace Nebulator.Common
         {
             if (_fn != Utils.UNKNOWN_STRING)
             {
-                string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-                File.WriteAllText(_fn, json);
+                //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                //File.WriteAllText(_fn, json);
             }
         }
 
@@ -80,12 +81,12 @@ namespace Nebulator.Common
         /// </summary>
         public static Bag Load(string fn)
         {
-            Bag bag;
+            Bag bag = new Bag();
 
-            if(File.Exists(fn))
+            if (File.Exists(fn))
             {
-                string json = File.ReadAllText(fn);
-                bag = JsonConvert.DeserializeObject<Bag>(json);
+                //string json = File.ReadAllText(fn);
+                //bag = JsonConvert.DeserializeObject<Bag>(json);
             }
             else
             {
@@ -94,7 +95,7 @@ namespace Nebulator.Common
             }
 
             bag._fn = fn;
-            
+
             return bag;
         }
         #endregion

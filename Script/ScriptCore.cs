@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-using NLog;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -18,7 +17,7 @@ namespace Nebulator.Script
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = new Logger("ScriptCore");
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;

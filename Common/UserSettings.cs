@@ -7,7 +7,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using NAudio.Midi;
 
 
@@ -123,34 +124,34 @@ namespace Nebulator.Common
         /// <summary>Save object to file.</summary>
         public void Save()
         {
-            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(_fn, json);
+            //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            //File.WriteAllText(_fn, json);
         }
 
         /// <summary>Create object from file.</summary>
         public static void Load(string appDir)
         {
-            TheSettings = null;
-            string fn = Path.Combine(appDir, "settings.json");
+            //TheSettings = null;
+            //string fn = Path.Combine(appDir, "settings.json");
 
-            if(File.Exists(fn))
-            {
-                string json = File.ReadAllText(fn);
-                TheSettings = JsonConvert.DeserializeObject<UserSettings>(json);
+            //if(File.Exists(fn))
+            //{
+            //    string json = File.ReadAllText(fn);
+            //    TheSettings = JsonConvert.DeserializeObject<UserSettings>(json);
 
-                // Clean up any bad file names.
-                TheSettings.RecentFiles.RemoveAll(f => !File.Exists(f));
+            //    // Clean up any bad file names.
+            //    TheSettings.RecentFiles.RemoveAll(f => !File.Exists(f));
 
-                TheSettings._fn = fn;
-            }
-            else
-            {
-                // Doesn't exist, create a new one.
-                TheSettings = new UserSettings
-                {
-                    _fn = fn
-                };
-            }
+            //    TheSettings._fn = fn;
+            //}
+            //else
+            //{
+            //    // Doesn't exist, create a new one.
+            //    TheSettings = new UserSettings
+            //    {
+            //        _fn = fn
+            //    };
+            //}
         }
         #endregion
     }

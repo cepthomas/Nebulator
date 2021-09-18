@@ -7,9 +7,8 @@ using System.IO;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Diagnostics;
-using NLog;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using NBagOfTricks;
 using Nebulator.Common;
 
@@ -54,7 +53,7 @@ namespace Nebulator.Script
 
         #region Fields
         /// <summary>My logger.</summary>
-        Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = new Logger("Compiler");
 
         /// <summary>Starting directory.</summary>
         string _baseDir = Utils.UNKNOWN_STRING;
@@ -513,7 +512,7 @@ namespace Nebulator.Script
     public class ScriptError
     {
         /// <summary>Where it came from.</summary>
-        [JsonConverter(typeof(StringEnumConverter))]
+        //TODO [JsonConverter(typeof(StringEnumConverter))]
         public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
 
         /// <summary>Original source file.</summary>

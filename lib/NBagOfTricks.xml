@@ -4,87 +4,6 @@
         <name>NBagOfTricks</name>
     </assembly>
     <members>
-        <member name="T:NBagOfTricks.MidiTime">
-            <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
-        </member>
-        <member name="P:NBagOfTricks.MidiTime.MidiPpq">
-            <summary>Resolution for midi events aka DeltaTicksPerQuarterNote.</summary>
-        </member>
-        <member name="P:NBagOfTricks.MidiTime.InternalPpq">
-            <summary>Resolution for internal format.</summary>
-        </member>
-        <member name="P:NBagOfTricks.MidiTime.Tempo">
-            <summary>Tempo aka BPM.</summary>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.InternalToMidi(System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.MidiToInternal(System.Int64)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.InternalToMsec(System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.MidiToSec(System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.MidiPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.InternalPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.RoundedInternalPeriod">
-            <summary>
-            Integer time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:NBagOfTricks.Tools">
-            <summary>
-            Higher level than Utils.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
-            <summary>
-            Reports non-ascii characters in a file. UTF-8 only.
-            </summary>
-            <param name="fn"></param>
-            <param name="limit"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.String,System.String,System.Boolean)">
-            <summary>
-            Convert list of markdown lines to html.
-            </summary>
-            <param name="body">The md text.</param>
-            <param name="bgcolor">Background color for page.</param>
-            <param name="font">Main font-family.</param>
-            <param name="show">If true open in browser.</param>
-            <returns></returns>
-        </member>
         <member name="T:NBagOfTricks.ArgOptType">
             <summary>Argument and value options: None, required, optional.</summary>
         </member>
@@ -215,203 +134,6 @@
             </summary>
             <param name="s"></param>
         </member>
-        <member name="T:NBagOfTricks.MiscUtils">
-            <summary>
-            Static general utility functions.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetVersionString">
-            <summary>
-            Returns a string with the application version information.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetAppDataDir(System.String,System.String)">
-            <summary>
-            Get the user app dir.
-            </summary>
-            <param name="appName"></param>
-            <param name="company">Optional nest under company name.</param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetExeDir">
-            <summary>
-            Get the executable dir.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.SecondsToTimeSpan(System.Double)">
-            <summary>
-            Convert time to TimeSpan.
-            </summary>
-            <param name="sec">Time in seconds.</param>
-            <returns>TimeSpan</returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.TimeSpanToSeconds(System.TimeSpan)">
-            <summary>
-            Convert TimeSpan to time.
-            </summary>
-            <param name="ts"></param>
-            <returns>Time in seconds.</returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.DeepClone``1(``0)">
-            <summary>
-            Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
-            There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
-            The binary serialization is apparently slower but safer. Feel free to reimplement with a better way.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="obj"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
-            <summary>
-            Get a subset of an array.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="source"></param>
-            <param name="start"></param>
-            <param name="length"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.InvokeIfRequired``1(``0,NBagOfTricks.MiscUtils.InvokeIfRequiredDelegate{``0})">
-            <summary>
-            Invoke helper. See http://stackoverflow.com/a/29497681
-            Usage:
-            progressBar1.InvokeIfRequired(o => 
-            {
-                o.Style = ProgressBarStyle.Marquee;
-                o.MarqueeAnimationSpeed = 40;
-            });
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="obj"></param>
-            <param name="action"></param>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
-            <summary>
-            Immediately executes the given action on each element in the source sequence.
-            </summary>
-            <typeparam name="T">The type of the elements in the sequence</typeparam>
-            <param name="source">The sequence of elements</param>
-            <param name="action">The action to execute on each element</param>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
-            <summary>
-            Immediately executes the given action on each element in the source sequence.
-            Each element's index is used in the logic of the action.
-            </summary>
-            <typeparam name="T">The type of the elements in the sequence</typeparam>
-            <param name="source">The sequence of elements</param>
-            <param name="action">The action to execute on each element; the second parameter
-            of the action represents the index of the source element.</param>
-        </member>
-        <member name="T:NBagOfTricks.StringUtils">
-            <summary>
-            Misc string extension methods.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.IsInteger(System.String)">
-            <summary>
-            Test for integer string.
-            </summary>
-            <param name="sourceString"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.IsFloat(System.String)">
-            <summary>
-            Test for float string.
-            </summary>
-            <param name="sourceString"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.IsAlpha(System.String)">
-            <summary>
-            Test for alpha string.
-            </summary>
-            <param name="sourceString"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.IsReadable(System.Byte)">
-            <summary>
-            
-            </summary>
-            <param name="b"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.Right(System.String,System.Int32)">
-            <summary>
-            Returns the rightmost characters of a string based on the number of characters specified.
-            </summary>
-            <param name="str">The source string to return characters from.</param>
-            <param name="numChars">The number of rightmost characters to return.</param>
-            <returns>The rightmost characters of a string.</returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.Left(System.String,System.Int32)">
-            <summary>
-            Returns the leftmost number of chars in the string.
-            </summary>
-            <param name="str">The source string .</param>
-            <param name="numChars">The number of characters to get from the source string.</param>
-            <returns>The leftmost number of characters to return from the source string supplied.</returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitByTokens(System.String,System.String,System.Boolean)">
-            <summary>
-            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
-            </summary>
-            <param name="text">The string to split up.</param>
-            <param name="tokens">The char token(s) to split by.</param>
-            <param name="trim">Remove whitespace at each end.</param>
-            <returns>Return the parts as a list.</returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitByToken(System.String,System.String,System.Boolean)">
-            <summary>
-            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
-            </summary>
-            <param name="text">The string to split up.</param>
-            <param name="splitby">The string to split by.</param>
-            <param name="trim">Remove whitespace at each end.</param>
-            <returns>Return the parts as a list.</returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitKeepDelims(System.String,System.String)">
-            <summary>
-            Split by any of the delims but keep the delim.
-            </summary>
-            <param name="s"></param>
-            <param name="delims"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitQuotedString(System.String)">
-            <summary>
-            Specialized splitter, mainly for cmd line args.
-            Input: 12345 "I HAVE SPACES" aaa bbb  "me too" ccc ddd "  and the last  "
-            Output: 12345,I HAVE SPACES,aaa,bbb,me too,ccc,ddd,and the last
-            </summary>
-            <param name="text"></param>
-            <returns>Properly split values</returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.Contains(System.String,System.Char)">
-            <summary>
-            Because .NET framework doesn't have this.
-            </summary>
-            <param name="s"></param>
-            <param name="c"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
-            <summary>
-            Update the MRU.
-            </summary>
-            <param name="mruList">The MRU.</param>
-            <param name="newVal">New value(s) to perhaps insert.</param>
-            <param name="mruSize">Optional max size.</param>
-        </member>
-        <member name="M:NBagOfTricks.StringUtils.FormatSpecifier(System.Single)">
-            <summary>
-            Gets the format specifier based upon the range of data.
-            </summary>
-            <param name="range">Data range</param>
-            <returns>Format specifier</returns>
-        </member>
         <member name="T:NBagOfTricks.MathUtils">
             <summary>
             Static math utility functions.
@@ -537,6 +259,154 @@
             <param name="min"></param>
             <param name="max"></param>
             <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.MidiTime">
+            <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
+        </member>
+        <member name="P:NBagOfTricks.MidiTime.MidiPpq">
+            <summary>Resolution for midi events aka DeltaTicksPerQuarterNote.</summary>
+        </member>
+        <member name="P:NBagOfTricks.MidiTime.InternalPpq">
+            <summary>Resolution for internal format.</summary>
+        </member>
+        <member name="P:NBagOfTricks.MidiTime.Tempo">
+            <summary>Tempo aka BPM.</summary>
+        </member>
+        <member name="M:NBagOfTricks.MidiTime.InternalToMidi(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MidiTime.MidiToInternal(System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MidiTime.InternalToMsec(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MidiTime.MidiToSec(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MidiTime.MidiPeriod">
+            <summary>
+            Exact time between events.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MidiTime.InternalPeriod">
+            <summary>
+            Exact time between events.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MidiTime.RoundedInternalPeriod">
+            <summary>
+            Integer time between events.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.MiscUtils">
+            <summary>
+            Static general utility functions.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetVersionString">
+            <summary>
+            Returns a string with the application version information.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetAppDataDir(System.String,System.String)">
+            <summary>
+            Get the user app dir.
+            </summary>
+            <param name="appName"></param>
+            <param name="company">Optional nest under company name.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetExeDir">
+            <summary>
+            Get the executable dir.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.SecondsToTimeSpan(System.Double)">
+            <summary>
+            Convert time to TimeSpan.
+            </summary>
+            <param name="sec">Time in seconds.</param>
+            <returns>TimeSpan</returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.TimeSpanToSeconds(System.TimeSpan)">
+            <summary>
+            Convert TimeSpan to time.
+            </summary>
+            <param name="ts"></param>
+            <returns>Time in seconds.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.DeepClone``1(``0)">
+            <summary>
+            Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
+            There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
+            The binary serialization is apparently slower but safer. Feel free to reimplement with a better way.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
+            <summary>
+            Get a subset of an array.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"></param>
+            <param name="start"></param>
+            <param name="length"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.InvokeIfRequired``1(``0,NBagOfTricks.MiscUtils.InvokeIfRequiredDelegate{``0})">
+            <summary>
+            Invoke helper. See http://stackoverflow.com/a/29497681
+            Usage:
+            progressBar1.InvokeIfRequired(o => 
+            {
+                o.Style = ProgressBarStyle.Marquee;
+                o.MarqueeAnimationSpeed = 40;
+            });
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <param name="action"></param>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Immediately executes the given action on each element in the source sequence.
+            </summary>
+            <typeparam name="T">The type of the elements in the sequence</typeparam>
+            <param name="source">The sequence of elements</param>
+            <param name="action">The action to execute on each element</param>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
+            <summary>
+            Immediately executes the given action on each element in the source sequence.
+            Each element's index is used in the logic of the action.
+            </summary>
+            <typeparam name="T">The type of the elements in the sequence</typeparam>
+            <param name="source">The sequence of elements</param>
+            <param name="action">The action to execute on each element; the second parameter
+            of the action represents the index of the source element.</param>
         </member>
         <member name="T:NBagOfTricks.MmTimerEx">
             <summary>
@@ -735,6 +605,113 @@
             </summary>
             <param name="disposing"></param>
         </member>
+        <member name="T:NBagOfTricks.StringUtils">
+            <summary>
+            Misc string extension methods.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.IsInteger(System.String)">
+            <summary>
+            Test for integer string.
+            </summary>
+            <param name="sourceString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.IsFloat(System.String)">
+            <summary>
+            Test for float string.
+            </summary>
+            <param name="sourceString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.IsAlpha(System.String)">
+            <summary>
+            Test for alpha string.
+            </summary>
+            <param name="sourceString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.IsReadable(System.Byte)">
+            <summary>
+            
+            </summary>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.Right(System.String,System.Int32)">
+            <summary>
+            Returns the rightmost characters of a string based on the number of characters specified.
+            </summary>
+            <param name="str">The source string to return characters from.</param>
+            <param name="numChars">The number of rightmost characters to return.</param>
+            <returns>The rightmost characters of a string.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.Left(System.String,System.Int32)">
+            <summary>
+            Returns the leftmost number of chars in the string.
+            </summary>
+            <param name="str">The source string .</param>
+            <param name="numChars">The number of characters to get from the source string.</param>
+            <returns>The leftmost number of characters to return from the source string supplied.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.SplitByTokens(System.String,System.String,System.Boolean)">
+            <summary>
+            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
+            </summary>
+            <param name="text">The string to split up.</param>
+            <param name="tokens">The char token(s) to split by.</param>
+            <param name="trim">Remove whitespace at each end.</param>
+            <returns>Return the parts as a list.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.SplitByToken(System.String,System.String,System.Boolean)">
+            <summary>
+            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
+            </summary>
+            <param name="text">The string to split up.</param>
+            <param name="splitby">The string to split by.</param>
+            <param name="trim">Remove whitespace at each end.</param>
+            <returns>Return the parts as a list.</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.SplitKeepDelims(System.String,System.String)">
+            <summary>
+            Split by any of the delims but keep the delim.
+            </summary>
+            <param name="s"></param>
+            <param name="delims"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.SplitQuotedString(System.String)">
+            <summary>
+            Specialized splitter, mainly for cmd line args.
+            Input: 12345 "I HAVE SPACES" aaa bbb  "me too" ccc ddd "  and the last  "
+            Output: 12345,I HAVE SPACES,aaa,bbb,me too,ccc,ddd,and the last
+            </summary>
+            <param name="text"></param>
+            <returns>Properly split values</returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.Contains(System.String,System.Char)">
+            <summary>
+            Because .NET framework doesn't have this.
+            </summary>
+            <param name="s"></param>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
+            <summary>
+            Update the MRU.
+            </summary>
+            <param name="mruList">The MRU.</param>
+            <param name="newVal">New value(s) to perhaps insert.</param>
+            <param name="mruSize">Optional max size.</param>
+        </member>
+        <member name="M:NBagOfTricks.StringUtils.FormatSpecifier(System.Single)">
+            <summary>
+            Gets the format specifier based upon the range of data.
+            </summary>
+            <param name="range">Data range</param>
+            <returns>Format specifier</returns>
+        </member>
         <member name="T:NBagOfTricks.TimingAnalyzer">
             <summary>
             Diagnostics for timing measurement.
@@ -803,6 +780,29 @@
             Conversion for stopwatch values.
             </summary>
             <param name="ticks"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.Tools">
+            <summary>
+            Higher level than Utils.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
+            <summary>
+            Reports non-ascii characters in a file. UTF-8 only.
+            </summary>
+            <param name="fn"></param>
+            <param name="limit"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.String,System.String,System.Boolean)">
+            <summary>
+            Convert list of markdown lines to html.
+            </summary>
+            <param name="body">The md text.</param>
+            <param name="bgcolor">Background color for page.</param>
+            <param name="font">Main font-family.</param>
+            <param name="show">If true open in browser.</param>
             <returns></returns>
         </member>
     </members>

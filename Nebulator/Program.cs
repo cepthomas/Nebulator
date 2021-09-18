@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using NLog;
 using Nebulator.Script;
 
 namespace Nebulator
@@ -70,7 +69,7 @@ namespace Nebulator
         {
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled exception:{e.Exception.Message}{Environment.NewLine}{e.Exception.StackTrace}{Environment.NewLine}";
-            LogManager.GetCurrentClassLogger().Error("Unhandled exception: " + s);
+//TODO            LogManager.GetCurrentClassLogger().Error("Unhandled exception: " + s);
             MessageBox.Show($"Unhandled exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
 
@@ -83,7 +82,7 @@ namespace Nebulator
         {
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled domain exception:{e}{Environment.NewLine}{e.ExceptionObject}{Environment.NewLine}";
-            LogManager.GetCurrentClassLogger().Error("Unhandled domain exception: " + s);
+//TODO            LogManager.GetCurrentClassLogger().Error("Unhandled domain exception: " + s);
             MessageBox.Show($"Unhandled domain exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
     }
