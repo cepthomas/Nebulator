@@ -20,7 +20,7 @@ using Nebulator.Device;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
-namespace Nebulator
+namespace Nebulator.UI
 {
     public partial class MainForm : Form
     {
@@ -49,7 +49,7 @@ namespace Nebulator
         List<ScriptError> _compileResults = new List<ScriptError>();
 
         /// <summary>Current np file name.</summary>
-        string _fn = Utils.UNKNOWN_STRING;
+        string _fn = Definitions.UNKNOWN_STRING;
 
         /// <summary>Detect changed script files.</summary>
         readonly MultiFileWatcher _watcher = new MultiFileWatcher();
@@ -61,7 +61,8 @@ namespace Nebulator
         string _compileTempDir = "";
 
         /// <summary>Persisted internal values for current script file.</summary>
-        Bag _nppVals = new Bag();
+        //Bag _nppVals = new Bag();
+        ProjectConfig _projectConfig = null;
 
         ///// <summary>Diagnostics for timing measurement.</summary>
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
@@ -103,7 +104,7 @@ namespace Nebulator
             // The rest of the controls.
             textViewer.WordWrap = false;
             textViewer.BackColor = UserSettings.TheSettings.BackColor;
-            textViewer.Font = UserSettings.TheSettings.EditorFont;
+            //textViewer.Font = UserSettings.TheSettings.EditorFont;
             textViewer.Colors.Add("ERROR:", Color.LightPink);
             textViewer.Colors.Add("WARNING:", Color.Plum);
 
@@ -127,11 +128,11 @@ namespace Nebulator
 
             potSpeed.DrawColor = UserSettings.TheSettings.IconColor;
             potSpeed.BackColor = UserSettings.TheSettings.BackColor;
-            potSpeed.Font = UserSettings.TheSettings.ControlFont;
+            //potSpeed.Font = UserSettings.TheSettings.ControlFont;
             potSpeed.Invalidate();
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.Font = UserSettings.TheSettings.ControlFont;
+            //sldVolume.Font = UserSettings.TheSettings.ControlFont;
             sldVolume.DecPlaces = 2;
             sldVolume.Invalidate();
 
@@ -254,50 +255,28 @@ namespace Nebulator
 
             ///// The channel controls.
 
-            // Create new controls.
-            foreach (NChannel t in _script.Channels)
+            //Dictionary<ChannelControl, NChannel> _channelMap = new();
+
+            // Create new channel controls.
+            foreach (NChannel t in _projectConfig.Channels)
             {
                 // Init from persistence.
-                double vt = Convert.ToDouble(_nppVals.GetValue(t.Name, "volume"));
+                double vt = t.Volume;// Convert.ToDouble(_nppVals.GetValue(t.Name, "volume"));
                 t.Volume = vt == 0.0 ? 0.5 : vt; // in case it's new
 
-                int state = Convert.ToInt32(_nppVals.GetValue(t.Name, "state"));
+                int state = Convert.ToInt32(t.State);
                 t.State = (ChannelState)state;
 
                 ChannelControl tctl = new ChannelControl()
                 {
                     Location = new Point(x, timeMaster.Top),
-                    BoundChannel = t
+                    Tag = t // hint
                 };
+
                 tctl.ChannelChangeEvent += ChannelChange_Event;
                 Controls.Add(tctl);
                 x += tctl.Width + CONTROL_SPACING;
             }
-
-            // Levers and meters.
-            scriptControls.Init(_script.Levers, _script.Displays);
-
-            // Calc the section times.
-            timeMaster.TimeDefs.Clear();
-            int start = 0;
-            foreach (NSection sect in _script.Sections)
-            {
-                timeMaster.TimeDefs.Add(start, sect.Name);
-                start += sect.Beats;
-            }
-            // Add the dummy end marker.
-            timeMaster.TimeDefs.Add(start, "");
-
-            if (timeMaster.TimeDefs.Count > 0)
-            {
-                timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
-            }
-
-            ///// Init other controls.
-            potSpeed.Value = Convert.ToInt32(_nppVals.GetValue("master", "speed"));
-            double mv = Convert.ToDouble(_nppVals.GetValue("master", "volume"));
-
-            sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
         }
 
         /// <summary>
@@ -305,16 +284,17 @@ namespace Nebulator
         /// </summary>
         void DestroyControls()
         {
-            // Save values.
-            _nppVals.Clear();
-            _nppVals.SetValue("master", "volume", sldVolume.Value);
-            _nppVals.SetValue("master", "speed", potSpeed.Value);
-            _script?.Channels?.ForEach(c =>
-            {
-                _nppVals.SetValue(c.Name, "volume", c.Volume);
-                _nppVals.SetValue(c.Name, "state", c.State);
-            });
-            _nppVals.Save();
+            // Save values. //TODO
+            //_nppVals.Clear();
+            //_nppVals.SetValue("master", "volume", sldVolume.Value);
+            //_nppVals.SetValue("master", "speed", potSpeed.Value);
+            //_script?.Channels?.ForEach(c =>
+            //{
+            //    _nppVals.SetValue(c.Name, "volume", c.Volume);
+            //    _nppVals.SetValue(c.Name, "state", c.State);
+            //});
+            //_nppVals.Save();
+            _projectConfig.Save();
 
             // Remove current controls.
             foreach (Control ctl in Controls)
@@ -340,7 +320,7 @@ namespace Nebulator
             // Get requested inputs.
             Keyboard vkey = null; // If used, requires special handling.
 
-            foreach (NController ctlr in _script.Controllers)
+            foreach (NController ctlr in _projectConfig.Controllers)
             {
                 // Have we seen it yet?
                 if (_inputs.ContainsKey(ctlr.DeviceType))
@@ -399,7 +379,7 @@ namespace Nebulator
             }
 
             // Get requested outputs.
-            foreach (NChannel chan in _script.Channels)
+            foreach (NChannel chan in _projectConfig.Channels)
             {
                 // Have we seen it yet?
                 if (_outputs.ContainsKey(chan.DeviceType))
@@ -468,7 +448,7 @@ namespace Nebulator
         {
             bool ok = true;
 
-            if (_fn == Utils.UNKNOWN_STRING)
+            if (_fn == Definitions.UNKNOWN_STRING)
             {
                 _logger.Warn("No script file loaded.");
                 ok = false;
@@ -535,8 +515,29 @@ namespace Nebulator
 
                         SetSpeedTimerPeriod();
 
-                        // Show everything.
-                        CreateControls();
+
+
+                        ///// Init the timeclock.
+                        // Calc the section times.
+                        timeMaster.TimeDefs.Clear();
+                        int start = 0;
+                        foreach (NSection sect in _script.Sections)
+                        {
+                            timeMaster.TimeDefs.Add(start, sect.Name);
+                            start += sect.Beats;
+                        }
+                        // Add the dummy end marker.
+                        timeMaster.TimeDefs.Add(start, "");
+
+                        if (timeMaster.TimeDefs.Count > 0)
+                        {
+                            timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
+                        }
+
+                        ///// Init other controls.
+                        potSpeed.Value = Convert.ToInt32(_projectConfig.MasterSpeed);
+                        double mv = Convert.ToDouble(_projectConfig.MasterVolume);
+                        sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
                     }
                     catch (Exception ex)
                     {
@@ -648,15 +649,15 @@ namespace Nebulator
                 //}
 
                 // Process any sequence steps.
-                bool anySolo = _script.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
-                bool anyMute = _script.Channels.Where(t => t.State == ChannelState.Mute).Count() > 0;
+                bool anySolo = _projectConfig.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
+                bool anyMute = _projectConfig.Channels.Where(t => t.State == ChannelState.Mute).Count() > 0;
                 lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
                 var steps = _script.Steps.GetSteps(_stepTime);
                 foreach(var step in steps)
                 {
-                    NChannel channel = _script.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
+                    NChannel channel = _projectConfig.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
 
                     // Is it ok to play now?
                     bool play = channel != null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !anySolo));
@@ -720,8 +721,6 @@ namespace Nebulator
 
         /// <summary>
         /// Process input event.
-        /// Is it a controller? Look it up in the inputs.
-        /// If not a ctlr or not found, send to the output, otherwise trigger listeners.
         /// </summary>
         void Device_InputEvent(object sender, DeviceInputEventArgs e)
         {
@@ -729,59 +728,87 @@ namespace Nebulator
             {
                 if (_script != null && e.Step != null)
                 {
-                    try
+                    if (e.Step is StepNoteOn || e.Step is StepNoteOff)
                     {
-                        bool handled = false; // default
-
-                        if (e.Step is StepNoteOn || e.Step is StepNoteOff)
-                        {
-                            int chanNum = (e.Step as Step).ChannelNumber;
-                            // Dig out the note number. !!! Note sign specifies note on/off.
-                            double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : -(e.Step as StepNoteOff).NoteNumber;
-                            handled = ProcessInput(sender as NInput, ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
-                        }
-                        else if (e.Step is StepControllerChange)
-                        {
-                            // Control change.
-                            StepControllerChange scc = e.Step as StepControllerChange;
-                            handled = ProcessInput(sender as NInput, scc.ControllerId, scc.ChannelNumber, scc.Value);
-                        }
-
-                        ///// Local common function /////
-                        bool ProcessInput(NInput input, int ctrlId, int channelNum, double value)
-                        {
-                            bool ret = false;
-
-                            if(input != null)
-                            {
-                                // Run through our list of inputs of interest.
-                                foreach (NController ctlpt in _script.Controllers)
-                                {
-                                    if (ctlpt.Device == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
-                                    {
-                                        // Assign new value which triggers script callback.
-                                        ctlpt.BoundVar.Value = value;
-                                        ret = true;
-                                    }
-                                }
-                            }
-
-                            return ret;
-                        }
-
-                        if (!handled)
-                        {
-                            // Pass through. Not.... let the script handle it.
-                            //e.Step.Device.Send(e.Step);
-                        }
+                        // Dig out the note number. !!! Note sign specifies note on/off.
+                        double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : -(e.Step as StepNoteOff).NoteNumber;
+                        _script.InputHandler((sender as NInput).DeviceType, e.Step.ChannelNumber, value);
                     }
-                    catch (Exception ex)
+                    else if (e.Step is StepControllerChange)
                     {
-                        ProcessScriptRuntimeError(ex);
+                        // Control change.
+                        StepControllerChange scc = e.Step as StepControllerChange;
+                        _script.InputHandler((sender as NInput).DeviceType, e.Step.ChannelNumber, scc.ControllerId); // also needs value TODO
                     }
                 }
             });
         }
+
+
+        ///// <summary>
+        ///// Process input event.
+        ///// Is it a controller? Look it up in the inputs.
+        ///// If not a ctlr or not found, send to the output, otherwise trigger listeners.
+        ///// </summary>
+        //void Device_InputEvent_orig_TODO(object sender, DeviceInputEventArgs e)
+        //{
+        //    BeginInvoke((MethodInvoker)delegate ()
+        //    {
+        //        if (_script != null && e.Step != null)
+        //        {
+        //            try
+        //            {
+        //                bool handled = false; // default
+
+        //                if (e.Step is StepNoteOn || e.Step is StepNoteOff)
+        //                {
+        //                    int chanNum = e.Step.ChannelNumber;
+        //                    // Dig out the note number. !!! Note sign specifies note on/off.
+        //                    double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : -(e.Step as StepNoteOff).NoteNumber;
+        //                    handled = ProcessInput(sender as NInput, ScriptDefinitions.TheDefinitions.NoteControl, chanNum, value);
+        //                }
+        //                else if (e.Step is StepControllerChange)
+        //                {
+        //                    // Control change.
+        //                    StepControllerChange scc = e.Step as StepControllerChange;
+        //                    handled = ProcessInput(sender as NInput, scc.ControllerId, scc.ChannelNumber, scc.Value);
+        //                }
+
+        //                ///// Local common function /////
+        //                bool ProcessInput(NInput input, int ctrlId, int channelNum, double value)
+        //                {
+        //                    bool ret = false;
+
+        //                    if (input != null)
+        //                    {
+        //                        // Run through our list of inputs of interest.
+        //                        foreach (NController ctlpt in _projectConfig.Controllers)
+        //                        {
+        //                            if (ctlpt.Device == input && ctlpt.ControllerId == ctrlId && ctlpt.ChannelNumber == channelNum)
+        //                            {
+        //                                // Assign new value which triggers script callback.
+        //                                ctlpt.BoundVar.Value = value;
+        //                                ret = true;
+        //                            }
+        //                        }
+        //                    }
+
+        //                    return ret;
+        //                }
+
+        //                if (!handled)
+        //                {
+        //                    // Pass through. Not.... let the script handle it.
+        //                    //e.Step.Device.Send(e.Step);
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                ProcessScriptRuntimeError(ex);
+        //            }
+        //        }
+        //    });
+        //}
 
         /// <summary>
         /// Process midi log event.
@@ -824,11 +851,13 @@ namespace Nebulator
         /// </summary>
         void ChannelChange_Event(object sender, EventArgs e)
         {
-            ChannelControl ch = sender as ChannelControl;
-            _nppVals.SetValue(ch.BoundChannel.Name, "volume", ch.BoundChannel.Volume);
+            ChannelControl cc = sender as ChannelControl;
+            NChannel ch = cc.Tag as NChannel;
+            // Save values.
+            // _nppVals.SetValue(ch.BoundChannel.Name, "volume", ch.BoundChannel.Volume);
 
-            // Kill any not solo.
-            _script.Channels.Where(c => c.State != ChannelState.Solo).ForEach(c => c.Device?.Kill(c.ChannelNumber));
+            // Kill any not solo. ???
+            //_script.Channels.Where(c => c.State != ChannelState.Solo).ForEach(c => c.Device?.Kill(c.ChannelNumber));
         }
         #endregion
 
@@ -970,6 +999,9 @@ namespace Nebulator
             }
         }
 
+
+
+
         /// <summary>
         /// Common np file opener.
         /// </summary>
@@ -986,10 +1018,15 @@ namespace Nebulator
                     if (File.Exists(fn))
                     {
                         _logger.Info($"Opening {fn}");
-                        _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         _fn = fn;
 
-                        SetCompileStatus(true);
+                        // Get the config and set things up.
+                        DestroyControls();
+                        DestroyDevices();
+                        _projectConfig = ProjectConfig.Load(fn.Replace(".neb", ".nebp"));
+                        CreateDevices();
+                        CreateControls();
+
                         AddToRecentDefs(fn);
                         bool ok = Compile();
                         SetCompileStatus(ok);
@@ -999,12 +1036,14 @@ namespace Nebulator
                     else
                     {
                         ret = $"Invalid file: {fn}";
+                        SetCompileStatus(false);
                     }
                 }
                 catch (Exception ex)
                 {
                     ret = $"Couldn't open the np file: {fn} because: {ex.Message}";
                     _logger.Error(ret);
+                    SetCompileStatus(false);
                 }
             }
 
@@ -1075,7 +1114,7 @@ namespace Nebulator
         /// </summary>
         void Speed_ValueChanged(object sender, EventArgs e)
         {
-            _nppVals.SetValue("master", "speed", potSpeed.Value);
+            _projectConfig.MasterSpeed = potSpeed.Value;
             SetSpeedTimerPeriod();
         }
 
@@ -1092,7 +1131,7 @@ namespace Nebulator
         /// </summary>
         void Volume_ValueChanged(object sender, EventArgs e)
         {
-            _nppVals.SetValue("master", "volume", sldVolume.Value);
+            _projectConfig.MasterVolume = sldVolume.Value;
         }
 
         /// <summary>
@@ -1222,7 +1261,7 @@ namespace Nebulator
             {
                 Text = "Log Viewer",
                 Size = new Size(900, 600),
-                Font = UserSettings.TheSettings.EditorFont,
+                //Font = UserSettings.TheSettings.EditorFont,
                 BackColor = UserSettings.TheSettings.BackColor,
                 StartPosition = FormStartPosition.Manual,
                 Location = new Point(20, 20),
@@ -1444,7 +1483,7 @@ namespace Nebulator
             if(ok)
             {
                 Dictionary<int, string> channels = new Dictionary<int, string>();
-                _script.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.Name));
+                _projectConfig.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.Name));
 
                 MidiUtils.ExportMidi(_script.Steps, fn, channels, potSpeed.Value, "Converted from " + _fn);
             }

@@ -14,7 +14,7 @@ namespace Nebulator.Script
 {
     public partial class NebScript
     {
-        #region Properties referenced in the script
+        #region Properties that can be referenced in the script
         /// <summary>Current Nebulator step time. Main -> Script</summary>
         public Time StepTime { get; set; } = new Time();
 
@@ -45,126 +45,67 @@ namespace Nebulator.Script
         public virtual void Setup() { }
 
         /// <summary>Called if you need to do something with devices after they have been created.</summary>
-        public virtual void Setup2() { }
+        public virtual void Setup2() { } //TODO probably don't need
 
         /// <summary>Called every Nebulator Incr.</summary>
         public virtual void Step() { }
+
+        /// <summary>Called when input arrives.</summary>
+        public virtual void InputHandler(DeviceType dev, int channel, double value) { } //TODO - noteon, noteoff, control, ...  MidiCommandCode?
         #endregion
 
         #region Script callable functions
-        /// <summary>
-        /// Normal factory.
-        /// </summary>
-        /// <param name="name">UI name</param>
-        /// <param name="val">Initial value</param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <param name="handler">Optional callback function.</param>
-        protected NVariable CreateVariable(string name, double val, double min, double max, Action handler = null)
-        {
-            NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
-            Variables.Add(nv);
-            return nv;
-        }
+        // /// <summary>
+        // /// Normal factory.
+        // /// </summary>
+        // /// <param name="name">UI name</param>
+        // /// <param name="val">Initial value</param>
+        // /// <param name="min"></param>
+        // /// <param name="max"></param>
+        // /// <param name="handler">Optional callback function.</param>
+        // protected NVariable CreateVariable(string name, double val, double min, double max, Action handler = null)
+        // {
+        //     NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
+        //     Variables.Add(nv);
+        //     return nv;
+        // }
 
-        /// <summary>
-        /// Normal factory.
-        /// </summary>
-        /// <param name="name">UI name</param>
-        /// <param name="device">Device type</param>
-        /// <param name="channelNum"></param>
-        /// <param name="volWobble"></param>
-        protected NChannel CreateChannel(string name, DeviceType device, int channelNum, double volWobble = 0.0)
-        {
-            if(device != DeviceType.MidiOut && device != DeviceType.OscOut)
-            {
-                throw new Exception($"Invalid device for channel {name} {device}");
-            }
 
-            NChannel nt = new NChannel()
-            {
-                Name = name,
-                DeviceType = device,
-                ChannelNumber = channelNum,
-            };
+        // /// <summary>
+        // /// Create a UI lever.
+        // /// </summary>
+        // /// <param name="bound"></param>
+        // protected void CreateLever(NVariable bound)
+        // {
+        //     if (bound is null)
+        //     {
+        //         throw new Exception($"Invalid NVariable for lever");
+        //     }
 
-            if(volWobble != 0.0)
-            {
-                nt.VolWobbler = new Wobbler()
-                {
-                    RangeHigh = volWobble,
-                    RangeLow = volWobble
-                };
-            }
+        //     NController ctlr = new NController() { BoundVar = bound };
+        //     Levers.Add(ctlr);
+        // }
 
-            Channels.Add(nt);
-            return nt;
-        }
+        // /// <summary>
+        // /// Create a UI meter.
+        // /// </summary>
+        // /// <param name="bound"></param>
+        // /// <param name="type"></param>
+        // protected void CreateDisplay(NVariable bound, int type)
+        // {
+        //     if (bound is null)
+        //     {
+        //         throw new Exception($"Invalid NVariable for meter");
+        //     }
 
-        /// <summary>
-        /// Create a controller input.
-        /// </summary>
-        /// <param name="device">Device type.</param>
-        /// <param name="channelNum">Which channel.</param>
-        /// <param name="controlId">Which</param>
-        /// <param name="bound">NVariable</param>
-        protected void CreateController(DeviceType device, int channelNum, int controlId, NVariable bound)
-        {
-            if (device != DeviceType.MidiIn && device != DeviceType.OscIn && device != DeviceType.VkeyIn)
-            {
-                throw new Exception($"Invalid device for controller {device}");
-            }
+        //     NDisplay disp = new NDisplay()
+        //     {
+        //         BoundVar = bound,
+        //         DisplayType = (DisplayType)type,
+        //     };
 
-            if (bound is null)
-            {
-                throw new Exception($"Invalid NVariable for controller {device}");
-            }
-
-            NController mp = new NController()
-            {
-                DeviceType = device,
-                ChannelNumber = channelNum,
-                ControllerId = controlId,
-                BoundVar = bound
-            };
-            Controllers.Add(mp);
-        }
-
-        /// <summary>
-        /// Create a UI lever.
-        /// </summary>
-        /// <param name="bound"></param>
-        protected void CreateLever(NVariable bound)
-        {
-            if (bound is null)
-            {
-                throw new Exception($"Invalid NVariable for lever");
-            }
-
-            NController ctlr = new NController() { BoundVar = bound };
-            Levers.Add(ctlr);
-        }
-
-        /// <summary>
-        /// Create a UI meter.
-        /// </summary>
-        /// <param name="bound"></param>
-        /// <param name="type"></param>
-        protected void CreateDisplay(NVariable bound, int type)
-        {
-            if (bound is null)
-            {
-                throw new Exception($"Invalid NVariable for meter");
-            }
-
-            NDisplay disp = new NDisplay()
-            {
-                BoundVar = bound,
-                DisplayType = (DisplayType)type,
-            };
-
-            Displays.Add(disp);
-        }
+        //     Displays.Add(disp);
+        // }
 
         /// <summary>
         /// Normal constructor.

@@ -1,4 +1,4 @@
-﻿namespace Nebulator
+﻿namespace Nebulator.UI
 {
     partial class Keyboard
     {

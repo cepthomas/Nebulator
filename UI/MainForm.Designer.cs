@@ -1,4 +1,4 @@
-﻿namespace Nebulator
+﻿namespace Nebulator.UI
 {
     partial class MainForm
     {
@@ -40,8 +40,7 @@
             this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
-            this.scriptControls = new Nebulator.ScriptControls();
-            this.timeMaster = new Nebulator.TimeControl();
+            this.timeMaster = new Nebulator.UI.TimeControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -305,17 +304,6 @@
             this.lblMute.TabIndex = 43;
             this.lblMute.Text = "Mute";
             // 
-            // scriptControls
-            // 
-            this.scriptControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.scriptControls.BackColor = System.Drawing.Color.AliceBlue;
-            this.scriptControls.Location = new System.Drawing.Point(13, 96);
-            this.scriptControls.Margin = new System.Windows.Forms.Padding(5);
-            this.scriptControls.Name = "scriptControls";
-            this.scriptControls.Size = new System.Drawing.Size(952, 52);
-            this.scriptControls.TabIndex = 0;
-            // 
             // timeMaster
             // 
             this.timeMaster.ControlColor = System.Drawing.Color.Orange;
@@ -343,7 +331,6 @@
             this.Controls.Add(this.lblSolo);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.scriptControls);
             this.Controls.Add(this.btnCompile);
             this.Controls.Add(this.timeMaster);
             this.Controls.Add(this.sldVolume);
@@ -370,7 +357,6 @@
         private NBagOfTricks.UI.Pot potSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
-        private ScriptControls scriptControls;
         private TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStrip toolStrip1;

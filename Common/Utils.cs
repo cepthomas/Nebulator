@@ -14,10 +14,10 @@ using System.ComponentModel;
 
 namespace Nebulator.Common
 {
-    /// <summary>
-    /// Static utility functions.
-    /// </summary>
-    public static class Utils
+    /// <summary>Channel state.</summary>
+    public enum ChannelState { Normal, Mute, Solo }
+
+    public static class Definitions
     {
         #region Constants
         /// <summary>General purpose marker.</summary>
@@ -26,7 +26,13 @@ namespace Nebulator.Common
         /// <summary>General UI.</summary>
         public const int BORDER_WIDTH = 1;
         #endregion
+    }
 
+    /// <summary>
+    /// Static utility functions.
+    /// </summary>
+    public static class Utils
+    {
         /// <summary>
         /// Endian support.
         /// </summary>
@@ -34,14 +40,9 @@ namespace Nebulator.Common
         /// <returns>Fixed number.</returns>
         public static UInt32 FixEndian(UInt32 i)
         {
-            if (BitConverter.IsLittleEndian)
-            {
-                return ((i & 0xFF000000) >> 24) | ((i & 0x00FF0000) >> 8) | ((i & 0x0000FF00) << 8) | ((i & 0x000000FF) << 24);
-            }
-            else
-            {
-                return i;
-            }
+            return BitConverter.IsLittleEndian ?
+                ((i & 0xFF000000) >> 24) | ((i & 0x00FF0000) >> 8) | ((i & 0x0000FF00) << 8) | ((i & 0x000000FF) << 24) :
+                i;
         }
 
         /// <summary>
@@ -51,14 +52,9 @@ namespace Nebulator.Common
         /// <returns>Fixed number.</returns>
         public static UInt16 FixEndian(UInt16 i)
         {
-            if (BitConverter.IsLittleEndian)
-            {
-                return (UInt16)(((i & 0xFF00) >> 8) | ((i & 0x00FF) << 8));
-            }
-            else
-            {
-                return i;
-            }
+            return BitConverter.IsLittleEndian ?
+                (UInt16)(((i & 0xFF00) >> 8) | ((i & 0x00FF) << 8)) :
+                i;
         }
     }
 }

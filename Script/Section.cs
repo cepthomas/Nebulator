@@ -27,7 +27,7 @@ namespace Nebulator.Script
         public int Beats { get; set; } = 0;
 
         /// <summary>Readable.</summary>
-        public string Name { get; set; } = Utils.UNKNOWN_STRING;
+        public string Name { get; set; } = Definitions.UNKNOWN_STRING;
         #endregion
 
         /// <summary>

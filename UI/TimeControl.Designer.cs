@@ -1,6 +1,6 @@
-﻿namespace Nebulator
+﻿namespace Nebulator.UI
 {
-    partial class ScriptControls
+    partial class TimeControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,19 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
-            // ScriptControls
+            // TimeControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Name = "ScriptControls";
-            this.Size = new System.Drawing.Size(438, 68);
-            this.Load += new System.EventHandler(this.ScriptControls_Load);
+            this.Name = "TimeControl";
+            this.Size = new System.Drawing.Size(94, 34);
+            this.Load += new System.EventHandler(this.TimeControl_Load);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.TimeControl_PreviewKeyDown);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

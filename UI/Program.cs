@@ -5,7 +5,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Nebulator.Script;
 
-namespace Nebulator
+namespace Nebulator.UI
 {
     static class Program
     {

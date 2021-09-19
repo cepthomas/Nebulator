@@ -7,28 +7,32 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
+// using Newtonsoft.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NAudio.Midi;
 
 
+//[JsonConverter(typeof(FontConverter))] TODO?
+//[JsonConverter(typeof(ColorConverter))]
+
 namespace Nebulator.Common
 {
     [Serializable]
-    public class UserSettings
+    public class UserSettings //TODO tweak these.
     {
         #region Persisted editable properties
-        [DisplayName("Editor Font")]
-        [Description("The font to use for editors etc.")]
-        [Category("Cosmetics")]
-        [Browsable(true)]
-        public Font EditorFont { get; set; } = new Font("Consolas", 10);
+        // [DisplayName("Editor Font")]
+        // [Description("The font to use for editors etc.")]
+        // [Category("Cosmetics")]
+        // [Browsable(true)]
+        // public Font EditorFont { get; set; } = new Font("Consolas", 10);
 
-        [DisplayName("Control Font")]
-        [Description("The font to use for controls.")]
-        [Category("Cosmetics")]
-        [Browsable(true)]
-        public Font ControlFont { get; set; } = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
+        // [DisplayName("Control Font")]
+        // [Description("The font to use for controls.")]
+        // [Category("Cosmetics")]
+        // [Browsable(true)]
+        // public Font ControlFont { get; set; } = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
 
         [DisplayName("Icon Color")]
         [Description("The color used for icons.")]
@@ -88,7 +92,7 @@ namespace Nebulator.Common
         [Browsable(true)]
         public bool AutoCompile { get; set; } = true;
 
-        [DisplayName("CPU Meter")]
+        [DisplayName("CPU Meter")] //TODO
         [Description("Show a CPU usage meter. Note that this slows start up a bit.")]
         [Category("Functionality")]
         [Browsable(true)]
@@ -114,7 +118,7 @@ namespace Nebulator.Common
 
         #region Fields
         /// <summary>The file name.</summary>
-        string _fn = Utils.UNKNOWN_STRING;
+        string _fn = Definitions.UNKNOWN_STRING;
         #endregion
 
         /// <summary>Current global user settings.</summary>
@@ -124,34 +128,37 @@ namespace Nebulator.Common
         /// <summary>Save object to file.</summary>
         public void Save()
         {
-            //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            //File.WriteAllText(_fn, json);
+            JsonSerializerOptions opts = new() { WriteIndented = true };
+            string json = JsonSerializer.Serialize(this, opts);
+            File.WriteAllText(_fn, json);
         }
 
         /// <summary>Create object from file.</summary>
-        public static void Load(string appDir)
+        public static UserSettings Load(string appDir)
         {
-            //TheSettings = null;
-            //string fn = Path.Combine(appDir, "settings.json");
+            UserSettings set = null;
+            string fn = Path.Combine(appDir, "settings.json");
 
-            //if(File.Exists(fn))
-            //{
-            //    string json = File.ReadAllText(fn);
-            //    TheSettings = JsonConvert.DeserializeObject<UserSettings>(json);
+            if (File.Exists(fn))
+            {
+                string json = File.ReadAllText(fn);
+                set = JsonSerializer.Deserialize<UserSettings>(json);
 
-            //    // Clean up any bad file names.
-            //    TheSettings.RecentFiles.RemoveAll(f => !File.Exists(f));
+                // Clean up any bad file names.
+                set.RecentFiles.RemoveAll(f => !File.Exists(f));
 
-            //    TheSettings._fn = fn;
-            //}
-            //else
-            //{
-            //    // Doesn't exist, create a new one.
-            //    TheSettings = new UserSettings
-            //    {
-            //        _fn = fn
-            //    };
-            //}
+                set._fn = fn;
+            }
+            else
+            {
+                // Doesn't exist, create a new one.
+                set = new UserSettings
+                {
+                    _fn = fn
+                };
+            }
+
+            return set;
         }
         #endregion
     }

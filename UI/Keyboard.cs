@@ -14,7 +14,7 @@ using Nebulator.Device;
 using Nebulator.Midi;
 
 
-namespace Nebulator
+namespace Nebulator.UI
 {
     /// <summary>
     /// Wrapper to turn control into a device.
@@ -32,6 +32,9 @@ namespace Nebulator
         #region Properties
         /// <inheritdoc />
         public string DeviceName { get; private set; } = "";
+
+        /// <inheritdoc />
+        public DeviceType DeviceType => DeviceType.VkeyIn;
         #endregion
 
         #region Lifecycle

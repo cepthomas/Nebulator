@@ -5,7 +5,7 @@ using Nebulator.Common;
 using Nebulator.Script;
 
 
-namespace Nebulator
+namespace Nebulator.UI
 {
     /// <summary>
     /// Common channel controller.
@@ -14,7 +14,41 @@ namespace Nebulator
     {
         #region Properties
         /// <summary>Corresponding channel object.</summary>
-        public NChannel BoundChannel { get; set; }
+        //public NChannel BoundChannel { get; set; }
+
+
+        public ChannelState State
+        {
+            get
+            {
+                var st = ChannelState.Normal;
+                if (chkSolo.Checked) { st = ChannelState.Solo; }
+                else if (chkMute.Checked) { st = ChannelState.Mute; }
+                return st;
+            }
+            set
+            {
+                switch(value)
+                {
+                    case ChannelState.Normal:
+                        chkSolo.Checked = false;
+                        chkMute.Checked = false;
+                        break;
+                    case ChannelState.Solo:
+                        chkSolo.Checked = true;
+                        chkMute.Checked = false;
+                        break;
+                    case ChannelState.Mute:
+                        chkSolo.Checked = false;
+                        chkMute.Checked = true;
+                        break;
+                }
+            }
+        }
+
+        public string Label { get { return sldVolume.Label; } set { sldVolume.Label = value; } }
+
+        public double Volume { get { return sldVolume.Value; } set { sldVolume.Value = value; } }
         #endregion
 
         #region Events
@@ -31,6 +65,7 @@ namespace Nebulator
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
+            sldVolume.Label = Definitions.UNKNOWN_STRING;
         }
 
         /// <summary>
@@ -41,11 +76,11 @@ namespace Nebulator
             chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
             chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.Font = UserSettings.TheSettings.ControlFont;
+            //sldVolume.Font = UserSettings.TheSettings.ControlFont;
             sldVolume.DecPlaces = 2;
-            sldVolume.Label = BoundChannel.Name;
+            //sldVolume.Label = BoundChannel.Name;
             sldVolume.Maximum = 1.0;
-            sldVolume.Value = BoundChannel.Volume;
+            //sldVolume.Value = BoundChannel.Volume;
 
             sldVolume.ValueChanged += VolChannel_ValueChanged;
         }
@@ -61,22 +96,9 @@ namespace Nebulator
             {
                 chkMute.Checked = false;
             }
-            else
+            else // chkMute
             {
                 chkSolo.Checked = false;
-            }
-
-            if (chkMute.Checked)
-            {
-                BoundChannel.State = ChannelState.Mute;
-            }
-            else if (chkSolo.Checked)
-            {
-                BoundChannel.State = ChannelState.Solo;
-            }
-            else
-            {
-                BoundChannel.State = ChannelState.Normal;
             }
 
             ChannelChangeEvent?.Invoke(this, new EventArgs());
@@ -87,7 +109,7 @@ namespace Nebulator
         /// </summary>
         private void VolChannel_ValueChanged(object sender, EventArgs e)
         {
-            BoundChannel.Volume = sldVolume.Value;
+  //          BoundChannel.Volume = sldVolume.Value;
             ChannelChangeEvent?.Invoke(this, new EventArgs());
         }
     }

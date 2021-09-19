@@ -33,7 +33,10 @@ namespace Nebulator.OSC
 
         #region Properties
         /// <inheritdoc />
-        public string DeviceName { get; private set; } = Utils.UNKNOWN_STRING;
+        public string DeviceName { get; private set; } = Definitions.UNKNOWN_STRING;
+
+        /// <inheritdoc />
+        public DeviceType DeviceType => DeviceType.OscOut;
         #endregion
 
         #region Lifecycle

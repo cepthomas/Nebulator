@@ -7,10 +7,16 @@ using System.IO;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Diagnostics;
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+//using NLog;
+// using Newtonsoft.Json;
+// using Newtonsoft.Json.Converters;
 using NBagOfTricks;
 using Nebulator.Common;
+
 
 namespace Nebulator.Script
 {
@@ -25,7 +31,7 @@ namespace Nebulator.Script
         class FileContext
         {
             /// <summary>Current source file.</summary>
-            public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
+            public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
 
             /// <summary>Current source line.</summary>
             public int LineNumber { get; set; } = 1;
@@ -56,10 +62,10 @@ namespace Nebulator.Script
         readonly Logger _logger = new Logger("Compiler");
 
         /// <summary>Starting directory.</summary>
-        string _baseDir = Utils.UNKNOWN_STRING;
+        string _baseDir = Definitions.UNKNOWN_STRING;
 
         /// <summary>Script info.</summary>
-        string _scriptName = Utils.UNKNOWN_STRING;
+        string _scriptName = Definitions.UNKNOWN_STRING;
 
         /// <summary>Accumulated lines to go in the constructor.</summary>
         List<string> _initLines = new List<string>();
@@ -87,7 +93,7 @@ namespace Nebulator.Script
 
             Errors.Clear();
 
-            if (nebfn != Utils.UNKNOWN_STRING && File.Exists(nebfn))
+            if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
             {
                 _logger.Info($"Compiling {nebfn}.");
 
@@ -196,7 +202,7 @@ namespace Nebulator.Script
                     {
                         // The line should end with source line number: "//1234"
                         int origLineNum = 0; // defaults
-                        string origFileName = Utils.UNKNOWN_STRING;
+                        string origFileName = Definitions.UNKNOWN_STRING;
 
                         // Dig out the offending source code information.
                         string fpath = Path.GetFileName(err.FileName.ToLower());
@@ -392,7 +398,7 @@ namespace Nebulator.Script
             List<string> codeLines = GenTopOfFile("");
 
             // Collected init stuff goes in a constructor.
-            // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack.
+            // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack. TODO fixed in C#9
             codeLines.Add($"        protected static NebScript s;");
             codeLines.Add($"        public {_scriptName}() : base()");
             codeLines.Add( "        {");
@@ -422,7 +428,7 @@ namespace Nebulator.Script
 
             // Some enums.
             WriteEnumValues<Device.DeviceType>();
-            WriteEnumValues<DisplayType>();
+//            WriteEnumValues<DisplayType>();
             WriteEnumValues<SequenceMode>();
 
             // Bottom stuff.
@@ -512,17 +518,17 @@ namespace Nebulator.Script
     public class ScriptError
     {
         /// <summary>Where it came from.</summary>
-        //TODO [JsonConverter(typeof(StringEnumConverter))]
+//        [JsonConverter(typeof(StringEnumConverter))]
         public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
 
         /// <summary>Original source file.</summary>
-        public string SourceFile { get; set; } = Utils.UNKNOWN_STRING;
+        public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
 
         /// <summary>Original source line number.</summary>
         public int LineNumber { get; set; } = 0;
 
         /// <summary>Content.</summary>
-        public string Message { get; set; } = Utils.UNKNOWN_STRING;
+        public string Message { get; set; } = Definitions.UNKNOWN_STRING;
 
         /// <summary>Readable.</summary>
         public override string ToString() => $"{ErrorType} {SourceFile}({LineNumber}): {Message}";

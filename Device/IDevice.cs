@@ -19,6 +19,9 @@ namespace Nebulator.Device
         #region Properties
         /// <summary>Device name.</summary>
         string DeviceName { get; }
+
+        /// <summary>Device type.</summary>
+        DeviceType DeviceType { get; }
         #endregion
 
         #region Functions

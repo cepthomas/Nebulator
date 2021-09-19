@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
+//using NLog;
 using Nebulator.Common;
 using Nebulator.Device;
 
@@ -17,7 +18,7 @@ namespace Nebulator.Script
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        readonly Logger _logger = new Logger("ScriptCore");
+        readonly Logger _logger = new Logger("Script");
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -32,20 +33,20 @@ namespace Nebulator.Script
         #endregion
 
         #region Elements defined in the script that MainForm needs
-        /// <summary>All vars.</summary>
-        public List<NVariable> Variables { get; set; } = new List<NVariable>();
+        ///// <summary>All vars.</summary>
+        //public List<NVariable> Variables { get; set; } = new List<NVariable>();
 
-        /// <summary>Control inputs.</summary>
-        public List<NController> Controllers { get; set; } = new List<NController>();
+        ///// <summary>Control inputs.</summary>
+        //public List<NController> Controllers { get; set; } = new List<NController>();
 
-        /// <summary>Levers.</summary>
-        public List<NController> Levers { get; set; } = new List<NController>();
+        // /// <summary>Levers.</summary>
+        // public List<NController> Levers { get; set; } = new List<NController>();
 
-        /// <summary>All displays.</summary>
-        public List<NDisplay> Displays { get; set; } = new List<NDisplay>();
+        // /// <summary>All displays.</summary>
+        // public List<NDisplay> Displays { get; set; } = new List<NDisplay>();
 
-        /// <summary>All channels.</summary>
-        public List<NChannel> Channels { get; set; } = new List<NChannel>();
+        ///// <summary>All channels.</summary>
+        //public List<NChannel> Channels { get; set; } = new List<NChannel>();
 
         /// <summary>All sequences.</summary>
         public List<NSequence> Sequences { get; set; } = new List<NSequence>();
