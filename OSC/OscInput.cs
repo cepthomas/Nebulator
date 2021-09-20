@@ -10,7 +10,7 @@ namespace Nebulator.OSC
     /// <summary>
     /// Abstraction layer between OSC comm and Nebulator steps. aka OSC server.
     /// </summary>
-    public class OscInput : NInput
+    public class OscInput : IInputDevice
     {
         #region Fields
         /// <summary>OSC input device.</summary>
@@ -45,7 +45,7 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public bool Init(DeviceType device)
+        public bool Init()
         {
             bool inited = false;
 

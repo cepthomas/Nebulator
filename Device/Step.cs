@@ -49,9 +49,9 @@ namespace Nebulator.Device
         public void Adjust(double masterVolume, double channelVolume)
         {
             // Maybe alter note velocity.
-            if (Device is NOutput)
+            if (Device is IOutputDevice)
             {
-                NOutput nout = Device as NOutput;
+                IOutputDevice nout = Device as IOutputDevice;
                 double vel = Velocity * channelVolume * masterVolume;
                 VelocityToPlay = MathUtils.Constrain(vel, 0, 1.0);
             }

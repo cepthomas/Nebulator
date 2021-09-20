@@ -102,7 +102,7 @@ namespace Nebulator.Common
         }
 
         /// <summary>
-        /// Constructor from Beat.Subdiv representation as a double. TODO a bit crude but other ways (e.g. string) clutter the syntax.
+        /// Constructor from Beat.Subdiv representation as a double. TODO2 a bit crude but other ways (e.g. string) clutter the syntax.
         /// </summary>
         /// <param name="tts"></param>
         public Time(double tts)

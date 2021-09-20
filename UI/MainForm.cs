@@ -20,6 +20,14 @@ using Nebulator.Device;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
+//TODO2 doc
+// N Channels to each IOutputDevice
+// 1 ChannelControl per Channel
+// N Controllers to each IInputDevice
+
+
+
+
 namespace Nebulator.UI
 {
     public partial class MainForm : Form
@@ -68,10 +76,10 @@ namespace Nebulator.UI
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
         /// <summary>Devices to use for send.</summary>
-        readonly Dictionary<DeviceType, NOutput> _outputs = new Dictionary<DeviceType, NOutput>();
+        readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new Dictionary<DeviceType, IOutputDevice>();//TODO0
 
         /// <summary>Devices to use for recv.</summary>
-        readonly Dictionary<DeviceType, NInput> _inputs = new Dictionary<DeviceType, NInput>();
+        readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new Dictionary<DeviceType, IInputDevice>();//TODO0
         #endregion
 
         #region Lifecycle
@@ -207,14 +215,14 @@ namespace Nebulator.UI
             ProcessPlay(PlayCommand.Stop);
 
             // Just in case.
-            _outputs.ForEach(o => o.Value?.Kill());
+            _outputDevices.ForEach(o => o.Value?.Kill());
 
             DestroyDevices();
 
             if (_script != null)
             {
                 // Save the project.
-                DestroyControls();
+                DestroyChannelControls();
                 _script.Dispose();
             }
 
@@ -245,20 +253,15 @@ namespace Nebulator.UI
 
         #region Manage controls
         /// <summary>
-        /// Create the main UI parts from the script.
+        /// Create the channel controls.
         /// </summary>
-        void CreateControls()
+        void CreateChannelControls()
         {
-            ///// Set up UI.
             const int CONTROL_SPACING = 10;
             int x = timeMaster.Right + CONTROL_SPACING;
 
-            ///// The channel controls.
-
-            //Dictionary<ChannelControl, NChannel> _channelMap = new();
-
             // Create new channel controls.
-            foreach (NChannel t in _projectConfig.Channels)
+            foreach (Channel t in _projectConfig.Channels)
             {
                 // Init from persistence.
                 double vt = t.Volume;// Convert.ToDouble(_nppVals.GetValue(t.Name, "volume"));
@@ -270,7 +273,7 @@ namespace Nebulator.UI
                 ChannelControl tctl = new ChannelControl()
                 {
                     Location = new Point(x, timeMaster.Top),
-                    Tag = t // hint
+                    BoundChannel = t
                 };
 
                 tctl.ChannelChangeEvent += ChannelChange_Event;
@@ -282,9 +285,9 @@ namespace Nebulator.UI
         /// <summary>
         /// 
         /// </summary>
-        void DestroyControls()
+        void DestroyChannelControls()
         {
-            // Save values. //TODO
+            // Save values. //TODO1
             //_nppVals.Clear();
             //_nppVals.SetValue("master", "volume", sldVolume.Value);
             //_nppVals.SetValue("master", "speed", potSpeed.Value);
@@ -320,77 +323,119 @@ namespace Nebulator.UI
             // Get requested inputs.
             Keyboard vkey = null; // If used, requires special handling.
 
-            foreach (NController ctlr in _projectConfig.Controllers)
+            foreach(IInputDevice idev in _projectConfig.InputDevices)
             {
-                // Have we seen it yet?
-                if (_inputs.ContainsKey(ctlr.DeviceType))
+                IInputDevice nin = null;
+                switch (idev.DeviceType)
                 {
-                    ctlr.Device = _inputs[ctlr.DeviceType];
+                    case DeviceType.MidiIn:
+                        nin = new MidiInput();
+                        break;
+
+                    case DeviceType.OscIn:
+                        nin = new OscInput();
+                        break;
+
+                    case DeviceType.VkeyIn:
+                        vkey = new Keyboard();
+                        nin = vkey;
+                        break;
                 }
-                else // nope
+
+                // Finish it up.
+                if (nin != null)
                 {
-                    NInput nin = null;
-
-                    switch (ctlr.DeviceType)
+                    if (nin.Init())
                     {
-                        case DeviceType.MidiIn:
-                            nin = new MidiInput();
-                            break;
-
-                        case DeviceType.OscIn:
-                            nin = new OscInput();
-                            break;
-
-                        case DeviceType.VkeyIn:
-                            vkey = new Keyboard();
-                            nin = vkey;
-                            break;
-                    }
-
-                    // Finish it up.
-                    if (nin != null)
-                    {
-                        if (nin.Init(ctlr.DeviceType))
-                        {
-                            nin.DeviceInputEvent += Device_InputEvent;
-                            nin.DeviceLogEvent += Device_LogEvent;
-                            ctlr.Device = nin;
-                            _inputs.Add(ctlr.DeviceType, nin);
-                        }
-                        else
-                        {
-                            _logger.Error($"Failed to init controller: {ctlr.DeviceType}");
-                        }
+                        nin.DeviceInputEvent += Device_InputEvent;
+                        nin.DeviceLogEvent += Device_LogEvent;
+                        _inputDevices.Add(nin.DeviceType, nin);
                     }
                     else
                     {
-                        _logger.Error($"Invalid controller: {ctlr.DeviceType}");
+                        _logger.Error($"Failed to init input device:");
                     }
                 }
-
-                if(vkey != null)
+                else
                 {
-                    vkey.StartPosition = FormStartPosition.Manual;
-                    vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
-                    vkey.TopMost = false;
-                    vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
-                    vkey.Show();
+                    _logger.Error($"Invalid input device");
                 }
+
             }
 
+
+
+            //foreach (Controller ctlr in _projectConfig.Controllers)
+            //{
+            //    // Have we seen it yet?
+            //    if (_inputDevices.ContainsKey(ctlr.Device.DeviceType))
+            //    {
+            //        ctlr.Device = _inputDevices[ctlr.Device.DeviceType];
+            //    }
+            //    else // nope
+            //    {
+            //        IInputDevice nin = null;
+
+            //        switch (ctlr.Device.DeviceType)
+            //        {
+            //            case DeviceType.MidiIn:
+            //                nin = new MidiInput();
+            //                break;
+
+            //            case DeviceType.OscIn:
+            //                nin = new OscInput();
+            //                break;
+
+            //            case DeviceType.VkeyIn:
+            //                vkey = new Keyboard();
+            //                nin = vkey;
+            //                break;
+            //        }
+
+            //        // Finish it up.
+            //        if (nin != null)
+            //        {
+            //            if (nin.Init(ctlr.Device.DeviceType))
+            //            {
+            //                nin.DeviceInputEvent += Device_InputEvent;
+            //                nin.DeviceLogEvent += Device_LogEvent;
+            //                ctlr.Device = nin;
+            //                _inputDevices.Add(ctlr.Device.DeviceType, nin);
+            //            }
+            //            else
+            //            {
+            //                _logger.Error($"Failed to init controller: {ctlr.Device.DeviceType}");
+            //            }
+            //        }
+            //        else
+            //        {
+            //            _logger.Error($"Invalid controller: {ctlr.Device.DeviceType}");
+            //        }
+            //    }
+
+            //    if(vkey != null)
+            //    {
+            //        vkey.StartPosition = FormStartPosition.Manual;
+            //        vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
+            //        vkey.TopMost = false;
+            //        vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
+            //        vkey.Show();
+            //    }
+            //}
+
             // Get requested outputs.
-            foreach (NChannel chan in _projectConfig.Channels)
+            foreach (Channel chan in _projectConfig.Channels)
             {
                 // Have we seen it yet?
-                if (_outputs.ContainsKey(chan.DeviceType))
+                if (_outputDevices.ContainsKey(chan.Device.DeviceType))
                 {
-                    chan.Device = _outputs[chan.DeviceType];
+                    chan.Device = _outputDevices[chan.Device.DeviceType];
                 }
                 else // nope
                 {
-                    NOutput nout = null;
+                    IOutputDevice nout = null;
 
-                    switch (chan.DeviceType)
+                    switch (chan.Device.DeviceType)
                     {
                         case DeviceType.MidiOut:
                             nout = new MidiOutput();
@@ -406,19 +451,19 @@ namespace Nebulator.UI
                     {
                         nout.DeviceLogEvent += Device_LogEvent;
 
-                        if (nout.Init(chan.DeviceType))
+                        if (nout.Init())
                         {
                             chan.Device = nout;
-                            _outputs.Add(chan.DeviceType, nout);
+                            _outputDevices.Add(chan.Device.DeviceType, nout);
                         }
                         else
                         {
-                            _logger.Error($"Failed to init channel: {chan.DeviceType}");
+                            _logger.Error($"Failed to init channel: {chan.Device.DeviceType}");
                         }
                     }
                     else
                     {
-                        _logger.Error($"Invalid channel: {chan.DeviceType}");
+                        _logger.Error($"Invalid channel: {chan.Device.DeviceType}");
                     }
                 }
             }
@@ -430,13 +475,13 @@ namespace Nebulator.UI
         void DestroyDevices()
         {
             // Save the vkbd position.
-            _inputs.Values.Where(v => v.GetType() == typeof(Keyboard)).ForEach
+            _inputDevices.Values.Where(v => v.GetType() == typeof(Keyboard)).ForEach
                (k => UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as Keyboard));
 
-            _inputs.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
-            _inputs.Clear();
-            _outputs.ForEach(o => { o.Value?.Stop(); o.Value?.Dispose(); });
-            _outputs.Clear();
+            _inputDevices.ForEach(i => { i.Value?.Stop(); i.Value?.Dispose(); });
+            _inputDevices.Clear();
+            _outputDevices.ForEach(o => { o.Value?.Stop(); o.Value?.Dispose(); });
+            _outputDevices.Clear();
         }
         #endregion
 
@@ -498,7 +543,7 @@ namespace Nebulator.UI
                         int sectionTime = 0;
                         foreach(NSection section in _script.Sections)
                         {
-                            foreach((NChannel ch, NSequence seq, int beat) v in section)
+                            foreach((Channel ch, NSequence seq, int beat) v in section)
                             {
                                 // Check for skip/mute.
                                 if(v.seq != null)
@@ -657,7 +702,7 @@ namespace Nebulator.UI
                 var steps = _script.Steps.GetSteps(_stepTime);
                 foreach(var step in steps)
                 {
-                    NChannel channel = _projectConfig.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
+                    Channel channel = _projectConfig.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
 
                     // Is it ok to play now?
                     bool play = channel != null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !anySolo));
@@ -679,14 +724,14 @@ namespace Nebulator.UI
                                 break;
 
                             default:
-                                if (step.Device is NOutput)
+                                if (step.Device is IOutputDevice)
                                 {
                                     // Maybe tweak values.
                                     if (step is StepNoteOn)
                                     {
                                         (step as StepNoteOn).Adjust(sldVolume.Value, channel.Volume);
                                     }
-                                    (step.Device as NOutput).Send(step);
+                                    (step.Device as IOutputDevice).Send(step);
                                 }
                                 break;
                         }
@@ -703,7 +748,7 @@ namespace Nebulator.UI
                    if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
                    {
                        ProcessPlay(PlayCommand.StopRewind);
-                       _outputs.ForEach(o => o.Value?.Kill()); // just in case
+                        _outputDevices.ForEach(o => o.Value?.Kill()); // just in case
                    }
                 }
                 // else keep going
@@ -715,8 +760,8 @@ namespace Nebulator.UI
             ProcessRuntime();
 
             // Process any lingering noteoffs etc.
-            _outputs.ForEach(o => o.Value?.Housekeep());
-            _inputs.ForEach(i => i.Value?.Housekeep());
+            _outputDevices.ForEach(o => o.Value?.Housekeep());
+            _inputDevices.ForEach(i => i.Value?.Housekeep());
         }
 
         /// <summary>
@@ -732,13 +777,13 @@ namespace Nebulator.UI
                     {
                         // Dig out the note number. !!! Note sign specifies note on/off.
                         double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : -(e.Step as StepNoteOff).NoteNumber;
-                        _script.InputHandler((sender as NInput).DeviceType, e.Step.ChannelNumber, value);
+                        _script.InputHandler((sender as IInputDevice).DeviceType, e.Step.ChannelNumber, value);
                     }
                     else if (e.Step is StepControllerChange)
                     {
                         // Control change.
                         StepControllerChange scc = e.Step as StepControllerChange;
-                        _script.InputHandler((sender as NInput).DeviceType, e.Step.ChannelNumber, scc.ControllerId); // also needs value TODO
+                        _script.InputHandler((sender as IInputDevice).DeviceType, e.Step.ChannelNumber, scc.ControllerId); // also needs value TODO1
                     }
                 }
             });
@@ -750,7 +795,7 @@ namespace Nebulator.UI
         ///// Is it a controller? Look it up in the inputs.
         ///// If not a ctlr or not found, send to the output, otherwise trigger listeners.
         ///// </summary>
-        //void Device_InputEvent_orig_TODO(object sender, DeviceInputEventArgs e)
+        //void Device_InputEvent_original(object sender, DeviceInputEventArgs e)
         //{
         //    BeginInvoke((MethodInvoker)delegate ()
         //    {
@@ -852,7 +897,10 @@ namespace Nebulator.UI
         void ChannelChange_Event(object sender, EventArgs e)
         {
             ChannelControl cc = sender as ChannelControl;
-            NChannel ch = cc.Tag as NChannel;
+            Channel ch = cc.BoundChannel;
+
+            //TODO the rest...
+
             // Save values.
             // _nppVals.SetValue(ch.BoundChannel.Name, "volume", ch.BoundChannel.Volume);
 
@@ -1021,11 +1069,11 @@ namespace Nebulator.UI
                         _fn = fn;
 
                         // Get the config and set things up.
-                        DestroyControls();
+                        DestroyChannelControls();
                         DestroyDevices();
                         _projectConfig = ProjectConfig.Load(fn.Replace(".neb", ".nebp"));
                         CreateDevices();
-                        CreateControls();
+                        CreateChannelControls();
 
                         AddToRecentDefs(fn);
                         bool ok = Compile();
@@ -1380,7 +1428,7 @@ namespace Nebulator.UI
                     _mmTimer.Stop();
 
                     // Send midi stop all notes just in case.
-                    _outputs.ForEach(o => o.Value?.Kill());
+                    _outputDevices.ForEach(o => o.Value?.Kill());
                     break;
 
                 case PlayCommand.Rewind:
@@ -1400,7 +1448,7 @@ namespace Nebulator.UI
             // Always do this.
             timeMaster.CurrentTime = _stepTime;
 
-            _outputs.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
+            _outputDevices.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }
@@ -1496,7 +1544,7 @@ namespace Nebulator.UI
         /// <param name="e"></param>
         void Kill_Click(object sender, EventArgs e)
         {
-            _outputs.ForEach(o => o.Value?.Kill());
+            _outputDevices.ForEach(o => o.Value?.Kill());
         }
         #endregion
     }

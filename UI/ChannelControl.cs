@@ -14,7 +14,7 @@ namespace Nebulator.UI
     {
         #region Properties
         /// <summary>Corresponding channel object.</summary>
-        //public NChannel BoundChannel { get; set; }
+        public Channel BoundChannel { get; set; }
 
 
         public ChannelState State

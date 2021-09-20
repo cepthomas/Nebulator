@@ -21,7 +21,7 @@ namespace Nebulator.Device
         string DeviceName { get; }
 
         /// <summary>Device type.</summary>
-        DeviceType DeviceType { get; }
+        DeviceType DeviceType { get; }//TODO0
         #endregion
 
         #region Functions
@@ -29,9 +29,8 @@ namespace Nebulator.Device
         /// Interfaces don't allow constructors so do this instead.
         /// Corresponds to the definition in the script.
         /// </summary>
-        /// <param name="device">Specific device.</param>
         /// <returns></returns>
-        bool Init(DeviceType device);
+        bool Init();
 
         /// <summary>Start operation.</summary>
         void Start();
@@ -44,8 +43,8 @@ namespace Nebulator.Device
         #endregion
     }
 
-    /// <summary>Input specific version. Slight deviation from naming convention to fit our model.</summary>
-    public interface NInput : IDevice
+    /// <summary>Input specific version.</summary>
+    public interface IInputDevice : IDevice
     {
         #region Events
         /// <summary>Reporting a change to listeners.</summary>
@@ -53,8 +52,8 @@ namespace Nebulator.Device
         #endregion
     }
 
-    /// <summary>Output specific version. Slight deviation from naming convention to fit our model.</summary>
-    public interface NOutput : IDevice
+    /// <summary>Output specific version.</summary>
+    public interface IOutputDevice : IDevice
     {
         #region Functions
         /// <summary>Device out processor.</summary>

@@ -19,7 +19,7 @@ namespace Nebulator.UI
     /// <summary>
     /// Wrapper to turn control into a device.
     /// </summary>
-    public partial class Keyboard : Form, NInput
+    public partial class Keyboard : Form, IInputDevice
     {
         #region Events
         /// <inheritdoc />
@@ -66,9 +66,9 @@ namespace Nebulator.UI
         }
 
         /// <inheritdoc />
-        public bool Init(DeviceType device)
+        public bool Init()
         {
-            return device == DeviceType.VkeyIn;
+            return true;
         }
         #endregion
 

@@ -93,7 +93,7 @@ namespace Nebulator.Script
         /// <param name="channel"></param>
         /// <param name="seqMode">One of enum SequenceMode</param>
         /// <param name="sequences"></param>
-        public void Add(NChannel channel, int seqMode, params NSequence[] sequences)
+        public void Add(Channel channel, int seqMode, params NSequence[] sequences)
         {
             NSectionElement sel = new NSectionElement()
             {
@@ -113,7 +113,7 @@ namespace Nebulator.Script
     {
         #region Properties
         /// <summary>Associated channel.</summary>
-        public NChannel Channel { get; set; } = null;
+        public Channel Channel { get; set; } = null;
 
         /// <summary>How to process it.</summary>
         public SequenceMode Mode { get; set; } = SequenceMode.Once;

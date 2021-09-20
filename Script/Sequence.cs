@@ -237,7 +237,7 @@ namespace Nebulator.Script
         /// <summary>Time between note on/off. 0 (default) means not used.</summary>
         public Time Duration { get; set; } = new Time(0);
 
-        /// <summary>The 0th is the root note and other values comprise possible chord notes. TODO notes below the root.</summary>
+        /// <summary>The 0th is the root note and other values comprise possible chord notes. TODO2 notes below the root.</summary>
         public List<double> Notes { get; private set; } = new List<double>();
 
         /// <summary>Call a script function.</summary>

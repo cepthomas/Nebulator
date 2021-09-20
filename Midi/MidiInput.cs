@@ -10,7 +10,7 @@ namespace Nebulator.Midi
     /// <summary>
     /// Abstraction layer between NAudio midi and Nebulator steps.
     /// </summary>
-    public class MidiInput : NInput
+    public class MidiInput : IInputDevice
     {
         #region Fields
         /// <summary>Midi input device.</summary>
@@ -45,7 +45,7 @@ namespace Nebulator.Midi
         }
 
         /// <inheritdoc />
-        public bool Init(DeviceType device)
+        public bool Init()
         {
             bool inited = false;
 
@@ -71,7 +71,7 @@ namespace Nebulator.Midi
 
                 if (ind < 0)
                 {
-                    LogMsg(DeviceLogCategory.Error, $"Invalid midi: {device}");
+                    LogMsg(DeviceLogCategory.Error, $"Invalid midi input device.");
                 }
                 else
                 {

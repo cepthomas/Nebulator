@@ -9,51 +9,43 @@ using Nebulator.Common;
 using Nebulator.Device;
 using System.IO;
 
+
+
 namespace Nebulator.Common
 {
-    /// <summary>Defines a controller input.</summary>
-    [Serializable]
-    public class NController //TODO rename Input?
-    {
-        #region Properties
-        /// <summary>The various devices.</summary>
-        public DeviceType DeviceType { get; set; } = DeviceType.None;//TODO needed?
+    ///// <summary>Defines a controller input.</summary>
+    //[Serializable]
+    //public class Controller
+    //{
+    //    #region Properties
+    //    /// <summary>The associated comm device.</summary>
+    //    [JsonIgnore]
+    //    public IInputDevice Device { get; set; } = null;
 
-        /// <summary>The associated comm device.</summary>
-        [JsonIgnore]
-        public NInput Device { get; set; } = null;
+    //    /// <summary>The associated numerical (midi) channel to use.</summary>
+    //    public int ChannelNumber { get; set; } = -1;
 
-        /// <summary>The associated numerical (midi) channel to use.</summary>
-        public int ChannelNumber { get; set; } = -1;
+    //    /// <summary>The numerical controller type. Usually the same as midi.</summary>
+    //    public int ControllerId { get; set; } = 0;
+    //    #endregion
 
-        /// <summary>The numerical controller type. Usually the same as midi.</summary>
-        public int ControllerId { get; set; } = 0;
-
-        ///// <summary>The bound var.</summary>
-        // [JsonIgnore]
-        //public NVariable BoundVar { get; set; } = null;
-        #endregion
-
-        /// <summary>For viewing pleasure.</summary>
-        public override string ToString()
-        {
-            var s = $"NController: ControllerId:{ControllerId} ChannelNumber:{ChannelNumber}";
-            //var s = $"NController: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} ChannelNumber:{ChannelNumber}";
-            return s;
-        }
-    }
+    //    /// <summary>For viewing pleasure.</summary>
+    //    public override string ToString()
+    //    {
+    //        var s = $"NController: ControllerId:{ControllerId} ChannelNumber:{ChannelNumber}";
+    //        //var s = $"NController: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} ChannelNumber:{ChannelNumber}";
+    //        return s;
+    //    }
+    //}
 
     /// <summary>One channel output.</summary>
     [Serializable]
-    public class NChannel //TODO rename Output?
+    public class Channel
     {
         #region Properties
-        /// <summary>The associated device.</summary>
-        public DeviceType DeviceType { get; set; } = DeviceType.None;//TODO needed?
-
         /// <summary>The associated comm device.</summary>
         [JsonIgnore]
-        public NOutput Device { get; set; } = null;
+        public IOutputDevice Device { get; set; } = null;
 
         /// <summary>The UI name for this channel.</summary>
         public string Name { get; set; } = Definitions.UNKNOWN_STRING;
@@ -98,12 +90,14 @@ namespace Nebulator.Common
 
         public double MasterSpeed { get; set; } = 100.0;
 
+        public List<IInputDevice> InputDevices { get; } = new List<IInputDevice>();
 
-        public List<NChannel> Channels { get; } = new List<NChannel>();
+        public List<Channel> Channels { get; } = new List<Channel>();
 
-        public List<NController> Controllers { get; } = new List<NController>();
+        //public List<Controller> Controllers { get; } = new List<Controller>();
+        //TODO1 filters for inputs?
 
-        // TODO overrides?
+        // TODO2 overrides?
         // "MidiInDevice": "",
         // "MidiOutDevice": "VirtualMIDISynth #1",
         // "OscInDevice": "6448",
@@ -217,7 +211,7 @@ namespace Nebulator.Common
             // Do post deserialization fixups.
             pc.Channels.ForEach(ch =>
             {
-                if (ch.DeviceType != DeviceType.MidiOut && ch.DeviceType != DeviceType.OscOut)
+                if (ch.Device.DeviceType != DeviceType.MidiOut && ch.Device.DeviceType != DeviceType.OscOut)
                 {
                     throw new Exception($"Invalid device for channel {ch.Name} {ch.ChannelNumber}");
                 }
@@ -233,13 +227,13 @@ namespace Nebulator.Common
             });
 
 
-            pc.Controllers.ForEach(con =>
-            {
-                if (con.DeviceType != DeviceType.MidiIn && con.DeviceType != DeviceType.OscIn && con.DeviceType != DeviceType.VkeyIn)
-                {
-                    throw new Exception($"Invalid device for controller {con.DeviceType}");
-                }
-            });
+            //pc.Controllers.ForEach(con =>
+            //{
+            //    if (con.Device.DeviceType != DeviceType.MidiIn && con.Device.DeviceType != DeviceType.OscIn && con.Device.DeviceType != DeviceType.VkeyIn)
+            //    {
+            //        throw new Exception($"Invalid device for controller {con.Device.DeviceType}");
+            //    }
+            //});
 
             return pc;
         }

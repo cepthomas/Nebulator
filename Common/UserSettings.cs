@@ -13,13 +13,13 @@ using System.Text.Json.Serialization;
 using NAudio.Midi;
 
 
-//[JsonConverter(typeof(FontConverter))] TODO?
+//[JsonConverter(typeof(FontConverter))] TODO2 test these are handled properly
 //[JsonConverter(typeof(ColorConverter))]
 
 namespace Nebulator.Common
 {
     [Serializable]
-    public class UserSettings //TODO tweak these.
+    public class UserSettings //TODO2 tweak these.
     {
         #region Persisted editable properties
         // [DisplayName("Editor Font")]
@@ -92,7 +92,7 @@ namespace Nebulator.Common
         [Browsable(true)]
         public bool AutoCompile { get; set; } = true;
 
-        [DisplayName("CPU Meter")] //TODO
+        [DisplayName("CPU Meter")] //TODO2 useful? improve?
         [Description("Show a CPU usage meter. Note that this slows start up a bit.")]
         [Category("Functionality")]
         [Browsable(true)]

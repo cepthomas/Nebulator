@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Nebulator.Common
 {
-    public class Logger
+    public class Logger //TODO1 flesh out
     {
         public Logger(string name)
         {

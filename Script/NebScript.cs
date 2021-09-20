@@ -45,13 +45,13 @@ namespace Nebulator.Script
         public virtual void Setup() { }
 
         /// <summary>Called if you need to do something with devices after they have been created.</summary>
-        public virtual void Setup2() { } //TODO probably don't need
+        public virtual void Setup2() { } //TODO1 probably don't need
 
         /// <summary>Called every Nebulator Incr.</summary>
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputHandler(DeviceType dev, int channel, double value) { } //TODO - noteon, noteoff, control, ...  MidiCommandCode?
+        public virtual void InputHandler(DeviceType dev, int channel, double value) { } //TODO1 - noteon, noteoff, control, ...  MidiCommandCode?
         #endregion
 
         #region Script callable functions
@@ -157,7 +157,7 @@ namespace Nebulator.Script
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        public void SendNote(NChannel channel, double notenum, double vol, Time dur)
+        public void SendNote(Channel channel, double notenum, double vol, Time dur)
         {
             if (channel is null || channel.Device is null)
             {
@@ -201,7 +201,7 @@ namespace Nebulator.Script
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void SendNote(NChannel channel, string notestr, double vol, Time dur)
+        public void SendNote(Channel channel, string notestr, double vol, Time dur)
         {
             NSequenceElement note = new NSequenceElement(notestr);
 
@@ -220,7 +220,7 @@ namespace Nebulator.Script
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        public void SendNote(NChannel channel, double notenum, double vol, double dur = 0.0)
+        public void SendNote(Channel channel, double notenum, double vol, double dur = 0.0)
         {
             SendNote(channel, notenum, vol, new Time(dur));
         }
@@ -230,7 +230,7 @@ namespace Nebulator.Script
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void SendNote(NChannel channel, string notestr, double vol, double dur = 0.0)
+        public void SendNote(Channel channel, string notestr, double vol, double dur = 0.0)
         {
             SendNote(channel, notestr, vol, new Time(dur));
         }
@@ -239,7 +239,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
-        public void SendNoteOn(NChannel channel, double notenum, double vol)
+        public void SendNoteOn(Channel channel, double notenum, double vol)
         {
             SendNote(channel, notenum, vol);
         }
@@ -247,7 +247,7 @@ namespace Nebulator.Script
         /// <summary>Send a note off immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
-        public void SendNoteOff(NChannel channel, double notenum)
+        public void SendNoteOff(Channel channel, double notenum)
         {
             SendNote(channel, notenum, 0);
         }
@@ -256,7 +256,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>
-        public void SendController(NChannel channel, int ctlnum, double val)
+        public void SendController(Channel channel, int ctlnum, double val)
         {
             if (channel is null || channel.Device is null)
             {
@@ -277,7 +277,7 @@ namespace Nebulator.Script
         /// <summary>Send a midi patch immediately.</summary>
         /// <param name="channel"></param>
         /// <param name="patch"></param>
-        public void SendPatch(NChannel channel, int patch)
+        public void SendPatch(Channel channel, int patch)
         {
             if (channel is null || channel.Device is null)
             {
@@ -297,7 +297,7 @@ namespace Nebulator.Script
         /// <summary>Send a named sequence now.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        public void SendSequence(NChannel channel, NSequence seq)
+        public void SendSequence(Channel channel, NSequence seq)
         {
             if (channel is null || channel.Device is null)
             {

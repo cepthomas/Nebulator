@@ -69,7 +69,7 @@ namespace Nebulator.UI
         {
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled exception:{e.Exception.Message}{Environment.NewLine}{e.Exception.StackTrace}{Environment.NewLine}";
-//TODO            LogManager.GetCurrentClassLogger().Error("Unhandled exception: " + s);
+//TODO2            LogManager.GetCurrentClassLogger().Error("Unhandled exception: " + s);
             MessageBox.Show($"Unhandled exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
 
@@ -82,7 +82,7 @@ namespace Nebulator.UI
         {
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled domain exception:{e}{Environment.NewLine}{e.ExceptionObject}{Environment.NewLine}";
-//TODO            LogManager.GetCurrentClassLogger().Error("Unhandled domain exception: " + s);
+//TODO2            LogManager.GetCurrentClassLogger().Error("Unhandled domain exception: " + s);
             MessageBox.Show($"Unhandled domain exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
     }

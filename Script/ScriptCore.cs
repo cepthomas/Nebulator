@@ -88,7 +88,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start at.</param>
-        public static StepCollection ConvertToSteps(NChannel channel, NSequence seq, int startBeat)
+        public static StepCollection ConvertToSteps(Channel channel, NSequence seq, int startBeat)
         {
             StepCollection steps = new StepCollection();
 
@@ -147,7 +147,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         /// <param name="beat">When to send the sequence.</param>
-        public void AddSequence(NChannel channel, NSequence seq, int beat)
+        public void AddSequence(Channel channel, NSequence seq, int beat)
         {
             if (channel is null)
             {

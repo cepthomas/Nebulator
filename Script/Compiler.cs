@@ -7,15 +7,15 @@ using System.IO;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Diagnostics;
-
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
-//using NLog;
-// using Newtonsoft.Json;
-// using Newtonsoft.Json.Converters;
 using NBagOfTricks;
 using Nebulator.Common;
+
+
+// string fn = Path.GetTempFileName() + ".html";
+// File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
+// new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
 
 
 namespace Nebulator.Script
@@ -398,7 +398,7 @@ namespace Nebulator.Script
             List<string> codeLines = GenTopOfFile("");
 
             // Collected init stuff goes in a constructor.
-            // Reference to current script so nested classes have access to it. Processing uses java which would not require this minor hack. TODO fixed in C#9
+            // Reference to current script so nested classes have access to it. TODO1 fixed in C#9 with static using.
             codeLines.Add($"        protected static NebScript s;");
             codeLines.Add($"        public {_scriptName}() : base()");
             codeLines.Add( "        {");
