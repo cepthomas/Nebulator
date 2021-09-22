@@ -1,27 +1,29 @@
 using System;
 using System.Collections.Generic;
-using Nebulator.Common;
+using Nebulator.Steps;
 
 
-namespace Nebulator.Device
+namespace Nebulator.Common
 {
     /// <summary>The various devices.</summary>
     public enum DeviceType { None, MidiIn, MidiOut, OscIn, OscOut, VkeyIn }
 
+    /// <summary>Device has received something.</summary>
+    public class DeviceInputEventArgs : EventArgs
+    {
+        /// <summary>Received data.</summary>
+        public Step Step { get; set; } = null;
+    }
+
     /// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>
     public interface IDevice : IDisposable
     {
-        #region Events
-        /// <summary>Request for logging service.</summary>
-        event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
-        #endregion
-
         #region Properties
         /// <summary>Device name.</summary>
         string DeviceName { get; }
 
         /// <summary>Device type.</summary>
-        DeviceType DeviceType { get; }//TODO0
+        DeviceType DeviceType { get; }
         #endregion
 
         #region Functions

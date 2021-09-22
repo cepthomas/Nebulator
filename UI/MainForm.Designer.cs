@@ -50,14 +50,14 @@
             this.sldVolume.DecPlaces = 1;
             this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
-            this.sldVolume.Location = new System.Drawing.Point(224, 39);
-            this.sldVolume.Margin = new System.Windows.Forms.Padding(4);
+            this.sldVolume.Location = new System.Drawing.Point(224, 49);
+            this.sldVolume.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.sldVolume.Maximum = 1D;
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.sldVolume.ResetValue = 0D;
-            this.sldVolume.Size = new System.Drawing.Size(88, 42);
+            this.sldVolume.Size = new System.Drawing.Size(88, 52);
             this.sldVolume.TabIndex = 36;
             this.toolTip.SetToolTip(this.sldVolume, "Master volume");
             this.sldVolume.Value = 1D;
@@ -68,12 +68,12 @@
             this.potSpeed.DecPlaces = 0;
             this.potSpeed.DrawColor = System.Drawing.Color.Black;
             this.potSpeed.Label = "";
-            this.potSpeed.Location = new System.Drawing.Point(169, 39);
-            this.potSpeed.Margin = new System.Windows.Forms.Padding(5);
+            this.potSpeed.Location = new System.Drawing.Point(170, 49);
+            this.potSpeed.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.potSpeed.Maximum = 200D;
             this.potSpeed.Minimum = 30D;
             this.potSpeed.Name = "potSpeed";
-            this.potSpeed.Size = new System.Drawing.Size(43, 39);
+            this.potSpeed.Size = new System.Drawing.Size(43, 49);
             this.potSpeed.TabIndex = 33;
             this.potSpeed.Taper = NBagOfTricks.UI.Taper.Linear;
             this.toolTip.SetToolTip(this.potSpeed, "Speed in BPM");
@@ -93,10 +93,10 @@
             // 
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::Nebulator.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(116, 39);
-            this.btnCompile.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCompile.Location = new System.Drawing.Point(116, 49);
+            this.btnCompile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCompile.Name = "btnCompile";
-            this.btnCompile.Size = new System.Drawing.Size(45, 39);
+            this.btnCompile.Size = new System.Drawing.Size(45, 49);
             this.btnCompile.TabIndex = 38;
             this.toolTip.SetToolTip(this.btnCompile, "Compile script file - lit indicates file changed externally");
             this.btnCompile.UseVisualStyleBackColor = false;
@@ -106,10 +106,10 @@
             // 
             this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRewind.Image = global::Nebulator.Properties.Resources.glyphicons_172_fast_backward;
-            this.btnRewind.Location = new System.Drawing.Point(13, 39);
-            this.btnRewind.Margin = new System.Windows.Forms.Padding(4);
+            this.btnRewind.Location = new System.Drawing.Point(13, 49);
+            this.btnRewind.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnRewind.Name = "btnRewind";
-            this.btnRewind.Size = new System.Drawing.Size(45, 39);
+            this.btnRewind.Size = new System.Drawing.Size(45, 49);
             this.btnRewind.TabIndex = 31;
             this.toolTip.SetToolTip(this.btnRewind, "Reset to start");
             this.btnRewind.UseVisualStyleBackColor = false;
@@ -122,12 +122,12 @@
             this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkPlay.Image = global::Nebulator.Properties.Resources.glyphicons_174_play;
-            this.chkPlay.Location = new System.Drawing.Point(65, 39);
-            this.chkPlay.Margin = new System.Windows.Forms.Padding(4);
-            this.chkPlay.MaximumSize = new System.Drawing.Size(43, 39);
-            this.chkPlay.MinimumSize = new System.Drawing.Size(43, 39);
+            this.chkPlay.Location = new System.Drawing.Point(65, 49);
+            this.chkPlay.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkPlay.MaximumSize = new System.Drawing.Size(43, 49);
+            this.chkPlay.MinimumSize = new System.Drawing.Size(43, 49);
             this.chkPlay.Name = "chkPlay";
-            this.chkPlay.Size = new System.Drawing.Size(43, 39);
+            this.chkPlay.Size = new System.Drawing.Size(43, 49);
             this.chkPlay.TabIndex = 35;
             this.toolTip.SetToolTip(this.chkPlay, "Play project");
             this.chkPlay.UseVisualStyleBackColor = false;
@@ -278,29 +278,29 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textViewer.Location = new System.Drawing.Point(13, 155);
-            this.textViewer.Margin = new System.Windows.Forms.Padding(4);
+            this.textViewer.Location = new System.Drawing.Point(13, 194);
+            this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(952, 507);
+            this.textViewer.Size = new System.Drawing.Size(952, 633);
             this.textViewer.TabIndex = 41;
             this.textViewer.WordWrap = true;
             // 
             // lblSolo
             // 
             this.lblSolo.AutoSize = true;
-            this.lblSolo.Location = new System.Drawing.Point(919, 102);
+            this.lblSolo.Location = new System.Drawing.Point(843, 49);
             this.lblSolo.Name = "lblSolo";
-            this.lblSolo.Size = new System.Drawing.Size(36, 17);
+            this.lblSolo.Size = new System.Drawing.Size(39, 20);
             this.lblSolo.TabIndex = 42;
             this.lblSolo.Text = "Solo";
             // 
             // lblMute
             // 
             this.lblMute.AutoSize = true;
-            this.lblMute.Location = new System.Drawing.Point(919, 127);
+            this.lblMute.Location = new System.Drawing.Point(843, 80);
             this.lblMute.Name = "lblMute";
-            this.lblMute.Size = new System.Drawing.Size(39, 17);
+            this.lblMute.Size = new System.Drawing.Size(43, 20);
             this.lblMute.TabIndex = 43;
             this.lblMute.Text = "Mute";
             // 
@@ -310,23 +310,23 @@
             time1.Beat = 0;
             time1.Subdiv = 0;
             this.timeMaster.CurrentTime = time1;
-            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeMaster.Location = new System.Drawing.Point(321, 39);
-            this.timeMaster.Margin = new System.Windows.Forms.Padding(12, 11, 12, 11);
+            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.timeMaster.Location = new System.Drawing.Point(321, 49);
+            this.timeMaster.Margin = new System.Windows.Forms.Padding(12, 14, 12, 14);
             this.timeMaster.MaxBeat = 0;
             this.timeMaster.Name = "timeMaster";
             this.timeMaster.ShowProgress = true;
-            this.timeMaster.Size = new System.Drawing.Size(233, 42);
+            this.timeMaster.Size = new System.Drawing.Size(233, 52);
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(976, 670);
+            this.ClientSize = new System.Drawing.Size(976, 838);
             this.Controls.Add(this.lblMute);
             this.Controls.Add(this.lblSolo);
             this.Controls.Add(this.textViewer);
@@ -338,7 +338,7 @@
             this.Controls.Add(this.btnRewind);
             this.Controls.Add(this.chkPlay);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.Text = "Nebulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Nebulator.Script;
+//using Nebulator.Script;
 
 namespace Nebulator.UI
 {
@@ -32,33 +32,33 @@ namespace Nebulator.UI
             Application.Run(f);
         }
 
-        /// <summary>
-        /// Compile one file.
-        /// </summary>
-        /// <param name="fn"></param>
-        private static void Compile(string fn)
-        {
-            Console.WriteLine($"FILE: {fn}");
+        ///// <summary>
+        ///// Compile one file.
+        ///// </summary>
+        ///// <param name="fn"></param>
+        //private static void Compile(string fn)
+        //{
+        //    Console.WriteLine($"FILE: {fn}");
 
-            NebCompiler compiler = new NebCompiler() { Min = false };
+        //    NebCompiler compiler = new NebCompiler() { Min = false };
 
-            // Compile now.
-            NebScript _script = compiler.Execute(fn);
+        //    // Compile now.
+        //    NebScript _script = compiler.Execute(fn);
 
-            int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptErrorType.Error);
+        //    int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptErrorType.Error);
 
-            compiler.Errors.ForEach(r =>
-            {
-                if (r.ErrorType == ScriptErrorType.Warning)
-                {
-                    Console.WriteLine($"WRN: {r}");
-                }
-                else
-                {
-                    Console.WriteLine($"ERR: {r}");
-                }
-            });
-        }
+        //    compiler.Errors.ForEach(r =>
+        //    {
+        //        if (r.ErrorType == ScriptErrorType.Warning)
+        //        {
+        //            Console.WriteLine($"WRN: {r}");
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine($"ERR: {r}");
+        //        }
+        //    });
+        //}
 
         /// <summary>
         /// Exception handler.

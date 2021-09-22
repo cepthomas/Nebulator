@@ -5,38 +5,58 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Nebulator.Common;
-using Nebulator.Device;
 using System.IO;
-
+using System.ComponentModel;
+using Nebulator.Common;
+//using Nebulator.Device;
 
 
 namespace Nebulator.Common
 {
-    ///// <summary>Defines a controller input.</summary>
-    //[Serializable]
-    //public class Controller
-    //{
-    //    #region Properties
-    //    /// <summary>The associated comm device.</summary>
-    //    [JsonIgnore]
-    //    public IInputDevice Device { get; set; } = null;
+    /// <summary>Defines a controller input.</summary>
+    [Serializable]
+    public class Controller
+    {
+        #region Properties
+        /// <summary>The associated comm device.</summary>
+        [JsonIgnore]
+        [Browsable(false)]
+        public IInputDevice Device { get; set; } = null;
 
-    //    /// <summary>The associated numerical (midi) channel to use.</summary>
-    //    public int ChannelNumber { get; set; } = -1;
+        /// <summary>The device type for this controller.</summary>
+        [JsonIgnore]
+        [Browsable(false)]
+        public DeviceType DeviceType { get; set; } = DeviceType.None;
 
-    //    /// <summary>The numerical controller type. Usually the same as midi.</summary>
-    //    public int ControllerId { get; set; } = 0;
-    //    #endregion
+        /// <summary>The device name for this controller.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        [TypeConverter(typeof(FixedListTypeConverter))]
+        public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
 
-    //    /// <summary>For viewing pleasure.</summary>
-    //    public override string ToString()
-    //    {
-    //        var s = $"NController: ControllerId:{ControllerId} ChannelNumber:{ChannelNumber}";
-    //        //var s = $"NController: ControllerId:{ControllerId} BoundVar:{BoundVar.Name} ChannelNumber:{ChannelNumber}";
-    //        return s;
-    //    }
-    //}
+        /// <summary>The UI name for this channel.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        public string ControllerName { get; set; } = Definitions.UNKNOWN_STRING;
+        #endregion
+
+        // /// <summary>The associated numerical (midi) channel to use.</summary>
+        // public int ChannelNumber { get; set; } = -1;
+
+        // /// <summary>The numerical controller type. Usually the same as midi.</summary>
+        // public int ControllerId { get; set; } = 0;
+
+        /// <summary>For viewing pleasure.</summary>
+        public override string ToString()
+        {
+            var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ControllerName:{ControllerName}";
+            return s;
+        }
+    }
 
     /// <summary>One channel output.</summary>
     [Serializable]
@@ -45,25 +65,58 @@ namespace Nebulator.Common
         #region Properties
         /// <summary>The associated comm device.</summary>
         [JsonIgnore]
+        [Browsable(false)]
         public IOutputDevice Device { get; set; } = null;
 
+        /// <summary>The device type for this channel.</summary>
+        [JsonIgnore]
+        [Browsable(false)]
+        public DeviceType DeviceType { get; set; } = DeviceType.None;
+
+        /// <summary>The device name for this channel.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        [TypeConverter(typeof(FixedListTypeConverter))]
+        public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
+
         /// <summary>The UI name for this channel.</summary>
-        public string Name { get; set; } = Definitions.UNKNOWN_STRING;
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        public string ChannelName { get; set; } = Definitions.UNKNOWN_STRING;
 
-        /// <summary>The associated numerical (midi) channel to use.</summary>
-        public int ChannelNumber { get; set; } = -1;
+        /// <summary>The associated numerical (midi) channel to use 1-16.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        public int ChannelNumber { get; set; } = 1;
 
+        //TODO1 Optional patch. See ClipExplorer.
         /// <summary>Current volume.</summary>
-        public double Volume { get; set; } = 90;
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        public double Volume { get; set; } = 0.8;
 
         /// <summary>How wobbly.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
         public double WobbleRange { get; set; } = 0.0;
 
         /// <summary>Wobbler for volume (optional).</summary>
         [JsonIgnore]
+        [Browsable(false)]
         public Wobbler VolWobbler { get; set; } = null;
 
         /// <summary>Current state for this channel.</summary>
+        [Browsable(false)]
         public ChannelState State { get; set; } = ChannelState.Normal;
         #endregion
 
@@ -78,7 +131,8 @@ namespace Nebulator.Common
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"NChannel: Name:{Name} ChannelNumber:{ChannelNumber}";
+            var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ChannelName:{ChannelName}";
+            return s;
         }
     }
 
@@ -86,88 +140,33 @@ namespace Nebulator.Common
     [Serializable]
     public class ProjectConfig
     {
+        /// <summary>Master volume.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
         public double MasterVolume { get; set; } = 0.8;
 
+        /// <summary>Tempo.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
         public double MasterSpeed { get; set; } = 100.0;
 
-        public List<IInputDevice> InputDevices { get; } = new List<IInputDevice>();
+        /// <summary>Active Controllers.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        public List<Controller> Controllers { get; } = new List<Controller>();
 
+        /// <summary>Active Chanels.</summary>
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
         public List<Channel> Channels { get; } = new List<Channel>();
-
-        //public List<Controller> Controllers { get; } = new List<Controller>();
-        //TODO1 filters for inputs?
-
-        // TODO2 overrides?
-        // "MidiInDevice": "",
-        // "MidiOutDevice": "VirtualMIDISynth #1",
-        // "OscInDevice": "6448",
-        // "OscOutDevice": "127.0.0.1:1234",
-
-
-
-
-        ///// <summary>
-        ///// Normal factory.
-        ///// </summary>
-        ///// <param name="name">UI name</param>
-        ///// <param name="device">Device type</param>
-        ///// <param name="channelNum"></param>
-        ///// <param name="volWobble"></param>
-        //public NChannel CreateChannel(string name, DeviceType device, int channelNum, double volWobble = 0.0)
-        //{
-        //    if (device != DeviceType.MidiOut && device != DeviceType.OscOut)
-        //    {
-        //        throw new Exception($"Invalid device for channel {name} {device}");
-        //    }
-
-        //    NChannel nt = new NChannel()
-        //    {
-        //        Name = name,
-        //        DeviceType = device,
-        //        ChannelNumber = channelNum,
-        //    };
-
-        //    if (volWobble != 0.0)
-        //    {
-        //        nt.VolWobbler = new Wobbler()
-        //        {
-        //            RangeHigh = volWobble,
-        //            RangeLow = volWobble
-        //        };
-        //    }
-
-        //    Channels.Add(nt);
-        //    return nt;
-        //}
-
-        ///// <summary>
-        ///// Create a controller input.
-        ///// </summary>
-        ///// <param name="device">Device type.</param>
-        ///// <param name="channelNum">Which channel.</param>
-        ///// <param name="controlId">Which</param>
-        ///// <param name="bound">NVariable</param>
-        //public void CreateController(DeviceType device, int channelNum, int controlId)//, NVariable bound)
-        //{
-        //    if (device != DeviceType.MidiIn && device != DeviceType.OscIn && device != DeviceType.VkeyIn)
-        //    {
-        //        throw new Exception($"Invalid device for controller {device}");
-        //    }
-
-        //    //if (bound is null)
-        //    //{
-        //    //    throw new Exception($"Invalid NVariable for controller {device}");
-        //    //}
-
-        //    NController mp = new NController()
-        //    {
-        //        DeviceType = device,
-        //        ChannelNumber = channelNum,
-        //        ControllerId = controlId,
-        //        BoundVar = bound
-        //    };
-        //    Controllers.Add(mp);
-        //}
 
         #region Fields
         /// <summary>The file name.</summary>
@@ -175,14 +174,6 @@ namespace Nebulator.Common
         #endregion
 
         #region Persistence
-        /// <summary>Save object to file.</summary>
-        public void Save()
-        {
-            JsonSerializerOptions opts = new() { WriteIndented = true };
-            string json = JsonSerializer.Serialize(this, opts);
-            File.WriteAllText(_fn, json);
-        }
-
         /// <summary>Create object from file.</summary>
         public static ProjectConfig Load(string fn)
         {
@@ -193,28 +184,32 @@ namespace Nebulator.Common
                 string json = File.ReadAllText(fn);
                 pc = JsonSerializer.Deserialize<ProjectConfig>(json);
 
-                // Clean up any bad file names.
-               // pc.RecentFiles.RemoveAll(f => !File.Exists(f));
-
                 pc._fn = fn;
             }
             else
             {
-                // Doesn't exist, create a new one.
+                // Doesn't exist, create a new one. TODO1 populate from defaults.
                 pc = new ProjectConfig
                 {
                     _fn = fn
                 };
             }
 
-
             // Do post deserialization fixups.
             pc.Channels.ForEach(ch =>
             {
                 if (ch.Device.DeviceType != DeviceType.MidiOut && ch.Device.DeviceType != DeviceType.OscOut)
                 {
-                    throw new Exception($"Invalid device for channel {ch.Name} {ch.ChannelNumber}");
+                    throw new Exception($"Invalid device for channel {ch.ChannelName} {ch.ChannelNumber}");
                 }
+
+                //TODO1 fixup other props, override from user settings - or in CreateDevices()?
+                //    Channel nt = new Channel()
+                //    {
+                //        Name = name,
+                //        DeviceType = device,
+                //        ChannelNumber = channelNum,
+                //    };
 
                 if (ch.WobbleRange != 0.0)
                 {
@@ -224,20 +219,39 @@ namespace Nebulator.Common
                         RangeLow = ch.WobbleRange
                     };
                 }
+
+                pc.Channels.Add(ch);
             });
 
+            pc.Controllers.ForEach(con =>
+            {
+                if (con.Device.DeviceType != DeviceType.MidiIn && con.Device.DeviceType != DeviceType.OscIn && con.Device.DeviceType != DeviceType.VkeyIn)
+                {
+                    throw new Exception($"Invalid device for controller {con.Device.DeviceType}");
+                }
 
-            //pc.Controllers.ForEach(con =>
-            //{
-            //    if (con.Device.DeviceType != DeviceType.MidiIn && con.Device.DeviceType != DeviceType.OscIn && con.Device.DeviceType != DeviceType.VkeyIn)
-            //    {
-            //        throw new Exception($"Invalid device for controller {con.Device.DeviceType}");
-            //    }
-            //});
+                //TODO1 fixup other props, override from user settings - or in CreateControls()?
+                //    NController mp = new NController()
+                //    {
+                //        DeviceType = device,
+                //        ChannelNumber = channelNum,
+                //        ControllerId = controlId,
+                //        BoundVar = bound
+                //    };
+
+                pc.Controllers.Add(con);
+            });
 
             return pc;
         }
-        #endregion
 
+        /// <summary>Save project to file.</summary>
+        public void Save()
+        {
+            JsonSerializerOptions opts = new() { WriteIndented = true };
+            string json = JsonSerializer.Serialize(this, opts);
+            File.WriteAllText(_fn, json);
+        }
+        #endregion
     }
 }

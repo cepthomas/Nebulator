@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
 
 
 namespace Nebulator.OSC
@@ -13,6 +14,9 @@ namespace Nebulator.OSC
     public class OscInput : IInputDevice
     {
         #region Fields
+        /// <summary>My logger.</summary>
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>OSC input device.</summary>
         NebOsc.Input _oscInput = null;
 
@@ -23,9 +27,6 @@ namespace Nebulator.OSC
         #region Events
         /// <inheritdoc />
         public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
-
-        /// <inheritdoc />
-        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
@@ -72,7 +73,7 @@ namespace Nebulator.OSC
             catch (Exception ex)
             {
                 inited = false;
-                LogMsg(DeviceLogCategory.Error, $"Init OSC in failed: {ex.Message}");
+                _logger.Error($"Init OSC in failed: {ex.Message}");
             }
 
             return inited;
@@ -128,7 +129,13 @@ namespace Nebulator.OSC
         /// <param name="e"></param>
         void OscInput_LogEvent(object sender, NebOsc.LogEventArgs e)
         {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = OscCommon.TranslateLogCategory(e.LogCategory), Message = e.Message });
+            switch (e.LogCategory)
+            {
+                case NebOsc.LogCategory.Info: _logger.Info(e.Message); break;
+                case NebOsc.LogCategory.Send: _logger.Trace($"SEND:{e.Message}"); break;
+                case NebOsc.LogCategory.Recv: _logger.Trace($"RECV:{e.Message}"); break;
+                case NebOsc.LogCategory.Error: _logger.Error(e.Message); break;
+            }
         }
 
         /// <summary>
@@ -198,7 +205,7 @@ namespace Nebulator.OSC
                         break;
 
                     default:
-                        LogMsg(DeviceLogCategory.Error, $"Invalid address: {m.Address}");
+                        _logger.Error($"Invalid address: {m.Address}");
                         break;
                 }
 
@@ -207,18 +214,9 @@ namespace Nebulator.OSC
                     // Pass it up for handling.
                     DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
                     DeviceInputEvent?.Invoke(this, args);
-                    LogMsg(DeviceLogCategory.Recv, step.ToString());
+                    _logger.Trace($"RECV:{step}");
                 }
-
             });
-        }
-
-        /// <summary>Ask host to do something with this.</summary>
-        /// <param name="cat"></param>
-        /// <param name="msg"></param>
-        void LogMsg(DeviceLogCategory cat, string msg)
-        {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
         #endregion
     }

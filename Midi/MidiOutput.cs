@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using NAudio.Midi;
+using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
 
 
 namespace Nebulator.Midi
@@ -14,6 +15,9 @@ namespace Nebulator.Midi
     public class MidiOutput : IOutputDevice
     {
         #region Fields
+        /// <summary>My logger.</summary>
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>Midi output device.</summary>
         MidiOut _midiOut = null;
 
@@ -25,11 +29,6 @@ namespace Nebulator.Midi
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
-        #endregion
-
-        #region Events
-        /// <inheritdoc />
-        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
@@ -74,7 +73,7 @@ namespace Nebulator.Midi
 
                 if (ind < 0)
                 {
-                    LogMsg(DeviceLogCategory.Error, $"Invalid midi output device.");
+                    _logger.Error($"Invalid midi output device.");
                 }
                 else
                 {
@@ -85,7 +84,7 @@ namespace Nebulator.Midi
             }
             catch (Exception ex)
             {
-                LogMsg(DeviceLogCategory.Error, $"Init midi out failed: {ex.Message}");
+                _logger.Error($"Init midi out failed: {ex.Message}");
                 inited = false;
             }
 
@@ -219,7 +218,7 @@ namespace Nebulator.Midi
                     if(msg != 0)
                     {
                         _midiOut.Send(msg);
-                        LogMsg(DeviceLogCategory.Send, step.ToString());
+                        _logger.Trace($"SEND:{step}"); //TODO0 all the SEND/RECV
                     }
                 }
             }
@@ -261,16 +260,6 @@ namespace Nebulator.Midi
         /// <inheritdoc />
         public void Stop()
         {
-        }
-        #endregion
-
-        #region Private functions
-        /// <summary>Ask host to do something with this.</summary>
-        /// <param name="cat"></param>
-        /// <param name="msg"></param>
-        void LogMsg(DeviceLogCategory cat, string msg)
-        {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
         #endregion
     }

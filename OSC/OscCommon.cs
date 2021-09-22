@@ -1,5 +1,5 @@
 using System;
-using Nebulator.Device;
+using Nebulator.Common;
 
 
 namespace Nebulator.OSC
@@ -11,19 +11,19 @@ namespace Nebulator.OSC
     {
         public const int MAX_NOTE = 127;
 
-        public static DeviceLogCategory TranslateLogCategory(NebOsc.LogCategory cat)
-        {
-            DeviceLogCategory dlog = DeviceLogCategory.Error;
+        //public static LogCategory TranslateLogCategory(NebOsc.LogCategory cat)
+        //{
+        //    LogCategory dlog = LogCategory.Error;
 
-            switch (cat)
-            {
-                case NebOsc.LogCategory.Error: dlog = DeviceLogCategory.Error; break;
-                case NebOsc.LogCategory.Info: dlog = DeviceLogCategory.Info; break;
-                case NebOsc.LogCategory.Recv: dlog = DeviceLogCategory.Recv; break;
-                case NebOsc.LogCategory.Send: dlog = DeviceLogCategory.Send; break;
-            }
+        //    switch (cat)
+        //    {
+        //        case NebOsc.LogCategory.Error: dlog = LogCategory.Error; break;
+        //        case NebOsc.LogCategory.Info: dlog = LogCategory.Info; break;
+        //        case NebOsc.LogCategory.Recv: dlog = LogCategory.Recv; break;
+        //        case NebOsc.LogCategory.Send: dlog = LogCategory.Send; break;
+        //    }
 
-            return dlog;
-        }
+        //    return dlog;
+        //}
     }
 }

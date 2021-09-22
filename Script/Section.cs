@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Device;
+//using Nebulator.Steps;
 
 
 namespace Nebulator.Script
@@ -17,17 +17,17 @@ namespace Nebulator.Script
     /// <summary>
     /// One section definition.
     /// </summary>
-    public class NSection : IEnumerable
+    public class Section : IEnumerable
     {
         #region Properties
         /// <summary>List of sequences in this section.</summary>
-        public NSectionElements Elements { get; set; } = new NSectionElements();
+        public SectionElements Elements { get; set; } = new SectionElements();
 
         /// <summary>Length in beats.</summary>
         public int Beats { get; set; } = 0;
 
         /// <summary>Readable.</summary>
-        public string Name { get; set; } = Definitions.UNKNOWN_STRING;
+        public string Name { get; set; } = "";
         #endregion
 
         /// <summary>
@@ -37,10 +37,10 @@ namespace Nebulator.Script
         public IEnumerator GetEnumerator()
         {
             // Flatten section into sequences.
-            foreach (NSectionElement sect in Elements)
+            foreach (SectionElement sect in Elements)
             {
                 int seqBeat = 0;
-                NSequence seqnull = null; // default means ignore
+                Sequence seqnull = null; // default means ignore
 
                 bool ok = sect.Sequences != null && sect.Sequences.Count() > 0;
 
@@ -49,7 +49,7 @@ namespace Nebulator.Script
                     switch(sect.Mode)
                     {
                         case SequenceMode.Once:
-                            foreach (NSequence seq in sect.Sequences)
+                            foreach (Sequence seq in sect.Sequences)
                             {
                                 yield return (sect.Channel, seq, seqBeat);
                                 seqBeat += seq.Beats;
@@ -78,14 +78,14 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSection: Beats:{Beats} Name:{Name} Elements:{Elements.Count}";
+            return $"Section: Beats:{Beats} Name:{Name} Elements:{Elements.Count}";
         }
     }
 
     /// <summary>
     /// Specialized container. Has Add() to support initialization.
     /// </summary>
-    public class NSectionElements : List<NSectionElement>
+    public class SectionElements : List<SectionElement>
     {
         /// <summary>
         /// Add 0-N elements.
@@ -93,9 +93,9 @@ namespace Nebulator.Script
         /// <param name="channel"></param>
         /// <param name="seqMode">One of enum SequenceMode</param>
         /// <param name="sequences"></param>
-        public void Add(Channel channel, int seqMode, params NSequence[] sequences)
+        public void Add(Channel channel, int seqMode, params Sequence[] sequences)
         {
-            NSectionElement sel = new NSectionElement()
+            SectionElement sel = new SectionElement()
             {
                 Channel = channel,
                 Mode = (SequenceMode)seqMode,
@@ -109,7 +109,7 @@ namespace Nebulator.Script
     /// <summary>
     /// Sequence(s) to play.
     /// </summary>
-    public class NSectionElement
+    public class SectionElement
     {
         #region Properties
         /// <summary>Associated channel.</summary>
@@ -119,7 +119,7 @@ namespace Nebulator.Script
         public SequenceMode Mode { get; set; } = SequenceMode.Once;
 
         /// <summary>Associated sequences.</summary>
-        public NSequence[] Sequences { get; set; } = null;
+        public Sequence[] Sequences { get; set; } = null;
         #endregion
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSectionElement: Channel:{Channel.Name}";
+            return $"SectionElement: Channel:{Channel.ChannelName}";
         }
     }
 }

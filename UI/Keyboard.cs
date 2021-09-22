@@ -8,9 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using NLog;
 using NBagOfTricks.UI;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
 using Nebulator.Midi;
 
 
@@ -21,10 +22,12 @@ namespace Nebulator.UI
     /// </summary>
     public partial class Keyboard : Form, IInputDevice
     {
-        #region Events
-        /// <inheritdoc />
-        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
+        #region Fields
+        /// <summary>My logger.</summary>
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        #endregion
 
+        #region Events
         /// <inheritdoc />
         public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
         #endregion
@@ -109,7 +112,7 @@ namespace Nebulator.UI
                         ChannelNumber = e.ChannelNumber,
                         NoteNumber = e.NoteId,
                         Velocity = e.Velocity,
-                        VelocityToPlay = e.Velocity,
+                        VelocityToPlay = e.Velocity,    
                         Duration = new Time(0)
                     };
                 }
@@ -125,18 +128,8 @@ namespace Nebulator.UI
                 }
 
                 DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
-                LogMsg(DeviceLogCategory.Recv, step.ToString());
+                _logger.Trace($"RECV:{step}");
             }
-        }
-        #endregion
-
-        #region Private functions
-        /// <summary>Ask host to do something with this.</summary>
-        /// <param name="cat"></param>
-        /// <param name="msg"></param>
-        void LogMsg(DeviceLogCategory cat, string msg)
-        {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
         }
         #endregion
     }

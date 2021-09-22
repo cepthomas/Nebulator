@@ -7,7 +7,8 @@ using System.IO;
 using NAudio.Midi;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
+
 
 namespace Nebulator.Midi
 {

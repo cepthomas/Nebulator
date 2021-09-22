@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using NAudio.Midi;
+using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
+
 
 namespace Nebulator.Midi
 {
@@ -13,6 +15,9 @@ namespace Nebulator.Midi
     public class MidiInput : IInputDevice
     {
         #region Fields
+        /// <summary>My logger.</summary>
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>Midi input device.</summary>
         MidiIn _midiIn = null;
 
@@ -23,9 +28,6 @@ namespace Nebulator.Midi
         #region Events
         /// <inheritdoc />
         public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
-
-        /// <inheritdoc />
-        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
@@ -71,7 +73,7 @@ namespace Nebulator.Midi
 
                 if (ind < 0)
                 {
-                    LogMsg(DeviceLogCategory.Error, $"Invalid midi input device.");
+                    _logger.Error($"Invalid midi input device.");
                 }
                 else
                 {
@@ -85,7 +87,7 @@ namespace Nebulator.Midi
             }
             catch (Exception ex)
             {
-                LogMsg(DeviceLogCategory.Error, $"Init midi in failed: {ex.Message}");
+                _logger.Error($"Init midi in failed: {ex.Message}");
                 inited = false;
             }
 
@@ -223,7 +225,7 @@ namespace Nebulator.Midi
                 // Pass it up for handling.
                 DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
                 DeviceInputEvent?.Invoke(this, args);
-                LogMsg(DeviceLogCategory.Recv, step.ToString());
+                _logger.Trace($"RECV:{step}");
             }
         }
 
@@ -232,15 +234,7 @@ namespace Nebulator.Midi
         /// </summary>
         void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
         {
-            LogMsg(DeviceLogCategory.Error, $"Message:0x{e.RawMessage:X8}");
-        }
-
-        /// <summary>Ask host to do something with this.</summary>
-        /// <param name="cat"></param>
-        /// <param name="msg"></param>
-        void LogMsg(DeviceLogCategory cat, string msg)
-        {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
+            _logger.Error($"Message:0x{e.RawMessage:X8}");
         }
         #endregion
     }

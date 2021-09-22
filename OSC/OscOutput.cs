@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
 
 
 namespace Nebulator.OSC
@@ -13,6 +14,9 @@ namespace Nebulator.OSC
     public class OscOutput : IOutputDevice
     {
         #region Fields
+        /// <summary>My logger.</summary>
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>OSC output device.</summary>
         NebOsc.Output _oscOutput;
 
@@ -24,11 +28,6 @@ namespace Nebulator.OSC
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
-        #endregion
-
-        #region Events
-        /// <inheritdoc />
-        public event EventHandler<DeviceLogEventArgs> DeviceLogEvent;
         #endregion
 
         #region Properties
@@ -75,7 +74,7 @@ namespace Nebulator.OSC
                     }
                     else
                     {
-                        LogMsg(DeviceLogCategory.Error, $"Init OSC out failed");
+                        _logger.Error($"Init OSC out failed");
                         inited = false;
                     }
                 }
@@ -185,16 +184,16 @@ namespace Nebulator.OSC
                     {
                         if(_oscOutput.Send(msg))
                         {
-                            LogMsg(DeviceLogCategory.Send, step.ToString());
+                            _logger.Trace($"SEND:{step}");
                         }
                         else
                         {
-                            LogMsg(DeviceLogCategory.Error, step.ToString());
+                            _logger.Error($"{step}");
                         }
                     }
                     else
                     {
-                        LogMsg(DeviceLogCategory.Error, step.ToString());
+                        _logger.Error($"{step}");
                     }
                 }
             }
@@ -226,17 +225,13 @@ namespace Nebulator.OSC
         /// <param name="e"></param>
         void OscOutput_LogEvent(object sender, NebOsc.LogEventArgs e)
         {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = OscCommon.TranslateLogCategory(e.LogCategory), Message = e.Message });
-        }
-
-        /// <summary>
-        /// Ask host to do something with this.
-        /// </summary>
-        /// <param name="cat"></param>
-        /// <param name="msg"></param>
-        void LogMsg(DeviceLogCategory cat, string msg)
-        {
-            DeviceLogEvent?.Invoke(this, new DeviceLogEventArgs() { DeviceLogCategory = cat, Message = msg });
+            switch (e.LogCategory)
+            {
+                case NebOsc.LogCategory.Info: _logger.Info(e.Message); break;
+                case NebOsc.LogCategory.Send: _logger.Trace($"SEND:{e.Message}"); break;
+                case NebOsc.LogCategory.Recv: _logger.Trace($"RECV:{e.Message}"); break;
+                case NebOsc.LogCategory.Error: _logger.Error(e.Message); break;
+            }
         }
         #endregion
     }

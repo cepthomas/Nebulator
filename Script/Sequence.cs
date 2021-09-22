@@ -12,11 +12,11 @@ namespace Nebulator.Script
     /// <summary>
     /// One sequence definition.
     /// </summary>
-    public class NSequence
+    public class Sequence
     {
         #region Properties
         /// <summary>List of notes or other elements.</summary>
-        public NSequenceElements Elements { get; set; } = new NSequenceElements();
+        public SequenceElements Elements { get; set; } = new SequenceElements();
 
         /// <summary>Length in beats.</summary>
         public int Beats { get; set; } = 1;
@@ -27,14 +27,14 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSequence: Beats:{Beats} Elements:{Elements.Count}";
+            return $"Sequence: Beats:{Beats} Elements:{Elements.Count}";
         }
     }
 
     /// <summary>
     /// Specialized container. Has Add() to support initialization.
     /// </summary>
-    public class NSequenceElements : List<NSequenceElement>
+    public class SequenceElements : List<SequenceElement>
     {
         /// <summary>
         /// Like: Z.Add(00.0, "G3", 90, 1.1);
@@ -45,7 +45,7 @@ namespace Nebulator.Script
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, string what, double volume, double duration = 0)
         {
-            NSequenceElement sel = new NSequenceElement(what)
+            SequenceElement sel = new SequenceElement(what)
             {
                 When = new Time(when),
                 Volume = volume,
@@ -64,7 +64,7 @@ namespace Nebulator.Script
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, int what, double volume, double duration = 0)
         {
-            NSequenceElement sel = new NSequenceElement(what)
+            SequenceElement sel = new SequenceElement(what)
             {
                 When = new Time(when),
                 Volume = volume,
@@ -82,7 +82,7 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(double when, Action func, double volume)
         {
-            NSequenceElement sel = new NSequenceElement(func)
+            SequenceElement sel = new SequenceElement(func)
             {
                 When = new Time(when),
                 Volume = volume
@@ -149,7 +149,7 @@ namespace Nebulator.Script
                 Time dur = new Time(nowSubdivs - startSubdivs);
                 Time when = new Time(startSubdivs);
 
-                NSequenceElement ncl = new NSequenceElement(which)
+                SequenceElement ncl = new SequenceElement(which)
                 {
                     When = when,
                     Volume = volume * volmod,
@@ -225,7 +225,7 @@ namespace Nebulator.Script
     /// <summary>
     /// One note or chord or script function etc in the sequence. Essentially something that gets played.
     /// </summary>
-    public class NSequenceElement
+    public class SequenceElement
     {
         #region Properties
         /// <summary>Individual note volume.</summary>
@@ -248,7 +248,7 @@ namespace Nebulator.Script
         /// Constructor that parses note string.
         /// </summary>
         /// <param name="s"></param>
-        public NSequenceElement(string s)
+        public SequenceElement(string s)
         {
             Notes = NoteUtils.ParseNoteString(s);
         }
@@ -256,7 +256,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Constructor from note number.
         /// </summary>
-        public NSequenceElement(double noteNum)
+        public SequenceElement(double noteNum)
         {
             Notes.Add(noteNum);
         }
@@ -264,7 +264,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Constructor from function.
         /// </summary>
-        public NSequenceElement(Action func)
+        public SequenceElement(Action func)
         {
             ScriptFunction = func;
             Notes.Clear();
@@ -273,7 +273,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        public NSequenceElement(NSequenceElement seqel)
+        public SequenceElement(SequenceElement seqel)
         {
             Volume = seqel.Volume;
             ScriptFunction = seqel.ScriptFunction;
@@ -287,7 +287,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"NSequenceElement: When:{When} NoteNum:{Notes[0]:F2} Volume:{Volume:F2} Duration:{Duration}";
+            return $"SequenceElement: When:{When} NoteNum:{Notes[0]:F2} Volume:{Volume:F2} Duration:{Duration}";
         }
     }
 }

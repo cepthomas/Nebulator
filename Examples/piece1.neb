@@ -13,21 +13,21 @@ const double SYNTH_VOL = 1.0;
 
 
 ///// Channels /////
-NChannel chKeys;
-NChannel chBass;
-NChannel chDrums;
-NChannel chSynth;
+// Channel chKeys;
+// Channel chBass;
+// Channel chDrums;
+// Channel chSynth;
 
 
 ////// Nebulator midi stuff //////
 public override void Setup()
 {
-    // IO devices.
-    // All the outputs.
-    chKeys =  CreateChannel("keys",  DeviceType.MidiOut, 1,  0.1);
-    chBass =  CreateChannel("bass",  DeviceType.MidiOut, 2,  0.1);
-    chSynth = CreateChannel("synth", DeviceType.MidiOut, 3,  0.1);
-    chDrums = CreateChannel("drums", DeviceType.MidiOut, 10, 0.1);
+    // // IO devices.
+    // // All the outputs.
+    // chKeys =  CreateChannel("keys",  DeviceType.MidiOut, 1,  0.1);
+    // chBass =  CreateChannel("bass",  DeviceType.MidiOut, 2,  0.1);
+    // chSynth = CreateChannel("synth", DeviceType.MidiOut, 3,  0.1);
+    // chDrums = CreateChannel("drums", DeviceType.MidiOut, 10, 0.1);
 
     // All the inputs.
     //CreateController(DeviceType.VkeyIn, 1, NoteControl, vVkeyNote);
@@ -35,14 +35,14 @@ public override void Setup()
  
 public override void Setup2()
 {
-    SendPatch(chKeys,  ElectricGrandPiano); // ElectricGrandPiano AcousticGrandPiano
-    SendPatch(chBass,  AcousticBass);
-    SendPatch(chSynth, Pad5Bowed);
-    SendPatch(chDrums, 32); // drum kit
+    // SendPatch(chKeys,  ElectricGrandPiano); // ElectricGrandPiano AcousticGrandPiano
+    // SendPatch(chBass,  AcousticBass);
+    // SendPatch(chSynth, Pad5Bowed);
+    // SendPatch(chDrums, 32); // drum kit
 
-    // Do some panning. Apparently FluidR3 sf ignores CC for some patches like AcousticGrandPiano
-    SendController(chKeys,  Pan, 30);
-    SendController(chSynth, Pan, 100);
+    // // Do some panning. Apparently FluidR3 sf ignores CC for some patches like AcousticGrandPiano
+    // SendController(chKeys,  Pan, 30);
+    // SendController(chSynth, Pan, 100);
 
     BuildComp();
     
@@ -53,7 +53,7 @@ void BuildComp()
     
     /////////////////////// Keys sequences /////////////////////////////////
 
-    NSequence seqKeysIntro = CreateSequence(16, new NSequenceElements
+    Sequence seqKeysIntro = CreateSequence(16, new SequenceElements
     {
         //"|m...............|b...b...b...b...|tttttttttttttttt|tttttttttttttttt|
         { "|9-------------  |9-------------  |9 9-----------  |9-----          |", 16, "E4.m", KEYS_VOL },
@@ -61,14 +61,14 @@ void BuildComp()
         { "|                |                |                |            9 9 |", 16, "A4.m", KEYS_VOL },
     });
 
-    NSequence seqKeysVerse = CreateSequence(16, new NSequenceElements
+    Sequence seqKeysVerse = CreateSequence(16, new SequenceElements
     {
         { "|9-------------  |                |                |                |", 16, "B4.m", KEYS_VOL },
         { "|                |9-------------  |                |                |", 16, "A4.m", KEYS_VOL },
         { "|                |                |9---------------|----------      |", 16, "E4.m", KEYS_VOL },
     });
 
-    NSequence seqKeysEnd = CreateSequence(16, new NSequenceElements
+    Sequence seqKeysEnd = CreateSequence(16, new SequenceElements
     {
         { "|9-------------  |9-------------  |9 9-----------  |9-----          |", 16, "E4.m", KEYS_VOL },
         { "|                |                |                |        9 9     |", 16, "D5.m", KEYS_VOL },
@@ -77,7 +77,7 @@ void BuildComp()
 
     /////////////////////// Drum sequences /////////////////////////////////
 
-    NSequence seqDrumsVerse = CreateSequence(16, new NSequenceElements
+    Sequence seqDrumsVerse = CreateSequence(16, new SequenceElements
     {
         { "|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|", 16, RideCymbal1,      DRUM_VOL*0.8 },
         { "|....8.......8...|....8.......8...|....8.......8...|....8.......8...|", 16, SideStick,        DRUM_VOL*0.9 },
@@ -86,26 +86,26 @@ void BuildComp()
 
     /////////////////////// Bass sequences /////////////////////////////////
 
-    NSequence seqBassIntro = CreateSequence(16, new NSequenceElements
+    Sequence seqBassIntro = CreateSequence(16, new SequenceElements
     {
         { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", 16, "E2", BASS_VOL },
     });
 
-    NSequence seqBassVerse = CreateSequence(16, new NSequenceElements
+    Sequence seqBassVerse = CreateSequence(16, new SequenceElements
     {
         { "|9----.9.9------.|                |                |                |", 16, "B2", BASS_VOL },
         { "|                |9----.9.9------.|                |                |", 16, "A2", BASS_VOL },
         { "|                |                |9----.9.9------.|9----.9.9------.|", 16, "E2", BASS_VOL },
     });
 
-    NSequence seqBassEnd = CreateSequence(16, new NSequenceElements
+    Sequence seqBassEnd = CreateSequence(16, new SequenceElements
     {
         { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", 16, "E2", BASS_VOL },
     });
 
 
     /////////////////////// Synth sequences /////////////////////////////////
-    NSequence seqSynth1 = CreateSequence(16, new NSequenceElements
+    Sequence seqSynth1 = CreateSequence(16, new SequenceElements
     {
         { "|9------        7|                |               7|                |", 16, "B4", SYNTH_VOL },
         { "|                |9-------       7|                |                |", 16, "A4", SYNTH_VOL },
@@ -114,7 +114,7 @@ void BuildComp()
 
     /////////////////////// sections /////////////////////////////////
 
-    CreateSection(32, "Intro", new NSectionElements
+    CreateSection(32, "Intro", new SectionElements
     {
         { chKeys,  Loop,  seqKeysIntro  },
         { chDrums, Loop,  seqDrumsVerse },
@@ -122,7 +122,7 @@ void BuildComp()
       //{ chSynth, Loop,  seqSynth1     },
     });
 
-    CreateSection(64, "Middle", new NSectionElements
+    CreateSection(64, "Middle", new SectionElements
     {
         { chKeys,  Loop,  seqKeysVerse  },
         { chDrums, Loop,  seqDrumsVerse },
@@ -130,7 +130,7 @@ void BuildComp()
         { chSynth, Loop,  seqSynth1     },
     });
 
-    CreateSection(32, "End", new NSectionElements
+    CreateSection(32, "End", new SectionElements
     {
         { chKeys,  Loop,  seqKeysEnd    },
         { chDrums, Loop,  seqDrumsVerse },

@@ -6,7 +6,7 @@ using NBagOfTricks;
 using Nebulator.Common;
 
 
-namespace Nebulator.Device
+namespace Nebulator.Steps //TODO1 put in Common?
 {
     /// <summary>
     /// Base class for representation of a received event or a compiled event to be sent.
@@ -16,7 +16,7 @@ namespace Nebulator.Device
         /// <summary>Associated comm device to use.</summary>
         public IDevice Device { get; set; } = null;
 
-        /// <summary>Channel number.</summary>
+        /// <summary>Channel number 1-16.</summary>
         public int ChannelNumber { get; set; } = 1;
 
         /// <summary>For viewing pleasure.</summary>
@@ -134,8 +134,8 @@ namespace Nebulator.Device
         }
     }
 
-    /// <summary>Used for internal things that are not actually comm protocol.</summary>
-    public class StepInternal : Step
+    /// <summary>Step that calls a function.</summary>
+    public class StepFunction : Step
     {
         /// <summary>A function to call.</summary>
         public Action ScriptFunction { get; set; } = null;
@@ -143,7 +143,7 @@ namespace Nebulator.Device
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            return $"StepInternal: {base.ToString()} function:{ScriptFunction}";
+            return $"StepFunction: {base.ToString()} function:{ScriptFunction}";
         }
     }
 }

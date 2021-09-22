@@ -4,11 +4,11 @@
 ///// Constants /////
 const double SOUND_VOL = 0.8;
 
-///// Variables /////
-NVariable vColor;
+// ///// Variables /////
+// NVariable vColor;
 
-///// Channels /////
-NChannel chSound;
+// ///// Channels /////
+// Channel chSound;
 
 class TapeLoop
 {
@@ -25,18 +25,19 @@ class TapeLoop
     }
 }
 
+// Possible loops.
 List<TapeLoop> _loops = new List<TapeLoop>();
 
 public override void Setup()
 {
-    // Variables
-    vColor = CreateVariable("color", 240, 0, 255); // change color
+    // // Variables
+    // vColor = CreateVariable("color", 240, 0, 255); // change color
 
-    // Channels
-    chSound = CreateChannel("sound", DeviceType.MidiOut, 1, 0.1);
+    // // Channels
+    // chSound = CreateChannel("sound", DeviceType.MidiOut, 1, 0.1);
     
-    // levers
-    CreateLever(vColor);
+    // // levers
+    // CreateLever(vColor);
 
     // Set up the _loops.
     _loops.Clear();

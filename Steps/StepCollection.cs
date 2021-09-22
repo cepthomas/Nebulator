@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Nebulator.Common;
 
 
-namespace Nebulator.Device
+namespace Nebulator.Steps
 {
-    /// <summary>A collection of Steps.</summary>
+    /// <summary>A convenience container for Steps.</summary>
     public class StepCollection
     {
         #region Fields

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
 
 
 // Nebulator script API stuff.
@@ -55,66 +55,14 @@ namespace Nebulator.Script
         #endregion
 
         #region Script callable functions
-        // /// <summary>
-        // /// Normal factory.
-        // /// </summary>
-        // /// <param name="name">UI name</param>
-        // /// <param name="val">Initial value</param>
-        // /// <param name="min"></param>
-        // /// <param name="max"></param>
-        // /// <param name="handler">Optional callback function.</param>
-        // protected NVariable CreateVariable(string name, double val, double min, double max, Action handler = null)
-        // {
-        //     NVariable nv = new NVariable() { Name = name, Value = val, Min = min, Max = max, Changed = handler };
-        //     Variables.Add(nv);
-        //     return nv;
-        // }
-
-
-        // /// <summary>
-        // /// Create a UI lever.
-        // /// </summary>
-        // /// <param name="bound"></param>
-        // protected void CreateLever(NVariable bound)
-        // {
-        //     if (bound is null)
-        //     {
-        //         throw new Exception($"Invalid NVariable for lever");
-        //     }
-
-        //     NController ctlr = new NController() { BoundVar = bound };
-        //     Levers.Add(ctlr);
-        // }
-
-        // /// <summary>
-        // /// Create a UI meter.
-        // /// </summary>
-        // /// <param name="bound"></param>
-        // /// <param name="type"></param>
-        // protected void CreateDisplay(NVariable bound, int type)
-        // {
-        //     if (bound is null)
-        //     {
-        //         throw new Exception($"Invalid NVariable for meter");
-        //     }
-
-        //     NDisplay disp = new NDisplay()
-        //     {
-        //         BoundVar = bound,
-        //         DisplayType = (DisplayType)type,
-        //     };
-
-        //     Displays.Add(disp);
-        // }
-
         /// <summary>
-        /// Normal constructor.
+        /// Create a defined sequence.
         /// </summary>
         /// <param name="beats">Length in beats.</param>
         /// <param name="elements">.</param>
-        protected NSequence CreateSequence(int beats, NSequenceElements elements)
+        protected Sequence CreateSequence(int beats, SequenceElements elements)
         {
-            NSequence nseq = new NSequence()
+            Sequence nseq = new Sequence()
             {
                 Beats = beats,
                 Elements = elements
@@ -130,18 +78,18 @@ namespace Nebulator.Script
         /// <param name="beats">How long in beats.</param>
         /// <param name="name">For UI display.</param>
         /// <param name="elements">Section info to add.</param>
-        protected NSection CreateSection(int beats, string name, NSectionElements elements)
+        protected Section CreateSection(int beats, string name, SectionElements elements)
         {
             // Sanity check elements.
             foreach (var el in elements)
             {
                 if (el.Channel is null)
                 {
-                    throw new Exception($"Invalid NChannel at index {elements.IndexOf(el)}");
+                    throw new Exception($"Invalid Channel at index {elements.IndexOf(el)}");
                 }
             }
 
-            NSection nsect = new NSection()
+            Section nsect = new Section()
             {
                 Beats = beats,
                 Name = name,
@@ -161,7 +109,7 @@ namespace Nebulator.Script
         {
             if (channel is null || channel.Device is null)
             {
-                throw new Exception($"Invalid NChannel");
+                throw new Exception($"Invalid Channel");
             }
 
             double vel = channel.NextVol(vol);
@@ -203,11 +151,11 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         public void SendNote(Channel channel, string notestr, double vol, Time dur)
         {
-            NSequenceElement note = new NSequenceElement(notestr);
+            SequenceElement note = new SequenceElement(notestr);
 
             if (note.Notes.Count == 0)
             {
-                _logger.Warn($"Invalid notestr: {notestr}");
+                throw new Exception($"Invalid notestr: {notestr}");
             }
             else
             {
@@ -260,7 +208,7 @@ namespace Nebulator.Script
         {
             if (channel is null || channel.Device is null)
             {
-                throw new Exception($"Invalid NChannel");
+                throw new Exception($"Invalid Channel");
             }
 
             StepControllerChange step = new StepControllerChange()
@@ -281,7 +229,7 @@ namespace Nebulator.Script
         {
             if (channel is null || channel.Device is null)
             {
-                throw new Exception($"Invalid NChannel");
+                throw new Exception($"Invalid Channel");
             }
 
             StepPatch step = new StepPatch()
@@ -297,16 +245,16 @@ namespace Nebulator.Script
         /// <summary>Send a named sequence now.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        public void SendSequence(Channel channel, NSequence seq)
+        public void SendSequence(Channel channel, Sequence seq)
         {
             if (channel is null || channel.Device is null)
             {
-                throw new Exception($"Invalid NChannel");
+                throw new Exception($"Invalid Channel");
             }
 
             if (seq is null)
             {
-                throw new Exception($"Invalid NSequence");
+                throw new Exception($"Invalid Sequence");
             }
 
             StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Beat);
@@ -348,7 +296,7 @@ namespace Nebulator.Script
         public double Random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
         public int Random(int max) { return _rand.Next(max); }
         public int Random(int min, int max) { return _rand.Next(min, max); }
-        public void Print(params object[] vars) { _logger.Info(string.Join(" ", vars)); }
+        public void Print(params object[] vars) { _logger.Info(string.Join(" | ", vars)); }
         #endregion
     }
 }

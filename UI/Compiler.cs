@@ -9,8 +9,10 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
+using Nebulator.Script;
 
 
 // string fn = Path.GetTempFileName() + ".html";
@@ -18,12 +20,12 @@ using Nebulator.Common;
 // new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
 
 
-namespace Nebulator.Script
+namespace Nebulator.UI // Probably not forever home
 {
     /// <summary>
     /// Parses/compiles *.neb file(s).
     /// </summary>
-    public class NebCompiler
+    public class Compiler
     {
         /// <summary>
         /// Parser helper class.
@@ -59,7 +61,7 @@ namespace Nebulator.Script
 
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = new Logger("Compiler");
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Starting directory.</summary>
         string _baseDir = Definitions.UNKNOWN_STRING;
@@ -326,7 +328,7 @@ namespace Nebulator.Script
                 pcont.CodeLines.AddRange(GenTopOfFile(pcont.SourceFile));
 
                 ///// The content.
-                GenScriptFile(pcont);
+                ProcessScriptFile(pcont);
 
                 ///// Postamble.
                 pcont.CodeLines.AddRange(GenBottomOfFile());
@@ -339,7 +341,7 @@ namespace Nebulator.Script
         /// Process one plain script file.
         /// </summary>
         /// <param name="pcont"></param>
-        void GenScriptFile(FileContext pcont)
+        void ProcessScriptFile(FileContext pcont)
         {
             List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
 
@@ -427,7 +429,7 @@ namespace Nebulator.Script
             WriteDefValues(ScriptDefinitions.TheDefinitions.ControllerDefs, "Midi Controllers");
 
             // Some enums.
-            WriteEnumValues<Device.DeviceType>();
+            WriteEnumValues<DeviceType>();
 //            WriteEnumValues<DisplayType>();
             WriteEnumValues<SequenceMode>();
 

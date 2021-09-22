@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Nebulator.Common;
-using Nebulator.Script;
+//using Nebulator.Script;
 
 
 namespace Nebulator.UI

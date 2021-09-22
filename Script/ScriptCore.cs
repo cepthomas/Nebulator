@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-//using NLog;
+using NLog;
 using Nebulator.Common;
-using Nebulator.Device;
+using Nebulator.Steps;
 
 
 // The internal script stuff.
@@ -18,7 +18,7 @@ namespace Nebulator.Script
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        readonly Logger _logger = new Logger("Script");
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -33,26 +33,11 @@ namespace Nebulator.Script
         #endregion
 
         #region Elements defined in the script that MainForm needs
-        ///// <summary>All vars.</summary>
-        //public List<NVariable> Variables { get; set; } = new List<NVariable>();
-
-        ///// <summary>Control inputs.</summary>
-        //public List<NController> Controllers { get; set; } = new List<NController>();
-
-        // /// <summary>Levers.</summary>
-        // public List<NController> Levers { get; set; } = new List<NController>();
-
-        // /// <summary>All displays.</summary>
-        // public List<NDisplay> Displays { get; set; } = new List<NDisplay>();
-
-        ///// <summary>All channels.</summary>
-        //public List<NChannel> Channels { get; set; } = new List<NChannel>();
-
         /// <summary>All sequences.</summary>
-        public List<NSequence> Sequences { get; set; } = new List<NSequence>();
+        public List<Sequence> Sequences { get; set; } = new List<Sequence>();
 
         /// <summary>All sections.</summary>
-        public List<NSection> Sections { get; set; } = new List<NSection>();
+        public List<Section> Sections { get; set; } = new List<Section>();
 
         /// <summary>The steps being executed. Script functions may add to it at runtime using e.g. SendSequence(). Script -> Main</summary>
         public StepCollection Steps { get; private set; } = new StepCollection();
@@ -88,11 +73,11 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start at.</param>
-        public static StepCollection ConvertToSteps(Channel channel, NSequence seq, int startBeat)
+        public static StepCollection ConvertToSteps(Channel channel, Sequence seq, int startBeat)
         {
             StepCollection steps = new StepCollection();
 
-            foreach (NSequenceElement seqel in seq.Elements)
+            foreach (SequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
                 int toffset = 0;
@@ -104,7 +89,7 @@ namespace Nebulator.Script
                 // Is it a function?
                 if (seqel.ScriptFunction != null)
                 {
-                    StepInternal step = new StepInternal()
+                    StepFunction step = new StepFunction()
                     {
                         Device = channel.Device,
                         ChannelNumber = channel.ChannelNumber,
@@ -147,16 +132,16 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         /// <param name="beat">When to send the sequence.</param>
-        public void AddSequence(Channel channel, NSequence seq, int beat)
+        public void AddSequence(Channel channel, Sequence seq, int beat)
         {
             if (channel is null)
             {
-                throw new Exception($"Invalid NChannel");
+                throw new Exception($"Invalid Channel");
             }
 
             if (seq is null)
             {
-                throw new Exception($"Invalid NSequence");
+                throw new Exception($"Invalid Sequence");
             }
 
             StepCollection scoll = ConvertToSteps(channel, seq, beat);
