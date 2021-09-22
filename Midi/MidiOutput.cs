@@ -218,7 +218,7 @@ namespace Nebulator.Midi
                     if(msg != 0)
                     {
                         _midiOut.Send(msg);
-                        _logger.Trace($"SEND:{step}"); //TODO0 all the SEND/RECV
+                        _logger.Trace($"SND:{step}");
                     }
                 }
             }

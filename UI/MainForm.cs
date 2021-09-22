@@ -85,7 +85,7 @@ namespace Nebulator.UI
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
-            UserSettings.Load(appDir);
+            UserSettings.TheSettings = UserSettings.Load(appDir);
             InitializeComponent();
             toolStrip1.Renderer = new NBagOfTricks.UI.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
         }
@@ -747,42 +747,6 @@ namespace Nebulator.UI
             });
         }
 
-        ///// <summary>
-        ///// Process log message.
-        ///// </summary>
-        //void Device_LogEvent(object sender, LogEventArgs e)//TODO0 - also sender
-        //{
-        //    BeginInvoke((MethodInvoker) delegate()
-        //    {
-        //        // Route all events through log.
-
-        //        switch (e.LogCategory)
-        //        {
-        //            case LogCategory.Error:
-        //                _logger.Error($"{_stepTime} {e.Message}");
-        //                break;
-
-        //            case LogCategory.Info:
-        //                _logger.Info($"{_stepTime} {e.Message}");
-        //                break;
-
-        //            case LogCategory.Recv:
-        //                if (UserSettings.TheSettings.MonitorInput)
-        //                {
-        //                    _logger.Info($"RCV: {_stepTime} {e.Message}");
-        //                }
-        //                break;
-
-        //            case LogCategory.Send:
-        //                if (UserSettings.TheSettings.MonitorOutput)
-        //                {
-        //                    _logger.Info($"SND: {_stepTime} {e.Message}");
-        //                }
-        //                break;
-        //        }
-        //    });
-        //}
-
         /// <summary>
         /// User has changed a channel value. Interested in solo/mute and volume.
         /// </summary>
@@ -1290,7 +1254,7 @@ namespace Nebulator.UI
                 ShowInTaskbar = false
             })
             {
-                PropertyGridEx pg = new PropertyGridEx()
+                PropertyGrid pg = new PropertyGrid()
                 {
                     Dock = DockStyle.Fill,
                     PropertySort = PropertySort.NoSort,

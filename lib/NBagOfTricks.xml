@@ -89,6 +89,15 @@
         <member name="T:NBagOfTricks.Arguments">
             <summary>Specialized container. Has Add() to support initialization.</summary>
         </member>
+        <member name="T:NBagOfTricks.JsonColorConverter">
+            <summary>Serialize prettier.</summary>
+        </member>
+        <member name="T:NBagOfTricks.JsonPointFConverter">
+            <summary>Serialize prettier.</summary>
+        </member>
+        <member name="T:NBagOfTricks.JsonFontConverter">
+            <summary>Serialize prettier.</summary>
+        </member>
         <member name="T:NBagOfTricks.Dumper">
             <summary>
             Dumps: objects, dictionaries of objects, or lists of objects.

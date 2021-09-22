@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using NBagOfTricks;
+using Nebulator.Common;
 
 
-namespace Nebulator.Common
+namespace Nebulator.Script
 {
     public class NoteUtils
     {

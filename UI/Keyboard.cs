@@ -128,7 +128,7 @@ namespace Nebulator.UI
                 }
 
                 DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
-                _logger.Trace($"RECV:{step}");
+                _logger.Trace($"RCV:{step}");
             }
         }
         #endregion

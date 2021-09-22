@@ -149,12 +149,10 @@ namespace Nebulator.Midi
             MidiEvent me = MidiEvent.FromRawMessage(e.RawMessage);
             Step step = null;
 
-            switch (me.CommandCode)
+            switch (me)
             {
-                case MidiCommandCode.NoteOn:
+                case NoteOnEvent evt:
                     {
-                        NoteOnEvent evt = me as NoteOnEvent;
-
                         if(evt.Velocity == 0)
                         {
                             step = new StepNoteOff()
@@ -180,9 +178,8 @@ namespace Nebulator.Midi
                     }
                     break;
 
-                case MidiCommandCode.NoteOff:
+                case NoteEvent evt:
                     {
-                        NoteEvent evt = me as NoteEvent;
                         step = new StepNoteOff()
                         {
                             Device = this,
@@ -193,9 +190,8 @@ namespace Nebulator.Midi
                     }
                     break;
 
-                case MidiCommandCode.ControlChange:
+                case ControlChangeEvent evt:
                     {
-                        ControlChangeEvent evt = me as ControlChangeEvent;
                         step = new StepControllerChange()
                         {
                             Device = this,
@@ -206,9 +202,8 @@ namespace Nebulator.Midi
                     }
                     break;
 
-                case MidiCommandCode.PitchWheelChange:
+                case PitchWheelChangeEvent evt:
                     {
-                        PitchWheelChangeEvent evt = me as PitchWheelChangeEvent;
                         step = new StepControllerChange()
                         {
                             Device = this,
@@ -225,7 +220,7 @@ namespace Nebulator.Midi
                 // Pass it up for handling.
                 DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
                 DeviceInputEvent?.Invoke(this, args);
-                _logger.Trace($"RECV:{step}");
+                _logger.Trace($"RCV:{step}");
             }
         }
 

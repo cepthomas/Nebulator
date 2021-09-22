@@ -24,8 +24,11 @@ namespace Nebulator.Common
         public IInputDevice Device { get; set; } = null;
 
         /// <summary>The device type for this controller.</summary>
-        [JsonIgnore]
-        [Browsable(false)]
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
         /// <summary>The device name for this controller.</summary>
@@ -69,8 +72,11 @@ namespace Nebulator.Common
         public IOutputDevice Device { get; set; } = null;
 
         /// <summary>The device type for this channel.</summary>
-        [JsonIgnore]
-        [Browsable(false)]
+        [DisplayName("xxxx")]
+        [Description("xxxx")]
+        [Category("xxxx")]
+        [Browsable(true)]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
         /// <summary>The device name for this channel.</summary>

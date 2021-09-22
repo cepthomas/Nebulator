@@ -132,8 +132,8 @@ namespace Nebulator.OSC
             switch (e.LogCategory)
             {
                 case NebOsc.LogCategory.Info: _logger.Info(e.Message); break;
-                case NebOsc.LogCategory.Send: _logger.Trace($"SEND:{e.Message}"); break;
-                case NebOsc.LogCategory.Recv: _logger.Trace($"RECV:{e.Message}"); break;
+                case NebOsc.LogCategory.Send: _logger.Trace($"SND:{e.Message}"); break;
+                case NebOsc.LogCategory.Recv: _logger.Trace($"RCV:{e.Message}"); break;
                 case NebOsc.LogCategory.Error: _logger.Error(e.Message); break;
             }
         }
@@ -214,7 +214,7 @@ namespace Nebulator.OSC
                     // Pass it up for handling.
                     DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
                     DeviceInputEvent?.Invoke(this, args);
-                    _logger.Trace($"RECV:{step}");
+                    _logger.Trace($"RCV:{step}");
                 }
             });
         }

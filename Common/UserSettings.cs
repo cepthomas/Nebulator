@@ -11,16 +11,16 @@ using System.Drawing.Design;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NAudio.Midi;
+using NBagOfTricks;
 
-
-//[JsonConverter(typeof(FontConverter))] TODO2 test these are handled properly
-//[JsonConverter(typeof(ColorConverter))]
 
 namespace Nebulator.Common
 {
     [Serializable]
     public class UserSettings //TODO2 tweak these.
     {
+  //      NBagOfTricks.
+
         #region Persisted editable properties
         // [DisplayName("Editor Font")]
         // [Description("The font to use for editors etc.")]
@@ -38,24 +38,28 @@ namespace Nebulator.Common
         [Description("The color used for icons.")]
         [Category("Cosmetics")]
         [Browsable(true)]
+        [JsonConverter(typeof(JsonColorConverter))]
         public Color IconColor { get; set; } = Color.Purple;
 
         [DisplayName("Control Color")]
         [Description("The color used for styling control surfaces.")]
         [Category("Cosmetics")]
         [Browsable(true)]
+        [JsonConverter(typeof(JsonColorConverter))]
         public Color ControlColor { get; set; } = Color.Yellow;
 
         [DisplayName("Selected Color")]
         [Description("The color used for selections.")]
         [Category("Cosmetics")]
         [Browsable(true)]
+        [JsonConverter(typeof(JsonColorConverter))]
         public Color SelectedColor { get; set; } = Color.Violet;
 
         [DisplayName("Background Color")]
         [Description("The color used for overall background.")]
         [Category("Cosmetics")]
         [Browsable(true)]
+        [JsonConverter(typeof(JsonColorConverter))]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
         [DisplayName("Midi Input")]
@@ -125,14 +129,6 @@ namespace Nebulator.Common
         public static UserSettings TheSettings { get; set; } = new UserSettings();
 
         #region Persistence
-        /// <summary>Save object to file.</summary>
-        public void Save()
-        {
-            JsonSerializerOptions opts = new() { WriteIndented = true };
-            string json = JsonSerializer.Serialize(this, opts);
-            File.WriteAllText(_fn, json);
-        }
-
         /// <summary>Create object from file.</summary>
         public static UserSettings Load(string appDir)
         {
@@ -152,13 +148,21 @@ namespace Nebulator.Common
             else
             {
                 // Doesn't exist, create a new one.
-                set = new UserSettings
+                set = new UserSettings()
                 {
                     _fn = fn
                 };
             }
 
             return set;
+        }
+
+        /// <summary>Save object to file.</summary>
+        public void Save()
+        {
+            JsonSerializerOptions opts = new() { WriteIndented = true };
+            string json = JsonSerializer.Serialize(this, opts);
+            File.WriteAllText(_fn, json);
         }
         #endregion
     }

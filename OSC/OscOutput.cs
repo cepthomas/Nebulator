@@ -184,7 +184,7 @@ namespace Nebulator.OSC
                     {
                         if(_oscOutput.Send(msg))
                         {
-                            _logger.Trace($"SEND:{step}");
+                            _logger.Trace($"SND:{step}");
                         }
                         else
                         {
@@ -228,8 +228,8 @@ namespace Nebulator.OSC
             switch (e.LogCategory)
             {
                 case NebOsc.LogCategory.Info: _logger.Info(e.Message); break;
-                case NebOsc.LogCategory.Send: _logger.Trace($"SEND:{e.Message}"); break;
-                case NebOsc.LogCategory.Recv: _logger.Trace($"RECV:{e.Message}"); break;
+                case NebOsc.LogCategory.Send: _logger.Trace($"SND:{e.Message}"); break;
+                case NebOsc.LogCategory.Recv: _logger.Trace($"RCV:{e.Message}"); break;
                 case NebOsc.LogCategory.Error: _logger.Error(e.Message); break;
             }
         }
