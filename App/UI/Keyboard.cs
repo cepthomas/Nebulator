@@ -59,7 +59,7 @@ namespace Nebulator.UI
         void Keyboard_Load(object sender, EventArgs e)
         {
             // Get the bitmap.
-            Bitmap bm = new Bitmap(Properties.Resources.glyphicons_327_piano);
+            Bitmap bm = new Bitmap(App.Properties.Resources.glyphicons_327_piano);
 
             // Convert to an icon and use for the form's icon.
             Icon = Icon.FromHandle(bm.GetHicon());
