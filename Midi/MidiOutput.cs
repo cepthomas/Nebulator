@@ -4,7 +4,6 @@ using NAudio.Midi;
 using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Steps;
 
 
 namespace Nebulator.Midi
@@ -16,7 +15,7 @@ namespace Nebulator.Midi
     {
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("MidiOutput");
 
         /// <summary>Midi output device.</summary>
         MidiOut _midiOut = null;
@@ -218,7 +217,14 @@ namespace Nebulator.Midi
                     if(msg != 0)
                     {
                         _midiOut.Send(msg);
-                        _logger.Trace($"SND:{step}");
+                        if(UserSettings.TheSettings.MonitorOutput)
+                        {
+                            _logger.Trace($"{TraceCat.SND} MidiOut:{step}");
+                        }
+                    }
+                    else
+                    {
+                        _logger.Error($"Send failed");
                     }
                 }
             }

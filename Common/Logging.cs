@@ -27,19 +27,12 @@ namespace Nebulator.Common
         /// <param name="logEvent">Describes the event.</param>
         protected override void Write(LogEventInfo logEvent)
         {
-            if (ClientNotification != null)
-            {
-                //string preamble = "";
-                //if (logEvent.Level == LogLevel.Fatal || logEvent.Level == LogLevel.Error)
-                //{
-                //    preamble = "ERROR: ";
-                //}
-                //else if (logEvent.Level == LogLevel.Warn)
-                //{
-                //    preamble = "WARNING: ";
-                //}
-                ClientNotification(logEvent.Level, logEvent.Message);
-            }
+            // Can do some preprocessing here...
+
+            //ClientNotification?.Invoke(logEvent.Level, logEvent.Message);
+
+            var slog = Layout.Render(logEvent);
+            ClientNotification?.Invoke(logEvent.Level, slog);
         }
     }
 }

@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NBagOfTricks;
-using Nebulator.Common;
 
 
-namespace Nebulator.Steps //TODO1 put in Common?
+namespace Nebulator.Common
 {
     /// <summary>
     /// Base class for representation of a received event or a compiled event to be sent.

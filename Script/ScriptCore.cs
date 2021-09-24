@@ -7,10 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using NLog;
 using Nebulator.Common;
-using Nebulator.Steps;
 
 
-// The internal script stuff.
+// The internal script stuff. 
 
 namespace Nebulator.Script
 {
@@ -18,18 +17,13 @@ namespace Nebulator.Script
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("NebScript");
 
         /// <summary>Resource clean up.</summary>
-        bool _disposed = false;
+        internal bool _disposed = false;
 
         /// <summary>Script randomizer.</summary>
-        Random _rand = new Random();
-        #endregion
-
-        #region Properties
-        /// <summary>Short duration for drum hits.</summary>
-        public static double DrumDur { get; } = 0.1;
+        internal Random _rand = new Random();
         #endregion
 
         #region Elements defined in the script that MainForm needs
@@ -66,7 +60,7 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Utilities
+        #region Utilities TODO0 clean up all
         /// <summary>
         /// Generate steps from sequence notes.
         /// </summary>
@@ -84,7 +78,7 @@ namespace Nebulator.Script
                 //int toffset = startBeat == -1 ? 0 : channel.NextTime();
 
                 Time startNoteTime = new Time(startBeat, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new Time(DrumDur) : seqel.Duration);
+                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new Time(0.1) : seqel.Duration); // 0.1 is a short hit
 
                 // Is it a function?
                 if (seqel.ScriptFunction != null)

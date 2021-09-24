@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Steps;
 
 
 namespace Nebulator.OSC
@@ -15,7 +14,7 @@ namespace Nebulator.OSC
     {
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("OscInput");
 
         /// <summary>OSC input device.</summary>
         NebOsc.Input _oscInput = null;
@@ -129,12 +128,13 @@ namespace Nebulator.OSC
         /// <param name="e"></param>
         void OscInput_LogEvent(object sender, NebOsc.LogEventArgs e)
         {
-            switch (e.LogCategory)
+            if(e.IsError)
             {
-                case NebOsc.LogCategory.Info: _logger.Info(e.Message); break;
-                case NebOsc.LogCategory.Send: _logger.Trace($"SND:{e.Message}"); break;
-                case NebOsc.LogCategory.Recv: _logger.Trace($"RCV:{e.Message}"); break;
-                case NebOsc.LogCategory.Error: _logger.Error(e.Message); break;
+                _logger.Error(e.Message);
+            }
+            else
+            {
+                _logger.Info(e.Message);
             }
         }
 
@@ -214,7 +214,10 @@ namespace Nebulator.OSC
                     // Pass it up for handling.
                     DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
                     DeviceInputEvent?.Invoke(this, args);
-                    _logger.Trace($"RCV:{step}");
+                    if(UserSettings.TheSettings.MonitorInput)
+                    {
+                        _logger.Trace($"{TraceCat.RCV} OscIn:{step}");
+                    }
                 }
             });
         }

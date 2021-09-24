@@ -19,6 +19,11 @@ using Nebulator.Script;
 // File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
 // new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
 
+//dotnet build ...
+
+// output like:
+// C:\Dev\comp_files\example_defs.cs(201,19): warning CS0108: 'example.Volume' hides inherited member 'NebScript.Volume'. Use the new keyword if hiding was intended. [C:\Dev\comp_files\comp_files.csproj]
+
 
 namespace Nebulator.UI // Probably not forever home
 {
@@ -61,7 +66,7 @@ namespace Nebulator.UI // Probably not forever home
 
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("Compiler");
 
         /// <summary>Starting directory.</summary>
         string _baseDir = Definitions.UNKNOWN_STRING;

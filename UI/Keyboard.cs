@@ -11,7 +11,6 @@ using System.IO;
 using NLog;
 using NBagOfTricks.UI;
 using Nebulator.Common;
-using Nebulator.Steps;
 using Nebulator.Midi;
 
 
@@ -24,7 +23,7 @@ namespace Nebulator.UI
     {
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("Keyboard");
         #endregion
 
         #region Events
@@ -128,7 +127,10 @@ namespace Nebulator.UI
                 }
 
                 DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
-                _logger.Trace($"RCV:{step}");
+                if(UserSettings.TheSettings.MonitorInput)
+                {
+                    _logger.Trace($"{TraceCat.RCV} KbdIn:{step}");
+                }
             }
         }
         #endregion

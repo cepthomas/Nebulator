@@ -7,7 +7,6 @@ using System.IO;
 using NAudio.Midi;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Steps;
 
 
 namespace Nebulator.Midi
@@ -26,7 +25,7 @@ namespace Nebulator.Midi
         /// <param name="channels">Map of channel number to channel name.</param>
         /// <param name="bpm">Beats per minute.</param>
         /// <param name="info">Extra info to add to midi file.</param>
-        public static void ExportMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double bpm, string info)
+        public static void ExportToMidi(StepCollection steps, string midiFileName, Dictionary<int, string> channels, double bpm, string info)
         {
             int exportPpq = 96;
 

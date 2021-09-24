@@ -6,6 +6,9 @@ namespace Nebulator.Common
     /// <summary>Channel state.</summary>
     public enum ChannelState { Normal, Mute, Solo }
 
+    /// <summary>Trace log markers.</summary>
+    public enum TraceCat { SND, RCV }
+
     public static class Definitions
     {
         #region Constants

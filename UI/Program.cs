@@ -32,34 +32,6 @@ namespace Nebulator.UI
             Application.Run(f);
         }
 
-        ///// <summary>
-        ///// Compile one file.
-        ///// </summary>
-        ///// <param name="fn"></param>
-        //private static void Compile(string fn)
-        //{
-        //    Console.WriteLine($"FILE: {fn}");
-
-        //    NebCompiler compiler = new NebCompiler() { Min = false };
-
-        //    // Compile now.
-        //    NebScript _script = compiler.Execute(fn);
-
-        //    int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptErrorType.Error);
-
-        //    compiler.Errors.ForEach(r =>
-        //    {
-        //        if (r.ErrorType == ScriptErrorType.Warning)
-        //        {
-        //            Console.WriteLine($"WRN: {r}");
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine($"ERR: {r}");
-        //        }
-        //    });
-        //}
-
         /// <summary>
         /// Exception handler.
         /// </summary>
@@ -69,7 +41,7 @@ namespace Nebulator.UI
         {
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled exception:{e.Exception.Message}{Environment.NewLine}{e.Exception.StackTrace}{Environment.NewLine}";
-//TODO2            LogManager.GetCurrentClassLogger().Error("Unhandled exception: " + s);
+//TODO2            LogManager.GetLogger().Error("Unhandled exception: " + s);
             MessageBox.Show($"Unhandled exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
 
@@ -82,7 +54,7 @@ namespace Nebulator.UI
         {
             // Unhandled exception, log the stack of application context.
             string s = $"Unhandled domain exception:{e}{Environment.NewLine}{e.ExceptionObject}{Environment.NewLine}";
-//TODO2            LogManager.GetCurrentClassLogger().Error("Unhandled domain exception: " + s);
+//TODO2            LogManager.GetLogger().Error("Unhandled domain exception: " + s);
             MessageBox.Show($"Unhandled domain exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
     }

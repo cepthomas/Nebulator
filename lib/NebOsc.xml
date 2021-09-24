@@ -41,16 +41,13 @@
             <summary>Received data.</summary>
         </member>
         <member name="T:NebOsc.LogEventArgs">
-            <summary>OSC wants to send something.</summary>
+            <summary>OSC wants to say something meta.</summary>
         </member>
-        <member name="P:NebOsc.LogEventArgs.LogCategory">
+        <member name="P:NebOsc.LogEventArgs.IsError">
             <summary>Category.</summary>
         </member>
         <member name="P:NebOsc.LogEventArgs.Message">
-            <summary>Text to log.</summary>
-        </member>
-        <member name="T:NebOsc.LogCategory">
-            <summary>Category types.</summary>
+            <summary>Text to log. Usually</summary>
         </member>
         <member name="T:NebOsc.Utils">
             <summary>
@@ -133,10 +130,10 @@
             </summary>
             <param name="ar"></param>
         </member>
-        <member name="M:NebOsc.Input.LogMsg(NebOsc.LogCategory,System.String)">
+        <member name="M:NebOsc.Input.LogMsg(System.String,System.Boolean)">
             <summary>Ask host to do something with this.</summary>
-            <param name="cat"></param>
             <param name="msg"></param>
+            <param name="error"></param>
         </member>
         <member name="T:NebOsc.Message">
             <summary>
@@ -223,10 +220,10 @@
             <param name="msg"></param>
             <returns></returns>
         </member>
-        <member name="M:NebOsc.Output.LogMsg(NebOsc.LogCategory,System.String)">
+        <member name="M:NebOsc.Output.LogMsg(System.String,System.Boolean)">
             <summary>Ask host to do something with this.</summary>
-            <param name="cat"></param>
             <param name="msg"></param>
+            <param name="error"></param>
         </member>
         <member name="T:NebOsc.Packet">
             <summary>

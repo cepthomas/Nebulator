@@ -4,7 +4,6 @@ using NAudio.Midi;
 using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Steps;
 
 
 namespace Nebulator.Midi
@@ -16,7 +15,7 @@ namespace Nebulator.Midi
     {
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("MidiInput");
 
         /// <summary>Midi input device.</summary>
         MidiIn _midiIn = null;
@@ -220,7 +219,10 @@ namespace Nebulator.Midi
                 // Pass it up for handling.
                 DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
                 DeviceInputEvent?.Invoke(this, args);
-                _logger.Trace($"RCV:{step}");
+                if(UserSettings.TheSettings.MonitorInput)
+                {
+                    _logger.Trace($"{TraceCat.RCV} MidiIn:{step}");
+                }
             }
         }
 

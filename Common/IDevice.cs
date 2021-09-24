@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Nebulator.Steps;
 
 
 namespace Nebulator.Common
 {
-    /// <summary>The various devices.</summary>
+    /// <summary>The various devices. TODO0 shouldn't need this.</summary>
     public enum DeviceType { None, MidiIn, MidiOut, OscIn, OscOut, VkeyIn }
 
     /// <summary>Device has received something.</summary>

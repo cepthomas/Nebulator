@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
-using Nebulator.Steps;
 
 
 namespace Nebulator.OSC
@@ -15,7 +14,7 @@ namespace Nebulator.OSC
     {
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("OscOutput");
 
         /// <summary>OSC output device.</summary>
         NebOsc.Output _oscOutput;
@@ -184,16 +183,19 @@ namespace Nebulator.OSC
                     {
                         if(_oscOutput.Send(msg))
                         {
-                            _logger.Trace($"SND:{step}");
+                            if(UserSettings.TheSettings.MonitorOutput)
+                            {
+                                _logger.Trace($"{TraceCat.SND} OscOut:{step}");
+                            }
                         }
                         else
                         {
-                            _logger.Error($"{step}");
+                            _logger.Error($"Send failed");
                         }
                     }
                     else
                     {
-                        _logger.Error($"{step}");
+                        _logger.Error($"Send failed");
                     }
                 }
             }
@@ -225,12 +227,13 @@ namespace Nebulator.OSC
         /// <param name="e"></param>
         void OscOutput_LogEvent(object sender, NebOsc.LogEventArgs e)
         {
-            switch (e.LogCategory)
+            if (e.IsError)
             {
-                case NebOsc.LogCategory.Info: _logger.Info(e.Message); break;
-                case NebOsc.LogCategory.Send: _logger.Trace($"SND:{e.Message}"); break;
-                case NebOsc.LogCategory.Recv: _logger.Trace($"RCV:{e.Message}"); break;
-                case NebOsc.LogCategory.Error: _logger.Error(e.Message); break;
+                _logger.Error(e.Message);
+            }
+            else
+            {
+                _logger.Info(e.Message);
             }
         }
         #endregion

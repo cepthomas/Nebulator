@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
-// using Newtonsoft.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NAudio.Midi;
@@ -19,21 +18,7 @@ namespace Nebulator.Common
     [Serializable]
     public class UserSettings //TODO2 tweak these.
     {
-  //      NBagOfTricks.
-
         #region Persisted editable properties
-        // [DisplayName("Editor Font")]
-        // [Description("The font to use for editors etc.")]
-        // [Category("Cosmetics")]
-        // [Browsable(true)]
-        // public Font EditorFont { get; set; } = new Font("Consolas", 10);
-
-        // [DisplayName("Control Font")]
-        // [Description("The font to use for controls.")]
-        // [Category("Cosmetics")]
-        // [Browsable(true)]
-        // public Font ControlFont { get; set; } = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
-
         [DisplayName("Icon Color")]
         [Description("The color used for icons.")]
         [Category("Cosmetics")]

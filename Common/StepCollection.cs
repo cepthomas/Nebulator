@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nebulator.Common;
 
 
-namespace Nebulator.Steps
+namespace Nebulator.Common
 {
     /// <summary>A convenience container for Steps.</summary>
     public class StepCollection

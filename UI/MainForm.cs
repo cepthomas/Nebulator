@@ -17,7 +17,6 @@ using NBagOfTricks;
 using NBagOfTricks.UI;
 using Nebulator.Common;
 using Nebulator.Script;
-using Nebulator.Steps;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
@@ -33,7 +32,7 @@ namespace Nebulator.UI
 
         #region Fields
         /// <summary>App logger.</summary>
-        readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetLogger("MainForm");
 
         /// <summary>Fast timer.</summary>
         MmTimerEx _mmTimer = new MmTimerEx();
@@ -53,7 +52,7 @@ namespace Nebulator.UI
         /// <summary>Current np file name.</summary>
         string _fn = Definitions.UNKNOWN_STRING;
 
-        /// <summary>Detect changed script files.</summary>
+        /// <summary>Detect changed script files. TODO1 also project files.</summary>
         readonly MultiFileWatcher _watcher = new MultiFileWatcher();
 
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
@@ -164,6 +163,8 @@ namespace Nebulator.UI
 
             InitLogging();
 
+            _logger.Info("Starting up.");
+
             PopulateRecentMenu();
 
             ScriptDefinitions.TheDefinitions.Init();
@@ -205,6 +206,8 @@ namespace Nebulator.UI
         /// </summary>
         void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            _logger.Info("Shutting down.");
+
             ProcessPlay(PlayCommand.Stop);
 
             // Just in case.
@@ -488,7 +491,7 @@ namespace Nebulator.UI
                         // Surface area.
                         InitRuntime();
 
-                        // Setup - first step.
+                        // Setup - first step. TODO0 rework the _script.xxx stuff - let script do them?
                         _script.Setup();
 
                         // Devices are specified in project config - create now.
@@ -606,7 +609,7 @@ namespace Nebulator.UI
             //}
 
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker) delegate()
             {
                 if (_script != null)
                 {
@@ -727,7 +730,7 @@ namespace Nebulator.UI
         /// </summary>
         void Device_InputEvent(object sender, DeviceInputEventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker) delegate()
             {
                 if (_script != null && e.Step != null)
                 {
@@ -991,7 +994,7 @@ namespace Nebulator.UI
         void Watcher_Changed(object sender, MultiFileWatcher.FileChangeEventArgs e)
         {
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker) delegate()
             {
                 if(UserSettings.TheSettings.AutoCompile)
                 {
@@ -1129,7 +1132,8 @@ namespace Nebulator.UI
         /// Init all logging functions.
         /// </summary>
         void InitLogging()
-        { 
+        {
+            // Do log maintenance.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
 
             FileInfo fi = new FileInfo(Path.Combine(appDir, "log.txt"));
@@ -1152,35 +1156,6 @@ namespace Nebulator.UI
         {
             BeginInvoke((MethodInvoker) delegate()
             {
-
-                //switch (e.LogCategory) // TODO0 these
-                //{
-                //    case LogCategory.Error:
-                //        _logger.Error($"{_stepTime} {e.Message}");
-                //        break;
-
-                //    case LogCategory.Info:
-                //        _logger.Info($"{_stepTime} {e.Message}");
-                //        break;
-
-                //    case LogCategory.Recv:
-                //        if (UserSettings.TheSettings.MonitorInput)
-                //        {
-                //            _logger.Info($"RCV: {_stepTime} {e.Message}");
-                //        }
-                //        break;
-
-                //    case LogCategory.Send:
-                //        if (UserSettings.TheSettings.MonitorOutput)
-                //        {
-                //            _logger.Info($"SND: {_stepTime} {e.Message}");
-                //        }
-                //        break;
-                //}
-
-
-
-
                 textViewer.AddLine(msg);
             });
         }
@@ -1196,7 +1171,6 @@ namespace Nebulator.UI
             {
                 Text = "Log Viewer",
                 Size = new Size(900, 600),
-                //Font = UserSettings.TheSettings.EditorFont,
                 BackColor = UserSettings.TheSettings.BackColor,
                 StartPosition = FormStartPosition.Manual,
                 Location = new Point(20, 20),
@@ -1214,7 +1188,7 @@ namespace Nebulator.UI
                 f.Controls.Add(tv);
                 tv.Colors.Add(" ERROR ", Color.Plum);
                 tv.Colors.Add(" _WARN ", Color.LightPink);
-                //tv.Colors.Add(" SND:", Color.LightGreen);
+                //tv.Colors.Add(" SND???:", Color.LightGreen);
 
                 string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
                 string logFilename = Path.Combine(appDir, "log.txt");
@@ -1420,7 +1394,7 @@ namespace Nebulator.UI
                 Dictionary<int, string> channels = new Dictionary<int, string>();
                 _projectConfig.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
 
-                MidiUtils.ExportMidi(_script.Steps, fn, channels, potSpeed.Value, "Converted from " + _fn);
+                MidiUtils.ExportToMidi(_script.Steps, fn, channels, potSpeed.Value, "Converted from " + _fn);
             }
         }
 
