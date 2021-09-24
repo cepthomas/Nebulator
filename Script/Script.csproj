@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <Deterministic>False</Deterministic>
     <Version>2.0.0.0</Version> <!-- TODO2 auto increment version -->
     <Description>Nebulator script stuff</Description>
     <Copyright>MIT License</Copyright>
@@ -10,5 +12,20 @@
     <WarningLevel>4</WarningLevel>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.0.1" />
+    <PackageReference Include="NLog" Version="4.7.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NBagOfTricks">
+      <HintPath>..\lib\NBagOfTricks.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

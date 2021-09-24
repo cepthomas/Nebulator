@@ -25,7 +25,7 @@ using Nebulator.Script;
 // C:\Dev\comp_files\example_defs.cs(201,19): warning CS0108: 'example.Volume' hides inherited member 'NebScript.Volume'. Use the new keyword if hiding was intended. [C:\Dev\comp_files\comp_files.csproj]
 
 
-namespace Nebulator.UI // Probably not forever home
+namespace Nebulator  // Probably not forever home
 {
     /// <summary>
     /// Parses/compiles *.neb file(s).

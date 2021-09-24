@@ -5,7 +5,8 @@ using System.Threading;
 using System.Windows.Forms;
 
 
-namespace Nebulator.UI
+
+namespace Nebulator
 {
     static class Program
     {
@@ -28,7 +29,7 @@ namespace Nebulator.UI
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             // Go!
-            MainForm f = new MainForm();
+            UI.MainForm f = new();
             Application.Run(f);
         }
 
