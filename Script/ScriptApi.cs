@@ -44,7 +44,7 @@ namespace Nebulator.Script
         public virtual void Setup() { }
 
         /// <summary>Called if you need to do something with devices after they have been created.</summary>
-        public virtual void Setup2() { } //TODO1 probably don't need
+        public virtual void Setup2() { } //TODO0 probably don't need
 
         /// <summary>Called every Nebulator Incr.</summary>
         public virtual void Step() { }

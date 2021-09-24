@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Version>2.0.0.0</Version> <!-- TODO2 auto increment version -->
+    <Description>Nebulator common stuff</Description>
+    <Copyright>MIT License</Copyright>
+    <OutputPath>bin\</OutputPath>
+    <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
+    <WarningLevel>4</WarningLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>

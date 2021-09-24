@@ -10,26 +10,9 @@
     <OutputPath>bin\</OutputPath>
     <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
     <WarningLevel>4</WarningLevel>
-    <NoWarn>CS1591</NoWarn>
+    <!-- <NoWarn>CS1591</NoWarn> -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="comp_files\**" />
-    <Compile Remove="Examples\temp\**" />
-    <Compile Remove="Test\**" />
-    <EmbeddedResource Remove="comp_files\**" />
-    <EmbeddedResource Remove="Examples\temp\**" />
-    <EmbeddedResource Remove="Test\**" />
-    <None Remove="comp_files\**" />
-    <None Remove="Examples\temp\**" />
-    <None Remove="Test\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="neb.sublime-project" />
-    <None Remove="neb.sublime-workspace" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.0.1" />
@@ -38,13 +21,13 @@
 
   <ItemGroup>
     <Reference Include="NBagOfTricks">
-      <HintPath>lib\NBagOfTricks.dll</HintPath>
+      <HintPath>..\lib\NBagOfTricks.dll</HintPath>
     </Reference>
     <Reference Include="NBagOfTricks.UI">
-      <HintPath>lib\NBagOfTricks.UI.dll</HintPath>
+      <HintPath>..\lib\NBagOfTricks.UI.dll</HintPath>
     </Reference>
     <Reference Include="NebOsc">
-      <HintPath>lib\NebOsc.dll</HintPath>
+      <HintPath>..\lib\NebOsc.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -64,9 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="app.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

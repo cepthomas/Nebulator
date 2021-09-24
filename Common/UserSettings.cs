@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Windows.Forms.Design;
-using System.Drawing.Design;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NAudio.Midi;
@@ -160,14 +156,6 @@ namespace Nebulator.Common
         public int Y { get; set; } = 50;
         public int Width { get; set; } = 1000;
         public int Height { get; set; } = 700;
-
-        public void FromForm(Form f)
-        {
-            X = f.Location.X;
-            Y = f.Location.Y;
-            Width = f.Width;
-            Height = f.Height;
-        }
     }
 
     /// <summary>Converter for selecting property value from known lists.</summary>

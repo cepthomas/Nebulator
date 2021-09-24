@@ -51,7 +51,7 @@ namespace Nebulator.Common
         [Browsable(true)]
         public int ChannelNumber { get; set; } = 1;
 
-        //TODO1 Optional patch. See ClipExplorer.
+        //TODO0 Optional patch. See ClipExplorer.
         /// <summary>Current volume.</summary>
         [DisplayName("xxxx")]
         [Description("xxxx")]

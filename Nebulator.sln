@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebulator", "Nebulator.csproj", "{DA84DAB2-81D8-4542-9058-C2DD4814F8C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nebulator", "Nebulator.csproj", "{DA84DAB2-81D8-4542-9058-C2DD4814F8C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Script", "Script\Script.csproj", "{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{7FB56B40-1555-438C-94B2-9D2C7DF763E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{DA84DAB2-81D8-4542-9058-C2DD4814F8C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA84DAB2-81D8-4542-9058-C2DD4814F8C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA84DAB2-81D8-4542-9058-C2DD4814F8C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

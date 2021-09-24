@@ -5,11 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using NAudio.Midi;
 using NAudio.Wave;
 using NLog;
@@ -427,7 +422,7 @@ namespace Nebulator.UI
         {
             // Save the vkbd position.
             _inputDevices.Values.Where(v => v.GetType() == typeof(Keyboard)).ForEach(k =>
-                UserSettings.TheSettings.VirtualKeyboardInfo.FromForm(k as Keyboard));
+                UserSettings.TheSettings.VirtualKeyboardInfo = FromForm(k as Keyboard));
 
             _inputDevices.ForEach(i => 
             {
@@ -753,13 +748,13 @@ namespace Nebulator.UI
         /// <summary>
         /// User has changed a channel value. Interested in solo/mute and volume.
         /// </summary>
-        void ChannelChange_Event(object sender, EventArgs e)
+        void ChannelChange_Event(object sender, EventArgs e) //TODO1 the rest...
         {
             //ChannelControl cc = sender as ChannelControl;
             
             //Channel ch = cc.BoundChannel; TODO0 eliminate?
 
-            //TODO1 the rest...
+            
 
             // Save values.
             // _nppVals.SetValue(ch.BoundChannel.Name, "volume", ch.BoundChannel.Volume);
@@ -1208,7 +1203,7 @@ namespace Nebulator.UI
         /// </summary>
         void SaveSettings()
         {
-            UserSettings.TheSettings.MainFormInfo.FromForm(this);
+            UserSettings.TheSettings.MainFormInfo = FromForm(this);
             UserSettings.TheSettings.Save();
         }
 
@@ -1254,6 +1249,22 @@ namespace Nebulator.UI
 
                 SaveSettings();
             }
+        }
+
+        /// <summary>
+        /// Helper for serialization.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public FormInfo FromForm(Form f)
+        {
+            return new()
+            {
+                X = f.Location.X,
+                Y = f.Location.Y,
+                Width = f.Width,
+                Height = f.Height
+            };
         }
         #endregion
 
