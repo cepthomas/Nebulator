@@ -12,24 +12,22 @@ namespace Nebulator.Script
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetLogger("NebScript");
+        internal readonly Logger _logger = LogManager.GetLogger("NebScript");
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
 
         /// <summary>Script randomizer.</summary>
         internal Random _rand = new Random();
-        #endregion
 
-        #region Elements defined in the script that MainForm needs
         /// <summary>All sequences.</summary>
-        public List<Sequence> Sequences { get; set; } = new List<Sequence>();
+        internal List<Sequence> _sequences = new List<Sequence>();
 
         /// <summary>All sections.</summary>
-        public List<Section> Sections { get; set; } = new List<Section>();
+        internal List<Section> _sections = new List<Section>();
 
-        /// <summary>The steps being executed. Script functions may add to it at runtime using e.g. SendSequence(). Script -> Main</summary>
-        public StepCollection Steps { get; private set; } = new StepCollection();
+        /// <summary>The steps being executed. Script functions may add to it at runtime.</summary>
+        internal StepCollection _steps = new StepCollection();
         #endregion
 
         #region Lifecycle
@@ -55,14 +53,76 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Utilities TODO0 clean up all
+        #region Client functions
+        /// <summary>
+        /// Convert script sequences etc to internal steps.
+        /// </summary>
+        public void BuildSteps()
+        {
+            // Build all the steps.
+            int sectionTime = 0;
+
+            foreach (Section section in _sections)
+            {
+                foreach ((Channel ch, Sequence seq, int beat) v in section)
+                {
+                    AddSequence(v.ch, v.seq, sectionTime + v.beat);
+                }
+
+                // Update accumulated time.
+                sectionTime += section.Beats;
+            }
+        }
+
+        /// <summary>
+        /// Get all section names and when they start. The end marker is also added.
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<int, string> GetSectionMarkers()
+        {
+            Dictionary<int, string> info = new();
+            int when = 0;
+
+            foreach (Section sect in _sections)
+            {
+                info.Add(when, sect.Name);
+                when += sect.Beats;
+            }
+
+            // Add the dummy end marker.
+            info.Add(when, "");
+
+            return info;
+        }
+
+        /// <summary>
+        /// Get steps at specific time.
+        /// </summary>
+        /// <param name="time">Specific time or null if all.</param>
+        /// <returns></returns>
+        public IEnumerable<Step> GetSteps(Time time)
+        {
+            return _steps.GetSteps(time);
+        }
+
+        /// <summary>
+        /// The whole enchilada.
+        /// </summary>
+        /// <returns></returns>
+        public StepCollection GetAllSteps()
+        {
+            return _steps;
+        }
+        #endregion
+
+        #region Utilities
         /// <summary>
         /// Generate steps from sequence notes.
         /// </summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start at.</param>
-        public static StepCollection ConvertToSteps(Channel channel, Sequence seq, int startBeat)
+        StepCollection ConvertToSteps(Channel channel, Sequence seq, int startBeat)
         {
             StepCollection steps = new StepCollection();
 
@@ -121,7 +181,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         /// <param name="beat">When to send the sequence.</param>
-        public void AddSequence(Channel channel, Sequence seq, int beat)
+        void AddSequence(Channel channel, Sequence seq, int beat)
         {
             if (channel is null)
             {
@@ -134,7 +194,7 @@ namespace Nebulator.Script
             }
 
             StepCollection scoll = ConvertToSteps(channel, seq, beat);
-            Steps.Add(scoll);
+            _steps.Add(scoll);
         }
         #endregion
     }

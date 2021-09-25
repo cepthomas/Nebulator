@@ -11,22 +11,24 @@ using System.ComponentModel;
 
 namespace Nebulator.Common
 {
+    /// <summary>Each nebulator script has an associated configuration file.</summary>
     [Serializable]
-    public class ProjectConfig
+    public class Config
     {
         /// <summary>Master volume.</summary>
-        [DisplayName("xxxx")]
-        [Description("xxxx")]
-        [Category("xxxx")]
-        [Browsable(true)]
+        [Browsable(false)]
         public double MasterVolume { get; set; } = 0.8;
 
         /// <summary>Tempo.</summary>
+        [Browsable(false)]
+        public double MasterSpeed { get; set; } = 100.0;
+
+        /// <summary>Active Channels.</summary>
         [DisplayName("xxxx")]
         [Description("xxxx")]
         [Category("xxxx")]
         [Browsable(true)]
-        public double MasterSpeed { get; set; } = 100.0;
+        public List<Channel> Channels { get; } = new List<Channel>();
 
         /// <summary>Active Controllers.</summary>
         [DisplayName("xxxx")]
@@ -35,13 +37,6 @@ namespace Nebulator.Common
         [Browsable(true)]
         public List<Controller> Controllers { get; } = new List<Controller>();
 
-        /// <summary>Active Chanels.</summary>
-        [DisplayName("xxxx")]
-        [Description("xxxx")]
-        [Category("xxxx")]
-        [Browsable(true)]
-        public List<Channel> Channels { get; } = new List<Channel>();
-
         #region Fields
         /// <summary>The file name.</summary>
         string _fn = Definitions.UNKNOWN_STRING;
@@ -49,21 +44,21 @@ namespace Nebulator.Common
 
         #region Persistence
         /// <summary>Create object from file.</summary>
-        public static ProjectConfig Load(string fn)
+        public static Config Load(string fn)
         {
-            ProjectConfig pc = null;
+            Config pc = null;
 
             if (File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
-                pc = JsonSerializer.Deserialize<ProjectConfig>(json);
+                pc = JsonSerializer.Deserialize<Config>(json);
 
                 pc._fn = fn;
             }
             else
             {
                 // Doesn't exist, create a new one. TODO1 populate from defaults.
-                pc = new ProjectConfig
+                pc = new Config
                 {
                     _fn = fn
                 };

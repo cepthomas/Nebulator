@@ -27,9 +27,7 @@ namespace Nebulator.Common
         /// <param name="logEvent">Describes the event.</param>
         protected override void Write(LogEventInfo logEvent)
         {
-            // Can do some preprocessing here...
-
-            //ClientNotification?.Invoke(logEvent.Level, logEvent.Message);
+            // Could do some preprocessing here...
 
             var slog = Layout.Render(logEvent);
             ClientNotification?.Invoke(logEvent.Level, slog);

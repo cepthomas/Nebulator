@@ -15,6 +15,7 @@ using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
+//TODO1 Config editor.
 
 namespace Nebulator.UI
 {
@@ -47,7 +48,7 @@ namespace Nebulator.UI
         /// <summary>Current np file name.</summary>
         string _fn = Definitions.UNKNOWN_STRING;
 
-        /// <summary>Detect changed script files. TODO1 also project files.</summary>
+        /// <summary>Detect changed script files. TODO1 also config files.</summary>
         readonly MultiFileWatcher _watcher = new MultiFileWatcher();
 
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
@@ -57,7 +58,7 @@ namespace Nebulator.UI
         string _compileTempDir = "";
 
         /// <summary>Persisted internal values for current script file.</summary>
-        ProjectConfig _projectConfig = null;
+        Config _config = null;
 
         ///// <summary>Diagnostics for timing measurement.</summary>
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
@@ -99,9 +100,8 @@ namespace Nebulator.UI
             // The rest of the controls.
             textViewer.WordWrap = false;
             textViewer.BackColor = UserSettings.TheSettings.BackColor;
-            //textViewer.Font = UserSettings.TheSettings.EditorFont;
             textViewer.Colors.Add("ERROR:", Color.LightPink);
-            textViewer.Colors.Add("WARNING:", Color.Plum);
+            textViewer.Colors.Add("_WARN:", Color.Plum);
 
             btnMonIn.Image = GraphicsUtils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = GraphicsUtils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
@@ -253,7 +253,7 @@ namespace Nebulator.UI
             int y = timeMaster.Bottom + CONTROL_SPACING;
 
             // Create new channel controls.
-            foreach (Channel t in _projectConfig.Channels)
+            foreach (Channel t in _config.Channels)
             {
                 // Init from persistence.
                 t.Volume = t.Volume;
@@ -263,7 +263,7 @@ namespace Nebulator.UI
                 ChannelControl tctl = new ChannelControl()
                 {
                     Location = new Point(x, y),
-                    BoundChannel = t,
+                    // BoundChannel = t,
                     State = t.State,
                     Volume = t.Volume,
                      
@@ -290,7 +290,7 @@ namespace Nebulator.UI
             //    _nppVals.SetValue(c.Name, "state", c.State);
             //});
             //_nppVals.Save();
-            _projectConfig.Save();
+            _config.Save();
 
             // Remove current controls.
             foreach (Control ctl in Controls)
@@ -316,7 +316,7 @@ namespace Nebulator.UI
             // Get requested inputs.
             Keyboard vkey = null; // If used, requires special handling.
 
-            foreach(Controller con in _projectConfig.Controllers)
+            foreach(Controller con in _config.Controllers)
             {
                 // Have we seen it yet?
                 if (_inputDevices.ContainsKey(con.Device.DeviceType))
@@ -363,7 +363,7 @@ namespace Nebulator.UI
             }
 
             // Get requested outputs.
-            foreach (Channel chan in _projectConfig.Channels)
+            foreach (Channel chan in _config.Channels)
             {
                 // Have we seen it yet?
                 if (_outputDevices.ContainsKey(chan.Device.DeviceType))
@@ -486,7 +486,7 @@ namespace Nebulator.UI
                         // Surface area.
                         InitRuntime();
 
-                        // Setup - first step. TODO0 rework the _script.xxx stuff - let script do them?
+                        // Setup - first step.
                         _script.Setup();
 
                         // Devices are specified in project config - create now.
@@ -496,49 +496,21 @@ namespace Nebulator.UI
                         _script.Setup2();
 
                         // Build all the steps.
-                        int sectionTime = 0;
-                        foreach(Section section in _script.Sections)
-                        {
-                            foreach((Channel ch, Sequence seq, int beat) v in section)
-                            {
-                                // Check for skip/mute.
-                                if(v.seq != null)
-                                {
-                                    _script.AddSequence(v.ch, v.seq, sectionTime + v.beat);
-                                }
-                            }
+                        _script.BuildSteps();
 
-                            // Update accumulated time.
-                            sectionTime += section.Beats;
-                        }
-
+                        // Script may have altered shared values.
                         ProcessRuntime();
 
-                        SetSpeedTimerPeriod();
-
-
-
                         ///// Init the timeclock.
-                        // Calc the section times.
-                        timeMaster.TimeDefs.Clear();
-                        int start = 0;
-                        foreach (Section sect in _script.Sections)
-                        {
-                            timeMaster.TimeDefs.Add(start, sect.Name);
-                            start += sect.Beats;
-                        }
-                        // Add the dummy end marker.
-                        timeMaster.TimeDefs.Add(start, "");
-
-                        if (timeMaster.TimeDefs.Count > 0)
-                        {
-                            timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
-                        }
+                        timeMaster.TimeDefs = _script.GetSectionMarkers();
+                        timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
 
                         ///// Init other controls.
-                        potSpeed.Value = Convert.ToInt32(_projectConfig.MasterSpeed);
-                        double mv = Convert.ToDouble(_projectConfig.MasterVolume);
+                        potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
+                        double mv = Convert.ToDouble(_config.MasterVolume);
                         sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
+
+                        SetSpeedTimerPeriod();
                     }
                     catch (Exception ex)
                     {
@@ -650,15 +622,16 @@ namespace Nebulator.UI
                 //}
 
                 // Process any sequence steps.
-                bool anySolo = _projectConfig.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
-                bool anyMute = _projectConfig.Channels.Where(t => t.State == ChannelState.Mute).Count() > 0;
+                bool anySolo = _config.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
+                bool anyMute = _config.Channels.Where(t => t.State == ChannelState.Mute).Count() > 0;
                 lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
-                var steps = _script.Steps.GetSteps(_stepTime);//TODO0 better - ask script to do this.
+                var steps = _script.GetSteps(_stepTime);
+
                 foreach(var step in steps)
                 {
-                    Channel channel = _projectConfig.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
+                    Channel channel = _config.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
 
                     // Is it ok to play now?
                     bool play = channel != null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !anySolo));
@@ -752,7 +725,7 @@ namespace Nebulator.UI
         {
             //ChannelControl cc = sender as ChannelControl;
             
-            //Channel ch = cc.BoundChannel; TODO0 eliminate?
+            // Channel ch = cc.BoundChannel; TODO1 eliminate?
 
             
 
@@ -766,7 +739,7 @@ namespace Nebulator.UI
 
         #region Runtime interop
         /// <summary>
-        /// Package up the runtime stuff the script may need. Call this before any script updates.
+        /// Package up the shared runtime stuff the script may need. Call this before any script updates.
         /// </summary>
         void InitRuntime()
         {
@@ -902,9 +875,6 @@ namespace Nebulator.UI
             }
         }
 
-
-
-
         /// <summary>
         /// Common np file opener.
         /// </summary>
@@ -926,7 +896,9 @@ namespace Nebulator.UI
                         // Get the config and set things up.
                         DestroyChannelControls();
                         DestroyDevices();
-                        _projectConfig = ProjectConfig.Load(fn.Replace(".neb", ".nebp"));
+
+                        //TODO0 get from main file Config("xxx"); See ProcessScriptFile()
+                        _config = Config.Load(fn.Replace(".neb", ".nebcfig"));
                         CreateDevices();
                         CreateChannelControls();
 
@@ -1017,7 +989,7 @@ namespace Nebulator.UI
         /// </summary>
         void Speed_ValueChanged(object sender, EventArgs e)
         {
-            _projectConfig.MasterSpeed = potSpeed.Value;
+            _config.MasterSpeed = potSpeed.Value;
             SetSpeedTimerPeriod();
         }
 
@@ -1034,7 +1006,7 @@ namespace Nebulator.UI
         /// </summary>
         void Volume_ValueChanged(object sender, EventArgs e)
         {
-            _projectConfig.MasterVolume = sldVolume.Value;
+            _config.MasterVolume = sldVolume.Value;
         }
 
         /// <summary>
@@ -1235,7 +1207,7 @@ namespace Nebulator.UI
                 pg.PropertyValueChanged += (sdr, args) =>
                 {
                     string p = args.ChangedItem.PropertyDescriptor.Name;
-                    ctrls |= (p.Contains("Font") | p.Contains("Color"));
+                    ctrls |= (p.Contains("Font") | p.Contains("Color")); //TODO1 fix
                 };
 
                 f.Controls.Add(pg);
@@ -1403,9 +1375,8 @@ namespace Nebulator.UI
             if(ok)
             {
                 Dictionary<int, string> channels = new Dictionary<int, string>();
-                _projectConfig.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
-
-                MidiUtils.ExportToMidi(_script.Steps, fn, channels, potSpeed.Value, "Converted from " + _fn);
+                _config.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
+                MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, potSpeed.Value, "Converted from " + _fn);
             }
         }
 

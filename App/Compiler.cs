@@ -359,26 +359,32 @@ namespace Nebulator  // Probably not forever home
                 string cline = pos >= 0 ? s.Left(pos) : s;
 
                 // Test for nested files
-                // #include "path\name.neb"
-                // #include "include path\split file name.neb"
-                if (s.StartsWith("#include"))
+                //Include("path\name.neb");
+                //Include("path\split file name.neb");
+                if (s.StartsWith("Include"))
                 {
-                    List<string> parts = s.SplitByTokens("\";");
-                    string fn = parts.Last();
-
-                    // Recursive call to parse this file
-                    FileContext subcont = new FileContext()
+                    bool valid = false;
+                    List<string> parts = s.SplitByTokens("\"");
+                    if(parts.Count == 3)
                     {
-                        SourceFile = fn,
-                        LineNumber = 1
-                    };
+                        string fn = parts[1];
 
-                    if (!ParseOneFile(subcont))
+                        // Recursive call to parse this file
+                        FileContext subcont = new FileContext()
+                        {
+                            SourceFile = fn,
+                            LineNumber = 1
+                        };
+
+                        valid = ParseOneFile(subcont);
+                    }
+
+                    if (!valid)
                     {
                         Errors.Add(new ScriptError()
                         {
                             ErrorType = ScriptErrorType.Error,
-                            Message = $"Invalid #include: {fn}",
+                            Message = $"Invalid Include: {s}",
                             SourceFile = pcont.SourceFile,
                             LineNumber = pcont.LineNumber
                         });
@@ -525,7 +531,7 @@ namespace Nebulator  // Probably not forever home
     public class ScriptError
     {
         /// <summary>Where it came from.</summary>
-//        [JsonConverter(typeof(StringEnumConverter))]
+        //[JsonConverter(typeof(StringEnumConverter))]
         public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
 
         /// <summary>Original source file.</summary>

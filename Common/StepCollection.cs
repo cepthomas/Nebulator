@@ -56,6 +56,8 @@ namespace Nebulator.Common
         /// <summary>
         /// Get the steps for the given time.
         /// </summary>
+        /// <param name="time">Specific time</param>
+        /// <returns>Iterator</returns>
         public IEnumerable<Step> GetSteps(Time time)
         {
             return _steps.ContainsKey(time) ? _steps[time] : new List<Step>();
@@ -64,6 +66,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Delete the steps at the given time.
         /// </summary>
+        /// <param name="time"></param>
         public void DeleteSteps(Time time)
         {
             _steps.Remove(time);

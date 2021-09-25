@@ -45,12 +45,6 @@ namespace Nebulator.Common
         public string ControllerName { get; set; } = Definitions.UNKNOWN_STRING;
         #endregion
 
-        // /// <summary>The associated numerical (midi) channel to use.</summary>
-        // public int ChannelNumber { get; set; } = -1;
-
-        // /// <summary>The numerical controller type. Usually the same as midi.</summary>
-        // public int ControllerId { get; set; } = 0;
-
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {

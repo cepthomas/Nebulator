@@ -3,8 +3,10 @@
 //----- Warning: this is not actual music! --------
 
 ///// Include other lib files. /////
-#include "utils.neb"
-#include "scale.neb"
+
+Config("example.nebcfig"); //TODO0 implement these 2 - preparse
+Include("utils.nebinc");
+Include("scale.nebinc");
 
 
 ///// Volumes.
@@ -62,14 +64,14 @@ public override void Setup()
     // Get some stock chords and scales
     _scaleNotes = GetScaleNotes("Algerian", "G3");
     _chordNotes = GetChordNotes("C4.o7");
-}
+// }
 
-public override void Setup2()
-{
-    // SendPatch(chKeys, AcousticGrandPiano);
-    // SendPatch(chBass, AcousticBass);
-    // SendPatch(chSynth, Lead1Square);
-    // SendPatch(chDrums, 32); // kit
+// public override void Setup2()
+// {
+//     // SendPatch(chKeys, AcousticGrandPiano);
+//     // SendPatch(chBass, AcousticBass);
+//     // SendPatch(chSynth, Lead1Square);
+//     // SendPatch(chDrums, 32); // kit
 
     BuildComp();
 }

@@ -13,40 +13,41 @@ namespace Nebulator.Script
 {
     public partial class NebScript
     {
-        #region Properties that can be referenced in the script
-        /// <summary>Current Nebulator step time. Main -> Script</summary>
-        public Time StepTime { get; set; } = new Time();
-
-        /// <summary>Sound is playing. Main -> Script</summary>
+        #region Properties that can be referenced in the user script
+        /// <summary>Sound is playing. Main:W Script:R</summary>
         public bool Playing { get; set; } = false;
 
-        /// <summary>Subdivision.</summary>
-        public int SubdivsPerBeat { get { return Time.SUBDIVS_PER_BEAT; } }
+        /// <summary>Current Nebulator step time. Main:W Script:R</summary>
+        public Time StepTime { get; set; } = new Time();
 
-        /// <summary>Current Nebulator Beat.</summary>
-        public int Beat { get { return StepTime.Beat; } }
-
-        /// <summary>Current Nebulator Subdiv.</summary>
-        public int Subdiv { get { return StepTime.Subdiv; } }
-
-        /// <summary>Actual time since start pressed. Main -> Script</summary>
+        /// <summary>Actual time since start pressed. Main:W Script:R</summary>
         public double RealTime { get; set; } = 0.0;
 
-        /// <summary>Nebulator Speed in bpm. Main -> Script ( -> Main)</summary>
+        /// <summary>Nebulator Speed in bpm. Main:RW Script:RW</summary>
         public double Speed { get; set; } = 0.0;
 
-        /// <summary>Nebulator master Volume. Main -> Script ( -> Main)</summary>
+        /// <summary>Nebulator master Volume. Main:RW Script:RW</summary>
         public double Volume { get; set; } = 0;
+
+//TODO1 these?
+        /// <summary>Subdivision. Main:W Script:R</summary>
+        public int SubdivsPerBeat { get { return Time.SUBDIVS_PER_BEAT; } }
+
+        /// <summary>Current Nebulator Beat. Main:W Script:R</summary>
+        public int Beat { get { return StepTime.Beat; } }
+
+        /// <summary>Current Nebulator Subdiv. Main:W Script:R</summary>
+        public int Subdiv { get { return StepTime.Subdiv; } }
         #endregion
 
         #region Functions that can be overridden in the user script
         /// <summary>Called to initialize Nebulator stuff.</summary>
         public virtual void Setup() { }
 
-        /// <summary>Called if you need to do something with devices after they have been created.</summary>
-        public virtual void Setup2() { } //TODO0 probably don't need
+        // /// <summary>Called if you need to do something with devices after they have been created.</summary>
+        // public virtual void Setup2() { }
 
-        /// <summary>Called every Nebulator Incr.</summary>
+        /// <summary>Called every mmtimer increment.</summary>
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
@@ -55,7 +56,7 @@ namespace Nebulator.Script
 
         #region Script callable functions
         /// <summary>
-        /// Create a defined sequence.
+        /// Create a defined sequence and add to internal collection.
         /// </summary>
         /// <param name="beats">Length in beats.</param>
         /// <param name="elements">.</param>
@@ -67,12 +68,12 @@ namespace Nebulator.Script
                 Elements = elements
             };
 
-            Sequences.Add(nseq);
+            _sequences.Add(nseq);
             return nseq;
         }
 
         /// <summary>
-        /// Create a defined section.
+        /// Create a defined section and add to internal collection.
         /// </summary>
         /// <param name="beats">How long in beats.</param>
         /// <param name="name">For UI display.</param>
@@ -95,7 +96,7 @@ namespace Nebulator.Script
                 Elements = elements,
             };
             
-            Sections.Add(nsect);
+            _sections.Add(nsect);
             return nsect;
         }
 
@@ -104,7 +105,7 @@ namespace Nebulator.Script
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        public void SendNote(Channel channel, double notenum, double vol, Time dur)
+        protected void SendNote(Channel channel, double notenum, double vol, Time dur)
         {
             if (channel is null || channel.Device is null)
             {
@@ -148,7 +149,7 @@ namespace Nebulator.Script
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void SendNote(Channel channel, string notestr, double vol, Time dur)
+        protected void SendNote(Channel channel, string notestr, double vol, Time dur)
         {
             SequenceElement note = new SequenceElement(notestr);
 
@@ -167,7 +168,7 @@ namespace Nebulator.Script
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        public void SendNote(Channel channel, double notenum, double vol, double dur = 0.0)
+        protected void SendNote(Channel channel, double notenum, double vol, double dur = 0.0)
         {
             SendNote(channel, notenum, vol, new Time(dur));
         }
@@ -177,7 +178,7 @@ namespace Nebulator.Script
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        public void SendNote(Channel channel, string notestr, double vol, double dur = 0.0)
+        protected void SendNote(Channel channel, string notestr, double vol, double dur = 0.0)
         {
             SendNote(channel, notestr, vol, new Time(dur));
         }
@@ -186,7 +187,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
-        public void SendNoteOn(Channel channel, double notenum, double vol)
+        protected void SendNoteOn(Channel channel, double notenum, double vol)
         {
             SendNote(channel, notenum, vol);
         }
@@ -194,7 +195,7 @@ namespace Nebulator.Script
         /// <summary>Send a note off immediately.</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
-        public void SendNoteOff(Channel channel, double notenum)
+        protected void SendNoteOff(Channel channel, double notenum)
         {
             SendNote(channel, notenum, 0);
         }
@@ -203,7 +204,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>
-        public void SendController(Channel channel, int ctlnum, double val)
+        protected void SendController(Channel channel, int ctlnum, double val)
         {
             if (channel is null || channel.Device is null)
             {
@@ -224,7 +225,7 @@ namespace Nebulator.Script
         /// <summary>Send a midi patch immediately.</summary>
         /// <param name="channel"></param>
         /// <param name="patch"></param>
-        public void SendPatch(Channel channel, int patch)
+        protected void SendPatch(Channel channel, int patch)
         {
             if (channel is null || channel.Device is null)
             {
@@ -241,10 +242,10 @@ namespace Nebulator.Script
             channel.Device.Send(step);
         }
 
-        /// <summary>Send a named sequence now.</summary>
+        /// <summary>Send a named sequence now. TODO1 not actually now, and becomes a permanent member - what is useful?</summary>
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        public void SendSequence(Channel channel, Sequence seq)
+        protected void SendSequence(Channel channel, Sequence seq)
         {
             if (channel is null || channel.Device is null)
             {
@@ -257,7 +258,7 @@ namespace Nebulator.Script
             }
 
             StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Beat);
-            Steps.Add(scoll);
+            _steps.Add(scoll);
         }
 
         /// <summary>
@@ -273,7 +274,7 @@ namespace Nebulator.Script
         /// <summary>Convert the argument into numbered notes.</summary>
         /// <param name="note">Note string using any form allowed in the script.</param>
         /// <returns>Array of notes or empty if invalid.</returns>
-        public double[] GetChordNotes(string note)
+        protected double[] GetChordNotes(string note)
         {
             List<double> notes = NoteUtils.ParseNoteString(note);
             return notes != null ? notes.ToArray() : new double[0];
@@ -283,7 +284,7 @@ namespace Nebulator.Script
         /// <param name="scale">One of the named scales from ScriptDefinitions.md.</param>
         /// <param name="key">Note name and octave.</param>
         /// <returns>Array of notes or empty if invalid.</returns>
-        public double[] GetScaleNotes(string scale, string key)
+        protected double[] GetScaleNotes(string scale, string key)
         {
             List<double> notes = NoteUtils.GetScaleNotes(scale, key);
             return notes != null ? notes.ToArray() : new double[0];
@@ -291,11 +292,11 @@ namespace Nebulator.Script
         #endregion
 
         #region Utilities like Processing
-        public double Random(double max) { return _rand.NextDouble() * max; }
-        public double Random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
-        public int Random(int max) { return _rand.Next(max); }
-        public int Random(int min, int max) { return _rand.Next(min, max); }
-        public void Print(params object[] vars) { _logger.Info(string.Join(" | ", vars)); }
+        protected double Random(double max) { return _rand.NextDouble() * max; }
+        protected double Random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
+        protected int Random(int max) { return _rand.Next(max); }
+        protected int Random(int min, int max) { return _rand.Next(min, max); }
+        protected void Print(params object[] vars) { _logger.Info(string.Join(" | ", vars)); }
         #endregion
     }
 }

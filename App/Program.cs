@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -40,9 +41,8 @@ namespace Nebulator
         /// <param name="e"></param>
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
-            // Unhandled exception, log the stack of application context.
             string s = $"Unhandled exception:{e.Exception.Message}{Environment.NewLine}{e.Exception.StackTrace}{Environment.NewLine}";
-//TODO2            LogManager.GetLogger().Error("Unhandled exception: " + s);
+            LogManager.GetLogger("Program").Error("Unhandled exception: " + s);
             MessageBox.Show($"Unhandled exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
 
@@ -53,9 +53,8 @@ namespace Nebulator
         /// <param name="e"></param>
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            // Unhandled exception, log the stack of application context.
             string s = $"Unhandled domain exception:{e}{Environment.NewLine}{e.ExceptionObject}{Environment.NewLine}";
-//TODO2            LogManager.GetLogger().Error("Unhandled domain exception: " + s);
+            LogManager.GetLogger("Program").Error("Unhandled domain exception: " + s);
             MessageBox.Show($"Unhandled domain exception:{Environment.NewLine}{s}{Environment.NewLine}");
         }
     }
