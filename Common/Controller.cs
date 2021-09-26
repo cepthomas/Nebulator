@@ -11,7 +11,7 @@ using System.ComponentModel;
 
 namespace Nebulator.Common
 {
-    /// <summary>Defines a controller input.</summary>
+    /// <summary>Defines a controller input. Currently just a simple mapping between script and device but could do more.</summary>
     [Serializable]
     public class Controller
     {
@@ -21,34 +21,31 @@ namespace Nebulator.Common
         [Browsable(false)]
         public IInputDevice Device { get; set; } = null;
 
-        /// <summary>The device type for this controller.</summary>
-        [DisplayName("xxxx")]
-        [Description("xxxx")]
+        [DisplayName("Device Type")]
+        [Description("The device type for this controller.")]
         [Category("xxxx")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
-        /// <summary>The device name for this controller.</summary>
-        [DisplayName("xxxx")]
-        [Description("xxxx")]
+        [DisplayName("Device Name")]
+        [Description("The device name for this controller.")]
         [Category("xxxx")]
         [Browsable(true)]
         [TypeConverter(typeof(FixedListTypeConverter))]
         public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
 
-        /// <summary>The UI name for this channel.</summary>
-        [DisplayName("xxxx")]
-        [Description("xxxx")]
+        [DisplayName("Controller Name")]
+        [Description("The UI name for this channel.")]
         [Category("xxxx")]
         [Browsable(true)]
-        public string ControllerName { get; set; } = Definitions.UNKNOWN_STRING;
+        public string ControllerNameX { get; set; } = Definitions.UNKNOWN_STRING;
         #endregion
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ControllerName:{ControllerName}";
+            var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ControllerName:{ControllerNameX}";
             return s;
         }
     }

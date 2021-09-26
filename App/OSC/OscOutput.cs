@@ -149,7 +149,7 @@ namespace Nebulator.OSC
                                 {
                                     Device = non.Device,
                                     ChannelNumber = non.ChannelNumber,
-                                    NoteNumber = MathUtils.Constrain(non.NoteNumber, 0, OscCommon.MAX_NOTE),
+                                    NoteNumber = MathUtils.Constrain(non.NoteNumber, 0, Definitions.MAX_MIDI),
                                     Expiry = non.Duration.TotalSubdivs
                                 });
                             }

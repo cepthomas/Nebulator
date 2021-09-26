@@ -146,8 +146,8 @@ namespace Nebulator.Midi
                                 NoteEvent evt = new NoteEvent(0,
                                     stt.ChannelNumber,
                                     MidiCommandCode.NoteOn,
-                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                                    (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
+                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
+                                    (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * Definitions.MAX_MIDI));
                                 msg = evt.GetAsShortMessage();
 
                                 if (stt.Duration.TotalSubdivs > 0) // specific duration
@@ -159,7 +159,7 @@ namespace Nebulator.Midi
                                     {
                                         Device = stt.Device,
                                         ChannelNumber = stt.ChannelNumber,
-                                        NoteNumber = MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                        NoteNumber = MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
                                         Expiry = stt.Duration.TotalSubdivs
                                     });
                                 }
@@ -171,7 +171,7 @@ namespace Nebulator.Midi
                                 NoteEvent evt = new NoteEvent(0,
                                     stt.ChannelNumber,
                                     MidiCommandCode.NoteOff,
-                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
                                     0);
                                 msg = evt.GetAsShortMessage();
                             }
@@ -195,7 +195,7 @@ namespace Nebulator.Midi
                                     ControlChangeEvent nevt = new ControlChangeEvent(0,
                                         stt.ChannelNumber,
                                         (MidiController)stt.ControllerId,
-                                        (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
+                                        (int)MathUtils.Constrain(stt.Value, 0, Definitions.MAX_MIDI));
                                     msg = nevt.GetAsShortMessage();
                                 }
                             }
@@ -237,7 +237,7 @@ namespace Nebulator.Midi
         {
             if(channel is null)
             {
-                for (int i = 0; i < MidiUtils.MAX_CHANNELS; i++)
+                for (int i = 0; i < Channel.NUM_CHANNELS; i++)
                 {
                     Send(new StepControllerChange()
                     {

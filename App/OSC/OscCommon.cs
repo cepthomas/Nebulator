@@ -9,6 +9,7 @@ namespace Nebulator.OSC
     /// </summary>
     public static class OscCommon
     {
-        public const int MAX_NOTE = 127;
+        ///// <summary>Arbitrary value, same as midi.</summary>
+        //public const int MAX_NOTE = 127;
     }
 }

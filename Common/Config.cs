@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.IO;
 using System.ComponentModel;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace Nebulator.Common
 {
@@ -15,6 +15,7 @@ namespace Nebulator.Common
     [Serializable]
     public class Config
     {
+        #region Properties
         /// <summary>Master volume.</summary>
         [Browsable(false)]
         public double MasterVolume { get; set; } = 0.8;
@@ -23,19 +24,19 @@ namespace Nebulator.Common
         [Browsable(false)]
         public double MasterSpeed { get; set; } = 100.0;
 
-        /// <summary>Active Channels.</summary>
-        [DisplayName("xxxx")]
-        [Description("xxxx")]
+        [DisplayName("Channels")]
+        [Description("Active Channels")]
         [Category("xxxx")]
         [Browsable(true)]
+        [MaxLength(Channel.NUM_CHANNELS, ErrorMessage = "Channel max is {Channel.NUM_CHANNELS}")]
         public List<Channel> Channels { get; } = new List<Channel>();
 
-        /// <summary>Active Controllers.</summary>
-        [DisplayName("xxxx")]
-        [Description("xxxx")]
+        [DisplayName("Controllers")]
+        [Description("Active Controllers")]
         [Category("xxxx")]
         [Browsable(true)]
         public List<Controller> Controllers { get; } = new List<Controller>();
+        #endregion
 
         #region Fields
         /// <summary>The file name.</summary>

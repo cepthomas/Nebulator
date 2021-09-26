@@ -15,7 +15,7 @@ using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
-//TODO1 Config editor.
+//TODO0 Config editor.
 
 namespace Nebulator.UI
 {
@@ -48,7 +48,7 @@ namespace Nebulator.UI
         /// <summary>Current np file name.</summary>
         string _fn = Definitions.UNKNOWN_STRING;
 
-        /// <summary>Detect changed script files. TODO1 also config files.</summary>
+        /// <summary>Detect changed script files. TODO0 also config files.</summary>
         readonly MultiFileWatcher _watcher = new MultiFileWatcher();
 
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
@@ -280,7 +280,7 @@ namespace Nebulator.UI
         /// </summary>
         void DestroyChannelControls()
         {
-            // Save values. //TODO1
+            // Save values first. //TODO0
             //_nppVals.Clear();
             //_nppVals.SetValue("master", "volume", sldVolume.Value);
             //_nppVals.SetValue("master", "speed", potSpeed.Value);
@@ -456,7 +456,7 @@ namespace Nebulator.UI
             }
             else
             {
-                Compiler compiler = new Compiler() { Min = false };
+                Compiler compiler = new() { Min = false };
 
                 // Clean up any old.
                 _script?.Dispose();
@@ -483,23 +483,20 @@ namespace Nebulator.UI
                     // Note: Need exception handling here to protect from user script errors.
                     try
                     {
+                        // Devices have been specified in project config - create now.
+                        CreateDevices();
+
                         // Surface area.
                         InitRuntime();
 
-                        // Setup - first step.
+                        // Setup scrript.
                         _script.Setup();
-
-                        // Devices are specified in project config - create now.
-                        CreateDevices();
-
-                        // Setup - optional second step.
-                        _script.Setup2();
-
-                        // Build all the steps.
-                        _script.BuildSteps();
 
                         // Script may have altered shared values.
                         ProcessRuntime();
+
+                        // Build all the steps.
+                        _script.BuildSteps();
 
                         ///// Init the timeclock.
                         timeMaster.TimeDefs = _script.GetSectionMarkers();
@@ -563,11 +560,33 @@ namespace Nebulator.UI
         }
         #endregion
 
-        #region Realtime handling
-        /// <summary>
-        /// Multimedia timer tick handler.
-        /// </summary>
-        void MmTimerCallback(double totalElapsed, double periodElapsed)
+        string GetConfigFileName(string scriptFileName)
+        {
+            string cfn = null;
+
+            foreach (string s in File.ReadAllLines(scriptFileName))
+            {
+                if (s.Trim().StartsWith("Config"))
+                {
+                    List<string> parts = s.SplitByTokens("\"");
+                    if (parts.Count == 3)
+                    {
+                        cfn = parts[1];
+                        break;
+                    }
+                }
+            }
+
+            return cfn;
+        }
+
+
+
+            #region Realtime handling
+            /// <summary>
+            /// Multimedia timer tick handler.
+            /// </summary>
+            void MmTimerCallback(double totalElapsed, double periodElapsed)
         {
             // Do some stats gathering for measuring jitter.
             //if (_tan.Grab())
@@ -725,7 +744,7 @@ namespace Nebulator.UI
         {
             //ChannelControl cc = sender as ChannelControl;
             
-            // Channel ch = cc.BoundChannel; TODO1 eliminate?
+            // Channel ch = cc.BoundChannel;  eliminate?
 
             
 
@@ -897,26 +916,56 @@ namespace Nebulator.UI
                         DestroyChannelControls();
                         DestroyDevices();
 
-                        //TODO0 get from main file Config("xxx"); See ProcessScriptFile()
-                        _config = Config.Load(fn.Replace(".neb", ".nebcfig"));
-                        CreateDevices();
-                        CreateChannelControls();
+                        _config = null;
 
-                        AddToRecentDefs(fn);
-                        bool ok = Compile();
-                        SetCompileStatus(ok);
+                        string cfigfn = GetConfigFileName(fn);
 
-                        Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
+                        if(cfigfn is not null)
+                        {
+                            // Check absolute.
+                            if(File.Exists(cfigfn))
+                            {
+                                _config = Config.Load(cfigfn);
+                            }
+                            else // Check local.
+                            {
+                                string local = Path.GetFullPath(fn);
+                                local = Path.Combine(local, cfigfn);
+
+                                if(File.Exists(local))
+                                {
+                                    _config = Config.Load(local);
+                                }
+                            }
+                        }
+
+                        if(_config is null)
+                        {
+                            _logger.Error("Couldn't load config file: {cfigfn}");
+                            SetCompileStatus(false);
+                            Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
+                        }
+                        else
+                        {
+                            CreateDevices();
+                            CreateChannelControls();
+
+                            AddToRecentDefs(fn);
+                            bool ok = Compile();
+                            SetCompileStatus(ok);
+
+                            Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
+                        }
                     }
                     else
                     {
-                        ret = $"Invalid file: {fn}";
+                        ret = $"Invalid script file: {fn}";
                         SetCompileStatus(false);
                     }
                 }
                 catch (Exception ex)
                 {
-                    ret = $"Couldn't open the np file: {fn} because: {ex.Message}";
+                    ret = $"Couldn't open the script file: {fn} because: {ex.Message}";
                     _logger.Error(ret);
                     SetCompileStatus(false);
                 }
@@ -1158,10 +1207,10 @@ namespace Nebulator.UI
                 //tv.Colors.Add(" SND???:", Color.LightGreen);
 
                 string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-                string logFilename = Path.Combine(appDir, "log.txt");
+                string logFileName = Path.Combine(appDir, "log.txt");
                 using (new WaitCursor())
                 {
-                    File.ReadAllLines(logFilename).ForEach(l => tv.AddLine(l));
+                    File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l));
                 }
 
                 f.ShowDialog();
@@ -1207,7 +1256,7 @@ namespace Nebulator.UI
                 pg.PropertyValueChanged += (sdr, args) =>
                 {
                     string p = args.ChangedItem.PropertyDescriptor.Name;
-                    ctrls |= (p.Contains("Font") | p.Contains("Color")); //TODO1 fix
+                    ctrls |= (p.Contains("Font") | p.Contains("Color")); //TODO0 fix
                 };
 
                 f.Controls.Add(pg);

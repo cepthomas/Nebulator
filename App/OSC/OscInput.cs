@@ -159,7 +159,7 @@ namespace Nebulator.OSC
                         if (m.Data.Count == 3)
                         {
                             int channel = MathUtils.Constrain((int)m.Data[0], 0, 100);
-                            double notenum = MathUtils.Constrain((int)m.Data[1], 0, OscCommon.MAX_NOTE);
+                            double notenum = MathUtils.Constrain((int)m.Data[1], 0, Definitions.MAX_MIDI);
                             double velocity = MathUtils.Constrain((int)m.Data[2], 0, 1.0);
 
                             if (velocity == 0)

@@ -139,7 +139,7 @@ namespace Nebulator  // Probably not forever home
             try // many ways to go wrong...
             {
                 // Set the compiler parameters.
-                CompilerParameters cp = new CompilerParameters()
+                CompilerParameters cp = new()
                 {
                     GenerateExecutable = false,
                     //OutputAssembly = _scriptName, -- don't do this!
@@ -193,7 +193,7 @@ namespace Nebulator  // Probably not forever home
                         if (t.BaseType != null && t.BaseType.Name == "NebScript")
                         {
                             // We have a good script file. Create the executable object.
-                            Object o = Activator.CreateInstance(t);
+                            object o = Activator.CreateInstance(t);
                             script = o as NebScript;
                         }
                     }
@@ -352,7 +352,7 @@ namespace Nebulator  // Probably not forever home
 
             for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
             {
-                string s = sourceLines[pcont.LineNumber - 1];
+                string s = sourceLines[pcont.LineNumber - 1].Trim();
 
                 // Remove any comments. Single line type only.
                 int pos = s.IndexOf("//");
@@ -370,7 +370,7 @@ namespace Nebulator  // Probably not forever home
                         string fn = parts[1];
 
                         // Recursive call to parse this file
-                        FileContext subcont = new FileContext()
+                        FileContext subcont = new()
                         {
                             SourceFile = fn,
                             LineNumber = 1
@@ -395,7 +395,7 @@ namespace Nebulator  // Probably not forever home
                     if (cline != "")
                     {
                         // Store the whole line with line number tacked on.
-                        pcont.CodeLines.Add($"        {cline} //{pcont.LineNumber}");
+                        pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
                     }
                 }
             }   
@@ -441,7 +441,6 @@ namespace Nebulator  // Probably not forever home
 
             // Some enums.
             WriteEnumValues<DeviceType>();
-//            WriteEnumValues<DisplayType>();
             WriteEnumValues<SequenceMode>();
 
             // Bottom stuff.

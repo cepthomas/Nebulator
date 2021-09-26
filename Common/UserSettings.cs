@@ -12,25 +12,25 @@ using NBagOfTricks;
 namespace Nebulator.Common
 {
     [Serializable]
-    public class UserSettings //TODO2 tweak these.
+    public class UserSettings
     {
         #region Persisted editable properties
         [DisplayName("Icon Color")]
-        [Description("The color used for icons.")]
+        [Description("The color used for button icons.")]
         [Category("Cosmetics")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color IconColor { get; set; } = Color.Purple;
 
         [DisplayName("Control Color")]
-        [Description("The color used for styling control surfaces.")]
+        [Description("The color used for active control surfaces.")]
         [Category("Cosmetics")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color ControlColor { get; set; } = Color.Yellow;
 
         [DisplayName("Selected Color")]
-        [Description("The color used for selections.")]
+        [Description("The color used for selected controls.")]
         [Category("Cosmetics")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
@@ -157,39 +157,4 @@ namespace Nebulator.Common
         public int Width { get; set; } = 1000;
         public int Height { get; set; } = 700;
     }
-
-    /// <summary>Converter for selecting property value from known lists.</summary>
-    public class FixedListTypeConverter : TypeConverter
-    {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
-
-        // Get the specific list based on the property name.
-        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-        {
-            List<string> rec = null;
-
-            switch (context.PropertyDescriptor.Name)
-            {
-                case "MidiInDevice":
-                    rec = new List<string>();
-                    for (int devindex = 0; devindex < MidiIn.NumberOfDevices; devindex++)
-                    {
-                        rec.Add(MidiIn.DeviceInfo(devindex).ProductName);
-                    }
-                    break;
-
-                case "MidiOutDevice":
-                    rec = new List<string>();
-                    for (int devindex = 0; devindex < MidiOut.NumberOfDevices; devindex++)
-                    {
-                        rec.Add(MidiOut.DeviceInfo(devindex).ProductName);
-                    }
-                    break;
-            }
-
-            return new StandardValuesCollection(rec);
-        }
-    }
-
 }

@@ -13,8 +13,7 @@ namespace Nebulator.Midi
 {
     public class MidiUtils
     {
-        public const int MAX_MIDI = 127;
-        public const int MAX_CHANNELS = 16;
+        /// <summary>Standard midi.</summary>
         public const int MAX_PITCH = 16383;
 
         /// <summary>
@@ -90,8 +89,8 @@ namespace Nebulator.Midi
                             evt = new NoteEvent(mtime,
                                 stt.ChannelNumber,
                                 MidiCommandCode.NoteOn,
-                                (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                                (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * MidiUtils.MAX_MIDI));
+                                (int)MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
+                                (int)(MathUtils.Constrain(stt.VelocityToPlay, 0, 1.0) * Definitions.MAX_MIDI));
                             trackEvents[step.ChannelNumber].Add(evt);
 
                             if (stt.Duration.TotalSubdivs > 0) // specific duration
@@ -99,7 +98,7 @@ namespace Nebulator.Midi
                                 evt = new NoteEvent(mtime + mt.InternalToMidi(stt.Duration.TotalSubdivs),
                                     stt.ChannelNumber,
                                     MidiCommandCode.NoteOff,
-                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                    (int)MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
                                     0);
                                 trackEvents[step.ChannelNumber].Add(evt);
                             }
@@ -109,7 +108,7 @@ namespace Nebulator.Midi
                             evt = new NoteEvent(mtime,
                                 stt.ChannelNumber,
                                 MidiCommandCode.NoteOff,
-                                (int)MathUtils.Constrain(stt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                (int)MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
                                 0);
                             trackEvents[step.ChannelNumber].Add(evt);
                             break;
@@ -123,7 +122,7 @@ namespace Nebulator.Midi
                             {
                                 evt = new PitchWheelChangeEvent(mtime,
                                     stt.ChannelNumber,
-                                    (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
+                                    (int)MathUtils.Constrain(stt.Value, 0, Definitions.MAX_MIDI));
                                 trackEvents[step.ChannelNumber].Add(evt);
                             }
                             else // CC
@@ -131,7 +130,7 @@ namespace Nebulator.Midi
                                 evt = new ControlChangeEvent(mtime,
                                     stt.ChannelNumber,
                                     (MidiController)stt.ControllerId,
-                                    (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_MIDI));
+                                    (int)MathUtils.Constrain(stt.Value, 0, Definitions.MAX_MIDI));
                                 trackEvents[step.ChannelNumber].Add(evt);
                             }
                             break;

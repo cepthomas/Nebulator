@@ -158,7 +158,7 @@ namespace Nebulator.Midi
                             {
                                 Device = this,
                                 ChannelNumber = evt.Channel,
-                                NoteNumber = MathUtils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
+                                NoteNumber = MathUtils.Constrain(evt.NoteNumber, 0, Definitions.MAX_MIDI),
                                 Velocity = 0.0
                             };
                         }
@@ -169,8 +169,8 @@ namespace Nebulator.Midi
                                 Device = this,
                                 ChannelNumber = evt.Channel,
                                 NoteNumber = evt.NoteNumber,
-                                Velocity = evt.Velocity / MidiUtils.MAX_MIDI,
-                                VelocityToPlay = evt.Velocity / MidiUtils.MAX_MIDI,
+                                Velocity = evt.Velocity / Definitions.MAX_MIDI,
+                                VelocityToPlay = evt.Velocity / Definitions.MAX_MIDI,
                                 Duration = new Time(0)
                             };
                         }
@@ -183,8 +183,8 @@ namespace Nebulator.Midi
                         {
                             Device = this,
                             ChannelNumber = evt.Channel,
-                            NoteNumber = MathUtils.Constrain(evt.NoteNumber, 0, MidiUtils.MAX_MIDI),
-                            Velocity = evt.Velocity / MidiUtils.MAX_MIDI
+                            NoteNumber = MathUtils.Constrain(evt.NoteNumber, 0, Definitions.MAX_MIDI),
+                            Velocity = evt.Velocity / Definitions.MAX_MIDI
                         };
                     }
                     break;
