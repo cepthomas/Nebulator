@@ -51,7 +51,7 @@ namespace Nebulator.Common
             ScaleDefs.Clear();
 
             // Read the file.
-            object section = null;
+            object currentSection;
 
             string fpath = Path.Combine(MiscUtils.GetExeDir(), @"Resources\ScriptDefinitions.md");
             foreach (string sl in File.ReadAllLines(fpath))
@@ -63,34 +63,34 @@ namespace Nebulator.Common
                     switch (parts[0])
                     {
                         case "Instrument":
-                            section = InstrumentDefs;
+                            currentSection = InstrumentDefs;
                             break;
 
                         case "Drum":
-                            section = DrumDefs;
+                            currentSection = DrumDefs;
                             break;
 
                         case "Controller":
-                            section = ControllerDefs;
+                            currentSection = ControllerDefs;
                             break;
 
                         case "Chord":
-                            section = ChordDefs;
+                            currentSection = ChordDefs;
                             break;
 
                         case "Scale":
-                            section = ScaleDefs;
+                            currentSection = ScaleDefs;
                             break;
 
                         case string s when !s.StartsWith("---"):
-                            switch(section)
+                            switch (currentSection)
                             {
                                 case Dictionary<string, string> sd:
-                                    (section as Dictionary<string, string>)[parts[0]] = parts[1];
+                                    (currentSection as Dictionary<string, string>)[parts[0]] = parts[1];
                                     break;
 
                                 case Dictionary<string, List<string>> sd:
-                                    (section as Dictionary<string, List<string>>).Add(parts[0], parts.GetRange(1, parts.Count - 1));
+                                    (currentSection as Dictionary<string, List<string>>).Add(parts[0], parts.GetRange(1, parts.Count - 1));
                                     break;
 
                                 default:

@@ -15,7 +15,6 @@ using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.OSC;
 
-//TODO0 Config editor.
 
 namespace Nebulator.UI
 {
@@ -31,7 +30,7 @@ namespace Nebulator.UI
         readonly Logger _logger = LogManager.GetLogger("MainForm");
 
         /// <summary>Fast timer.</summary>
-        MmTimerEx _mmTimer = new MmTimerEx();
+        MmTimerEx _mmTimer = new();
 
         /// <summary>The current script.</summary>
         NebScript _script = null;
@@ -40,16 +39,16 @@ namespace Nebulator.UI
         DateTime _startTime = DateTime.Now;
 
         /// <summary>Current step time clock.</summary>
-        Time _stepTime = new Time();
+        Time _stepTime = new();
 
         /// <summary>Script compile errors and warnings.</summary>
-        List<ScriptError> _compileResults = new List<ScriptError>();
+        List<ScriptError> _compileResults = new();
 
         /// <summary>Current np file name.</summary>
-        string _fn = Definitions.UNKNOWN_STRING;
+        string _scriptFileName = Definitions.UNKNOWN_STRING;
 
-        /// <summary>Detect changed script files. TODO0 also config files.</summary>
-        readonly MultiFileWatcher _watcher = new MultiFileWatcher();
+        /// <summary>Detect changed script files. TODO1 also config files.</summary>
+        readonly MultiFileWatcher _watcher = new();
 
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
         bool _needCompile = false;
@@ -64,10 +63,10 @@ namespace Nebulator.UI
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
         /// <summary>Devices to use for send.</summary>
-        readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new Dictionary<DeviceType, IOutputDevice>();//TODO1 consolidate?
+        readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new();//TODO2 remove/consolidate?
 
-        /// <summary>Devices to use for recv.</summary>
-        readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new Dictionary<DeviceType, IInputDevice>();//TODO1 consolidate?
+        /// <summary>Devices to use for receive.</summary>
+        readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new();//TODO2 remove/consolidate?
         #endregion
 
         #region Lifecycle
@@ -78,7 +77,7 @@ namespace Nebulator.UI
         {
             // Need to load settings before creating controls in MainForm_Load().
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-            DirectoryInfo di = new DirectoryInfo(appDir);
+            DirectoryInfo di = new(appDir);
             di.Create();
             UserSettings.TheSettings = UserSettings.Load(appDir);
             InitializeComponent();
@@ -136,7 +135,7 @@ namespace Nebulator.UI
 
             if (UserSettings.TheSettings.CpuMeter)
             {
-                CpuMeter cpuMeter = new CpuMeter()
+                CpuMeter cpuMeter = new()
                 {
                     Width = 50,
                     Height = toolStrip1.Height,
@@ -174,14 +173,14 @@ namespace Nebulator.UI
 
             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
 
-            #region Open file
+            #region Command line args
             string sopen = "";
             
             // Look for filename passed in.
             string[] args = Environment.GetCommandLineArgs();
-            if (args.Count() > 1)
+            if (args.Length > 1)
             {
-                sopen = OpenFile(args[1]);
+                sopen = OpenScriptFile(args[1]);
             }
 
             if (sopen == "")
@@ -190,8 +189,7 @@ namespace Nebulator.UI
             }
             else
             {
-                _logger.Error(sopen);
-
+                _logger.Error($"Couldn't open script file: {sopen}");
             }
             #endregion
         }
@@ -208,14 +206,18 @@ namespace Nebulator.UI
             // Just in case.
             _outputDevices.ForEach(o => o.Value?.Kill());
 
-            DestroyDevices();
+            UnloadConfig();
 
-            if (_script != null)
-            {
-                // Save the project.
-                DestroyChannelControls();
-                _script.Dispose();
-            }
+            _script?.Dispose();
+
+            //DestroyDevices();
+
+            //if (_script != null)
+            //{
+            //    // Save the project.
+            //    DestroyChannelControls();
+            //    _script.Dispose();
+            //}
 
             // Save user settings.
             SaveSettings();
@@ -233,8 +235,6 @@ namespace Nebulator.UI
                 _mmTimer?.Dispose();
                 _mmTimer = null;
 
-                DestroyDevices();
-
                 components?.Dispose();
             }
 
@@ -242,9 +242,197 @@ namespace Nebulator.UI
         }
         #endregion
 
-        #region Manage controls
+        #region Compile
         /// <summary>
-        /// Create the channel controls.
+        /// Compile the neb script itself. Config is handled separately.
+        /// </summary>
+        bool Compile()
+        {
+            bool ok = true;
+
+            if (_scriptFileName == Definitions.UNKNOWN_STRING)
+            {
+                _logger.Warn("No script file loaded.");
+                ok = false;
+            }
+            else
+            {
+                Compiler compiler = new() { Min = false };
+
+                // Clean up any old.
+                _script?.Dispose();
+
+                // Compile script now.
+                _script = compiler.Execute(_scriptFileName);
+
+                // Update file watcher - keeps an eye on any included files too.
+                _watcher.Clear();
+                compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
+
+                // Time points.
+                timeMaster.TimeDefs.Clear();
+
+                // Process errors. Some may be warnings.
+                _compileResults = compiler.Errors;
+                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptErrorType.Error);
+
+                if (errorCount == 0 && _script != null)
+                {
+                    SetCompileStatus(true);
+                    _compileTempDir = compiler.TempDir;
+
+                    // Note: Need exception handling here to protect from user script errors.
+                    try
+                    {
+                        // Devices have been specified in project config - create now.
+//                        CreateDevices();
+
+                        // Init shared vars.
+                        InitRuntime();
+
+                        // Setup script. This builds the sequences and sections.
+                        _script.Setup();
+
+                        // Script may have altered shared values.
+                        ProcessRuntime();
+
+                        // Build all the steps.
+                        _script.BuildSteps();
+
+                        ///// Init the timeclock.
+                        timeMaster.TimeDefs = _script.GetSectionMarkers();
+                        timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
+
+                        SetSpeedTimerPeriod();
+                    }
+                    catch (Exception ex)
+                    {
+                        ProcessScriptRuntimeError(ex);
+                        ok = false;
+                    }
+
+                    SetCompileStatus(ok);
+                }
+                else
+                {
+                    _logger.Error("Compile failed.");
+                    ok = false;
+                    ProcessPlay(PlayCommand.StopRewind);
+                    SetCompileStatus(false);
+                }
+
+                _compileResults.ForEach(r =>
+                {
+                    if (r.ErrorType == ScriptErrorType.Warning)
+                    {
+                        _logger.Warn(r.ToString());
+                    }
+                    else
+                    {
+                        _logger.Error(r.ToString());
+                    }
+                });
+            }
+
+            return ok;
+        }
+
+        /// <summary>
+        /// Update system statuses.
+        /// </summary>
+        /// <param name="compileStatus">True if compile is clean.</param>
+        void SetCompileStatus(bool compileStatus)
+        {
+            if (compileStatus)
+            {
+                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+                _needCompile = false;
+            }
+            else
+            {
+                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, Color.Red);
+                _needCompile = true;
+            }
+        }
+        #endregion
+
+        #region Config management
+        /// <summary>
+        /// Load the runtime stuff from the config file.
+        /// </summary>
+        /// <param name="cfigfn"></param>
+        void LoadConfig(string cfigfn)
+        {
+            if(_config is not null)
+            {
+                UnloadConfig();
+            }
+
+            _config = Config.Load(cfigfn);
+
+            if (_config is not null)
+            {
+                // Create devices.
+                CreateDevices();
+
+                // Create controls.
+                CreateChannelControls();
+
+                // Init other controls.
+                potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
+                double mv = Convert.ToDouble(_config.MasterVolume);
+                sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        void UnloadConfig()
+        {
+            ///// Save current config values.
+            if(_config is not null)
+            {
+                _config.MasterSpeed = potSpeed.Value;
+                _config.MasterVolume = potSpeed.Value;
+            }
+
+            ///// Save current channel values then destroy controls.
+            foreach (Control ctl in Controls)
+            {
+                if (ctl is ChannelControl)
+                {
+                    ChannelControl tctl = ctl as ChannelControl;
+ //                   tctl.BoundChannel.Volume = tctl.Volume;
+ //                   tctl.BoundChannel.State = tctl.State;
+ //                   tctl.ChannelChangeEvent -= ChannelChange_Event;
+                    tctl.Dispose();
+                    Controls.Remove(tctl);
+                }
+            }
+
+            ///// Destroy devices.
+            _inputDevices.ForEach(i =>
+            {
+                i.Value.DeviceInputEvent -= Device_InputEvent;
+                i.Value?.Stop();
+                i.Value?.Dispose();
+            });
+            _inputDevices.Clear();
+
+            _outputDevices.ForEach(o =>
+            {
+                o.Value?.Stop();
+                o.Value?.Dispose();
+            });
+            _outputDevices.Clear();
+
+            _config.Save();
+            _config = null;
+        }
+
+        /// <summary>
+        /// Create the channel controls from the user script config.
         /// </summary>
         void CreateChannelControls()
         {
@@ -260,63 +448,28 @@ namespace Nebulator.UI
 
                 t.State = t.State;
 
-                ChannelControl tctl = new ChannelControl()
+                ChannelControl tctl = new()
                 {
+                    //Name = t.DeviceType.ToString(),
                     Location = new Point(x, y),
-                    // BoundChannel = t,
-                    State = t.State,
-                    Volume = t.Volume,
-                     
+                    BoundChannel = t,
+//                    State = t.State,
+//                    Volume = t.Volume,
                 };
 
-                tctl.ChannelChangeEvent += ChannelChange_Event;
+//                tctl.ChannelChangeEvent += ChannelChange_Event;
                 Controls.Add(tctl);
                 x += tctl.Width + CONTROL_SPACING;
             }
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        void DestroyChannelControls()
-        {
-            // Save values first. //TODO0
-            //_nppVals.Clear();
-            //_nppVals.SetValue("master", "volume", sldVolume.Value);
-            //_nppVals.SetValue("master", "speed", potSpeed.Value);
-            //_script?.Channels?.ForEach(c =>
-            //{
-            //    _nppVals.SetValue(c.Name, "volume", c.Volume);
-            //    _nppVals.SetValue(c.Name, "state", c.State);
-            //});
-            //_nppVals.Save();
-            _config.Save();
-
-            // Remove current controls.
-            foreach (Control ctl in Controls)
-            {
-                if (ctl is ChannelControl)
-                {
-                    ChannelControl tctl = ctl as ChannelControl;
-                    tctl.ChannelChangeEvent -= ChannelChange_Event;
-                    tctl.Dispose();
-                    Controls.Remove(tctl);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Create all devices from user script. NController, Keyboard
+        /// Create all devices from user script config.
         /// </summary>
         void CreateDevices()
         {
-            // Clean up for company.
-            DestroyDevices();
-
             // Get requested inputs.
-            Keyboard vkey = null; // If used, requires special handling.
-
-            foreach(Controller con in _config.Controllers)
+            foreach (Controller con in _config.Controllers)
             {
                 // Have we seen it yet?
                 if (_inputDevices.ContainsKey(con.Device.DeviceType))
@@ -337,8 +490,15 @@ namespace Nebulator.UI
                             break;
 
                         case DeviceType.VkeyIn:
-                            vkey = new Keyboard();
-                            nin = vkey;
+                            var kbd = new Keyboard
+                            {
+                                StartPosition = FormStartPosition.Manual,
+                                Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height),
+                                TopMost = false,
+                                Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y)
+                            };
+                            kbd.Show();
+                            nin = kbd;
                             break;
                     }
 
@@ -404,165 +564,16 @@ namespace Nebulator.UI
                     }
                 }
             }
-
-            if (vkey != null)
-            {
-                vkey.StartPosition = FormStartPosition.Manual;
-                vkey.Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height);
-                vkey.TopMost = false;
-                vkey.Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y);
-                vkey.Show();
-            }
         }
 
         /// <summary>
-        /// Dispose of all current devices.
+        /// Get the config file name from the script and validate.
         /// </summary>
-        void DestroyDevices()
-        {
-            // Save the vkbd position.
-            _inputDevices.Values.Where(v => v.GetType() == typeof(Keyboard)).ForEach(k =>
-                UserSettings.TheSettings.VirtualKeyboardInfo = FromForm(k as Keyboard));
-
-            _inputDevices.ForEach(i => 
-            {
-                i.Value.DeviceInputEvent -= Device_InputEvent;
-                i.Value?.Stop();
-                i.Value?.Dispose();
-            });
-            _inputDevices.Clear();
-
-            _outputDevices.ForEach(o =>
-            {
-                o.Value?.Stop();
-                o.Value?.Dispose();
-            });
-            _outputDevices.Clear();
-        }
-        #endregion
-
-        #region Compile
-        /// <summary>
-        /// Master compiler function.
-        /// </summary>
-        bool Compile()
-        {
-            bool ok = true;
-
-            if (_fn == Definitions.UNKNOWN_STRING)
-            {
-                _logger.Warn("No script file loaded.");
-                ok = false;
-            }
-            else
-            {
-                Compiler compiler = new() { Min = false };
-
-                // Clean up any old.
-                _script?.Dispose();
-
-                // Compile script now.
-                _script = compiler.Execute(_fn);
-
-                // Update file watcher - keeps an eye on any included files too.
-                _watcher.Clear();
-                compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
-
-                // Time points.
-                timeMaster.TimeDefs.Clear();
-
-                // Process errors. Some may be warnings.
-                _compileResults = compiler.Errors;
-                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptErrorType.Error);
-
-                if (errorCount == 0 && _script != null)
-                {
-                    SetCompileStatus(true);
-                    _compileTempDir = compiler.TempDir;
-
-                    // Note: Need exception handling here to protect from user script errors.
-                    try
-                    {
-                        // Devices have been specified in project config - create now.
-                        CreateDevices();
-
-                        // Surface area.
-                        InitRuntime();
-
-                        // Setup scrript.
-                        _script.Setup();
-
-                        // Script may have altered shared values.
-                        ProcessRuntime();
-
-                        // Build all the steps.
-                        _script.BuildSteps();
-
-                        ///// Init the timeclock.
-                        timeMaster.TimeDefs = _script.GetSectionMarkers();
-                        timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
-
-                        ///// Init other controls.
-                        potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
-                        double mv = Convert.ToDouble(_config.MasterVolume);
-                        sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
-
-                        SetSpeedTimerPeriod();
-                    }
-                    catch (Exception ex)
-                    {
-                        ProcessScriptRuntimeError(ex);
-                        ok = false;
-                    }
-
-                    SetCompileStatus(ok);
-                }
-                else
-                {
-                    _logger.Error("Compile failed.");
-                    ok = false;
-                    ProcessPlay(PlayCommand.StopRewind);
-                    SetCompileStatus(false);
-                }
-
-                _compileResults.ForEach(r =>
-                {
-                    if (r.ErrorType == ScriptErrorType.Warning)
-                    {
-                        _logger.Warn(r.ToString());
-                    }
-                    else
-                    {
-                        _logger.Error(r.ToString());
-                    }
-                });
-            }
-
-            return ok;
-        }
-
-        /// <summary>
-        /// Update system statuses.
-        /// </summary>
-        /// <param name="compileStatus">True if compile is clean.</param>
-        void SetCompileStatus(bool compileStatus)
-        {
-            if (compileStatus)
-            {
-                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
-                _needCompile = false;
-            }
-            else
-            {
-                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, Color.Red);
-                _needCompile = true;
-            }
-        }
-        #endregion
-
+        /// <param name="scriptFileName"></param>
+        /// <returns></returns>
         string GetConfigFileName(string scriptFileName)
         {
-            string cfn = null;
+            string cfigfn = null;
 
             foreach (string s in File.ReadAllLines(scriptFileName))
             {
@@ -571,22 +582,89 @@ namespace Nebulator.UI
                     List<string> parts = s.SplitByTokens("\"");
                     if (parts.Count == 3)
                     {
-                        cfn = parts[1];
+                        cfigfn = parts[1];
                         break;
                     }
                 }
             }
 
-            return cfn;
+            if(cfigfn is not null)
+            {
+                // Check absolute.
+                if (File.Exists(cfigfn))
+                {
+                    // ok
+                }
+                else // Check local.
+                {
+                    string local = Path.GetFullPath(scriptFileName);
+                    local = Path.Combine(local, cfigfn);
+
+                    if (File.Exists(local))
+                    {
+                        cfigfn = local;
+                    }
+                    else
+                    {
+                        cfigfn = null;
+                    }
+                }
+            }
+
+            return cfigfn;
         }
 
+        /// <summary>
+        /// Edit the script config in a property grid.
+        /// </summary>
+        void Config_Click(object sender, EventArgs e)
+        {
+            if(_config is not null)
+            {
+                using Form f = new()
+                {
+                    Text = $"Script Config {_config.FileName}",
+                    Size = new Size(350, 400),
+                    StartPosition = FormStartPosition.Manual,
+                    Location = new Point(200, 200),
+                    FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                    ShowIcon = false,
+                    ShowInTaskbar = false
+                };
 
+                PropertyGrid pg = new()
+                {
+                    Dock = DockStyle.Fill,
+                    PropertySort = PropertySort.NoSort,
+                    SelectedObject = UserSettings.TheSettings
+                };
 
-            #region Realtime handling
-            /// <summary>
-            /// Multimedia timer tick handler.
-            /// </summary>
-            void MmTimerCallback(double totalElapsed, double periodElapsed)
+                // Detect changes of interest.
+                bool changed = false;
+                pg.PropertyValueChanged += (sdr, args) => { changed = true; };
+
+                f.Controls.Add(pg);
+                f.ShowDialog();
+
+                if (changed)
+                {
+                    // Reload.
+                    UnloadConfig();
+                    LoadConfig(_config.FileName);
+                }
+            }
+            else
+            {
+                _logger.Warn("No script config loaded");
+            }
+        }
+        #endregion
+
+        #region Realtime handling
+        /// <summary>
+        /// Multimedia timer tick handler.
+        /// </summary>
+        void MmTimerCallback(double totalElapsed, double periodElapsed)
         {
             // Do some stats gathering for measuring jitter.
             //if (_tan.Grab())
@@ -690,7 +768,7 @@ namespace Nebulator.UI
                 _stepTime.Advance();
 
                 // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                if(timeMaster.TimeDefs.Count() > 1)
+                if(timeMaster.TimeDefs.Count > 1)
                 {
                    // Check for end.
                    if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
@@ -721,39 +799,37 @@ namespace Nebulator.UI
             {
                 if (_script != null && e.Step != null)
                 {
-                    if (e.Step is StepNoteOn || e.Step is StepNoteOff)
+                    var dev = sender as IInputDevice;
+                    switch (e.Step)
                     {
-                        // Dig out the note number. !!! Note sign specifies note on/off.
-                        double value = (e.Step is StepNoteOn) ? (e.Step as StepNoteOn).NoteNumber : -(e.Step as StepNoteOff).NoteNumber;
-                        _script.InputHandler((sender as IInputDevice).DeviceType, e.Step.ChannelNumber, value);
-                    }
-                    else if (e.Step is StepControllerChange)
-                    {
-                        // Control change.
-                        StepControllerChange scc = e.Step as StepControllerChange;
-                        _script.InputHandler((sender as IInputDevice).DeviceType, e.Step.ChannelNumber, scc.ControllerId); // also needs value TODO1
+                        case StepNoteOn ston:
+                            _script.InputNote(dev.DeviceType, ston.ChannelNumber, ston.NoteNumber);
+                            break;
+
+                        case StepNoteOff stoff:
+                            _script.InputNote(dev.DeviceType, stoff.ChannelNumber, -stoff.NoteNumber);
+                            break;
+
+                        case StepControllerChange stctl:
+                            _script.InputControl(dev.DeviceType, stctl.ChannelNumber, stctl.ControllerId, stctl.Value);
+                            break;
                     }
                 }
             });
         }
 
-        /// <summary>
-        /// User has changed a channel value. Interested in solo/mute and volume.
-        /// </summary>
-        void ChannelChange_Event(object sender, EventArgs e) //TODO1 the rest...
-        {
-            //ChannelControl cc = sender as ChannelControl;
-            
-            // Channel ch = cc.BoundChannel;  eliminate?
+        ///// <summary>
+        ///// User has changed a channel value. Interested in solo/mute and volume.
+        ///// </summary>
+        //void ChannelChange_Event(object sender, EventArgs e)
+        //{
+        //    ChannelControl tctl = sender as ChannelControl;
+        //    tctl.BoundChannel.Volume = tctl.Volume;
+        //    tctl.BoundChannel.State = tctl.State;
 
-            
-
-            // Save values.
-            // _nppVals.SetValue(ch.BoundChannel.Name, "volume", ch.BoundChannel.Volume);
-
-            // Kill any not solo. ???
-            //_script.Channels.Where(c => c.State != ChannelState.Solo).ForEach(c => c.Device?.Kill(c.ChannelNumber));
-        }
+        //    // Kill any not solo. ???
+        //    _script.Channels.Where(c => c.State != ChannelState.Solo).ForEach(c => c.Device?.Kill(c.ChannelNumber));
+        //}
         #endregion
 
         #region Runtime interop
@@ -800,7 +876,7 @@ namespace Nebulator.UI
             // Locate the offending frame.
             string srcFile;
             int srcLine = -1;
-            StackTrace st = new StackTrace(ex, true);
+            StackTrace st = new(ex, true);
             StackFrame sf = null;
 
             for (int i = 0; i < st.FrameCount; i++)
@@ -827,8 +903,8 @@ namespace Nebulator.UI
                 int ind = genLines[genLine].LastIndexOf("//");
                 if (ind != -1)
                 {
-                    string sl = genLines[genLine].Substring(ind + 2);
-                    int.TryParse(sl, out srcLine);
+                    string sl = genLines[genLine][(ind + 2)..];
+                    srcLine = int.Parse(sl);
                 }
 
                 err = new ScriptError()
@@ -866,7 +942,7 @@ namespace Nebulator.UI
         void Recent_Click(object sender, EventArgs e)
         {
             string fn = sender.ToString();
-            string sopen = OpenFile(fn);
+            string sopen = OpenScriptFile(fn);
             if (sopen != "")
             {
                 _logger.Error(sopen);
@@ -878,7 +954,7 @@ namespace Nebulator.UI
         /// </summary>
         void Open_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openDlg = new OpenFileDialog()
+            OpenFileDialog openDlg = new()
             {
                 Filter = "Nebulator files | *.neb",
                 Title = "Select a Nebulator file"
@@ -886,7 +962,7 @@ namespace Nebulator.UI
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
-                string sopen = OpenFile(openDlg.FileName);
+                string sopen = OpenScriptFile(openDlg.FileName);
                 if (sopen != "")
                 {
                     _logger.Error(sopen);
@@ -895,11 +971,11 @@ namespace Nebulator.UI
         }
 
         /// <summary>
-        /// Common np file opener.
+        /// Common script file opener.
         /// </summary>
         /// <param name="fn">The np file to open.</param>
         /// <returns>Error string or empty if ok.</returns>
-        public string OpenFile(string fn)
+        public string OpenScriptFile(string fn)
         {
             string ret = "";
 
@@ -907,54 +983,36 @@ namespace Nebulator.UI
             {
                 try
                 {
+                    // Clean up the old.
+                    UnloadConfig();
+
                     if (File.Exists(fn))
                     {
                         _logger.Info($"Opening {fn}");
-                        _fn = fn;
+                        _scriptFileName = fn;
 
                         // Get the config and set things up.
-                        DestroyChannelControls();
-                        DestroyDevices();
-
-                        _config = null;
-
                         string cfigfn = GetConfigFileName(fn);
 
                         if(cfigfn is not null)
                         {
-                            // Check absolute.
-                            if(File.Exists(cfigfn))
-                            {
-                                _config = Config.Load(cfigfn);
-                            }
-                            else // Check local.
-                            {
-                                string local = Path.GetFullPath(fn);
-                                local = Path.Combine(local, cfigfn);
-
-                                if(File.Exists(local))
-                                {
-                                    _config = Config.Load(local);
-                                }
-                            }
+                            LoadConfig(cfigfn);
                         }
 
-                        if(_config is null)
+                        if (_config is not null)
                         {
-                            _logger.Error("Couldn't load config file: {cfigfn}");
-                            SetCompileStatus(false);
-                            Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
-                        }
-                        else
-                        {
-                            CreateDevices();
-                            CreateChannelControls();
 
                             AddToRecentDefs(fn);
                             bool ok = Compile();
                             SetCompileStatus(ok);
 
                             Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
+                        }
+                        else
+                        {
+                            _logger.Error("Couldn't load config file: {cfigfn}");
+                            SetCompileStatus(false);
+                            Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
                         }
                     }
                     else
@@ -984,7 +1042,7 @@ namespace Nebulator.UI
 
             UserSettings.TheSettings.RecentFiles.ForEach(f =>
             {
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(f, null, new EventHandler(Recent_Click));
+                ToolStripMenuItem menuItem = new(f, null, new EventHandler(Recent_Click));
                 menuItems.Add(menuItem);
             });
         }
@@ -1091,7 +1149,7 @@ namespace Nebulator.UI
         void About_Click(object sender, EventArgs e)
         {
             // Make some markdown.
-            List<string> mdText = new List<string>
+            List<string> mdText = new()
             {
                 // Device info.
                 "# Your Devices",
@@ -1124,7 +1182,7 @@ namespace Nebulator.UI
             }
 
             mdText.Add("## Asio");
-            if (AsioOut.GetDriverNames().Count() > 0)
+            if (AsioOut.GetDriverNames().Length > 0)
             {
                 foreach (string sdev in AsioOut.GetDriverNames())
                 {
@@ -1152,7 +1210,7 @@ namespace Nebulator.UI
             // Do log maintenance.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
 
-            FileInfo fi = new FileInfo(Path.Combine(appDir, "log.txt"));
+            FileInfo fi = new(Path.Combine(appDir, "log.txt"));
             if(fi.Exists && fi.Length > 100000)
             {
                 File.Copy(fi.FullName, fi.FullName.Replace("log.", "log2."), true);
@@ -1183,7 +1241,7 @@ namespace Nebulator.UI
         /// <param name="e"></param>
         void LogShow_Click(object sender, EventArgs e)
         {
-            using (Form f = new Form()
+            using Form f = new ()
             {
                 Text = "Log Viewer",
                 Size = new Size(900, 600),
@@ -1193,28 +1251,27 @@ namespace Nebulator.UI
                 FormBorderStyle = FormBorderStyle.SizableToolWindow,
                 ShowIcon = false,
                 ShowInTaskbar = false
-            })
+            };
+
+            TextViewer tv = new()
             {
-                TextViewer tv = new TextViewer()
-                {
-                    Dock = DockStyle.Fill,
-                    WordWrap = true
-                };
+                Dock = DockStyle.Fill,
+                WordWrap = true
+            };
 
-                f.Controls.Add(tv);
-                tv.Colors.Add(" ERROR ", Color.Plum);
-                tv.Colors.Add(" _WARN ", Color.LightPink);
-                //tv.Colors.Add(" SND???:", Color.LightGreen);
+            f.Controls.Add(tv);
+            tv.Colors.Add(" ERROR ", Color.Plum);
+            tv.Colors.Add(" _WARN ", Color.LightPink);
+            //tv.Colors.Add(" SND???:", Color.LightGreen);
 
-                string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-                string logFileName = Path.Combine(appDir, "log.txt");
-                using (new WaitCursor())
-                {
-                    File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l));
-                }
-
-                f.ShowDialog();
+            string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
+            string logFileName = Path.Combine(appDir, "log.txt");
+            using (new WaitCursor())
+            {
+                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l));
             }
+
+            f.ShowDialog();
         }
         #endregion
 
@@ -1233,7 +1290,7 @@ namespace Nebulator.UI
         /// </summary>
         void UserSettings_Click(object sender, EventArgs e)
         {
-            using (Form f = new Form()
+            using Form f = new()
             {
                 Text = "User Settings",
                 Size = new Size(350, 400),
@@ -1242,34 +1299,28 @@ namespace Nebulator.UI
                 FormBorderStyle = FormBorderStyle.FixedToolWindow,
                 ShowIcon = false,
                 ShowInTaskbar = false
-            })
+            };
+
+            PropertyGrid pg = new()
             {
-                PropertyGrid pg = new PropertyGrid()
-                {
-                    Dock = DockStyle.Fill,
-                    PropertySort = PropertySort.NoSort,
-                    SelectedObject = UserSettings.TheSettings
-                };
+                Dock = DockStyle.Fill,
+                PropertySort = PropertySort.NoSort,
+                SelectedObject = UserSettings.TheSettings
+            };
 
-                // Detect changes of interest.
-                bool ctrls = false;
-                pg.PropertyValueChanged += (sdr, args) =>
-                {
-                    string p = args.ChangedItem.PropertyDescriptor.Name;
-                    ctrls |= (p.Contains("Font") | p.Contains("Color")); //TODO0 fix
-                };
+            // Detect changes of interest.
+            bool changed = false;
+            pg.PropertyValueChanged += (sdr, args) => { changed = true; };
 
-                f.Controls.Add(pg);
-                f.ShowDialog();
+            f.Controls.Add(pg);
+            f.ShowDialog();
 
-                // Figure out what changed - each handled differently.
-                if (ctrls)
-                {
-                    MessageBox.Show("UI changes require a restart to take effect.");
-                }
-
-                SaveSettings();
+            if (changed)
+            {
+                MessageBox.Show("UI changes require a restart to take effect.");
             }
+
+            SaveSettings();
         }
 
         /// <summary>
@@ -1371,7 +1422,7 @@ namespace Nebulator.UI
         void SetSpeedTimerPeriod()
         {
             // Make a transformer.
-            MidiTime mt = new MidiTime()
+            MidiTime mt = new()
             {
                 InternalPpq = Time.SUBDIVS_PER_BEAT,
                 Tempo = potSpeed.Value
@@ -1388,11 +1439,11 @@ namespace Nebulator.UI
         /// <param name="e"></param>
         void ExportMidi_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveDlg = new SaveFileDialog()
+            SaveFileDialog saveDlg = new()
             {
                 Filter = "Midi files (*.mid)|*.mid",
                 Title = "Export to midi file",
-                FileName = Path.GetFileName(_fn.Replace(".neb", ".mid"))
+                FileName = Path.GetFileName(_scriptFileName.Replace(".neb", ".mid"))
             };
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
@@ -1423,9 +1474,9 @@ namespace Nebulator.UI
 
             if(ok)
             {
-                Dictionary<int, string> channels = new Dictionary<int, string>();
+                Dictionary<int, string> channels = new();
                 _config.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
-                MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, potSpeed.Value, "Converted from " + _fn);
+                MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, potSpeed.Value, "Converted from " + _scriptFileName);
             }
         }
 

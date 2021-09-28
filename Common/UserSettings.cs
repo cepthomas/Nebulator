@@ -71,6 +71,12 @@ namespace Nebulator.Common
         [TypeConverter(typeof(FixedListTypeConverter))]
         public string OscOutDevice { get; set; } = "127.0.0.1:1234";
 
+        //[DisplayName("Virtual Keyboard")]
+        //[Description("Show the keyboard.")]
+        //[Category("Devices")]
+        //[Browsable(true)]
+        //public bool VirtualKeyboard { get; set; } = true;
+
         [DisplayName("Auto Compile")]
         [Description("Compile current file when change detected.")]
         [Category("Functionality")]
@@ -111,19 +117,15 @@ namespace Nebulator.Common
 
         #region Persistence
         /// <summary>Create object from file.</summary>
-        public static UserSettings Load(string appDir)
+        public static UserSettings? Load(string appDir)
         {
-            UserSettings set = null;
+            UserSettings set;
             string fn = Path.Combine(appDir, "settings.json");
 
             if (File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
                 set = JsonSerializer.Deserialize<UserSettings>(json);
-
-                // Clean up any bad file names.
-                set.RecentFiles.RemoveAll(f => !File.Exists(f));
-
                 set._fn = fn;
             }
             else

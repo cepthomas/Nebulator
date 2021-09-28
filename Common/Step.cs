@@ -13,7 +13,7 @@ namespace Nebulator.Common
     public abstract class Step
     {
         /// <summary>Associated comm device to use.</summary>
-        public IDevice Device { get; set; } = null;
+        public IDevice? Device { get; set; }
 
         /// <summary>Channel number 1-16.</summary>
         public int ChannelNumber { get; set; } = 1;
@@ -50,7 +50,6 @@ namespace Nebulator.Common
             // Maybe alter note velocity.
             if (Device is IOutputDevice)
             {
-                IOutputDevice nout = Device as IOutputDevice;
                 double vel = Velocity * channelVolume * masterVolume;
                 VelocityToPlay = MathUtils.Constrain(vel, 0, 1.0);
             }
@@ -101,7 +100,7 @@ namespace Nebulator.Common
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"StepControllerChange: {base.ToString()}");
+            StringBuilder sb = new($"StepControllerChange: {base.ToString()}");
 
             if (ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
             {
@@ -137,7 +136,7 @@ namespace Nebulator.Common
     public class StepFunction : Step
     {
         /// <summary>A function to call.</summary>
-        public Action ScriptFunction { get; set; } = null;
+        public Action? ScriptFunction { get; set; }
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()

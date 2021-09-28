@@ -20,7 +20,7 @@ namespace Nebulator.Common
         public delegate void ClientNotificationEventHandler(LogLevel level, string msg);
 
         /// <summary>The event handler for messages back to the client.</summary>
-        public static event ClientNotificationEventHandler ClientNotification;
+        public static event ClientNotificationEventHandler? ClientNotification = null;
         #endregion
 
         /// <summary>Send the event to the client for display.</summary>

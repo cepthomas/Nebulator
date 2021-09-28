@@ -16,6 +16,11 @@ namespace Nebulator.Common
     public class Config
     {
         #region Properties
+        /// <summary>The file name.</summary>
+        [JsonIgnore]
+        [Browsable(false)]
+        public string FileName { get; private set; } = Definitions.UNKNOWN_STRING;
+
         /// <summary>Master volume.</summary>
         [Browsable(false)]
         public double MasterVolume { get; set; } = 0.8;
@@ -38,30 +43,24 @@ namespace Nebulator.Common
         public List<Controller> Controllers { get; } = new List<Controller>();
         #endregion
 
-        #region Fields
-        /// <summary>The file name.</summary>
-        string _fn = Definitions.UNKNOWN_STRING;
-        #endregion
-
         #region Persistence
         /// <summary>Create object from file.</summary>
         public static Config Load(string fn)
         {
-            Config pc = null;
+            Config pc;
 
             if (File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
                 pc = JsonSerializer.Deserialize<Config>(json);
-
-                pc._fn = fn;
+                pc.FileName = fn;
             }
             else
             {
-                // Doesn't exist, create a new one. TODO1 populate from defaults.
+                // Doesn't exist, create a new one.
                 pc = new Config
                 {
-                    _fn = fn
+                    FileName = fn
                 };
             }
 
@@ -72,14 +71,6 @@ namespace Nebulator.Common
                 {
                     throw new Exception($"Invalid device for channel {ch.ChannelName} {ch.ChannelNumber}");
                 }
-
-                //TODO1 fixup other props, override from user settings - or in CreateDevices()?
-                //    Channel nt = new Channel()
-                //    {
-                //        Name = name,
-                //        DeviceType = device,
-                //        ChannelNumber = channelNum,
-                //    };
 
                 if (ch.WobbleRange != 0.0)
                 {
@@ -100,15 +91,6 @@ namespace Nebulator.Common
                     throw new Exception($"Invalid device for controller {con.Device.DeviceType}");
                 }
 
-                //TODO1 fixup other props, override from user settings - or in CreateControls()?
-                //    NController mp = new NController()
-                //    {
-                //        DeviceType = device,
-                //        ChannelNumber = channelNum,
-                //        ControllerId = controlId,
-                //        BoundVar = bound
-                //    };
-
                 pc.Controllers.Add(con);
             });
 
@@ -120,7 +102,7 @@ namespace Nebulator.Common
         {
             JsonSerializerOptions opts = new() { WriteIndented = true };
             string json = JsonSerializer.Serialize(this, opts);
-            File.WriteAllText(_fn, json);
+            File.WriteAllText(FileName, json);
         }
         #endregion
     }

@@ -13,49 +13,51 @@ namespace Nebulator.UI
     {
         #region Properties
         /// <summary>Corresponding channel object.</summary>
-        // public Channel BoundChannel { get; set; }
+        public Channel BoundChannel { get; set; }
 
+        ///// <summary>Channel state.</summary>
+        //ChannelState State
+        //{
+        //    get
+        //    {
+        //        var st = ChannelState.Normal;
+        //        if (chkSolo.Checked) { st = ChannelState.Solo; }
+        //        else if (chkMute.Checked) { st = ChannelState.Mute; }
+        //        return st;
+        //    }
+        //    set
+        //    {
+        //        switch(value)
+        //        {
+        //            case ChannelState.Normal:
+        //                chkSolo.Checked = false;
+        //                chkMute.Checked = false;
+        //                break;
+        //            case ChannelState.Solo:
+        //                chkSolo.Checked = true;
+        //                chkMute.Checked = false;
+        //                break;
+        //            case ChannelState.Mute:
+        //                chkSolo.Checked = false;
+        //                chkMute.Checked = true;
+        //                break;
+        //        }
+        //    }
+        //}
 
-        public ChannelState State
-        {
-            get
-            {
-                var st = ChannelState.Normal;
-                if (chkSolo.Checked) { st = ChannelState.Solo; }
-                else if (chkMute.Checked) { st = ChannelState.Mute; }
-                return st;
-            }
-            set
-            {
-                switch(value)
-                {
-                    case ChannelState.Normal:
-                        chkSolo.Checked = false;
-                        chkMute.Checked = false;
-                        break;
-                    case ChannelState.Solo:
-                        chkSolo.Checked = true;
-                        chkMute.Checked = false;
-                        break;
-                    case ChannelState.Mute:
-                        chkSolo.Checked = false;
-                        chkMute.Checked = true;
-                        break;
-                }
-            }
-        }
+        ///// <summary>For UI display.</summary>
+        //public string Label { get { return sldVolume.Label; } set { sldVolume.Label = value; } }
 
-        public string Label { get { return sldVolume.Label; } set { sldVolume.Label = value; } }
-
-        public double Volume { get { return sldVolume.Value; } set { sldVolume.Value = value; } }
+        ///// <summary>Channel volume.</summary>
+        //double Volume { get { return sldVolume.Value; } set { sldVolume.Value = value; } }
         #endregion
 
-        #region Events
-        /// <summary>
-        /// User changed something.
-        /// </summary>
-        public event EventHandler ChannelChangeEvent;
-        #endregion
+        //#region Events
+        ///// <summary>
+        ///// User changed something.
+        ///// </summary>
+        //public event EventHandler ChannelChangeEvent;
+        //#endregion
 
         /// <summary>
         /// Constructor.
@@ -74,14 +76,28 @@ namespace Nebulator.UI
         {
             chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
             chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            //sldVolume.Font = UserSettings.TheSettings.ControlFont;
-            sldVolume.DecPlaces = 2;
-            //sldVolume.Label = BoundChannel.Name;
-            sldVolume.Maximum = 1.0;
-            //sldVolume.Value = BoundChannel.Volume;
 
-            sldVolume.ValueChanged += VolChannel_ValueChanged;
+            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.DecPlaces = 2;
+            sldVolume.Label = BoundChannel.ChannelName;
+            sldVolume.Maximum = 1.0;
+            sldVolume.Value = BoundChannel.Volume;
+
+            switch (BoundChannel.State)
+            {
+                case ChannelState.Normal:
+                    chkSolo.Checked = false;
+                    chkMute.Checked = false;
+                    break;
+                case ChannelState.Solo:
+                    chkSolo.Checked = true;
+                    chkMute.Checked = false;
+                    break;
+                case ChannelState.Mute:
+                    chkSolo.Checked = false;
+                    chkMute.Checked = true;
+                    break;
+            }
         }
 
         /// <summary>
@@ -91,6 +107,7 @@ namespace Nebulator.UI
         {
             CheckBox chk = sender as CheckBox;
 
+            // Fix UI logic.
             if (chk == chkSolo)
             {
                 chkMute.Checked = false;
@@ -100,7 +117,13 @@ namespace Nebulator.UI
                 chkSolo.Checked = false;
             }
 
-            ChannelChangeEvent?.Invoke(this, new EventArgs());
+            var st = ChannelState.Normal;
+            if (chkSolo.Checked) { st = ChannelState.Solo; }
+            else if (chkMute.Checked) { st = ChannelState.Mute; }
+
+            BoundChannel.State = st;
+
+//            ChannelChangeEvent?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -108,8 +131,8 @@ namespace Nebulator.UI
         /// </summary>
         private void VolChannel_ValueChanged(object sender, EventArgs e)
         {
-  //          BoundChannel.Volume = sldVolume.Value;
-            ChannelChangeEvent?.Invoke(this, new EventArgs());
+            BoundChannel.Volume = sldVolume.Value;
+  //          ChannelChangeEvent?.Invoke(this, new EventArgs());
         }
     }
 }

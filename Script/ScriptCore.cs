@@ -4,7 +4,7 @@ using NLog;
 using Nebulator.Common;
 
 
-// The internal script stuff. 
+// The internal script stuff. TODO1 combine with ScriptApi?
 
 namespace Nebulator.Script
 {
@@ -18,16 +18,16 @@ namespace Nebulator.Script
         internal bool _disposed = false;
 
         /// <summary>Script randomizer.</summary>
-        internal Random _rand = new Random();
+        internal Random _rand = new();
 
         /// <summary>All sequences.</summary>
-        internal List<Sequence> _sequences = new List<Sequence>();
+        internal List<Sequence> _sequences = new();
 
         /// <summary>All sections.</summary>
-        internal List<Section> _sections = new List<Section>();
+        internal List<Section> _sections = new();
 
         /// <summary>The steps being executed. Script functions may add to it at runtime.</summary>
-        internal StepCollection _steps = new StepCollection();
+        internal StepCollection _steps = new();
         #endregion
 
         #region Lifecycle
@@ -124,7 +124,7 @@ namespace Nebulator.Script
         /// <param name="startBeat">Which beat to start at.</param>
         StepCollection ConvertToSteps(Channel channel, Sequence seq, int startBeat)
         {
-            StepCollection steps = new StepCollection();
+            StepCollection steps = new();
 
             foreach (SequenceElement seqel in seq.Elements)
             {
@@ -138,7 +138,7 @@ namespace Nebulator.Script
                 // Is it a function?
                 if (seqel.ScriptFunction != null)
                 {
-                    StepFunction step = new StepFunction()
+                    StepFunction step = new()
                     {
                         Device = channel.Device,
                         ChannelNumber = channel.ChannelNumber,
@@ -153,7 +153,7 @@ namespace Nebulator.Script
                     {
                         ///// Note on.
                         double vel = channel.NextVol(seqel.Volume);
-                        StepNoteOn step = new StepNoteOn()
+                        StepNoteOn step = new()
                         {
                             Device = channel.Device,
                             ChannelNumber = channel.ChannelNumber,

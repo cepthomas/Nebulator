@@ -66,7 +66,7 @@ namespace Nebulator.Common
         // Get the specific list based on the property name.
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> rec = null;
+            List<string>? rec = null;
 
             switch (context.PropertyDescriptor.Name)
             {

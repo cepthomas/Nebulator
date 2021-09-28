@@ -159,7 +159,6 @@ namespace Nebulator  // Probably not forever home
                 cp.ReferencedAssemblies.Add("NebOsc.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
                 cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Device.dll");
 
                 // Add the generated source files.
                 List<string> paths = new List<string>();

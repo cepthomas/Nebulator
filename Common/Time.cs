@@ -127,7 +127,7 @@ namespace Nebulator.Common
 
         #region Overrides and operators for custom classess
         // Compare contents.
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (other is null)
             {

@@ -29,7 +29,7 @@ namespace Nebulator.Script
         /// <summary>Nebulator master Volume. Main:RW Script:RW</summary>
         public double Volume { get; set; } = 0;
 
-//TODO1 these?
+        //TODO1 these 3?
         /// <summary>Subdivision. Main:W Script:R</summary>
         public int SubdivsPerBeat { get { return Time.SUBDIVS_PER_BEAT; } }
 
@@ -51,7 +51,10 @@ namespace Nebulator.Script
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputHandler(DeviceType dev, int channel, double value) { } //TODO1 - noteon, noteoff, control, ...  MidiCommandCode?
+        public virtual void InputNote(DeviceType dev, int channel, double note) { }
+
+        /// <summary>Called when input arrives.</summary>
+        public virtual void InputControl(DeviceType dev, int channel, int ctlid, double value) { }
         #endregion
 
         #region Script callable functions
@@ -62,7 +65,7 @@ namespace Nebulator.Script
         /// <param name="elements">.</param>
         protected Sequence CreateSequence(int beats, SequenceElements elements)
         {
-            Sequence nseq = new Sequence()
+            Sequence nseq = new()
             {
                 Beats = beats,
                 Elements = elements
@@ -89,11 +92,11 @@ namespace Nebulator.Script
                 }
             }
 
-            Section nsect = new Section()
+            Section nsect = new()
             {
                 Beats = beats,
                 Name = name,
-                Elements = elements,
+                Elements = elements
             };
             
             _sections.Add(nsect);
@@ -118,7 +121,7 @@ namespace Nebulator.Script
             // If vol is positive and the note is not negative, it's note on, else note off.
             if (vol > 0 && notenum > 0)
             {
-                StepNoteOn step = new StepNoteOn()
+                StepNoteOn step = new()
                 {
                     Device = channel.Device,
                     ChannelNumber = channel.ChannelNumber,
@@ -133,7 +136,7 @@ namespace Nebulator.Script
             }
             else
             {
-                StepNoteOff step = new StepNoteOff()
+                StepNoteOff step = new()
                 {
                     Device = channel.Device,
                     ChannelNumber = channel.ChannelNumber,
@@ -151,7 +154,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         protected void SendNote(Channel channel, string notestr, double vol, Time dur)
         {
-            SequenceElement note = new SequenceElement(notestr);
+            SequenceElement note = new(notestr);
 
             if (note.Notes.Count == 0)
             {
@@ -211,7 +214,7 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid Channel");
             }
 
-            StepControllerChange step = new StepControllerChange()
+            StepControllerChange step = new()
             {
                 Device = channel.Device,
                 ChannelNumber = channel.ChannelNumber,
@@ -232,7 +235,7 @@ namespace Nebulator.Script
                 throw new Exception($"Invalid Channel");
             }
 
-            StepPatch step = new StepPatch()
+            StepPatch step = new()
             {
                 Device = channel.Device,
                 ChannelNumber = channel.ChannelNumber,
@@ -277,7 +280,7 @@ namespace Nebulator.Script
         protected double[] GetChordNotes(string note)
         {
             List<double> notes = NoteUtils.ParseNoteString(note);
-            return notes != null ? notes.ToArray() : new double[0];
+            return notes != null ? notes.ToArray() : Array.Empty<double>();
         }
 
         /// <summary>Get an array of scale notes.</summary>
@@ -287,16 +290,35 @@ namespace Nebulator.Script
         protected double[] GetScaleNotes(string scale, string key)
         {
             List<double> notes = NoteUtils.GetScaleNotes(scale, key);
-            return notes != null ? notes.ToArray() : new double[0];
+            return notes != null ? notes.ToArray() : Array.Empty<double>();
         }
         #endregion
 
-        #region Utilities like Processing
-        protected double Random(double max) { return _rand.NextDouble() * max; }
-        protected double Random(double min, double max) { return min + _rand.NextDouble() * (max - min); }
-        protected int Random(int max) { return _rand.Next(max); }
-        protected int Random(int min, int max) { return _rand.Next(min, max); }
-        protected void Print(params object[] vars) { _logger.Info(string.Join(" | ", vars)); }
+        #region Script utilities
+        protected double Random(double max)
+        {
+            return _rand.NextDouble() * max;
+        }
+
+        protected double Random(double min, double max)
+        {
+            return min + _rand.NextDouble() * (max - min);
+        }
+
+        protected int Random(int max)
+        {
+            return _rand.Next(max);
+        }
+
+        protected int Random(int min, int max)
+        {
+            return _rand.Next(min, max);
+        }
+
+        protected void Print(params object[] vars)
+        {
+            _logger.Info(string.Join(" | ", vars));
+        }
         #endregion
     }
 }

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Nebulator.Common
 {
-    /// <summary>The various devices. TODO1 shouldn't need this.</summary>
+    /// <summary>The various devices.</summary>
     public enum DeviceType { None, MidiIn, MidiOut, OscIn, OscOut, VkeyIn }
 
     /// <summary>Device has received something.</summary>
     public class DeviceInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
-        public Step Step { get; set; } = null;
+        public Step? Step { get; set; }
     }
 
     /// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>

@@ -28,7 +28,7 @@ namespace Nebulator.Common
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
         [DisplayName("Device Name")]
-        [Description("The device name for this channel.")]
+        [Description("The system device name for this channel.")]
         [Category("xxxx")]
         [Browsable(true)]
         [TypeConverter(typeof(FixedListTypeConverter))]
@@ -63,7 +63,7 @@ namespace Nebulator.Common
         /// <summary>The associated comm device.</summary>
         [JsonIgnore]
         [Browsable(false)]
-        public IOutputDevice Device { get; set; } = null;
+        public IOutputDevice? Device { get; set; }
 
         /// <summary>Current volume.</summary>
         [Browsable(false)]
@@ -76,7 +76,7 @@ namespace Nebulator.Common
         /// <summary>Wobbler for volume (optional).</summary>
         [JsonIgnore]
         [Browsable(false)]
-        public Wobbler VolWobbler { get; set; } = null;
+        public Wobbler? VolWobbler { get; set; } = null;
         #endregion
 
         /// <summary>Get the next volume.</summary>

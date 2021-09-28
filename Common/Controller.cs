@@ -19,7 +19,7 @@ namespace Nebulator.Common
         /// <summary>The associated comm device.</summary>
         [JsonIgnore]
         [Browsable(false)]
-        public IInputDevice Device { get; set; } = null;
+        public IInputDevice? Device { get; set; }
 
         [DisplayName("Device Type")]
         [Description("The device type for this controller.")]
