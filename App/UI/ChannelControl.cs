@@ -14,50 +14,7 @@ namespace Nebulator.UI
         #region Properties
         /// <summary>Corresponding channel object.</summary>
         public Channel BoundChannel { get; set; }
-
-        ///// <summary>Channel state.</summary>
-        //ChannelState State
-        //{
-        //    get
-        //    {
-        //        var st = ChannelState.Normal;
-        //        if (chkSolo.Checked) { st = ChannelState.Solo; }
-        //        else if (chkMute.Checked) { st = ChannelState.Mute; }
-        //        return st;
-        //    }
-        //    set
-        //    {
-        //        switch(value)
-        //        {
-        //            case ChannelState.Normal:
-        //                chkSolo.Checked = false;
-        //                chkMute.Checked = false;
-        //                break;
-        //            case ChannelState.Solo:
-        //                chkSolo.Checked = true;
-        //                chkMute.Checked = false;
-        //                break;
-        //            case ChannelState.Mute:
-        //                chkSolo.Checked = false;
-        //                chkMute.Checked = true;
-        //                break;
-        //        }
-        //    }
-        //}
-
-        ///// <summary>For UI display.</summary>
-        //public string Label { get { return sldVolume.Label; } set { sldVolume.Label = value; } }
-
-        ///// <summary>Channel volume.</summary>
-        //double Volume { get { return sldVolume.Value; } set { sldVolume.Value = value; } }
         #endregion
-
-        //#region Events
-        ///// <summary>
-        ///// User changed something.
-        ///// </summary>
-        //public event EventHandler ChannelChangeEvent;
-        //#endregion
 
         /// <summary>
         /// Constructor.
@@ -122,8 +79,6 @@ namespace Nebulator.UI
             else if (chkMute.Checked) { st = ChannelState.Mute; }
 
             BoundChannel.State = st;
-
-//            ChannelChangeEvent?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -132,7 +87,6 @@ namespace Nebulator.UI
         private void VolChannel_ValueChanged(object sender, EventArgs e)
         {
             BoundChannel.Volume = sldVolume.Value;
-  //          ChannelChangeEvent?.Invoke(this, new EventArgs());
         }
     }
 }

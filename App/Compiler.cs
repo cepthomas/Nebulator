@@ -15,6 +15,7 @@ using Nebulator.Common;
 using Nebulator.Script;
 
 
+// TODO1 new style:
 // string fn = Path.GetTempFileName() + ".html";
 // File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
 // new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();

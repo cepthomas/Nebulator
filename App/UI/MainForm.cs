@@ -41,9 +41,6 @@ namespace Nebulator.UI
         /// <summary>Current step time clock.</summary>
         Time _stepTime = new();
 
-        /// <summary>Script compile errors and warnings.</summary>
-        List<ScriptError> _compileResults = new();
-
         /// <summary>Current np file name.</summary>
         string _scriptFileName = Definitions.UNKNOWN_STRING;
 
@@ -122,11 +119,9 @@ namespace Nebulator.UI
 
             potSpeed.DrawColor = UserSettings.TheSettings.IconColor;
             potSpeed.BackColor = UserSettings.TheSettings.BackColor;
-            //potSpeed.Font = UserSettings.TheSettings.ControlFont;
             potSpeed.Invalidate();
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            //sldVolume.Font = UserSettings.TheSettings.ControlFont;
             sldVolume.DecPlaces = 2;
             sldVolume.Invalidate();
 
@@ -151,6 +146,7 @@ namespace Nebulator.UI
             lblSolo.Hide();
             lblMute.Hide();
 
+            btnKillComm.Click += (object _, EventArgs __) => { Kill(); };
             btnClear.Click += (object _, EventArgs __) => { textViewer.Clear(); };
             btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
             #endregion
@@ -164,7 +160,7 @@ namespace Nebulator.UI
             ScriptDefinitions.TheDefinitions.Init();
 
             // Fast mm timer.
-            SetSpeedTimerPeriod();
+            SetFastTimerPeriod();
             _mmTimer.Start();
 
             KeyPreview = true; // for routing kbd strokes properly
@@ -172,6 +168,8 @@ namespace Nebulator.UI
             _watcher.FileChangeEvent += Watcher_Changed;
 
             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
+
+            Config.MakeFake(@"..\..\..\fake.nebcfig");
 
             #region Command line args
             string sopen = "";
@@ -204,20 +202,11 @@ namespace Nebulator.UI
             ProcessPlay(PlayCommand.Stop);
 
             // Just in case.
-            _outputDevices.ForEach(o => o.Value?.Kill());
+            Kill();
 
             UnloadConfig();
 
             _script?.Dispose();
-
-            //DestroyDevices();
-
-            //if (_script != null)
-            //{
-            //    // Save the project.
-            //    DestroyChannelControls();
-            //    _script.Dispose();
-            //}
 
             // Save user settings.
             SaveSettings();
@@ -273,20 +262,16 @@ namespace Nebulator.UI
                 timeMaster.TimeDefs.Clear();
 
                 // Process errors. Some may be warnings.
-                _compileResults = compiler.Errors;
-                int errorCount = _compileResults.Count(w => w.ErrorType == ScriptErrorType.Error);
+                int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptErrorType.Error);
 
                 if (errorCount == 0 && _script != null)
                 {
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 
-                    // Note: Need exception handling here to protect from user script errors.
+                    // Need exception handling here to protect from user script errors.
                     try
                     {
-                        // Devices have been specified in project config - create now.
-//                        CreateDevices();
-
                         // Init shared vars.
                         InitRuntime();
 
@@ -303,7 +288,7 @@ namespace Nebulator.UI
                         timeMaster.TimeDefs = _script.GetSectionMarkers();
                         timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
 
-                        SetSpeedTimerPeriod();
+                        SetFastTimerPeriod();
                     }
                     catch (Exception ex)
                     {
@@ -321,7 +306,7 @@ namespace Nebulator.UI
                     SetCompileStatus(false);
                 }
 
-                _compileResults.ForEach(r =>
+                compiler.Errors.ForEach(r =>
                 {
                     if (r.ErrorType == ScriptErrorType.Warning)
                     {
@@ -390,22 +375,12 @@ namespace Nebulator.UI
         /// </summary>
         void UnloadConfig()
         {
-            ///// Save current config values.
-            if(_config is not null)
-            {
-                _config.MasterSpeed = potSpeed.Value;
-                _config.MasterVolume = potSpeed.Value;
-            }
-
-            ///// Save current channel values then destroy controls.
+            ///// Destroy controls.
             foreach (Control ctl in Controls)
             {
                 if (ctl is ChannelControl)
                 {
                     ChannelControl tctl = ctl as ChannelControl;
- //                   tctl.BoundChannel.Volume = tctl.Volume;
- //                   tctl.BoundChannel.State = tctl.State;
- //                   tctl.ChannelChangeEvent -= ChannelChange_Event;
                     tctl.Dispose();
                     Controls.Remove(tctl);
                 }
@@ -427,7 +402,7 @@ namespace Nebulator.UI
             });
             _outputDevices.Clear();
 
-            _config.Save();
+            _config?.Save();
             _config = null;
         }
 
@@ -453,12 +428,9 @@ namespace Nebulator.UI
                     //Name = t.DeviceType.ToString(),
                     Location = new Point(x, y),
                     BoundChannel = t,
-//                    State = t.State,
-//                    Volume = t.Volume,
                 };
-
-//                tctl.ChannelChangeEvent += ChannelChange_Event;
                 Controls.Add(tctl);
+
                 x += tctl.Width + CONTROL_SPACING;
             }
         }
@@ -468,7 +440,7 @@ namespace Nebulator.UI
         /// </summary>
         void CreateDevices()
         {
-            // Get requested inputs.
+            // Get requested inputs. Hook to the device.
             foreach (Controller con in _config.Controllers)
             {
                 // Have we seen it yet?
@@ -490,7 +462,7 @@ namespace Nebulator.UI
                             break;
 
                         case DeviceType.VkeyIn:
-                            var kbd = new Keyboard
+                            var kbd = new Keyboard //TODO2 useful? or replace with something else? x/y surface
                             {
                                 StartPosition = FormStartPosition.Manual,
                                 Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height),
@@ -522,7 +494,7 @@ namespace Nebulator.UI
                 }
             }
 
-            // Get requested outputs.
+            // Get requested outputs. Hook to the device.
             foreach (Channel chan in _config.Channels)
             {
                 // Have we seen it yet?
@@ -683,7 +655,7 @@ namespace Nebulator.UI
         }
 
         /// <summary>
-        /// Output next time/step.
+        /// Output steps for next time increment.
         /// </summary>
         void NextStep()
         {
@@ -699,7 +671,7 @@ namespace Nebulator.UI
                 {
                     if(timeMaster.TimeDefs.ContainsKey(_stepTime.Beat))
                     {
-                        // currentSection = _stepTime.Beat;
+                        // TODO1? currentSection = _stepTime.Beat;
                     }
                 }
 
@@ -719,8 +691,8 @@ namespace Nebulator.UI
                 //}
 
                 // Process any sequence steps.
-                bool anySolo = _config.Channels.Where(t => t.State == ChannelState.Solo).Count() > 0;
-                bool anyMute = _config.Channels.Where(t => t.State == ChannelState.Mute).Count() > 0;
+                bool anySolo = _config.Channels.Where(t => t.State == ChannelState.Solo).Any();
+                bool anyMute = _config.Channels.Where(t => t.State == ChannelState.Mute).Any();
                 lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
@@ -738,7 +710,7 @@ namespace Nebulator.UI
                         switch(step)
                         {
                             case StepFunction sf:
-                                // Note: Need exception handling here to protect from user script errors.
+                                // Need exception handling here to protect from user script errors.
                                 try
                                 {
                                     sf.ScriptFunction();
@@ -773,8 +745,8 @@ namespace Nebulator.UI
                    // Check for end.
                    if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
                    {
-                       ProcessPlay(PlayCommand.StopRewind);
-                        _outputDevices.ForEach(o => o.Value?.Kill()); // just in case
+                        ProcessPlay(PlayCommand.StopRewind);
+                        Kill(); // just in case
                    }
                 }
                 // else keep going
@@ -817,19 +789,6 @@ namespace Nebulator.UI
                 }
             });
         }
-
-        ///// <summary>
-        ///// User has changed a channel value. Interested in solo/mute and volume.
-        ///// </summary>
-        //void ChannelChange_Event(object sender, EventArgs e)
-        //{
-        //    ChannelControl tctl = sender as ChannelControl;
-        //    tctl.BoundChannel.Volume = tctl.Volume;
-        //    tctl.BoundChannel.State = tctl.State;
-
-        //    // Kill any not solo. ???
-        //    _script.Channels.Where(c => c.State != ChannelState.Solo).ForEach(c => c.Device?.Kill(c.ChannelNumber));
-        //}
         #endregion
 
         #region Runtime interop
@@ -850,13 +809,13 @@ namespace Nebulator.UI
         /// </summary>
         void ProcessRuntime()
         {
-            if (_script.Speed != potSpeed.Value)
+            if (Math.Abs(_script.Speed - potSpeed.Value) > 0.001)
             {
                 potSpeed.Value = _script.Speed;
-                SetSpeedTimerPeriod();
+                SetFastTimerPeriod();
             }
 
-            if (_script.Volume != sldVolume.Value)
+            if (Math.Abs(_script.Volume - sldVolume.Value) > 0.001)
             {
                 sldVolume.Value = _script.Volume;
             }
@@ -1010,7 +969,7 @@ namespace Nebulator.UI
                         }
                         else
                         {
-                            _logger.Error("Couldn't load config file: {cfigfn}");
+                            _logger.Error($"Couldn't load config file: {cfigfn}");
                             SetCompileStatus(false);
                             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
                         }
@@ -1097,7 +1056,7 @@ namespace Nebulator.UI
         void Speed_ValueChanged(object sender, EventArgs e)
         {
             _config.MasterSpeed = potSpeed.Value;
-            SetSpeedTimerPeriod();
+            SetFastTimerPeriod();
         }
 
         /// <summary>
@@ -1372,7 +1331,7 @@ namespace Nebulator.UI
                     _mmTimer.Stop();
 
                     // Send midi stop all notes just in case.
-                    _outputDevices.ForEach(o => o.Value?.Kill());
+                    Kill();
                     break;
 
                 case PlayCommand.Rewind:
@@ -1415,11 +1374,11 @@ namespace Nebulator.UI
         }
         #endregion
 
-        #region Timers
+        #region Timer
         /// <summary>
         /// Common func.
         /// </summary>
-        void SetSpeedTimerPeriod()
+        void SetFastTimerPeriod()
         {
             // Make a transformer.
             MidiTime mt = new()
@@ -1483,9 +1442,7 @@ namespace Nebulator.UI
         /// <summary>
         /// Kill em all.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Kill_Click(object sender, EventArgs e)
+        void Kill()
         {
             _outputDevices.ForEach(o => o.Value?.Kill());
         }

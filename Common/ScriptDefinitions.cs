@@ -9,6 +9,7 @@ using NBagOfTricks;
 
 namespace Nebulator.Common
 {
+    /// <summary>Definitions for use inside scripts.</summary>
     public class ScriptDefinitions
     {
         /// <summary>Current global defs.</summary>
@@ -29,8 +30,8 @@ namespace Nebulator.Common
         /// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is list of constituent notes.</summary>
         public Dictionary<string, List<string>> ScaleDefs { get; private set; } = new Dictionary<string, List<string>>();
 
-        /// <summary>The midi instrument names ordered by patch numbers.</summary>
-        public string[] Patches { get; private set; } = new string[Definitions.MAX_MIDI+1];
+        // /// <summary>The midi instrument names ordered by patch numbers.</summary>
+        // public string[] Patches { get; private set; } = new string[Definitions.MAX_MIDI+1];
 
         /// <summary>Helper for internals. Really should be separate classes - avoiding over-OOPing.</summary>
         public int NoteControl { get; set; } = -1;
@@ -51,7 +52,7 @@ namespace Nebulator.Common
             ScaleDefs.Clear();
 
             // Read the file.
-            object currentSection;
+            object? currentSection = null;
 
             string fpath = Path.Combine(MiscUtils.GetExeDir(), @"Resources\ScriptDefinitions.md");
             foreach (string sl in File.ReadAllLines(fpath))
@@ -86,11 +87,15 @@ namespace Nebulator.Common
                             switch (currentSection)
                             {
                                 case Dictionary<string, string> sd:
-                                    (currentSection as Dictionary<string, string>)[parts[0]] = parts[1];
+                                    sd[parts[0]] = parts[1];
                                     break;
 
                                 case Dictionary<string, List<string>> sd:
-                                    (currentSection as Dictionary<string, List<string>>).Add(parts[0], parts.GetRange(1, parts.Count - 1));
+                                    sd.Add(parts[0], parts.GetRange(1, parts.Count - 1));
+                                    break;
+
+                                case null:
+                                    // Ignore.
                                     break;
 
                                 default:
@@ -105,15 +110,15 @@ namespace Nebulator.Common
             NoteControl = int.Parse(ControllerDefs["NoteControl"]);
             PitchControl = int.Parse(ControllerDefs["PitchControl"]);
 
-            // Patches.
-            Patches.ForEach(p => p = "NoPatch"); // default
-            InstrumentDefs.ForEach( kv =>
-            {
-                if(int.TryParse(kv.Value, out int inum) && inum >= 0 && inum <= Definitions.MAX_MIDI)
-                {
-                    Patches[inum] = kv.Key;
-                }
-            });
+            //// Patches.
+            //Patches.ForEach(p => p = "NoPatch"); // default
+            //InstrumentDefs.ForEach( kv =>
+            //{
+            //    if(int.TryParse(kv.Value, out int inum) && inum >= 0 && inum <= Definitions.MAX_MIDI)
+            //    {
+            //        Patches[inum] = kv.Key;
+            //    }
+            //});
         }
     }
 }

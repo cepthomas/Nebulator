@@ -52,8 +52,16 @@ namespace Nebulator.Common
             if (File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
-                pc = JsonSerializer.Deserialize<Config>(json);
-                pc.FileName = fn;
+                var jobj = JsonSerializer.Deserialize<Config>(json);
+                if(jobj is not null)
+                {
+                    pc = jobj;
+                    pc.FileName = fn;
+                }
+                else
+                {
+                    throw new Exception($"Invalid config file: {fn}");
+                }
             }
             else
             {
@@ -67,31 +75,14 @@ namespace Nebulator.Common
             // Do post deserialization fixups.
             pc.Channels.ForEach(ch =>
             {
-                if (ch.Device.DeviceType != DeviceType.MidiOut && ch.Device.DeviceType != DeviceType.OscOut)
-                {
-                    throw new Exception($"Invalid device for channel {ch.ChannelName} {ch.ChannelNumber}");
-                }
-
-                if (ch.WobbleRange != 0.0)
+                if (ch.VolumeWobbleRange != 0.0)
                 {
                     ch.VolWobbler = new Wobbler()
                     {
-                        RangeHigh = ch.WobbleRange,
-                        RangeLow = ch.WobbleRange
+                        RangeHigh = ch.VolumeWobbleRange,
+                        RangeLow = ch.VolumeWobbleRange
                     };
                 }
-
-                pc.Channels.Add(ch);
-            });
-
-            pc.Controllers.ForEach(con =>
-            {
-                if (con.Device.DeviceType != DeviceType.MidiIn && con.Device.DeviceType != DeviceType.OscIn && con.Device.DeviceType != DeviceType.VkeyIn)
-                {
-                    throw new Exception($"Invalid device for controller {con.Device.DeviceType}");
-                }
-
-                pc.Controllers.Add(con);
             });
 
             return pc;
@@ -105,5 +96,85 @@ namespace Nebulator.Common
             File.WriteAllText(FileName, json);
         }
         #endregion
+
+        /// <summary>Create object from file.</summary>
+        public static void MakeFake(string fn)
+        {
+            Config pc = new()
+            {
+                FileName = fn,
+                MasterVolume = 0.1234,
+                MasterSpeed = 67.89
+            };
+
+            pc.Channels.Add(new()
+            {
+                DeviceType = DeviceType.MidiOut,
+                DeviceName = "DevOut1",
+                ChannelName = "Chan1",
+                ChannelNumber = 1,
+                Patch = Patch.Bassoon,
+                VolumeWobbleRange = 0.0,
+                Volume = 0.1,
+                State = ChannelState.Normal
+            });
+
+            pc.Channels.Add(new()
+            {
+                DeviceType = DeviceType.OscOut,
+                DeviceName = "DevOut2",
+                ChannelName = "Chan2",
+                ChannelNumber = 2,
+                Patch = Patch.ChurchOrgan,
+                VolumeWobbleRange = 0.2,
+                Volume = 0.2,
+                State = ChannelState.Normal
+            });
+            pc.Channels.Add(new()
+            {
+                DeviceType = DeviceType.MidiOut,
+                DeviceName = "DevOut3",
+                ChannelName = "Chan3",
+                ChannelNumber = 3,
+                Patch = Patch.FrenchHorn,
+                VolumeWobbleRange = 0.3,
+                Volume = 0.3,
+                State = ChannelState.Mute
+            });
+            pc.Channels.Add(new()
+            {
+                DeviceType = DeviceType.MidiOut,
+                DeviceName = "DevOut4",
+                ChannelName = "Chan4",
+                ChannelNumber = 4,
+                Patch = Patch.Fx8SciFi,
+                VolumeWobbleRange = 0.4,
+                Volume = 0.4,
+                State = ChannelState.Solo
+            });
+
+            pc.Controllers.Add(new()
+            {
+                DeviceType = DeviceType.MidiIn,
+                DeviceName = "DevIn1",
+                ControllerName = "Ctrl1"
+            });
+
+            pc.Controllers.Add(new()
+            {
+                DeviceType = DeviceType.MidiIn,
+                DeviceName = "DevIn2",
+                ControllerName = "Ctrl2"
+            });
+
+            pc.Controllers.Add(new()
+            {
+                DeviceType = DeviceType.OscIn,
+                DeviceName = "DevIn3",
+                ControllerName = "Ctrl3"
+            });
+
+            pc.Save();
+        }
     }
 }

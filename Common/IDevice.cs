@@ -26,10 +26,7 @@ namespace Nebulator.Common
         #endregion
 
         #region Functions
-        /// <summary>
-        /// Interfaces don't allow constructors so do this instead.
-        /// Corresponds to the definition in the script.
-        /// </summary>
+        /// <summary>Interfaces don't allow constructors so do this instead.</summary>
         /// <returns></returns>
         bool Init();
 

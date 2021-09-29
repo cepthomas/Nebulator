@@ -16,36 +16,33 @@ namespace Nebulator.Common
     public class Controller
     {
         #region Properties
-        /// <summary>The associated comm device.</summary>
-        [JsonIgnore]
-        [Browsable(false)]
-        public IInputDevice? Device { get; set; }
+        [DisplayName("Controller Name")]
+        [Description("The UI name for this channel.")]
+        [Browsable(true)]
+        public string ControllerName { get; set; } = Definitions.UNKNOWN_STRING;
 
         [DisplayName("Device Type")]
         [Description("The device type for this controller.")]
-        [Category("xxxx")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
         [DisplayName("Device Name")]
         [Description("The device name for this controller.")]
-        [Category("xxxx")]
         [Browsable(true)]
         [TypeConverter(typeof(FixedListTypeConverter))]
         public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
 
-        [DisplayName("Controller Name")]
-        [Description("The UI name for this channel.")]
-        [Category("xxxx")]
-        [Browsable(true)]
-        public string ControllerNameX { get; set; } = Definitions.UNKNOWN_STRING;
+        /// <summary>The associated comm device.</summary>
+        [JsonIgnore]
+        [Browsable(false)]
+        public IInputDevice? Device { get; set; }
         #endregion
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ControllerName:{ControllerNameX}";
+            var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ControllerName:{ControllerName}";
             return s;
         }
     }

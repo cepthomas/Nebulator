@@ -13,6 +13,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>CS1591;CA1822</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Nebulator</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

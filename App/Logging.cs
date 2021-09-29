@@ -7,11 +7,11 @@ using NLog;
 using NLog.Targets;
 
 
-namespace Nebulator.Common
+namespace Nebulator
 {
     /// <summary>Handles writes to the client.</summary>
     [Target("ClientWindow")]
-    public sealed class LogClientNotificationTarget : TargetWithLayout
+    public class LogClientNotificationTarget : TargetWithLayout
     {
         #region Event Generation
         /// <summary>Definition of delegate for event handler.</summary>

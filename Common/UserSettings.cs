@@ -119,14 +119,22 @@ namespace Nebulator.Common
         /// <summary>Create object from file.</summary>
         public static UserSettings? Load(string appDir)
         {
-            UserSettings set;
+            UserSettings? set;
             string fn = Path.Combine(appDir, "settings.json");
 
             if (File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
-                set = JsonSerializer.Deserialize<UserSettings>(json);
-                set._fn = fn;
+                var jobj = JsonSerializer.Deserialize<UserSettings>(json);
+                if (jobj is not null)
+                {
+                    set = jobj;
+                    set._fn = fn;
+                }
+                else
+                {
+                    throw new Exception($"Invalid user settings file: {fn}");
+                }
             }
             else
             {

@@ -20,45 +20,39 @@ namespace Nebulator.Common
         public const int NUM_CHANNELS = 16;
 
         #region Properties
-        [DisplayName("Device Type")]
-        [Description("The device type for this channel.")]
-        [Category("xxxx")]
-        [Browsable(true)]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public DeviceType DeviceType { get; set; } = DeviceType.None;
-
-        [DisplayName("Device Name")]
-        [Description("The system device name for this channel.")]
-        [Category("xxxx")]
-        [Browsable(true)]
-        [TypeConverter(typeof(FixedListTypeConverter))]
-        public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
-
         [DisplayName("Channel Name")]
         [Description("The UI name for this channel.")]
-        [Category("xxxx")]
         [Browsable(true)]
         public string ChannelName { get; set; } = Definitions.UNKNOWN_STRING;
 
         [DisplayName("Channel Number")]
         [Description("The associated numerical (midi) channel to use")]
-        [Category("xxxx")]
         [Browsable(true)]
         [Range(1, NUM_CHANNELS, ErrorMessage = "Channel must be 1 to {NUM_CHANNELS}")]
         public int ChannelNumber { get; set; } = 1;
 
         [DisplayName("Patch")]
         [Description("Optional patch.")]
-        [Category("xxxx")]
+        [Browsable(true)]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public Patch Patch { get; set; } = Patch.AcousticGrandPiano;
+
+        [DisplayName("Device Type")]
+        [Description("The device type for this channel.")]
+        [Browsable(true)]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public DeviceType DeviceType { get; set; } = DeviceType.None;
+
+        [DisplayName("Device Name")]
+        [Description("The system device name for this channel.")]
         [Browsable(true)]
         [TypeConverter(typeof(FixedListTypeConverter))]
-        public string Patch { get; set; } = "";
+        public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
 
-        [DisplayName("Wobble Range")]
-        [Description("How wobbly.")]
-        [Category("xxxx")]
+        [DisplayName("Volume Wobble Range")]
+        [Description("How wobbly. 0 to disable.")]
         [Browsable(true)]
-        public double WobbleRange { get; set; } = 0.0;
+        public double VolumeWobbleRange { get; set; } = 0.0;
 
         /// <summary>The associated comm device.</summary>
         [JsonIgnore]
@@ -71,6 +65,7 @@ namespace Nebulator.Common
 
         /// <summary>Current state for this channel.</summary>
         [Browsable(false)]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ChannelState State { get; set; } = ChannelState.Normal;
 
         /// <summary>Wobbler for volume (optional).</summary>
