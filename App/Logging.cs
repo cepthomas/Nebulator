@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using NLog;
 using NLog.Targets;
 
+#nullable enable
 
 namespace Nebulator
 {
@@ -20,7 +21,7 @@ namespace Nebulator
         public delegate void ClientNotificationEventHandler(LogLevel level, string msg);
 
         /// <summary>The event handler for messages back to the client.</summary>
-        public static event ClientNotificationEventHandler? ClientNotification = null;
+        public static event ClientNotificationEventHandler? ClientNotification;
         #endregion
 
         /// <summary>Send the event to the client for display.</summary>

@@ -83,16 +83,6 @@ namespace App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_170_record {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_170_record", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap glyphicons_171_step_backward {
             get {
                 object obj = ResourceManager.GetObject("glyphicons_171_step_backward", resourceCulture);
@@ -223,79 +213,9 @@ namespace App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_221_play_button {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_221_play_button", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_242_flash {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_242_flash", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_290_bomb {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_290_bomb", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_291_skull {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_291_skull", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap glyphicons_327_piano {
             get {
                 object obj = ResourceManager.GetObject("glyphicons_327_piano", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_331_blog {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_331_blog", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_359_file_import {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_359_file_import", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_360_file_export {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_360_file_export", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -323,49 +243,9 @@ namespace App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_440_wrench {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_440_wrench", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_458_transfer {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_458_transfer", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap glyphicons_551_erase {
             get {
                 object obj = ResourceManager.GetObject("glyphicons_551_erase", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_701_ear {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_701_ear", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap glyphicons_79_warning_sign {
-            get {
-                object obj = ResourceManager.GetObject("glyphicons_79_warning_sign", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -401,62 +281,12 @@ namespace App.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap mark2 {
-            get {
-                object obj = ResourceManager.GetObject("mark2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap mark3 {
-            get {
-                object obj = ResourceManager.GetObject("mark3", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap mark4 {
-            get {
-                object obj = ResourceManager.GetObject("mark4", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon medusa {
             get {
                 object obj = ResourceManager.GetObject("medusa", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap medusa1 {
-            get {
-                object obj = ResourceManager.GetObject("medusa1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] ScriptDefinitions {
-            get {
-                object obj = ResourceManager.GetObject("ScriptDefinitions", resourceCulture);
-                return ((byte[])(obj));
             }
         }
     }

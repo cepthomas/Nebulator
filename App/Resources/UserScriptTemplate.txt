@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Deterministic>False</Deterministic>
+    <Description>Nebulator user script</Description>
+    <Copyright>MIT License</Copyright>
+    <OutputPath>.</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <!-- TODO1 <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningsAsErrors>NU1605</WarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NBagOfTricks">
+      <HintPath>%DLL_PATH%\NBagOfTricks.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio">
+      <HintPath>%DLL_PATH%\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="Common">
+      <HintPath>%DLL_PATH%\Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Script">
+      <HintPath>%DLL_PATH%\Script.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

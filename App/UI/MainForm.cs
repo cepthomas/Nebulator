@@ -246,14 +246,12 @@ namespace Nebulator.UI
             }
             else
             {
-                Compiler compiler = new() { Min = false };
-
                 // Clean up any old.
                 _script?.Dispose();
 
                 // Compile script now.
+                Compiler compiler = new();
                 _script = compiler.Execute(_scriptFileName);
-                _script.Init(_config.Channels);
 
                 // Update file watcher - keeps an eye on any included files too.
                 _watcher.Clear();
@@ -267,6 +265,8 @@ namespace Nebulator.UI
 
                 if (errorCount == 0 && _script != null)
                 {
+                    _script.Init(_config.Channels);
+
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 

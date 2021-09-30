@@ -86,7 +86,7 @@ namespace Nebulator.Common
         /// <returns></returns>
         public string Dump()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             foreach (Time time in Times)
             {

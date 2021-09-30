@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.CodeDom.Compiler;
+//using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Diagnostics;
 using System.Text.Json;
@@ -47,11 +47,8 @@ namespace Nebulator  // TODO1 Probably not forever home
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
 
-        /// <summary>Specifies the temp dir used so client can track down runtime errors.</summary>
-        public string TempDir { get; set; } = "";
-
         /// <summary>Do not include some neb only components.</summary>
-        public bool Min { get; set; } = true;
+        public string TempDir { get; set; } = Definitions.UNKNOWN_STRING;
         #endregion
 
         #region Fields
@@ -65,13 +62,13 @@ namespace Nebulator  // TODO1 Probably not forever home
         string _scriptName = Definitions.UNKNOWN_STRING;
 
         /// <summary>Accumulated lines to go in the constructor.</summary>
-        List<string> _initLines = new List<string>();
+        readonly List<string> _initLines = new();
 
         /// <summary>Products of file process. Key is generated file name.</summary>
-        Dictionary<string, FileContext> _filesToCompile = new Dictionary<string, FileContext>();
+        readonly Dictionary<string, FileContext> _filesToCompile = new();
 
-        /// <summary>All the definitions for internal use.</summary>
-        Dictionary<string, int> _defs = new Dictionary<string, int>();
+        /// <summary>All the definitions for internal use. TODO2 more elegant way?</summary>
+        readonly Dictionary<string, int> _defs = new();
         #endregion
 
         #region Public functions
@@ -96,15 +93,16 @@ namespace Nebulator  // TODO1 Probably not forever home
 
                 ///// Get and sanitize the script name.
                 _scriptName = Path.GetFileNameWithoutExtension(nebfn);
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new();
                 _scriptName.ForEach(c => sb.Append(char.IsLetterOrDigit(c) ? c : '_'));
                 _scriptName = sb.ToString();
                 _baseDir = Path.GetDirectoryName(nebfn);
 
                 ///// Compile.
                 DateTime startTime = DateTime.Now; // for metrics
+
                 Parse(nebfn);
-                script = CompileXXX();
+                script = Compile();
 
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
             }
@@ -122,81 +120,83 @@ namespace Nebulator  // TODO1 Probably not forever home
         /// Top level compiler.
         /// </summary>
         /// <returns>Compiled script</returns>
-        ScriptBase CompileXXX()
+        ScriptBase Compile()
         {
-
-
             ScriptBase script = null;
 
             try // many ways to go wrong...
             {
-                // Set the compiler parameters.
-                CompilerParameters cp = new()
-                {
-                    GenerateExecutable = false,
-                    //OutputAssembly = _scriptName, -- don't do this!
-                    GenerateInMemory = true,
-                    TreatWarningsAsErrors = false,
-                    IncludeDebugInformation = true
-                };
-
-                // The usual suspects.
-                cp.ReferencedAssemblies.Add("System.dll");
-                cp.ReferencedAssemblies.Add("System.Core.dll");
-                cp.ReferencedAssemblies.Add("System.Drawing.dll");
-                cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
-                cp.ReferencedAssemblies.Add("System.Data.dll");
-                cp.ReferencedAssemblies.Add("NAudio.dll");
-                cp.ReferencedAssemblies.Add("NBagOfTricks.dll");
-                cp.ReferencedAssemblies.Add("NebOsc.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-
-                // Add the generated source files.
-                List<string> paths = new();
-
-                // Create temp output area.
+                // Create temp output area, clean it.
                 TempDir = Path.Combine(_baseDir, "temp");
                 Directory.CreateDirectory(TempDir);
-                Directory.GetFiles(TempDir).Where(f => f.EndsWith(".cs")).ForEach(f => File.Delete(f));
+                //Directory.GetFiles(TempDir).Where(f => f.EndsWith(".cs")).ForEach(f => File.Delete(f));
+                Directory.GetFiles(TempDir).ForEach(f => File.Delete(f));
 
+                // Get template. Fix the assembly location.
+                string fpath = Path.Combine(MiscUtils.GetExeDir(), @"Resources\UserScriptTemplate.txt");
+                string inputDllPath = Environment.CurrentDirectory;
+                string stempl = File.ReadAllText(fpath);
+                stempl = stempl.Replace("%DLL_PATH%", inputDllPath);
+
+                // Write project file to temp.
+                string projFn = Path.Combine(TempDir, "UserScript.csproj");
+                File.WriteAllText(projFn, stempl);
+
+                // Write the generated source files.
                 foreach (string genFn in _filesToCompile.Keys)
                 {
                     FileContext ci = _filesToCompile[genFn];
                     string fullpath = Path.Combine(TempDir, genFn);
                     File.Delete(fullpath);
                     File.WriteAllLines(fullpath, ci.CodeLines);
-                    //File.WriteAllLines(fullpath, Tools.FormatSourceCode(ci.CodeLines));
-                    paths.Add(fullpath);
                 }
 
                 // Make it compile.
-
-
-                // TODO1 new style:
-                // string fn = Path.GetTempFileName() + ".html";
-                // File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
-                // new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
-
-                //dotnet build ...
-
-                // output like:
-                // C:\Dev\comp_files\example_defs.cs(201,19): warning CS0108: 'example.Volume' hides inherited member 'NebScript.Volume'. Use the new keyword if hiding was intended. [C:\Dev\comp_files\comp_files.csproj]
-                // C:\Dev\repos\Nebulator\Examples\temp\example_src2.cs(144, 8): error CS0103: The name 'Subdiv' does not exist in the current context[C:\Dev\repos\Nebulator\Examples\temp\UserScript.csproj]
-
-
-
-
-
-
-
-
-                CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
-                CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
-
-                if (cr.Errors.Count == 0)
+                ProcessStartInfo stinfo = new()
                 {
-                    Assembly assy = cr.CompiledAssembly;
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    FileName = "dotnet",
+                    Arguments = $"build {TempDir}"
+                };
+
+                Process process = new() { StartInfo = stinfo };
+                process.Start();
+                
+                process.WaitForExit();
+
+                // Process output.
+                string stdout = process.StandardOutput.ReadToEnd();
+                string stderr = process.StandardError.ReadToEnd();
+
+                if(stderr != "")
+                {
+                    // Bad thing happened. TODO1
+                }
+
+                List<string> outlines = stdout.SplitByToken("\r\n");
+
+                //Microsoft (R) Build Engine version 16.11.0+0538acc04 for .NET
+                //Copyright (C) Microsoft Corporation. All rights reserved.
+                //Determining projects to restore...
+                //All projects are up-to-date for restore.
+                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(24,1): error CS1585: Member modifier 'public' must precede the member type and name [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
+                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(22,5): warning CS0414: The field 'example._noteNum' is assigned but its value is never used [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
+                //Build FAILED.
+                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(24,1): error CS1585: Member modifier 'public' must precede the member type and name [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
+                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(22,5): warning CS0414: The field 'example._noteNum' is assigned but its value is never used [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
+                //1 Warning(s)
+                //1 Error(s)
+                //Time Elapsed 00:00:00.93
+
+                // Process the output.
+                List<string> scriptErrors = new();
+                //C:\Dev\repos\Nebulator\Examples\temp\net5.0-windows
+                if (scriptErrors.Count == 0)
+                {
+                    Assembly assy = Assembly.LoadFrom(Path.Combine(TempDir, "net5.0-windows", "UserScript.dll"));
 
                     // Bind to the script interface.
                     foreach (Type t in assy.GetTypes())
@@ -216,54 +216,54 @@ namespace Nebulator  // TODO1 Probably not forever home
                 }
                 else
                 {
-                    foreach (CompilerError err in cr.Errors)
+                    foreach (string err in scriptErrors)//TODO1 all this:
                     {
-                        // The line should end with source line number: "//1234"
-                        int origLineNum = 0; // defaults
-                        string origFileName = Definitions.UNKNOWN_STRING;
+                        //// The line should end with source line number: "//1234"
+                        //int origLineNum = 0; // defaults
+                        //string origFileName = Definitions.UNKNOWN_STRING;
 
-                        // Dig out the offending source code information.
-                        string fpath = Path.GetFileName(err.FileName.ToLower());
-                        if (_filesToCompile.ContainsKey(fpath))
-                        {
-                            FileContext ci = _filesToCompile[fpath];
-                            origFileName = ci.SourceFile;
-                            string origLine = ci.CodeLines[err.Line - 1];
-                            int ind = origLine.LastIndexOf("//");
+                        //// Dig out the offending source code information.
+                        //string fpath = Path.GetFileName(err.FileName.ToLower());
+                        //if (_filesToCompile.ContainsKey(fpath))
+                        //{
+                        //    FileContext ci = _filesToCompile[fpath];
+                        //    origFileName = ci.SourceFile;
+                        //    string origLine = ci.CodeLines[err.Line - 1];
+                        //    int ind = origLine.LastIndexOf("//");
 
-                            if (origFileName == "" || ind == -1)
-                            {
-                                // Must be an internal error. Do the best we can.
-                                Errors.Add(new ScriptError()
-                                {
-                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                                    SourceFile = err.FileName,
-                                    LineNumber = err.Line,
-                                    Message = $"InternalError: {err.ErrorText} in: {origLine}"
-                                });
-                            }
-                            else
-                            {
-                                int.TryParse(origLine.Substring(ind + 2), out origLineNum);
-                                Errors.Add(new ScriptError()
-                                {
-                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                                    SourceFile = origFileName,
-                                    LineNumber = origLineNum,
-                                    Message = err.ErrorText
-                                });
-                            }
-                        }
-                        else
-                        {
-                            Errors.Add(new ScriptError()
-                            {
-                                ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                                SourceFile = "NoSourceFile",
-                                LineNumber = -1,
-                                Message = err.ErrorText
-                            });
-                        }
+                        //    if (origFileName == "" || ind == -1)
+                        //    {
+                        //        // Must be an internal error. Do the best we can.
+                        //        Errors.Add(new ScriptError()
+                        //        {
+                        //            ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
+                        //            SourceFile = err.FileName,
+                        //            LineNumber = err.Line,
+                        //            Message = $"InternalError: {err.ErrorText} in: {origLine}"
+                        //        });
+                        //    }
+                        //    else
+                        //    {
+                        //        int.TryParse(origLine.Substring(ind + 2), out origLineNum);
+                        //        Errors.Add(new ScriptError()
+                        //        {
+                        //            ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
+                        //            SourceFile = origFileName,
+                        //            LineNumber = origLineNum,
+                        //            Message = err.ErrorText
+                        //        });
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Errors.Add(new ScriptError()
+                        //    {
+                        //        ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
+                        //        SourceFile = "NoSourceFile",
+                        //        LineNumber = -1,
+                        //        Message = err.ErrorText
+                        //    });
+                        //}
                     }
                 }
             }
@@ -443,7 +443,7 @@ namespace Nebulator  // TODO1 Probably not forever home
             });
 
             // Start parsing from the main file. ParseOneFile is a recursive function.
-            FileContext pcont = new FileContext()
+            FileContext pcont = new()
             {
                 SourceFile = nebfn,
                 LineNumber = 1
@@ -501,7 +501,7 @@ namespace Nebulator  // TODO1 Probably not forever home
         /// <param name="pcont"></param>
         void ProcessScriptFile(FileContext pcont)
         {
-            List<string> sourceLines = new List<string>(File.ReadAllLines(pcont.SourceFile));
+            List<string> sourceLines = new(File.ReadAllLines(pcont.SourceFile));
 
             for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
             {
@@ -609,11 +609,11 @@ namespace Nebulator  // TODO1 Probably not forever home
             #region Some DRY helpers
             void WriteEnumValues<T>() where T : Enum
             {
-                codeLines.Add($"        ///// {typeof(T).ToString()}");
+                codeLines.Add($"        ///// {typeof(T)}");
                 Enum.GetValues(typeof(T)).Cast<T>().ForEach(e =>
                 {
                     int val = Convert.ToInt32(e);
-                    codeLines.Add($"        const int {e.ToString()} = {val};");
+                    codeLines.Add($"        const int {e} = {val};");
                     _defs.Add(e.ToString(), val);
                 });
             }
@@ -639,7 +639,7 @@ namespace Nebulator  // TODO1 Probably not forever home
         List<string> GenTopOfFile(string fn)
         {
             // Create the common contents.
-            List<string> codeLines = new List<string>
+            List<string> codeLines = new()
             {
                 $"//{fn}",
                 "using System;",
@@ -669,7 +669,7 @@ namespace Nebulator  // TODO1 Probably not forever home
         List<string> GenBottomOfFile()
         {
             // Create the common contents.
-            List<string> codeLines = new List<string>
+            List<string> codeLines = new()
             {
                 "    }",
                 "}"

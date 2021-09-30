@@ -33,6 +33,7 @@ double[] _scaleNotes;
 double[] _chordNotes;
 int _noteNum = 48;
 
+//error
 
 ////// Nebulator midi stuff
 public override void Setup()

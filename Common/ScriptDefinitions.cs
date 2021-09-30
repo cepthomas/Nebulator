@@ -30,9 +30,6 @@ namespace Nebulator.Common
         /// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is list of constituent notes.</summary>
         public Dictionary<string, List<string>> ScaleDefs { get; private set; } = new Dictionary<string, List<string>>();
 
-        // /// <summary>The midi instrument names ordered by patch numbers.</summary>
-        // public string[] Patches { get; private set; } = new string[Definitions.MAX_MIDI+1];
-
         /// <summary>Helper for internals. Really should be separate classes - avoiding over-OOPing.</summary>
         public int NoteControl { get; set; } = -1;
 

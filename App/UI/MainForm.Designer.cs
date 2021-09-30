@@ -92,7 +92,7 @@
             // btnCompile
             // 
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCompile.Image = global::App.Properties.Resources.glyphicons_366_restart;
+            this.btnCompile.Image = global::App.Properties.Resources.glyphicons_86_repeat;
             this.btnCompile.Location = new System.Drawing.Point(116, 49);
             this.btnCompile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCompile.Name = "btnCompile";

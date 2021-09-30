@@ -62,7 +62,7 @@ namespace Nebulator.Midi
                 }
 
                 // Figure out which device.
-                List<string> devices = new List<string>();
+                List<string> devices = new();
                 for (int i = 0; i < MidiIn.NumberOfDevices; i++)
                 {
                     devices.Add(MidiIn.DeviceInfo(i).ProductName);
@@ -217,7 +217,7 @@ namespace Nebulator.Midi
             if (step != null)
             {
                 // Pass it up for handling.
-                DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
+                DeviceInputEventArgs args = new() { Step = step };
                 DeviceInputEvent?.Invoke(this, args);
                 if(UserSettings.TheSettings.MonitorInput)
                 {
