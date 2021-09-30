@@ -1,0 +1,63 @@
+{
+  "MasterVolume": 0.1234,
+  "MasterSpeed": 67.89,
+  "Channels": [
+    {
+      "ChannelName": "keys",
+      "ChannelNumber": 1,
+      "Patch": "Bassoon",
+      "DeviceType": "MidiOut",
+      "DeviceName": "DevOut1",
+      "VolumeWobbleRange": 0,
+      "Volume": 0.1,
+      "State": "Normal"
+    },
+    {
+      "ChannelName": "bass",
+      "ChannelNumber": 2,
+      "Patch": "ChurchOrgan",
+      "DeviceType": "OscOut",
+      "DeviceName": "DevOut2",
+      "VolumeWobbleRange": 0.2,
+      "Volume": 0.2,
+      "State": "Normal"
+    },
+    {
+      "ChannelName": "synth",
+      "ChannelNumber": 3,
+      "Patch": "FrenchHorn",
+      "DeviceType": "MidiOut",
+      "DeviceName": "DevOut3",
+      "VolumeWobbleRange": 0.3,
+      "Volume": 0.3,
+      "State": "Mute"
+    },
+    {
+      "ChannelName": "drums",
+      "ChannelNumber": 10,
+      "Patch": "Fx8SciFi",
+      "DeviceType": "MidiOut",
+      "DeviceName": "DevOut4",
+      "VolumeWobbleRange": 0.4,
+      "Volume": 0.4,
+      "State": "Solo"
+    }
+  ],
+  "Controllers": [
+    {
+      "ControllerName": "Ctrl1",
+      "DeviceType": "MidiIn",
+      "DeviceName": "DevIn1"
+    },
+    {
+      "ControllerName": "Ctrl2",
+      "DeviceType": "MidiIn",
+      "DeviceName": "DevIn2"
+    },
+    {
+      "ControllerName": "Ctrl3",
+      "DeviceType": "OscIn",
+      "DeviceName": "DevIn3"
+    }
+  ]
+}

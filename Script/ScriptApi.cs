@@ -11,7 +11,7 @@ using Nebulator.Common;
 
 namespace Nebulator.Script
 {
-    public partial class NebScript
+    public partial class ScriptBase
     {
         #region Properties that can be referenced in the user script
         /// <summary>Sound is playing. Main:W Script:R</summary>
@@ -27,25 +27,12 @@ namespace Nebulator.Script
         public double Speed { get; set; } = 0.0;
 
         /// <summary>Nebulator master Volume. Main:RW Script:RW</summary>
-        public double Volume { get; set; } = 0;
-
-        //TODO1 these 3?
-        /// <summary>Subdivision. Main:W Script:R</summary>
-        public int SubdivsPerBeat { get { return Time.SUBDIVS_PER_BEAT; } }
-
-        /// <summary>Current Nebulator Beat. Main:W Script:R</summary>
-        public int Beat { get { return StepTime.Beat; } }
-
-        /// <summary>Current Nebulator Subdiv. Main:W Script:R</summary>
-        public int Subdiv { get { return StepTime.Subdiv; } }
+        public double MasterVolume { get; set; } = 0;
         #endregion
 
         #region Functions that can be overridden in the user script
         /// <summary>Called to initialize Nebulator stuff.</summary>
         public virtual void Setup() { }
-
-        // /// <summary>Called if you need to do something with devices after they have been created.</summary>
-        // public virtual void Setup2() { }
 
         /// <summary>Called every mmtimer increment.</summary>
         public virtual void Step() { }
@@ -104,16 +91,13 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send a note immediately. Lowest level sender. Adds a note off to play after dur time.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(Channel channel, double notenum, double vol, Time dur)
+        protected void SendNote(string chanName, double notenum, double vol, Time dur)
         {
-            if (channel is null || channel.Device is null)
-            {
-                throw new Exception($"Invalid Channel");
-            }
+            Channel channel = GetChannel(chanName);
 
             double vel = channel.NextVol(vol);
             double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
@@ -131,7 +115,7 @@ namespace Nebulator.Script
                     Duration = dur
                 };
 
-                step.Adjust(Volume, channel.Volume);
+                step.Adjust(MasterVolume, channel.Volume);
                 channel.Device.Send(step);
             }
             else
@@ -148,71 +132,60 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send one or more named notes immediately.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        protected void SendNote(Channel channel, string notestr, double vol, Time dur)
+        protected void SendNote(string chanName, string notestr, double vol, Time dur)
         {
             SequenceElement note = new(notestr);
-
-            if (note.Notes.Count == 0)
-            {
-                throw new Exception($"Invalid notestr: {notestr}");
-            }
-            else
-            {
-                note.Notes.ForEach(n => SendNote(channel, n, vol, dur));
-            }
+            note.Notes.ForEach(n => SendNote(chanName, n, vol, dur));
         }
 
         /// <summary>Send a note immediately. Lowest level sender. Adds a note off to play after dur time.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(Channel channel, double notenum, double vol, double dur = 0.0)
+        protected void SendNote(string chanName, double notenum, double vol, double dur = 0.0)
         {
-            SendNote(channel, notenum, vol, new Time(dur));
+            SendNote(chanName, notenum, vol, new Time(dur));
         }
 
         /// <summary>Send one or more named notes immediately.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        protected void SendNote(Channel channel, string notestr, double vol, double dur = 0.0)
+        protected void SendNote(string chanName, string notestr, double vol, double dur = 0.0)
         {
-            SendNote(channel, notestr, vol, new Time(dur));
+            SendNote(chanName, notestr, vol, new Time(dur));
         }
 
         /// <summary>Send a note on immediately.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
-        protected void SendNoteOn(Channel channel, double notenum, double vol)
+        protected void SendNoteOn(string chanName, double notenum, double vol)
         {
-            SendNote(channel, notenum, vol);
+            SendNote(chanName, notenum, vol);
         }
 
         /// <summary>Send a note off immediately.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
-        protected void SendNoteOff(Channel channel, double notenum)
+        protected void SendNoteOff(string chanName, double notenum)
         {
-            SendNote(channel, notenum, 0);
+            SendNote(chanName, notenum, 0);
         }
 
         /// <summary>Send a controller immediately.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="ctlnum">Controller number.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(Channel channel, int ctlnum, double val)
+        protected void SendController(string chanName, int ctlnum, double val)
         {
-            if (channel is null || channel.Device is null)
-            {
-                throw new Exception($"Invalid Channel");
-            }
+            Channel channel = GetChannel(chanName);
 
             StepControllerChange step = new()
             {
@@ -226,14 +199,11 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send a midi patch immediately.</summary>
-        /// <param name="channel"></param>
+        /// <param name="chanName"></param>
         /// <param name="patch"></param>
-        protected void SendPatch(Channel channel, int patch)
+        protected void SendPatch(string chanName, int patch)
         {
-            if (channel is null || channel.Device is null)
-            {
-                throw new Exception($"Invalid Channel");
-            }
+            Channel channel = GetChannel(chanName);
 
             StepPatch step = new()
             {
@@ -246,21 +216,11 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send a named sequence now. TODO1 not actually now, and becomes a permanent member - what is useful?</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        protected void SendSequence(Channel channel, Sequence seq)
+        protected void SendSequence(string chanName, Sequence seq)
         {
-            if (channel is null || channel.Device is null)
-            {
-                throw new Exception($"Invalid Channel");
-            }
-
-            if (seq is null)
-            {
-                throw new Exception($"Invalid Sequence");
-            }
-
-            StepCollection scoll = ConvertToSteps(channel, seq, StepTime.Beat);
+            StepCollection scoll = ConvertToSteps(chanName, seq, StepTime.Beat);
             _steps.Add(scoll);
         }
 

@@ -8,11 +8,11 @@ using Nebulator.Common;
 
 namespace Nebulator.Script
 {
-    public partial class NebScript : IDisposable
+    public partial class ScriptBase : IDisposable
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        internal readonly Logger _logger = LogManager.GetLogger("NebScript");
+        internal readonly Logger _logger = LogManager.GetLogger("ScriptBase");
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
@@ -28,9 +28,22 @@ namespace Nebulator.Script
 
         /// <summary>The steps being executed. Script functions may add to it at runtime.</summary>
         internal StepCollection _steps = new();
+
+        /// <summary>All the channels - key is user assigned name.</summary>
+        readonly Dictionary<string, Channel> _channelMap = new();
         #endregion
 
         #region Lifecycle
+        /// <summary>
+        /// Set up runtime stuff.
+        /// </summary>
+        /// <param name="channels"></param>
+        public void Init(List<Channel> channels)
+        {
+            _channelMap.Clear();
+            channels.ForEach(ch => _channelMap[ch.ChannelName] = ch);
+        }
+
         /// <summary>
         /// Resource clean up.
         /// </summary>
@@ -64,7 +77,7 @@ namespace Nebulator.Script
 
             foreach (Section section in _sections)
             {
-                foreach ((Channel ch, Sequence seq, int beat) v in section)
+                foreach ((string ch, Sequence seq, int beat) v in section)
                 {
                     AddSequence(v.ch, v.seq, sectionTime + v.beat);
                 }
@@ -119,12 +132,18 @@ namespace Nebulator.Script
         /// <summary>
         /// Generate steps from sequence notes.
         /// </summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start at.</param>
-        StepCollection ConvertToSteps(Channel channel, Sequence seq, int startBeat)
+        StepCollection ConvertToSteps(string chanName, Sequence seq, int startBeat)
         {
+            if (seq is null)
+            {
+                throw new Exception($"Invalid Sequence");
+            }
+
             StepCollection steps = new();
+            Channel channel = GetChannel(chanName);
 
             foreach (SequenceElement seqel in seq.Elements)
             {
@@ -178,24 +197,42 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send a named sequence at some future time.</summary>
-        /// <param name="channel">Which channel to send it on.</param>
+        /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         /// <param name="beat">When to send the sequence.</param>
-        void AddSequence(Channel channel, Sequence seq, int beat)
+        void AddSequence(string chanName, Sequence seq, int beat)
         {
-            if (channel is null)
-            {
-                throw new Exception($"Invalid Channel");
-            }
-
             if (seq is null)
             {
                 throw new Exception($"Invalid Sequence");
             }
 
-            StepCollection scoll = ConvertToSteps(channel, seq, beat);
+            StepCollection scoll = ConvertToSteps(chanName, seq, beat);
             _steps.Add(scoll);
         }
+
+        /// <summary>
+        /// Utility to look up channel.
+        /// </summary>
+        /// <param name="chanName"></param>
+        /// <returns></returns>
+        Channel GetChannel(string chanName)
+        {
+            Channel channel;
+
+            if (!_channelMap.TryGetValue(chanName, out channel))
+            {
+                throw new Exception($"Invalid Channel Name: {chanName}");
+            }
+
+            if (channel is null || channel.Device is null)
+            {
+                throw new Exception($"Invalid Channel config: {chanName}");
+            }
+
+            return channel;
+        }
+
         #endregion
     }
 }

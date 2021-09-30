@@ -41,7 +41,6 @@
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
             this.timeMaster = new Nebulator.UI.TimeControl();
-            this.btnJunk = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -170,27 +169,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -320,14 +319,6 @@
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
-            // btnJunk
-            // 
-            this.btnJunk.Location = new System.Drawing.Point(597, 49);
-            this.btnJunk.Name = "btnJunk";
-            this.btnJunk.Size = new System.Drawing.Size(94, 29);
-            this.btnJunk.TabIndex = 44;
-            this.btnJunk.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -335,7 +326,6 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(976, 838);
-            this.Controls.Add(this.btnJunk);
             this.Controls.Add(this.lblMute);
             this.Controls.Add(this.lblSolo);
             this.Controls.Add(this.textViewer);
@@ -384,7 +374,6 @@
         private System.Windows.Forms.ToolStripButton btnWrap;
         private System.Windows.Forms.Label lblSolo;
         private System.Windows.Forms.Label lblMute;
-        private System.Windows.Forms.Button btnJunk;
     }
 }
 

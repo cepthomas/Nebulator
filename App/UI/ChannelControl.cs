@@ -29,7 +29,7 @@ namespace Nebulator.UI
         /// <summary>
         /// Initialize the UI from the object.
         /// </summary>
-        private void ChannelControl_Load(object sender, EventArgs e)
+        void ChannelControl_Load(object sender, EventArgs e)
         {
             chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
             chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
@@ -60,7 +60,7 @@ namespace Nebulator.UI
         /// <summary>
         /// Handles solo and mute.
         /// </summary>
-        private void Check_Click(object sender, EventArgs e)
+        void Check_Click(object sender, EventArgs e)
         {
             CheckBox chk = sender as CheckBox;
 
@@ -84,7 +84,7 @@ namespace Nebulator.UI
         /// <summary>
         /// 
         /// </summary>
-        private void VolChannel_ValueChanged(object sender, EventArgs e)
+        void VolChannel_ValueChanged(object sender, EventArgs e)
         {
             BoundChannel.Volume = sldVolume.Value;
         }

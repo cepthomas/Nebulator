@@ -31,14 +31,12 @@ namespace Nebulator.Common
 
         [DisplayName("Channels")]
         [Description("Active Channels")]
-        [Category("xxxx")]
         [Browsable(true)]
         [MaxLength(Channel.NUM_CHANNELS, ErrorMessage = "Channel max is {Channel.NUM_CHANNELS}")]
         public List<Channel> Channels { get; } = new List<Channel>();
 
         [DisplayName("Controllers")]
         [Description("Active Controllers")]
-        [Category("xxxx")]
         [Browsable(true)]
         public List<Controller> Controllers { get; } = new List<Controller>();
         #endregion

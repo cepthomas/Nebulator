@@ -17,7 +17,7 @@ namespace Nebulator.Common
     {
         #region Properties
         [DisplayName("Controller Name")]
-        [Description("The UI name for this channel.")]
+        [Description("UI label and script reference.")]
         [Browsable(true)]
         public string ControllerName { get; set; } = Definitions.UNKNOWN_STRING;
 

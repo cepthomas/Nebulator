@@ -41,7 +41,7 @@ namespace Nebulator.Script
                 int seqBeat = 0;
                 Sequence seqnull = null; // default means ignore
 
-                bool ok = sect.Sequences != null && sect.Sequences.Count() > 0;
+                bool ok = sect.Sequences != null && sect.Sequences.Length > 0;
 
                 if(ok)
                 {
@@ -92,9 +92,9 @@ namespace Nebulator.Script
         /// <param name="channel"></param>
         /// <param name="seqMode">One of enum SequenceMode</param>
         /// <param name="sequences"></param>
-        public void Add(Channel channel, int seqMode, params Sequence[] sequences)
+        public void Add(string channel, int seqMode, params Sequence[] sequences)
         {
-            SectionElement sel = new SectionElement()
+            SectionElement sel = new()
             {
                 Channel = channel,
                 Mode = (SequenceMode)seqMode,
@@ -112,7 +112,8 @@ namespace Nebulator.Script
     {
         #region Properties
         /// <summary>Associated channel.</summary>
-        public Channel Channel { get; set; } = null;
+        public string Channel { get; set; } = Definitions.UNKNOWN_STRING;
+        //public Channel Channel { get; set; } = null;
 
         /// <summary>How to process it.</summary>
         public SequenceMode Mode { get; set; } = SequenceMode.Once;
@@ -126,7 +127,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"SectionElement: Channel:{Channel.ChannelName}";
+            return $"SectionElement: Channel:{Channel}";
         }
     }
 }

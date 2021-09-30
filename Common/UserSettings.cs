@@ -77,6 +77,12 @@ namespace Nebulator.Common
         //[Browsable(true)]
         //public bool VirtualKeyboard { get; set; } = true;
 
+        [DisplayName("Work Path")]
+        [Description("Where you keep your neb files.")]
+        [Category("Functionality")]
+        [Browsable(true)]
+        public string WorkPath { get; set; } = "";
+
         [DisplayName("Auto Compile")]
         [Description("Compile current file when change detected.")]
         [Category("Functionality")]

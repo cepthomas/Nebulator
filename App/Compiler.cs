@@ -15,18 +15,7 @@ using Nebulator.Common;
 using Nebulator.Script;
 
 
-// TODO1 new style:
-// string fn = Path.GetTempFileName() + ".html";
-// File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
-// new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
-
-//dotnet build ...
-
-// output like:
-// C:\Dev\comp_files\example_defs.cs(201,19): warning CS0108: 'example.Volume' hides inherited member 'NebScript.Volume'. Use the new keyword if hiding was intended. [C:\Dev\comp_files\comp_files.csproj]
-
-
-namespace Nebulator  // Probably not forever home
+namespace Nebulator  // TODO1 Probably not forever home
 {
     /// <summary>
     /// Parses/compiles *.neb file(s).
@@ -91,9 +80,9 @@ namespace Nebulator  // Probably not forever home
         /// </summary>
         /// <param name="nebfn">Fully qualified path to main file.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public NebScript Execute(string nebfn)
+        public ScriptBase Execute(string nebfn)
         {
-            NebScript script = null;
+            ScriptBase script = null;
 
             // Reset everything.
             _filesToCompile.Clear();
@@ -115,7 +104,7 @@ namespace Nebulator  // Probably not forever home
                 ///// Compile.
                 DateTime startTime = DateTime.Now; // for metrics
                 Parse(nebfn);
-                script = Compile();
+                script = CompileXXX();
 
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
             }
@@ -133,6 +122,168 @@ namespace Nebulator  // Probably not forever home
         /// Top level compiler.
         /// </summary>
         /// <returns>Compiled script</returns>
+        ScriptBase CompileXXX()
+        {
+
+
+            ScriptBase script = null;
+
+            try // many ways to go wrong...
+            {
+                // Set the compiler parameters.
+                CompilerParameters cp = new()
+                {
+                    GenerateExecutable = false,
+                    //OutputAssembly = _scriptName, -- don't do this!
+                    GenerateInMemory = true,
+                    TreatWarningsAsErrors = false,
+                    IncludeDebugInformation = true
+                };
+
+                // The usual suspects.
+                cp.ReferencedAssemblies.Add("System.dll");
+                cp.ReferencedAssemblies.Add("System.Core.dll");
+                cp.ReferencedAssemblies.Add("System.Drawing.dll");
+                cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
+                cp.ReferencedAssemblies.Add("System.Data.dll");
+                cp.ReferencedAssemblies.Add("NAudio.dll");
+                cp.ReferencedAssemblies.Add("NBagOfTricks.dll");
+                cp.ReferencedAssemblies.Add("NebOsc.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
+                cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
+
+                // Add the generated source files.
+                List<string> paths = new();
+
+                // Create temp output area.
+                TempDir = Path.Combine(_baseDir, "temp");
+                Directory.CreateDirectory(TempDir);
+                Directory.GetFiles(TempDir).Where(f => f.EndsWith(".cs")).ForEach(f => File.Delete(f));
+
+                foreach (string genFn in _filesToCompile.Keys)
+                {
+                    FileContext ci = _filesToCompile[genFn];
+                    string fullpath = Path.Combine(TempDir, genFn);
+                    File.Delete(fullpath);
+                    File.WriteAllLines(fullpath, ci.CodeLines);
+                    //File.WriteAllLines(fullpath, Tools.FormatSourceCode(ci.CodeLines));
+                    paths.Add(fullpath);
+                }
+
+                // Make it compile.
+
+
+                // TODO1 new style:
+                // string fn = Path.GetTempFileName() + ".html";
+                // File.WriteAllText(fn, string.Join(Environment.NewLine, htmlText));
+                // new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
+
+                //dotnet build ...
+
+                // output like:
+                // C:\Dev\comp_files\example_defs.cs(201,19): warning CS0108: 'example.Volume' hides inherited member 'NebScript.Volume'. Use the new keyword if hiding was intended. [C:\Dev\comp_files\comp_files.csproj]
+                // C:\Dev\repos\Nebulator\Examples\temp\example_src2.cs(144, 8): error CS0103: The name 'Subdiv' does not exist in the current context[C:\Dev\repos\Nebulator\Examples\temp\UserScript.csproj]
+
+
+
+
+
+
+
+
+                CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
+                CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
+
+                if (cr.Errors.Count == 0)
+                {
+                    Assembly assy = cr.CompiledAssembly;
+
+                    // Bind to the script interface.
+                    foreach (Type t in assy.GetTypes())
+                    {
+                        if (t.BaseType != null && t.BaseType.Name == "ScriptBase")
+                        {
+                            // We have a good script file. Create the executable object.
+                            object o = Activator.CreateInstance(t);
+                            script = o as ScriptBase;
+                        }
+                    }
+
+                    if (script is null)
+                    {
+                        throw new Exception("Could not instantiate script");
+                    }
+                }
+                else
+                {
+                    foreach (CompilerError err in cr.Errors)
+                    {
+                        // The line should end with source line number: "//1234"
+                        int origLineNum = 0; // defaults
+                        string origFileName = Definitions.UNKNOWN_STRING;
+
+                        // Dig out the offending source code information.
+                        string fpath = Path.GetFileName(err.FileName.ToLower());
+                        if (_filesToCompile.ContainsKey(fpath))
+                        {
+                            FileContext ci = _filesToCompile[fpath];
+                            origFileName = ci.SourceFile;
+                            string origLine = ci.CodeLines[err.Line - 1];
+                            int ind = origLine.LastIndexOf("//");
+
+                            if (origFileName == "" || ind == -1)
+                            {
+                                // Must be an internal error. Do the best we can.
+                                Errors.Add(new ScriptError()
+                                {
+                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
+                                    SourceFile = err.FileName,
+                                    LineNumber = err.Line,
+                                    Message = $"InternalError: {err.ErrorText} in: {origLine}"
+                                });
+                            }
+                            else
+                            {
+                                int.TryParse(origLine.Substring(ind + 2), out origLineNum);
+                                Errors.Add(new ScriptError()
+                                {
+                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
+                                    SourceFile = origFileName,
+                                    LineNumber = origLineNum,
+                                    Message = err.ErrorText
+                                });
+                            }
+                        }
+                        else
+                        {
+                            Errors.Add(new ScriptError()
+                            {
+                                ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
+                                SourceFile = "NoSourceFile",
+                                LineNumber = -1,
+                                Message = err.ErrorText
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Errors.Add(new ScriptError()
+                {
+                    ErrorType = ScriptErrorType.Error,
+                    Message = "Exception: " + ex.Message,
+                    SourceFile = "",
+                    LineNumber = 0
+                });
+            }
+
+            return script;
+        }
+
+
+
+        /*** original
         NebScript Compile()
         {
             NebScript script = null;
@@ -269,6 +420,8 @@ namespace Nebulator  // Probably not forever home
 
             return script;
         }
+        */
+
 
         /// <summary>
         /// Top level parser.
@@ -352,7 +505,7 @@ namespace Nebulator  // Probably not forever home
 
             for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
             {
-                string s = sourceLines[pcont.LineNumber - 1].Trim();
+                string s = sourceLines[pcont.LineNumber - 1];
 
                 // Remove any comments. Single line type only.
                 int pos = s.IndexOf("//");
@@ -361,13 +514,14 @@ namespace Nebulator  // Probably not forever home
                 // Test for nested files
                 //Include("path\name.neb");
                 //Include("path\split file name.neb");
-                if (s.StartsWith("Include"))
+                if (s.Trim().StartsWith("Include"))
                 {
                     bool valid = false;
+
                     List<string> parts = s.SplitByTokens("\"");
                     if(parts.Count == 3)
                     {
-                        string fn = parts[1];
+                        string fn = Path.Combine(UserSettings.TheSettings.WorkPath, parts[1]);
 
                         // Recursive call to parse this file
                         FileContext subcont = new()
@@ -390,7 +544,11 @@ namespace Nebulator  // Probably not forever home
                         });
                     }
                 }
-                else
+                else if (s.Trim().StartsWith("Config"))
+                {
+                    // Remove these.
+                }
+                else // plain line
                 {
                     if (cline != "")
                     {
@@ -412,7 +570,7 @@ namespace Nebulator  // Probably not forever home
 
             // Collected init stuff goes in a constructor.
             // Reference to current script so nested classes have access to it. TODO1 fixed in C#9 with static using.
-            codeLines.Add($"        protected static NebScript s;");
+            codeLines.Add($"        protected static ScriptBase s;");
             codeLines.Add($"        public {_scriptName}() : base()");
             codeLines.Add( "        {");
             codeLines.Add( "            s = this;");
@@ -495,10 +653,9 @@ namespace Nebulator  // Probably not forever home
                 "using NBagOfTricks;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
-                "using Nebulator.Device;",
                 "namespace Nebulator.UserScript",
                 "{",
-               $"    public partial class {_scriptName} : NebScript",
+               $"    public partial class {_scriptName} : ScriptBase",
                 "    {"
             };
 

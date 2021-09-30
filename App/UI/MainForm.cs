@@ -33,7 +33,7 @@ namespace Nebulator.UI
         MmTimerEx _mmTimer = new();
 
         /// <summary>The current script.</summary>
-        NebScript _script = null;
+        ScriptBase _script = null;
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -235,7 +235,7 @@ namespace Nebulator.UI
         /// <summary>
         /// Compile the neb script itself. Config is handled separately.
         /// </summary>
-        bool Compile()
+        bool CompileScript()
         {
             bool ok = true;
 
@@ -253,6 +253,7 @@ namespace Nebulator.UI
 
                 // Compile script now.
                 _script = compiler.Execute(_scriptFileName);
+                _script.Init(_config.Channels);
 
                 // Update file watcher - keeps an eye on any included files too.
                 _watcher.Clear();
@@ -560,28 +561,28 @@ namespace Nebulator.UI
                 }
             }
 
-            if(cfigfn is not null)
-            {
-                // Check absolute.
-                if (File.Exists(cfigfn))
-                {
-                    // ok
-                }
-                else // Check local.
-                {
-                    string local = Path.GetFullPath(scriptFileName);
-                    local = Path.Combine(local, cfigfn);
+            //if (cfigfn is not null)
+            //{
+            //    // Check absolute.
+            //    if (File.Exists(cfigfn))
+            //    {
+            //        // ok
+            //    }
+            //    else // Check local.
+            //    {
+            //        string local = Path.GetDirectoryName(scriptFileName);
+            //        local = Path.Combine(local, cfigfn);
 
-                    if (File.Exists(local))
-                    {
-                        cfigfn = local;
-                    }
-                    else
-                    {
-                        cfigfn = null;
-                    }
-                }
-            }
+            //        if (File.Exists(local))
+            //        {
+            //            cfigfn = local;
+            //        }
+            //        else
+            //        {
+            //            cfigfn = null;
+            //        }
+            //    }
+            //}
 
             return cfigfn;
         }
@@ -801,7 +802,7 @@ namespace Nebulator.UI
             _script.StepTime = _stepTime;
             _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
             _script.Speed = potSpeed.Value;
-            _script.Volume = sldVolume.Value;
+            _script.MasterVolume = sldVolume.Value;
         }
 
         /// <summary>
@@ -815,9 +816,9 @@ namespace Nebulator.UI
                 SetFastTimerPeriod();
             }
 
-            if (Math.Abs(_script.Volume - sldVolume.Value) > 0.001)
+            if (Math.Abs(_script.MasterVolume - sldVolume.Value) > 0.001)
             {
-                sldVolume.Value = _script.Volume;
+                sldVolume.Value = _script.MasterVolume;
             }
         }
 
@@ -934,7 +935,7 @@ namespace Nebulator.UI
         /// </summary>
         /// <param name="fn">The np file to open.</param>
         /// <returns>Error string or empty if ok.</returns>
-        public string OpenScriptFile(string fn)
+        string OpenScriptFile(string fn)
         {
             string ret = "";
 
@@ -952,24 +953,30 @@ namespace Nebulator.UI
 
                         // Get the config and set things up.
                         string cfigfn = GetConfigFileName(fn);
-
                         if(cfigfn is not null)
                         {
+                            cfigfn = Path.Combine(UserSettings.TheSettings.WorkPath, cfigfn);
+
                             LoadConfig(cfigfn);
-                        }
 
-                        if (_config is not null)
-                        {
+                            if (_config is not null)
+                            {
+                                AddToRecentDefs(fn);
+                                bool ok = CompileScript();
+                                SetCompileStatus(ok);
 
-                            AddToRecentDefs(fn);
-                            bool ok = Compile();
-                            SetCompileStatus(ok);
-
-                            Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
+                                Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
+                            }
+                            else
+                            {
+                                _logger.Error($"Couldn't load config file: {cfigfn}");
+                                SetCompileStatus(false);
+                                Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
+                            }
                         }
                         else
                         {
-                            _logger.Error($"Couldn't load config file: {cfigfn}");
+                            _logger.Error($"Invalid config file in script");
                             SetCompileStatus(false);
                             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
                         }
@@ -1031,7 +1038,7 @@ namespace Nebulator.UI
             {
                 if(UserSettings.TheSettings.AutoCompile)
                 {
-                    Compile();
+                    CompileScript();
                 }
                 else
                 {
@@ -1080,7 +1087,7 @@ namespace Nebulator.UI
         /// </summary>
         void Compile_Click(object sender, EventArgs e)
         {
-            Compile();
+            CompileScript();
             ProcessPlay(PlayCommand.StopRewind);
         }
 
@@ -1312,7 +1319,7 @@ namespace Nebulator.UI
             switch (cmd)
             {
                 case PlayCommand.Start:
-                    bool ok = !_needCompile || Compile();
+                    bool ok = !_needCompile || CompileScript();
                     if (ok)
                     {
                         _startTime = DateTime.Now;
@@ -1423,7 +1430,7 @@ namespace Nebulator.UI
             {
                 if(_needCompile)
                 {
-                    ok = Compile();
+                    ok = CompileScript();
                 }
             }
             else

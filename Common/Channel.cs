@@ -21,7 +21,7 @@ namespace Nebulator.Common
 
         #region Properties
         [DisplayName("Channel Name")]
-        [Description("The UI name for this channel.")]
+        [Description("UI label and script reference.")]
         [Browsable(true)]
         public string ChannelName { get; set; } = Definitions.UNKNOWN_STRING;
 

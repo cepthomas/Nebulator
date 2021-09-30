@@ -2,7 +2,7 @@
 // Example Nebulator composition file with some UI demo.
 //----- Warning: this is not actual music! --------
 
-///// Include other lib files. /////
+///// Include config and lib files. /////
 
 Config("example.nebcfig");
 Include("utils.nebinc");
@@ -163,24 +163,24 @@ void BuildComp()
 
     Section sectBeginning = CreateSection(32, "Beginning", new SectionElements
     {
-        { chKeys,  Loop,  seqKeysVerse   },
-        { chDrums, Loop,  seqDrumsVerse },
-        { chBass,  Loop,  seqBassVerse   }
+        { "keys",  Loop,  seqKeysVerse   },
+        { "drums", Loop,  seqDrumsVerse },
+        { "bass",  Loop,  seqBassVerse   }
     });
 
     Section sectMiddle = CreateSection(16, "Middle", new SectionElements
     {
-        { chKeys,  Loop,  seqKeysChorus },
-        { chDrums, Loop,  seqDrumsVerse },
-        { chBass,  Loop,  seqBassVerse  },
-        { chSynth, Once,  seqAlgo, seqDynamic, seqAlgo, seqDynamic }
+        { "keys",  Loop,  seqKeysChorus },
+        { "drums", Loop,  seqDrumsVerse },
+        { "bass",  Loop,  seqBassVerse  },
+        { "synth", Once,  seqAlgo, seqDynamic, seqAlgo, seqDynamic }
     });
 
     Section sectEnding = CreateSection(32, "Ending", new SectionElements
     {
-        { chKeys,  Loop,  seqKeysVerse   },
-        { chDrums, Loop,  seqDrumsSimple },
-        { chBass,  Loop,  seqBassVerse   }
+        { "keys",  Loop,  seqKeysVerse   },
+        { "drums", Loop,  seqDrumsSimple },
+        { "bass",  Loop,  seqBassVerse   }
     });
 }
 
@@ -189,7 +189,7 @@ void BuildComp()
 
 public override void Step()
 {
-    if(Subdiv != 0) // not looking at these right now
+    if(StepTime.Subdiv != 0) // not looking at these right now
     {
         return;
     }
@@ -200,7 +200,7 @@ public override void Step()
 void Algo()
 {
     int notenum = Random(0, _scaleNotes.Count());
-    SendNote(chSynth, _scaleNotes[notenum], 0.7, 0.1);
+    SendNote("synth", _scaleNotes[notenum], 0.7, 0.1);
 }
 
 void AlgoNull()
