@@ -14,9 +14,10 @@ using Nebulator.Common;
 using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.OSC;
+using Nebulator.Controls;
 
 
-namespace Nebulator.UI
+namespace Nebulator.App
 {
     public partial class MainForm : Form
     {
@@ -96,8 +97,8 @@ namespace Nebulator.UI
             // The rest of the controls.
             textViewer.WordWrap = false;
             textViewer.BackColor = UserSettings.TheSettings.BackColor;
-            textViewer.Colors.Add("ERROR:", Color.LightPink);
-            textViewer.Colors.Add("_WARN:", Color.Plum);
+            textViewer.Colors.Add(" E ", Color.LightPink);
+            textViewer.Colors.Add(" W ", Color.Plum);
 
             btnMonIn.Image = GraphicsUtils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = GraphicsUtils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
@@ -1226,15 +1227,15 @@ namespace Nebulator.UI
             };
 
             f.Controls.Add(tv);
-            tv.Colors.Add(" ERROR ", Color.Plum);
-            tv.Colors.Add(" _WARN ", Color.LightPink);
+            tv.Colors.Add(" E ", Color.LightPink);
+            tv.Colors.Add(" W ", Color.Plum);
             //tv.Colors.Add(" SND???:", Color.LightGreen);
 
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             string logFileName = Path.Combine(appDir, "log.txt");
             using (new WaitCursor())
             {
-                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l));
+                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l));//TODO2 doesn't work.
             }
 
             f.ShowDialog();

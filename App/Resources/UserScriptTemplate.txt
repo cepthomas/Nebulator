@@ -7,7 +7,7 @@
     <Copyright>MIT License</Copyright>
     <OutputPath>.</OutputPath>
     <WarningLevel>4</WarningLevel>
-    <!-- TODO1 <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->
+    <!-- TODO2 <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningsAsErrors>NU1605</WarningsAsErrors>

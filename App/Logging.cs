@@ -8,7 +8,7 @@ using NLog.Targets;
 
 #nullable enable
 
-namespace Nebulator
+namespace Nebulator.App
 {
     /// <summary>Handles writes to the client.</summary>
     [Target("ClientWindow")]

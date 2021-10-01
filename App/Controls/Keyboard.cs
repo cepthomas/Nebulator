@@ -14,7 +14,7 @@ using Nebulator.Common;
 using Nebulator.Midi;
 
 
-namespace Nebulator.UI
+namespace Nebulator.Controls
 {
     /// <summary>
     /// Wrapper to turn control into a device.
@@ -58,11 +58,11 @@ namespace Nebulator.UI
         /// <param name="e"></param>
         void Keyboard_Load(object sender, EventArgs e)
         {
-            // Get the bitmap.
-            Bitmap bm = new Bitmap(App.Properties.Resources.glyphicons_327_piano);
+            //// Get the bitmap. TODO2
+            //Bitmap bm = new Bitmap(App.Properties.Resources.glyphicons_327_piano);
 
-            // Convert to an icon and use for the form's icon.
-            Icon = Icon.FromHandle(bm.GetHicon());
+            //// Convert to an icon and use for the form's icon.
+            //Icon = Icon.FromHandle(bm.GetHicon());
 
             vkey.KeyboardEvent += Vkey_KeyboardEvent;
         }

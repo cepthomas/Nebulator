@@ -5,8 +5,8 @@
 ///// Include config and lib files. /////
 
 Config("example.nebcfig");
-Include("utils.nebinc");
-Include("scale.nebinc");
+Include("utils.neb");
+Include("scale.neb");
 
 
 ///// Volumes.
@@ -27,6 +27,7 @@ const double DRUM_VOL = 0.8;
 ///// Sequences
 Sequence seqDynamic;
 
+int unused;
 
 ////// Simple variables for functions
 double[] _scaleNotes;

@@ -75,9 +75,7 @@ namespace Nebulator.Common
         }
     }
 
-
-
-    /// <summary>Converter for selecting property value from known lists.TODO2 better home?</summary>
+    /// <summary>Converter for selecting property value from known lists. TODO2 better home?</summary>
     public class FixedListTypeConverter : TypeConverter
     {
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
@@ -106,9 +104,9 @@ namespace Nebulator.Common
                     }
                     break;
 
-                //case "Patch":
-                //    rec = new(ScriptDefinitions.TheDefinitions.Patches);
-                //    break;
+                default:
+                    System.Windows.Forms.MessageBox.Show($"????????? {context.PropertyDescriptor.Name}");
+                    break;
             }
 
             return new StandardValuesCollection(rec);

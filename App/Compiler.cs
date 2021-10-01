@@ -15,7 +15,7 @@ using Nebulator.Common;
 using Nebulator.Script;
 
 
-namespace Nebulator  // TODO1 Probably not forever home
+namespace Nebulator.App
 {
     /// <summary>
     /// Parses/compiles *.neb file(s).
@@ -67,8 +67,10 @@ namespace Nebulator  // TODO1 Probably not forever home
         /// <summary>Products of file process. Key is generated file name.</summary>
         readonly Dictionary<string, FileContext> _filesToCompile = new();
 
-        /// <summary>All the definitions for internal use. TODO2 more elegant way?</summary>
+        /// <summary>All the definitions for internal use. TODO2 more elegant/fast way?</summary>
         readonly Dictionary<string, int> _defs = new();
+
+        //const string GENNED_FILE = ""
         #endregion
 
         #region Public functions
@@ -126,13 +128,13 @@ namespace Nebulator  // TODO1 Probably not forever home
 
             try // many ways to go wrong...
             {
-                // Create temp output area, clean it.
+                // Create temp output area and/or clean it.
                 TempDir = Path.Combine(_baseDir, "temp");
                 Directory.CreateDirectory(TempDir);
                 //Directory.GetFiles(TempDir).Where(f => f.EndsWith(".cs")).ForEach(f => File.Delete(f));
                 Directory.GetFiles(TempDir).ForEach(f => File.Delete(f));
 
-                // Get template. Fix the assembly location.
+                // Get project file template. Fix the assembly location.
                 string fpath = Path.Combine(MiscUtils.GetExeDir(), @"Resources\UserScriptTemplate.txt");
                 string inputDllPath = Environment.CurrentDirectory;
                 string stempl = File.ReadAllText(fpath);
@@ -159,13 +161,13 @@ namespace Nebulator  // TODO1 Probably not forever home
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     FileName = "dotnet",
-                    Arguments = $"build {TempDir}"
+                    Arguments = $"build --no-restore {TempDir}"
                 };
 
                 Process process = new() { StartInfo = stinfo };
                 process.Start();
                 
-                process.WaitForExit();
+ //???               process.WaitForExit();
 
                 // Process output.
                 string stdout = process.StandardOutput.ReadToEnd();
@@ -173,236 +175,110 @@ namespace Nebulator  // TODO1 Probably not forever home
 
                 if(stderr != "")
                 {
-                    // Bad thing happened. TODO1
-                }
-
-                List<string> outlines = stdout.SplitByToken("\r\n");
-
-                //Microsoft (R) Build Engine version 16.11.0+0538acc04 for .NET
-                //Copyright (C) Microsoft Corporation. All rights reserved.
-                //Determining projects to restore...
-                //All projects are up-to-date for restore.
-                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(24,1): error CS1585: Member modifier 'public' must precede the member type and name [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
-                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(22,5): warning CS0414: The field 'example._noteNum' is assigned but its value is never used [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
-                //Build FAILED.
-                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(24,1): error CS1585: Member modifier 'public' must precede the member type and name [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
-                //C:\\Dev\\repos\\Nebulator\\Examples\\temp\\example_src2.cs(22,5): warning CS0414: The field 'example._noteNum' is assigned but its value is never used [C:\\Dev\\repos\\Nebulator\\Examples\\temp\\UserScript.csproj]
-                //1 Warning(s)
-                //1 Error(s)
-                //Time Elapsed 00:00:00.93
-
-                // Process the output.
-                List<string> scriptErrors = new();
-                //C:\Dev\repos\Nebulator\Examples\temp\net5.0-windows
-                if (scriptErrors.Count == 0)
-                {
-                    Assembly assy = Assembly.LoadFrom(Path.Combine(TempDir, "net5.0-windows", "UserScript.dll"));
-
-                    // Bind to the script interface.
-                    foreach (Type t in assy.GetTypes())
+                    ScriptError se = new()
                     {
-                        if (t.BaseType != null && t.BaseType.Name == "ScriptBase")
-                        {
-                            // We have a good script file. Create the executable object.
-                            object o = Activator.CreateInstance(t);
-                            script = o as ScriptBase;
-                        }
-                    }
-
-                    if (script is null)
-                    {
-                        throw new Exception("Could not instantiate script");
-                    }
+                        ErrorType = ScriptErrorType.Error,
+                        LineNumber = -1,
+                        SourceFile = "",
+                        Message = $"Really bad thing happened:{stderr}"
+                    };
+                    Errors.Add(se);
                 }
                 else
                 {
-                    foreach (string err in scriptErrors)//TODO1 all this:
+                    List<string> outlines = stdout.SplitByToken("\r\n");
+
+                    // Because there are dupes, wait for the go-ahead.
+                    bool collect = false;
+
+                    foreach(var l in outlines)
                     {
-                        //// The line should end with source line number: "//1234"
-                        //int origLineNum = 0; // defaults
-                        //string origFileName = Definitions.UNKNOWN_STRING;
-
-                        //// Dig out the offending source code information.
-                        //string fpath = Path.GetFileName(err.FileName.ToLower());
-                        //if (_filesToCompile.ContainsKey(fpath))
-                        //{
-                        //    FileContext ci = _filesToCompile[fpath];
-                        //    origFileName = ci.SourceFile;
-                        //    string origLine = ci.CodeLines[err.Line - 1];
-                        //    int ind = origLine.LastIndexOf("//");
-
-                        //    if (origFileName == "" || ind == -1)
-                        //    {
-                        //        // Must be an internal error. Do the best we can.
-                        //        Errors.Add(new ScriptError()
-                        //        {
-                        //            ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                        //            SourceFile = err.FileName,
-                        //            LineNumber = err.Line,
-                        //            Message = $"InternalError: {err.ErrorText} in: {origLine}"
-                        //        });
-                        //    }
-                        //    else
-                        //    {
-                        //        int.TryParse(origLine.Substring(ind + 2), out origLineNum);
-                        //        Errors.Add(new ScriptError()
-                        //        {
-                        //            ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                        //            SourceFile = origFileName,
-                        //            LineNumber = origLineNum,
-                        //            Message = err.ErrorText
-                        //        });
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    Errors.Add(new ScriptError()
-                        //    {
-                        //        ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                        //        SourceFile = "NoSourceFile",
-                        //        LineNumber = -1,
-                        //        Message = err.ErrorText
-                        //    });
-                        //}
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Errors.Add(new ScriptError()
-                {
-                    ErrorType = ScriptErrorType.Error,
-                    Message = "Exception: " + ex.Message,
-                    SourceFile = "",
-                    LineNumber = 0
-                });
-            }
-
-            return script;
-        }
-
-
-
-        /*** original
-        NebScript Compile()
-        {
-            NebScript script = null;
-
-            try // many ways to go wrong...
-            {
-                // Set the compiler parameters.
-                CompilerParameters cp = new()
-                {
-                    GenerateExecutable = false,
-                    //OutputAssembly = _scriptName, -- don't do this!
-                    GenerateInMemory = true,
-                    TreatWarningsAsErrors = false,
-                    IncludeDebugInformation = true
-                };
-
-                // The usual suspects.
-                cp.ReferencedAssemblies.Add("System.dll");
-                cp.ReferencedAssemblies.Add("System.Core.dll");
-                cp.ReferencedAssemblies.Add("System.Drawing.dll");
-                cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
-                cp.ReferencedAssemblies.Add("System.Data.dll");
-                cp.ReferencedAssemblies.Add("NAudio.dll");
-                cp.ReferencedAssemblies.Add("NBagOfTricks.dll");
-                cp.ReferencedAssemblies.Add("NebOsc.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Common.dll");
-                cp.ReferencedAssemblies.Add("Nebulator.Script.dll");
-
-                // Add the generated source files.
-                List<string> paths = new List<string>();
-
-                // Create output area.
-                TempDir = Path.Combine(_baseDir, "temp");
-                Directory.CreateDirectory(TempDir);
-                Directory.GetFiles(TempDir).ForEach(f => File.Delete(f));
-
-                foreach (string genFn in _filesToCompile.Keys)
-                {
-                    FileContext ci = _filesToCompile[genFn];
-                    string fullpath = Path.Combine(TempDir, genFn);
-                    File.Delete(fullpath);
-                    File.WriteAllLines(fullpath, ci.CodeLines);
-                    //File.WriteAllLines(fullpath, Tools.FormatSourceCode(ci.CodeLines));
-                    paths.Add(fullpath);
-                }
-
-                // Make it compile.
-                CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
-                CompilerResults cr = provider.CompileAssemblyFromFile(cp, paths.ToArray());
-
-                if (cr.Errors.Count == 0)
-                {
-                    Assembly assy = cr.CompiledAssembly;
-
-                    // Bind to the script interface.
-                    foreach (Type t in assy.GetTypes())
-                    {
-                        if (t.BaseType != null && t.BaseType.Name == "NebScript")
+                        if(collect)
                         {
-                            // We have a good script file. Create the executable object.
-                            object o = Activator.CreateInstance(t);
-                            script = o as NebScript;
-                        }
-                    }
-
-                    if (script is null)
-                    {
-                        throw new Exception("Could not instantiate script");
-                    }
-                }
-                else
-                {
-                    foreach (CompilerError err in cr.Errors)
-                    {
-                        // The line should end with source line number: "//1234"
-                        int origLineNum = 0; // defaults
-                        string origFileName = Definitions.UNKNOWN_STRING;
-
-                        // Dig out the offending source code information.
-                        string fpath = Path.GetFileName(err.FileName.ToLower());
-                        if (_filesToCompile.ContainsKey(fpath))
-                        {
-                            FileContext ci = _filesToCompile[fpath];
-                            origFileName = ci.SourceFile;
-                            string origLine = ci.CodeLines[err.Line - 1];
-                            int ind = origLine.LastIndexOf("//");
-
-                            if (origFileName == "" || ind == -1)
+                            if (l.Contains(": error ") || l.Contains(": warning "))
                             {
-                                // Must be an internal error. Do the best we can.
-                                Errors.Add(new ScriptError()
+                                ScriptError se = new();
+
+                                // Parse the line.
+                                var parts0 = l.SplitByTokens(":");
+
+                                if (parts0[2].StartsWith("error")) se.ErrorType = ScriptErrorType.Error;
+                                if (parts0[2].StartsWith("warning")) se.ErrorType = ScriptErrorType.Warning;
+
+                                var parts1 = parts0[1].SplitByTokens("(),");
+
+                                // genned file name.
+                                var gennedFileName = $"{parts0[0]}:{parts1[0]}";
+
+                                // genned file line number.
+                                int gennedFileLine = int.Parse(parts1[1]);
+
+                                var parts2 = parts0[3].SplitByTokens("[");
+
+                                se.Message = parts2[0];
+
+                                // Get the original info.
+                                if (_filesToCompile.TryGetValue(Path.GetFileName(gennedFileName), out FileContext cont))
                                 {
-                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                                    SourceFile = err.FileName,
-                                    LineNumber = err.Line,
-                                    Message = $"InternalError: {err.ErrorText} in: {origLine}"
-                                });
+                                    string origLine = cont.CodeLines[gennedFileLine - 1];
+                                    se.SourceFile = cont.SourceFile;
+                                    int ind = origLine.LastIndexOf("//");
+                                    if (ind != -1)
+                                    {
+                                        if(int.TryParse(origLine.Substring(ind + 2), out int origLineNum))
+                                        {
+                                            se.LineNumber = origLineNum;
+                                        }
+                                        else
+                                        {
+                                            se.LineNumber = -1;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    // Presumably internal generated file - should never have errors.
+                                    se.SourceFile = "NoSourceFile";
+                                    se.LineNumber = -1;
+                                }
+
+                                Errors.Add(se);
+                            }
+                            else if (l.StartsWith("Time Elapsed"))
+                            {
+                                //TODO2 Do something with this?
                             }
                             else
                             {
-                                int.TryParse(origLine.Substring(ind + 2), out origLineNum);
-                                Errors.Add(new ScriptError()
-                                {
-                                    ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                                    SourceFile = origFileName,
-                                    LineNumber = origLineNum,
-                                    Message = err.ErrorText
-                                });
+                                // ????
                             }
                         }
                         else
                         {
-                            Errors.Add(new ScriptError()
+                            collect = l.StartsWith("Build ");
+                        }
+                    }
+
+                    // Process the output.
+                    if (Errors.Count == 0)
+                    {
+                        // All good so far.
+                        Assembly assy = Assembly.LoadFrom(Path.Combine(TempDir, "net5.0-windows", "UserScript.dll"));
+
+                        // Bind to the script interface.
+                        foreach (Type t in assy.GetTypes())
+                        {
+                            if (t.BaseType != null && t.BaseType.Name == "ScriptBase")
                             {
-                                ErrorType = err.IsWarning ? ScriptErrorType.Warning : ScriptErrorType.Error,
-                                SourceFile = "NoSourceFile",
-                                LineNumber = -1,
-                                Message = err.ErrorText
-                            });
+                                // We have a good script file. Create the executable object.
+                                object o = Activator.CreateInstance(t);
+                                script = o as ScriptBase;
+                            }
+                        }
+
+                        if (script is null)
+                        {
+                            throw new Exception("Could not instantiate script");
                         }
                     }
                 }
@@ -420,8 +296,6 @@ namespace Nebulator  // TODO1 Probably not forever home
 
             return script;
         }
-        */
-
 
         /// <summary>
         /// Top level parser.

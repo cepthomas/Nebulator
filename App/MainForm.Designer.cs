@@ -1,4 +1,4 @@
-﻿namespace Nebulator.UI
+﻿namespace Nebulator.App
 {
     partial class MainForm
     {
@@ -40,7 +40,7 @@
             this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
-            this.timeMaster = new Nebulator.UI.TimeControl();
+            this.timeMaster = new Nebulator.Controls.TimeControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -356,7 +356,7 @@
         private NBagOfTricks.UI.Pot potSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
-        private TimeControl timeMaster;
+        private Controls.TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnMonIn;

@@ -1,0 +1,91 @@
+
+
+///// Include other lib files. /////
+#include "utils.neb"
+#include "scale.neb"
+
+
+// Volumes
+const double KEYS_VOL = 0.8;
+const double DRUM_VOL = 1.0;
+const double BASS_VOL = 1.0;
+const double SYNTH_VOL = 1.0;
+
+
+///// Channels /////
+Channel chKeys;
+Channel chBass;
+Channel chDrums;
+Channel chSynth;
+
+
+////// Nebulator midi stuff //////
+public override void Setup()
+{
+    // IO devices.
+    // All the outputs.
+    chKeys =  CreateChannel("keys",  DeviceType.MidiOut, 1,  0.1);
+    chBass =  CreateChannel("bass",  DeviceType.MidiOut, 2,  0.1);
+    chSynth = CreateChannel("synth", DeviceType.MidiOut, 3,  0.1);
+    chDrums = CreateChannel("drums", DeviceType.MidiOut, 10, 0.1);
+
+    // All the inputs.
+    //CreateController(DeviceType.VkeyIn, 1, NoteControl, vVkeyNote);
+}
+ 
+public override void Setup2()
+{
+    SendPatch(chKeys,  ElectricGrandPiano); // ElectricGrandPiano AcousticGrandPiano
+    SendPatch(chBass,  AcousticBass);
+    SendPatch(chSynth, Pad5Bowed);
+    SendPatch(chDrums, 32); // drum kit
+
+    // Do some panning. Apparently FluidR3 sf ignores CC for some patches like AcousticGrandPiano
+    SendController(chKeys,  Pan, 30);
+    SendController(chSynth, Pan, 100);
+
+    BuildComp();
+}
+
+void BuildComp()
+{
+    
+    /////////////////////// Keys sequences /////////////////////////////////
+
+    Sequence seqKeys = CreateSequence(new SequenceElements
+    {
+        //"|m...............|b...b...b...b...|tttttttttttttttt|tttttttttttttttt|
+        { "|9-------------  |9-------------  |9 9-----------  |9-----          |", 16, "E4.m", KEYS_VOL },
+        { "|                |                |                |        9 9     |", 16, "D5.m", KEYS_VOL },
+        { "|                |                |                |            9 9 |", 16, "A4.m", KEYS_VOL },
+    });
+
+
+    /////////////////////// Drum sequences /////////////////////////////////
+
+    Sequence seqDrums = CreateSequence(new SequenceElements
+    {
+        { "|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|", 16, SideStick,      DRUM_VOL*0.8 },
+        { "|8...............|8...............|8...............|8...............|", 16, CrashCymbal1, DRUM_VOL },
+        //{ "|....8.......8...|....8.......8...|....8.......8...|....8.......8...|", 16, SideStick,        DRUM_VOL*0.9 },
+       // { "|8.....8.8.......|8.....8.8.......|8.....8.8.......|8.....8.8.......|", 16, AcousticBassDrum, DRUM_VOL },
+    });
+
+    /////////////////////// Bass sequences /////////////////////////////////
+
+    Sequence seqBass = CreateSequence(new SequenceElements
+    {
+       // { "|9------        7|                |               7|                |", 16, "B4", BASS_VOL },
+        { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9----- 5|", 16, "E2", BASS_VOL },
+    });
+
+    /////////////////////// sections /////////////////////////////////
+
+    CreateSection(32, "Run", new SectionElements 
+    {
+        { chKeys,  Loop,  seqKeys  },
+        { chDrums, Loop,  seqDrums },
+        { chBass,  Loop,  seqBass  },
+      //{ chSynth, Loop,  seqSynth1     },
+    });
+}
