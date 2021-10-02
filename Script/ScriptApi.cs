@@ -231,54 +231,27 @@ namespace Nebulator.Script
         /// <param name="parts">"1 4 6 b13"</param>
         protected void CreateNotes(string name, string parts)
         {
-            NoteUtils.AddScriptNoteDef(name, parts);
+            ScriptUtils.AddScriptNoteDef(name, parts);
         }
 
-        /// <summary>Convert the argument into numbered notes.</summary>
-        /// <param name="note">Note string using any form allowed in the script.</param>
-        /// <returns>Array of notes or empty if invalid.</returns>
-        protected double[] GetChordNotes(string note)
-        {
-            List<double> notes = NoteUtils.ParseNoteString(note);
-            return notes != null ? notes.ToArray() : Array.Empty<double>();
-        }
+        ///// <summary>Convert the argument into numbered notes.</summary>
+        ///// <param name="note">Note string using any form allowed in the script.</param>
+        ///// <returns>Array of notes or empty if invalid.</returns>
+        //protected double[] GetChordNotes(string note)
+        //{
+        //    List<double> notes = ScriptUtils.ParseNoteString(note);
+        //    return notes != null ? notes.ToArray() : Array.Empty<double>();
+        //}
 
-        /// <summary>Get an array of scale notes.</summary>
-        /// <param name="scale">One of the named scales from ScriptDefinitions.md.</param>
-        /// <param name="key">Note name and octave.</param>
-        /// <returns>Array of notes or empty if invalid.</returns>
-        protected double[] GetScaleNotes(string scale, string key)
-        {
-            List<double> notes = NoteUtils.GetScaleNotes(scale, key);
-            return notes != null ? notes.ToArray() : Array.Empty<double>();
-        }
-        #endregion
-
-        #region Script utilities
-        protected double Random(double max)
-        {
-            return _rand.NextDouble() * max;
-        }
-
-        protected double Random(double min, double max)
-        {
-            return min + _rand.NextDouble() * (max - min);
-        }
-
-        protected int Random(int max)
-        {
-            return _rand.Next(max);
-        }
-
-        protected int Random(int min, int max)
-        {
-            return _rand.Next(min, max);
-        }
-
-        protected void Print(params object[] vars)
-        {
-            _logger.Info(string.Join(" | ", vars));
-        }
+        ///// <summary>Get an array of scale notes.</summary>
+        ///// <param name="scale">One of the named scales from ScriptDefinitions.md.</param>
+        ///// <param name="key">Note name and octave.</param>
+        ///// <returns>Array of notes or empty if invalid.</returns>
+        //protected double[] GetScaleNotes(string scale, string key)
+        //{
+        //    List<double> notes = ScriptUtils.GetScaleNotes(scale, key);
+        //    return notes != null ? notes.ToArray() : Array.Empty<double>();
+        //}
         #endregion
     }
 }

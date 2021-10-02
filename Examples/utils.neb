@@ -1,11 +1,11 @@
 
-
 // Define some Neb vars.
 const double VEL = 0.8;
 
+
 ///// Functions /////
 
-int notavar = 911;
+// int notavar = 911;
 
 bool Boing(double notenum = 0)
 {
@@ -18,7 +18,7 @@ bool Boing(double notenum = 0)
         boinged = true;
     }
 
-    SendNote(chSynth, notenum, VEL, 1.0);
+    SendNote("synth", notenum, VEL, 1.0);
     return boinged;
 }
 
@@ -35,6 +35,6 @@ public class Dummy
 
     public int GetThing(int value)
     {
-        return _thing * s.Random(value);
+        return _thing * Random(value);
     }
 }

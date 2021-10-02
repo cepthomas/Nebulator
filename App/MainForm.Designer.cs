@@ -33,14 +33,15 @@
             this.btnMonIn = new System.Windows.Forms.ToolStripButton();
             this.btnMonOut = new System.Windows.Forms.ToolStripButton();
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
-            this.btnSettings = new System.Windows.Forms.ToolStripButton();
-            this.btnAbout = new System.Windows.Forms.ToolStripButton();
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
             this.timeMaster = new Nebulator.Controls.TimeControl();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.configToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -141,8 +142,6 @@
             this.btnMonIn,
             this.btnMonOut,
             this.btnKillComm,
-            this.btnSettings,
-            this.btnAbout,
             this.btnClear,
             this.btnWrap});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -158,38 +157,42 @@
             this.openToolStripMenuItem,
             this.recentToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
-            this.viewLogToolStripMenuItem});
+            this.viewLogToolStripMenuItem,
+            this.aboutToolStripMenuItem,
+            this.settingsToolStripMenuItem,
+            this.configToolStripMenuItem});
             this.fileDropDownButton.Image = global::App.Properties.Resources.glyphicons_37_file;
             this.fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.fileDropDownButton.Name = "fileDropDownButton";
             this.fileDropDownButton.Size = new System.Drawing.Size(34, 24);
             this.fileDropDownButton.Text = "fileDropDownButton";
             this.fileDropDownButton.ToolTipText = "File operations";
+            this.fileDropDownButton.Click += new System.EventHandler(this.Open_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -227,28 +230,6 @@
             this.btnKillComm.Size = new System.Drawing.Size(29, 24);
             this.btnKillComm.Text = "toolStripButton1";
             this.btnKillComm.ToolTipText = "Instant stop all devices";
-            // 
-            // btnSettings
-            // 
-            this.btnSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSettings.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
-            this.btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(29, 24);
-            this.btnSettings.Text = "toolStripButton1";
-            this.btnSettings.ToolTipText = "Settings";
-            this.btnSettings.Click += new System.EventHandler(this.UserSettings_Click);
-            // 
-            // btnAbout
-            // 
-            this.btnAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAbout.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
-            this.btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAbout.Name = "btnAbout";
-            this.btnAbout.Size = new System.Drawing.Size(29, 24);
-            this.btnAbout.Text = "toolStripButton1";
-            this.btnAbout.ToolTipText = "General info and a list of your devices";
-            this.btnAbout.Click += new System.EventHandler(this.About_Click);
             // 
             // btnClear
             // 
@@ -319,6 +300,28 @@
             this.timeMaster.TabIndex = 37;
             this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
+            this.aboutToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.aboutToolStripMenuItem.Text = "About...";
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.settingsToolStripMenuItem.Text = "Settings...";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
+            // 
+            // configToolStripMenuItem
+            // 
+            this.configToolStripMenuItem.Name = "configToolStripMenuItem";
+            this.configToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.configToolStripMenuItem.Text = "Config...";
+            this.configToolStripMenuItem.Click += new System.EventHandler(this.Config_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -366,14 +369,15 @@
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnKillComm;
-        private System.Windows.Forms.ToolStripButton btnSettings;
-        private System.Windows.Forms.ToolStripButton btnAbout;
         private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
         private NBagOfTricks.UI.TextViewer textViewer;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
         private System.Windows.Forms.Label lblSolo;
         private System.Windows.Forms.Label lblMute;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem configToolStripMenuItem;
     }
 }
 

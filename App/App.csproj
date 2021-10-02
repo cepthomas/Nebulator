@@ -22,6 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\README.md" Link="Resources\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NAudio" Version="2.0.1" />
     <PackageReference Include="NLog" Version="4.7.11" />
   </ItemGroup>

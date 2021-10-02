@@ -72,7 +72,7 @@ namespace Nebulator.Midi
 
                 if (ind < 0)
                 {
-                    _logger.Error($"Invalid midi input device.");
+                    _logger.Error($"Invalid midi input device:{UserSettings.TheSettings.MidiInDevice}");
                 }
                 else
                 {

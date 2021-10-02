@@ -21,6 +21,11 @@ namespace Nebulator.Common
         [Browsable(false)]
         public string FileName { get; private set; } = Definitions.UNKNOWN_STRING;
 
+        /// <summary>Is it ok?</summary>
+        [JsonIgnore]
+        [Browsable(false)]
+        public bool Valid { get; set; } = true;
+
         /// <summary>Master volume.</summary>
         [Browsable(false)]
         public double MasterVolume { get; set; } = 0.8;
@@ -33,12 +38,12 @@ namespace Nebulator.Common
         [Description("Active Channels")]
         [Browsable(true)]
         [MaxLength(Channel.NUM_CHANNELS, ErrorMessage = "Channel max is {Channel.NUM_CHANNELS}")]
-        public List<Channel> Channels { get; } = new List<Channel>();
+        public List<Channel> Channels { get; set; } = new List<Channel>();
 
         [DisplayName("Controllers")]
         [Description("Active Controllers")]
         [Browsable(true)]
-        public List<Controller> Controllers { get; } = new List<Controller>();
+        public List<Controller> Controllers { get; set; } = new List<Controller>();
         #endregion
 
         #region Persistence
@@ -109,11 +114,11 @@ namespace Nebulator.Common
             {
                 DeviceType = DeviceType.MidiOut,
                 DeviceName = "DevOut1",
-                ChannelName = "Chan1",
+                ChannelName = "keys",
                 ChannelNumber = 1,
-                Patch = Patch.Bassoon,
+                Patch = Patch.AcousticGrandPiano,
                 VolumeWobbleRange = 0.0,
-                Volume = 0.1,
+                Volume = 0.8,
                 State = ChannelState.Normal
             });
 
@@ -121,31 +126,31 @@ namespace Nebulator.Common
             {
                 DeviceType = DeviceType.OscOut,
                 DeviceName = "DevOut2",
-                ChannelName = "Chan2",
+                ChannelName = "bass",
                 ChannelNumber = 2,
-                Patch = Patch.ChurchOrgan,
+                Patch = Patch.AcousticBass,
                 VolumeWobbleRange = 0.2,
-                Volume = 0.2,
+                Volume = 0.75,
                 State = ChannelState.Normal
             });
             pc.Channels.Add(new()
             {
                 DeviceType = DeviceType.MidiOut,
                 DeviceName = "DevOut3",
-                ChannelName = "Chan3",
+                ChannelName = "synth",
                 ChannelNumber = 3,
-                Patch = Patch.FrenchHorn,
+                Patch = Patch.Lead2Sawtooth,
                 VolumeWobbleRange = 0.3,
-                Volume = 0.3,
-                State = ChannelState.Mute
+                Volume = 0.6,
+                State = ChannelState.Normal
             });
             pc.Channels.Add(new()
             {
                 DeviceType = DeviceType.MidiOut,
                 DeviceName = "DevOut4",
-                ChannelName = "Chan4",
-                ChannelNumber = 4,
-                Patch = Patch.Fx8SciFi,
+                ChannelName = "drums",
+                ChannelNumber = 10,
+                //Patch = Patch.,
                 VolumeWobbleRange = 0.4,
                 Volume = 0.4,
                 State = ChannelState.Solo

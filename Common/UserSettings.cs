@@ -75,7 +75,7 @@ namespace Nebulator.Common
         //[Description("Show the keyboard.")]
         //[Category("Devices")]
         //[Browsable(true)]
-        //public bool VirtualKeyboard { get; set; } = true;
+        //public bool VirtualKeyboard { get; set; } = true; TODO2
 
         [DisplayName("Work Path")]
         [Description("Where you keep your neb files.")]
@@ -88,6 +88,12 @@ namespace Nebulator.Common
         [Category("Functionality")]
         [Browsable(true)]
         public bool AutoCompile { get; set; } = true;
+
+        [DisplayName("Ignore Warnings")]
+        [Description("Ignore warnings otherwise treat them as errors.")]
+        [Category("Functionality")]
+        [Browsable(true)]
+        public bool IgnoreWarnings { get; set; } = true;
 
         [DisplayName("CPU Meter")] //TODO2 useful? improve?
         [Description("Show a CPU usage meter. Note that this slows start up a bit.")]
@@ -105,6 +111,9 @@ namespace Nebulator.Common
 
         [Browsable(false)]
         public bool MonitorInput { get; set; } = false;
+
+        [Browsable(false)]
+        public bool WordWrap { get; set; } = false;
 
         [Browsable(false)]
         public bool MonitorOutput { get; set; } = false;

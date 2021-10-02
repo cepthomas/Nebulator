@@ -4,24 +4,52 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
 
 
 namespace Nebulator.Script
 {
-    public class NoteUtils
+    /// <summary>Static utilities usable by scripts.</summary>
+    public static class ScriptUtils
     {
         #region Constants
         const int NOTES_PER_OCTAVE = 12;
         #endregion
 
         #region Fields
+        /// <summary>My logger.</summary>
+        static readonly Logger _logger = LogManager.GetLogger("Print");
+
         /// <summary>Chord and scale definitions added from the script. Value is list of constituent notes.</summary>
-        static Dictionary<string, List<string>> _scriptNoteDefs { get; set; } = new Dictionary<string, List<string>>();
+        static readonly Dictionary<string, List<string>> _scriptNoteDefs = new();
+
+        /// <summary>Script randomizer.</summary>
+        static readonly Random _rand = new();
         #endregion
 
-        #region Public functions
+        #region All about notes
+        static readonly string[] _noteNames =
+        {
+            "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B",
+            "B#", "C#", "", "D#", "Fb", "E#", "F#", "", "G#", "", "A#", "Cb",
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"
+        };
+
+        static readonly int[] _naturals =
+        {
+            0, 2, 4, 5, 7, 9, 11
+        };
+
+        static readonly string[] _intervals =
+        {
+            "1", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "b7", "7",
+            "", "", "9", "#9", "", "11", "#11", "", "", "13", "", ""
+        };
+        #endregion
+
+        #region Note manipulation functions
         /// <summary>
         /// Add a chord or scale definition from the script.
         /// </summary>
@@ -39,7 +67,7 @@ namespace Nebulator.Script
         /// <returns>List of note numbers - empty if invalid.</returns>
         public static List<double> ParseNoteString(string noteString)
         {
-            List<double> notes = new List<double>();
+            List<double> notes = new();
 
             // Parse the input value.
             // Note: Need exception handling here to protect from user script errors.
@@ -122,6 +150,20 @@ namespace Nebulator.Script
             return notes;
         }
 
+        /// <summary>Convert the argument into numbered notes.</summary>
+        /// <param name="note">Note string using any form allowed in the script.</param>
+        /// <returns>Array of notes or empty if invalid.</returns>
+        public static List<double> GetChordNotes(string note)
+        {
+            List<double> notes = ParseNoteString(note);
+            return notes;
+        }
+        //public static double[] GetChordNotes(string note)
+        //{
+        //    List<double> notes = ScriptUtils.ParseNoteString(note);
+        //    return notes != null ? notes.ToArray() : Array.Empty<double>();
+        //}
+
         /// <summary>
         /// Create a list of absolute note numbers for given scale name. Checks both stock items and those defined in the script.
         /// </summary>
@@ -171,8 +213,7 @@ namespace Nebulator.Script
         /// <returns>True/false</returns>
         public static bool IsNatural(int notenum)
         {
-            int[] naturals = { 0, 2, 4, 5, 7, 9, 11 };
-            return naturals.Contains(SplitNoteNumber(notenum).root % NOTES_PER_OCTAVE);
+            return _naturals.Contains(SplitNoteNumber(notenum).root % NOTES_PER_OCTAVE);
         }
 
         /// <summary>
@@ -182,13 +223,12 @@ namespace Nebulator.Script
         /// <returns></returns>
         public static List<string> FormatNotes(List<int> notes)
         {
-            List<string> snotes = new List<string>();
+            List<string> snotes = new();
 
             // Dissect root note.
-            int rootOctave = SplitNoteNumber(notes[0]).octave;
-            int rootNoteNum = SplitNoteNumber(notes[0]).root;
-
-            string sroot = $"\"{NoteNumberToName(rootNoteNum)}{rootOctave}\"";
+            //int rootOctave = SplitNoteNumber(notes[0]).octave;
+            //int rootNoteNum = SplitNoteNumber(notes[0]).root;
+            //string sroot = $"\"{NoteNumberToName(rootNoteNum)}{rootOctave}\"";
 
             foreach (int n in notes)
             {
@@ -235,24 +275,18 @@ namespace Nebulator.Script
         #endregion
 
         #region Conversion functions
-        static string[] intervals =
-        {
-            "1", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "b7", "7",
-            "", "", "9", "#9", "", "11", "#11", "", "", "13", "", ""
-        };
-
         /// <summary>
         /// Get interval offset from name.
         /// </summary>
         /// <param name="sinterval"></param>
         /// <returns>Offset or null if invalid.</returns>
-        static int? GetInterval(string sinterval)
+        public static int? GetInterval(string sinterval)
         {
             int flats = sinterval.Count(c => c == 'b');
             int sharps = sinterval.Count(c => c == '#');
             sinterval = sinterval.Replace(" ", "").Replace("b", "").Replace("#", "");
 
-            int iinterval = Array.IndexOf(intervals, sinterval);
+            int iinterval = Array.IndexOf(_intervals, sinterval);
             return iinterval == -1 ? (int?)null : iinterval + sharps - flats;
         }
 
@@ -261,9 +295,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="iint">The name or empty if invalid.</param>
         /// <returns></returns>
-        static string GetInterval(int iint)
+        public static string GetInterval(int iint)
         {
-            return iint >= intervals.Count() ? null : intervals[iint % intervals.Count()];
+            return iint >= _intervals.Length ? null : _intervals[iint % _intervals.Length];
         }
 
         /// <summary>
@@ -271,16 +305,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="snote">The root of the note without octave.</param>
         /// <returns>The number or null if invalid.</returns>
-        static int? NoteNameToNumber(string snote)
+        public static int? NoteNameToNumber(string snote)
         {
-            string[] noteNames =
-            {
-                "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B",
-                "B#", "C#", "", "D#", "Fb", "E#", "F#", "", "G#", "", "A#", "Cb",
-                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"
-            };
-
-            int inote = Array.IndexOf(noteNames, snote) % NOTES_PER_OCTAVE;
+            int inote = Array.IndexOf(_noteNames, snote) % NOTES_PER_OCTAVE;
             return inote == -1 ? null : (int?)inote;
         }
 
@@ -289,12 +316,41 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="inote"></param>
         /// <returns></returns>
-        static string NoteNumberToName(int inote)
+        public static string NoteNumberToName(int inote)
         {
             int rootNote = SplitNoteNumber(inote).root;
             string[] noteNames = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
-            return noteNames[rootNote % noteNames.Count()];
+            return noteNames[rootNote % noteNames.Length];
         }
         #endregion
+
+
+        #region General utilities
+        public static double Random(double max)
+        {
+            return _rand.NextDouble() * max;
+        }
+
+        public static double Random(double min, double max)
+        {
+            return min + _rand.NextDouble() * (max - min);
+        }
+
+        public static int Random(int max)
+        {
+            return _rand.Next(max);
+        }
+
+        public static int Random(int min, int max)
+        {
+            return _rand.Next(min, max);
+        }
+
+        public static void Print(params object[] vars)
+        {
+            _logger.Info(string.Join(" | ", vars));
+        }
+        #endregion
+
     }
 }

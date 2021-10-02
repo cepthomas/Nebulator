@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-//using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Diagnostics;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
@@ -17,38 +13,76 @@ using Nebulator.Script;
 
 namespace Nebulator.App
 {
-    /// <summary>
-    /// Parses/compiles *.neb file(s).
-    /// </summary>
+    /// <summary>General script result - error/warn etc.</summary>
+    public enum ScriptResultType
+    {
+        None,       // Not an error - could be info.
+        Warning,    // Compiler warning.
+        Error,      // Compiler error.
+        Fatal,      // Internal error.
+        Runtime     // Runtime error - user script.
+    }
+
+    /// <summary>General script result container.</summary>
+    public class ScriptResult
+    {
+        /// <summary>Where it came from.</summary>
+        public ScriptResultType ResultType { get; set; } = ScriptResultType.None;
+
+        /// <summary>Original source file.</summary>
+        public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
+
+        /// <summary>Original source line number. -1 means invalid.</summary>
+        public int LineNumber { get; set; } = -1;
+
+        /// <summary>Content.</summary>
+        public string Message { get; set; } = Definitions.UNKNOWN_STRING;
+
+        /// <summary>Readable.</summary>
+        public override string ToString() => $"{ResultType} {SourceFile}({LineNumber}): {Message}";
+    }
+
+    /// <summary>Parser helper class.</summary>
+    class FileContext
+    {
+        /// <summary>Current source file.</summary>
+        public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
+
+        /// <summary>Current source line.</summary>
+        public int LineNumber { get; set; } = 1;
+
+        /// <summary>Current parse state.</summary>
+        public string State { get; set; } = "idle";
+
+        /// <summary>Accumulated script code lines.</summary>
+        public List<string> CodeLines { get; set; } = new List<string>();
+    }
+
+    /// <summary>Parses/compiles *.neb file(s).</summary>
     public class Compiler
     {
-        /// <summary>
-        /// Parser helper class.
-        /// </summary>
-        class FileContext
-        {
-            /// <summary>Current source file.</summary>
-            public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
-
-            /// <summary>Current source line.</summary>
-            public int LineNumber { get; set; } = 1;
-
-            /// <summary>Current parse state.</summary>
-            public string State { get; set; } = "idle";
-
-            /// <summary>Accumulated script code lines.</summary>
-            public List<string> CodeLines { get; set; } = new List<string>();
-        }
-
         #region Properties
-        /// <summary>Accumulated errors.</summary>
-        public List<ScriptError> Errors { get; } = new List<ScriptError>();
+        /// <summary>Accumulated results.</summary>
+        public List<ScriptResult> Results { get; } = new List<ScriptResult>();
 
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
 
-        /// <summary>Do not include some neb only components.</summary>
+        /// <summary>Compile products are here.</summary>
         public string TempDir { get; set; } = Definitions.UNKNOWN_STRING;
+
+        public int ErrorCount
+        {
+            get
+            {
+                int errorCount = Results.Where(r => r.ResultType == ScriptResultType.Error || r.ResultType == ScriptResultType.Fatal).Count();
+                if (!UserSettings.TheSettings.IgnoreWarnings)
+                {
+                    errorCount += Results.Where(r => r.ResultType == ScriptResultType.Warning).Count();
+                }
+                return errorCount;
+            }
+        }
         #endregion
 
         #region Fields
@@ -70,7 +104,8 @@ namespace Nebulator.App
         /// <summary>All the definitions for internal use. TODO2 more elegant/fast way?</summary>
         readonly Dictionary<string, int> _defs = new();
 
-        //const string GENNED_FILE = ""
+        /// <summary>Need to know.</summary>
+        Config _config;
         #endregion
 
         #region Public functions
@@ -78,16 +113,18 @@ namespace Nebulator.App
         /// Run the Compiler.
         /// </summary>
         /// <param name="nebfn">Fully qualified path to main file.</param>
+        /// <param name="config">Config info.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public ScriptBase Execute(string nebfn)
+        public ScriptBase Execute(string nebfn, Config config)
         {
             ScriptBase script = null;
+            _config = config;
 
             // Reset everything.
             _filesToCompile.Clear();
             _initLines.Clear();
 
-            Errors.Clear();
+            Results.Clear();
 
             if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
             {
@@ -113,7 +150,7 @@ namespace Nebulator.App
                 _logger.Error($"Invalid file {nebfn}.");
             }
 
-            return Errors.Count == 0 ? script : null;
+            return Results.Count == 0 ? script : null;
         }
         #endregion
 
@@ -166,8 +203,8 @@ namespace Nebulator.App
 
                 Process process = new() { StartInfo = stinfo };
                 process.Start();
-                
- //???               process.WaitForExit();
+
+                //TODO1 blocks??? process.WaitForExit();
 
                 // Process output.
                 string stdout = process.StandardOutput.ReadToEnd();
@@ -175,14 +212,12 @@ namespace Nebulator.App
 
                 if(stderr != "")
                 {
-                    ScriptError se = new()
+                    ScriptResult se = new()
                     {
-                        ErrorType = ScriptErrorType.Error,
-                        LineNumber = -1,
-                        SourceFile = "",
+                        ResultType = ScriptResultType.Fatal,
                         Message = $"Really bad thing happened:{stderr}"
                     };
-                    Errors.Add(se);
+                    Results.Add(se);
                 }
                 else
                 {
@@ -197,13 +232,13 @@ namespace Nebulator.App
                         {
                             if (l.Contains(": error ") || l.Contains(": warning "))
                             {
-                                ScriptError se = new();
+                                ScriptResult se = new();
 
                                 // Parse the line.
                                 var parts0 = l.SplitByTokens(":");
 
-                                if (parts0[2].StartsWith("error")) se.ErrorType = ScriptErrorType.Error;
-                                if (parts0[2].StartsWith("warning")) se.ErrorType = ScriptErrorType.Warning;
+                                if (parts0[2].StartsWith("error")) se.ResultType = ScriptResultType.Error;
+                                else if (parts0[2].StartsWith("warning")) se.ResultType = ScriptResultType.Warning;
 
                                 var parts1 = parts0[1].SplitByTokens("(),");
 
@@ -225,7 +260,7 @@ namespace Nebulator.App
                                     int ind = origLine.LastIndexOf("//");
                                     if (ind != -1)
                                     {
-                                        if(int.TryParse(origLine.Substring(ind + 2), out int origLineNum))
+                                        if(int.TryParse(origLine[(ind + 2)..], out int origLineNum))
                                         {
                                             se.LineNumber = origLineNum;
                                         }
@@ -239,10 +274,9 @@ namespace Nebulator.App
                                 {
                                     // Presumably internal generated file - should never have errors.
                                     se.SourceFile = "NoSourceFile";
-                                    se.LineNumber = -1;
                                 }
 
-                                Errors.Add(se);
+                                Results.Add(se);
                             }
                             else if (l.StartsWith("Time Elapsed"))
                             {
@@ -260,7 +294,7 @@ namespace Nebulator.App
                     }
 
                     // Process the output.
-                    if (Errors.Count == 0)
+                    if (ErrorCount == 0)
                     {
                         // All good so far.
                         Assembly assy = Assembly.LoadFrom(Path.Combine(TempDir, "net5.0-windows", "UserScript.dll"));
@@ -285,12 +319,10 @@ namespace Nebulator.App
             }
             catch (Exception ex)
             {
-                Errors.Add(new ScriptError()
+                Results.Add(new ScriptResult()
                 {
-                    ErrorType = ScriptErrorType.Error,
+                    ResultType = ScriptResultType.Fatal,
                     Message = "Exception: " + ex.Message,
-                    SourceFile = "",
-                    LineNumber = 0
                 });
             }
 
@@ -303,12 +335,12 @@ namespace Nebulator.App
         /// <param name="nebfn">Topmost file in collection.</param>
         void Parse(string nebfn)
         {
-            // Add the generated internal code files.
-            _filesToCompile.Add($"{_scriptName}_wrapper.cs", new FileContext()
-            {
-                SourceFile = "",
-                CodeLines = GenMainFileContents()
-            });
+            //// Add the generated internal code files.
+            //_filesToCompile.Add($"{_scriptName}_wrapper.cs", new FileContext()
+            //{
+            //    SourceFile = "",
+            //    CodeLines = GenMainFileContents()
+            //});
 
             _filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext()
             {
@@ -327,29 +359,29 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// Parse one file. This is recursive to support nested #include.
+        /// Parse one file. Recursive to support nested #include.
         /// </summary>
         /// <param name="pcont">The parse context.</param>
         /// <returns>True if a valid file.</returns>
         bool ParseOneFile(FileContext pcont)
         {
-            bool valid = false;
+            bool valid = File.Exists(pcont.SourceFile);
 
-            // Try fully qualified.
-            if (File.Exists(pcont.SourceFile))
-            {
-                // OK - leave as is.
-                valid = true;
-            }
-            else // Try relative.
-            {
-                string fn = Path.Combine(_baseDir, pcont.SourceFile);
-                if (File.Exists(fn))
-                {
-                    pcont.SourceFile = fn;
-                    valid = true;
-                }
-            }
+            //// Try fully qualified.
+            //if (File.Exists(pcont.SourceFile))
+            //{
+            //    // OK - leave as is.
+            //    valid = true;
+            //}
+            //else // Try relative.
+            //{
+            //    string fn = Path.Combine(_baseDir, pcont.SourceFile);
+            //    if (File.Exists(fn))
+            //    {
+            //        pcont.SourceFile = fn;
+            //        valid = true;
+            //    }
+            //}
 
             if (valid)
             {
@@ -387,7 +419,6 @@ namespace Nebulator.App
 
                 // Test for nested files
                 //Include("path\name.neb");
-                //Include("path\split file name.neb");
                 if (s.Trim().StartsWith("Include"))
                 {
                     bool valid = false;
@@ -409,9 +440,9 @@ namespace Nebulator.App
 
                     if (!valid)
                     {
-                        Errors.Add(new ScriptError()
+                        Results.Add(new ScriptResult()
                         {
-                            ErrorType = ScriptErrorType.Error,
+                            ResultType = ScriptResultType.Error,
                             Message = $"Invalid Include: {s}",
                             SourceFile = pcont.SourceFile,
                             LineNumber = pcont.LineNumber
@@ -424,37 +455,13 @@ namespace Nebulator.App
                 }
                 else // plain line
                 {
-                    if (cline != "")
+                    if (cline.Trim() != "")
                     {
-                        // Store the whole line with line number tacked on.
-                        pcont.CodeLines.Add($"{cline} //{pcont.LineNumber}");
+                        // Store the whole line with line number tacked on and some indentation.
+                        pcont.CodeLines.Add($"        {cline} //{pcont.LineNumber}");
                     }
                 }
-            }   
-        }
-
-        /// <summary>
-        /// Create the file containing all the nebulator glue.
-        /// </summary>
-        /// <returns></returns>
-        List<string> GenMainFileContents()
-        {
-            // Create the main/generated file. Indicated by empty source file name.
-            List<string> codeLines = GenTopOfFile("");
-
-            // Collected init stuff goes in a constructor.
-            // Reference to current script so nested classes have access to it. TODO1 fixed in C#9 with static using.
-            codeLines.Add($"        protected static ScriptBase s;");
-            codeLines.Add($"        public {_scriptName}() : base()");
-            codeLines.Add( "        {");
-            codeLines.Add( "            s = this;");
-            _initLines.ForEach(l => codeLines.Add("            " + l));
-            codeLines.Add( "        }");
-
-            // Bottom stuff.
-            codeLines.AddRange(GenBottomOfFile());
-
-            return codeLines;
+            }
         }
 
         /// <summary>
@@ -527,6 +534,8 @@ namespace Nebulator.App
                 "using NBagOfTricks;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
+                "using static Nebulator.Script.ScriptUtils;",
+                "",
                 "namespace Nebulator.UserScript",
                 "{",
                $"    public partial class {_scriptName} : ScriptBase",
@@ -552,28 +561,5 @@ namespace Nebulator.App
             return codeLines;
         }
         #endregion
-    }
-
-    /// <summary>General script error.</summary>
-    public enum ScriptErrorType { None, Warning, Error, Runtime }
-
-    /// <summary>General script error container.</summary>
-    public class ScriptError
-    {
-        /// <summary>Where it came from.</summary>
-        //[JsonConverter(typeof(StringEnumConverter))]
-        public ScriptErrorType ErrorType { get; set; } = ScriptErrorType.None;
-
-        /// <summary>Original source file.</summary>
-        public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
-
-        /// <summary>Original source line number.</summary>
-        public int LineNumber { get; set; } = 0;
-
-        /// <summary>Content.</summary>
-        public string Message { get; set; } = Definitions.UNKNOWN_STRING;
-
-        /// <summary>Readable.</summary>
-        public override string ToString() => $"{ErrorType} {SourceFile}({LineNumber}): {Message}";
     }
 }

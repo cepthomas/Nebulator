@@ -4,7 +4,7 @@
 public class Scale
 {
     int _count = 0;
-    double[] _scaleNotes;
+    List<double> _scaleNotes;
     int[] _noteWeights;
     int _totalWeight = 100;
     int _down = 0;
@@ -12,7 +12,7 @@ public class Scale
 
     public Scale(string scale, string root, int octDown, int octUp)
     {
-        _scaleNotes = s.GetScaleNotes(scale, root);
+        _scaleNotes = GetScaleNotes(scale, root);
         _count = _scaleNotes.Count();
         _noteWeights = new int[_count];
         _down = octDown;
@@ -43,7 +43,7 @@ public class Scale
     public double randomNote()
     {
         double note = 0;
-        double r = s.Random(_totalWeight);
+        double r = Random(_totalWeight);
         
         int offset = 0;
 
@@ -58,7 +58,7 @@ public class Scale
         }
 
         // Which octave?
-        int oct = s.Random(0, 3) - 1;
+        int oct = Random(0, 3) - 1;
         note += oct * 12;
 
         return note;

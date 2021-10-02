@@ -9,6 +9,7 @@ const double SOUND_VOL = 0.8;
 
 // ///// Channels /////
 // Channel chSound;
+//SendPatch(chSound, Pad2Warm);
 
 class TapeLoop
 {
@@ -53,11 +54,6 @@ public override void Setup()
     // 6th
     _loops.Add(new TapeLoop("F4",  19.3,  4.2));
     _loops.Add(new TapeLoop("F5",  20.0,  14.1));
-}
-
-public override void Setup2()
-{
-    SendPatch(chSound, Pad2Warm);
 }
 
 public override void Step()

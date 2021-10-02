@@ -27,12 +27,12 @@ const double DRUM_VOL = 0.8;
 ///// Sequences
 Sequence seqDynamic;
 
-int unused;
+//int unused;
 
 ////// Simple variables for functions
-double[] _scaleNotes;
-double[] _chordNotes;
-int _noteNum = 48;
+List<double> _scaleNotes;
+List<double> _chordNotes;
+//int _noteNum = 48;
 
 //error
 

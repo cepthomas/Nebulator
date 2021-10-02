@@ -103,8 +103,6 @@ namespace Nebulator.App
             btnMonIn.Image = GraphicsUtils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = GraphicsUtils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
             btnKillComm.Image = GraphicsUtils.ColorizeBitmap(btnKillComm.Image, UserSettings.TheSettings.IconColor);
-            btnSettings.Image = GraphicsUtils.ColorizeBitmap(btnSettings.Image, UserSettings.TheSettings.IconColor);
-            btnAbout.Image = GraphicsUtils.ColorizeBitmap(btnAbout.Image, UserSettings.TheSettings.IconColor);
             fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
             btnRewind.Image = GraphicsUtils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
             btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
@@ -147,9 +145,12 @@ namespace Nebulator.App
             lblSolo.Hide();
             lblMute.Hide();
 
+            btnWrap.Checked = UserSettings.TheSettings.WordWrap;
+            textViewer.WordWrap = btnWrap.Checked;
+            btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; UserSettings.TheSettings.WordWrap = btnWrap.Checked; };
+
             btnKillComm.Click += (object _, EventArgs __) => { Kill(); };
             btnClear.Click += (object _, EventArgs __) => { textViewer.Clear(); };
-            btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
             #endregion
 
             InitLogging();
@@ -170,7 +171,7 @@ namespace Nebulator.App
 
             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
 
-            Config.MakeFake(@"..\..\..\fake.nebcfig");
+            //Config.MakeFake(@"..\..\..\fake.nebcfig");
 
             #region Command line args
             string sopen = "";
@@ -240,9 +241,14 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            if (_scriptFileName == Definitions.UNKNOWN_STRING)
+            if(_scriptFileName == Definitions.UNKNOWN_STRING)
             {
                 _logger.Warn("No script file loaded.");
+                ok = false;
+            }
+            else if(_config is null || !_config.Valid)
+            {
+                _logger.Warn("Invalid config.");
                 ok = false;
             }
             else
@@ -252,19 +258,17 @@ namespace Nebulator.App
 
                 // Compile script now.
                 Compiler compiler = new();
-                _script = compiler.Execute(_scriptFileName);
+                _script = compiler.Execute(_scriptFileName, _config);
 
                 // Update file watcher - keeps an eye on any included files too.
                 _watcher.Clear();
-                compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
+                compiler.SourceFiles.ForEach(f => { if(f != "") _watcher.Add(f); });
 
                 // Time points.
                 timeMaster.TimeDefs.Clear();
 
                 // Process errors. Some may be warnings.
-                int errorCount = compiler.Errors.Count(w => w.ErrorType == ScriptErrorType.Error);
-
-                if (errorCount == 0 && _script != null)
+                if (compiler.ErrorCount == 0 && _script != null)
                 {
                     _script.Init(_config.Channels);
 
@@ -308,15 +312,24 @@ namespace Nebulator.App
                     SetCompileStatus(false);
                 }
 
-                compiler.Errors.ForEach(r =>
+                // Log/show results.
+                compiler.Results.ForEach(r =>
                 {
-                    if (r.ErrorType == ScriptErrorType.Warning)
+                    switch(r.ResultType)
                     {
-                        _logger.Warn(r.ToString());
-                    }
-                    else
-                    {
-                        _logger.Error(r.ToString());
+                        case ScriptResultType.Fatal:
+                        case ScriptResultType.Error:
+                        case ScriptResultType.Runtime:
+                            _logger.Error(r.ToString());
+                            break;
+
+                        case ScriptResultType.Warning:
+                            _logger.Warn(r.ToString());
+                            break;
+
+                        case ScriptResultType.None:
+                            _logger.Info(r.ToString());
+                            break;
                     }
                 });
             }
@@ -360,15 +373,18 @@ namespace Nebulator.App
             if (_config is not null)
             {
                 // Create devices.
-                CreateDevices();
+                _config.Valid = CreateDevices();
 
-                // Create controls.
-                CreateChannelControls();
+                if(_config.Valid)
+                {
+                    // Create controls.
+                    CreateChannelControls();
 
-                // Init other controls.
-                potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
-                double mv = Convert.ToDouble(_config.MasterVolume);
-                sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
+                    // Init other controls.
+                    potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
+                    double mv = Convert.ToDouble(_config.MasterVolume);
+                    sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
+                }
             }
         }
 
@@ -440,20 +456,23 @@ namespace Nebulator.App
         /// <summary>
         /// Create all devices from user script config.
         /// </summary>
-        void CreateDevices()
+        /// <returns>Success</returns>
+        bool CreateDevices()
         {
+            bool ok = true;
+
             // Get requested inputs. Hook to the device.
             foreach (Controller con in _config.Controllers)
             {
                 // Have we seen it yet?
-                if (_inputDevices.ContainsKey(con.Device.DeviceType))
+                if (_inputDevices.ContainsKey(con.DeviceType))
                 {
-                    con.Device = _inputDevices[con.Device.DeviceType];
+                    con.Device = _inputDevices[con.DeviceType];
                 }
                 else // nope
                 {
                     IInputDevice nin = con.Device;
-                    switch (nin.DeviceType)
+                    switch (con.DeviceType)
                     {
                         case DeviceType.MidiIn:
                             nin = new MidiInput();
@@ -486,12 +505,14 @@ namespace Nebulator.App
                         }
                         else
                         {
-                            _logger.Error($"Failed to init input device:");
+                            _logger.Error($"Failed to init input device:{con.ControllerName}");
+                            ok = false;
                         }
                     }
                     else
                     {
-                        _logger.Error($"Invalid input device");
+                        _logger.Error($"Invalid input device for {con.ControllerName}");
+                        ok = false;
                     }
                 }
             }
@@ -500,15 +521,15 @@ namespace Nebulator.App
             foreach (Channel chan in _config.Channels)
             {
                 // Have we seen it yet?
-                if (_outputDevices.ContainsKey(chan.Device.DeviceType))
+                if (_outputDevices.ContainsKey(chan.DeviceType))
                 {
-                    chan.Device = _outputDevices[chan.Device.DeviceType];
+                    chan.Device = _outputDevices[chan.DeviceType];
                 }
                 else // nope
                 {
                     IOutputDevice nout = null;
 
-                    switch (chan.Device.DeviceType)
+                    switch (chan.DeviceType)
                     {
                         case DeviceType.MidiOut:
                             nout = new MidiOutput();
@@ -525,19 +546,23 @@ namespace Nebulator.App
                         if (nout.Init())
                         {
                             chan.Device = nout;
-                            _outputDevices.Add(chan.Device.DeviceType, nout);
+                            _outputDevices.Add(chan.DeviceType, nout);
                         }
                         else
                         {
-                            _logger.Error($"Failed to init channel: {chan.Device.DeviceType}");
+                            _logger.Error($"Failed to init channel: {chan.ChannelName}");
+                            ok = false;
                         }
                     }
                     else
                     {
-                        _logger.Error($"Invalid channel: {chan.Device.DeviceType}");
+                        _logger.Error($"Invalid output device for {chan.ChannelName}");
+                        ok = false;
                     }
                 }
             }
+
+            return ok;
         }
 
         /// <summary>
@@ -597,7 +622,7 @@ namespace Nebulator.App
             {
                 using Form f = new()
                 {
-                    Text = $"Script Config {_config.FileName}",
+                    Text = "Config File",
                     Size = new Size(350, 400),
                     StartPosition = FormStartPosition.Manual,
                     Location = new Point(200, 200),
@@ -610,7 +635,7 @@ namespace Nebulator.App
                 {
                     Dock = DockStyle.Fill,
                     PropertySort = PropertySort.NoSort,
-                    SelectedObject = UserSettings.TheSettings
+                    SelectedObject = _config
                 };
 
                 // Detect changes of interest.
@@ -622,14 +647,11 @@ namespace Nebulator.App
 
                 if (changed)
                 {
-                    // Reload.
+                    string cfn = _config.FileName;
+                    _config.Save();
                     UnloadConfig();
-                    LoadConfig(_config.FileName);
+                    LoadConfig(cfn);
                 }
-            }
-            else
-            {
-                _logger.Warn("No script config loaded");
             }
         }
         #endregion
@@ -827,9 +849,9 @@ namespace Nebulator.App
         /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
         /// </summary>
         /// <param name="ex"></param>
-        ScriptError ProcessScriptRuntimeError(Exception ex)
+        ScriptResult ProcessScriptRuntimeError(Exception ex)
         {
-            ScriptError err;
+            ScriptResult err;
 
             ProcessPlay(PlayCommand.Stop);
             SetCompileStatus(false);
@@ -868,9 +890,9 @@ namespace Nebulator.App
                     srcLine = int.Parse(sl);
                 }
 
-                err = new ScriptError()
+                err = new ScriptResult()
                 {
-                    ErrorType = ScriptErrorType.Runtime,
+                    ResultType = ScriptResultType.Runtime,
                     SourceFile = srcFile,
                     LineNumber = srcLine,
                     Message = ex.Message
@@ -878,9 +900,9 @@ namespace Nebulator.App
             }
             else // unknown?
             {
-                err = new ScriptError()
+                err = new ScriptResult()
                 {
-                    ErrorType = ScriptErrorType.Runtime,
+                    ResultType = ScriptResultType.Runtime,
                     SourceFile = "",
                     LineNumber = -1,
                     Message = ex.Message
@@ -960,7 +982,7 @@ namespace Nebulator.App
 
                             LoadConfig(cfigfn);
 
-                            if (_config is not null)
+                            if (_config is not null && _config.Valid)
                             {
                                 AddToRecentDefs(fn);
                                 bool ok = CompileScript();
@@ -1285,9 +1307,8 @@ namespace Nebulator.App
             if (changed)
             {
                 MessageBox.Show("UI changes require a restart to take effect.");
+                SaveSettings();
             }
-
-            SaveSettings();
         }
 
         /// <summary>

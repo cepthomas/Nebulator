@@ -24,7 +24,7 @@ namespace Nebulator.Midi
         readonly object _lock = new object();
 
         /// <summary>Notes to stop later.</summary>
-        List<StepNoteOff> _stops = new List<StepNoteOff>();
+        List<StepNoteOff> _stops = new();
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -62,7 +62,7 @@ namespace Nebulator.Midi
                 }
 
                 // Figure out which device.
-                List<string> devices = new List<string>();
+                List<string> devices = new();
                 for (int i = 0; i < MidiOut.NumberOfDevices; i++)
                 {
                     devices.Add(MidiOut.DeviceInfo(i).ProductName);
@@ -72,7 +72,7 @@ namespace Nebulator.Midi
 
                 if (ind < 0)
                 {
-                    _logger.Error($"Invalid midi output device.");
+                    _logger.Error($"Invalid midi output device:{UserSettings.TheSettings.MidiOutDevice}");
                 }
                 else
                 {
@@ -136,14 +136,14 @@ namespace Nebulator.Midi
             {
                 if(_midiOut != null)
                 {
-                    List<int> msgs = new List<int>();
+                    List<int> msgs = new();
                     int msg = 0;
 
                     switch (step)
                     {
                         case StepNoteOn stt:
                             {
-                                NoteEvent evt = new NoteEvent(0,
+                                NoteEvent evt = new(0,
                                     stt.ChannelNumber,
                                     MidiCommandCode.NoteOn,
                                     (int)MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
@@ -155,7 +155,7 @@ namespace Nebulator.Midi
                                     // Remove any lingering note offs and add a fresh one.
                                     _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
 
-                                    _stops.Add(new StepNoteOff()
+                                    _stops.Add(new()
                                     {
                                         Device = stt.Device,
                                         ChannelNumber = stt.ChannelNumber,
@@ -168,7 +168,7 @@ namespace Nebulator.Midi
 
                         case StepNoteOff stt:
                             {
-                                NoteEvent evt = new NoteEvent(0,
+                                NoteEvent evt = new(0,
                                     stt.ChannelNumber,
                                     MidiCommandCode.NoteOff,
                                     (int)MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
@@ -185,14 +185,14 @@ namespace Nebulator.Midi
                                 }
                                 else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
                                 {
-                                    PitchWheelChangeEvent pevt = new PitchWheelChangeEvent(0,
+                                    PitchWheelChangeEvent pevt = new(0,
                                         stt.ChannelNumber,
                                         (int)MathUtils.Constrain(stt.Value, 0, MidiUtils.MAX_PITCH));
                                     msg = pevt.GetAsShortMessage();
                                 }
                                 else // CC
                                 {
-                                    ControlChangeEvent nevt = new ControlChangeEvent(0,
+                                    ControlChangeEvent nevt = new(0,
                                         stt.ChannelNumber,
                                         (MidiController)stt.ControllerId,
                                         (int)MathUtils.Constrain(stt.Value, 0, Definitions.MAX_MIDI));
@@ -203,7 +203,7 @@ namespace Nebulator.Midi
 
                         case StepPatch stt:
                             {
-                                PatchChangeEvent evt = new PatchChangeEvent(0,
+                                PatchChangeEvent evt = new(0,
                                     stt.ChannelNumber,
                                     stt.PatchNumber);
                                 msg = evt.GetAsShortMessage();

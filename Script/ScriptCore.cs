@@ -12,13 +12,10 @@ namespace Nebulator.Script
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        internal readonly Logger _logger = LogManager.GetLogger("ScriptBase");
+        internal readonly Logger _logger = LogManager.GetLogger("Script");
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
-
-        /// <summary>Script randomizer.</summary>
-        internal Random _rand = new();
 
         /// <summary>All sequences.</summary>
         internal List<Sequence> _sequences = new();
@@ -218,9 +215,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         Channel GetChannel(string chanName)
         {
-            Channel channel;
-
-            if (!_channelMap.TryGetValue(chanName, out channel))
+            if (!_channelMap.TryGetValue(chanName, out Channel channel))
             {
                 throw new Exception($"Invalid Channel Name: {chanName}");
             }
