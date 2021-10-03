@@ -140,52 +140,55 @@ namespace Nebulator.Script
             }
 
             StepCollection steps = new();
-            Channel channel = GetChannel(chanName);
 
-            foreach (SequenceElement seqel in seq.Elements)
+            var channel = GetChannel(chanName);
+            if(channel is not null)
             {
-                // Create the note start and stop times.
-                int toffset = 0;
-                //int toffset = startBeat == -1 ? 0 : channel.NextTime();
-
-                Time startNoteTime = new Time(startBeat, toffset) + seqel.When;
-                Time stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new Time(0.1) : seqel.Duration); // 0.1 is a short hit
-
-                // Is it a function?
-                if (seqel.ScriptFunction != null)
+                foreach (SequenceElement seqel in seq.Elements)
                 {
-                    StepFunction step = new()
+                    // Create the note start and stop times.
+                    int toffset = 0;
+                    //int toffset = startBeat == -1 ? 0 : channel.NextTime();
+
+                    Time startNoteTime = new Time(startBeat, toffset) + seqel.When;
+                    Time stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new Time(0.1) : seqel.Duration); // 0.1 is a short hit
+
+                    // Is it a function?
+                    if (seqel.ScriptFunction is not null)
                     {
-                        Device = channel.Device,
-                        ChannelNumber = channel.ChannelNumber,
-                        ScriptFunction = seqel.ScriptFunction
-                    };
-                    steps.AddStep(startNoteTime, step);
-                }
-                else // plain ordinary
-                {
-                    // Process all note numbers.
-                    foreach (int noteNum in seqel.Notes)
-                    {
-                        ///// Note on.
-                        double vel = channel.NextVol(seqel.Volume);
-                        StepNoteOn step = new()
+                        StepFunction step = new()
                         {
                             Device = channel.Device,
                             ChannelNumber = channel.ChannelNumber,
-                            NoteNumber = noteNum,
-                            Velocity = vel,
-                            VelocityToPlay = vel,
-                            Duration = seqel.Duration
+                            ScriptFunction = seqel.ScriptFunction
                         };
                         steps.AddStep(startNoteTime, step);
+                    }
+                    else // plain ordinary
+                    {
+                        // Process all note numbers.
+                        foreach (int noteNum in seqel.Notes)
+                        {
+                            ///// Note on.
+                            double vel = channel.NextVol(seqel.Volume);
+                            StepNoteOn step = new()
+                            {
+                                Device = channel.Device,
+                                ChannelNumber = channel.ChannelNumber,
+                                NoteNumber = noteNum,
+                                Velocity = vel,
+                                VelocityToPlay = vel,
+                                Duration = seqel.Duration
+                            };
+                            steps.AddStep(startNoteTime, step);
 
-                        //// Maybe add a deferred stop note.
-                        //if (stopNoteTime != startNoteTime)
-                        //{
-                        //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
-                        //}
-                        //// else client is taking care of it.
+                            //// Maybe add a deferred stop note.
+                            //if (stopNoteTime != startNoteTime)
+                            //{
+                            //    steps.AddStep(stopNoteTime, new StepNoteOff(step));
+                            //}
+                            //// else client is taking care of it.
+                        }
                     }
                 }
             }
@@ -213,9 +216,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="chanName"></param>
         /// <returns></returns>
-        Channel GetChannel(string chanName)
+        Channel? GetChannel(string chanName)
         {
-            if (!_channelMap.TryGetValue(chanName, out Channel channel))
+            if (!_channelMap.TryGetValue(chanName, out Channel? channel))
             {
                 throw new Exception($"Invalid Channel Name: {chanName}");
             }
@@ -227,7 +230,6 @@ namespace Nebulator.Script
 
             return channel;
         }
-
         #endregion
     }
 }

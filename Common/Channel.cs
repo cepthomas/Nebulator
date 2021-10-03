@@ -19,7 +19,7 @@ namespace Nebulator.Common
         /// <summary>Same as midi.</summary>
         public const int NUM_CHANNELS = 16;
 
-        #region Properties
+        #region Properties - editable
         [DisplayName("Channel Name")]
         [Description("UI label and script reference.")]
         [Browsable(true)]
@@ -32,7 +32,7 @@ namespace Nebulator.Common
         public int ChannelNumber { get; set; } = 1;
 
         [DisplayName("Patch")]
-        [Description("Optional patch.")]
+        [Description("Optional patch to send at startup.")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Patch Patch { get; set; } = Patch.AcousticGrandPiano;
@@ -43,20 +43,22 @@ namespace Nebulator.Common
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
-        [DisplayName("Device Name")]
-        [Description("The system device name for this channel.")]
-        [Browsable(true)]
-        [TypeConverter(typeof(FixedListTypeConverter))]
-        public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
+        // [DisplayName("Device Name")]
+        // [Description("The system device name used by this channel.")]
+        // [Browsable(true)]
+        // [TypeConverter(typeof(FixedListTypeConverter))]
+        // public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
 
         [DisplayName("Volume Wobble Range")]
         [Description("How wobbly. 0 to disable.")]
         [Browsable(true)]
         public double VolumeWobbleRange { get; set; } = 0.0;
+        #endregion
 
-        /// <summary>The associated comm device.</summary>
-        [JsonIgnore]
+        #region Properties - internal
+        /// <summary>The associated device object.</summary>
         [Browsable(false)]
+        [JsonIgnore]
         public IOutputDevice? Device { get; set; }
 
         /// <summary>Current volume.</summary>
@@ -69,8 +71,8 @@ namespace Nebulator.Common
         public ChannelState State { get; set; } = ChannelState.Normal;
 
         /// <summary>Wobbler for volume (optional).</summary>
-        [JsonIgnore]
         [Browsable(false)]
+        [JsonIgnore]
         public Wobbler? VolWobbler { get; set; } = null;
         #endregion
 
@@ -85,7 +87,8 @@ namespace Nebulator.Common
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ChannelName:{ChannelName}";
+            var s = $"Controller: DeviceType:{DeviceType} ChannelName:{ChannelName}";
+            //var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ChannelName:{ChannelName}";
             return s;
         }
     }

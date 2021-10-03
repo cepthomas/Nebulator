@@ -105,7 +105,7 @@ namespace Nebulator.App
         readonly Dictionary<string, int> _defs = new();
 
         /// <summary>Need to know.</summary>
-        Config _config;
+        Config? _config;
         #endregion
 
         #region Public functions
@@ -115,9 +115,9 @@ namespace Nebulator.App
         /// <param name="nebfn">Fully qualified path to main file.</param>
         /// <param name="config">Config info.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public ScriptBase Execute(string nebfn, Config config)
+        public ScriptBase? Execute(string nebfn, Config config)
         {
-            ScriptBase script = null;
+            ScriptBase? script = null;
             _config = config;
 
             // Reset everything.
@@ -126,7 +126,8 @@ namespace Nebulator.App
 
             Results.Clear();
 
-            if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
+            var path = Path.GetDirectoryName(nebfn);
+            if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn) && !string.IsNullOrEmpty(path))
             {
                 _logger.Info($"Compiling {nebfn}.");
 
@@ -135,7 +136,8 @@ namespace Nebulator.App
                 StringBuilder sb = new();
                 _scriptName.ForEach(c => sb.Append(char.IsLetterOrDigit(c) ? c : '_'));
                 _scriptName = sb.ToString();
-                _baseDir = Path.GetDirectoryName(nebfn);
+
+                _baseDir = path;
 
                 ///// Compile.
                 DateTime startTime = DateTime.Now; // for metrics
@@ -159,9 +161,9 @@ namespace Nebulator.App
         /// Top level compiler.
         /// </summary>
         /// <returns>Compiled script</returns>
-        ScriptBase Compile()
+        ScriptBase? Compile()
         {
-            ScriptBase script = null;
+            ScriptBase? script = null;
 
             try // many ways to go wrong...
             {
@@ -253,7 +255,7 @@ namespace Nebulator.App
                                 se.Message = parts2[0];
 
                                 // Get the original info.
-                                if (_filesToCompile.TryGetValue(Path.GetFileName(gennedFileName), out FileContext cont))
+                                if (_filesToCompile.TryGetValue(Path.GetFileName(gennedFileName), out FileContext? cont))
                                 {
                                     string origLine = cont.CodeLines[gennedFileLine - 1];
                                     se.SourceFile = cont.SourceFile;
@@ -302,7 +304,7 @@ namespace Nebulator.App
                         // Bind to the script interface.
                         foreach (Type t in assy.GetTypes())
                         {
-                            if (t.BaseType != null && t.BaseType.Name == "ScriptBase")
+                            if (t is not null && t.BaseType is not null && t.BaseType.Name == "ScriptBase")
                             {
                                 // We have a good script file. Create the executable object.
                                 object o = Activator.CreateInstance(t);

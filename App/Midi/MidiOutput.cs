@@ -18,13 +18,13 @@ namespace Nebulator.Midi
         readonly Logger _logger = LogManager.GetLogger("MidiOutput");
 
         /// <summary>Midi output device.</summary>
-        MidiOut _midiOut = null;
+        MidiOut? _midiOut = null;
 
         /// <summary>Midi access synchronizer.</summary>
-        readonly object _lock = new object();
+        readonly object _lock = new();
 
         /// <summary>Notes to stop later.</summary>
-        List<StepNoteOff> _stops = new();
+        readonly List<StepNoteOff> _stops = new();
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -55,11 +55,8 @@ namespace Nebulator.Midi
 
             try
             {
-                if (_midiOut != null)
-                {
-                    _midiOut.Dispose();
-                    _midiOut = null;
-                }
+                _midiOut?.Dispose();
+                _midiOut = null;
 
                 // Figure out which device.
                 List<string> devices = new();
@@ -68,17 +65,17 @@ namespace Nebulator.Midi
                     devices.Add(MidiOut.DeviceInfo(i).ProductName);
                 }
 
-                int ind = devices.IndexOf(UserSettings.TheSettings.MidiOutDevice);
+                int ind = devices.IndexOf(UserSettings.TheSettings.MidiOut);
 
                 if (ind < 0)
                 {
-                    _logger.Error($"Invalid midi output device:{UserSettings.TheSettings.MidiOutDevice}");
+                    _logger.Error($"Invalid midi output device:{UserSettings.TheSettings.MidiOut}");
                 }
                 else
                 {
                     _midiOut = new MidiOut(ind);
                     inited = true;
-                    DeviceName = UserSettings.TheSettings.MidiOutDevice;
+                    DeviceName = UserSettings.TheSettings.MidiOut;
                 }
             }
             catch (Exception ex)
@@ -134,7 +131,7 @@ namespace Nebulator.Midi
             // Critical code section.
             lock (_lock)
             {
-                if(_midiOut != null)
+                if(_midiOut is not null)
                 {
                     List<int> msgs = new();
                     int msg = 0;

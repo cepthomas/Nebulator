@@ -28,7 +28,7 @@ namespace Nebulator.Controls
 
         #region Events
         /// <inheritdoc />
-        public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
+        public event EventHandler<DeviceInputEventArgs>? DeviceInputEvent;
         #endregion
 
         #region Properties
@@ -36,7 +36,7 @@ namespace Nebulator.Controls
         public string DeviceName { get; private set; } = "";
 
         /// <inheritdoc />
-        public DeviceType DeviceType => DeviceType.VkeyIn;
+        public DeviceType DeviceType => DeviceType.Vkey;
         #endregion
 
         #region Lifecycle
@@ -58,11 +58,10 @@ namespace Nebulator.Controls
         /// <param name="e"></param>
         void Keyboard_Load(object sender, EventArgs e)
         {
-            //// Get the bitmap. TODO2
-            //Bitmap bm = new Bitmap(App.Properties.Resources.glyphicons_327_piano);
-
-            //// Convert to an icon and use for the form's icon.
-            //Icon = Icon.FromHandle(bm.GetHicon());
+            StartPosition = FormStartPosition.Manual;
+            Size = new Size(UserSettings.TheSettings.KeyboardInfo.Width, UserSettings.TheSettings.KeyboardInfo.Height);
+            TopMost = false;
+            Location = new Point(UserSettings.TheSettings.KeyboardInfo.X, UserSettings.TheSettings.KeyboardInfo.Y);
 
             vkey.KeyboardEvent += Vkey_KeyboardEvent;
         }
@@ -97,11 +96,11 @@ namespace Nebulator.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Vkey_KeyboardEvent(object sender, VirtualKeyboard.KeyboardEventArgs e)
+        void Vkey_KeyboardEvent(object? sender, VirtualKeyboard.KeyboardEventArgs e)
         {
-            if (DeviceInputEvent != null)
+            if (DeviceInputEvent is not null)
             {
-                Step step = null;
+                Step step;
 
                 if (e.Velocity != 0)
                 {
@@ -132,6 +131,23 @@ namespace Nebulator.Controls
                     _logger.Trace($"{TraceCat.RCV} KbdIn:{step}");
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Keyboard_Resize(object sender, EventArgs e)
+        {
+            UserSettings.TheSettings.KeyboardInfo =
+                new()
+                {
+                    X = Location.X,
+                    Y = Location.Y,
+                    Width = Width,
+                    Height = Height
+                };
         }
         #endregion
     }

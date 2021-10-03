@@ -14,7 +14,10 @@ namespace Nebulator.Common
     [Serializable]
     public class UserSettings
     {
-        #region Persisted editable properties
+        /// <summary>Current global user settings.</summary>
+        public static UserSettings TheSettings { get; set; } = new UserSettings();
+
+        #region Properties - persisted editable
         [DisplayName("Icon Color")]
         [Description("The color used for button icons.")]
         [Category("Cosmetics")]
@@ -47,40 +50,35 @@ namespace Nebulator.Common
         [Description("Valid device if handling midi input.")]
         [Category("Devices")]
         [Browsable(true)]
-        [TypeConverter(typeof(FixedListTypeConverter))]
-        public string MidiInDevice { get; set; } = "";
+        [TypeConverter(typeof(MidiDeviceTypeConverter))]
+        public string MidiIn { get; set; } = "None";
 
         [DisplayName("Midi Output")]
         [Description("Valid device if sending midi output.")]
         [Category("Devices")]
         [Browsable(true)]
-        [TypeConverter(typeof(FixedListTypeConverter))]
-        public string MidiOutDevice { get; set; } = "";
+        [TypeConverter(typeof(MidiDeviceTypeConverter))]
+        public string MidiOut { get; set; } = "None";
 
         [DisplayName("OSC Input")]
         [Description("Valid port number if handling OSC input.")]
         [Category("Devices")]
         [Browsable(true)]
-        [TypeConverter(typeof(FixedListTypeConverter))]
-        public string OscInDevice { get; set; } = "6448";
+        //[TypeConverter(typeof(FixedListTypeConverter))]
+        public string OscIn { get; set; } = "None";
 
         [DisplayName("OSC Output")]
         [Description("Valid url:port if sending OSC output.")]
         [Category("Devices")]
         [Browsable(true)]
-        [TypeConverter(typeof(FixedListTypeConverter))]
-        public string OscOutDevice { get; set; } = "127.0.0.1:1234";
-
-        //[DisplayName("Virtual Keyboard")]
-        //[Description("Show the keyboard.")]
-        //[Category("Devices")]
-        //[Browsable(true)]
-        //public bool VirtualKeyboard { get; set; } = true; TODO2
+        //[TypeConverter(typeof(FixedListTypeConverter))]
+        public string OscOut { get; set; } = "None";
 
         [DisplayName("Work Path")]
         [Description("Where you keep your neb files.")]
         [Category("Functionality")]
         [Browsable(true)]
+        [Editor(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string WorkPath { get; set; } = "";
 
         [DisplayName("Auto Compile")]
@@ -102,12 +100,12 @@ namespace Nebulator.Common
         public bool CpuMeter { get; set; } = true;
         #endregion
 
-        #region Persisted non-editable properties
+        #region Properties - internal
         [Browsable(false)]
         public FormInfo MainFormInfo { get; set; } = new FormInfo();
 
         [Browsable(false)]
-        public FormInfo VirtualKeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
+        public FormInfo KeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
 
         [Browsable(false)]
         public bool MonitorInput { get; set; } = false;
@@ -119,6 +117,9 @@ namespace Nebulator.Common
         public bool MonitorOutput { get; set; } = false;
 
         [Browsable(false)]
+        public bool Keyboard { get; set; } = true;
+
+        [Browsable(false)]
         public List<string> RecentFiles { get; set; } = new List<string>();
         #endregion
 
@@ -126,9 +127,6 @@ namespace Nebulator.Common
         /// <summary>The file name.</summary>
         string _fn = Definitions.UNKNOWN_STRING;
         #endregion
-
-        /// <summary>Current global user settings.</summary>
-        public static UserSettings TheSettings { get; set; } = new UserSettings();
 
         #region Persistence
         /// <summary>Create object from file.</summary>
@@ -182,4 +180,44 @@ namespace Nebulator.Common
         public int Width { get; set; } = 1000;
         public int Height { get; set; } = 700;
     }
+
+
+    /// <summary>Converter for selecting property value from known lists.
+    public class MidiDeviceTypeConverter : TypeConverter
+    {
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
+
+        // Get the specific list based on the property name.
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            List<string>? rec = null;
+
+            switch (context.PropertyDescriptor.Name)
+            {
+                case "MidiIn":
+                    rec = new() { "None" };
+                    for (int devindex = 0; devindex < MidiIn.NumberOfDevices; devindex++)
+                    {
+                        rec.Add(MidiIn.DeviceInfo(devindex).ProductName);
+                    }
+                    break;
+
+                case "MidiOut":
+                    rec = new() { "None" };
+                    for (int devindex = 0; devindex < MidiOut.NumberOfDevices; devindex++)
+                    {
+                        rec.Add(MidiOut.DeviceInfo(devindex).ProductName);
+                    }
+                    break;
+
+                default:
+                    System.Windows.Forms.MessageBox.Show($"This should never happen: {context.PropertyDescriptor.Name}");
+                    break;
+            }
+
+            return new StandardValuesCollection(rec);
+        }
+    }
+
 }

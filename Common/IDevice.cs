@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Nebulator.Common
 {
     /// <summary>The various devices.</summary>
-    public enum DeviceType { None, MidiIn, MidiOut, OscIn, OscOut, VkeyIn }
+    public enum DeviceType { None, MidiIn, MidiOut, OscIn, OscOut, Vkey }
 
     /// <summary>Device has received something.</summary>
     public class DeviceInputEventArgs : EventArgs
@@ -22,7 +22,7 @@ namespace Nebulator.Common
         string DeviceName { get; }
 
         /// <summary>Device type.</summary>
-        DeviceType DeviceType { get; }
+        DeviceType DeviceType { get; } //TODO1???
         #endregion
 
         #region Functions
@@ -46,7 +46,7 @@ namespace Nebulator.Common
     {
         #region Events
         /// <summary>Reporting a change to listeners.</summary>
-        event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
+        event EventHandler<DeviceInputEventArgs>? DeviceInputEvent;
         #endregion
     }
 

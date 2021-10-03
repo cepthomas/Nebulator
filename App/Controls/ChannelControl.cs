@@ -13,7 +13,7 @@ namespace Nebulator.Controls
     {
         #region Properties
         /// <summary>Corresponding channel object.</summary>
-        public Channel BoundChannel { get; set; }
+        public Channel? BoundChannel { get; set; }
         #endregion
 
         /// <summary>
@@ -31,62 +31,75 @@ namespace Nebulator.Controls
         /// </summary>
         void ChannelControl_Load(object sender, EventArgs e)
         {
-            chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-            chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-
-            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.DecPlaces = 2;
-            sldVolume.Label = BoundChannel.ChannelName;
-            sldVolume.Maximum = 1.0;
-            sldVolume.Value = BoundChannel.Volume;
-
-            switch (BoundChannel.State)
+            if(BoundChannel is not null)
             {
-                case ChannelState.Normal:
-                    chkSolo.Checked = false;
-                    chkMute.Checked = false;
-                    break;
-                case ChannelState.Solo:
-                    chkSolo.Checked = true;
-                    chkMute.Checked = false;
-                    break;
-                case ChannelState.Mute:
-                    chkSolo.Checked = false;
-                    chkMute.Checked = true;
-                    break;
+                chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+                chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+
+                sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
+                sldVolume.DecPlaces = 2;
+                sldVolume.Label = BoundChannel.ChannelName;
+                sldVolume.Maximum = 1.0;
+                sldVolume.Value = BoundChannel.Volume;
+
+                switch (BoundChannel.State)
+                {
+                    case ChannelState.Normal:
+                        chkSolo.Checked = false;
+                        chkMute.Checked = false;
+                        break;
+                    case ChannelState.Solo:
+                        chkSolo.Checked = true;
+                        chkMute.Checked = false;
+                        break;
+                    case ChannelState.Mute:
+                        chkSolo.Checked = false;
+                        chkMute.Checked = true;
+                        break;
+                }
+            }
+            else
+            {
+                //TODO1 error
             }
         }
 
         /// <summary>
         /// Handles solo and mute.
         /// </summary>
-        void Check_Click(object sender, EventArgs e)
+        void Check_Click(object? sender, EventArgs e)
         {
-            CheckBox chk = sender as CheckBox;
-
-            // Fix UI logic.
-            if (chk == chkSolo)
+            if(sender is not null && BoundChannel is not null)
             {
-                chkMute.Checked = false;
-            }
-            else // chkMute
-            {
-                chkSolo.Checked = false;
-            }
+                var chk = sender as CheckBox;
 
-            var st = ChannelState.Normal;
-            if (chkSolo.Checked) { st = ChannelState.Solo; }
-            else if (chkMute.Checked) { st = ChannelState.Mute; }
+                // Fix UI logic.
+                if (chk == chkSolo)
+                {
+                    chkMute.Checked = false;
+                }
+                else // chkMute
+                {
+                    chkSolo.Checked = false;
+                }
 
-            BoundChannel.State = st;
+                var st = ChannelState.Normal;
+                if (chkSolo.Checked) { st = ChannelState.Solo; }
+                else if (chkMute.Checked) { st = ChannelState.Mute; }
+
+                BoundChannel.State = st;
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        void VolChannel_ValueChanged(object sender, EventArgs e)
+        void VolChannel_ValueChanged(object? sender, EventArgs e)
         {
-            BoundChannel.Volume = sldVolume.Value;
+            if (BoundChannel is not null)
+            {
+                BoundChannel.Volume = sldVolume.Value;
+            }
         }
     }
 }

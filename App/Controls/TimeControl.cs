@@ -12,11 +12,11 @@ namespace Nebulator.Controls
     public partial class TimeControl : UserControl
     {
         #region Fields
-        Time _current = new Time();
+        Time _current = new();
         int _maxBeat = 0;
         int _lastPos = 0;
-        Font _fontLarge = new Font("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
-        Font _fontSmall = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Point, 0);
+        readonly Font _fontLarge = new("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
+        readonly Font _fontSmall = new("Consolas", 14, FontStyle.Regular, GraphicsUnit.Point, 0);
         #endregion
 
         #region Properties
@@ -70,7 +70,7 @@ namespace Nebulator.Controls
         /// <summary>
         /// Value changed event.
         /// </summary>
-        public event EventHandler ValueChanged;
+        public event EventHandler? ValueChanged;
         #endregion
 
         #region Lifecycle
@@ -104,10 +104,10 @@ namespace Nebulator.Controls
             // Setup.
             pe.Graphics.Clear(UserSettings.TheSettings.BackColor);
             Brush brush = new SolidBrush(ControlColor);
-            Pen pen = new Pen(ControlColor);
+            //Pen pen = new Pen(ControlColor);
 
             // Draw border.
-            Pen penBorder = new Pen(Color.Black, Definitions.BORDER_WIDTH);
+            Pen penBorder = new(Color.Black, Definitions.BORDER_WIDTH);
             pe.Graphics.DrawRectangle(penBorder,
                 0,
                 0,
@@ -115,7 +115,7 @@ namespace Nebulator.Controls
                 Height - 1);
 
             // Draw data.
-            Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -Definitions.BORDER_WIDTH, -Definitions.BORDER_WIDTH);
+            //Rectangle drawArea = Rectangle.Inflate(ClientRectangle, -Definitions.BORDER_WIDTH, -Definitions.BORDER_WIDTH);
 
             if(ShowProgress && MaxBeat != 0 && _current.Beat < _maxBeat)
             {
@@ -127,7 +127,7 @@ namespace Nebulator.Controls
             }
 
             // Text.
-            StringFormat format = new StringFormat()
+            StringFormat format = new()
             {
                 LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Near
@@ -136,7 +136,7 @@ namespace Nebulator.Controls
             string sval = $"{_current.Beat:000}";
             pe.Graphics.DrawString(sval, _fontLarge, Brushes.Black, ClientRectangle, format);
 
-            Rectangle r2 = new Rectangle(ClientRectangle.X + 66, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
+            Rectangle r2 = new(ClientRectangle.X + 66, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
             sval = GetTimeDef(_current.Beat);
             pe.Graphics.DrawString(sval, _fontSmall, Brushes.Black, r2, format);
         }

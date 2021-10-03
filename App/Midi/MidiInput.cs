@@ -18,7 +18,7 @@ namespace Nebulator.Midi
         readonly Logger _logger = LogManager.GetLogger("MidiInput");
 
         /// <summary>Midi input device.</summary>
-        MidiIn _midiIn = null;
+        MidiIn? _midiIn = null;
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -26,7 +26,7 @@ namespace Nebulator.Midi
 
         #region Events
         /// <inheritdoc />
-        public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
+        public event EventHandler<DeviceInputEventArgs>? DeviceInputEvent;
         #endregion
 
         #region Properties
@@ -54,12 +54,9 @@ namespace Nebulator.Midi
 
             try
             {
-                if (_midiIn != null)
-                {
-                    _midiIn.Stop();
-                    _midiIn.Dispose();
-                    _midiIn = null;
-                }
+                _midiIn?.Stop();
+                _midiIn?.Dispose();
+                _midiIn = null;
 
                 // Figure out which device.
                 List<string> devices = new();
@@ -68,11 +65,11 @@ namespace Nebulator.Midi
                     devices.Add(MidiIn.DeviceInfo(i).ProductName);
                 }
 
-                int ind = devices.IndexOf(UserSettings.TheSettings.MidiInDevice);
+                int ind = devices.IndexOf(UserSettings.TheSettings.MidiIn);
 
                 if (ind < 0)
                 {
-                    _logger.Error($"Invalid midi input device:{UserSettings.TheSettings.MidiInDevice}");
+                    _logger.Error($"Invalid midi input device:{UserSettings.TheSettings.MidiIn}");
                 }
                 else
                 {
@@ -81,7 +78,7 @@ namespace Nebulator.Midi
                     _midiIn.ErrorReceived += MidiIn_ErrorReceived;
                     _midiIn.Start();
                     inited = true;
-                    DeviceName = UserSettings.TheSettings.MidiInDevice;
+                    DeviceName = UserSettings.TheSettings.MidiIn;
                 }
             }
             catch (Exception ex)
@@ -142,11 +139,11 @@ namespace Nebulator.Midi
         /// <summary>
         /// Process input midi event. Note that NoteOn with 0 velocity are converted to NoteOff.
         /// </summary>
-        void MidiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
+        void MidiIn_MessageReceived(object? sender, MidiInMessageEventArgs e)
         {
             // Decode the message. We only care about a few.
             MidiEvent me = MidiEvent.FromRawMessage(e.RawMessage);
-            Step step = null;
+            Step? step = null;
 
             switch (me)
             {
@@ -214,7 +211,7 @@ namespace Nebulator.Midi
                     break;
             }
 
-            if (step != null)
+            if (step is not null)
             {
                 // Pass it up for handling.
                 DeviceInputEventArgs args = new() { Step = step };
@@ -229,7 +226,7 @@ namespace Nebulator.Midi
         /// <summary>
         /// Process error midi event - Parameter 1 is invalid.
         /// </summary>
-        void MidiIn_ErrorReceived(object sender, MidiInMessageEventArgs e)
+        void MidiIn_ErrorReceived(object? sender, MidiInMessageEventArgs e)
         {
             _logger.Error($"Message:0x{e.RawMessage:X8}");
         }

@@ -39,11 +39,11 @@ namespace Nebulator.Script
             foreach (SectionElement sect in Elements)
             {
                 int seqBeat = 0;
-                Sequence seqnull = null; // default means ignore
+                Sequence? seqnull = null; // default means ignore
 
-                bool ok = sect.Sequences != null && sect.Sequences.Length > 0;
+                bool ok = sect.Sequences is not null && sect.Sequences.Length > 0;
 
-                if(ok)
+                if(sect.Sequences is not null)
                 {
                     switch(sect.Mode)
                     {
@@ -119,7 +119,7 @@ namespace Nebulator.Script
         public SequenceMode Mode { get; set; } = SequenceMode.Once;
 
         /// <summary>Associated sequences.</summary>
-        public Sequence[] Sequences { get; set; } = null;
+        public Sequence[] Sequences { get; set; } = Array.Empty<Sequence>();
         #endregion
 
         /// <summary>

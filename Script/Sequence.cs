@@ -45,7 +45,7 @@ namespace Nebulator.Script
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, string what, double volume, double duration = 0)
         {
-            SequenceElement sel = new SequenceElement(what)
+            SequenceElement sel = new(what)
             {
                 When = new Time(when),
                 Volume = volume,
@@ -64,7 +64,7 @@ namespace Nebulator.Script
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, int what, double volume, double duration = 0)
         {
-            SequenceElement sel = new SequenceElement(what)
+            SequenceElement sel = new(what)
             {
                 When = new Time(when),
                 Volume = volume,
@@ -82,7 +82,7 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(double when, Action func, double volume)
         {
-            SequenceElement sel = new SequenceElement(func)
+            SequenceElement sel = new(func)
             {
                 When = new Time(when),
                 Volume = volume
@@ -146,10 +146,10 @@ namespace Nebulator.Script
                 int startSubdivs = startIndex * scale;
                 int nowSubdivs = index * scale;
 
-                Time dur = new Time(nowSubdivs - startSubdivs);
-                Time when = new Time(startSubdivs);
+                Time dur = new(nowSubdivs - startSubdivs);
+                Time when = new(startSubdivs);
 
-                SequenceElement ncl = new SequenceElement(which)
+                SequenceElement ncl = new(which)
                 {
                     When = when,
                     Volume = volume * volmod,
@@ -241,7 +241,7 @@ namespace Nebulator.Script
         public List<double> Notes { get; private set; } = new List<double>();
 
         /// <summary>Call a script function.</summary>
-        public Action ScriptFunction { get; set; } = null;
+        public Action? ScriptFunction { get; set; } = null;
         #endregion
 
         /// <summary>

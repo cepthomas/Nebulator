@@ -30,7 +30,7 @@ namespace Nebulator.App
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             // Go!
-            MainForm f = new();
+            MainForm? f = new();
             Application.Run(f);
         }
 

@@ -12,7 +12,7 @@ namespace Nebulator.Common
     public enum TraceCat { SND, RCV }
 
     /// <summary>The patch types. Numerical value is the midi number.</summary>
-    public enum Patch
+    public enum Patch //TODO1 make all enums or consts?
     {
         AcousticGrandPiano = 0, BrightAcousticPiano, ElectricGrandPiano, HonkyTonkPiano, ElectricPiano1, ElectricPiano2, Harpsichord,
         Clavinet, Celesta, Glockenspiel, MusicBox, Vibraphone, Marimba, Xylophone, TubularBells, Dulcimer, DrawbarOrgan,
@@ -72,44 +72,6 @@ namespace Nebulator.Common
             return BitConverter.IsLittleEndian ?
                 (UInt16)(((i & 0xFF00) >> 8) | ((i & 0x00FF) << 8)) :
                 i;
-        }
-    }
-
-    /// <summary>Converter for selecting property value from known lists. TODO2 better home?</summary>
-    public class FixedListTypeConverter : TypeConverter
-    {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
-
-        // Get the specific list based on the property name.
-        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-        {
-            List<string>? rec = null;
-
-            switch (context.PropertyDescriptor.Name)
-            {
-                case "MidiInDevice":
-                    rec = new(); 
-                    for (int devindex = 0; devindex < MidiIn.NumberOfDevices; devindex++)
-                    {
-                        rec.Add(MidiIn.DeviceInfo(devindex).ProductName);
-                    }
-                    break;
-
-                case "MidiOutDevice":
-                    rec = new(); 
-                    for (int devindex = 0; devindex < MidiOut.NumberOfDevices; devindex++)
-                    {
-                        rec.Add(MidiOut.DeviceInfo(devindex).ProductName);
-                    }
-                    break;
-
-                default:
-                    System.Windows.Forms.MessageBox.Show($"????????? {context.PropertyDescriptor.Name}");
-                    break;
-            }
-
-            return new StandardValuesCollection(rec);
         }
     }
 }

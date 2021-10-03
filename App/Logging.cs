@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using NLog;
 using NLog.Targets;
 
-#nullable enable
+//#nullable enable
 
 namespace Nebulator.App
 {

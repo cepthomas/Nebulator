@@ -34,7 +34,10 @@ namespace Nebulator.App
         MmTimerEx _mmTimer = new();
 
         /// <summary>The current script.</summary>
-        ScriptBase _script = null;
+        ScriptBase? _script = null;
+
+        /// <summary>Persisted internal values for current script file.</summary>
+        Config? _config = null;
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -53,9 +56,6 @@ namespace Nebulator.App
 
         /// <summary>The temp dir for compile products.</summary>
         string _compileTempDir = "";
-
-        /// <summary>Persisted internal values for current script file.</summary>
-        Config _config = null;
 
         ///// <summary>Diagnostics for timing measurement.</summary>
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
@@ -77,7 +77,17 @@ namespace Nebulator.App
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             DirectoryInfo di = new(appDir);
             di.Create();
-            UserSettings.TheSettings = UserSettings.Load(appDir);
+
+            var set = UserSettings.Load(appDir);
+            if (set is not null)
+            {
+                UserSettings.TheSettings = set;
+            }
+            else
+            {
+                MessageBox.Show($"Wooops - bad user settings - goodbye");
+                Environment.Exit(1);
+            }
             InitializeComponent();
             toolStrip1.Renderer = new NBagOfTricks.UI.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
         }
@@ -108,6 +118,7 @@ namespace Nebulator.App
             btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = GraphicsUtils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
             btnWrap.Image = GraphicsUtils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
+            btnKeyboard.Image = GraphicsUtils.ColorizeBitmap(btnKeyboard.Image, UserSettings.TheSettings.IconColor);
 
             btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
@@ -142,24 +153,32 @@ namespace Nebulator.App
                 toolStrip1.Items.Add(new ToolStripControlHost(cpuMeter));
             }
 
+            // Keyboard.
+            var kbd = new Keyboard(); //TODO2 useful? and/or replace with something else? x/y surface
+            kbd.DeviceInputEvent += Device_InputEvent;
+            _inputDevices.Add(kbd.DeviceType, kbd);
+            kbd.Visible = UserSettings.TheSettings.Keyboard;
+            btnKeyboard.Click += (object? _, EventArgs __) => { kbd.Visible = btnKeyboard.Checked; UserSettings.TheSettings.Keyboard = btnKeyboard.Checked; };
+
+            // For testing.
             lblSolo.Hide();
             lblMute.Hide();
 
             btnWrap.Checked = UserSettings.TheSettings.WordWrap;
             textViewer.WordWrap = btnWrap.Checked;
-            btnWrap.Click += (object _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; UserSettings.TheSettings.WordWrap = btnWrap.Checked; };
+            btnWrap.Click += (object? _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; UserSettings.TheSettings.WordWrap = btnWrap.Checked; };
 
-            btnKillComm.Click += (object _, EventArgs __) => { Kill(); };
-            btnClear.Click += (object _, EventArgs __) => { textViewer.Clear(); };
+            btnKillComm.Click += (object? _, EventArgs __) => { Kill(); };
+            btnClear.Click += (object? _, EventArgs __) => { textViewer.Clear(); };
             #endregion
 
             InitLogging();
 
-            _logger.Info("Starting up.");
+            _logger.Info("============================ Starting up ===========================");
 
             PopulateRecentMenu();
 
-            ScriptDefinitions.TheDefinitions.Init();
+            ScriptDefinitions.TheDefinitions.Init();//TODO1
 
             // Fast mm timer.
             SetFastTimerPeriod();
@@ -175,7 +194,7 @@ namespace Nebulator.App
 
             #region Command line args
             string sopen = "";
-            
+
             // Look for filename passed in.
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
@@ -197,7 +216,7 @@ namespace Nebulator.App
         /// <summary>
         /// Clean up on shutdown.
         /// </summary>
-        void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
         {
             _logger.Info("Shutting down.");
 
@@ -206,12 +225,31 @@ namespace Nebulator.App
             // Just in case.
             Kill();
 
+            // Save user settings.
+            UserSettings.TheSettings.Save();
+
             UnloadConfig();
 
-            _script?.Dispose();
+            // DestroyDevices()
 
-            // Save user settings.
-            SaveSettings();
+            // Destroy devices.
+            _inputDevices.ForEach(i =>
+            {
+                i.Value.DeviceInputEvent -= Device_InputEvent;
+                i.Value?.Stop();
+                i.Value?.Dispose();
+            });
+            _inputDevices.Clear();
+
+            _outputDevices.ForEach(o =>
+            {
+                o.Value?.Stop();
+                o.Value?.Dispose();
+            });
+            _outputDevices.Clear();
+
+
+            _script?.Dispose();
         }
 
         /// <summary>
@@ -222,15 +260,32 @@ namespace Nebulator.App
         {
             if (disposing)
             {
-                _mmTimer?.Stop();
-                _mmTimer?.Dispose();
-                _mmTimer = null;
+                _mmTimer.Stop();
+                _mmTimer.Dispose();
 
                 components?.Dispose();
             }
 
             base.Dispose(disposing);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void MainForm_Resize(object? sender, EventArgs e)
+        {
+            UserSettings.TheSettings.MainFormInfo =
+                new()
+                {
+                    X = Location.X,
+                    Y = Location.Y,
+                    Width = Width,
+                    Height = Height
+                };
+        }
+
         #endregion
 
         #region Compile
@@ -241,12 +296,12 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            if(_scriptFileName == Definitions.UNKNOWN_STRING)
+            if (_scriptFileName == Definitions.UNKNOWN_STRING)
             {
                 _logger.Warn("No script file loaded.");
                 ok = false;
             }
-            else if(_config is null || !_config.Valid)
+            else if (_config is null || !_config.Valid)
             {
                 _logger.Warn("Invalid config.");
                 ok = false;
@@ -262,13 +317,13 @@ namespace Nebulator.App
 
                 // Update file watcher - keeps an eye on any included files too.
                 _watcher.Clear();
-                compiler.SourceFiles.ForEach(f => { if(f != "") _watcher.Add(f); });
+                compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
 
                 // Time points.
                 timeMaster.TimeDefs.Clear();
 
                 // Process errors. Some may be warnings.
-                if (compiler.ErrorCount == 0 && _script != null)
+                if (compiler.ErrorCount == 0 && _script is not null)
                 {
                     _script.Init(_config.Channels);
 
@@ -315,7 +370,7 @@ namespace Nebulator.App
                 // Log/show results.
                 compiler.Results.ForEach(r =>
                 {
-                    switch(r.ResultType)
+                    switch (r.ResultType)
                     {
                         case ScriptResultType.Fatal:
                         case ScriptResultType.Error:
@@ -363,7 +418,7 @@ namespace Nebulator.App
         /// <param name="cfigfn"></param>
         void LoadConfig(string cfigfn)
         {
-            if(_config is not null)
+            if (_config is not null)
             {
                 UnloadConfig();
             }
@@ -375,10 +430,10 @@ namespace Nebulator.App
                 // Create devices.
                 _config.Valid = CreateDevices();
 
-                if(_config.Valid)
+                if (_config.Valid)
                 {
                     // Create controls.
-                    CreateChannelControls();
+                    _config.Valid = CreateChannels();
 
                     // Init other controls.
                     potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
@@ -398,27 +453,11 @@ namespace Nebulator.App
             {
                 if (ctl is ChannelControl)
                 {
-                    ChannelControl tctl = ctl as ChannelControl;
-                    tctl.Dispose();
+                    ChannelControl? tctl = ctl as ChannelControl;
+                    tctl?.Dispose();
                     Controls.Remove(tctl);
                 }
             }
-
-            ///// Destroy devices.
-            _inputDevices.ForEach(i =>
-            {
-                i.Value.DeviceInputEvent -= Device_InputEvent;
-                i.Value?.Stop();
-                i.Value?.Dispose();
-            });
-            _inputDevices.Clear();
-
-            _outputDevices.ForEach(o =>
-            {
-                o.Value?.Stop();
-                o.Value?.Dispose();
-            });
-            _outputDevices.Clear();
 
             _config?.Save();
             _config = null;
@@ -427,138 +466,46 @@ namespace Nebulator.App
         /// <summary>
         /// Create the channel controls from the user script config.
         /// </summary>
-        void CreateChannelControls()
-        {
-            const int CONTROL_SPACING = 10;
-            int x = btnRewind.Left; // timeMaster.Right + CONTROL_SPACING;
-            int y = timeMaster.Bottom + CONTROL_SPACING;
-
-            // Create new channel controls.
-            foreach (Channel t in _config.Channels)
-            {
-                // Init from persistence.
-                t.Volume = t.Volume;
-
-                t.State = t.State;
-
-                ChannelControl tctl = new()
-                {
-                    //Name = t.DeviceType.ToString(),
-                    Location = new Point(x, y),
-                    BoundChannel = t,
-                };
-                Controls.Add(tctl);
-
-                x += tctl.Width + CONTROL_SPACING;
-            }
-        }
-
-        /// <summary>
-        /// Create all devices from user script config.
-        /// </summary>
-        /// <returns>Success</returns>
-        bool CreateDevices()
+        bool CreateChannels()
         {
             bool ok = true;
 
-            // Get requested inputs. Hook to the device.
-            foreach (Controller con in _config.Controllers)
+            if (_config is not null)
             {
-                // Have we seen it yet?
-                if (_inputDevices.ContainsKey(con.DeviceType))
+                const int CONTROL_SPACING = 10;
+                int x = btnRewind.Left; // timeMaster.Right + CONTROL_SPACING;
+                int y = timeMaster.Bottom + CONTROL_SPACING;
+
+                // Create new channel controls.
+                foreach (Channel t in _config.Channels)
                 {
-                    con.Device = _inputDevices[con.DeviceType];
-                }
-                else // nope
-                {
-                    IInputDevice nin = con.Device;
-                    switch (con.DeviceType)
+
+
+                    if (_outputDevices.TryGetValue(t.DeviceType, out IOutputDevice? dev))
                     {
-                        case DeviceType.MidiIn:
-                            nin = new MidiInput();
-                            break;
+                        t.Device = dev;
 
-                        case DeviceType.OscIn:
-                            nin = new OscInput();
-                            break;
-
-                        case DeviceType.VkeyIn:
-                            var kbd = new Keyboard //TODO2 useful? or replace with something else? x/y surface
-                            {
-                                StartPosition = FormStartPosition.Manual,
-                                Size = new Size(UserSettings.TheSettings.VirtualKeyboardInfo.Width, UserSettings.TheSettings.VirtualKeyboardInfo.Height),
-                                TopMost = false,
-                                Location = new Point(UserSettings.TheSettings.VirtualKeyboardInfo.X, UserSettings.TheSettings.VirtualKeyboardInfo.Y)
-                            };
-                            kbd.Show();
-                            nin = kbd;
-                            break;
-                    }
-
-                    // Finish it up.
-                    if (nin != null)
-                    {
-                        if (nin.Init())
+                        ChannelControl tctl = new()
                         {
-                            nin.DeviceInputEvent += Device_InputEvent;
-                            _inputDevices.Add(nin.DeviceType, nin);
-                        }
-                        else
-                        {
-                            _logger.Error($"Failed to init input device:{con.ControllerName}");
-                            ok = false;
-                        }
+                            //Name = t.DeviceType.ToString(),
+                            Location = new Point(x, y),
+                            BoundChannel = t,
+                        };
+                        Controls.Add(tctl);
+
+                        x += tctl.Width + CONTROL_SPACING;
                     }
-                    else
+                    //else
+
+                    if (dev is not null)
                     {
-                        _logger.Error($"Invalid input device for {con.ControllerName}");
+                        _logger.Error($"Invalid device {t.DeviceType} for channel {t.ChannelName}");
                         ok = false;
-                    }
-                }
-            }
-
-            // Get requested outputs. Hook to the device.
-            foreach (Channel chan in _config.Channels)
-            {
-                // Have we seen it yet?
-                if (_outputDevices.ContainsKey(chan.DeviceType))
-                {
-                    chan.Device = _outputDevices[chan.DeviceType];
-                }
-                else // nope
-                {
-                    IOutputDevice nout = null;
-
-                    switch (chan.DeviceType)
-                    {
-                        case DeviceType.MidiOut:
-                            nout = new MidiOutput();
-                            break;
-
-                        case DeviceType.OscOut:
-                            nout = new OscOutput();
-                            break;
+                        break;
                     }
 
-                    // Finish it up.
-                    if (nout != null)
-                    {
-                        if (nout.Init())
-                        {
-                            chan.Device = nout;
-                            _outputDevices.Add(chan.DeviceType, nout);
-                        }
-                        else
-                        {
-                            _logger.Error($"Failed to init channel: {chan.ChannelName}");
-                            ok = false;
-                        }
-                    }
-                    else
-                    {
-                        _logger.Error($"Invalid output device for {chan.ChannelName}");
-                        ok = false;
-                    }
+
+
                 }
             }
 
@@ -566,13 +513,214 @@ namespace Nebulator.App
         }
 
         /// <summary>
+        /// Create all devices from user settings.
+        /// </summary>
+        /// <returns>Success</returns>
+        bool CreateDevices()
+        {
+            bool ok = true;
+
+            // Virtual keyboards has already been added.
+
+            // TODO1 clean these up.
+            if (UserSettings.TheSettings.MidiIn != "None" && UserSettings.TheSettings.MidiIn != "")
+            {
+                var nin = new MidiInput();
+                if (nin.Init())
+                {
+                    nin.DeviceInputEvent += Device_InputEvent;
+                    _inputDevices.Add(nin.DeviceType, nin);
+                }
+                else
+                {
+                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    ok = false;
+                }
+            }
+
+            if (UserSettings.TheSettings.MidiOut != "None" && UserSettings.TheSettings.MidiOut != "")
+            {
+                var nin = new MidiOutput();
+                if (nin.Init())
+                {
+                    //nin.DeviceInputEvent += Device_InputEvent;
+                    _outputDevices.Add(nin.DeviceType, nin);
+                }
+                else
+                {
+                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    ok = false;
+                }
+
+            }
+
+            if (UserSettings.TheSettings.OscIn != "None" && UserSettings.TheSettings.OscIn != "")
+            {
+                var nin = new OscInput();
+                if (nin.Init())
+                {
+                    nin.DeviceInputEvent += Device_InputEvent;
+                    _inputDevices.Add(nin.DeviceType, nin);
+                }
+                else
+                {
+                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    ok = false;
+                }
+
+            }
+
+            if (UserSettings.TheSettings.OscOut != "None" && UserSettings.TheSettings.OscOut != "")
+            {
+                var nin = new OscOutput();
+                if (nin.Init())
+                {
+                    //nin.DeviceInputEvent += Device_InputEvent;
+                    _outputDevices.Add(nin.DeviceType, nin);
+                }
+                else
+                {
+                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    ok = false;
+                }
+
+            }
+
+            //bool local(IDevice nin)
+            //{
+            //    bool ok = true;
+
+            //    if (nin.Init())
+            //    {
+            //        nin.DeviceInputEvent += Device_InputEvent;
+            //        _inputDevices.Add(nin.DeviceType, nin);
+            //    }
+            //    else
+            //    {
+            //        _logger.Error($"Failed to init input device:{nin.DeviceType}");
+            //        ok = false;
+            //    }
+            //    return ok;
+            //}
+
+            return ok;
+        }
+
+        /*
+                    // Get requested inputs. Hook to the device.
+                    foreach (Controller con in _config.Controllers)
+                    {
+                        // Have we seen it yet?
+                        if (_inputDevices.ContainsKey(con.DeviceType))
+                        {
+                            con.Device = _inputDevices[con.DeviceType];
+                        }
+                        else // nope
+                        {
+                            IInputDevice nin = con.Device;
+                            switch (con.DeviceType)
+                            {
+                                case DeviceType.MidiIn:
+                                    nin = new MidiInput();
+                                    break;
+
+                                case DeviceType.OscIn:
+                                    nin = new OscInput();
+                                    break;
+
+                                case DeviceType.Vkey:
+                                    // var kbd = new Keyboard //TODO2 useful? or replace with something else? x/y surface
+                                    // {
+                                    //     StartPosition = FormStartPosition.Manual,
+                                    //     Size = new Size(UserSettings.TheSettings.KeyboardInfo.Width, UserSettings.TheSettings.KeyboardInfo.Height),
+                                    //     TopMost = false,
+                                    //     Location = new Point(UserSettings.TheSettings.KeyboardInfo.X, UserSettings.TheSettings.KeyboardInfo.Y)
+                                    // };
+                                    // kbd.Show();
+                                    // nin = kbd;
+                                    nin = null;
+                                    break;
+                            }
+
+                            // Finish it up.
+                            if (nin is not null)
+                            {
+                                if (nin.Init())
+                                {
+                                    nin.DeviceInputEvent += Device_InputEvent;
+                                    _inputDevices.Add(nin.DeviceType, nin);
+                                }
+                                else
+                                {
+                                    _logger.Error($"Failed to init input device:{con.ControllerName}");
+                                    ok = false;
+                                }
+                            }
+                            else
+                            {
+                                _logger.Error($"Invalid input device for {con.ControllerName}");
+                                ok = false;
+                            }
+                        }
+                    }
+
+                    // Get requested outputs. Hook to the device.
+                    foreach (Channel chan in _config.Channels)
+                    {
+                        // Have we seen it yet?
+                        if (_outputDevices.ContainsKey(chan.DeviceType))
+                        {
+                            chan.Device = _outputDevices[chan.DeviceType];
+                        }
+                        else // nope
+                        {
+                            IOutputDevice nout = null;
+
+                            switch (chan.DeviceType)
+                            {
+                                case DeviceType.MidiOut:
+                                    nout = new MidiOutput();
+                                    break;
+
+                                case DeviceType.OscOut:
+                                    nout = new OscOutput();
+                                    break;
+                            }
+
+                            // Finish it up.
+                            if (nout is not null)
+                            {
+                                if (nout.Init())
+                                {
+                                    chan.Device = nout;
+                                    _outputDevices.Add(chan.DeviceType, nout);
+                                }
+                                else
+                                {
+                                    _logger.Error($"Failed to init channel: {chan.ChannelName}");
+                                    ok = false;
+                                }
+                            }
+                            else
+                            {
+                                _logger.Error($"Invalid output device for {chan.ChannelName}");
+                                ok = false;
+                            }
+                        }
+                    }
+
+                    return ok;
+                }
+        */
+
+        /// <summary>
         /// Get the config file name from the script and validate.
         /// </summary>
         /// <param name="scriptFileName"></param>
         /// <returns></returns>
-        string GetConfigFileName(string scriptFileName)
+        string? GetConfigFileName(string scriptFileName)
         {
-            string cfigfn = null;
+            string? cfigfn = null;
 
             foreach (string s in File.ReadAllLines(scriptFileName))
             {
@@ -618,12 +766,12 @@ namespace Nebulator.App
         /// </summary>
         void Config_Click(object sender, EventArgs e)
         {
-            if(_config is not null)
+            if (_config is not null)
             {
                 using Form f = new()
                 {
                     Text = "Config File",
-                    Size = new Size(350, 400),
+                    Size = new Size(350, 500),
                     StartPosition = FormStartPosition.Manual,
                     Location = new Point(200, 200),
                     FormBorderStyle = FormBorderStyle.FixedToolWindow,
@@ -634,7 +782,7 @@ namespace Nebulator.App
                 PropertyGrid pg = new()
                 {
                     Dock = DockStyle.Fill,
-                    PropertySort = PropertySort.NoSort,
+                    PropertySort = PropertySort.Categorized,
                     SelectedObject = _config
                 };
 
@@ -669,13 +817,13 @@ namespace Nebulator.App
             //}
 
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker) delegate()
-            {
-                if (_script != null)
-                {
-                    NextStep();
-                }
-            });
+            BeginInvoke((MethodInvoker)delegate ()
+           {
+               if (_script is not null)
+               {
+                   NextStep();
+               }
+           });
         }
 
         /// <summary>
@@ -693,7 +841,7 @@ namespace Nebulator.App
                 // Update section - only on beats.
                 if (timeMaster.TimeDefs.Count > 0 && _stepTime.Subdiv == 0)
                 {
-                    if(timeMaster.TimeDefs.ContainsKey(_stepTime.Beat))
+                    if (timeMaster.TimeDefs.ContainsKey(_stepTime.Beat))
                     {
                         // TODO1? currentSection = _stepTime.Beat;
                     }
@@ -722,16 +870,16 @@ namespace Nebulator.App
 
                 var steps = _script.GetSteps(_stepTime);
 
-                foreach(var step in steps)
+                foreach (var step in steps)
                 {
                     Channel channel = _config.Channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
 
                     // Is it ok to play now?
-                    bool play = channel != null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !anySolo));
+                    bool play = channel is not null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !anySolo));
 
                     if (play)
                     {
-                        switch(step)
+                        switch (step)
                         {
                             case StepFunction sf:
                                 // Need exception handling here to protect from user script errors.
@@ -764,14 +912,14 @@ namespace Nebulator.App
                 _stepTime.Advance();
 
                 // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                if(timeMaster.TimeDefs.Count > 1)
+                if (timeMaster.TimeDefs.Count > 1)
                 {
-                   // Check for end.
-                   if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
-                   {
+                    // Check for end.
+                    if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
+                    {
                         ProcessPlay(PlayCommand.StopRewind);
                         Kill(); // just in case
-                   }
+                    }
                 }
                 // else keep going
 
@@ -791,27 +939,27 @@ namespace Nebulator.App
         /// </summary>
         void Device_InputEvent(object sender, DeviceInputEventArgs e)
         {
-            BeginInvoke((MethodInvoker) delegate()
-            {
-                if (_script != null && e.Step != null)
-                {
-                    var dev = sender as IInputDevice;
-                    switch (e.Step)
-                    {
-                        case StepNoteOn ston:
-                            _script.InputNote(dev.DeviceType, ston.ChannelNumber, ston.NoteNumber);
-                            break;
+            BeginInvoke((MethodInvoker)delegate ()
+           {
+               if (_script is not null && e.Step is not null)
+               {
+                   var dev = sender as IInputDevice;
+                   switch (e.Step)
+                   {
+                       case StepNoteOn ston:
+                           _script.InputNote(dev.DeviceType, ston.ChannelNumber, ston.NoteNumber);
+                           break;
 
-                        case StepNoteOff stoff:
-                            _script.InputNote(dev.DeviceType, stoff.ChannelNumber, -stoff.NoteNumber);
-                            break;
+                       case StepNoteOff stoff:
+                           _script.InputNote(dev.DeviceType, stoff.ChannelNumber, -stoff.NoteNumber);
+                           break;
 
-                        case StepControllerChange stctl:
-                            _script.InputControl(dev.DeviceType, stctl.ChannelNumber, stctl.ControllerId, stctl.Value);
-                            break;
-                    }
-                }
-            });
+                       case StepControllerChange stctl:
+                           _script.InputControl(dev.DeviceType, stctl.ChannelNumber, stctl.ControllerId, stctl.Value);
+                           break;
+                   }
+               }
+           });
         }
         #endregion
 
@@ -865,14 +1013,14 @@ namespace Nebulator.App
             for (int i = 0; i < st.FrameCount; i++)
             {
                 StackFrame stf = st.GetFrame(i);
-                if (stf.GetFileName() != null && stf.GetFileName().ToUpper().Contains(_compileTempDir.ToUpper()))
+                if (stf.GetFileName() is not null && stf.GetFileName().ToUpper().Contains(_compileTempDir.ToUpper()))
                 {
                     sf = stf;
                     break;
                 }
             }
 
-            if (sf != null)
+            if (sf is not null)
             {
                 // Dig out generated file parts.
                 string genFile = sf.GetFileName();
@@ -909,7 +1057,7 @@ namespace Nebulator.App
                 };
             }
 
-            if (err != null)
+            if (err is not null)
             {
                 _logger.Error(err.ToString());
             }
@@ -976,7 +1124,7 @@ namespace Nebulator.App
 
                         // Get the config and set things up.
                         string cfigfn = GetConfigFileName(fn);
-                        if(cfigfn is not null)
+                        if (cfigfn is not null)
                         {
                             cfigfn = Path.Combine(UserSettings.TheSettings.WorkPath, cfigfn);
 
@@ -1057,17 +1205,17 @@ namespace Nebulator.App
         void Watcher_Changed(object sender, MultiFileWatcher.FileChangeEventArgs e)
         {
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker) delegate()
-            {
-                if(UserSettings.TheSettings.AutoCompile)
-                {
-                    CompileScript();
-                }
-                else
-                {
-                    SetCompileStatus(false);
-                }
-            });
+            BeginInvoke((MethodInvoker)delegate ()
+           {
+               if (UserSettings.TheSettings.AutoCompile)
+               {
+                   CompileScript();
+               }
+               else
+               {
+                   SetCompileStatus(false);
+               }
+           });
         }
         #endregion
 
@@ -1200,7 +1348,7 @@ namespace Nebulator.App
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
 
             FileInfo fi = new(Path.Combine(appDir, "log.txt"));
-            if(fi.Exists && fi.Length > 100000)
+            if (fi.Exists && fi.Length > 100000)
             {
                 File.Copy(fi.FullName, fi.FullName.Replace("log.", "log2."), true);
                 File.Delete(fi.FullName);
@@ -1217,10 +1365,10 @@ namespace Nebulator.App
         /// <param name="msg">The message.</param>
         void Log_ClientNotification(LogLevel level, string msg)
         {
-            BeginInvoke((MethodInvoker) delegate()
-            {
-                textViewer.AddLine(msg);
-            });
+            BeginInvoke((MethodInvoker)delegate ()
+           {
+               textViewer.AddLine(msg);
+           });
         }
 
         /// <summary>
@@ -1230,7 +1378,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void LogShow_Click(object sender, EventArgs e)
         {
-            using Form f = new ()
+            using Form f = new()
             {
                 Text = "Log Viewer",
                 Size = new Size(900, 600),
@@ -1265,14 +1413,15 @@ namespace Nebulator.App
         #endregion
 
         #region User settings
-        /// <summary>
-        /// Save user settings that aren't automatic.
-        /// </summary>
-        void SaveSettings()
-        {
-            UserSettings.TheSettings.MainFormInfo = FromForm(this);
-            UserSettings.TheSettings.Save();
-        }
+        ///// <summary>
+        ///// Save user settings that aren't automatic.
+        ///// </summary>
+        //void SaveSettings()
+        //{
+        //    UserSettings.TheSettings.MainFormInfo = FromForm(this);
+
+        //    UserSettings.TheSettings.Save();
+        //}
 
         /// <summary>
         /// Edit the common options in a property grid.
@@ -1282,7 +1431,7 @@ namespace Nebulator.App
             using Form f = new()
             {
                 Text = "User Settings",
-                Size = new Size(350, 400),
+                Size = new Size(350, 500),
                 StartPosition = FormStartPosition.Manual,
                 Location = new Point(200, 200),
                 FormBorderStyle = FormBorderStyle.FixedToolWindow,
@@ -1293,7 +1442,7 @@ namespace Nebulator.App
             PropertyGrid pg = new()
             {
                 Dock = DockStyle.Fill,
-                PropertySort = PropertySort.NoSort,
+                PropertySort = PropertySort.Categorized,
                 SelectedObject = UserSettings.TheSettings
             };
 
@@ -1306,25 +1455,9 @@ namespace Nebulator.App
 
             if (changed)
             {
-                MessageBox.Show("UI changes require a restart to take effect.");
+                MessageBox.Show("Settings changes require a restart to take effect.");
                 SaveSettings();
             }
-        }
-
-        /// <summary>
-        /// Helper for serialization.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public FormInfo FromForm(Form f)
-        {
-            return new()
-            {
-                X = f.Location.X,
-                Y = f.Location.Y,
-                Width = f.Width,
-                Height = f.Height
-            };
         }
         #endregion
 
@@ -1394,7 +1527,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Space)
+            if (e.KeyCode == Keys.Space)
             {
                 // Handle start/stop toggle.
                 ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start);
@@ -1448,9 +1581,9 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            if(_script != null)
+            if (_script is not null)
             {
-                if(_needCompile)
+                if (_needCompile)
                 {
                     ok = CompileScript();
                 }
@@ -1460,7 +1593,7 @@ namespace Nebulator.App
                 ok = false;
             }
 
-            if(ok)
+            if (ok)
             {
                 Dictionary<int, string> channels = new();
                 _config.Channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));

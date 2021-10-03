@@ -17,7 +17,7 @@ namespace Nebulator.OSC
         readonly Logger _logger = LogManager.GetLogger("OscInput");
 
         /// <summary>OSC input device.</summary>
-        NebOsc.Input _oscInput = null;
+        NebOsc.Input? _oscInput = null;
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -25,7 +25,7 @@ namespace Nebulator.OSC
 
         #region Events
         /// <inheritdoc />
-        public event EventHandler<DeviceInputEventArgs> DeviceInputEvent;
+        public event EventHandler<DeviceInputEventArgs>? DeviceInputEvent;
         #endregion
 
         #region Properties
@@ -53,14 +53,11 @@ namespace Nebulator.OSC
 
             try
             {
-                if (_oscInput != null)
-                {
-                    _oscInput.Dispose();
-                    _oscInput = null;
-                }
+                _oscInput?.Dispose();
+                _oscInput = null;
 
                 // Check for properly formed port.
-                if (int.TryParse(UserSettings.TheSettings.OscInDevice, out int port))
+                if (int.TryParse(UserSettings.TheSettings.OscIn, out int port))
                 {
                     _oscInput = new NebOsc.Input() { LocalPort = port };
                     inited = true;
@@ -126,7 +123,7 @@ namespace Nebulator.OSC
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OscInput_LogEvent(object sender, NebOsc.LogEventArgs e)
+        void OscInput_LogEvent(object? sender, NebOsc.LogEventArgs e)
         {
             if(e.IsError)
             {
@@ -143,7 +140,7 @@ namespace Nebulator.OSC
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OscInput_InputEvent(object sender, NebOsc.InputEventArgs e)
+        void OscInput_InputEvent(object? sender, NebOsc.InputEventArgs e)
         {
             // message could be:
             // /note/ channel notenum vel
@@ -151,7 +148,7 @@ namespace Nebulator.OSC
 
             e.Messages.ForEach(m =>
             {
-                Step step = null;
+                Step? step = null;
 
                 switch (m.Address)
                 {
@@ -209,10 +206,10 @@ namespace Nebulator.OSC
                         break;
                 }
 
-                if (step != null)
+                if (step is not null)
                 {
                     // Pass it up for handling.
-                    DeviceInputEventArgs args = new DeviceInputEventArgs() { Step = step };
+                    DeviceInputEventArgs args = new() { Step = step };
                     DeviceInputEvent?.Invoke(this, args);
                     if(UserSettings.TheSettings.MonitorInput)
                     {

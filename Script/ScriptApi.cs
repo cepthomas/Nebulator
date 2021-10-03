@@ -97,37 +97,40 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, double notenum, double vol, Time dur)
         {
-            Channel channel = GetChannel(chanName);
+            var channel = GetChannel(chanName);
 
-            double vel = channel.NextVol(vol);
-            double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
-
-            // If vol is positive and the note is not negative, it's note on, else note off.
-            if (vol > 0 && notenum > 0)
+            if(channel is not null)
             {
-                StepNoteOn step = new()
-                {
-                    Device = channel.Device,
-                    ChannelNumber = channel.ChannelNumber,
-                    NoteNumber = absnote,
-                    Velocity = vel,
-                    VelocityToPlay = vel,
-                    Duration = dur
-                };
+                double vel = channel.NextVol(vol);
+                double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
 
-                step.Adjust(MasterVolume, channel.Volume);
-                channel.Device.Send(step);
-            }
-            else
-            {
-                StepNoteOff step = new()
+                // If vol is positive and the note is not negative, it's note on, else note off.
+                if (vol > 0 && notenum > 0)
                 {
-                    Device = channel.Device,
-                    ChannelNumber = channel.ChannelNumber,
-                    NoteNumber = absnote
-                };
+                    StepNoteOn step = new()
+                    {
+                        Device = channel.Device,
+                        ChannelNumber = channel.ChannelNumber,
+                        NoteNumber = absnote,
+                        Velocity = vel,
+                        VelocityToPlay = vel,
+                        Duration = dur
+                    };
 
-                channel.Device.Send(step);
+                    step.Adjust(MasterVolume, channel.Volume);
+                    channel?.Device?.Send(step);
+                }
+                else
+                {
+                    StepNoteOff step = new()
+                    {
+                        Device = channel.Device,
+                        ChannelNumber = channel.ChannelNumber,
+                        NoteNumber = absnote
+                    };
+
+                    channel?.Device?.Send(step);
+                }
             }
         }
 
@@ -185,17 +188,19 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         protected void SendController(string chanName, int ctlnum, double val)
         {
-            Channel channel = GetChannel(chanName);
-
-            StepControllerChange step = new()
+            var channel = GetChannel(chanName);
+            if (channel is not null)
             {
-                Device = channel.Device,
-                ChannelNumber = channel.ChannelNumber,
-                ControllerId = ctlnum,
-                Value = val
-            };
+                StepControllerChange step = new()
+                {
+                    Device = channel.Device,
+                    ChannelNumber = channel.ChannelNumber,
+                    ControllerId = ctlnum,
+                    Value = val
+                };
 
-            channel.Device.Send(step);
+                channel.Device?.Send(step);
+            }
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -203,16 +208,18 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         protected void SendPatch(string chanName, int patch)
         {
-            Channel channel = GetChannel(chanName);
-
-            StepPatch step = new()
+            var channel = GetChannel(chanName);
+            if (channel is not null)
             {
-                Device = channel.Device,
-                ChannelNumber = channel.ChannelNumber,
-                PatchNumber = patch
-            };
+                StepPatch step = new()
+                {
+                    Device = channel.Device,
+                    ChannelNumber = channel.ChannelNumber,
+                    PatchNumber = patch
+                };
 
-            channel.Device.Send(step);
+                channel.Device?.Send(step);
+            }
         }
 
         /// <summary>Send a named sequence now. TODO1 not actually now, and becomes a permanent member - what is useful?</summary>
@@ -240,7 +247,7 @@ namespace Nebulator.Script
         //protected double[] GetChordNotes(string note)
         //{
         //    List<double> notes = ScriptUtils.ParseNoteString(note);
-        //    return notes != null ? notes.ToArray() : Array.Empty<double>();
+        //    return notes is not null ? notes.ToArray() : Array.Empty<double>();
         //}
 
         ///// <summary>Get an array of scale notes.</summary>
@@ -250,7 +257,7 @@ namespace Nebulator.Script
         //protected double[] GetScaleNotes(string scale, string key)
         //{
         //    List<double> notes = ScriptUtils.GetScaleNotes(scale, key);
-        //    return notes != null ? notes.ToArray() : Array.Empty<double>();
+        //    return notes is not null ? notes.ToArray() : Array.Empty<double>();
         //}
         #endregion
     }

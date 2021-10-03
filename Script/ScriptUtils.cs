@@ -94,7 +94,7 @@ namespace Nebulator.Script
 
                 // Figure out the root note.
                 int? noteNum = NoteNameToNumber(snote);
-                if (noteNum != null)
+                if (noteNum is not null)
                 {
                     // Transpose octave.
                     noteNum += (octave + 1) * NOTES_PER_OCTAVE;
@@ -128,7 +128,7 @@ namespace Nebulator.Script
                         }
 
                         int? iint = GetInterval(interval);
-                        if (iint != null)
+                        if (iint is not null)
                         {
                             iint = down ? iint - NOTES_PER_OCTAVE : iint;
                             notes.Add(noteNum.Value + iint.Value);
@@ -161,7 +161,7 @@ namespace Nebulator.Script
         //public static double[] GetChordNotes(string note)
         //{
         //    List<double> notes = ScriptUtils.ParseNoteString(note);
-        //    return notes != null ? notes.ToArray() : Array.Empty<double>();
+        //    return notes is not null ? notes.ToArray() : Array.Empty<double>();
         //}
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Nebulator.Script
                     scaleDef = _scriptNoteDefs[scale];
                 }
 
-                if (scaleDef != null && scaleDef.Count >= 1)
+                if (scaleDef is not null && scaleDef.Count >= 1)
                 {
                     // "1 2 b3 #4 5 b6 7"
                    var scaleNotes = scaleDef[0].SplitByToken(" ");
@@ -195,7 +195,7 @@ namespace Nebulator.Script
                     scaleNotes.ForEach(sn =>
                     {
                         int? intNum = GetInterval(sn);
-                        if (intNum != null)
+                        if (intNum is not null)
                         {
                             notes.Add(keyNotes[0] + intNum.Value);
                         }
@@ -295,7 +295,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="iint">The name or empty if invalid.</param>
         /// <returns></returns>
-        public static string GetInterval(int iint)
+        public static string? GetInterval(int iint)
         {
             return iint >= _intervals.Length ? null : _intervals[iint % _intervals.Length];
         }

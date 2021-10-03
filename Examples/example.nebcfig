@@ -1,13 +1,12 @@
 {
-  "MasterVolume": 0.1234,
-  "MasterSpeed": 67.89,
+  "MasterVolume": 0.12,
+  "MasterSpeed": 68,
   "Channels": [
     {
       "ChannelName": "keys",
       "ChannelNumber": 1,
       "Patch": "AcousticGrandPiano",
       "DeviceType": "MidiOut",
-      "DeviceName": "DevOut1",
       "VolumeWobbleRange": 0,
       "Volume": 0.8,
       "State": "Normal"
@@ -17,7 +16,6 @@
       "ChannelNumber": 2,
       "Patch": "AcousticBass",
       "DeviceType": "OscOut",
-      "DeviceName": "DevOut2",
       "VolumeWobbleRange": 0.2,
       "Volume": 0.75,
       "State": "Normal"
@@ -27,7 +25,6 @@
       "ChannelNumber": 3,
       "Patch": "Lead2Sawtooth",
       "DeviceType": "MidiOut",
-      "DeviceName": "DevOut3",
       "VolumeWobbleRange": 0.3,
       "Volume": 0.6,
       "State": "Normal"
@@ -37,27 +34,9 @@
       "ChannelNumber": 10,
       "Patch": "AcousticGrandPiano",
       "DeviceType": "MidiOut",
-      "DeviceName": "DevOut4",
       "VolumeWobbleRange": 0.4,
       "Volume": 0.4,
       "State": "Solo"
-    }
-  ],
-  "Controllers": [
-    {
-      "ControllerName": "Ctrl1",
-      "DeviceType": "MidiIn",
-      "DeviceName": "DevIn1"
-    },
-    {
-      "ControllerName": "Ctrl2",
-      "DeviceType": "MidiIn",
-      "DeviceName": "DevIn2"
-    },
-    {
-      "ControllerName": "Ctrl3",
-      "DeviceType": "OscIn",
-      "DeviceName": "DevIn3"
     }
   ]
 }

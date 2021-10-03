@@ -17,13 +17,13 @@ namespace Nebulator.OSC
         readonly Logger _logger = LogManager.GetLogger("OscOutput");
 
         /// <summary>OSC output device.</summary>
-        NebOsc.Output _oscOutput;
+        NebOsc.Output? _oscOutput;
 
         /// <summary>Access synchronizer.</summary>
-        readonly object _lock = new object();
+        readonly object _lock = new();
 
         /// <summary>Notes to stop later.</summary>
-        List<StepNoteOff> _stops = new List<StepNoteOff>();
+        readonly List<StepNoteOff> _stops = new();
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;
@@ -50,14 +50,11 @@ namespace Nebulator.OSC
         {
             bool inited = false;
 
-            if (_oscOutput != null)
-            {
-                _oscOutput.Dispose();
-                _oscOutput = null;
-            }
+            _oscOutput?.Dispose();
+            _oscOutput = null;
 
             // Check for properly formed url:port.
-            List<string> parts = UserSettings.TheSettings.OscOutDevice.SplitByToken(":");
+            List<string> parts = UserSettings.TheSettings.OscOut.SplitByToken(":");
             if (parts.Count == 2)
             {
                 if (int.TryParse(parts[1], out int port))
@@ -126,10 +123,10 @@ namespace Nebulator.OSC
             // Critical code section.
             lock (_lock)
             {
-                if (_oscOutput != null)
+                if (_oscOutput is not null)
                 {
-                    List<int> msgs = new List<int>();
-                    NebOsc.Message msg = null;
+                    List<int> msgs = new();
+                    NebOsc.Message? msg = null;
 
                     switch (step)
                     {
@@ -179,7 +176,7 @@ namespace Nebulator.OSC
                             break;
                     }
 
-                    if (msg != null)
+                    if (msg is not null)
                     {
                         if(_oscOutput.Send(msg))
                         {
@@ -225,7 +222,7 @@ namespace Nebulator.OSC
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OscOutput_LogEvent(object sender, NebOsc.LogEventArgs e)
+        void OscOutput_LogEvent(object? sender, NebOsc.LogEventArgs e)
         {
             if (e.IsError)
             {

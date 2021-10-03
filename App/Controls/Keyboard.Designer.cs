@@ -35,20 +35,24 @@
             // 
             this.vkey.Dock = System.Windows.Forms.DockStyle.Fill;
             this.vkey.Location = new System.Drawing.Point(0, 0);
+            this.vkey.Margin = new System.Windows.Forms.Padding(5, 8, 5, 8);
             this.vkey.Name = "vkey";
-            this.vkey.Size = new System.Drawing.Size(660, 129);
+            this.vkey.ShowNoteNames = false;
+            this.vkey.Size = new System.Drawing.Size(880, 198);
             this.vkey.TabIndex = 0;
             // 
             // Keyboard
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(660, 129);
+            this.ClientSize = new System.Drawing.Size(880, 198);
             this.Controls.Add(this.vkey);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Keyboard";
             this.Text = "Keyboard";
             this.Load += new System.EventHandler(this.Keyboard_Load);
+            this.Resize += new System.EventHandler(this.Keyboard_Resize);
             this.ResumeLayout(false);
 
         }

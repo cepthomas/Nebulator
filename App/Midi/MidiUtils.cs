@@ -7,7 +7,7 @@ using System.IO;
 using NAudio.Midi;
 using NBagOfTricks;
 using Nebulator.Common;
-
+using System.ComponentModel;
 
 namespace Nebulator.Midi
 {
@@ -29,10 +29,10 @@ namespace Nebulator.Midi
             int exportPpq = 96;
 
             // Events per track.
-            Dictionary<int, IList<MidiEvent>> trackEvents = new Dictionary<int, IList<MidiEvent>>();
+            Dictionary<int, IList<MidiEvent>> trackEvents = new();
 
             ///// Meta file stuff.
-            MidiEventCollection events = new MidiEventCollection(1, exportPpq);
+            MidiEventCollection events = new(1, exportPpq);
 
             ///// Add Header chunk stuff.
             IList<MidiEvent> lhdr = events.AddTrack();
@@ -67,7 +67,7 @@ namespace Nebulator.Midi
             }
 
             // Make a transformer.
-            MidiTime mt = new MidiTime()
+            MidiTime mt = new()
             {
                 InternalPpq = Time.SUBDIVS_PER_BEAT,
                 MidiPpq = exportPpq,
@@ -81,7 +81,7 @@ namespace Nebulator.Midi
 
                 foreach (Step step in steps.GetSteps(time))
                 {
-                    MidiEvent evt = null;
+                    MidiEvent evt;
 
                     switch (step)
                     {
