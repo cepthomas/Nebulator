@@ -240,25 +240,6 @@ namespace Nebulator.Script
         {
             ScriptUtils.AddScriptNoteDef(name, parts);
         }
-
-        ///// <summary>Convert the argument into numbered notes.</summary>
-        ///// <param name="note">Note string using any form allowed in the script.</param>
-        ///// <returns>Array of notes or empty if invalid.</returns>
-        //protected double[] GetChordNotes(string note)
-        //{
-        //    List<double> notes = ScriptUtils.ParseNoteString(note);
-        //    return notes is not null ? notes.ToArray() : Array.Empty<double>();
-        //}
-
-        ///// <summary>Get an array of scale notes.</summary>
-        ///// <param name="scale">One of the named scales from ScriptDefinitions.md.</param>
-        ///// <param name="key">Note name and octave.</param>
-        ///// <returns>Array of notes or empty if invalid.</returns>
-        //protected double[] GetScaleNotes(string scale, string key)
-        //{
-        //    List<double> notes = ScriptUtils.GetScaleNotes(scale, key);
-        //    return notes is not null ? notes.ToArray() : Array.Empty<double>();
-        //}
         #endregion
     }
 }

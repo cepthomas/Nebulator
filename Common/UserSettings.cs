@@ -64,14 +64,12 @@ namespace Nebulator.Common
         [Description("Valid port number if handling OSC input.")]
         [Category("Devices")]
         [Browsable(true)]
-        //[TypeConverter(typeof(FixedListTypeConverter))]
         public string OscIn { get; set; } = "None";
 
         [DisplayName("OSC Output")]
         [Description("Valid url:port if sending OSC output.")]
         [Category("Devices")]
         [Browsable(true)]
-        //[TypeConverter(typeof(FixedListTypeConverter))]
         public string OscOut { get; set; } = "None";
 
         [DisplayName("Work Path")]

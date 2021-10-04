@@ -341,14 +341,8 @@ namespace Nebulator.App
         /// <param name="nebfn">Topmost file in collection.</param>
         void Parse(string nebfn)
         {
-            //// Add the generated internal code files.
-            //_filesToCompile.Add($"{_scriptName}_wrapper.cs", new FileContext()
-            //{
-            //    SourceFile = "",
-            //    CodeLines = GenMainFileContents()
-            //});
-
-            _filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext()
+            // Add the generated internal code files.
+            _filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext() // TODO1 Not if using internal collections!
             {
                 SourceFile = "",
                 CodeLines = GenDefFileContents()
@@ -373,34 +367,18 @@ namespace Nebulator.App
         {
             bool valid = File.Exists(pcont.SourceFile);
 
-            //// Try fully qualified.
-            //if (File.Exists(pcont.SourceFile))
-            //{
-            //    // OK - leave as is.
-            //    valid = true;
-            //}
-            //else // Try relative.
-            //{
-            //    string fn = Path.Combine(_baseDir, pcont.SourceFile);
-            //    if (File.Exists(fn))
-            //    {
-            //        pcont.SourceFile = fn;
-            //        valid = true;
-            //    }
-            //}
-
             if (valid)
             {
                 string genFn = $"{_scriptName}_src{_filesToCompile.Count}.cs".ToLower();
                 _filesToCompile.Add(genFn, pcont);
 
-                ///// Preamble.
+                // Preamble.
                 pcont.CodeLines.AddRange(GenTopOfFile(pcont.SourceFile));
 
-                ///// The content.
+                // The content.
                 ProcessScriptFile(pcont);
 
-                ///// Postamble.
+                // Postamble.
                 pcont.CodeLines.AddRange(GenBottomOfFile());
             }
 

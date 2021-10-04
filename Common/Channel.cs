@@ -43,12 +43,6 @@ namespace Nebulator.Common
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
-        // [DisplayName("Device Name")]
-        // [Description("The system device name used by this channel.")]
-        // [Browsable(true)]
-        // [TypeConverter(typeof(FixedListTypeConverter))]
-        // public string DeviceName { get; set; } = Definitions.UNKNOWN_STRING;
-
         [DisplayName("Volume Wobble Range")]
         [Description("How wobbly. 0 to disable.")]
         [Browsable(true)]
