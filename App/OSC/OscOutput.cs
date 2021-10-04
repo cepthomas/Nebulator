@@ -201,7 +201,7 @@ namespace Nebulator.OSC
         }
 
         /// <inheritdoc />
-        public void Kill(int? channel)
+        public void Kill(int channel)
         {
         }
 

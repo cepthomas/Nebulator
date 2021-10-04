@@ -11,7 +11,7 @@ namespace Nebulator.Common
     public class DeviceInputEventArgs : EventArgs
     {
         /// <summary>Received data.</summary>
-        public Step? Step { get; set; }
+        public Step? Step { get; set; } = null;
     }
 
     /// <summary>Abstraction layer between low level protocols (e.g. midi, OSC) and Nebulator steps.</summary>
@@ -59,8 +59,8 @@ namespace Nebulator.Common
         bool Send(Step step);
 
         /// <summary>Kill channel(s).</summary>
-        /// <param name="channel">Specific channel or null for all.</param>
-        void Kill(int? channel = null);
+        /// <param name="channel">Specific channel or -1 for all.</param>
+        void Kill(int channel = -1);
         #endregion
     }
 }

@@ -10,6 +10,11 @@ namespace Nebulator.Script
 {
     public partial class ScriptBase : IDisposable
     {
+        #region Properties that can be referenced in the user script
+        /// <summary>Is this script ok?</summary>
+        public bool Valid { get; set; } = false;
+        #endregion
+
         #region Fields - internal
         /// <summary>My logger.</summary>
         internal readonly Logger _logger = LogManager.GetLogger("Script");
@@ -216,9 +221,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="chanName"></param>
         /// <returns></returns>
-        Channel? GetChannel(string chanName)
+        Channel GetChannel(string chanName)
         {
-            if (!_channelMap.TryGetValue(chanName, out Channel? channel))
+            if (!_channelMap.TryGetValue(chanName, out var channel))
             {
                 throw new Exception($"Invalid Channel Name: {chanName}");
             }

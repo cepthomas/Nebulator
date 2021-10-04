@@ -287,7 +287,7 @@ namespace Nebulator.Script
             sinterval = sinterval.Replace(" ", "").Replace("b", "").Replace("#", "");
 
             int iinterval = Array.IndexOf(_intervals, sinterval);
-            return iinterval == -1 ? (int?)null : iinterval + sharps - flats;
+            return iinterval == -1 ? null : iinterval + sharps - flats;
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace Nebulator.Script
         public static int? NoteNameToNumber(string snote)
         {
             int inote = Array.IndexOf(_noteNames, snote) % NOTES_PER_OCTAVE;
-            return inote == -1 ? null : (int?)inote;
+            return inote == -1 ? null : inote;
         }
 
         /// <summary>

@@ -25,7 +25,7 @@ namespace Nebulator.Common
         /// <summary>Is this config ok?</summary>
         [JsonIgnore]
         [Browsable(false)]
-        public bool Valid { get; set; } = true;
+        public bool Valid { get; set; } = false;
 
         /// <summary>Master volume.</summary>
         [Browsable(false)]
@@ -49,18 +49,20 @@ namespace Nebulator.Common
 
         #region Persistence
         /// <summary>Create object from file.</summary>
-        public static Config? Load(string fn)
+        public static Config Load(string fn)
         {
-            Config? pc;
+            Config pc = new();
 
             if (File.Exists(fn))
             {
                 JsonSerializerOptions opts = new() { AllowTrailingCommas = true };
                 string json = File.ReadAllText(fn);
-                pc = JsonSerializer.Deserialize<Config>(json, opts);
-                if(pc is not null)
+                var jpc = JsonSerializer.Deserialize<Config>(json, opts);
+                if(jpc is not null)
                 {
+                    pc = jpc;
                     pc.FileName = fn;
+                    pc.Valid = true;
 
                     // Do post deserialization fixups.
                     pc.Channels.ForEach(ch =>
@@ -75,17 +77,14 @@ namespace Nebulator.Common
                         }
                     });
                 }
-                //else
-                //{
-                //    throw new Exception($"Invalid config file: {fn}");
-                //}
             }
             else
             {
                 // Doesn't exist, create a new one.
                 pc = new Config
                 {
-                    FileName = fn
+                    FileName = fn,
+                    Valid = true
                 };
             }
 

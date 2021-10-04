@@ -13,7 +13,7 @@ namespace Nebulator.Common
     public abstract class Step
     {
         /// <summary>Associated comm device to use.</summary>
-        public IDevice? Device { get; set; }
+        public IDevice? Device { get; set; } = null;
 
         /// <summary>Channel number 1-16.</summary>
         public int ChannelNumber { get; set; } = 1;

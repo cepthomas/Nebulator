@@ -31,13 +31,13 @@ namespace Nebulator.App
         readonly Logger _logger = LogManager.GetLogger("MainForm");
 
         /// <summary>Fast timer.</summary>
-        MmTimerEx _mmTimer = new();
+        readonly MmTimerEx _mmTimer = new();
 
         /// <summary>The current script.</summary>
-        ScriptBase? _script = null;
+        ScriptBase _script = new();
 
         /// <summary>Persisted internal values for current script file.</summary>
-        Config? _config = null;
+        Config _config = new();
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -95,7 +95,7 @@ namespace Nebulator.App
         /// <summary>
         /// Initialize form controls.
         /// </summary>
-        void MainForm_Load(object sender, EventArgs e)
+        void MainForm_Load(object? sender, EventArgs e)
         {
             #region Init UI from settings
             // Main form.
@@ -178,7 +178,7 @@ namespace Nebulator.App
 
             PopulateRecentMenu();
 
-            ScriptDefinitions.TheDefinitions.Init();//TODO1
+            ScriptDefinitions.TheDefinitions.Init();// TODO1
 
             // Fast mm timer.
             SetFastTimerPeriod();
@@ -236,20 +236,20 @@ namespace Nebulator.App
             _inputDevices.ForEach(i =>
             {
                 i.Value.DeviceInputEvent -= Device_InputEvent;
-                i.Value?.Stop();
-                i.Value?.Dispose();
+                i.Value.Stop();
+                i.Value.Dispose();
             });
             _inputDevices.Clear();
 
             _outputDevices.ForEach(o =>
             {
-                o.Value?.Stop();
-                o.Value?.Dispose();
+                o.Value.Stop();
+                o.Value.Dispose();
             });
             _outputDevices.Clear();
 
 
-            _script?.Dispose();
+            _script.Dispose();
         }
 
         /// <summary>
@@ -276,14 +276,13 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void MainForm_Resize(object? sender, EventArgs e)
         {
-            UserSettings.TheSettings.MainFormInfo =
-                new()
-                {
-                    X = Location.X,
-                    Y = Location.Y,
-                    Width = Width,
-                    Height = Height
-                };
+            UserSettings.TheSettings.MainFormInfo = new()
+            {
+                X = Location.X,
+                Y = Location.Y,
+                Width = Width,
+                Height = Height
+            };
         }
 
         #endregion
@@ -301,7 +300,7 @@ namespace Nebulator.App
                 _logger.Warn("No script file loaded.");
                 ok = false;
             }
-            else if (_config is null || !_config.Valid)
+            else if (!_config.Valid)
             {
                 _logger.Warn("Invalid config.");
                 ok = false;
@@ -309,7 +308,7 @@ namespace Nebulator.App
             else
             {
                 // Clean up any old.
-                _script?.Dispose();
+                _script.Dispose();
 
                 // Compile script now.
                 Compiler compiler = new();
@@ -323,7 +322,7 @@ namespace Nebulator.App
                 timeMaster.TimeDefs.Clear();
 
                 // Process errors. Some may be warnings.
-                if (compiler.ErrorCount == 0 && _script is not null)
+                if (compiler.ErrorCount == 0 && _script.Valid)
                 {
                     _script.Init(_config.Channels);
 
@@ -418,28 +417,28 @@ namespace Nebulator.App
         /// <param name="cfigfn"></param>
         void LoadConfig(string cfigfn)
         {
-            if (_config is not null)
+            if (_config.Valid)
             {
                 UnloadConfig();
             }
 
             _config = Config.Load(cfigfn);
 
-            if (_config is not null)
+            if (_config.Valid)
             {
                 // Create devices.
                 _config.Valid = CreateDevices();
+            }
 
-                if (_config.Valid)
-                {
-                    // Create controls.
-                    _config.Valid = CreateChannels();
+            if (_config.Valid)
+            {
+                // Create controls.
+                _config.Valid = CreateChannels();
 
-                    // Init other controls.
-                    potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
-                    double mv = Convert.ToDouble(_config.MasterVolume);
-                    sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
-                }
+                // Init other controls.
+                potSpeed.Value = Convert.ToInt32(_config.MasterSpeed);
+                double mv = Convert.ToDouble(_config.MasterVolume);
+                sldVolume.Value = mv == 0 ? 90 : mv; // in case it's new
             }
         }
 
@@ -459,8 +458,8 @@ namespace Nebulator.App
                 }
             }
 
-            _config?.Save();
-            _config = null;
+            _config.Save();
+            _config.Valid = false;
         }
 
         /// <summary>
@@ -470,7 +469,7 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            if (_config is not null)
+            if (_config.Valid)
             {
                 const int CONTROL_SPACING = 10;
                 int x = btnRewind.Left; // timeMaster.Right + CONTROL_SPACING;
@@ -479,8 +478,6 @@ namespace Nebulator.App
                 // Create new channel controls.
                 foreach (Channel t in _config.Channels)
                 {
-
-
                     if (_outputDevices.TryGetValue(t.DeviceType, out IOutputDevice? dev))
                     {
                         t.Device = dev;
@@ -503,9 +500,6 @@ namespace Nebulator.App
                         ok = false;
                         break;
                     }
-
-
-
                 }
             }
 
@@ -551,7 +545,6 @@ namespace Nebulator.App
                     _logger.Error($"Failed to init input device:{nin.DeviceType}");
                     ok = false;
                 }
-
             }
 
             if (UserSettings.TheSettings.OscIn != "None" && UserSettings.TheSettings.OscIn != "")
@@ -567,7 +560,6 @@ namespace Nebulator.App
                     _logger.Error($"Failed to init input device:{nin.DeviceType}");
                     ok = false;
                 }
-
             }
 
             if (UserSettings.TheSettings.OscOut != "None" && UserSettings.TheSettings.OscOut != "")
@@ -583,7 +575,6 @@ namespace Nebulator.App
                     _logger.Error($"Failed to init input device:{nin.DeviceType}");
                     ok = false;
                 }
-
             }
 
             //bool local(IDevice nin)
@@ -764,9 +755,9 @@ namespace Nebulator.App
         /// <summary>
         /// Edit the script config in a property grid.
         /// </summary>
-        void Config_Click(object sender, EventArgs e)
+        void Config_Click(object? sender, EventArgs e)
         {
-            if (_config is not null)
+            if (_config.Valid)
             {
                 using Form f = new()
                 {
@@ -817,9 +808,9 @@ namespace Nebulator.App
             //}
 
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker) delegate ()
            {
-               if (_script is not null)
+               if (_script.Valid)
                {
                    NextStep();
                }
@@ -885,7 +876,7 @@ namespace Nebulator.App
                                 // Need exception handling here to protect from user script errors.
                                 try
                                 {
-                                    sf.ScriptFunction();
+                                    sf.ScriptFunction?.Invoke();
                                 }
                                 catch (Exception ex)
                                 {
@@ -894,14 +885,14 @@ namespace Nebulator.App
                                 break;
 
                             default:
-                                if (step.Device is IOutputDevice)
+                                if (step.Device is IOutputDevice dev)
                                 {
                                     // Maybe tweak values.
-                                    if (step is StepNoteOn)
+                                    if (step is StepNoteOn on && channel is not null)
                                     {
-                                        (step as StepNoteOn).Adjust(sldVolume.Value, channel.Volume);
+                                        on.Adjust(sldVolume.Value, channel.Volume);
                                     }
-                                    (step.Device as IOutputDevice).Send(step);
+                                    dev.Send(step);
                                 }
                                 break;
                         }
@@ -937,13 +928,14 @@ namespace Nebulator.App
         /// <summary>
         /// Process input event.
         /// </summary>
-        void Device_InputEvent(object sender, DeviceInputEventArgs e)
+        void Device_InputEvent(object? sender, DeviceInputEventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker) delegate ()
            {
-               if (_script is not null && e.Step is not null)
+               if (_script.Valid && sender is not null)
                {
-                   var dev = sender as IInputDevice;
+                   var dev = (IInputDevice)sender;
+
                    switch (e.Step)
                    {
                        case StepNoteOn ston:
@@ -997,9 +989,9 @@ namespace Nebulator.App
         /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
         /// </summary>
         /// <param name="ex"></param>
-        ScriptResult ProcessScriptRuntimeError(Exception ex)
+        void ProcessScriptRuntimeError(Exception ex)
         {
-            ScriptResult err;
+            ScriptResult? err;
 
             ProcessPlay(PlayCommand.Stop);
             SetCompileStatus(false);
@@ -1008,26 +1000,30 @@ namespace Nebulator.App
             string srcFile;
             int srcLine = -1;
             StackTrace st = new(ex, true);
-            StackFrame sf = null;
+            StackFrame? sf = null;
 
             for (int i = 0; i < st.FrameCount; i++)
             {
-                StackFrame stf = st.GetFrame(i);
-                if (stf.GetFileName() is not null && stf.GetFileName().ToUpper().Contains(_compileTempDir.ToUpper()))
+                StackFrame? stf = st.GetFrame(i);
+                if(stf is not null)
                 {
-                    sf = stf;
-                    break;
+                    var stfn = stf!.GetFileName();
+                    if (stfn!.ToUpper().Contains(_compileTempDir.ToUpper()))
+                    {
+                        sf = stf;
+                        break;
+                    }
                 }
             }
 
             if (sf is not null)
             {
                 // Dig out generated file parts.
-                string genFile = sf.GetFileName();
+                string? genFile = sf!.GetFileName();
                 int genLine = sf.GetFileLineNumber() - 1;
 
                 // Open the generated file and dig out the source file and line.
-                string[] genLines = File.ReadAllLines(genFile);
+                string[] genLines = File.ReadAllLines(genFile!);
 
                 srcFile = genLines[0].Trim().Replace("//", "");
 
@@ -1061,8 +1057,6 @@ namespace Nebulator.App
             {
                 _logger.Error(err.ToString());
             }
-
-            return err;
         }
         #endregion
 
@@ -1070,10 +1064,10 @@ namespace Nebulator.App
         /// <summary>
         /// The user has asked to open a recent file.
         /// </summary>
-        void Recent_Click(object sender, EventArgs e)
+        void Recent_Click(object? sender, EventArgs e)
         {
-            string fn = sender.ToString();
-            string sopen = OpenScriptFile(fn);
+            string? fn = sender!.ToString();
+            string sopen = OpenScriptFile(fn!);
             if (sopen != "")
             {
                 _logger.Error(sopen);
@@ -1083,7 +1077,7 @@ namespace Nebulator.App
         /// <summary>
         /// Allows the user to select a np file from file system.
         /// </summary>
-        void Open_Click(object sender, EventArgs e)
+        void Open_Click(object? sender, EventArgs e)
         {
             OpenFileDialog openDlg = new()
             {
@@ -1123,14 +1117,14 @@ namespace Nebulator.App
                         _scriptFileName = fn;
 
                         // Get the config and set things up.
-                        string cfigfn = GetConfigFileName(fn);
+                        string? cfigfn = GetConfigFileName(fn);
                         if (cfigfn is not null)
                         {
                             cfigfn = Path.Combine(UserSettings.TheSettings.WorkPath, cfigfn);
 
                             LoadConfig(cfigfn);
 
-                            if (_config is not null && _config.Valid)
+                            if (_config.Valid)
                             {
                                 AddToRecentDefs(fn);
                                 bool ok = CompileScript();
@@ -1202,10 +1196,10 @@ namespace Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Watcher_Changed(object sender, MultiFileWatcher.FileChangeEventArgs e)
+        void Watcher_Changed(object? sender, MultiFileWatcher.FileChangeEventArgs e)
         {
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker) delegate ()
            {
                if (UserSettings.TheSettings.AutoCompile)
                {
@@ -1223,7 +1217,7 @@ namespace Nebulator.App
         /// <summary>
         /// Go or stop button.
         /// </summary>
-        void Play_Click(object sender, EventArgs e)
+        void Play_Click(object? sender, EventArgs e)
         {
             ProcessPlay(chkPlay.Checked ? PlayCommand.Start : PlayCommand.Stop);
         }
@@ -1231,7 +1225,7 @@ namespace Nebulator.App
         /// <summary>
         /// Update multimedia timer period.
         /// </summary>
-        void Speed_ValueChanged(object sender, EventArgs e)
+        void Speed_ValueChanged(object? sender, EventArgs e)
         {
             _config.MasterSpeed = potSpeed.Value;
             SetFastTimerPeriod();
@@ -1240,7 +1234,7 @@ namespace Nebulator.App
         /// <summary>
         /// Go back jack.
         /// </summary>
-        void Rewind_Click(object sender, EventArgs e)
+        void Rewind_Click(object? sender, EventArgs e)
         {
             ProcessPlay(PlayCommand.Rewind);
         }
@@ -1248,7 +1242,7 @@ namespace Nebulator.App
         /// <summary>
         /// User updated volume.
         /// </summary>
-        void Volume_ValueChanged(object sender, EventArgs e)
+        void Volume_ValueChanged(object? sender, EventArgs e)
         {
             _config.MasterVolume = sldVolume.Value;
         }
@@ -1256,7 +1250,7 @@ namespace Nebulator.App
         /// <summary>
         /// Manual recompile.
         /// </summary>
-        void Compile_Click(object sender, EventArgs e)
+        void Compile_Click(object? sender, EventArgs e)
         {
             CompileScript();
             ProcessPlay(PlayCommand.StopRewind);
@@ -1265,7 +1259,7 @@ namespace Nebulator.App
         /// <summary>
         /// User updated the time.
         /// </summary>
-        void Time_ValueChanged(object sender, EventArgs e)
+        void Time_ValueChanged(object? sender, EventArgs e)
         {
             _stepTime = timeMaster.CurrentTime;
             ProcessPlay(PlayCommand.UpdateUiTime);
@@ -1274,7 +1268,7 @@ namespace Nebulator.App
         /// <summary>
         /// Monitor comm messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
-        void Mon_Click(object sender, EventArgs e)
+        void Mon_Click(object? sender, EventArgs e)
         {
             UserSettings.TheSettings.MonitorInput = btnMonIn.Checked;
             UserSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
@@ -1283,7 +1277,7 @@ namespace Nebulator.App
         /// <summary>
         /// The meaning of life.
         /// </summary>
-        void About_Click(object sender, EventArgs e)
+        void About_Click(object? sender, EventArgs e)
         {
             // Make some markdown.
             List<string> mdText = new()
@@ -1365,7 +1359,7 @@ namespace Nebulator.App
         /// <param name="msg">The message.</param>
         void Log_ClientNotification(LogLevel level, string msg)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker) delegate ()
            {
                textViewer.AddLine(msg);
            });
@@ -1376,7 +1370,7 @@ namespace Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void LogShow_Click(object sender, EventArgs e)
+        void LogShow_Click(object? sender, EventArgs e)
         {
             using Form f = new()
             {
@@ -1426,7 +1420,7 @@ namespace Nebulator.App
         /// <summary>
         /// Edit the common options in a property grid.
         /// </summary>
-        void UserSettings_Click(object sender, EventArgs e)
+        void UserSettings_Click(object? sender, EventArgs e)
         {
             using Form f = new()
             {
@@ -1455,8 +1449,8 @@ namespace Nebulator.App
 
             if (changed)
             {
+                UserSettings.TheSettings.Save();
                 MessageBox.Show("Settings changes require a restart to take effect.");
-                SaveSettings();
             }
         }
         #endregion
@@ -1525,7 +1519,7 @@ namespace Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void MainForm_KeyDown(object sender, KeyEventArgs e)
+        void MainForm_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
             {
@@ -1558,7 +1552,7 @@ namespace Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ExportMidi_Click(object sender, EventArgs e)
+        void ExportMidi_Click(object? sender, EventArgs e)
         {
             SaveFileDialog saveDlg = new()
             {
@@ -1581,7 +1575,7 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            if (_script is not null)
+            if (_script.Valid)
             {
                 if (_needCompile)
                 {

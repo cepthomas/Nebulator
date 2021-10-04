@@ -102,6 +102,9 @@ namespace Nebulator.Common
 
         #region Properties - internal
         [Browsable(false)]
+        public bool Valid { get; set; } = false;
+
+        [Browsable(false)]
         public FormInfo MainFormInfo { get; set; } = new FormInfo();
 
         [Browsable(false)]
@@ -130,9 +133,9 @@ namespace Nebulator.Common
 
         #region Persistence
         /// <summary>Create object from file.</summary>
-        public static UserSettings? Load(string appDir)
+        public static UserSettings Load(string appDir)
         {
-            UserSettings? set;
+            UserSettings set = new();
             string fn = Path.Combine(appDir, "settings.json");
 
             if (File.Exists(fn))
@@ -143,10 +146,7 @@ namespace Nebulator.Common
                 {
                     set = jobj;
                     set._fn = fn;
-                }
-                else
-                {
-                    throw new Exception($"Invalid user settings file: {fn}");
+                    set.Valid = true;
                 }
             }
             else
@@ -154,7 +154,8 @@ namespace Nebulator.Common
                 // Doesn't exist, create a new one.
                 set = new UserSettings()
                 {
-                    _fn = fn
+                    _fn = fn,
+                    Valid = true
                 };
             }
 
@@ -164,9 +165,12 @@ namespace Nebulator.Common
         /// <summary>Save object to file.</summary>
         public void Save()
         {
-            JsonSerializerOptions opts = new() { WriteIndented = true };
-            string json = JsonSerializer.Serialize(this, opts);
-            File.WriteAllText(_fn, json);
+            if(Valid)
+            {
+                JsonSerializerOptions opts = new() { WriteIndented = true };
+                string json = JsonSerializer.Serialize(this, opts);
+                File.WriteAllText(_fn, json);
+            }
         }
         #endregion
     }

@@ -59,7 +59,7 @@ namespace Nebulator.Common
         /// <summary>The associated device object.</summary>
         [Browsable(false)]
         [JsonIgnore]
-        public IOutputDevice? Device { get; set; }
+        public IOutputDevice? Device { get; set; } = null;
 
         /// <summary>Current volume.</summary>
         [Browsable(false)]

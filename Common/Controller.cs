@@ -38,7 +38,7 @@ namespace Nebulator.Common
         /// <summary>The associated device object.</summary>
         [Browsable(false)]
         [JsonIgnore]
-        public IInputDevice? Device { get; set; }
+        public IInputDevice? Device { get; set; } = null;
         #endregion
 
         /// <summary>For viewing pleasure.</summary>

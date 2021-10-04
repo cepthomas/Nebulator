@@ -118,7 +118,7 @@ namespace Nebulator.Script
                     };
 
                     step.Adjust(MasterVolume, channel.Volume);
-                    channel?.Device?.Send(step);
+                    channel.Device?.Send(step);
                 }
                 else
                 {
@@ -129,7 +129,7 @@ namespace Nebulator.Script
                         NoteNumber = absnote
                     };
 
-                    channel?.Device?.Send(step);
+                    channel.Device?.Send(step);
                 }
             }
         }

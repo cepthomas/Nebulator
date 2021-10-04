@@ -18,7 +18,7 @@ namespace Nebulator.Midi
         readonly Logger _logger = LogManager.GetLogger("MidiInput");
 
         /// <summary>Midi input device.</summary>
-        MidiIn? _midiIn = null;
+        MidiIn? _midiIn;
 
         /// <summary>Resource clean up.</summary>
         bool _disposed = false;

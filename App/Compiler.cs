@@ -105,7 +105,7 @@ namespace Nebulator.App
         readonly Dictionary<string, int> _defs = new();
 
         /// <summary>Need to know.</summary>
-        Config? _config;
+        Config _config = new();
         #endregion
 
         #region Public functions
@@ -115,9 +115,9 @@ namespace Nebulator.App
         /// <param name="nebfn">Fully qualified path to main file.</param>
         /// <param name="config">Config info.</param>
         /// <returns>The newly minted script object or null if failed.</returns>
-        public ScriptBase? Execute(string nebfn, Config config)
+        public ScriptBase Execute(string nebfn, Config config)
         {
-            ScriptBase? script = null;
+            ScriptBase script = new();
             _config = config;
 
             // Reset everything.
@@ -152,7 +152,8 @@ namespace Nebulator.App
                 _logger.Error($"Invalid file {nebfn}.");
             }
 
-            return Results.Count == 0 ? script : null;
+            script.Valid = ErrorCount == 0;
+            return script;
         }
         #endregion
 
@@ -161,9 +162,9 @@ namespace Nebulator.App
         /// Top level compiler.
         /// </summary>
         /// <returns>Compiled script</returns>
-        ScriptBase? Compile()
+        ScriptBase Compile()
         {
-            ScriptBase? script = null;
+            ScriptBase script = new();
 
             try // many ways to go wrong...
             {
@@ -255,7 +256,7 @@ namespace Nebulator.App
                                 se.Message = parts2[0];
 
                                 // Get the original info.
-                                if (_filesToCompile.TryGetValue(Path.GetFileName(gennedFileName), out FileContext? cont))
+                                if (_filesToCompile.TryGetValue(Path.GetFileName(gennedFileName), out var cont))
                                 {
                                     string origLine = cont.CodeLines[gennedFileLine - 1];
                                     se.SourceFile = cont.SourceFile;
@@ -307,8 +308,11 @@ namespace Nebulator.App
                             if (t is not null && t.BaseType is not null && t.BaseType.Name == "ScriptBase")
                             {
                                 // We have a good script file. Create the executable object.
-                                object o = Activator.CreateInstance(t);
-                                script = o as ScriptBase;
+                                object? o = Activator.CreateInstance(t);
+                                if(o is not null)
+                                {
+                                    script = (ScriptBase)o;
+                                }
                             }
                         }
 

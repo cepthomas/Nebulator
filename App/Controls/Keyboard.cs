@@ -140,14 +140,13 @@ namespace Nebulator.Controls
         /// <param name="e"></param>
         private void Keyboard_Resize(object sender, EventArgs e)
         {
-            UserSettings.TheSettings.KeyboardInfo =
-                new()
-                {
-                    X = Location.X,
-                    Y = Location.Y,
-                    Width = Width,
-                    Height = Height
-                };
+            UserSettings.TheSettings.KeyboardInfo = new()
+            {
+                X = Location.X,
+                Y = Location.Y,
+                Width = Width,
+                Height = Height
+            };
         }
         #endregion
     }

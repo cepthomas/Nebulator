@@ -230,9 +230,9 @@ namespace Nebulator.Midi
         }
 
         /// <inheritdoc />
-        public void Kill(int? channel)
+        public void Kill(int channel)
         {
-            if(channel is null)
+            if(channel == -1)
             {
                 for (int i = 0; i < Channel.NUM_CHANNELS; i++)
                 {
@@ -249,7 +249,7 @@ namespace Nebulator.Midi
                 Send(new StepControllerChange()
                 {
                     Device = this,
-                    ChannelNumber = channel.Value,
+                    ChannelNumber = channel,
                     ControllerId = (int)MidiController.AllNotesOff
                 });
             }
