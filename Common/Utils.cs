@@ -12,7 +12,7 @@ namespace Nebulator.Common
     public enum TraceCat { SND, RCV }
 
     /// <summary>The patch types. Numerical value is the midi number.</summary>
-    public enum Patch //TODO1 make all enums or consts?
+    public enum Patch //TODO0 make all enums or consts?
     {
         AcousticGrandPiano = 0, BrightAcousticPiano, ElectricGrandPiano, HonkyTonkPiano, ElectricPiano1, ElectricPiano2, Harpsichord,
         Clavinet, Celesta, Glockenspiel, MusicBox, Vibraphone, Marimba, Xylophone, TubularBells, Dulcimer, DrawbarOrgan,

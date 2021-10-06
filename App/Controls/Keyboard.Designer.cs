@@ -52,7 +52,6 @@
             this.Name = "Keyboard";
             this.Text = "Keyboard";
             this.Load += new System.EventHandler(this.Keyboard_Load);
-            this.Resize += new System.EventHandler(this.Keyboard_Resize);
             this.ResumeLayout(false);
 
         }

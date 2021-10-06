@@ -2,84 +2,45 @@
 // Example Nebulator composition file with some UI demo.
 //----- Warning: this is not actual music! --------
 
-///// Include config and lib files. /////
-
-Config("example.nebcfig");
+///// Directives/preprocess: Include config and lib files. /////
 Include("utils.neb");
 Include("scale.neb");
 
+///// All the channel/outputs.
+Channel("keys",  MidiOut, 1, AcousticGrandPiano,  0.1); // something
+Channel("bass",  MidiOut, 2, AcousticBass,  0.1);
+Channel("synth", MidiOut, 3, Lead1Square,  0.1);
+Channel("drums", MidiOut, 10, 32, 0.1); // kit
 
 ///// Volumes.
 const double KEYS_VOL = 0.8;
 const double DRUM_VOL = 0.8;
 
-
-///// Variables
-// NVariable vModN;
-// NVariable vVkeyNote;
-
-// ///// Channels
-// Channel chKeys;
-// Channel chBass;
-// Channel chDrums;
-// Channel chSynth;
-
 ///// Sequences
 Sequence seqDynamic;
 
-//int unused;
+// Compiler test.
+//int _unused;
+//error
 
-////// Simple variables for functions
+////// Simple variables for functions.
 List<double> _scaleNotes;
 List<double> _chordNotes;
+List<double> _myChordNotes;
+List<double> _myScaleNotes;
 //int _noteNum = 48;
 
-//error
 
 ////// Nebulator midi stuff
 public override void Setup()
 {
-    // // All the neb variables.
-    // vModN =     CreateVariable("modn", 63, 0,    127, On_vModN);
-    // vVkeyNote = CreateVariable("note", 60, -127, 127, On_vVkeyNote); // note neg number for note off encoding
-
-    // // IO devices.
-    // // All the outputs.
-    // chKeys =  CreateChannel("keys",  DeviceType.MidiOut, 1,  0.1);
-    // chBass =  CreateChannel("bass",  DeviceType.MidiOut, 2,  0.1);
-    // chSynth = CreateChannel("synth", DeviceType.MidiOut, 3,  0.1);
-    // chDrums = CreateChannel("drums", DeviceType.MidiOut, 10, 0.1);
-
-    // // All the inputs.
-    // CreateController(DeviceType.VkeyIn, 1, NoteControl, vVkeyNote);
-    // // CreateController(DeviceType.MidiIn, 1, 1, vMod1); // modulate eq
-    // // CreateController(DeviceType.MidiIn, 1, 2, vCtl2); // since I don't have a pitch knob, I'll use this instead
-    // // CreateController(DeviceType.MidiIn, 1, 3, vCtl3); // another controller
-
-    // Create set of notes (chord)
-    CreateNotes("MY_CHORD", "1 -4 6 -b13");
+    // Create sets of notes.
     CreateNotes("MY_SCALE", "1 3 4 b7");
+    _myScaleNotes = GetNotes("B4.MY_SCALE");
+    // Get some stock chords and scales.
+    _scaleNotes = GetNotes("G3.Algerian");
+    _chordNotes = GetNotes("C4.o7");
 
-    // // levers
-    // CreateLever(vModN);
-
-    // Get some stock chords and scales
-    _scaleNotes = GetScaleNotes("Algerian", "G3");
-    _chordNotes = GetChordNotes("C4.o7");
-// }
-
-// public override void Setup2()
-// {
-//     // SendPatch(chKeys, AcousticGrandPiano);
-//     // SendPatch(chBass, AcousticBass);
-//     // SendPatch(chSynth, Lead1Square);
-//     // SendPatch(chDrums, 32); // kit
-
-    BuildComp();
-}
-
-void BuildComp()
-{
 
     /////////////////////// sequences /////////////////////////////////
 
@@ -197,7 +158,25 @@ public override void Step()
     }
 }
 
-////////////////// my functions /////////////////////////////
+// TODO1 add event handlers
+//     //Print("vModN", "=", vModN.Value);
+//     SendController(chSynth, Pan, vModN.Value);
+//
+//     //Print("vVkeyNote", "=", vVkeyNote.Value);
+//
+//     // Test for note on or off.
+//     if(vVkeyNote.Value > 0)
+//     {
+//         SendNoteOn(chSynth, vVkeyNote.Value, 0.9);
+//     }
+//     else
+//     {
+//         SendNoteOff(chSynth, -vVkeyNote.Value);
+//     }
+
+
+
+////////////////// custom functions /////////////////////////////
 
 void Algo()
 {
@@ -210,25 +189,3 @@ void AlgoNull()
     // Print("!!!! AlgoNull");
 }
 
-////////////// event handlers ////////////////////
-
-// public void On_vModN()
-// {
-//     //Print("vModN", "=", vModN.Value);
-//     SendController(chSynth, Pan, vModN.Value);
-// }
-
-// public void On_vVkeyNote()
-// {
-//     //Print("vVkeyNote", "=", vVkeyNote.Value);
-
-//     // Test for note on or off.
-//     if(vVkeyNote.Value > 0)
-//     {
-//         SendNoteOn(chSynth, vVkeyNote.Value, 0.9);
-//     }
-//     else
-//     {
-//         SendNoteOff(chSynth, -vVkeyNote.Value);
-//     }
-// }

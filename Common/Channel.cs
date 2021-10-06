@@ -13,39 +13,39 @@ using System.ComponentModel.DataAnnotations;
 namespace Nebulator.Common
 {
     /// <summary>One channel output.</summary>
-    [Serializable]
+    //[Serializable]
     public class Channel
     {
         /// <summary>Same as midi.</summary>
         public const int NUM_CHANNELS = 16;
 
         #region Properties - editable
-        [DisplayName("Channel Name")]
-        [Description("UI label and script reference.")]
-        [Browsable(true)]
+        // [DisplayName("Channel Name")]
+        // [Description("UI label and script reference.")]
+        // [Browsable(true)]
         public string ChannelName { get; set; } = Definitions.UNKNOWN_STRING;
 
-        [DisplayName("Channel Number")]
-        [Description("The associated numerical (midi) channel to use")]
-        [Browsable(true)]
-        [Range(1, NUM_CHANNELS, ErrorMessage = "Channel must be 1 to {NUM_CHANNELS}")]
+        // [DisplayName("Channel Number")]
+        // [Description("The associated numerical (midi) channel to use")]
+        // [Browsable(true)]
+        // [Range(1, NUM_CHANNELS, ErrorMessage = "Channel must be 1 to {NUM_CHANNELS}")]
         public int ChannelNumber { get; set; } = 1;
 
-        [DisplayName("Patch")]
-        [Description("Optional patch to send at startup.")]
-        [Browsable(true)]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        // [DisplayName("Patch")]
+        // [Description("Optional patch to send at startup.")]
+        // [Browsable(true)]
+        // [JsonConverter(typeof(JsonStringEnumConverter))]
         public Patch Patch { get; set; } = Patch.AcousticGrandPiano;
 
-        [DisplayName("Device Type")]
-        [Description("The device type for this channel.")]
-        [Browsable(true)]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        // [DisplayName("Device Type")]
+        // [Description("The device type for this channel.")]
+        // [Browsable(true)]
+        // [JsonConverter(typeof(JsonStringEnumConverter))]
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
-        [DisplayName("Volume Wobble Range")]
-        [Description("How wobbly. 0 to disable.")]
-        [Browsable(true)]
+        // [DisplayName("Volume Wobble Range")]
+        // [Description("How wobbly. 0 to disable.")]
+        // [Browsable(true)]
         public double VolumeWobbleRange { get; set; } = 0.0;
         #endregion
 
@@ -81,8 +81,8 @@ namespace Nebulator.Common
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()
         {
-            var s = $"Controller: DeviceType:{DeviceType} ChannelName:{ChannelName}";
-            //var s = $"Controller: DeviceType:{DeviceType} DeviceName:{DeviceName} ChannelName:{ChannelName}";
+            var s = $"Channel: DeviceType:{DeviceType} ChannelName:{ChannelName}";
+            //var s = $"Channel: DeviceType:{DeviceType} DeviceName:{DeviceName} ChannelName:{ChannelName}";
             return s;
         }
     }

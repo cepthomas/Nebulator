@@ -230,7 +230,7 @@ namespace Nebulator.Script
 
             if (channel is null || channel.Device is null)
             {
-                throw new Exception($"Invalid Channel config: {chanName}");
+                throw new Exception($"Invalid device for channel: {chanName}");
             }
 
             return channel;

@@ -198,7 +198,7 @@ namespace Nebulator.Common
             switch (context.PropertyDescriptor.Name)
             {
                 case "MidiIn":
-                    rec = new() { "None" };
+                    rec = new() { "" };
                     for (int devindex = 0; devindex < MidiIn.NumberOfDevices; devindex++)
                     {
                         rec.Add(MidiIn.DeviceInfo(devindex).ProductName);
@@ -206,7 +206,7 @@ namespace Nebulator.Common
                     break;
 
                 case "MidiOut":
-                    rec = new() { "None" };
+                    rec = new() { "" };
                     for (int devindex = 0; devindex < MidiOut.NumberOfDevices; devindex++)
                     {
                         rec.Add(MidiOut.DeviceInfo(devindex).ProductName);

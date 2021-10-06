@@ -100,7 +100,7 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, int resolution, string which, double volume)
         {
-            foreach (double d in ScriptUtils.ParseNoteString(which))
+            foreach (double d in ScriptUtils.GetNotes(which))
             {
                 Add(pattern, resolution, d, volume);
             }
@@ -250,7 +250,7 @@ namespace Nebulator.Script
         /// <param name="s"></param>
         public SequenceElement(string s)
         {
-            Notes = ScriptUtils.ParseNoteString(s);
+            Notes = ScriptUtils.GetNotes(s);
         }
 
         /// <summary>

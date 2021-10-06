@@ -6,7 +6,6 @@ using System.Threading;
 using System.Windows.Forms;
 
 
-
 namespace Nebulator.App
 {
     static class Program
@@ -15,7 +14,7 @@ namespace Nebulator.App
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        static void Main(string[] _)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

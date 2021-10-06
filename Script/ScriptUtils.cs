@@ -19,11 +19,11 @@ namespace Nebulator.Script
         #endregion
 
         #region Fields
-        /// <summary>My logger.</summary>
+        /// <summary>My logger - only for Print() function.</summary>
         static readonly Logger _logger = LogManager.GetLogger("Print");
 
-        /// <summary>Chord and scale definitions added from the script. Value is list of constituent notes.</summary>
-        static readonly Dictionary<string, List<string>> _scriptNoteDefs = new();
+        ///// <summary>Chord and scale definitions added from the script. Value is list of constituent notes.</summary>
+        //static readonly Dictionary<string, List<string>> _scriptNoteDefs = new();
 
         /// <summary>Script randomizer.</summary>
         static readonly Random _rand = new();
@@ -49,23 +49,25 @@ namespace Nebulator.Script
         };
         #endregion
 
+//TODO0 this file needs refactoring.
+
         #region Note manipulation functions
         /// <summary>
-        /// Add a chord or scale definition from the script.
+        /// Add a named chord or scale definition.
         /// </summary>
         /// <param name="name">"MY_CHORD"</param>
         /// <param name="parts">"1 4 6 b13"</param>
-        public static void AddScriptNoteDef(string name, string parts)
+        public static void CreateNotes(string name, string parts)
         {
-            _scriptNoteDefs[name] = parts.SplitByToken(" ");
+            ScriptDefinitions.TheDefinitions.NoteDefs[name] = parts.SplitByToken(" ");
         }
 
         /// <summary>
-        /// Parse note or notes from input value. Checks both stock items and those defined in the script.
+        /// Parse note or notes from input value.
         /// </summary>
         /// <param name="noteString">String to parse.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
-        public static List<double> ParseNoteString(string noteString)
+        public static List<double> GetNotes(string noteString)
         {
             List<double> notes = new();
 
@@ -75,8 +77,9 @@ namespace Nebulator.Script
             {
                 // Could be:
                 // F4 - named note
-                // F4.dim7 - named chord
-                // F4.BLA - user defined chord
+                // F4.dim7 - named key/chord
+                // F4.FOO - user defined key/chord or scale
+                // F4.Major - named key/scale
 
                 // Break it up.
                 var parts = noteString.SplitByToken(".");
@@ -106,14 +109,8 @@ namespace Nebulator.Script
 
                 if (parts.Count > 1)
                 {
-                    // It's a chord. M, M7, m, m7, etc. Determine the constituents. Start with the stock collection then try user defs.
-                    var chordParts = ScriptDefinitions.TheDefinitions.ChordDefs[parts[1]];
-
-                    if(chordParts is null)
-                    {
-                        chordParts = _scriptNoteDefs[parts[1]];
-                    }
-
+                    // It's a chord. M, M7, m, m7, etc. Determine the constituents.
+                    var chordParts = ScriptDefinitions.TheDefinitions.NoteDefs[parts[1]];
                     var chordNotes = chordParts[0].SplitByToken(" ");
 
                     for (int p = 0; p < chordNotes.Count; p++)
@@ -150,61 +147,51 @@ namespace Nebulator.Script
             return notes;
         }
 
-        /// <summary>Convert the argument into numbered notes.</summary>
-        /// <param name="note">Note string using any form allowed in the script.</param>
-        /// <returns>Array of notes or empty if invalid.</returns>
-        public static List<double> GetChordNotes(string note)
-        {
-            List<double> notes = ParseNoteString(note);
-            return notes;
-        }
-        //public static double[] GetChordNotes(string note)
+        ///// <summary>Convert the argument into numbered notes.</summary>
+        ///// <param name="note">Note string using any form allowed in the script.</param>
+        ///// <returns>Array of notes or empty if invalid.</returns>
+        //public static List<double> GetChordNotes(string note)
         //{
-        //    List<double> notes = ScriptUtils.ParseNoteString(note);
-        //    return notes is not null ? notes.ToArray() : Array.Empty<double>();
+        //    List<double> notes = ParseNoteString(note);
+        //    return notes;
         //}
 
-        /// <summary>
-        /// Create a list of absolute note numbers for given scale name. Checks both stock items and those defined in the script.
-        /// </summary>
-        /// <param name="scale">Name of the scale.</param>
-        /// <param name="key">Key.octave</param>
-        /// <returns>List of scale notes - empty if invalid.</returns>
-        public static List<double> GetScaleNotes(string scale, string key)
-        {
-            var notes = new List<double>();
+        ///// <summary>
+        ///// Create a list of absolute note numbers for given scale or chord name.
+        ///// </summary>
+        ///// <param name="scale">Name of the scale or chord.</param>
+        ///// <param name="key">Key.octave</param>
+        ///// <returns>List of scale notes - empty if invalid.</returns>
+        //public static List<double> GetNotes(string scale, string key)
+        //{
+        //    var notes = new List<double>();
 
-            // Dig out the root note.
-            List<double> keyNotes = ParseNoteString(key);
+        //    // Dig out the root note.
+        //    List<double> keyNotes = ParseNoteString(key);
 
-            if (keyNotes.Count > 0)
-            {
-                // Start with the stock collection then try user defs.
-                var scaleDef = ScriptDefinitions.TheDefinitions.ScaleDefs[scale];
+        //    if (keyNotes.Count > 0)
+        //    {
+        //        // Start with the stock collection then try user defs.
+        //        var scaleDef = ScriptDefinitions.TheDefinitions.NoteDefs[scale];
 
-                if (scaleDef is null)
-                {
-                    scaleDef = _scriptNoteDefs[scale];
-                }
+        //        if (scaleDef is not null && scaleDef.Count >= 1)
+        //        {
+        //            // like "1 2 b3 #4 5 b6 7"
+        //           var scaleNotes = scaleDef[0].SplitByToken(" ");
 
-                if (scaleDef is not null && scaleDef.Count >= 1)
-                {
-                    // "1 2 b3 #4 5 b6 7"
-                   var scaleNotes = scaleDef[0].SplitByToken(" ");
+        //            scaleNotes.ForEach(sn =>
+        //            {
+        //                int? intNum = GetInterval(sn);
+        //                if (intNum is not null)
+        //                {
+        //                    notes.Add(keyNotes[0] + intNum.Value);
+        //                }
+        //            });
+        //        }
+        //    }
 
-                    scaleNotes.ForEach(sn =>
-                    {
-                        int? intNum = GetInterval(sn);
-                        if (intNum is not null)
-                        {
-                            notes.Add(keyNotes[0] + intNum.Value);
-                        }
-                    });
-                }
-            }
-
-            return notes;
-        }
+        //    return notes;
+        //}
 
         /// <summary>
         /// Is it a white key?
@@ -324,7 +311,6 @@ namespace Nebulator.Script
         }
         #endregion
 
-
         #region General utilities
         public static double Random(double max)
         {
@@ -351,6 +337,5 @@ namespace Nebulator.Script
             _logger.Info(string.Join(" | ", vars));
         }
         #endregion
-
     }
 }

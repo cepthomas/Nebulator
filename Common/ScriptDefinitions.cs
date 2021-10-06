@@ -24,11 +24,14 @@ namespace Nebulator.Common
         /// <summary>The midi controller definitions from ScriptDefinitions.md.</summary>
         public Dictionary<string, string> ControllerDefs { get; private set; } = new Dictionary<string, string>();
 
-        /// <summary>The chord definitions from ScriptDefinitions.md. Key is chord name, Value is list of constituent notes.</summary>
-        public Dictionary<string, List<string>> ChordDefs { get; private set; } = new Dictionary<string, List<string>>();
+        /// <summary>The note definitions from ScriptDefinitions.md. Key is chord name or scale name, Value is list of constituent notes.</summary>
+        public Dictionary<string, List<string>> NoteDefs { get; private set; } = new Dictionary<string, List<string>>();
 
-        /// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is list of constituent notes.</summary>
-        public Dictionary<string, List<string>> ScaleDefs { get; private set; } = new Dictionary<string, List<string>>();
+        ///// <summary>The chord definitions from ScriptDefinitions.md. Key is chord name, Value is list of constituent notes.</summary>
+        //public Dictionary<string, List<string>> ChordDefs { get; private set; } = new Dictionary<string, List<string>>();
+
+        ///// <summary>The scale definitions from ScriptDefinitions.md. Key is scale name, Value is list of constituent notes.</summary>
+        //public Dictionary<string, List<string>> ScaleDefs { get; private set; } = new Dictionary<string, List<string>>();
 
         /// <summary>Helper for internals. Really should be separate classes - avoiding over-OOPing.</summary>
         public int NoteControl { get; set; } = -1;
@@ -45,8 +48,9 @@ namespace Nebulator.Common
             InstrumentDefs.Clear();
             DrumDefs.Clear();
             ControllerDefs.Clear();
-            ChordDefs.Clear();
-            ScaleDefs.Clear();
+            //ChordDefs.Clear();
+            //ScaleDefs.Clear();
+            NoteDefs.Clear();
 
             // Read the file.
             object? currentSection = null;
@@ -73,11 +77,11 @@ namespace Nebulator.Common
                             break;
 
                         case "Chord":
-                            currentSection = ChordDefs;
+                            currentSection = NoteDefs;// ChordDefs;
                             break;
 
                         case "Scale":
-                            currentSection = ScaleDefs;
+                            currentSection = NoteDefs;//ScaleDefs;
                             break;
 
                         case string s when !s.StartsWith("---"):

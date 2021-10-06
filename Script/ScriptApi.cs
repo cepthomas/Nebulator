@@ -30,7 +30,7 @@ namespace Nebulator.Script
         public double MasterVolume { get; set; } = 0;
         #endregion
 
-        #region Functions that can be overridden in the user script
+        #region Script functions that can be overridden
         /// <summary>Called to initialize Nebulator stuff.</summary>
         public virtual void Setup() { }
 
@@ -44,7 +44,7 @@ namespace Nebulator.Script
         public virtual void InputControl(DeviceType dev, int channel, int ctlid, double value) { }
         #endregion
 
-        #region Script callable functions
+        #region Script callable functions - composition
         /// <summary>
         /// Create a defined sequence and add to internal collection.
         /// </summary>
@@ -89,7 +89,9 @@ namespace Nebulator.Script
             _sections.Add(nsect);
             return nsect;
         }
+        #endregion
 
+        #region Script callable functions - send
         /// <summary>Send a note immediately. Lowest level sender. Adds a note off to play after dur time.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
@@ -229,16 +231,6 @@ namespace Nebulator.Script
         {
             StepCollection scoll = ConvertToSteps(chanName, seq, StepTime.Beat);
             _steps.Add(scoll);
-        }
-
-        /// <summary>
-        /// Add a chord or scale definition.
-        /// </summary>
-        /// <param name="name">"MY_CHORD"</param>
-        /// <param name="parts">"1 4 6 b13"</param>
-        protected void CreateNotes(string name, string parts)
-        {
-            ScriptUtils.AddScriptNoteDef(name, parts);
         }
         #endregion
     }

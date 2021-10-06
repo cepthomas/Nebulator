@@ -14,7 +14,7 @@ using Nebulator.Script;
 namespace Nebulator.App
 {
     /// <summary>General script result - error/warn etc.</summary>
-    public enum ScriptResultType
+    public enum CompileResultType
     {
         None,       // Not an error - could be info.
         Warning,    // Compiler warning.
@@ -24,10 +24,10 @@ namespace Nebulator.App
     }
 
     /// <summary>General script result container.</summary>
-    public class ScriptResult
+    public class CompileResult
     {
         /// <summary>Where it came from.</summary>
-        public ScriptResultType ResultType { get; set; } = ScriptResultType.None;
+        public CompileResultType ResultType { get; set; } = CompileResultType.None;
 
         /// <summary>Original source file.</summary>
         public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
@@ -51,9 +51,6 @@ namespace Nebulator.App
         /// <summary>Current source line.</summary>
         public int LineNumber { get; set; } = 1;
 
-        /// <summary>Current parse state.</summary>
-        public string State { get; set; } = "idle";
-
         /// <summary>Accumulated script code lines.</summary>
         public List<string> CodeLines { get; set; } = new List<string>();
     }
@@ -62,8 +59,14 @@ namespace Nebulator.App
     public class Compiler
     {
         #region Properties
-        /// <summary>Accumulated results.</summary>
-        public List<ScriptResult> Results { get; } = new List<ScriptResult>();
+        /// <summary>The compiled script.</summary>
+        public ScriptBase Script { get; set; } = new();
+
+        /// <summary>Current active channels.</summary>
+        public List<Channel> Channels { get; set; } = new();
+
+        /// <summary>Accumulated errors/results.</summary>
+        public List<CompileResult> Results { get; } = new List<CompileResult>();
 
         /// <summary>All active source files. Provided so client can monitor for external changes.</summary>
         public IEnumerable<string> SourceFiles { get { return _filesToCompile.Values.Select(f => f.SourceFile).ToList(); } }
@@ -71,14 +74,15 @@ namespace Nebulator.App
         /// <summary>Compile products are here.</summary>
         public string TempDir { get; set; } = Definitions.UNKNOWN_STRING;
 
+        /// <summary>Errors considering warnings-as-errors setting.</summary>
         public int ErrorCount
         {
             get
             {
-                int errorCount = Results.Where(r => r.ResultType == ScriptResultType.Error || r.ResultType == ScriptResultType.Fatal).Count();
+                int errorCount = Results.Where(r => r.ResultType == CompileResultType.Error || r.ResultType == CompileResultType.Fatal).Count();
                 if (!UserSettings.TheSettings.IgnoreWarnings)
                 {
-                    errorCount += Results.Where(r => r.ResultType == ScriptResultType.Warning).Count();
+                    errorCount += Results.Where(r => r.ResultType == CompileResultType.Warning).Count();
                 }
                 return errorCount;
             }
@@ -92,6 +96,9 @@ namespace Nebulator.App
         /// <summary>Starting directory.</summary>
         string _baseDir = Definitions.UNKNOWN_STRING;
 
+        /// <summary>Main source file name.</summary>
+        readonly string _nebfn = Definitions.UNKNOWN_STRING;
+
         /// <summary>Script info.</summary>
         string _scriptName = Definitions.UNKNOWN_STRING;
 
@@ -104,8 +111,8 @@ namespace Nebulator.App
         /// <summary>All the definitions for internal use. TODO2 more elegant/fast way?</summary>
         readonly Dictionary<string, int> _defs = new();
 
-        /// <summary>Need to know.</summary>
-        Config _config = new();
+        /// <summary>Code lines that define channels.</summary>
+        readonly List<string> _channelDescriptors = new();
         #endregion
 
         #region Public functions
@@ -113,21 +120,16 @@ namespace Nebulator.App
         /// Run the Compiler.
         /// </summary>
         /// <param name="nebfn">Fully qualified path to main file.</param>
-        /// <param name="config">Config info.</param>
-        /// <returns>The newly minted script object or null if failed.</returns>
-        public ScriptBase Execute(string nebfn, Config config)
+        public void Execute(string nebfn)
         {
-            ScriptBase script = new();
-            _config = config;
-
             // Reset everything.
+            Script = new();
+            Channels.Clear();
+            Results.Clear();
             _filesToCompile.Clear();
             _initLines.Clear();
 
-            Results.Clear();
-
-            var path = Path.GetDirectoryName(nebfn);
-            if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn) && !string.IsNullOrEmpty(path))
+            if (nebfn != Definitions.UNKNOWN_STRING && File.Exists(nebfn))
             {
                 _logger.Info($"Compiling {nebfn}.");
 
@@ -136,14 +138,27 @@ namespace Nebulator.App
                 StringBuilder sb = new();
                 _scriptName.ForEach(c => sb.Append(char.IsLetterOrDigit(c) ? c : '_'));
                 _scriptName = sb.ToString();
-
-                _baseDir = path;
+                var dir = Path.GetDirectoryName(nebfn);
+                _baseDir = dir!;
 
                 ///// Compile.
                 DateTime startTime = DateTime.Now; // for metrics
 
+                // Save hash of current channel descriptors to detect change in source code.
+                int chdesc = string.Join("", _channelDescriptors).GetHashCode();
+                _channelDescriptors.Clear();
+
+                // Process the source files.
                 Parse(nebfn);
-                script = Compile();
+
+                // Check for changed channels.
+                if (string.Join("", _channelDescriptors).GetHashCode() != chdesc)
+                {
+                    Channels = ProcessChannelDescs();
+                }
+
+                // Compile the processed files.
+                Script = CompileNative();
 
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
             }
@@ -152,8 +167,11 @@ namespace Nebulator.App
                 _logger.Error($"Invalid file {nebfn}.");
             }
 
-            script.Valid = ErrorCount == 0;
-            return script;
+            Script.Valid = ErrorCount == 0;
+
+            if(Script.Valid)
+            {
+            }
         }
         #endregion
 
@@ -162,7 +180,7 @@ namespace Nebulator.App
         /// Top level compiler.
         /// </summary>
         /// <returns>Compiled script</returns>
-        ScriptBase Compile()
+        ScriptBase CompileNative()
         {
             ScriptBase script = new();
 
@@ -201,7 +219,8 @@ namespace Nebulator.App
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     FileName = "dotnet",
-                    Arguments = $"build --no-restore {TempDir}"
+                    Arguments = $"build {TempDir}"
+                    //Arguments = $"build --no-restore {TempDir}"
                 };
 
                 Process process = new() { StartInfo = stinfo };
@@ -215,9 +234,9 @@ namespace Nebulator.App
 
                 if(stderr != "")
                 {
-                    ScriptResult se = new()
+                    CompileResult se = new()
                     {
-                        ResultType = ScriptResultType.Fatal,
+                        ResultType = CompileResultType.Fatal,
                         Message = $"Really bad thing happened:{stderr}"
                     };
                     Results.Add(se);
@@ -235,13 +254,15 @@ namespace Nebulator.App
                         {
                             if (l.Contains(": error ") || l.Contains(": warning "))
                             {
-                                ScriptResult se = new();
+                                CompileResult se = new();
+
+                                // TODO1 need better parser!
 
                                 // Parse the line.
                                 var parts0 = l.SplitByTokens(":");
 
-                                if (parts0[2].StartsWith("error")) se.ResultType = ScriptResultType.Error;
-                                else if (parts0[2].StartsWith("warning")) se.ResultType = ScriptResultType.Warning;
+                                if (parts0[2].StartsWith("error")) se.ResultType = CompileResultType.Error;
+                                else if (parts0[2].StartsWith("warning")) se.ResultType = CompileResultType.Warning;
 
                                 var parts1 = parts0[1].SplitByTokens("(),");
 
@@ -300,7 +321,7 @@ namespace Nebulator.App
                     if (ErrorCount == 0)
                     {
                         // All good so far.
-                        Assembly assy = Assembly.LoadFrom(Path.Combine(TempDir, "net5.0-windows", "UserScript.dll"));
+                        Assembly assy = Assembly.LoadFrom(Path.Combine(TempDir, "net5.0-windows", "UserScript.dll")); //TODO1 need to unload/free script to release dll file.
 
                         // Bind to the script interface.
                         foreach (Type t in assy.GetTypes())
@@ -325,9 +346,9 @@ namespace Nebulator.App
             }
             catch (Exception ex)
             {
-                Results.Add(new ScriptResult()
+                Results.Add(new CompileResult()
                 {
-                    ResultType = ScriptResultType.Fatal,
+                    ResultType = CompileResultType.Fatal,
                     Message = "Exception: " + ex.Message,
                 });
             }
@@ -342,7 +363,7 @@ namespace Nebulator.App
         void Parse(string nebfn)
         {
             // Add the generated internal code files.
-            _filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext() // TODO1 Not if using internal collections!
+            _filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext() // TODO0 Not if using internal collections!
             {
                 SourceFile = "",
                 CodeLines = GenDefFileContents()
@@ -359,7 +380,7 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// Parse one file. Recursive to support nested #include.
+        /// Parse one file. Recursive to support nested include(fn).
         /// </summary>
         /// <param name="pcont">The parse context.</param>
         /// <returns>True if a valid file.</returns>
@@ -401,13 +422,15 @@ namespace Nebulator.App
                 int pos = s.IndexOf("//");
                 string cline = pos >= 0 ? s.Left(pos) : s;
 
-                // Test for nested files
+                // Test for preprocessor directives.
+                string strim = s.Trim();
+
                 //Include("path\name.neb");
-                if (s.Trim().StartsWith("Include"))
+                if (strim.StartsWith("Include"))
                 {
                     bool valid = false;
 
-                    List<string> parts = s.SplitByTokens("\"");
+                    List<string> parts = strim.SplitByTokens("\"");
                     if(parts.Count == 3)
                     {
                         string fn = Path.Combine(UserSettings.TheSettings.WorkPath, parts[1]);
@@ -424,18 +447,18 @@ namespace Nebulator.App
 
                     if (!valid)
                     {
-                        Results.Add(new ScriptResult()
+                        Results.Add(new CompileResult()
                         {
-                            ResultType = ScriptResultType.Error,
-                            Message = $"Invalid Include: {s}",
+                            ResultType = CompileResultType.Error,
+                            Message = $"Invalid Include: {strim}",
                             SourceFile = pcont.SourceFile,
                             LineNumber = pcont.LineNumber
                         });
                     }
                 }
-                else if (s.Trim().StartsWith("Config"))
+                else if (strim.StartsWith("Channel"))
                 {
-                    // Remove these.
+                    _channelDescriptors.Add(strim);
                 }
                 else // plain line
                 {
@@ -446,6 +469,48 @@ namespace Nebulator.App
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Convert channel descriptors into objects.
+        /// </summary>
+        /// <returns></returns>
+        List<Channel> ProcessChannelDescs()
+        {
+            List<Channel> channels = new();
+
+            // Build new channels.
+            foreach (string sch in _channelDescriptors)
+            {
+                try
+                {
+                    // Channel("keys",  MidiOut, 1, AcousticGrandPiano,  0.1);
+                    List<string> parts = sch.SplitByTokens("(),;");
+
+                    Channel ch = new()
+                    {
+                        ChannelName = parts[1].Replace("\"", ""),
+                        DeviceType = (DeviceType)Enum.Parse(typeof(DeviceType), parts[2]),
+                        ChannelNumber = int.Parse(parts[3]),
+                        Patch = (Patch)Enum.Parse(typeof(Patch), parts[4]),
+                        VolumeWobbleRange = double.Parse(parts[5])
+                    };
+
+                    channels.Add(ch);
+                }
+                catch (Exception)
+                {
+                    Results.Add(new()
+                    {
+                        ResultType = CompileResultType.Error,
+                        Message = $"Bad statement:{sch}",
+                        SourceFile = _nebfn,
+                        //LineNumber = -1 // TODO2
+                    });
+                }
+            }
+
+            return channels;
         }
 
         /// <summary>
