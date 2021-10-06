@@ -243,7 +243,7 @@ namespace Nebulator.App
 
             UserSettings.TheSettings.Save();
 
-            _nppVals.Save();
+            SaveProjectValues();
 
             DestroyDevices();
 
@@ -265,6 +265,41 @@ namespace Nebulator.App
             }
 
             base.Dispose(disposing);
+        }
+        #endregion
+
+        #region Project persistence
+        /// <summary>
+        /// Save current values.
+        /// </summary>
+        void SaveProjectValues()
+        {
+            _nppVals.Clear();
+            _nppVals.SetValue("master", "speed", potSpeed.Value);
+            _nppVals.SetValue("master", "volume", sldVolume.Value);
+
+            foreach (var ch in _channels)
+            {
+                _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
+                _nppVals.SetValue(ch.ChannelName, "state", ch.State);
+            }
+
+            _nppVals.Save();
+        }
+
+        /// <summary>
+        /// Load from persistence.
+        /// </summary>
+        void InitProjectValues()
+        {
+            potSpeed.Value = (double)_nppVals.GetValue("master", "speed", 100.0);
+            sldVolume.Value = (double)_nppVals.GetValue("master", "volume", 0.8);
+
+            foreach (var ch in _channels)
+            {
+                ch.Volume = (double)_nppVals.GetValue(ch.ChannelName, "volume", 0.8);
+                ch.State = (ChannelState)_nppVals.GetValue(ch.ChannelName, "state", ChannelState.Normal);
+            }
         }
         #endregion
 
@@ -305,6 +340,7 @@ namespace Nebulator.App
                             DestroyChannelControls();
                             _channels = compiler.Channels;
                             CreateChannelControls();
+                            InitProjectValues();
                         }
 
                         _script.Init(compiler.Channels);
@@ -519,7 +555,6 @@ namespace Nebulator.App
 
                     ChannelControl tctl = new()
                     {
-                        //Name = t.DeviceType.ToString(),
                         Location = new Point(x, y),
                         BoundChannel = t,
                     };
@@ -527,7 +562,6 @@ namespace Nebulator.App
 
                     x += tctl.Width + CONTROL_SPACING;
                 }
-                //else
 
                 if (dev is null)
                 {
@@ -556,8 +590,6 @@ namespace Nebulator.App
             }
         }
         #endregion
-
-
 
         #region Realtime handling
         /// <summary>
@@ -876,7 +908,7 @@ namespace Nebulator.App
                 try
                 {
                     // Clean up the old.
-                    _nppVals.Save();
+                    SaveProjectValues();
 
                     if (File.Exists(fn))
                     {
@@ -895,48 +927,6 @@ namespace Nebulator.App
                     {
                         ret = $"Invalid file: {fn}";
                     }
-
-
-                    // if (File.Exists(fn))
-                    // {
-                    //     _logger.Info($"Opening {fn}");
-                    //     _scriptFileName = fn;
-
-                    //     // Get the config and set things up.
-                    //     string? cfigfn = GetConfigFileName(fn);
-                    //     if (cfigfn is not null)
-                    //     {
-                    //         cfigfn = Path.Combine(UserSettings.TheSettings.WorkPath, cfigfn);
-
-                    //         LoadConfig(cfigfn);
-
-                    //         if (_config.Valid)
-                    //         {
-                    //             AddToRecentDefs(fn);
-                    //             bool ok = CompileScript();
-                    //             SetCompileStatus(ok);
-
-                    //             Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
-                    //         }
-                    //         else
-                    //         {
-                    //             _logger.Error($"Couldn't load config file: {cfigfn}");
-                    //             SetCompileStatus(false);
-                    //             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
-                    //         }
-                    //     }
-                    //     else
-                    //     {
-                    //         _logger.Error($"Invalid config file in script");
-                    //         SetCompileStatus(false);
-                    //         Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
-                    //     }
-                    // }
-                    // else
-                    // {
-                    //     ret = $"Invalid script file: {fn}";
-                    //     SetCompileStatus(false);
-                    // }
                 }
                 catch (Exception ex)
                 {
@@ -1013,7 +1003,6 @@ namespace Nebulator.App
         /// </summary>
         void Speed_ValueChanged(object? sender, EventArgs e)
         {
-            _nppVals.SetValue("master", "speed", potSpeed.Value);
             SetFastTimerPeriod();
         }
 
@@ -1030,7 +1019,6 @@ namespace Nebulator.App
         /// </summary>
         void Volume_ValueChanged(object? sender, EventArgs e)
         {
-            _nppVals.SetValue("master", "volume", sldVolume.Value);
         }
 
         /// <summary>
@@ -1193,16 +1181,6 @@ namespace Nebulator.App
         #endregion
 
         #region User settings
-        ///// <summary>
-        ///// Save user settings that aren't automatic.
-        ///// </summary>
-        //void SaveSettings()
-        //{
-        //    UserSettings.TheSettings.MainFormInfo = FromForm(this);
-
-        //    UserSettings.TheSettings.Save();
-        //}
-
         /// <summary>
         /// Edit the common options in a property grid.
         /// </summary>

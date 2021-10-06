@@ -168,10 +168,6 @@ namespace Nebulator.App
             }
 
             Script.Valid = ErrorCount == 0;
-
-            if(Script.Valid)
-            {
-            }
         }
         #endregion
 

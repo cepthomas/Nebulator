@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using Nebulator.Common;
 
@@ -33,8 +34,8 @@ namespace Nebulator.Controls
         {
             if(BoundChannel is not null)
             {
-                chkSolo.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
-                chkMute.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
+                chkSolo.FlatAppearance.CheckedBackColor = Color.Green;
+                chkMute.FlatAppearance.CheckedBackColor = Color.Red;
 
                 sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
                 sldVolume.DecPlaces = 2;

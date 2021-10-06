@@ -20,32 +20,19 @@ namespace Nebulator.Common
         public const int NUM_CHANNELS = 16;
 
         #region Properties - editable
-        // [DisplayName("Channel Name")]
-        // [Description("UI label and script reference.")]
-        // [Browsable(true)]
+        /// <summary>UI label and script reference.</summary>
         public string ChannelName { get; set; } = Definitions.UNKNOWN_STRING;
 
-        // [DisplayName("Channel Number")]
-        // [Description("The associated numerical (midi) channel to use")]
-        // [Browsable(true)]
-        // [Range(1, NUM_CHANNELS, ErrorMessage = "Channel must be 1 to {NUM_CHANNELS}")]
+        /// <summary>The associated numerical (midi) channel to use</summary>
         public int ChannelNumber { get; set; } = 1;
 
-        // [DisplayName("Patch")]
-        // [Description("Optional patch to send at startup.")]
-        // [Browsable(true)]
-        // [JsonConverter(typeof(JsonStringEnumConverter))]
+        /// <summary>Optional patch to send at startup.</summary>
         public Patch Patch { get; set; } = Patch.AcousticGrandPiano;
 
-        // [DisplayName("Device Type")]
-        // [Description("The device type for this channel.")]
-        // [Browsable(true)]
-        // [JsonConverter(typeof(JsonStringEnumConverter))]
+        /// <summary>The device type for this channel.</summary>
         public DeviceType DeviceType { get; set; } = DeviceType.None;
 
-        // [DisplayName("Volume Wobble Range")]
-        // [Description("How wobbly. 0 to disable.")]
-        // [Browsable(true)]
+        /// <summary>How wobbly. 0 to disable.</summary>
         public double VolumeWobbleRange { get; set; } = 0.0;
         #endregion
 

@@ -38,10 +38,10 @@ namespace Nebulator.Common
         /// <param name="owner"></param>
         /// <param name="valname"></param>
         /// <returns>The value or null if not in the collection.</returns>
-        public object? GetValue(string owner, string valname)
+        public object GetValue(string owner, string valname, object defval)
         {
             string key = MakeKey(owner, valname);
-            return Values.ContainsKey(key) ? Values[key] : null;
+            return Values.ContainsKey(key) ? Values[key] : defval;
         }
 
         /// <summary>
