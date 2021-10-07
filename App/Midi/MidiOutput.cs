@@ -176,11 +176,11 @@ namespace Nebulator.Midi
 
                         case StepControllerChange stt:
                             {
-                                if (stt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
+                                if (stt.ControllerId == MusicDefinitions.ControllerDef.NoteControl)
                                 {
                                     // Shouldn't happen, ignore.
                                 }
-                                else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
+                                else if (stt.ControllerId == MusicDefinitions.ControllerDef.PitchControl)
                                 {
                                     PitchWheelChangeEvent pevt = new(0,
                                         stt.ChannelNumber,
@@ -202,7 +202,7 @@ namespace Nebulator.Midi
                             {
                                 PatchChangeEvent evt = new(0,
                                     stt.ChannelNumber,
-                                    stt.PatchNumber);
+                                    (int)stt.Patch);
                                 msg = evt.GetAsShortMessage();
                             }
                             break;
@@ -240,7 +240,7 @@ namespace Nebulator.Midi
                     {
                         Device = this,
                         ChannelNumber = i + 1,
-                        ControllerId = (int)MidiController.AllNotesOff
+                        ControllerId = MusicDefinitions.ControllerDef.AllNotesOff
                     });
                 }
             }
@@ -250,7 +250,7 @@ namespace Nebulator.Midi
                 {
                     Device = this,
                     ChannelNumber = channel,
-                    ControllerId = (int)MidiController.AllNotesOff
+                    ControllerId = MusicDefinitions.ControllerDef.AllNotesOff
                 });
             }
         }

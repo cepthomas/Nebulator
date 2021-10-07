@@ -114,11 +114,11 @@ namespace Nebulator.Midi
                             break;
 
                         case StepControllerChange stt:
-                            if (stt.ControllerId == ScriptDefinitions.TheDefinitions.NoteControl)
+                            if (stt.ControllerId == MusicDefinitions.ControllerDef.NoteControl)
                             {
                                 // Shouldn't happen, ignore.
                             }
-                            else if (stt.ControllerId == ScriptDefinitions.TheDefinitions.PitchControl)
+                            else if (stt.ControllerId == MusicDefinitions.ControllerDef.PitchControl)
                             {
                                 evt = new PitchWheelChangeEvent(mtime,
                                     stt.ChannelNumber,
@@ -138,7 +138,7 @@ namespace Nebulator.Midi
                         case StepPatch stt:
                             evt = new PatchChangeEvent(mtime,
                                 stt.ChannelNumber,
-                                stt.PatchNumber);
+                                (int)stt.Patch);
                             trackEvents[step.ChannelNumber].Add(evt);
                             break;
 

@@ -192,7 +192,7 @@ namespace Nebulator.Midi
                         {
                             Device = this,
                             ChannelNumber = evt.Channel,
-                            ControllerId = (int)evt.Controller,
+                            ControllerId = (MusicDefinitions.ControllerDef)evt.Controller,
                             Value = evt.ControllerValue
                         };
                     }
@@ -204,7 +204,7 @@ namespace Nebulator.Midi
                         {
                             Device = this,
                             ChannelNumber = evt.Channel,
-                            ControllerId = ScriptDefinitions.TheDefinitions.PitchControl,
+                            ControllerId = MusicDefinitions.ControllerDef.PitchControl,
                             Value = MathUtils.Constrain(evt.Pitch, 0, MidiUtils.MAX_PITCH),
                         };
                     }

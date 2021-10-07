@@ -41,7 +41,7 @@ namespace Nebulator.Script
         public virtual void InputNote(DeviceType dev, int channel, double note) { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputControl(DeviceType dev, int channel, int ctlid, double value) { }
+        public virtual void InputControl(DeviceType dev, int channel, MusicDefinitions.ControllerDef ctlid, double value) { }
         #endregion
 
         #region Script callable functions - composition
@@ -186,9 +186,9 @@ namespace Nebulator.Script
 
         /// <summary>Send a controller immediately.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="ctlnum">Controller number.</param>
+        /// <param name="ctlid">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string chanName, int ctlnum, double val)
+        protected void SendController(string chanName, MusicDefinitions.ControllerDef ctlid, double val)
         {
             var channel = GetChannel(chanName);
             if (channel is not null)
@@ -197,7 +197,7 @@ namespace Nebulator.Script
                 {
                     Device = channel.Device,
                     ChannelNumber = channel.ChannelNumber,
-                    ControllerId = ctlnum,
+                    ControllerId = ctlid,
                     Value = val
                 };
 
@@ -208,7 +208,7 @@ namespace Nebulator.Script
         /// <summary>Send a midi patch immediately.</summary>
         /// <param name="chanName"></param>
         /// <param name="patch"></param>
-        protected void SendPatch(string chanName, int patch)
+        protected void SendPatch(string chanName, MusicDefinitions.InstrumentDef patch)
         {
             var channel = GetChannel(chanName);
             if (channel is not null)
@@ -217,7 +217,7 @@ namespace Nebulator.Script
                 {
                     Device = channel.Device,
                     ChannelNumber = channel.ChannelNumber,
-                    PatchNumber = patch
+                    Patch = patch
                 };
 
                 channel.Device?.Send(step);

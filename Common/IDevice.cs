@@ -22,7 +22,7 @@ namespace Nebulator.Common
         string DeviceName { get; }
 
         /// <summary>Device type.</summary>
-        DeviceType DeviceType { get; } //TODO1???
+        DeviceType DeviceType { get; } //TODO1  see - Channel???
         #endregion
 
         #region Functions

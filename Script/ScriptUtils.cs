@@ -56,13 +56,13 @@ namespace Nebulator.Script
         /// <param name="parts">"1 4 6 b13"</param>
         public static void CreateNotes(string name, string parts)
         {
-            ScriptDefinitions.TheDefinitions.NoteDefs[name] = parts.SplitByToken(" ");
+            MusicDefinitions.NoteDefs[name] = parts.SplitByToken(" ");
         }
 
         /// <summary>
         /// Parse note or notes from input value.
         /// </summary>
-        /// <param name="noteString">String to parse.</param>
+        /// <param name="noteString">Standard string to parse.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
         public static List<double> GetNotes(string noteString)
         {
@@ -107,7 +107,7 @@ namespace Nebulator.Script
                 if (parts.Count > 1)
                 {
                     // It's a chord. M, M7, m, m7, etc. Determine the constituents.
-                    var chordParts = ScriptDefinitions.TheDefinitions.NoteDefs[parts[1]];
+                    var chordParts = MusicDefinitions.NoteDefs[parts[1]];
                     var chordNotes = chordParts[0].SplitByToken(" ");
 
                     for (int p = 0; p < chordNotes.Count; p++)
@@ -159,7 +159,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="notes"></param>
         /// <returns></returns>
-        public static List<string> FormatNotes(List<int> notes)
+        public static List<string> FormatNotes(List<int> notes) //TODO2 prob internal only.
         {
             List<string> snotes = new();
 
@@ -183,19 +183,10 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="note"></param>
         /// <returns>The drum name</returns>
-        public static string FormatDrum(int note)
+        public static string FormatDrum(int note) //TODO2 prob internal only.
         {
-            string drumName = note.ToString();
-
-            foreach (string key in ScriptDefinitions.TheDefinitions.DrumDefs.Keys)
-            {
-                if (string.Join(" ", ScriptDefinitions.TheDefinitions.DrumDefs[key]) == note.ToString())
-                {
-                    drumName = key;
-                    break;
-                }
-            }
-
+            var n = Enum.GetName(typeof(MusicDefinitions.DrumDef), note);
+            string drumName = n is not null ? n : $"Drum{note}";
             return drumName;
         }
 
@@ -254,7 +245,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="inote"></param>
         /// <returns></returns>
-        public static string NoteNumberToName(int inote)
+        public static string NoteNumberToName(int inote) //TODO2 prob internal only.
         {
             int rootNote = SplitNoteNumber(inote).root;
             string[] noteNames = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };

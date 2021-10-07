@@ -91,6 +91,7 @@ namespace Nebulator.App
                 MessageBox.Show($"Wooops - bad user settings - goodbye");
                 Environment.Exit(1);
             }
+
             InitializeComponent();
             toolStrip1.Renderer = new NBagOfTricks.UI.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
         }
@@ -173,7 +174,7 @@ namespace Nebulator.App
 
             PopulateRecentMenu();
 
-            ScriptDefinitions.TheDefinitions.Init();// TODO0
+            MusicDefinitions.Init();
 
             CreateDevices();
 
@@ -443,7 +444,7 @@ namespace Nebulator.App
             // Keyboard.
             var kbd = new Keyboard(); //TODO2 useful? and/or replace with something else? x/y surface
             kbd.DeviceInputEvent += Device_InputEvent;
-            _inputDevices.Add(kbd.DeviceType, kbd);
+            _inputDevices.Add(DeviceType.Vkey, kbd);
             kbd.Visible = UserSettings.TheSettings.Keyboard;
             btnKeyboard.Click += (object? _, EventArgs __) => { kbd.Visible = btnKeyboard.Checked; };
 
@@ -454,11 +455,11 @@ namespace Nebulator.App
                 if (nin.Init())
                 {
                     nin.DeviceInputEvent += Device_InputEvent;
-                    _inputDevices.Add(nin.DeviceType, nin);
+                    _inputDevices.Add(DeviceType.MidiIn, nin);
                 }
                 else
                 {
-                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    _logger.Error($"Failed to init input device:MidiIn");
                     ok = false;
                 }
             }
@@ -469,11 +470,11 @@ namespace Nebulator.App
                 if (nin.Init())
                 {
                     //nin.DeviceInputEvent += Device_InputEvent;
-                    _outputDevices.Add(nin.DeviceType, nin);
+                    _outputDevices.Add(DeviceType.MidiOut, nin);
                 }
                 else
                 {
-                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    _logger.Error($"Failed to init input device:MidiOut");
                     ok = false;
                 }
             }
@@ -484,11 +485,11 @@ namespace Nebulator.App
                 if (nin.Init())
                 {
                     nin.DeviceInputEvent += Device_InputEvent;
-                    _inputDevices.Add(nin.DeviceType, nin);
+                    _inputDevices.Add(DeviceType.OscIn, nin);
                 }
                 else
                 {
-                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    _logger.Error($"Failed to init input device:OscIn");
                     ok = false;
                 }
             }
@@ -499,11 +500,11 @@ namespace Nebulator.App
                 if (nin.Init())
                 {
                     //nin.DeviceInputEvent += Device_InputEvent;
-                    _outputDevices.Add(nin.DeviceType, nin);
+                    _outputDevices.Add(DeviceType.OscOut, nin);
                 }
                 else
                 {
-                    _logger.Error($"Failed to init input device:{nin.DeviceType}");
+                    _logger.Error($"Failed to init input device:OscOut");
                     ok = false;
                 }
             }
@@ -727,7 +728,7 @@ namespace Nebulator.App
         void Device_InputEvent(object? sender, DeviceInputEventArgs e)
         {
             BeginInvoke((MethodInvoker) delegate ()
-           {
+            {
                if (_script.Valid && sender is not null)
                {
                    var dev = (IInputDevice)sender;
@@ -743,7 +744,7 @@ namespace Nebulator.App
                            break;
 
                        case StepControllerChange stctl:
-                           _script.InputControl(dev.DeviceType, stctl.ChannelNumber, stctl.ControllerId, stctl.Value);
+                            _script.InputControl(dev.DeviceType, stctl.ChannelNumber, stctl.ControllerId, stctl.Value);
                            break;
                    }
                }

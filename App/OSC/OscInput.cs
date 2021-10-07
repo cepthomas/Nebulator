@@ -191,13 +191,20 @@ namespace Nebulator.OSC
                             int ctlnum = (int)m.Data[1];
                             double value = MathUtils.Constrain((int)m.Data[2], 0, 10000);
 
-                            step = new StepControllerChange()
+                            if(Enum.IsDefined(typeof(MusicDefinitions.ControllerDef), ctlnum))
                             {
-                                Device = this,
-                                ChannelNumber = channel,
-                                ControllerId = ctlnum,
-                                Value = value
-                            };
+                                step = new StepControllerChange()
+                                {
+                                    Device = this,
+                                    ChannelNumber = channel,
+                                    ControllerId = (MusicDefinitions.ControllerDef)ctlnum,
+                                    Value = value
+                                };
+                            }
+                            else
+                            {
+                                _logger.Error($"Invalid controller: {ctlnum}");
+                            }
                         }
                         break;
 

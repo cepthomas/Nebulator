@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.IO;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Nebulator.Common;
 
 
 namespace Nebulator.Common
@@ -27,10 +28,10 @@ namespace Nebulator.Common
         public int ChannelNumber { get; set; } = 1;
 
         /// <summary>Optional patch to send at startup.</summary>
-        public Patch Patch { get; set; } = Patch.AcousticGrandPiano;
+        public MusicDefinitions.InstrumentDef Patch { get; set; } = MusicDefinitions.InstrumentDef.AcousticGrandPiano;
 
         /// <summary>The device type for this channel.</summary>
-        public DeviceType DeviceType { get; set; } = DeviceType.None;
+        public DeviceType DeviceType { get; set; } = DeviceType.None; //TODO1 see IDevice???
 
         /// <summary>How wobbly. 0 to disable.</summary>
         public double VolumeWobbleRange { get; set; } = 0.0;
