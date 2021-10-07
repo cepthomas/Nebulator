@@ -7,7 +7,7 @@ Include("utils.neb");
 Include("scale.neb");
 
 ///// All the channel/outputs.
-Channel("keys",  MidiOut, 1, AcousticGrandPiano,  0.1); // something
+Channel("keys",  MidiOut, 1, AcousticGrandPiano,  0.1);
 Channel("bass",  MidiOut, 2, AcousticBass,  0.1);
 Channel("synth", MidiOut, 3, Lead1Square,  0.1);
 Channel("drums", MidiOut, 10, 32, 0.1); // kit
@@ -20,15 +20,14 @@ const double DRUM_VOL = 0.8;
 Sequence seqDynamic;
 
 // Compiler test.
-//int _unused;
 //error
+//int _unused = 48;
 
 ////// Simple variables for functions.
 List<double> _scaleNotes;
 List<double> _chordNotes;
 List<double> _myChordNotes;
 List<double> _myScaleNotes;
-//int _noteNum = 48;
 
 
 ////// Nebulator midi stuff
@@ -126,9 +125,9 @@ public override void Setup()
 
     Section sectBeginning = CreateSection(32, "Beginning", new SectionElements
     {
-        { "keys",  Loop,  seqKeysVerse   },
+        { "keys",  Loop,  seqKeysVerse  },
         { "drums", Loop,  seqDrumsVerse },
-        { "bass",  Loop,  seqBassVerse   }
+        { "bass",  Loop,  seqBassVerse  }
     });
 
     Section sectMiddle = CreateSection(16, "Middle", new SectionElements

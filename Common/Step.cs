@@ -92,7 +92,7 @@ namespace Nebulator.Common
     public class StepControllerChange : Step
     {
         /// <summary>Specific controller. See also specials in ControllerType.</summary>
-        public MusicDefinitions.ControllerDef ControllerId { get; set; } = MusicDefinitions.ControllerDef.None;
+        public ControllerDef ControllerId { get; set; } = ControllerDef.None;
 
         /// <summary>The payload. CC value, midi pitch value, note number.</summary>
         public double Value { get; set; } = 0;
@@ -102,11 +102,11 @@ namespace Nebulator.Common
         {
             StringBuilder sb = new($"StepControllerChange: {base.ToString()}");
 
-            if (ControllerId == MusicDefinitions.ControllerDef.NoteControl)
+            if (ControllerId == ControllerDef.NoteControl)
             {
                 sb.Append($" Note:{Value:F2}");
             }
-            else if (ControllerId == MusicDefinitions.ControllerDef.PitchControl)
+            else if (ControllerId == ControllerDef.PitchControl)
             {
                 sb.Append($" Pitch:{Value:F2}");
             }
@@ -123,7 +123,7 @@ namespace Nebulator.Common
     public class StepPatch : Step
     {
         /// <summary>Specific patch.</summary>
-        public MusicDefinitions.InstrumentDef Patch { get; set; } = MusicDefinitions.InstrumentDef.AcousticGrandPiano;
+        public InstrumentDef Patch { get; set; } = InstrumentDef.AcousticGrandPiano;
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()

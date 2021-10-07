@@ -10,9 +10,6 @@ using Nebulator.Common;
 
 namespace Nebulator.Script
 {
-    /// <summary>How to play the sequence in the section.</summary>
-    public enum SequenceMode { Once, Loop }
-
     /// <summary>
     /// One section definition.
     /// </summary>
@@ -92,12 +89,12 @@ namespace Nebulator.Script
         /// <param name="channel"></param>
         /// <param name="seqMode">One of enum SequenceMode</param>
         /// <param name="sequences"></param>
-        public void Add(string channel, int seqMode, params Sequence[] sequences)
+        public void Add(string channel, SequenceMode seqMode, params Sequence[] sequences)
         {
             SectionElement sel = new()
             {
                 Channel = channel,
-                Mode = (SequenceMode)seqMode,
+                Mode = seqMode,
                 Sequences = sequences
             };
 

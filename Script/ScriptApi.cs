@@ -41,7 +41,7 @@ namespace Nebulator.Script
         public virtual void InputNote(DeviceType dev, int channel, double note) { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputControl(DeviceType dev, int channel, MusicDefinitions.ControllerDef ctlid, double value) { }
+        public virtual void InputControl(DeviceType dev, int channel, ControllerDef ctlid, double value) { }
         #endregion
 
         #region Script callable functions - composition
@@ -188,7 +188,7 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="ctlid">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string chanName, MusicDefinitions.ControllerDef ctlid, double val)
+        protected void SendController(string chanName, ControllerDef ctlid, double val)
         {
             var channel = GetChannel(chanName);
             if (channel is not null)
@@ -208,7 +208,7 @@ namespace Nebulator.Script
         /// <summary>Send a midi patch immediately.</summary>
         /// <param name="chanName"></param>
         /// <param name="patch"></param>
-        protected void SendPatch(string chanName, MusicDefinitions.InstrumentDef patch)
+        protected void SendPatch(string chanName, InstrumentDef patch)
         {
             var channel = GetChannel(chanName);
             if (channel is not null)

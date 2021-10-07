@@ -46,7 +46,7 @@ namespace Nebulator.Script
         };
         #endregion
 
-//TODO0 this file needs refactoring.
+        //TODO1 this file might need refactoring.
 
         #region Note manipulation functions
         /// <summary>
@@ -185,7 +185,7 @@ namespace Nebulator.Script
         /// <returns>The drum name</returns>
         public static string FormatDrum(int note) //TODO2 prob internal only.
         {
-            var n = Enum.GetName(typeof(MusicDefinitions.DrumDef), note);
+            var n = Enum.GetName(typeof(DrumDef), note);
             string drumName = n is not null ? n : $"Drum{note}";
             return drumName;
         }

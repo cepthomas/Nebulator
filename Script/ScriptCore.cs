@@ -37,13 +37,17 @@ namespace Nebulator.Script
 
         #region Lifecycle
         /// <summary>
-        /// Set up runtime stuff.
+        /// Set up runtime stuff. Good time to send initial patches.
         /// </summary>
         /// <param name="channels"></param>
         public void Init(List<Channel> channels)
         {
             _channelMap.Clear();
-            channels.ForEach(ch => _channelMap[ch.ChannelName] = ch);
+            channels.ForEach(ch =>
+            {
+                _channelMap[ch.ChannelName] = ch;
+                SendPatch(ch.ChannelName, ch.Patch);
+            });
         }
 
         /// <summary>

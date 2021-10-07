@@ -293,13 +293,13 @@ namespace Nebulator.App
         /// </summary>
         void InitProjectValues()
         {
-            potSpeed.Value = (double)_nppVals.GetValue("master", "speed", 100.0);
-            sldVolume.Value = (double)_nppVals.GetValue("master", "volume", 0.8);
+            potSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
+            sldVolume.Value = _nppVals.GetDouble("master", "volume", 0.8);
 
             foreach (var ch in _channels)
             {
-                ch.Volume = (double)_nppVals.GetValue(ch.ChannelName, "volume", 0.8);
-                ch.State = (ChannelState)_nppVals.GetValue(ch.ChannelName, "state", ChannelState.Normal);
+                ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", 0.8);
+                ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
             }
         }
         #endregion

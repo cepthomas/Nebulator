@@ -28,7 +28,7 @@ namespace Nebulator.Common
         public int ChannelNumber { get; set; } = 1;
 
         /// <summary>Optional patch to send at startup.</summary>
-        public MusicDefinitions.InstrumentDef Patch { get; set; } = MusicDefinitions.InstrumentDef.AcousticGrandPiano;
+        public InstrumentDef Patch { get; set; } = InstrumentDef.AcousticGrandPiano;
 
         /// <summary>The device type for this channel.</summary>
         public DeviceType DeviceType { get; set; } = DeviceType.None; //TODO1 see IDevice???

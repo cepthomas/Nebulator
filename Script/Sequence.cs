@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,9 +63,9 @@ namespace Nebulator.Script
         /// <param name="what">What to play.</param>
         /// <param name="volume">Base volume.</param>
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
-        public void Add(double when, int what, double volume, double duration = 0)
+        public void Add(double when, DrumDef what, double volume, double duration = 0)
         {
-            SequenceElement sel = new(what)
+            SequenceElement sel = new((int)what)
             {
                 When = new Time(when),
                 Volume = volume,
@@ -98,12 +99,24 @@ namespace Nebulator.Script
         /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
         /// <param name="which">Specific note(s).</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, int resolution, string which, double volume)
+        public void Add(string pattern, int resolution, string which, double volume)//xxx
         {
             foreach (double d in ScriptUtils.GetNotes(which))
             {
                 Add(pattern, resolution, d, volume);
             }
+        }
+
+        /// <summary>
+        /// Like: Z.Add("|5---    8       |7.......7654--- |", RideCymbal1, 90);
+        /// </summary>
+        /// <param name="pattern">Ascii pattern string.</param>
+        /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
+        /// <param name="which">Specific note(s).</param>
+        /// <param name="volume">Base volume.</param>
+        public void Add(string pattern, int resolution, DrumDef which, double volume)//xxx
+        {
+            Add(pattern, resolution, (int)which, volume);
         }
 
         /// <summary>
@@ -113,7 +126,7 @@ namespace Nebulator.Script
         /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
         /// <param name="which">Specific instrument or drum.</param>
         /// <param name="volume">Volume.</param>
-        public void Add(string pattern, int resolution, double which, double volume)
+        public void Add(string pattern, int resolution, double which, double volume)//xxx
         {
             // Needs to be a multiple of 2 up to 32 (min note for Time.SUBDIVS_PER_BEAT).
             switch(resolution)
@@ -260,6 +273,14 @@ namespace Nebulator.Script
         {
             Notes.Add(noteNum);
         }
+
+        ///// <summary>
+        ///// Constructor from drum.
+        ///// </summary>
+        //public SequenceElement(MusicDefinitions.DrumDef drum)
+        //{
+        //    Notes.Add((double)drum);
+        //}
 
         /// <summary>
         /// Constructor from function.

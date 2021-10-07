@@ -359,7 +359,7 @@ namespace Nebulator.App
         void Parse(string nebfn)
         {
             //// Add the generated internal code files.
-            //_filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext() // TODO0 Not if using internal collections!
+            //_filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext()
             //{
             //    SourceFile = "",
             //    CodeLines = GenDefFileContents()
@@ -488,7 +488,7 @@ namespace Nebulator.App
                         ChannelName = parts[1].Replace("\"", ""),
                         DeviceType = (DeviceType)Enum.Parse(typeof(DeviceType), parts[2]),
                         ChannelNumber = int.Parse(parts[3]),
-                        Patch = (MusicDefinitions.InstrumentDef)Enum.Parse(typeof(MusicDefinitions.InstrumentDef), parts[4]),
+                        Patch = (InstrumentDef)Enum.Parse(typeof(InstrumentDef), parts[4]),
                         VolumeWobbleRange = double.Parse(parts[5])
                     };
 
@@ -508,54 +508,6 @@ namespace Nebulator.App
 
             return channels;
         }
-
-        ///// <summary>
-        ///// Create the file containing definitions.
-        ///// </summary>
-        ///// <returns></returns>
-        //List<string> GenDefFileContents()
-        //{
-        //    // Create the supplementary file. Indicated by empty source file name.
-        //    List<string> codeLines = GenTopOfFile("");
-
-        //    // Various defines.
-        //    WriteDefValues(ScriptDefinitions.TheDefinitions.InstrumentDefs, "General Midi Instruments");
-        //    WriteDefValues(ScriptDefinitions.TheDefinitions.DrumDefs, "General Midi Drums");
-        //    WriteDefValues(ScriptDefinitions.TheDefinitions.ControllerDefs, "Midi Controllers");
-
-        //    // Some enums.
-        //    WriteEnumValues<DeviceType>();
-        //    WriteEnumValues<SequenceMode>();
-
-        //    // Bottom stuff.
-        //    codeLines.AddRange(GenBottomOfFile());
-
-        //    return codeLines;
-
-        //    #region Some DRY helpers
-        //    void WriteEnumValues<T>() where T : Enum
-        //    {
-        //        codeLines.Add($"        ///// {typeof(T)}");
-        //        Enum.GetValues(typeof(T)).Cast<T>().ForEach(e =>
-        //        {
-        //            int val = Convert.ToInt32(e);
-        //            codeLines.Add($"        const int {e} = {val};");
-        //            _defs.Add(e.ToString(), val);
-        //        });
-        //    }
-
-        //    void WriteDefValues(Dictionary<string, string> vals, string txt)
-        //    {
-        //        codeLines.Add($"        ///// {txt}");
-        //        vals.Keys.ForEach(k =>
-        //        {
-        //            int val = int.Parse(vals[k]);
-        //            codeLines.Add($"        const int {k} = {val};");
-        //            _defs.Add(k, val);
-        //        });
-        //    }
-        //    #endregion
-        //}
 
         /// <summary>
         /// Create the boilerplate file top stuff.
@@ -580,7 +532,10 @@ namespace Nebulator.App
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
                 "using static Nebulator.Script.ScriptUtils;",
-                "using static Nebulator.Common.MusicDefinitions;",
+                "using static Nebulator.Common.InstrumentDef;",
+                "using static Nebulator.Common.DrumDef;",
+                "using static Nebulator.Common.ControllerDef;",
+                "using static Nebulator.Common.SequenceMode;",
                 "",
                 "namespace Nebulator.UserScript",
                 "{",

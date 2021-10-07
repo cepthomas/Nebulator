@@ -37,11 +37,89 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="valname"></param>
-        /// <returns>The value or null if not in the collection.</returns>
-        public object GetValue(string owner, string valname, object defval)
+        /// <param name="defval"></param>
+        /// <returns>The value or default if not in the collection.</returns>
+        public double GetDouble(string owner, string valname, double defval)
         {
+            double ret = double.NaN;
+
             string key = MakeKey(owner, valname);
-            return Values.ContainsKey(key) ? Values[key] : defval;
+            if (Values.ContainsKey(key))
+            {
+                var val = (JsonElement)Values[key];
+                if (val.ValueKind == JsonValueKind.Number)
+                {
+                    ret = val.GetDouble();
+                }
+            }
+            else
+            {
+                ret = defval;
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Lazy helper.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="valname"></param>
+        /// <param name="defval"></param>
+        /// <returns>The value or default if not in the collection.</returns>
+        public int GetInteger(string owner, string valname, int defval)
+        {
+            int ret = int.MinValue;
+
+            string key = MakeKey(owner, valname);
+            if (Values.ContainsKey(key))
+            {
+                var val = (JsonElement)Values[key];
+                if (val.ValueKind == JsonValueKind.Number)
+                {
+                    var d = val.GetDouble();
+                    ret = (int)d;
+                }
+            }
+            else
+            {
+                ret = defval;
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Lazy helper.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="valname"></param>
+        /// <param name="defval"></param>
+        /// <returns>The value or default if not in the collection.</returns>
+        public string GetString(string owner, string valname, string defval)
+        {
+            string ret;
+
+            string key = MakeKey(owner, valname);
+            if (Values.ContainsKey(key))
+            {
+                var val = (JsonElement)Values[key];
+                if (val.ValueKind == JsonValueKind.String)
+                {
+                    ret = val.GetString()!;
+
+                }
+                else
+                {
+                    ret = val.ToString()!;
+                }
+            }
+            else
+            {
+                ret = defval;
+            }
+
+            return ret;
         }
 
         /// <summary>

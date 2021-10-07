@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
+    <AssemblyName>Nebulator.Script</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
     <Deterministic>False</Deterministic>
     <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\..\version.txt"))</Version>
