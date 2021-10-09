@@ -15,6 +15,7 @@
     <NoWarn>CS1591;CA1822</NoWarn>
     <Nullable>enable</Nullable>
     <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
+    <SatelliteResourceLanguages>none</SatelliteResourceLanguages> <!-- en none -->
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,12 +25,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ros_src\**" />
+    <EmbeddedResource Remove="ros_src\**" />
+    <None Remove="ros_src\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\README.md" Link="Resources\README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
     <PackageReference Include="NAudio" Version="2.0.1" />
     <PackageReference Include="NLog" Version="4.7.11" />
   </ItemGroup>

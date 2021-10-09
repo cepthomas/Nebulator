@@ -1,7 +1,9 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -16,6 +18,12 @@ namespace Nebulator.App
         [STAThread]
         static void Main(string[] _)
         {
+            //Debug.WriteLine("========================================");
+            //Ros ros = new();
+            //ros.DoIt();
+            //return;
+
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

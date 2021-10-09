@@ -9,7 +9,9 @@ using NLog;
 using NBagOfTricks;
 using Nebulator.Common;
 using Nebulator.Script;
-
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace Nebulator.App
 {
@@ -93,9 +95,6 @@ namespace Nebulator.App
         /// <summary>My logger.</summary>
         readonly Logger _logger = LogManager.GetLogger("Compiler");
 
-        /// <summary>Starting directory.</summary>
-        string _baseDir = Definitions.UNKNOWN_STRING;
-
         /// <summary>Main source file name.</summary>
         readonly string _nebfn = Definitions.UNKNOWN_STRING;
 
@@ -105,11 +104,8 @@ namespace Nebulator.App
         /// <summary>Accumulated lines to go in the constructor.</summary>
         readonly List<string> _initLines = new();
 
-        /// <summary>Products of file process. Key is generated file name.</summary>
+        /// <summary>Products of file preprocess. Key is generated file name.</summary>
         readonly Dictionary<string, FileContext> _filesToCompile = new();
-
-        /// <summary>All the definitions for internal use. TODO2 more elegant/fast way?</summary>
-        readonly Dictionary<string, int> _defs = new();
 
         /// <summary>Code lines that define channels.</summary>
         readonly List<string> _channelDescriptors = new();
@@ -139,7 +135,6 @@ namespace Nebulator.App
                 _scriptName.ForEach(c => sb.Append(char.IsLetterOrDigit(c) ? c : '_'));
                 _scriptName = sb.ToString();
                 var dir = Path.GetDirectoryName(nebfn);
-                _baseDir = dir!;
 
                 ///// Compile.
                 DateTime startTime = DateTime.Now; // for metrics
@@ -148,17 +143,22 @@ namespace Nebulator.App
                 int chdesc = string.Join("", _channelDescriptors).GetHashCode();
                 _channelDescriptors.Clear();
 
-                // Process the source files.
-                Parse(nebfn);
+                ///// Process the source files into something that can be compiled. ParseOneFile is a recursive function.
+                FileContext pcont = new()
+                {
+                    SourceFile = nebfn,
+                    LineNumber = 1
+                };
+                PreprocessFile(pcont);
 
-                // Check for changed channels.
+                ///// Check for changed channel descriptors.
                 if (string.Join("", _channelDescriptors).GetHashCode() != chdesc)
                 {
                     Channels = ProcessChannelDescs();
                 }
 
-                // Compile the processed files.
-                Script = CompileNative();
+                ///// Compile the processed files.
+                Script = CompileNative(dir!);
 
                 _logger.Info($"Compile took {(DateTime.Now - startTime).Milliseconds} msec.");
             }
@@ -173,170 +173,149 @@ namespace Nebulator.App
 
         #region Private functions
         /// <summary>
-        /// Top level compiler.
+        /// The actual compiler driver.
         /// </summary>
         /// <returns>Compiled script</returns>
-        ScriptBase CompileNative()
+        ScriptBase CompileNative(string baseDir)
         {
             ScriptBase script = new();
 
             try // many ways to go wrong...
             {
                 // Create temp output area and/or clean it.
-                TempDir = Path.Combine(_baseDir, "temp");
+                TempDir = Path.Combine(baseDir, "temp");
                 Directory.CreateDirectory(TempDir);
-                //Directory.GetFiles(TempDir).Where(f => f.EndsWith(".cs")).ForEach(f => File.Delete(f));
                 Directory.GetFiles(TempDir).ForEach(f => File.Delete(f));
 
-                // Get project file template. Fix the assembly location.
-                string fpath = Path.Combine(MiscUtils.GetExeDir(), @"Resources\UserScriptTemplate.txt");
-                string inputDllPath = Environment.CurrentDirectory;
-                string stempl = File.ReadAllText(fpath);
-                stempl = stempl.Replace("%DLL_PATH%", inputDllPath);
+                ///// Assemble constituents.
+                List<SyntaxTree> trees = new();
 
-                // Write project file to temp.
-                string projFn = Path.Combine(TempDir, "UserScript.csproj");
-                File.WriteAllText(projFn, stempl);
-
-                // Write the generated source files.
+                // Write the generated source files to temp build area.
                 foreach (string genFn in _filesToCompile.Keys)
                 {
                     FileContext ci = _filesToCompile[genFn];
                     string fullpath = Path.Combine(TempDir, genFn);
                     File.Delete(fullpath);
                     File.WriteAllLines(fullpath, ci.CodeLines);
+
+                    // Build a syntax tree.
+                    string code = File.ReadAllText(fullpath);
+                    CSharpParseOptions popts = new();
+                    SyntaxTree tree = CSharpSyntaxTree.ParseText(code, popts, genFn);
+                    trees.Add(tree);
                 }
 
-                // Make it compile.
-                ProcessStartInfo stinfo = new()
+                //3. We now build up a list of references needed to compile the code.
+                // System stuff.
+                var dotnetStore = Path.GetDirectoryName(typeof(object).Assembly.Location);
+                // Project refs like nuget.
+                var localStore = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // Path.GetDirectoryName(typeof(object).Assembly.Location);
+                // C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\5.0.10
+
+                var references = new List<MetadataReference>();
+
+                // System dlls.
+                foreach (var dll in new[] { "System", "System.Core", "System.Private.CoreLib", "System.Runtime", "System.Collections", "System.Drawing", "System.Linq" })
                 {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    FileName = "dotnet",
-                    Arguments = $"build {TempDir}"
-                    //Arguments = $"build --no-restore {TempDir}"
-                };
-
-                Process process = new() { StartInfo = stinfo };
-                process.Start();
-
-                //TODO1 blocks??? process.WaitForExit();
-
-                // Process output.
-                string stdout = process.StandardOutput.ReadToEnd();
-                string stderr = process.StandardError.ReadToEnd();
-
-                if(stderr != "")
-                {
-                    CompileResult se = new()
-                    {
-                        ResultType = CompileResultType.Fatal,
-                        Message = $"Really bad thing happened:{stderr}"
-                    };
-                    Results.Add(se);
+                    references.Add(MetadataReference.CreateFromFile(Path.Combine(dotnetStore!, dll + ".dll")));
                 }
-                else
+
+                // Local dlls.
+                foreach (var dll in new[] { "NAudio", "NLog", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script" })
                 {
-                    List<string> outlines = stdout.SplitByToken("\r\n");
+                    references.Add(MetadataReference.CreateFromFile(Path.Combine(localStore!, dll + ".dll")));
+                }
 
-                    // Because there are dupes, wait for the go-ahead.
-                    bool collect = false;
+                ///// Emit to stream
+                var copts = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+                //TODO1 other opts?
+                //  <WarningLevel>4</WarningLevel>
+                //  <!-- TODO2 <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->  CS8019
+                //  <WarningsAsErrors>NU1605</WarningsAsErrors>
 
-                    foreach(var l in outlines)
+                var compilation = CSharpCompilation.Create("aaaaaaaaaaaaaaa.dll", trees, references, copts);
+                var ms = new MemoryStream();
+                EmitResult result = compilation.Emit(ms);
+                if (result.Success)
+                {
+                    //Load into currently running assembly. Normally we'd probably want to do this in an AppDomain
+                    var assy = Assembly.Load(ms.ToArray());
+                    foreach (Type t in assy.GetTypes())
                     {
-                        if(collect)
+                        if (t.BaseType != null && t.BaseType.Name == "ScriptBase")
                         {
-                            if (l.Contains(": error ") || l.Contains(": warning "))
+                            // We have a good script file. Create the executable object.
+                            object? o = Activator.CreateInstance(t);
+                            if(o is not null)
                             {
-                                CompileResult se = new();
-
-                                // TODO1 need better parser!
-
-                                // Parse the line.
-                                var parts0 = l.SplitByTokens(":");
-
-                                if (parts0[2].StartsWith("error")) se.ResultType = CompileResultType.Error;
-                                else if (parts0[2].StartsWith("warning")) se.ResultType = CompileResultType.Warning;
-
-                                var parts1 = parts0[1].SplitByTokens("(),");
-
-                                // genned file name.
-                                var gennedFileName = $"{parts0[0]}:{parts1[0]}";
-
-                                // genned file line number.
-                                int gennedFileLine = int.Parse(parts1[1]);
-
-                                var parts2 = parts0[3].SplitByTokens("[");
-
-                                se.Message = parts2[0];
-
-                                // Get the original info.
-                                if (_filesToCompile.TryGetValue(Path.GetFileName(gennedFileName), out var cont))
-                                {
-                                    string origLine = cont.CodeLines[gennedFileLine - 1];
-                                    se.SourceFile = cont.SourceFile;
-                                    int ind = origLine.LastIndexOf("//");
-                                    if (ind != -1)
-                                    {
-                                        if(int.TryParse(origLine[(ind + 2)..], out int origLineNum))
-                                        {
-                                            se.LineNumber = origLineNum;
-                                        }
-                                        else
-                                        {
-                                            se.LineNumber = -1;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    // Presumably internal generated file - should never have errors.
-                                    se.SourceFile = "NoSourceFile";
-                                }
-
-                                Results.Add(se);
+                                script = (ScriptBase)o;
                             }
-                            else if (l.StartsWith("Time Elapsed"))
-                            {
-                                //TODO2 Do something with this?
-                            }
-                            else
-                            {
-                                // ????
-                            }
-                        }
-                        else
-                        {
-                            collect = l.StartsWith("Build ");
                         }
                     }
+                }
 
-                    // Process the output.
-                    if (ErrorCount == 0)
+                //if (!result.Success || script is null)
+                //{
+                //    throw new Exception("Could not instantiate script");
+                //}
+
+
+                ///// Results.
+                List<string> diags = new();
+                result.Diagnostics.ForEach(d => diags.Add(d.ToString()));
+                File.WriteAllLines(@"C:\Dev\repos\Nebulator\Examples\temp\compiler.txt", diags);
+
+
+                foreach (var diag in result.Diagnostics)
+                {
+                    CompileResult se = new();
+                    se.Message = diag.GetMessage();
+                    bool keep = true;
+
+                    switch (diag.Severity)
                     {
-                        // All good so far.
-                        Assembly assy = Assembly.LoadFrom(Path.Combine(TempDir, "net5.0-windows", "UserScript.dll")); //TODO1 need to unload/free script to release dll file.
+                        case DiagnosticSeverity.Error:
+                            se.ResultType = CompileResultType.Error;
+                            break;
 
-                        // Bind to the script interface.
-                        foreach (Type t in assy.GetTypes())
-                        {
-                            if (t is not null && t.BaseType is not null && t.BaseType.Name == "ScriptBase")
-                            {
-                                // We have a good script file. Create the executable object.
-                                object? o = Activator.CreateInstance(t);
-                                if(o is not null)
-                                {
-                                    script = (ScriptBase)o;
-                                }
-                            }
-                        }
+                        case DiagnosticSeverity.Warning:
+                            se.ResultType = CompileResultType.Warning;
+                            break;
 
-                        if (script is null)
+                        case DiagnosticSeverity.Info:
+                            se.ResultType = CompileResultType.None;
+                            break;
+
+                        case DiagnosticSeverity.Hidden:
+                            keep = false;
+                            //se.ResultType = CompileResultType.Warning; // TODO1???
+                            break;
+                    }
+
+                    var genFileName = diag.Location.SourceTree.FilePath;
+                    var genLine = diag.Location.GetLineSpan().StartLinePosition.Line;
+
+                    // Get the original info.
+                    if (_filesToCompile.TryGetValue(Path.GetFileName(genFileName), out var context))
+                    {
+                        se.SourceFile = context.SourceFile;
+                        // Dig out the original line number.
+                        string origLine = context.CodeLines[genLine - 1];
+                        int ind = origLine.LastIndexOf("//");
+                        if (ind != -1)
                         {
-                            throw new Exception("Could not instantiate script");
+                            se.LineNumber = int.TryParse(origLine[(ind + 2)..], out int origLineNum) ? origLineNum : -1;
                         }
+                    }
+                    else
+                    {
+                        // Presumably internal generated file - should never have errors.
+                        se.SourceFile = "NoSourceFile";
+                    }
+
+                    if(keep)
+                    {
+                        Results.Add(se);
                     }
                 }
             }
@@ -353,34 +332,11 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// Top level parser.
-        /// </summary>
-        /// <param name="nebfn">Topmost file in collection.</param>
-        void Parse(string nebfn)
-        {
-            //// Add the generated internal code files.
-            //_filesToCompile.Add($"{_scriptName}_defs.cs", new FileContext()
-            //{
-            //    SourceFile = "",
-            //    CodeLines = GenDefFileContents()
-            //});
-
-            // Start parsing from the main file. ParseOneFile is a recursive function.
-            FileContext pcont = new()
-            {
-                SourceFile = nebfn,
-                LineNumber = 1
-            };
-
-            ParseOneFile(pcont);
-        }
-
-        /// <summary>
         /// Parse one file. Recursive to support nested include(fn).
         /// </summary>
         /// <param name="pcont">The parse context.</param>
         /// <returns>True if a valid file.</returns>
-        bool ParseOneFile(FileContext pcont)
+        bool PreprocessFile(FileContext pcont)
         {
             bool valid = File.Exists(pcont.SourceFile);
 
@@ -389,13 +345,68 @@ namespace Nebulator.App
                 string genFn = $"{_scriptName}_src{_filesToCompile.Count}.cs".ToLower();
                 _filesToCompile.Add(genFn, pcont);
 
-                // Preamble.
+                ///// Preamble.
                 pcont.CodeLines.AddRange(GenTopOfFile(pcont.SourceFile));
 
-                // The content.
-                ProcessScriptFile(pcont);
+                ///// The content.
+                List<string> sourceLines = new(File.ReadAllLines(pcont.SourceFile));
 
-                // Postamble.
+                for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
+                {
+                    string s = sourceLines[pcont.LineNumber - 1];
+
+                    // Remove any comments. Single line type only.
+                    int pos = s.IndexOf("//");
+                    string cline = pos >= 0 ? s.Left(pos) : s;
+
+                    // Test for preprocessor directives.
+                    string strim = s.Trim();
+
+                    //Include("path\name.neb");
+                    if (strim.StartsWith("Include"))
+                    {
+                        // Exclude from output file.
+                        List<string> parts = strim.SplitByTokens("\"");
+                        if (parts.Count == 3)
+                        {
+                            string fn = Path.Combine(UserSettings.TheSettings.WorkPath, parts[1]);
+
+                            // Recursive call to parse this file
+                            FileContext subcont = new()
+                            {
+                                SourceFile = fn,
+                                LineNumber = 1
+                            };
+                            valid = PreprocessFile(subcont);
+                        }
+
+                        if (!valid)
+                        {
+                            Results.Add(new CompileResult()
+                            {
+                                ResultType = CompileResultType.Error,
+                                Message = $"Invalid Include: {strim}",
+                                SourceFile = pcont.SourceFile,
+                                LineNumber = pcont.LineNumber
+                            });
+                        }
+                    }
+                    else if (strim.StartsWith("Channel"))
+                    {
+                        // Exclude from output file.
+                        _channelDescriptors.Add(strim);
+                    }
+                    else // plain line
+                    {
+                        if (cline.Trim() != "")
+                        {
+                            // Store the whole line with line number tacked on and some indentation.
+                            pcont.CodeLines.Add($"        {cline} //{pcont.LineNumber}");
+                        }
+                    }
+                }
+
+                ///// Postamble.
                 pcont.CodeLines.AddRange(GenBottomOfFile());
             }
 
@@ -403,72 +414,7 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// Process one plain script file.
-        /// </summary>
-        /// <param name="pcont"></param>
-        void ProcessScriptFile(FileContext pcont)
-        {
-            List<string> sourceLines = new(File.ReadAllLines(pcont.SourceFile));
-
-            for (pcont.LineNumber = 1; pcont.LineNumber <= sourceLines.Count; pcont.LineNumber++)
-            {
-                string s = sourceLines[pcont.LineNumber - 1];
-
-                // Remove any comments. Single line type only.
-                int pos = s.IndexOf("//");
-                string cline = pos >= 0 ? s.Left(pos) : s;
-
-                // Test for preprocessor directives.
-                string strim = s.Trim();
-
-                //Include("path\name.neb");
-                if (strim.StartsWith("Include"))
-                {
-                    bool valid = false;
-
-                    List<string> parts = strim.SplitByTokens("\"");
-                    if(parts.Count == 3)
-                    {
-                        string fn = Path.Combine(UserSettings.TheSettings.WorkPath, parts[1]);
-
-                        // Recursive call to parse this file
-                        FileContext subcont = new()
-                        {
-                            SourceFile = fn,
-                            LineNumber = 1
-                        };
-
-                        valid = ParseOneFile(subcont);
-                    }
-
-                    if (!valid)
-                    {
-                        Results.Add(new CompileResult()
-                        {
-                            ResultType = CompileResultType.Error,
-                            Message = $"Invalid Include: {strim}",
-                            SourceFile = pcont.SourceFile,
-                            LineNumber = pcont.LineNumber
-                        });
-                    }
-                }
-                else if (strim.StartsWith("Channel"))
-                {
-                    _channelDescriptors.Add(strim);
-                }
-                else // plain line
-                {
-                    if (cline.Trim() != "")
-                    {
-                        // Store the whole line with line number tacked on and some indentation.
-                        pcont.CodeLines.Add($"        {cline} //{pcont.LineNumber}");
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Convert channel descriptors into objects.
+        /// Convert channel descriptors into partial Channel objects.
         /// </summary>
         /// <returns></returns>
         List<Channel> ProcessChannelDescs()
@@ -519,15 +465,14 @@ namespace Nebulator.App
             // Create the common contents.
             List<string> codeLines = new()
             {
-                $"//{fn}",
                 "using System;",
                 "using System.Collections;",
                 "using System.Collections.Generic;",
                 "using System.Text;",
                 "using System.Linq;",
                 "using System.Drawing;",
-                "using System.Windows.Forms;",
                 "using NAudio;",
+                "using NLog;",
                 "using NBagOfTricks;",
                 "using Nebulator.Common;",
                 "using Nebulator.Script;",
