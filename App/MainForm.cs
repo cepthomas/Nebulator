@@ -63,11 +63,11 @@ namespace Nebulator.App
         ///// <summary>Diagnostics for timing measurement.</summary>
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
-        /// <summary>Devices to use for send.</summary>
-        readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new();//TODO2 remove/consolidate?
+        /// <summary>All devices to use for send.</summary>
+        readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new();
 
-        /// <summary>Devices to use for receive.</summary>
-        readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new();//TODO2 remove/consolidate?
+        /// <summary>All devices to use for receive.</summary>
+        readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new();
         #endregion
 
         #region Lifecycle
@@ -332,7 +332,7 @@ namespace Nebulator.App
                     _script = compiler.Script;
 
                     // Process results.
-                    if (compiler.ErrorCount == 0 && _script.Valid)
+                    if (_script.Valid)
                     {
                         // Check for changes to channels.
                         if (compiler.Channels.Count > 0)
@@ -402,7 +402,7 @@ namespace Nebulator.App
                                 _logger.Warn(r.ToString());
                                 break;
 
-                            case CompileResultType.None:
+                            case CompileResultType.Info:
                                 _logger.Info(r.ToString());
                                 break;
                         }
@@ -443,68 +443,51 @@ namespace Nebulator.App
 
             // Keyboard.
             var kbd = new Keyboard(); //TODO2 useful? and/or replace with something else? x/y surface
-            kbd.DeviceInputEvent += Device_InputEvent;
-            _inputDevices.Add(DeviceType.Vkey, kbd);
+            RegDevice(kbd);
             kbd.Visible = UserSettings.TheSettings.Keyboard;
+            btnKeyboard.Checked = UserSettings.TheSettings.Keyboard;
             btnKeyboard.Click += (object? _, EventArgs __) => { kbd.Visible = btnKeyboard.Checked; };
 
-            // TODO2 clean these up.
             if (UserSettings.TheSettings.MidiIn != "")
             {
-                var nin = new MidiInput();
-                if (nin.Init())
-                {
-                    nin.DeviceInputEvent += Device_InputEvent;
-                    _inputDevices.Add(DeviceType.MidiIn, nin);
-                }
-                else
-                {
-                    _logger.Error($"Failed to init input device:MidiIn");
-                    ok = false;
-                }
+                RegDevice(new MidiInput());
             }
 
             if (UserSettings.TheSettings.MidiOut != "")
             {
-                var nin = new MidiOutput();
-                if (nin.Init())
-                {
-                    //nin.DeviceInputEvent += Device_InputEvent;
-                    _outputDevices.Add(DeviceType.MidiOut, nin);
-                }
-                else
-                {
-                    _logger.Error($"Failed to init input device:MidiOut");
-                    ok = false;
-                }
+                RegDevice(new MidiOutput());
             }
 
             if (UserSettings.TheSettings.OscIn != "")
             {
-                var nin = new OscInput();
-                if (nin.Init())
-                {
-                    nin.DeviceInputEvent += Device_InputEvent;
-                    _inputDevices.Add(DeviceType.OscIn, nin);
-                }
-                else
-                {
-                    _logger.Error($"Failed to init input device:OscIn");
-                    ok = false;
-                }
+                RegDevice(new OscInput());
             }
 
             if (UserSettings.TheSettings.OscOut != "")
             {
-                var nin = new OscOutput();
-                if (nin.Init())
+                RegDevice(new OscOutput());
+            }
+
+            // Local function.
+            void RegDevice(IDevice dt)
+            {
+                if (dt.Init())
                 {
-                    //nin.DeviceInputEvent += Device_InputEvent;
-                    _outputDevices.Add(DeviceType.OscOut, nin);
+                    if (dt is IInputDevice)
+                    {
+                        IInputDevice? nin = dt as IInputDevice;
+                        nin!.DeviceInputEvent += Device_InputEvent;
+                        _inputDevices.Add(nin.DeviceType, nin);
+                    }
+                    else
+                    {
+                        IOutputDevice? nout = dt as IOutputDevice;
+                        _outputDevices.Add(nout!.DeviceType, nout);
+                    }
                 }
                 else
                 {
-                    _logger.Error($"Failed to init input device:OscOut");
+                    _logger.Error($"Failed to init device:{dt.DeviceType}");
                     ok = false;
                 }
             }
@@ -625,15 +608,6 @@ namespace Nebulator.App
             if (chkPlay.Checked && !_needCompile)
             {
                 //_tan.Arm();
-
-                // Update section - only on beats.
-                if (timeMaster.TimeDefs.Count > 0 && _stepTime.Subdiv == 0)
-                {
-                    if (timeMaster.TimeDefs.ContainsKey(_stepTime.Beat))
-                    {
-                        // TODO1? currentSection = _stepTime.Beat;
-                    }
-                }
 
                 // Kick the script. Note: Need exception handling here to protect from user script errors.
                 try
@@ -1162,19 +1136,20 @@ namespace Nebulator.App
             TextViewer tv = new()
             {
                 Dock = DockStyle.Fill,
-                WordWrap = true
+                WordWrap = true,
+                MaxText = 50000
             };
 
-            f.Controls.Add(tv);
             tv.Colors.Add(" E ", Color.LightPink);
             tv.Colors.Add(" W ", Color.Plum);
             //tv.Colors.Add(" SND???:", Color.LightGreen);
+            f.Controls.Add(tv);
 
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             string logFileName = Path.Combine(appDir, "log.txt");
             using (new WaitCursor())
             {
-                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l));//TODO2 doesn't work.
+                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l)); //TODO2 still a little broken.
             }
 
             f.ShowDialog();

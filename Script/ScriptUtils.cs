@@ -19,14 +19,14 @@ namespace Nebulator.Script
         #endregion
 
         #region Fields
-        /// <summary>My logger - only for Print() function.</summary>
+        /// <summary>My logger - used only for Print() function.</summary>
         static readonly Logger _logger = LogManager.GetLogger("Print");
 
         /// <summary>Script randomizer.</summary>
         static readonly Random _rand = new();
         #endregion
 
-        #region All about notes
+        #region Note definitions
         static readonly string[] _noteNames =
         {
             "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B",
@@ -46,14 +46,12 @@ namespace Nebulator.Script
         };
         #endregion
 
-        //TODO1 this file might need refactoring.
-
-        #region Note manipulation functions
+        #region Public note manipulation functions
         /// <summary>
         /// Add a named chord or scale definition.
         /// </summary>
         /// <param name="name">"MY_CHORD"</param>
-        /// <param name="parts">"1 4 6 b13"</param>
+        /// <param name="parts">Like "1 4 6 b13"</param>
         public static void CreateNotes(string name, string parts)
         {
             MusicDefinitions.NoteDefs[name] = parts.SplitByToken(" ");
@@ -76,7 +74,7 @@ namespace Nebulator.Script
                 // F4 - named note
                 // F4.dim7 - named key/chord
                 // F4.FOO - user defined key/chord or scale
-                // F4.Major - named key/scale
+                // F4.major - named key/scale
 
                 // Break it up.
                 var parts = noteString.SplitByToken(".");
@@ -155,42 +153,6 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Try to make a note and/or chord string from the param. If it can't find a chord return the individual notes.
-        /// </summary>
-        /// <param name="notes"></param>
-        /// <returns></returns>
-        public static List<string> FormatNotes(List<int> notes) //TODO2 prob internal only.
-        {
-            List<string> snotes = new();
-
-            // Dissect root note.
-            //int rootOctave = SplitNoteNumber(notes[0]).octave;
-            //int rootNoteNum = SplitNoteNumber(notes[0]).root;
-            //string sroot = $"\"{NoteNumberToName(rootNoteNum)}{rootOctave}\"";
-
-            foreach (int n in notes)
-            {
-                int octave = SplitNoteNumber(n).octave;
-                int root = SplitNoteNumber(n).root;
-                snotes.Add($"\"{NoteNumberToName(root)}{octave}\"");
-            }
-
-            return snotes;
-        }
-
-        /// <summary>
-        /// Convert note number to corresponding drum name.
-        /// </summary>
-        /// <param name="note"></param>
-        /// <returns>The drum name</returns>
-        public static string FormatDrum(int note) //TODO2 prob internal only.
-        {
-            var n = Enum.GetName(typeof(DrumDef), note);
-            string drumName = n is not null ? n : $"Drum{note}";
-            return drumName;
-        }
-
-        /// <summary>
         /// Split a midi note number into root note and octave.
         /// </summary>
         /// <param name="notenum">Absolute note number</param>
@@ -201,9 +163,7 @@ namespace Nebulator.Script
             int octave = (notenum / NOTES_PER_OCTAVE) - 1;
             return (root, octave);
         }
-        #endregion
 
-        #region Conversion functions
         /// <summary>
         /// Get interval offset from name.
         /// </summary>
@@ -240,12 +200,52 @@ namespace Nebulator.Script
             return inote == -1 ? null : inote;
         }
 
+
+        #endregion
+
+        #region Internal note manipulation functions
+        /// <summary>
+        /// Try to make a note and/or chord string from the param. If it can't find a chord return the individual notes.
+        /// </summary>
+        /// <param name="notes"></param>
+        /// <returns></returns>
+        internal static List<string> FormatNotes(List<int> notes)
+        {
+            List<string> snotes = new();
+
+            // Dissect root note.
+            //int rootOctave = SplitNoteNumber(notes[0]).octave;
+            //int rootNoteNum = SplitNoteNumber(notes[0]).root;
+            //string sroot = $"\"{NoteNumberToName(rootNoteNum)}{rootOctave}\"";
+
+            foreach (int n in notes)
+            {
+                int octave = SplitNoteNumber(n).octave;
+                int root = SplitNoteNumber(n).root;
+                snotes.Add($"\"{NoteNumberToName(root)}{octave}\"");
+            }
+
+            return snotes;
+        }
+
+        /// <summary>
+        /// Convert note number to corresponding drum name.
+        /// </summary>
+        /// <param name="note"></param>
+        /// <returns>The drum name</returns>
+        internal static string FormatDrum(int note)
+        {
+            var n = Enum.GetName(typeof(DrumDef), note);
+            string drumName = n is not null ? n : $"Drum{note}";
+            return drumName;
+        }
+
         /// <summary>
         /// Convert note number into name.
         /// </summary>
         /// <param name="inote"></param>
         /// <returns></returns>
-        public static string NoteNumberToName(int inote) //TODO2 prob internal only.
+        internal static string NoteNumberToName(int inote)
         {
             int rootNote = SplitNoteNumber(inote).root;
             string[] noteNames = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };

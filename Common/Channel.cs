@@ -30,8 +30,8 @@ namespace Nebulator.Common
         /// <summary>Optional patch to send at startup.</summary>
         public InstrumentDef Patch { get; set; } = InstrumentDef.AcousticGrandPiano;
 
-        /// <summary>The device type for this channel.</summary>
-        public DeviceType DeviceType { get; set; } = DeviceType.None; //TODO1 see IDevice???
+        /// <summary>The device type for this channel. Used to find and bind the device at runtime.</summary>
+        public DeviceType DeviceType { get; set; } = DeviceType.None;
 
         /// <summary>How wobbly. 0 to disable.</summary>
         public double VolumeWobbleRange { get; set; } = 0.0;

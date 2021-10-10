@@ -32,36 +32,29 @@ namespace Nebulator.Controls
         /// </summary>
         void ChannelControl_Load(object sender, EventArgs e)
         {
-            if(BoundChannel is not null)
-            {
-                chkSolo.FlatAppearance.CheckedBackColor = Color.Green;
-                chkMute.FlatAppearance.CheckedBackColor = Color.Red;
+            chkSolo.FlatAppearance.CheckedBackColor = Color.Green;
+            chkMute.FlatAppearance.CheckedBackColor = Color.Red;
 
-                sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-                sldVolume.DecPlaces = 2;
-                sldVolume.Label = BoundChannel.ChannelName;
-                sldVolume.Maximum = 1.0;
-                sldVolume.Value = BoundChannel.Volume;
+            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.DecPlaces = 2;
+            sldVolume.Label = BoundChannel.ChannelName;
+            sldVolume.Maximum = 1.0;
+            sldVolume.Value = BoundChannel.Volume;
 
-                switch (BoundChannel.State)
-                {
-                    case ChannelState.Normal:
-                        chkSolo.Checked = false;
-                        chkMute.Checked = false;
-                        break;
-                    case ChannelState.Solo:
-                        chkSolo.Checked = true;
-                        chkMute.Checked = false;
-                        break;
-                    case ChannelState.Mute:
-                        chkSolo.Checked = false;
-                        chkMute.Checked = true;
-                        break;
-                }
-            }
-            else
+            switch (BoundChannel.State)
             {
-                //TODO2 error
+                case ChannelState.Normal:
+                    chkSolo.Checked = false;
+                    chkMute.Checked = false;
+                    break;
+                case ChannelState.Solo:
+                    chkSolo.Checked = true;
+                    chkMute.Checked = false;
+                    break;
+                case ChannelState.Mute:
+                    chkSolo.Checked = false;
+                    chkMute.Checked = true;
+                    break;
             }
         }
 

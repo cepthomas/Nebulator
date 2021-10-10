@@ -18,7 +18,7 @@ namespace Nebulator.App
     /// <summary>General script result - error/warn etc.</summary>
     public enum CompileResultType
     {
-        None,       // Not an error - could be info.
+        Info,       // Not an error.
         Warning,    // Compiler warning.
         Error,      // Compiler error.
         Fatal,      // Internal error.
@@ -29,7 +29,7 @@ namespace Nebulator.App
     public class CompileResult
     {
         /// <summary>Where it came from.</summary>
-        public CompileResultType ResultType { get; set; } = CompileResultType.None;
+        public CompileResultType ResultType { get; set; } = CompileResultType.Info;
 
         /// <summary>Original source file.</summary>
         public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
@@ -75,20 +75,6 @@ namespace Nebulator.App
 
         /// <summary>Compile products are here.</summary>
         public string TempDir { get; set; } = Definitions.UNKNOWN_STRING;
-
-        /// <summary>Errors considering warnings-as-errors setting.</summary>
-        public int ErrorCount
-        {
-            get
-            {
-                int errorCount = Results.Where(r => r.ResultType == CompileResultType.Error || r.ResultType == CompileResultType.Fatal).Count();
-                if (!UserSettings.TheSettings.IgnoreWarnings)
-                {
-                    errorCount += Results.Where(r => r.ResultType == CompileResultType.Warning).Count();
-                }
-                return errorCount;
-            }
-        }
         #endregion
 
         #region Fields
@@ -167,7 +153,8 @@ namespace Nebulator.App
                 _logger.Error($"Invalid file {nebfn}.");
             }
 
-            Script.Valid = ErrorCount == 0;
+            int errorCount = Results.Where(r => r.ResultType == CompileResultType.Error || r.ResultType == CompileResultType.Fatal).Count();
+            Script.Valid = errorCount == 0;
         }
         #endregion
 
@@ -206,13 +193,11 @@ namespace Nebulator.App
                 }
 
                 //3. We now build up a list of references needed to compile the code.
-                // System stuff.
+                var references = new List<MetadataReference>();
+                // System stuff location.
                 var dotnetStore = Path.GetDirectoryName(typeof(object).Assembly.Location);
                 // Project refs like nuget.
-                var localStore = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // Path.GetDirectoryName(typeof(object).Assembly.Location);
-                // C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\5.0.10
-
-                var references = new List<MetadataReference>();
+                var localStore = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                 // System dlls.
                 foreach (var dll in new[] { "System", "System.Core", "System.Private.CoreLib", "System.Runtime", "System.Collections", "System.Drawing", "System.Linq" })
@@ -230,10 +215,15 @@ namespace Nebulator.App
                 var copts = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
                 //TODO1 other opts?
                 //  <WarningLevel>4</WarningLevel>
-                //  <!-- TODO2 <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->  CS8019
+                //  <!-- <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->  CS8019?
                 //  <WarningsAsErrors>NU1605</WarningsAsErrors>
+//var specificOption = new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Error);
+//var compilationOptions = new CSharpCompilationOptions(OutputKind.ConsoleApplication, specificDiagnosticOptions: new[]{ specificOption });
+//VerifyCSharpDiagnostic(test, parseOptions: null, compilationOptions: compilationOptions);
+//specificOption = new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Suppress);
+//compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(new[] { specificOption });
 
-                var compilation = CSharpCompilation.Create("aaaaaaaaaaaaaaa.dll", trees, references, copts);
+                var compilation = CSharpCompilation.Create($"{_scriptName}.dll", trees, references, copts);
                 var ms = new MemoryStream();
                 EmitResult result = compilation.Emit(ms);
                 if (result.Success)
@@ -254,18 +244,10 @@ namespace Nebulator.App
                     }
                 }
 
-                //if (!result.Success || script is null)
-                //{
-                //    throw new Exception("Could not instantiate script");
-                //}
-
-
                 ///// Results.
-                List<string> diags = new();
-                result.Diagnostics.ForEach(d => diags.Add(d.ToString()));
-                File.WriteAllLines(@"C:\Dev\repos\Nebulator\Examples\temp\compiler.txt", diags);
-
-
+                // List<string> diags = new();
+                // result.Diagnostics.ForEach(d => diags.Add(d.ToString()));
+                // File.WriteAllLines(@"C:\Dev\repos\Nebulator\Examples\temp\compiler.txt", diags);
                 foreach (var diag in result.Diagnostics)
                 {
                     CompileResult se = new();
@@ -279,32 +261,45 @@ namespace Nebulator.App
                             break;
 
                         case DiagnosticSeverity.Warning:
-                            se.ResultType = CompileResultType.Warning;
+                            if (UserSettings.TheSettings.IgnoreWarnings)
+                            {
+                                keep = false;
+                            }
+                            else
+                            {
+                                se.ResultType = CompileResultType.Warning;
+                            }
                             break;
 
                         case DiagnosticSeverity.Info:
-                            se.ResultType = CompileResultType.None;
+                            se.ResultType = CompileResultType.Info;
                             break;
 
                         case DiagnosticSeverity.Hidden:
-                            keep = false;
-                            //se.ResultType = CompileResultType.Warning; // TODO1???
+                            if (UserSettings.TheSettings.IgnoreWarnings)
+                            {
+                                keep = false;
+                            }
+                            else
+                            {
+                                //?? se.ResultType = CompileResultType.Warning;
+                            }
                             break;
                     }
 
-                    var genFileName = diag.Location.SourceTree.FilePath;
-                    var genLine = diag.Location.GetLineSpan().StartLinePosition.Line;
+                    var genFileName = diag.Location.SourceTree!.FilePath;
+                    var genLineNum = diag.Location.GetLineSpan().StartLinePosition.Line; // 0-based
 
                     // Get the original info.
                     if (_filesToCompile.TryGetValue(Path.GetFileName(genFileName), out var context))
                     {
                         se.SourceFile = context.SourceFile;
                         // Dig out the original line number.
-                        string origLine = context.CodeLines[genLine - 1];
+                        string origLine = context.CodeLines[genLineNum];
                         int ind = origLine.LastIndexOf("//");
                         if (ind != -1)
                         {
-                            se.LineNumber = int.TryParse(origLine[(ind + 2)..], out int origLineNum) ? origLineNum : -1;
+                            se.LineNumber = int.TryParse(origLine[(ind + 2)..], out int origLineNum) ? origLineNum : -1; // 1-based
                         }
                     }
                     else
@@ -447,7 +442,7 @@ namespace Nebulator.App
                         ResultType = CompileResultType.Error,
                         Message = $"Bad statement:{sch}",
                         SourceFile = _nebfn,
-                        //LineNumber = -1 // TODO2
+                        LineNumber = -1
                     });
                 }
             }
@@ -462,9 +457,12 @@ namespace Nebulator.App
         /// <returns></returns>
         List<string> GenTopOfFile(string fn)
         {
+            string origin = fn == "" ? "internal" : fn;
+
             // Create the common contents.
             List<string> codeLines = new()
             {
+                $"// Created from:{origin}",
                 "using System;",
                 "using System.Collections;",
                 "using System.Collections.Generic;",

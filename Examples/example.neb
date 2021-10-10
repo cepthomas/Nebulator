@@ -30,7 +30,7 @@ List<double> _myChordNotes;
 List<double> _myScaleNotes;
 
 
-////// Nebulator midi stuff
+////// Nebulator setup stuff
 public override void Setup()
 {
     // Create sets of notes.
@@ -40,7 +40,13 @@ public override void Setup()
     _scaleNotes = GetNotes("G3.Algerian");
     _chordNotes = GetNotes("C4.o7");
 
+    BuildComp();
+}    
 
+
+///// Make the music.
+public void BuildComp()
+{
     /////////////////////// sequences /////////////////////////////////
 
     Sequence seqKeysVerse = CreateSequence(8, new SequenceElements

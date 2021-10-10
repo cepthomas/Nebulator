@@ -18,11 +18,11 @@ namespace Nebulator.Common
     public interface IDevice : IDisposable
     {
         #region Properties
-        /// <summary>Device name.</summary>
+        /// <summary>Device name as defined by the system.</summary>
         string DeviceName { get; }
 
         /// <summary>Device type.</summary>
-        DeviceType DeviceType { get; } //TODO1  see - Channel???
+        DeviceType DeviceType { get; }
         #endregion
 
         #region Functions

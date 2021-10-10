@@ -18,12 +18,6 @@ namespace Nebulator.App
         [STAThread]
         static void Main(string[] _)
         {
-            //Debug.WriteLine("========================================");
-            //Ros ros = new();
-            //ros.DoIt();
-            //return;
-
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
