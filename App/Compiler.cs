@@ -213,15 +213,10 @@ namespace Nebulator.App
 
                 ///// Emit to stream
                 var copts = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-                //TODO1 other opts?
+                //TODO2 other opts?
                 //  <WarningLevel>4</WarningLevel>
                 //  <!-- <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->  CS8019?
                 //  <WarningsAsErrors>NU1605</WarningsAsErrors>
-//var specificOption = new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Error);
-//var compilationOptions = new CSharpCompilationOptions(OutputKind.ConsoleApplication, specificDiagnosticOptions: new[]{ specificOption });
-//VerifyCSharpDiagnostic(test, parseOptions: null, compilationOptions: compilationOptions);
-//specificOption = new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Suppress);
-//compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(new[] { specificOption });
 
                 var compilation = CSharpCompilation.Create($"{_scriptName}.dll", trees, references, copts);
                 var ms = new MemoryStream();

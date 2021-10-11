@@ -6,9 +6,11 @@ I played around with various scripting concepts, but ended up realizing that C# 
 
 It supports midi and OSC.
 
-While the primary intent is to generate music-by-code, runtime interaction is also supported. It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of parameters using custom UI inputs.
+While the primary intent is to generate music-by-code, runtime interaction is also supported using midi/OSC inputs.
 
 API, examples etc are in the [Wiki](https://github.com/cepthomas/Nebulator/wiki)
+
+TODO1 mark pic.
 
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.
@@ -21,5 +23,6 @@ This project contains a bunch of components that are either recycled or created 
 This application uses these FOSS components.
 
 - NAudio DLL including modified controls and midi file utilities: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License).
+- Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).

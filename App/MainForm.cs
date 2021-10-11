@@ -287,21 +287,6 @@ namespace Nebulator.App
 
             _nppVals.Save();
         }
-
-        /// <summary>
-        /// Load from persistence.
-        /// </summary>
-        void InitProjectValues()
-        {
-            potSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
-            sldVolume.Value = _nppVals.GetDouble("master", "volume", 0.8);
-
-            foreach (var ch in _channels)
-            {
-                ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", 0.8);
-                ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
-            }
-        }
         #endregion
 
         #region Compile
@@ -341,7 +326,6 @@ namespace Nebulator.App
                             DestroyChannelControls();
                             _channels = compiler.Channels;
                             CreateChannelControls();
-                            InitProjectValues();
                         }
 
                         _script.Init(compiler.Channels);
@@ -536,6 +520,8 @@ namespace Nebulator.App
                 if (_outputDevices.TryGetValue(t.DeviceType, out IOutputDevice? dev))
                 {
                     t.Device = dev;
+                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", 0.8);
+                    t.State = (ChannelState)_nppVals.GetInteger(t.ChannelName, "state", (int)ChannelState.Normal);
 
                     ChannelControl tctl = new()
                     {
@@ -888,8 +874,12 @@ namespace Nebulator.App
                     if (File.Exists(fn))
                     {
                         _logger.Info($"Opening {fn}");
-                        _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         _scriptFileName = fn;
+
+                        // Get the persisted properties.
+                        _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
+                        potSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
+                        sldVolume.Value = _nppVals.GetDouble("master", "volume", 0.8);
 
                         SetCompileStatus(true);
                         AddToRecentDefs(fn);

@@ -105,8 +105,8 @@ namespace Nebulator.Script
                 if (parts.Count > 1)
                 {
                     // It's a chord. M, M7, m, m7, etc. Determine the constituents.
-                    var chordParts = MusicDefinitions.NoteDefs[parts[1]];
-                    var chordNotes = chordParts[0].SplitByToken(" ");
+                    var chordNotes = MusicDefinitions.NoteDefs[parts[1]];
+                    //var chordNotes = chordParts[0].SplitByToken(" ");
 
                     for (int p = 0; p < chordNotes.Count; p++)
                     {
@@ -199,8 +199,6 @@ namespace Nebulator.Script
             int inote = Array.IndexOf(_noteNames, snote) % NOTES_PER_OCTAVE;
             return inote == -1 ? null : inote;
         }
-
-
         #endregion
 
         #region Internal note manipulation functions

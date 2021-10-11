@@ -52,7 +52,7 @@ public void BuildComp()
     Sequence seqKeysVerse = CreateSequence(8, new SequenceElements
     {
         { "|7-      7-      |7-      7-      |", 4, "G4.m7", KEYS_VOL },
-        { "|    4-      4-8-|    4-      4-8-|", 4, "G4.m6", KEYS_VOL*0.9 }
+        { "|    5-      5-8-|    5-      5-8-|", 4, "G4.m6", KEYS_VOL*0.9 }
     });
 
     Sequence seqKeysChorus = CreateSequence(8, new SequenceElements
@@ -163,21 +163,15 @@ public override void Step()
     }
 }
 
+
+
+
 // TODO1 add event handlers
-//     //Print("vModN", "=", vModN.Value);
-//     SendController(chSynth, Pan, vModN.Value);
-//
-//     //Print("vVkeyNote", "=", vVkeyNote.Value);
-//
-//     // Test for note on or off.
-//     if(vVkeyNote.Value > 0)
-//     {
-//         SendNoteOn(chSynth, vVkeyNote.Value, 0.9);
-//     }
-//     else
-//     {
-//         SendNoteOff(chSynth, -vVkeyNote.Value);
-//     }
+/// <summary>Called when input arrives.</summary>
+public virtual void InputNote(DeviceType dev, int channel, double note) { }
+
+/// <summary>Called when input arrives.</summary>
+public virtual void InputControl(DeviceType dev, int channel, ControllerDef ctlid, double value) { }
 
 
 

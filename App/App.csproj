@@ -31,11 +31,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\marks.bmp" />
+  </ItemGroup>
+
+<!--   <ItemGroup>
     <None Include="..\README.md" Link="Resources\README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+ -->
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
     <PackageReference Include="NAudio" Version="2.0.1" />
