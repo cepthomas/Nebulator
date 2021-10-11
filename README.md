@@ -8,9 +8,21 @@ It supports midi and OSC.
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported using midi/OSC inputs.
 
-API, examples etc are in the [Wiki](https://github.com/cepthomas/Nebulator/wiki)
+API, examples etc are in:
+* [General Script Syntax](ScriptSyntax)
+* [API for Nebulator](ScriptApi)
+* [Script Definitions](ScriptDefinitions)
 
 TODO1 mark pic.
+
+
+# Usage
+- Top pane is the global transport control and channel controls.
+- Bottom pane is log and comm tracing. Note that comm tracing has an impact on performance so use it judiciously.
+- Basically open a .neb file, press compile, then run.
+- Rather than spending the effort on a built-in script editor, use your favorite external text editor. The application will watch for
+  changes you make and indicate that recompile is needed. I use Sublime - you can associate `*.neb` files with C# for pretty-close syntax coloring.
+
 
 # Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Most could be stripped out for subsequent reuse.
@@ -18,6 +30,7 @@ This project contains a bunch of components that are either recycled or created 
 - Midi classes may be useful elsewhere in conjunction with NAudio.
 - General purpose embedded C# in memory compiler.
 - See [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks) for more goodies.
+
 
 # Third Party
 This application uses these FOSS components.
