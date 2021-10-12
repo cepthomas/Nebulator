@@ -1,15 +1,9 @@
 
-// A take on Eno's Music for Airports - ported from github.com/teropa/musicforairports.js
+// A take on Eno's "algorithmic" Music for Airports - ported from github.com/teropa/musicforairports.js
 
-///// Constants /////
+Channel("sound",  MidiOut, 1,  Pad2Warm,  0.1); //TODO2 support muliple channels
+
 const double SOUND_VOL = 0.8;
-
-// ///// Variables /////
-// NVariable vColor;
-
-// ///// Channels /////
-// Channel chSound;
-//SendPatch(chSound, Pad2Warm);
 
 class TapeLoop
 {
@@ -31,15 +25,6 @@ List<TapeLoop> _loops = new List<TapeLoop>();
 
 public override void Setup()
 {
-    // // Variables
-    // vColor = CreateVariable("color", 240, 0, 255); // change color
-
-    // // Channels
-    // chSound = CreateChannel("sound", DeviceType.MidiOut, 1, 0.1);
-    
-    // // levers
-    // CreateLever(vColor);
-
     // Set up the _loops.
     _loops.Clear();
     // Key is Ab.
@@ -63,7 +48,7 @@ public override void Step()
         if(StepTime >= l.nextStart)
         {
             Print("!! Starting note", l.snote);
-            SendNote(chSound, l.snote, SOUND_VOL, l.duration);
+            SendNote("sound", l.snote, SOUND_VOL, l.duration);
             // Calc next time.
             l.nextStart = StepTime + l.delay + l.duration;
         }

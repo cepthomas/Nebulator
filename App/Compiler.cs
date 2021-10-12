@@ -416,7 +416,6 @@ namespace Nebulator.App
             {
                 try
                 {
-                    // Channel("keys",  MidiOut, 1, AcousticGrandPiano,  0.1);
                     List<string> parts = sch.SplitByTokens("(),;");
 
                     Channel ch = new()

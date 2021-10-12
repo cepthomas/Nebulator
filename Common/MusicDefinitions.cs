@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Nebulator.Common
 {
-    /// <summary>The patch types. Numerical value is the midi number.</summary>
+    /// <summary>The patch types. Numerical value is the midi number. Also includes GM drum kit defs for convenience.</summary>
     public enum InstrumentDef
     {
         AcousticGrandPiano = 0, BrightAcousticPiano, ElectricGrandPiano, HonkyTonkPiano, ElectricPiano1, ElectricPiano2, Harpsichord,
@@ -26,7 +26,9 @@ namespace Nebulator.Common
         Pad8Sweep, Fx1Rain, Fx2Soundtrack, Fx3Crystal, Fx4Atmosphere, Fx5Brightness, Fx6Goblins, Fx7Echoes, Fx8SciFi,
         Sitar, Banjo, Shamisen, Koto, Kalimba, BagPipe, Fiddle, Shanai, TinkleBell, Agogo, SteelDrums, Woodblock,
         TaikoDrum, MelodicTom, SynthDrum, ReverseCymbal, GuitarFretNoise, BreathNoise, Seashore, BirdTweet, TelephoneRing,
-        Helicopter, Applause, Gunshot
+        Helicopter, Applause, Gunshot,
+        // GM Drum Kits
+        Standard = 0, Room = 8, Power = 16, Electronic = 24, TR808 = 25, Jazz = 32, Brush = 40, Orchestra = 48, SFX = 56
     };
 
     /// <summary>Supported drum names.</summary>
@@ -53,7 +55,6 @@ namespace Nebulator.Common
 
     /// <summary>How to play the sequence in the section.</summary>
     public enum SequenceMode { Once, Loop }
-
 
     /// <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
     public static class MusicDefinitions

@@ -1,7 +1,9 @@
 
+# Music Definitions
+
 Definitions for use in Nebulator script functions.
 
-# Chords
+## Chords
 These are the built-in chords. You can add your own in your script.
 
 Chord | Notes | Description
@@ -35,7 +37,7 @@ sus4 | 1 4 5 |
 sus2 | 1 2 5 | Sometimes considered as an inverted sus4 (GCD).
 5 | 1 5 | Power chord.
 
-# Scales
+## Scales
 These are the built-in scales. You can add your own in your script.
 
 Scale | Notes | Description | Lower tetrachord | Upper tetrachord
@@ -88,7 +90,7 @@ UkrainianDorian | 1 2 b3 #4 5 6 b7 | Ukrainian Dorian scale | Gypsy | minor
 WholeTone | 1 2 3 #4 #5 #6 | Whole tone scale | |
 Yo | 1 b3 4 5 b7 | Yo scale | |
 
-# General Midi Instruments
+## General Midi Instruments
 
 Instrument | Number
 ---------- | ------
@@ -221,7 +223,7 @@ Helicopter | 125
 Applause | 126
 Gunshot | 127
 
-# General Midi Drums
+## General Midi Drums
 
 Drum | Number
 ---- | ------
@@ -273,7 +275,7 @@ OpenCuica | 79
 MuteTriangle | 80
 OpenTriangle | 81
 
-# Midi Controllers
+## Midi Controllers
 - http://www.nortonmusic.com/midi_cc.html
 - Undefined MIDI CCs: 3, 9, 14-15, 20-31, 85-90, 102-119
 - For most controllers marked on/off, on=127 and off=0
@@ -311,3 +313,20 @@ LocalKeyboard | 122 |
 AllNotesOff | 123 |
 NoteControl | 250 | Special for internal use
 PitchControl | 251 | Special for internal use
+
+
+## GM Drum Kits
+
+Note that these will vary depending on the SF file.
+
+Kit  | Number
+-----| ------
+Standard | 0
+Room | 8
+Power | 16
+Electronic | 24
+TR808 | 25
+Jazz | 32
+Brush | 40
+Orchestra | 48
+SFX | 56

@@ -141,13 +141,15 @@ namespace Nebulator.Script
 
             return notes;
         }
+        #endregion
 
+        #region Internal note manipulation functions
         /// <summary>
         /// Is it a white key?
         /// </summary>
         /// <param name="notenum">Which note</param>
         /// <returns>True/false</returns>
-        public static bool IsNatural(int notenum)
+        internal static bool IsNatural(int notenum)
         {
             return _naturals.Contains(SplitNoteNumber(notenum).root % NOTES_PER_OCTAVE);
         }
@@ -157,7 +159,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="notenum">Absolute note number</param>
         /// <returns>tuple of root and octave</returns>
-        public static (int root, int octave) SplitNoteNumber(int notenum)
+        internal static (int root, int octave) SplitNoteNumber(int notenum)
         {
             int root = notenum % NOTES_PER_OCTAVE;
             int octave = (notenum / NOTES_PER_OCTAVE) - 1;
@@ -169,7 +171,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="sinterval"></param>
         /// <returns>Offset or null if invalid.</returns>
-        public static int? GetInterval(string sinterval)
+        internal static int? GetInterval(string sinterval)
         {
             int flats = sinterval.Count(c => c == 'b');
             int sharps = sinterval.Count(c => c == '#');
@@ -184,7 +186,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="iint">The name or empty if invalid.</param>
         /// <returns></returns>
-        public static string? GetInterval(int iint)
+        internal static string? GetInterval(int iint)
         {
             return iint >= _intervals.Length ? null : _intervals[iint % _intervals.Length];
         }
@@ -194,14 +196,12 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="snote">The root of the note without octave.</param>
         /// <returns>The number or null if invalid.</returns>
-        public static int? NoteNameToNumber(string snote)
+        internal static int? NoteNameToNumber(string snote)
         {
             int inote = Array.IndexOf(_noteNames, snote) % NOTES_PER_OCTAVE;
             return inote == -1 ? null : inote;
         }
-        #endregion
 
-        #region Internal note manipulation functions
         /// <summary>
         /// Try to make a note and/or chord string from the param. If it can't find a chord return the individual notes.
         /// </summary>

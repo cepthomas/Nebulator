@@ -7,10 +7,10 @@ Include("utils.neb");
 Include("scale.neb");
 
 ///// All the channel/outputs.
-Channel("keys",  MidiOut, 1, AcousticGrandPiano,  0.1);
-Channel("bass",  MidiOut, 2, AcousticBass,  0.1);
-Channel("synth", MidiOut, 3, Lead1Square,  0.1);
-Channel("drums", MidiOut, 10, 32, 0.1); // kit
+Channel("keys",  MidiOut, 1,  AcousticGrandPiano,  0.1);
+Channel("bass",  MidiOut, 2,  AcousticBass,  0.1);
+Channel("synth", MidiOut, 3,  Lead1Square,  0.1);
+Channel("drums", MidiOut, 10, Jazz, 0.1); // for drums = kit
 
 ///// Volumes.
 const double KEYS_VOL = 0.8;
@@ -163,16 +163,15 @@ public override void Step()
     }
 }
 
+public override void InputNote(DeviceType dev, int channel, int note)
+{
+    // TODO1 something
+}
 
-
-
-// TODO1 add event handlers
-/// <summary>Called when input arrives.</summary>
-public virtual void InputNote(DeviceType dev, int channel, double note) { }
-
-/// <summary>Called when input arrives.</summary>
-public virtual void InputControl(DeviceType dev, int channel, ControllerDef ctlid, double value) { }
-
+public virtual void InputControl(DeviceType dev, int channel, ControllerDef ctlid, int value)
+{
+    // TODO1 something
+}
 
 
 ////////////////// custom functions /////////////////////////////
