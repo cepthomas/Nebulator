@@ -15,7 +15,7 @@ using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.OSC;
 using Nebulator.Controls;
-
+using System.Reflection;
 
 namespace Nebulator.App
 {
@@ -1016,10 +1016,10 @@ namespace Nebulator.App
         /// <summary>
         /// The meaning of life.
         /// </summary>
-        void About_Click(object? sender, EventArgs e)
+        void About_Click(object? sender, EventArgs e) // TODO1 new stuff
         {
-            // Make some markdown.
-            List<string> mdText = new()
+            // Get dynamic stuff.
+            List<string> devText = new()
             {
                 // Device info.
                 "# Your Devices",
@@ -1030,44 +1030,46 @@ namespace Nebulator.App
             {
                 for (int device = 0; device < MidiIn.NumberOfDevices; device++)
                 {
-                    mdText.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
+                    devText.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
                 }
             }
             else
             {
-                mdText.Add($"- None");
+                devText.Add($"- None");
             }
 
-            mdText.Add("## Midi Output");
+            devText.Add("## Midi Output");
             if (MidiOut.NumberOfDevices > 0)
             {
                 for (int device = 0; device < MidiOut.NumberOfDevices; device++)
                 {
-                    mdText.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
+                    devText.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
                 }
             }
             else
             {
-                mdText.Add($"- None");
+                devText.Add($"- None");
             }
 
-            mdText.Add("## Asio");
             if (AsioOut.GetDriverNames().Length > 0)
             {
+                devText.Add("## Asio");
                 foreach (string sdev in AsioOut.GetDriverNames())
                 {
-                    mdText.Add($"- {sdev}");
+                    devText.Add($"- {sdev}");
                 }
             }
-            else
-            {
-                mdText.Add($"- None");
-            }
+
+            //string devfn = Path.GetTempFileName();
+            //File.WriteAllText(devfn, string.Join(Environment.NewLine, devText));
+
+            // Assemble all files in order.
+            //var cd = Environment.CurrentDirectory;
 
             // Main help file.
-            mdText.AddRange(File.ReadAllLines(@"Resources\README.md"));
+            //devText.AddRange(File.ReadAllLines(@"Resources\README.md"));
 
-            Tools.MarkdownToHtml(mdText, "lightcyan", "helvetica", true);
+            Tools.MarkdownToHtml(devText, "lightcyan", "helvetica", true);
         }
         #endregion
 

@@ -35,7 +35,7 @@ Note groups are specified by strings like "1 4 6 b13" using `CreateNotes("FOO", 
 
 Notes (single) and note groups (chords, scales) are specified in several ways:
 - "F4" - Named note with octave.
-- "F4.o7" - Named chord from [ScriptDefinitions](ScriptDefinitions).TODO1 these links
+- "F4.o7" - Named chord from [ScriptDefinitions](ScriptDefinitions).
 - "F4.Aeolian" - Named scale from [ScriptDefinitions](ScriptDefinitions).
 - "F4.FOO" - Custom chord or acale created with `CreateNotes()`.
 - SideStick - Drum name from [ScriptDefinitions](ScriptDefinitions).
@@ -215,7 +215,7 @@ void SendNote("chname", note, vol, dur)
 Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.
 
 - chname: Channel name to send it on.
-- note: One of [Notes](#notes). Named notes and chords need quotes. TODO1 local refs?
+- note: One of [Notes](#notes). Named notes and chords need quotes.
 - vol: Note volume. Normalized to 0.0 - 1.0. 0.0 means note off.
 - dur: How long it lasts in Beat.Subdiv or Time object representation.
 
@@ -270,8 +270,6 @@ Define a group of notes for use as a note, or in a chord or scale.
 
 - name: Reference name.
 - note: List of [notes](#notes).
-        /// <param name="name">"MY_CHORD"</param>
-        /// <param name="parts">Like "1 4 6 b13"</param>
 
 ```c#
 double[] GetNotes("scale_or_chord", "key")

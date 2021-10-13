@@ -11,10 +11,10 @@ It supports midi and OSC.
 While the primary intent is to generate music-by-code, runtime interaction is also supported using midi/OSC inputs.
 
 API, examples etc are in:
-* [General Script Syntax](ScriptSyntax.md.html) TODO1 this ext won't work for github flavor. also inserts below.
-* [API for User scripts](ScriptApi.md.html)
-* [Midi defs, scales, chords Definitions](MusicDefinitions.md.html)
-* [Design and Build notes](Internals.md.html)
+- [General script syntax](ScriptSyntax)
+- [API for user scripts](ScriptApi)
+- [Midi definitions, scales, chords](MusicDefinitions)
+- [Design and build notes](Internals)
 
 
 ## Usage
@@ -28,8 +28,8 @@ API, examples etc are in:
 ## Example Script Files
 See the Examples directory for material while perusing this.
 
-File | Description
----- | -----------
+File        | Description
+----------- | -----------
 example.neb | Source file showing example of static sequence and loop definitions, and creating notes by script functions.
 airport.neb | My take on Eno's Music for Airports - from [this](https://github.com/teropa/musicforairports.js).
 utils.neb   | Example of a library file for simple functions.

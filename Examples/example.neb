@@ -165,12 +165,12 @@ public override void Step()
 
 public override void InputNote(DeviceType dev, int channel, int note)
 {
-    // TODO1 something
+    Print("Input note", dev, channel, note);
 }
 
 public virtual void InputControl(DeviceType dev, int channel, ControllerDef ctlid, int value)
 {
-    // TODO1 something
+    Print("Input control", dev, channel, ctlid, value);
 }
 
 
