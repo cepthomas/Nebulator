@@ -14,7 +14,7 @@ using Nebulator.Common;
 using Nebulator.Midi;
 
 
-namespace Nebulator.Controls
+namespace Nebulator.UI
 {
     /// <summary>
     /// Wrapper to turn control into a device.

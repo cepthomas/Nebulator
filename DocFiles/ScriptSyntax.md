@@ -17,7 +17,7 @@ Names cannot have spaces or begin with a number.
 
 
 ## Classes
-Classes are supported (see utils.neb).
+Classes are supported (see `scale.neb`).
 ```c#
 class klass
 {

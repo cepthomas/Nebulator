@@ -14,7 +14,7 @@ using Nebulator.Common;
 using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.OSC;
-using Nebulator.Controls;
+using Nebulator.UI;
 using System.Reflection;
 
 namespace Nebulator.App
@@ -1016,60 +1016,10 @@ namespace Nebulator.App
         /// <summary>
         /// The meaning of life.
         /// </summary>
-        void About_Click(object? sender, EventArgs e) // TODO1 new stuff
+        void About_Click(object? sender, EventArgs e)
         {
-            // Get dynamic stuff.
-            List<string> devText = new()
-            {
-                // Device info.
-                "# Your Devices",
-                "## Midi Input"
-            };
-
-            if (MidiIn.NumberOfDevices > 0)
-            {
-                for (int device = 0; device < MidiIn.NumberOfDevices; device++)
-                {
-                    devText.Add($"- {MidiIn.DeviceInfo(device).ProductName}");
-                }
-            }
-            else
-            {
-                devText.Add($"- None");
-            }
-
-            devText.Add("## Midi Output");
-            if (MidiOut.NumberOfDevices > 0)
-            {
-                for (int device = 0; device < MidiOut.NumberOfDevices; device++)
-                {
-                    devText.Add($"- {MidiOut.DeviceInfo(device).ProductName}");
-                }
-            }
-            else
-            {
-                devText.Add($"- None");
-            }
-
-            if (AsioOut.GetDriverNames().Length > 0)
-            {
-                devText.Add("## Asio");
-                foreach (string sdev in AsioOut.GetDriverNames())
-                {
-                    devText.Add($"- {sdev}");
-                }
-            }
-
-            //string devfn = Path.GetTempFileName();
-            //File.WriteAllText(devfn, string.Join(Environment.NewLine, devText));
-
-            // Assemble all files in order.
-            //var cd = Environment.CurrentDirectory;
-
-            // Main help file.
-            //devText.AddRange(File.ReadAllLines(@"Resources\README.md"));
-
-            Tools.MarkdownToHtml(devText, "lightcyan", "helvetica", true);
+            string fn = "Main.md.html";
+            new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
         }
         #endregion
 
@@ -1154,32 +1104,9 @@ namespace Nebulator.App
         /// </summary>
         void UserSettings_Click(object? sender, EventArgs e)
         {
-            using Form f = new()
-            {
-                Text = "User Settings",
-                Size = new Size(350, 500),
-                StartPosition = FormStartPosition.Manual,
-                Location = new Point(200, 200),
-                FormBorderStyle = FormBorderStyle.FixedToolWindow,
-                ShowIcon = false,
-                ShowInTaskbar = false
-            };
+            using SettingsEditor f = new() { Settings = UserSettings.TheSettings };
 
-            PropertyGrid pg = new()
-            {
-                Dock = DockStyle.Fill,
-                PropertySort = PropertySort.Categorized,
-                SelectedObject = UserSettings.TheSettings
-            };
-
-            // Detect changes of interest.
-            bool changed = false;
-            pg.PropertyValueChanged += (sdr, args) => { changed = true; };
-
-            f.Controls.Add(pg);
-            f.ShowDialog();
-
-            if (changed)
+            if(f.ShowDialog() == DialogResult.OK)
             {
                 UserSettings.TheSettings.Save();
                 MessageBox.Show("Settings changes require a restart to take effect.");
@@ -1271,7 +1198,7 @@ namespace Nebulator.App
             // Make a transformer.
             MidiTime mt = new()
             {
-                InternalPpq = Time.SUBDIVS_PER_BEAT,
+                InternalPpq = Time.SubdivsPerBeat,
                 Tempo = potSpeed.Value
             };
             _mmTimer.SetTimer(mt.RoundedInternalPeriod(), MmTimerCallback);

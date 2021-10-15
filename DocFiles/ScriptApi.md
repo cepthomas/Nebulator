@@ -8,7 +8,8 @@ What the script supports.
 ### Time
 Time is described as a fixed point value `Beat.Subdiv` where:
 - Beat as in the traditional definition = quarter note. From 0 to N.
-- Subdiv is the subdivision of Beat. Fixed at 4 giving resolution of sixteenth notes. From 0 to 3.
+- `Subdiv` is the subdivision of `Beat`.
+- `Time.SubdivsPerBeat` gives you another possibly useful bit of information.
 
 Neb doesn't care about measures, that's up to you.
 
@@ -18,33 +19,35 @@ Some pieces work better with absolute time so scripts have access to a `Now` pro
 
 ### Devices and Protocols
 Midi and OSC are supported by Nebulator (or at least reasonable subsets). Devices are specified in the settings file:
+
 - MidiIn: Midi in port name you have available.
 - MidiOut: Midi out port name you have available.
 - OscIn: Local port number.
 - OscOut: As `127.0.0.1:1234` where `127.0.0.1` is the endpoint IP and `1234` is the port number.
 - Vkey: Virtual keyboard, handled internally.
 
-The help button will show you the devices on your computer.
+The Settings... menu will show you the devices on your computer.
 
 Since the built-in Windows GM player sounds terrible, there are a couple of options for playing midi locally:
+
 - Replace it with [virtualmidisynth](https://coolsoft.altervista.org/en/virtualmidisynth) and your favorite soundfont.
 - If you are using a DAW for sound generation, you can use a virtual midi loopback like [loopMIDI](http://www.tobias-erichsen.de/software/loopmidi.html) to send to it.
 
 ### Musical Notes
-Note groups are specified by strings like "1 4 6 b13" using `CreateNotes("FOO", "1 4 6 b13")`.
+Note groups are specified by strings like `"1 4 6 b13"` using `CreateNotes("FOO", "1 4 6 b13")`.
 
-Notes (single) and note groups (chords, scales) are specified in several ways:
+Notes (single) and note groups (chords, scales) are referenced in several ways:
 - "F4" - Named note with octave.
-- "F4.o7" - Named chord from [ScriptDefinitions](ScriptDefinitions).
-- "F4.Aeolian" - Named scale from [ScriptDefinitions](ScriptDefinitions).
-- "F4.FOO" - Custom chord or acale created with `CreateNotes()`.
-- SideStick - Drum name from [ScriptDefinitions](ScriptDefinitions).
+- "F4.o7" - Named chord from [Chords](#musicdefinitions/chords) in the key of middle F.
+- "F4.Aeolian" - Named scale from [Scales](#musicdefinitions/scales).
+- "F4.FOO" - Custom chord or scale created with `CreateNotes()` see above
+- SideStick - Drum name from [Drums](#musicdefinitions/generalmididrums).
 - 57 - Simple midi note number.
 
 
 ## Directives
 
-### Include()
+### Include
 ```c#
 Include("utils.neb");
 ```
@@ -54,7 +57,7 @@ Tries absolute path first, then relative to current. It needs to be specified be
 If one were to get grandiose, a true import could be implemented.
 
 
-### Channel()
+### Channel
 ```c#
 Channel("chname", device, chnum, volWobble)
 ```
@@ -62,50 +65,52 @@ Channel("chname", device, chnum, volWobble)
 Defines an output comm channel.
 
 - chname: For display in the UI.
-- device: Type of MidiOut or OscOut.
+- device: Type of `MidiOut` or `OscOut`.
 - chnum: Channel number to play on.
-- volWobble: Optional value to add some randomization from 0.0 to 1.0.
+- volWobble: Optional value to add some randomization - from 0.0 to 1.0.
 
 
 ## Composition
-A composition is comprised of NSections each of which has one or more NSequences.
-You first create your sequences like this:
+A composition is comprised of Sections each of which has one or more Sequences.
+You first create your Sequences like this:
 ```c#
-NSequence CreateSequence(beats, elements[]);
+Sequence CreateSequence(beats, elements[]);
 ```
 
-Create a sequence of notes.
+Create a sequence of notes. There are several ways to do this. (This is a bit confusing but `example.neb`
+should help clarify.)
 
-- beats: Overall length in beats.
+- beats: Overall length in Beats.
 - elements: 1 to N descriptors of what to play when. This can take several forms:
     - { when, which, volume, dur }
     - { when, drum, volume }
     - { when, function, volume }
     - { pattern, subdivs, which, volume, dur }
     - { pattern, subdivs, drum, volume }
-        - when: When to play the element in the sequence, in Beat.Subdiv format.
-        - which/drum: One of [Notes](#notes).
+        - when: When to play the element in the sequence, in `Beat.Subdiv` format.
+        - which/drum: One of [Notes](#scriptapi/basics/musicalnotes) or [Drums](#musicdefinitions/generalmididrums).
         - volume: Note volume. Normalized to 0.0 - 1.0.
-        - dur: Optional duration in Beat.Subdiv format e.g. 2.2. Drums and functions don't use duration.
+        - dur: Optional duration in `Beat.Subdiv` format e.g. 2.2. Drums and functions don't use duration.
         - function: Name of a defined function - executed at when.
         - pattern: describes a sequence of notes, kind of like a piano roll. `1 to 9` (volume) starts a note which is held 
           for subsequent `-`. The note is ended with any other character than `-`. `|`, `.` and ` ` are ignored, 
           used for visual assist only. These are particularly useful for drum patterns.
-        - subdivs: Subdivisions per beat.
+        - subdivs: Subdivisions per Beat.
         
+
 A nonsensical example:
 ```c#
 NSequence seqKeysChorus = CreateSequence(2, new NSequenceElements
 {
-    { 0.0, "F4",  0.7,  0.2 },
-    { "|7--     7--     |7--     7--     |", "G4.m7", KEYS_VOL, 1.2 },
+    { 0.0,  "F4",         0.7,   0.2 },
+    { "|7--     7--     |7--     7--     |", "G4.m7",   KEYS_VOL,   1.2 },
     { 1.0,  RideCymbal1,  DRUM_VOL },
-    { 1.2,  "B4.m7",  0.7,  0.3 },
-    { 1.3, MyAlgoFunc, 0.8 },
+    { 1.2,  "B4.m7",      0.7,   0.3 },
+    { 1.3,  MyAlgoFunc,   0.8 },
 });
 ```
 
-Then you group sequences into sections, typically things like verse, chorus, bridge, etc.
+Then you group Sequences into Sections, typically things like verse, chorus, bridge, etc.
 ```c#
 void CreateSection(beats, name, elements[]);
 ```
@@ -121,7 +126,7 @@ Create a defined section.
 
 An example:
 ```c#
-CreateSection(16, "Middle", new NSectionElements
+CreateSection(16, "Middle", new SectionElements
 {
     { "keys",  Loop,  seqKeysChorus },
     { "drums", Loop,  seqDrumsVerse },
@@ -136,25 +141,15 @@ CreateSection(16, "Middle", new NSectionElements
 ```c#
 bool Playing
 ```
-Indicates that sound is playing. Read only.
+Indicates that script is executing. Read only.
 
 ```c#
 Time StepTime
 ```
-Current Nebulator step time object. Read only.
+Current Nebulator step time object. Read only. Also use for StepTime.Beat and StepTime.subdiv.
 
 ```c#
-int Beat
-```
-Current Nebulator Beat. Read only.
-
-```c#
-int Subdiv
-```
-Current Nebulator Subdiv. Read only.
-
-```c#
-double Now
+double RealTime
 ```
 Seconds since playing started. Read only.
 
@@ -164,14 +159,10 @@ double Speed
 Nebulator speed in BPM. Read/write.
 
 ```c#
-int Volume
+int MasterVolume
 ```
 Nebulator master volume. Read/write.
 
-```c#
-int SubdivsPerBeat
-```
-Beat subdivision. Currently fixed at 4. Read only.
 
 ### Callback Functions
 These can be overridden in the user script.
@@ -179,7 +170,7 @@ These can be overridden in the user script.
 ```c#
 public override void Setup()
 ```
-Called once to initialize script stuff.
+Called once to initialize your script stuff.
 
 ```c#
 public override void Step()
@@ -215,7 +206,7 @@ void SendNote("chname", note, vol, dur)
 Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.
 
 - chname: Channel name to send it on.
-- note: One of [Notes](#notes). Named notes and chords need quotes.
+- note: One of [Notes](#scriptapi/basics/musicalnotes).
 - vol: Note volume. Normalized to 0.0 - 1.0. 0.0 means note off.
 - dur: How long it lasts in Beat.Subdiv or Time object representation.
 
@@ -225,7 +216,7 @@ void SendNoteOn("chname", note, vol)
 Send a note on immediately. Respects solo/mute. Doesn't add note off.
 
 - chname: Channel name to send it on.
-- note: Numbered note. Floating point to support OSC.
+- note: One of [Notes](#scriptapi/basics/musicalnotes).
 - vol: Note volume. Normalized to 0.0 - 1.0.
 
 ```c#
@@ -234,7 +225,7 @@ void SendNoteOff("chname", note)
 Send a note off immediately.
 
 - chname: Channel name to send it on.
-- note: Numbered note. Floating point to support OSC.
+- note: One of [Notes](#scriptapi/basics/musicalnotes).
 
 ```c#
 void SendSequence("chname", seq) 
@@ -242,7 +233,7 @@ void SendSequence("chname", seq)
 Send a sequence immediately.
 
 - chname: Channel name to send it on.
-- seq: Which defined NSequence to send.
+- seq: Which defined Sequence to send.
 
 ```c#
 void SendController("chname", ctl, val)
@@ -250,7 +241,7 @@ void SendController("chname", ctl, val)
 Send a controller immediately. Useful for things like panning and bank select.
 
 - chname: Channel name to send it on.
-- ctl: Controller from [Script Definitions](ScriptDefinitions) or const() or simple integer.
+- ctl: Controller from [Controllers](#musicdefinitions/midicontrollers) or const() or simple integer.
 - val: Controller value.
 
 ```c#
@@ -259,7 +250,7 @@ void SendPatch("chname", patch)
 Send a midi patch immediately. Really only needed if using the windows GM.
 
 - chname: Channel name to send it on.
-- patch: Instrument from [Script Definitions](ScriptDefinitions) or const() or simple integer.
+- patch: Instrument from [Instruments](#musicdefinitions/generalmidiinstruments).
 
 ### Utilities
 
@@ -269,10 +260,10 @@ void CreateNotes("name", "parts")
 Define a group of notes for use as a note, or in a chord or scale.
 
 - name: Reference name.
-- note: List of [notes](#notes).
+- note: List of [Notes](#scriptapi/basics/musicalnotes).
 
 ```c#
-double[] GetNotes("scale_or_chord", "key")
+List<double> GetNotes("scale_or_chord", "key")
 ```
 Get an array of scale notes.
 

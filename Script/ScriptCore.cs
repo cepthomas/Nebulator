@@ -4,7 +4,7 @@ using NLog;
 using Nebulator.Common;
 
 
-// The internal script stuff. TODO2 combine with ScriptApi?
+// The internal script stuff.
 
 namespace Nebulator.Script
 {

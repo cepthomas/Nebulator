@@ -7,7 +7,7 @@ using NBagOfTricks;
 using Nebulator.Common;
 
 
-namespace Nebulator.Controls
+namespace Nebulator.UI
 {
     public partial class TimeControl : UserControl
     {

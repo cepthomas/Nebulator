@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using Nebulator.Common;
 
 
-namespace Nebulator.Controls
+namespace Nebulator.UI
 {
     /// <summary>
     /// Common channel controller.

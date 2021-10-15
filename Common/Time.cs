@@ -19,18 +19,18 @@ namespace Nebulator.Common
         ///   - 100 bpm = 800 subdiv/min = 13.33 subdiv/sec = 0.01333 subdiv/msec = 75.0 msec/subdiv
         ///   - 99 bpm = 792 subdiv/min = 13.20 subdiv/sec = 0.0132 subdiv/msec  = 75.757 msec/subdiv
         /// </remarks>
-        public const int SUBDIVS_PER_BEAT  = 8;
+        public const int SubdivsPerBeat  = 8;
         #endregion
 
         #region Properties
         /// <summary>Left of the decimal point. From 0 to N.</summary>
         public int Beat { get; set; } = 0;
 
-        /// <summary>Right of the decimal point. From 0 to SUBDIVS_PER_BEAT-1.</summary>
+        /// <summary>Right of the decimal point. From 0 to SubdivsPerBeat-1.</summary>
         public int Subdiv { get; set; } = 0;
 
         /// <summary>Total subdivisions for the unit of time.</summary>
-        public int TotalSubdivs { get { return Beat * SUBDIVS_PER_BEAT + Subdiv; } }
+        public int TotalSubdivs { get { return Beat * SubdivsPerBeat + Subdiv; } }
         #endregion
 
         #region Constructors
@@ -67,14 +67,14 @@ namespace Nebulator.Common
 
             if (subdiv >= 0)
             {
-                Beat = beat + subdiv / SUBDIVS_PER_BEAT;
-                Subdiv = subdiv % SUBDIVS_PER_BEAT;
+                Beat = beat + subdiv / SubdivsPerBeat;
+                Subdiv = subdiv % SubdivsPerBeat;
             }
             else
             {
                 subdiv = Math.Abs(subdiv);
-                Beat = beat - (subdiv / SUBDIVS_PER_BEAT) - 1;
-                Subdiv = SUBDIVS_PER_BEAT - (subdiv % SUBDIVS_PER_BEAT);
+                Beat = beat - (subdiv / SubdivsPerBeat) - 1;
+                Subdiv = SubdivsPerBeat - (subdiv % SubdivsPerBeat);
             }
         }
 
@@ -89,8 +89,8 @@ namespace Nebulator.Common
                 throw new Exception("Negative value is invalid");
             }
 
-            Beat = subdivs / SUBDIVS_PER_BEAT;
-            Subdiv = subdivs % SUBDIVS_PER_BEAT;
+            Beat = subdivs / SubdivsPerBeat;
+            Subdiv = subdivs % SubdivsPerBeat;
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Nebulator.Common
             Beat = (int)integral;
             Subdiv = (int)Math.Round(fractional * 10.0);
 
-            if (Subdiv >= SUBDIVS_PER_BEAT)
+            if (Subdiv >= SubdivsPerBeat)
             {
                 throw new Exception($"Invalid subdiv value: {tts}");
             }
@@ -211,8 +211,8 @@ namespace Nebulator.Common
 
         public static Time operator +(Time t1, Time t2)
         {
-            int beat = t1.Beat + t2.Beat + (t1.Subdiv + t2.Subdiv) / SUBDIVS_PER_BEAT;
-            int incr = (t1.Subdiv + t2.Subdiv) % SUBDIVS_PER_BEAT;
+            int beat = t1.Beat + t2.Beat + (t1.Subdiv + t2.Subdiv) / SubdivsPerBeat;
+            int incr = (t1.Subdiv + t2.Subdiv) % SubdivsPerBeat;
             return new Time(beat, incr);
         }
 
@@ -232,7 +232,7 @@ namespace Nebulator.Common
             bool newdiv = false;
             Subdiv++;
 
-            if(Subdiv >= SUBDIVS_PER_BEAT)
+            if(Subdiv >= SubdivsPerBeat)
             {
                 Beat++;
                 Subdiv = 0;

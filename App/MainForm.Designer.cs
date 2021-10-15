@@ -41,7 +41,7 @@
             this.textViewer = new NBagOfTricks.UI.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
-            this.timeMaster = new Nebulator.Controls.TimeControl();
+            this.timeMaster = new Nebulator.UI.TimeControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -171,27 +171,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -200,14 +200,15 @@
             // 
             this.aboutToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.aboutToolStripMenuItem.Text = "About...";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.settingsToolStripMenuItem.Text = "Settings...";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
             // 
@@ -283,13 +284,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textViewer.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textViewer.Location = new System.Drawing.Point(13, 194);
             this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
             this.textViewer.Size = new System.Drawing.Size(952, 633);
             this.textViewer.TabIndex = 41;
-            this.textViewer.WordWrap = true;
+            this.textViewer.Text = "";
             // 
             // lblSolo
             // 
@@ -362,7 +364,7 @@
         private NBagOfTricks.UI.Pot potSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
-        private Controls.TimeControl timeMaster;
+        private UI.TimeControl timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnMonIn;

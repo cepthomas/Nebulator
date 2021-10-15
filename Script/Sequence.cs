@@ -128,7 +128,7 @@ namespace Nebulator.Script
         /// <param name="volume">Volume.</param>
         public void Add(string pattern, int resolution, double which, double volume)//xxx
         {
-            // Needs to be a multiple of 2 up to 32 (min note for Time.SUBDIVS_PER_BEAT).
+            // Needs to be a multiple of 2 up to 32 (min note for Time.SubdivsPerBeat).
             switch(resolution)
             {
                 case 1:
@@ -142,7 +142,7 @@ namespace Nebulator.Script
                     throw new Exception($"Invalid resolution: {resolution}");
             }
 
-            int scale = Time.SUBDIVS_PER_BEAT * 4 / resolution;
+            int scale = Time.SubdivsPerBeat * 4 / resolution;
 
             // Remove visual markers.
             pattern = pattern.Replace("|", "");

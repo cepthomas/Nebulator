@@ -69,7 +69,7 @@ namespace Nebulator.Midi
             // Make a transformer.
             MidiTime mt = new()
             {
-                InternalPpq = Time.SUBDIVS_PER_BEAT,
+                InternalPpq = Time.SubdivsPerBeat,
                 MidiPpq = exportPpq,
                 Tempo = bpm
             };

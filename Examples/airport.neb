@@ -1,7 +1,7 @@
 
 // A take on Eno's "algorithmic" Music for Airports - ported from github.com/teropa/musicforairports.js
 
-Channel("sound",  MidiOut, 1,  Pad2Warm,  0.1); //TODO2 support muliple channels
+Channel("sound",  MidiOut, 1,  Pad2Warm,  0.1); //TODO1 support muliple channels
 
 const double SOUND_VOL = 0.8;
 
