@@ -1,7 +1,7 @@
 
 // A take on Eno's "algorithmic" Music for Airports - ported from github.com/teropa/musicforairports.js
 
-Channel("sound",  MidiOut, 1,  Pad2Warm,  0.1); //TODO1 support muliple channels
+Channel("sound",  MidiOut, 1,  Pad2Warm,  0.1);
 
 const double SOUND_VOL = 0.8;
 
@@ -47,7 +47,7 @@ public override void Step()
     {
         if(StepTime >= l.nextStart)
         {
-            Print("!! Starting note", l.snote);
+            Print("Starting note", l.snote);
             SendNote("sound", l.snote, SOUND_VOL, l.duration);
             // Calc next time.
             l.nextStart = StepTime + l.delay + l.duration;

@@ -247,8 +247,6 @@ namespace Nebulator.App
             SaveProjectValues();
 
             DestroyDevices();
-
-            _script.Dispose();
         }
 
         /// <summary>
@@ -307,7 +305,6 @@ namespace Nebulator.App
                 else
                 {
                     // Clean up any old.
-                    _script.Dispose();
                     _watcher.Clear();
                     timeMaster.TimeDefs.Clear();
 

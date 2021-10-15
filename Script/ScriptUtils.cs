@@ -274,7 +274,7 @@ namespace Nebulator.Script
 
         public static void Print(params object[] vars)
         {
-            _logger.Info(string.Join(" | ", vars));
+            _logger.Info(string.Join(", ", vars));
         }
         #endregion
     }

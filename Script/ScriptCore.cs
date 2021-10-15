@@ -8,7 +8,7 @@ using Nebulator.Common;
 
 namespace Nebulator.Script
 {
-    public partial class ScriptBase : IDisposable
+    public partial class ScriptBase
     {
         #region Properties that can be referenced in the user script
         /// <summary>Is this script ok?</summary>
@@ -48,27 +48,6 @@ namespace Nebulator.Script
                 _channelMap[ch.ChannelName] = ch;
                 SendPatch(ch.ChannelName, ch.Patch);
             });
-        }
-
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing)
-            {
-                _disposed = true;
-            }
         }
         #endregion
 
