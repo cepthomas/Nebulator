@@ -7,7 +7,7 @@ using NBagOfTricks;
 using NBagOfTricks.PNUT;
 using Nebulator.Common;
 
-namespace Nebulator.Test //TODO2??
+namespace Nebulator.Test
 {
     class Program
     {

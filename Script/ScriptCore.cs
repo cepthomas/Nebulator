@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NLog;
 using Nebulator.Common;
 
@@ -28,8 +29,11 @@ namespace Nebulator.Script
         /// <summary>All sections.</summary>
         internal List<Section> _sections = new();
 
-        /// <summary>The steps being executed. Script functions may add to it at runtime.</summary>
-        internal StepCollection _steps = new();
+        /// <summary>The steps being executed.</summary>
+        internal StepCollection _scriptSteps = new();
+
+        /// <summary>Script functions may add sequences at runtime.</summary>
+        internal StepCollection _transientSteps = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
         readonly Dictionary<string, Channel> _channelMap = new();
@@ -96,20 +100,28 @@ namespace Nebulator.Script
         /// <summary>
         /// Get steps at specific time.
         /// </summary>
-        /// <param name="time">Specific time or null if all.</param>
-        /// <returns></returns>
+        /// <param name="time">Specific time.</param>
+        /// <returns>Enumerator for steps at time.</returns>
         public IEnumerable<Step> GetSteps(Time time)
         {
-            return _steps.GetSteps(time);
+            if(time.Beat == 0 && time.Subdiv == 0)
+            {
+                // Starting/looping. Clean up transient.
+                _transientSteps.Clear();
+            }
+
+            // Check both collections.
+            var steps = _scriptSteps.GetSteps(time).Concat(_transientSteps.GetSteps(time));
+            return steps;
         }
 
         /// <summary>
-        /// The whole enchilada.
+        /// All the script steps.
         /// </summary>
         /// <returns></returns>
         public StepCollection GetAllSteps()
         {
-            return _steps;
+            return _scriptSteps;
         }
         #endregion
 
@@ -184,7 +196,7 @@ namespace Nebulator.Script
             return steps;
         }
 
-        /// <summary>Send a named sequence at some future time.</summary>
+        /// <summary>Send a named script sequence at some beat/time.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
         /// <param name="beat">When to send the sequence.</param>
@@ -196,7 +208,7 @@ namespace Nebulator.Script
             }
 
             StepCollection scoll = ConvertToSteps(chanName, seq, beat);
-            _steps.Add(scoll);
+            _scriptSteps.Add(scoll);
         }
 
         /// <summary>

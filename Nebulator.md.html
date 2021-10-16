@@ -296,12 +296,13 @@ Send a note off immediately.
 - note: One of [Notes](#scriptapi/basics/musicalnotes).
 
 ```c#
-void SendSequence("chname", seq) 
+void SendSequence("chname", seq, beat) 
 ```
-Send a sequence immediately.
+Send a sequence in the future.
 
 - chname: Channel name to send it on.
 - seq: Which defined Sequence to send.
+- beat: When to send.
 
 ```c#
 void SendController("chname", ctl, val)
@@ -362,12 +363,30 @@ You know what this is.
 - No installer yet, it's a build-it-yerself for now. Eventually a nuget package might be created.
 - Settings and log are in `C:\Users\<user>\AppData\Local\Ephemera\Nebulator`.
 
-## Design TODO1
+## Design
 
-- assemblies -> user script
-- N Channels to each IOutputDevice
-- 1 ChannelControl per Channel
-- LogLevel: Trace Debug Info Warn Error Fatal Off
+- Three projects. `Common` and `BaseScript` are compiled separately into assemblies
+  so that they can be linked with the user script dynamically.
+- Main UI and non user script stuff is all in the `App` project.
+- Channels and Controllers follow the midi model. Devices represent ports (and corresponding physical dvices.)
+- You can have up to 16 Channels attached to each IOutputDevice.
+- There is one ChannelControl per Channel.
+
+TODO2 Would some diagrams be useful?
+
+****************************
+* .---------.              *
+* |  Server |<------.      *
+* '----+----'       |      *
+*      |            |      *
+*      | DATA CYCLE |      *
+*      v            |      *
+*  .-------.   .----+----. *
+* | Security|  |  File   | *
+* | Policy  +->| Manager | *
+*  '-------'   '---------' *
+****************************
+
 
 ## Code Files
 
@@ -428,7 +447,7 @@ root
 |       Section.cs
 |       Sequence.cs
 |       
-+---Examples (see #main/examplescriptfiles)
++---Examples (see  #nebulator/examplescriptfiles)
 |           
 +---lib (third party non-nuget)
 |       
@@ -462,7 +481,6 @@ This application uses these FOSS components.
 
 
 # Diagrams
---------------------------------------------------------------------------------
 
 Diagrams can be inserted alongside, as in this      ****************************
 example, or between paragraphs of text as shown     * .---------.              *
@@ -478,18 +496,6 @@ distored by the beautification process.             *  '-------'   '---------' *
                                                     ****************************
 
 
-****************************
-* .---------.              *
-* |  Server |<------.      *
-* '----+----'       |      *
-*      |            |      *
-*      | DATA CYCLE |      *
-*      v            |      *
-*  .-------.   .----+----. *
-* | Security|  |  File   | *
-* | Policy  +->| Manager | *
-*  '-------'   '---------' *
-****************************
 
 
 

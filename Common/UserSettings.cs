@@ -91,7 +91,7 @@ namespace Nebulator.Common
         [Browsable(true)]
         public bool IgnoreWarnings { get; set; } = true;
 
-        [DisplayName("CPU Meter")] //TODO2 useful? improve?
+        [DisplayName("CPU Meter")] //TODO useful? improve?
         [Description("Show a CPU usage meter. Note that this slows start up a bit.")]
         [Category("Functionality")]
         [Browsable(true)]

@@ -213,14 +213,10 @@ namespace Nebulator.App
 
                 ///// Emit to stream
                 var copts = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-                //TODO2 other opts?
-                //  <WarningLevel>4</WarningLevel>
-                //  <!-- <NoWarn>CS1591;CA1822;CS0414</NoWarn> -->  CS8019?
-                //  <WarningsAsErrors>NU1605</WarningsAsErrors>
-
                 var compilation = CSharpCompilation.Create($"{_scriptName}.dll", trees, references, copts);
                 var ms = new MemoryStream();
                 EmitResult result = compilation.Emit(ms);
+
                 if (result.Success)
                 {
                     //Load into currently running assembly. Normally we'd probably want to do this in an AppDomain

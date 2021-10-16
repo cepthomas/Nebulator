@@ -6,12 +6,31 @@
 - No installer yet, it's a build-it-yerself for now. Eventually a nuget package might be created.
 - Settings and log are in `C:\Users\<user>\AppData\Local\Ephemera\Nebulator`.
 
-## Design TODO1
+## Design
 
-- assemblies -> user script
-- N Channels to each IOutputDevice
-- 1 ChannelControl per Channel
-- LogLevel: Trace Debug Info Warn Error Fatal Off
+- Three projects. `Common` and `BaseScript` are compiled separately into assemblies
+  so that they can be linked with the user script dynamically.
+- Main UI and non user script stuff is all in the `App` project.
+- Channels and Controllers follow the midi model. Devices represent ports (and corresponding physical dvices.)
+- You can have up to 16 Channels attached to each IOutputDevice.
+- There is one ChannelControl per Channel.
+
+
+******************************************
+* .---------.                            *
+* |  Server |<--------------------.      *
+* '----+----'                     |      *
+*      |                          |      *
+*      | TODO Would some diagrams |      *
+*      | be useful?               |      *
+*      v                          |      *
+*  .-------.                 .----+----. *
+* | Security|                |  File   | *
+* | Policy  +--------------->| Manager | *
+*  '-------'                 '---------' *
+*                                        *
+******************************************
+
 
 ## Code Files
 
@@ -72,11 +91,11 @@ root
 |       Section.cs
 |       Sequence.cs
 |       
-+---Examples (see #main/examplescriptfiles)
++---Examples (see  #nebulator/examplescriptfiles)
 |           
 +---lib (third party non-nuget)
 |       
-+---Test (not enough test stuff)
++---Test (pathetic test stuff)
 |
 \---DocFiles (source for doc build)
         Nebulator.md
@@ -121,16 +140,4 @@ distored by the beautification process.             *  '-------'   '---------' *
                                                     ****************************
 
 
-****************************
-* .---------.              *
-* |  Server |<------.      *
-* '----+----'       |      *
-*      |            |      *
-*      | DATA CYCLE |      *
-*      v            |      *
-*  .-------.   .----+----. *
-* | Security|  |  File   | *
-* | Policy  +->| Manager | *
-*  '-------'   '---------' *
-****************************
 

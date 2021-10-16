@@ -3,31 +3,22 @@ import sys
 import pathlib
 import shutil
 
-# Combine md files into single html with toc. Assumes cwf is the repo of interest.
-# Uses markdeep slate.css - good for "dark mode" documentation or apidoc for white.
-
-repo_path = os.getcwd()
-# print('>>>>>', os.getcwd())
-
-# arg[0] is script filename
-# arg[1] is SolutionDir == C:\Dev\repos\Nebulator
+# Combine md files into single html with toc. Assumes cwd is the repo of interest.
+# Markdeep styles: slate.css for dark mode or apidoc.css for light.
 
 hdr = '''
 <meta charset="utf-8" emacsmode="-*- markdown -*-">
 <link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
 '''
 
-# <link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
-
-# Modifications.
+# Modifications (for slate.css).
 hdr_mod = '''
-<!-- make code stand out (for slate.css): -->
+<!-- make code stand out: -->
 <style>.md code { color: #f3f }</style>
 '''
-# <!-- toc needs to be wider and/or adjustable: TODO2 doesnt work right -->
+# <!-- toc needs to be wider and/or adjustable: TODO doesnt work right -->
 # <style>.md .longTOC { width:300px; }</style>
 
-# 
 ftr = '''
 <!-- Markdeep: -->
 <style class="fallback">body{visibility:hidden} </style>
@@ -37,8 +28,7 @@ ftr = '''
 
 all_text = []
 
-# Ensure existence of output.
-# pathlib.Path(repo_path).mkdir(parents=True, exist_ok=True)
+repo_path = os.getcwd()
 
 # Content files.
 dfiles = [ 'Nebulator.md', 'ScriptSyntax.md', 'ScriptApi.md', 'Internals.md', 'MusicDefinitions.md' ]

@@ -224,13 +224,14 @@ namespace Nebulator.Script
             }
         }
 
-        /// <summary>Send a named sequence now. TODO1 not actually now, and becomes a permanent member - what is useful?</summary>
+        /// <summary>Send a named sequence at some point.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        protected void SendSequence(string chanName, Sequence seq)
+        /// <param name="beat">When to send the sequence. Must be in the future.</param>
+        protected void SendSequence(string chanName, Sequence seq, int beat)
         {
-            StepCollection scoll = ConvertToSteps(chanName, seq, StepTime.Beat);
-            _steps.Add(scoll);
+            StepCollection scoll = ConvertToSteps(chanName, seq, beat);
+            _transientSteps.Add(scoll);
         }
         #endregion
     }

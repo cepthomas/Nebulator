@@ -60,7 +60,7 @@ namespace Nebulator.Common
         /// <returns>Iterator</returns>
         public IEnumerable<Step> GetSteps(Time time)
         {
-            return _steps.ContainsKey(time) ? _steps[time] : new List<Step>();
+            return _steps.ContainsKey(time) ? _steps[time] : Enumerable.Empty<Step>();
         }
 
         /// <summary>

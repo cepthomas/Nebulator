@@ -423,7 +423,7 @@ namespace Nebulator.App
             bool ok = true;
 
             // Keyboard.
-            var kbd = new Keyboard(); //TODO2 useful? and/or replace with something else? x/y surface
+            var kbd = new Keyboard();
             RegDevice(kbd);
             kbd.Visible = UserSettings.TheSettings.Keyboard;
             btnKeyboard.Checked = UserSettings.TheSettings.Keyboard;
@@ -1088,7 +1088,7 @@ namespace Nebulator.App
             string logFileName = Path.Combine(appDir, "log.txt");
             using (new WaitCursor())
             {
-                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l)); //TODO2 still a little broken.
+                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l)); //TODO still a little broken.
             }
 
             f.ShowDialog();
