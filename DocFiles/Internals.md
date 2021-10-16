@@ -21,7 +21,7 @@ root
 |   README.md
 |   LICENSE
 |   version.txt (contains current version string)
-|   mkdoc.py (builds the single doc file Main.md.html)
+|   mkdoc.py (builds the single doc file Nebulator.md.html)
 |   
 +---App (main app and UI)
 |   |   App.csproj
@@ -79,11 +79,11 @@ root
 +---Test (not enough test stuff)
 |
 \---DocFiles (source for doc build)
-        Main.md
+        Nebulator.md
+        ScriptSyntax.md
+        ScriptApi.md
         Internals.md
         MusicDefinitions.md
-        ScriptApi.md
-        ScriptSyntax.md
 ```
       
 
@@ -103,3 +103,34 @@ This application uses these FOSS components.
 - Markdown rendering: [Markdeep](https://casual-effects.com/markdeep).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
+
+
+# Diagrams
+
+Diagrams can be inserted alongside, as in this      ****************************
+example, or between paragraphs of text as shown     * .---------.              *
+below.                                              * |  Server |<------.      *
+                                                    * '----+----'       |      *
+The diagram parser leaves symbols used as labels    *      |            |      *
+unmodified, so characters like > and ( can appear   *      | DATA CYCLE |      *
+inside of the diagram. In fact, any plain text      *      v            |      *
+may appear in the diagram. In addition to labels,   *  .-------.   .----+----. *
+any un-beautified text will remain in place for     * | Security|  |  File   | *
+use as ASCII art. Thus, the diagram is rarely       * | Policy  +->| Manager | *
+distored by the beautification process.             *  '-------'   '---------' *
+                                                    ****************************
+
+
+****************************
+* .---------.              *
+* |  Server |<------.      *
+* '----+----'       |      *
+*      |            |      *
+*      | DATA CYCLE |      *
+*      v            |      *
+*  .-------.   .----+----. *
+* | Security|  |  File   | *
+* | Policy  +->| Manager | *
+*  '-------'   '---------' *
+****************************
+

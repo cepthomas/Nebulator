@@ -3,21 +3,29 @@ import sys
 import pathlib
 import shutil
 
-# Version that combines files.
+# Combine md files into single html with toc. Assumes cwf is the repo of interest.
+# Uses markdeep slate.css - good for "dark mode" documentation or apidoc for white.
+
+repo_path = os.getcwd()
+# print('>>>>>', os.getcwd())
 
 # arg[0] is script filename
 # arg[1] is SolutionDir == C:\Dev\repos\Nebulator
 
-# slate.css is good for "dark mode" documentation. It automatically switches to
-# black-on-white and an inline table of contents when printed.
 hdr = '''
 <meta charset="utf-8" emacsmode="-*- markdown -*-">
-<link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/slate.css?">
-<!-- CET: make code stand out: -->
-<style>.md code { color: #f3f }</style>
-<!-- CET: toc needs to be wider and/or adjustable: TODO2 -->
-<!-- <style>.md .longTOC { width:300px; }</style> -->
+<link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
 '''
+
+# <link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
+
+# Modifications.
+hdr_mod = '''
+<!-- make code stand out (for slate.css): -->
+<style>.md code { color: #f3f }</style>
+'''
+# <!-- toc needs to be wider and/or adjustable: TODO2 doesnt work right -->
+# <style>.md .longTOC { width:300px; }</style>
 
 # 
 ftr = '''
@@ -27,29 +35,23 @@ ftr = '''
 <script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?" charset="utf-8" ></script>
 # '''
 
-
 all_text = []
 
-if len(sys.argv) == 2:
-    src_path = sys.argv[1]
-    # src_path = os.path.join(sys.argv[1], 'DocFiles')
-    out_path = sys.argv[1]
-    # Ensure existence of output.
-    pathlib.Path(out_path).mkdir(parents=True, exist_ok=True)
+# Ensure existence of output.
+# pathlib.Path(repo_path).mkdir(parents=True, exist_ok=True)
 
-    # Content files.
-    dfiles = [ 'Main.md', 'ScriptSyntax.md', 'ScriptApi.md', 'Internals.md', 'MusicDefinitions.md' ]
-    for df in dfiles:
-        srcfn = os.path.join(src_path, 'DocFiles', df)
-        with open(srcfn, "r") as srcf:
-            all_text.append(srcf.read() + '\n')
+# Content files.
+dfiles = [ 'Nebulator.md', 'ScriptSyntax.md', 'ScriptApi.md', 'Internals.md', 'MusicDefinitions.md' ]
+for df in dfiles:
+    srcfn = os.path.join(repo_path, 'DocFiles', df)
+    with open(srcfn, "r") as srcf:
+        all_text.append(srcf.read() + '\n')
 
-    outfn = os.path.join(out_path, dfiles[0] + '.html')
-    with open(outfn, "w+") as outf:
-        outf.write(hdr)
-        for s in all_text:
-            outf.write(s)
-        outf.write(ftr)
-else:
-    print('Bad args!!')
-    sys.exit(2)
+# Output to
+outfn = os.path.join(repo_path, dfiles[0] + '.html')
+with open(outfn, "w+") as outf:
+    outf.write(hdr)
+    # outf.write(hdr_mod)
+    for s in all_text:
+        outf.write(s)
+    outf.write(ftr)

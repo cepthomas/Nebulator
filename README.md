@@ -10,4 +10,4 @@ It supports midi and OSC.
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported using midi/OSC inputs.
 
-See [Main Documentation](Main.md.html).
+See [Main Documentation](Nebulator.md.html).

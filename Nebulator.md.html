@@ -1,12 +1,8 @@
 
 <meta charset="utf-8" emacsmode="-*- markdown -*-">
-<link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/slate.css?">
-<!-- CET: make code stand out: -->
-<style>.md code { color: #f3f }</style>
-<!-- CET: toc needs to be wider and/or adjustable: TODO2 -->
-<!-- <style>.md .longTOC { width:300px; }</style> -->
+<link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
 
-# Main
+# Nebulator
 
 ![MarkS][marks.jpg]
 
@@ -80,8 +76,8 @@ What the script supports.
 ### Time
 Time is described as a fixed point value `Beat.Subdiv` where:
 - Beat as in the traditional definition = quarter note. From 0 to N.
-- Subdiv is the subdivision of Beat. Fixed at 4 giving resolution of sixteenth notes. From 0 to 3.
-- Time.SubdivsPerBeat gives you another possibly useful bit of information.
+- `Subdiv` is the subdivision of `Beat`.
+- `Time.SubdivsPerBeat` gives you another possibly useful bit of information.
 
 Neb doesn't care about measures, that's up to you.
 
@@ -98,7 +94,7 @@ Midi and OSC are supported by Nebulator (or at least reasonable subsets). Device
 - OscOut: As `127.0.0.1:1234` where `127.0.0.1` is the endpoint IP and `1234` is the port number.
 - Vkey: Virtual keyboard, handled internally.
 
-The `Settings...` menu will show you the devices on your computer.
+The Settings... menu will show you the devices on your computer.
 
 Since the built-in Windows GM player sounds terrible, there are a couple of options for playing midi locally:
 
@@ -373,21 +369,17 @@ You know what this is.
 - 1 ChannelControl per Channel
 - LogLevel: Trace Debug Info Warn Error Fatal Off
 
-## Code
-
-
-
-## Files
+## Code Files
 
 ```
 root
 |   Nebulator.sln 
 |   README.md
 |   LICENSE
-|   version.txt `contains current version string`
-|   mkdoc.py `builds the single doc file Main.md.html`
+|   version.txt (contains current version string)
+|   mkdoc.py (builds the single doc file Nebulator.md.html)
 |   
-+---App `main app and UI`
++---App (main app and UI)
 |   |   App.csproj
 |   |   Program.cs
 |   |   MainForm.*
@@ -395,18 +387,18 @@ root
 |   |   Logging.cs
 |   |   NLog.config
 |   |               
-|   +---UI `controls and forms`
+|   +---UI (controls and forms)
 |   |       ChannelControl.*
 |   |       Keyboard.*
 |   |       SettingsEditor.*
 |   |       TimeControl.*
 |   |       
-|   +---Midi `midi I/O`
+|   +---Midi (midi I/O)
 |   |       MidiInput.cs
 |   |       MidiOutput.cs
 |   |       MidiUtils.cs
 |   |                   
-|   +---OSC `OSC I/O`
+|   +---OSC (OSC I/O)
 |   |       OscCommon.cs
 |   |       OscInput.cs
 |   |       OscOutput.cs
@@ -415,7 +407,7 @@ root
 |           glyphicons-*.png
 |           medusa.ico
 |           
-+---Common `separate assembly so it can be linked with the user script`
++---Common (separate assembly so it can be linked with the user script)
 |       Common.csproj
 |       Bag.cs
 |       Channel.cs
@@ -428,7 +420,7 @@ root
 |       Utils.cs
 |       Wobbler.cs
 |
-+---Script `base class/assembly for user script`
++---Script (base class/assembly for user script)
 |       Script.csproj
 |       ScriptApi.cs
 |       ScriptCore.cs
@@ -436,18 +428,18 @@ root
 |       Section.cs
 |       Sequence.cs
 |       
-+---Examples `see #main/examplescriptfiles`
++---Examples (see #main/examplescriptfiles)
 |           
-+---lib `third party non-nuget`
++---lib (third party non-nuget)
 |       
-+---Test `not enough test stuff`
++---Test (not enough test stuff)
 |
-\---DocFiles `source for doc build`
-        Main.md
+\---DocFiles (source for doc build)
+        Nebulator.md
+        ScriptSyntax.md
+        ScriptApi.md
         Internals.md
         MusicDefinitions.md
-        ScriptApi.md
-        ScriptSyntax.md
 ```
       
 
@@ -467,6 +459,38 @@ This application uses these FOSS components.
 - Markdown rendering: [Markdeep](https://casual-effects.com/markdeep).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
+
+
+# Diagrams
+--------------------------------------------------------------------------------
+
+Diagrams can be inserted alongside, as in this      ****************************
+example, or between paragraphs of text as shown     * .---------.              *
+below.                                              * |  Server |<------.      *
+                                                    * '----+----'       |      *
+The diagram parser leaves symbols used as labels    *      |            |      *
+unmodified, so characters like > and ( can appear   *      | DATA CYCLE |      *
+inside of the diagram. In fact, any plain text      *      v            |      *
+may appear in the diagram. In addition to labels,   *  .-------.   .----+----. *
+any un-beautified text will remain in place for     * | Security|  |  File   | *
+use as ASCII art. Thus, the diagram is rarely       * | Policy  +->| Manager | *
+distored by the beautification process.             *  '-------'   '---------' *
+                                                    ****************************
+
+
+****************************
+* .---------.              *
+* |  Server |<------.      *
+* '----+----'       |      *
+*      |            |      *
+*      | DATA CYCLE |      *
+*      v            |      *
+*  .-------.   .----+----. *
+* | Security|  |  File   | *
+* | Policy  +->| Manager | *
+*  '-------'   '---------' *
+****************************
+
 
 
 # Music Definitions

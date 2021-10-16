@@ -1015,7 +1015,7 @@ namespace Nebulator.App
         /// </summary>
         void About_Click(object? sender, EventArgs e)
         {
-            string fn = "Main.md.html";
+            string fn = "Nebulator.md.html";
             new Process { StartInfo = new ProcessStartInfo(fn) { UseShellExecute = true } }.Start();
         }
         #endregion
