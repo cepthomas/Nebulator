@@ -18,18 +18,12 @@
     <SatelliteResourceLanguages>none</SatelliteResourceLanguages> <!-- en none -->
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningsAsErrors>NU1605 </WarningsAsErrors>
+<!--   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningsAsErrors>NU1605</WarningsAsErrors>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="ros_src\**" />
-    <EmbeddedResource Remove="ros_src\**" />
-    <None Remove="ros_src\**" />
-  </ItemGroup>
-
+ -->
   <ItemGroup>
     <Content Include="..\Nebulator.md.html" Link="Nebulator.md.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -76,12 +70,6 @@
 
   <ItemGroup>
     <None Update="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ScriptDefinitions.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\UserScriptTemplate.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

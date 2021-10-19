@@ -15,7 +15,7 @@ namespace Nebulator.Common
     public class UserSettings
     {
         /// <summary>Current global user settings.</summary>
-        public static UserSettings TheSettings { get; set; } = new UserSettings();
+        public static UserSettings TheSettings { get; set; } = new();
 
         #region Properties - persisted editable
         [DisplayName("Icon Color")]

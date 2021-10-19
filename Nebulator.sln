@@ -9,12 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Script", "Script\Script.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{7FB56B40-1555-438C-94B2-9D2C7DF763E2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{4DEF0736-26BA-4D08-B0E9-D6CAFAAB8C1F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFiles", "DocFiles", "{4DEF0736-26BA-4D08-B0E9-D6CAFAAB8C1F}"
 	ProjectSection(SolutionItems) = preProject
-		Doc\Internals.md = Doc\Internals.md
-		Doc\MusicDefinitions.md = Doc\MusicDefinitions.md
-		Doc\ScriptApi.md = Doc\ScriptApi.md
-		Doc\ScriptSyntax.md = Doc\ScriptSyntax.md
+		DocFiles\Nebulator.md = DocFiles\Nebulator.md
+		DocFiles\Internals.md = DocFiles\Internals.md
+		DocFiles\MusicDefinitions.md = DocFiles\MusicDefinitions.md
+		DocFiles\ScriptApi.md = DocFiles\ScriptApi.md
+		DocFiles\ScriptSyntax.md = DocFiles\ScriptSyntax.md
 	EndProjectSection
 EndProject
 Global

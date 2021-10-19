@@ -34,7 +34,7 @@ namespace Nebulator.App
         /// <summary>Original source file.</summary>
         public string SourceFile { get; set; } = Definitions.UNKNOWN_STRING;
 
-        /// <summary>Original source line number. -1 means invalid.</summary>
+        /// <summary>Original source line number. -1 means invalid or unknown.</summary>
         public int LineNumber { get; set; } = -1;
 
         /// <summary>Content.</summary>
@@ -219,7 +219,7 @@ namespace Nebulator.App
 
                 if (result.Success)
                 {
-                    //Load into currently running assembly. Normally we'd probably want to do this in an AppDomain
+                    // Load into currently running assembly. Normally we'd probably want to do this in an AppDomain
                     var assy = Assembly.Load(ms.ToArray());
                     foreach (Type t in assy.GetTypes())
                     {
@@ -348,7 +348,7 @@ namespace Nebulator.App
                     // Test for preprocessor directives.
                     string strim = s.Trim();
 
-                    //Include("path\name.neb");
+                    // like Include("path\name.neb");
                     if (strim.StartsWith("Include"))
                     {
                         // Exclude from output file.
