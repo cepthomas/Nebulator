@@ -11,10 +11,10 @@ namespace Nebulator.Script
 {
     public partial class ScriptBase
     {
-        #region Properties that can be referenced in the user script
-        /// <summary>Is this script ok?</summary>
-        public bool Valid { get; set; } = false;
-        #endregion
+        //#region Properties that can be referenced in the user script
+        ///// <summary>Is this script ok?</summary>
+        //public bool Valid { get; set; } = false;
+        //#endregion
 
         #region Fields - internal
         /// <summary>My logger.</summary>

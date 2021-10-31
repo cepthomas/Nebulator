@@ -1,5 +1,4 @@
-﻿using Nebulator.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,6 +10,8 @@ using System.Windows.Forms;
 using NBagOfTricks;
 using NAudio.Midi;
 using NAudio.Wave;
+using Nebulator.Common;
+
 
 namespace Nebulator.UI
 {

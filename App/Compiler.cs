@@ -62,7 +62,7 @@ namespace Nebulator.App
     {
         #region Properties
         /// <summary>The compiled script.</summary>
-        public ScriptBase Script { get; set; } = new();
+        public ScriptBase? Script { get; set; } = null;
 
         /// <summary>Current active channels.</summary>
         public List<Channel> Channels { get; set; } = new();
@@ -105,7 +105,7 @@ namespace Nebulator.App
         public void Execute(string nebfn)
         {
             // Reset everything.
-            Script = new();
+            Script = null;
             Channels.Clear();
             Results.Clear();
             _filesToCompile.Clear();
@@ -163,9 +163,9 @@ namespace Nebulator.App
         /// The actual compiler driver.
         /// </summary>
         /// <returns>Compiled script</returns>
-        ScriptBase CompileNative(string baseDir)
+        ScriptBase? CompileNative(string baseDir)
         {
-            ScriptBase script = new();
+            ScriptBase? script = null;
 
             try // many ways to go wrong...
             {
