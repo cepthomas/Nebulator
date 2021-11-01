@@ -1,6 +1,6 @@
 
-Include("utils.neb");
-Include("scale.neb");
+Include(utils.neb);
+Include(scale.neb);
 
 Channel("keys",  MidiOut, 1,  ElectricGrandPiano,  0.1);
 Channel("bass",  MidiOut, 2,  AcousticBass,  0.1);

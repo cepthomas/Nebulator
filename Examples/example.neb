@@ -3,8 +3,8 @@
 //----- Warning: this is not actual music! --------
 
 ///// Directives/preprocess: Include config and lib files. /////
-Include("utils.neb");
-Include("scale.neb");
+Include(utils.neb);
+Include(scale.neb);
 
 ///// All the channel/outputs.
 Channel("keys",  MidiOut, 1,  AcousticGrandPiano,  0.1);

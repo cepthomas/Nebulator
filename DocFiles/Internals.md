@@ -9,27 +9,11 @@
 ## Design
 
 - Three projects. `Common` and `BaseScript` are compiled separately into assemblies
-  so that they can be linked with the user script dynamically.
+  so that they can be linked with the compiled user script dynamically.
 - Main UI and non user script stuff is all in the `App` project.
 - Channels and Controllers follow the midi model. Devices represent ports (and corresponding physical dvices.)
 - You can have up to 16 Channels attached to each IOutputDevice.
 - There is one ChannelControl per Channel.
-
-
-******************************************
-* .---------.                            *
-* |  Server |<--------------------.      *
-* '----+----'                     |      *
-*      |                          |      *
-*      | TODO Would some diagrams |      *
-*      | be useful?               |      *
-*      v                          |      *
-*  .-------.                 .----+----. *
-* | Security|                |  File   | *
-* | Policy  +--------------->| Manager | *
-*  '-------'                 '---------' *
-*                                        *
-******************************************
 
 
 ## Code Files

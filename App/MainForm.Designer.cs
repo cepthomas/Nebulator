@@ -92,6 +92,7 @@
             // 
             // btnCompile
             // 
+            this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompile.Image = global::App.Properties.Resources.glyphicons_86_repeat;
             this.btnCompile.Location = new System.Drawing.Point(116, 49);
@@ -105,6 +106,7 @@
             // 
             // btnRewind
             // 
+            this.btnRewind.FlatAppearance.BorderSize = 0;
             this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRewind.Image = global::App.Properties.Resources.glyphicons_173_rewind;
             this.btnRewind.Location = new System.Drawing.Point(13, 49);
@@ -120,6 +122,7 @@
             // 
             this.chkPlay.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkPlay.BackColor = System.Drawing.SystemColors.Control;
+            this.chkPlay.FlatAppearance.BorderSize = 0;
             this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkPlay.Image = global::App.Properties.Resources.glyphicons_174_play;
@@ -171,27 +174,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -200,7 +203,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -208,7 +211,7 @@
             // 
             this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.settingsToolStripMenuItem.Text = "Settings...";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
             // 

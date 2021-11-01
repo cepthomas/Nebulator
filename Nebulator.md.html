@@ -1,6 +1,6 @@
 
 <meta charset="utf-8" emacsmode="-*- markdown -*-">
-<link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
+<link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/slate.css?">
 
 # Nebulator
 
@@ -117,7 +117,7 @@ Notes (single) and note groups (chords, scales) are referenced in several ways:
 
 ### Include
 ```c#
-Include("utils.neb");
+Include(utils.neb);
 ```
 
 A simple include mechanism is supplied. It's pretty much an insert-whole-file-body-here, no wildcard support.
@@ -366,26 +366,11 @@ You know what this is.
 ## Design
 
 - Three projects. `Common` and `BaseScript` are compiled separately into assemblies
-  so that they can be linked with the user script dynamically.
+  so that they can be linked with the compiled user script dynamically.
 - Main UI and non user script stuff is all in the `App` project.
 - Channels and Controllers follow the midi model. Devices represent ports (and corresponding physical dvices.)
 - You can have up to 16 Channels attached to each IOutputDevice.
 - There is one ChannelControl per Channel.
-
-TODO2 Would some diagrams be useful?
-
-****************************
-* .---------.              *
-* |  Server |<------.      *
-* '----+----'       |      *
-*      |            |      *
-*      | DATA CYCLE |      *
-*      v            |      *
-*  .-------.   .----+----. *
-* | Security|  |  File   | *
-* | Policy  +->| Manager | *
-*  '-------'   '---------' *
-****************************
 
 
 ## Code Files
@@ -451,7 +436,7 @@ root
 |           
 +---lib (third party non-nuget)
 |       
-+---Test (not enough test stuff)
++---Test (pathetic test stuff)
 |
 \---DocFiles (source for doc build)
         Nebulator.md

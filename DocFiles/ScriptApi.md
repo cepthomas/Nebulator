@@ -49,7 +49,7 @@ Notes (single) and note groups (chords, scales) are referenced in several ways:
 
 ### Include
 ```c#
-Include("utils.neb");
+Include(utils.neb);
 ```
 
 A simple include mechanism is supplied. It's pretty much an insert-whole-file-body-here, no wildcard support.

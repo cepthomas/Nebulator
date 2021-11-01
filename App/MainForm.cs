@@ -15,7 +15,7 @@ using Nebulator.Script;
 using Nebulator.Midi;
 using Nebulator.OSC;
 using Nebulator.UI;
-using System.Reflection;
+using NBagOfTricks.ScriptCompiler;
 
 namespace Nebulator.App
 {
@@ -37,7 +37,7 @@ namespace Nebulator.App
         string _scriptFileName = Definitions.UNKNOWN_STRING;
 
         /// <summary>The current script.</summary>
-        ScriptBase _script = new();
+        ScriptBase? _script = new();
 
         /// <summary>The current channels.</summary>
         List<Channel> _channels = new();
@@ -295,100 +295,105 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            using (new WaitCursor())
+            if (_scriptFileName == Definitions.UNKNOWN_STRING)
             {
-                if (_scriptFileName == Definitions.UNKNOWN_STRING)
+                _logger.Warn("No script file loaded.");
+                ok = false;
+            }
+            else
+            {
+                // Clean up any old.
+                timeMaster.TimeDefs.Clear();
+
+                // Compile script now.
+                Compiler compiler = new();
+                compiler.Execute(_scriptFileName);
+                _script = (ScriptBase?)compiler.Script;
+
+                // Update file watcher.
+                _watcher.Clear();
+                compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
+
+                // Process errors. Some may be warnings.
+                int errorCount = compiler.Results.Count(w => w.ResultType == CompileResultType.Error);
+
+                if (errorCount == 0 && _script is not null)
                 {
-                    _logger.Warn("No script file loaded.");
-                    ok = false;
+                    // Check for changes to channels.
+                    if (compiler.Channels.Count > 0)
+                    {
+                        // Update.
+                        DestroyChannelControls();
+                        _channels = compiler.Channels;
+                        CreateChannelControls();
+                    }
+
+                    _script.Init(compiler.Channels);
+
+                    SetCompileStatus(true);
+                    _compileTempDir = compiler.TempDir;
+
+                    // Need exception handling here to protect from user script errors.
+                    try
+                    {
+                        // Init shared vars.
+                        InitRuntime();
+
+                        // Setup script. This builds the sequences and sections.
+                        _script.Setup();
+
+                        // Script may have altered shared values.
+                        ProcessRuntime();
+
+                        // Build all the steps.
+                        _script.BuildSteps();
+
+                        // Init the timeclock.
+                        timeMaster.TimeDefs = _script.GetSectionMarkers();
+                        timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
+
+                        SetFastTimerPeriod();
+                    }
+                    catch (Exception ex)
+                    {
+                        ProcessScriptRuntimeError(ex);
+                        ok = false;
+                    }
+
+                    SetCompileStatus(ok);
                 }
                 else
                 {
-                    // Clean up any old.
-                    _watcher.Clear();
-                    timeMaster.TimeDefs.Clear();
-
-                    // Compile script now.
-                    Compiler compiler = new();
-                    compiler.Execute(_scriptFileName);
-                    _script = compiler.Script;  make nullable like np
-
-                    // Process results.
-                    if (_script.Valid)
-                    {
-                        // Check for changes to channels.
-                        if (compiler.Channels.Count > 0)
-                        {
-                            // Update.
-                            DestroyChannelControls();
-                            _channels = compiler.Channels;
-                            CreateChannelControls();
-                        }
-
-                        _script.Init(compiler.Channels);
-
-                        SetCompileStatus(true);
-                        compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
-                        _compileTempDir = compiler.TempDir;
-
-                        // Need exception handling here to protect from user script errors.
-                        try
-                        {
-                            // Init shared vars.
-                            InitRuntime();
-
-                            // Setup script. This builds the sequences and sections.
-                            _script.Setup();
-
-                            // Script may have altered shared values.
-                            ProcessRuntime();
-
-                            // Build all the steps.
-                            _script.BuildSteps();
-
-                            ///// Init the timeclock.
-                            timeMaster.TimeDefs = _script.GetSectionMarkers();
-                            timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
-
-                            SetFastTimerPeriod();
-                        }
-                        catch (Exception ex)
-                        {
-                            ProcessScriptRuntimeError(ex);
-                            ok = false;
-                        }
-
-                        SetCompileStatus(ok);
-                    }
-                    else
-                    {
-                        _logger.Error("Compile failed.");
-                        ok = false;
-                        ProcessPlay(PlayCommand.StopRewind);
-                        SetCompileStatus(false);
-                    }
-
-                    // Log/show results.
-                    compiler.Results.ForEach(r =>  TODO changed-nproc
-                    {
-                        switch (r.ResultType)
-                        {
-                            case CompileResultType.Fatal:
-                            case CompileResultType.Error:
-                            case CompileResultType.Runtime:
-                                _logger.Error(r.ToString());
-                                break;
-
-                            case CompileResultType.Warning:
-                                _logger.Warn(r.ToString());
-                                break;
-
-                            case CompileResultType.Info:
-                                _logger.Info(r.ToString());
-                                break;
-                        }
-                    });
+                    _logger.Error("Compile failed.");
+                    ok = false;
+                    ProcessPlay(PlayCommand.StopRewind);
+                    SetCompileStatus(false);
                 }
+
+                // Log/show results.
+                compiler.Results.ForEach(r =>
+                {
+                    LogLevel level = LogLevel.Info;
+
+                    switch(r.ResultType)
+                    {
+                        case CompileResultType.Error:
+                            level = LogLevel.Error;
+                            break;
+                        case CompileResultType.Warning:
+                            level = LogLevel.Warn;
+                            break;
+                        case CompileResultType.Info:
+                            level = LogLevel.Info;
+                            break;
+                    }
+
+                    _logger.Log(new LogEventInfo()
+                    {
+                        Level = level,
+                        Message = r.LineNumber > 0 ? $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}" : $"{r.SourceFile}: {r.Message}"
+                    });
+                });
             }
 
             return ok;
@@ -524,6 +529,7 @@ namespace Nebulator.App
                     {
                         Location = new Point(x, y),
                         BoundChannel = t,
+                        BorderStyle = BorderStyle.FixedSingle
                     };
                     Controls.Add(tctl);
 
@@ -573,7 +579,7 @@ namespace Nebulator.App
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker) delegate ()
            {
-               if (_script.Valid)
+               if (_script is not null)
                {
                    NextStep();
                }
@@ -588,7 +594,7 @@ namespace Nebulator.App
             ////// Neb steps /////
             InitRuntime();
 
-            if (chkPlay.Checked && !_needCompile)
+            if (_script is not null && chkPlay.Checked && !_needCompile)
             {
                 //_tan.Arm();
 
@@ -686,7 +692,7 @@ namespace Nebulator.App
         {
             BeginInvoke((MethodInvoker) delegate ()
             {
-               if (_script.Valid && sender is not null)
+               if (_script is not null && sender is not null)
                {
                    var dev = (IInputDevice)sender;
 
@@ -715,11 +721,14 @@ namespace Nebulator.App
         /// </summary>
         void InitRuntime()
         {
-            _script.Playing = chkPlay.Checked;
-            _script.StepTime = _stepTime;
-            _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
-            _script.Speed = potSpeed.Value;
-            _script.MasterVolume = sldVolume.Value;
+            if(_script is not null)
+            {
+                _script.Playing = chkPlay.Checked;
+                _script.StepTime = _stepTime;
+                _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
+                _script.Speed = potSpeed.Value;
+                _script.MasterVolume = sldVolume.Value;
+            }
         }
 
         /// <summary>
@@ -727,15 +736,18 @@ namespace Nebulator.App
         /// </summary>
         void ProcessRuntime()
         {
-            if (Math.Abs(_script.Speed - potSpeed.Value) > 0.001)
+            if (_script is not null)
             {
-                potSpeed.Value = _script.Speed;
-                SetFastTimerPeriod();
-            }
+                if (Math.Abs(_script.Speed - potSpeed.Value) > 0.001)
+                {
+                    potSpeed.Value = _script.Speed;
+                    SetFastTimerPeriod();
+                }
 
-            if (Math.Abs(_script.MasterVolume - sldVolume.Value) > 0.001)
-            {
-                sldVolume.Value = _script.MasterVolume;
+                if (Math.Abs(_script.MasterVolume - sldVolume.Value) > 0.001)
+                {
+                    sldVolume.Value = _script.MasterVolume;
+                }
             }
         }
 
@@ -743,26 +755,25 @@ namespace Nebulator.App
         /// Runtime error. Look for ones generated by our script - normal occurrence which the user should know about.
         /// </summary>
         /// <param name="ex"></param>
-        void ProcessScriptRuntimeError(Exception ex)  changed-nproc
+        void ProcessScriptRuntimeError(Exception ex)
         {
-            CompileResult? err;
-
             ProcessPlay(PlayCommand.Stop);
             SetCompileStatus(false);
 
             // Locate the offending frame.
-            string srcFile;
+            string srcFile = "???";
             int srcLine = -1;
+            string msg = ex.Message;
             StackTrace st = new(ex, true);
             StackFrame? sf = null;
 
             for (int i = 0; i < st.FrameCount; i++)
             {
                 StackFrame? stf = st.GetFrame(i);
-                if(stf is not null)
+                if (stf is not null)
                 {
                     var stfn = stf!.GetFileName();
-                    if(stfn is not null)
+                    if (stfn is not null)
                     {
                         if (stfn.ToUpper().Contains(_compileTempDir.ToUpper()))
                         {
@@ -790,30 +801,10 @@ namespace Nebulator.App
                     string sl = genLines[genLine][(ind + 2)..];
                     srcLine = int.Parse(sl);
                 }
+            }
+            // else // unknown?
 
-                err = new CompileResult()
-                {
-                    ResultType = CompileResultType.Runtime,
-                    SourceFile = srcFile,
-                    LineNumber = srcLine,
-                    Message = ex.Message
-                };
-            }
-            else // unknown?
-            {
-                err = new CompileResult()
-                {
-                    ResultType = CompileResultType.Runtime,
-                    SourceFile = "",
-                    LineNumber = -1,
-                    Message = ex.Message
-                };
-            }
-
-            if (err is not null)
-            {
-                _logger.Error(err.ToString());
-            }
+            _logger.Error(srcLine > 0 ? $"{srcFile}({srcLine}): {msg}" : $"{srcFile}: {msg}");
         }
         #endregion
 
@@ -1229,25 +1220,20 @@ namespace Nebulator.App
         /// <param name="fn">Output filename.</param>
         void ExportMidi(string fn)
         {
-            bool ok = true;
-
-            if (_script.Valid)
+            if (_script is not null)
             {
+                bool ok = true;
                 if (_needCompile)
                 {
                     ok = CompileScript();
                 }
-            }
-            else
-            {
-                ok = false;
-            }
 
-            if (ok)
-            {
-                Dictionary<int, string> channels = new();
-                _channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
-                MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, potSpeed.Value, "Converted from " + _scriptFileName);
+                if (ok)
+                {
+                    Dictionary<int, string> channels = new();
+                    _channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
+                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, potSpeed.Value, "Converted from " + _scriptFileName);
+                }
             }
         }
 
