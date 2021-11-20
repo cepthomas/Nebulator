@@ -157,10 +157,6 @@ namespace Nebulator.App
                 toolStrip1.Items.Add(new ToolStripControlHost(cpuMeter));
             }
 
-            // For testing.
-            lblSolo.Hide();
-            lblMute.Hide();
-
             btnWrap.Checked = UserSettings.TheSettings.WordWrap;
             textViewer.WordWrap = btnWrap.Checked;
             btnWrap.Click += (object? _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
@@ -168,6 +164,10 @@ namespace Nebulator.App
             btnKillComm.Click += (object? _, EventArgs __) => { Kill(); };
             btnClear.Click += (object? _, EventArgs __) => { textViewer.Clear(); };
             #endregion
+
+            //// For testing.
+            //lblSolo.Hide();
+            //lblMute.Hide();
 
             InitLogging();
             _logger.Info("============================ Starting up ===========================");
@@ -302,6 +302,8 @@ namespace Nebulator.App
             }
             else
             {
+                ProcessPlay(PlayCommand.StopRewind);
+
                 // Clean up any old.
                 timeMaster.TimeDefs.Clear();
 
@@ -310,6 +312,7 @@ namespace Nebulator.App
                 compiler.Execute(_scriptFileName);
                 _script = (ScriptBase?)compiler.Script;
 
+_logger.Info($"----- update file watcher {compiler.SourceFiles.Count()}");
                 // Update file watcher.
                 _watcher.Clear();
                 compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
@@ -927,9 +930,10 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void Watcher_Changed(object? sender, MultiFileWatcher.FileChangeEventArgs e)
         {
+_logger.Info($"----- Watcher_Changed {UserSettings.TheSettings.AutoCompile}");
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker) delegate ()
-           {
+            {
                if (UserSettings.TheSettings.AutoCompile)
                {
                    CompileScript();

@@ -44,6 +44,7 @@ public override void Setup()
 }    
 
 
+
 ///// Make the music.
 public void BuildComp()
 {
@@ -127,27 +128,31 @@ public void BuildComp()
     });
 
 
+
+
+
+
     /////////////////////// sections /////////////////////////////////
 
     Section sectBeginning = CreateSection(32, "Beginning", new SectionElements
     {
-        { "keys",  Loop,  seqKeysVerse  },
-        { "drums", Loop,  seqDrumsVerse },
-        { "bass",  Loop,  seqBassVerse  }
+        { "keys",  Loop,  seqKeysVerse   },
+        { "drums", Loop,  seqDrumsVerse  },
+        { "bass",  Loop,  seqBassVerse   }
     });
 
     Section sectMiddle = CreateSection(16, "Middle", new SectionElements
     {
-        { "keys",  Loop,  seqKeysChorus },
-        { "drums", Loop,  seqDrumsVerse },
-        { "bass",  Loop,  seqBassVerse  },
+        //{ "keys",  Loop,  seqKeysChorus  },
+        { "drums", Loop,  seqDrumsSimple },
+        { "bass",  Loop,  seqBassVerse   },
         { "synth", Once,  seqAlgo, seqDynamic, seqAlgo, seqDynamic }
     });
 
     Section sectEnding = CreateSection(32, "Ending", new SectionElements
     {
         { "keys",  Loop,  seqKeysVerse   },
-        { "drums", Loop,  seqDrumsSimple },
+        { "drums", Loop,  seqDrumsVerse  },
         { "bass",  Loop,  seqBassVerse   }
     });
 }
@@ -157,9 +162,10 @@ public void BuildComp()
 
 public override void Step()
 {
-    if(StepTime.Subdiv != 0) // not looking at these right now
+    if(StepTime == new Time(0))
     {
-        return;
+        SendController("synth", Pan, 0);
+        SendController("keys", Pan, -127);
     }
 }
 

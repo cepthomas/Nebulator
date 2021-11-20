@@ -18,12 +18,6 @@
     <SatelliteResourceLanguages>none</SatelliteResourceLanguages> <!-- en none -->
   </PropertyGroup>
 
-<!--   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningsAsErrors>NU1605</WarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
- -->
   <ItemGroup>
     <Content Include="..\Nebulator.md.html" Link="Nebulator.md.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
