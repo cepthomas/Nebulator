@@ -308,14 +308,17 @@ namespace Nebulator.App
                 timeMaster.TimeDefs.Clear();
 
                 // Compile script now.
-                Compiler compiler = new();
+                Compiler compiler = new() { WorkPath = UserSettings.TheSettings.WorkPath };
                 compiler.Execute(_scriptFileName);
                 _script = (ScriptBase?)compiler.Script;
 
-_logger.Info($"----- update file watcher {compiler.SourceFiles.Count()}");
+                _watcher.WatchedFiles.ForEach(fn => _logger.Info($"file watcher before {compiler.SourceFiles.Count()}"));
+
                 // Update file watcher.
                 _watcher.Clear();
                 compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
+
+                _watcher.WatchedFiles.ForEach(fn => _logger.Info($"file watcher after {compiler.SourceFiles.Count()}"));
 
                 // Process errors. Some may be warnings.
                 int errorCount = compiler.Results.Count(w => w.ResultType == CompileResultType.Error);
@@ -391,10 +394,17 @@ _logger.Info($"----- update file watcher {compiler.SourceFiles.Count()}");
                             break;
                     }
 
+                    string msg = r.Message; // default
+
+                    if (r.SourceFile != "")
+                    {
+                        msg = r.LineNumber > 0 ? $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}" : $"{r.SourceFile}: {r.Message}";
+                    }
+
                     _logger.Log(new LogEventInfo()
                     {
                         Level = level,
-                        Message = r.LineNumber > 0 ? $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}" : $"{r.SourceFile}: {r.Message}"
+                        Message = msg
                     });
                 });
             }
@@ -930,7 +940,8 @@ _logger.Info($"----- update file watcher {compiler.SourceFiles.Count()}");
         /// <param name="e"></param>
         void Watcher_Changed(object? sender, MultiFileWatcher.FileChangeEventArgs e)
         {
-_logger.Info($"----- Watcher_Changed {UserSettings.TheSettings.AutoCompile}");
+            e.FileNames.ForEach(fn => _logger.Info($"Watcher_Changed {fn}"));
+
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker) delegate ()
             {

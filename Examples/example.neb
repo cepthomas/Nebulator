@@ -40,6 +40,8 @@ public override void Setup()
     _scaleNotes = GetNotes("G3.Algerian");
     _chordNotes = GetNotes("C4.o7");
 
+    bool b = Boing(60);
+
     BuildComp();
 }    
 
@@ -126,9 +128,6 @@ public void BuildComp()
         { 2.0, "Bb3", 0.7, 0.1 },
         { 3.0, "C4 ", 0.7, 0.1 },
     });
-
-
-
 
 
 
