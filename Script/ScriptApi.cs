@@ -57,8 +57,6 @@ namespace Nebulator.Script
                 Beats = beats,
                 Elements = elements
             };
-
-            _sequences.Add(nseq);
             return nseq;
         }
 
@@ -230,6 +228,11 @@ namespace Nebulator.Script
         /// <param name="beat">When to send the sequence. Must be in the future.</param>
         protected void SendSequence(string chanName, Sequence seq, int beat)
         {
+            if (seq is null)
+            {
+                throw new Exception($"Invalid Sequence");
+            }
+
             StepCollection scoll = ConvertToSteps(chanName, seq, beat);
             _transientSteps.Add(scoll);
         }

@@ -53,9 +53,6 @@ namespace Nebulator.Common
         NoteControl = 250, PitchControl = 251, None = 252
     }
 
-    /// <summary>How to play the sequence in the section.</summary>
-    public enum SequenceMode { Once, Loop }
-
     /// <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
     public static class MusicDefinitions
     {

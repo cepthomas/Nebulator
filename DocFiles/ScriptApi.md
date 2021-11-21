@@ -85,8 +85,8 @@ should help clarify.)
     - { when, which, volume, dur }
     - { when, drum, volume }
     - { when, function, volume }
-    - { pattern, subdivs, which, volume, dur }
-    - { pattern, subdivs, drum, volume }
+    - { pattern, which, volume, dur }
+    - { pattern, drum, volume }
         - when: When to play the element in the sequence, in `Beat.Subdiv` format.
         - which/drum: One of [Notes](#scriptapi/basics/musicalnotes) or [Drums](#musicdefinitions/generalmididrums).
         - volume: Note volume. Normalized to 0.0 - 1.0.
@@ -95,7 +95,6 @@ should help clarify.)
         - pattern: describes a sequence of notes, kind of like a piano roll. `1 to 9` (volume) starts a note which is held 
           for subsequent `-`. The note is ended with any other character than `-`. `|`, `.` and ` ` are ignored, 
           used for visual assist only. These are particularly useful for drum patterns.
-        - subdivs: Subdivisions per Beat.
         
 
 A nonsensical example:

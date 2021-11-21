@@ -43,8 +43,7 @@ namespace Nebulator.App
             Usings.AddRange(new List<string>()
             {
                 "static Nebulator.Script.ScriptUtils", "static Nebulator.Common.InstrumentDef",
-                "static Nebulator.Common.DrumDef", "static Nebulator.Common.ControllerDef",
-                "static Nebulator.Common.SequenceMode"
+                "static Nebulator.Common.DrumDef", "static Nebulator.Common.ControllerDef"
             });
 
             // Save hash of current channel descriptors to detect change in source code.

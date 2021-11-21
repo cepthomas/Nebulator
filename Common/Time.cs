@@ -120,8 +120,6 @@ namespace Nebulator.Common
             {
                 throw new Exception($"Invalid subdiv value: {tts}");
             }
-
-            Subdiv = (int)(fractional * 100);
         }
         #endregion
 

@@ -13,7 +13,7 @@ namespace Nebulator.Script
     /// <summary>
     /// One section definition.
     /// </summary>
-    public class Section : IEnumerable
+    public class Section
     {
         #region Properties
         /// <summary>List of sequences in this section.</summary>
@@ -25,49 +25,6 @@ namespace Nebulator.Script
         /// <summary>Readable.</summary>
         public string Name { get; set; } = "";
         #endregion
-
-        /// <summary>
-        /// Enumerator for section.
-        /// </summary>
-        /// <returns>Tuple of (channel, sequence, beat)</returns>
-        public IEnumerator GetEnumerator()
-        {
-            // Flatten section into sequences.
-            foreach (SectionElement sect in Elements)
-            {
-                int seqBeat = 0;
-                Sequence? seqnull = null; // default means ignore
-
-                bool ok = sect.Sequences is not null && sect.Sequences.Length > 0;
-
-                if(sect.Sequences is not null)
-                {
-                    switch(sect.Mode)
-                    {
-                        case SequenceMode.Once:
-                            foreach (Sequence seq in sect.Sequences)
-                            {
-                                yield return (sect.Channel, seq, seqBeat);
-                                seqBeat += seq.Beats;
-                            }
-                            break;
-
-                        case SequenceMode.Loop:
-                            while (seqBeat < Beats)
-                            {
-                                yield return (sect.Channel, sect.Sequences[0], seqBeat);
-                                seqBeat += sect.Sequences[0].Beats;
-                            }
-                            break;
-                    }
-                }
-
-                if (!ok)
-                {
-                    yield return (sect.Channel, seqnull, seqBeat);
-                }
-            }
-        }
 
         /// <summary>
         /// For viewing pleasure.
@@ -87,18 +44,16 @@ namespace Nebulator.Script
         /// Add 0-N elements.
         /// </summary>
         /// <param name="channel"></param>
-        /// <param name="seqMode">One of enum SequenceMode</param>
         /// <param name="sequences"></param>
-        public void Add(string channel, SequenceMode seqMode, params Sequence[] sequences)
+        public void Add(string channel, params Sequence[] sequences)
         {
             SectionElement sel = new()
             {
                 Channel = channel,
-                Mode = seqMode,
                 Sequences = sequences
             };
 
-            this.Add(sel);
+            Add(sel);
         }
     }
 
@@ -110,10 +65,6 @@ namespace Nebulator.Script
         #region Properties
         /// <summary>Associated channel.</summary>
         public string Channel { get; set; } = Definitions.UNKNOWN_STRING;
-        //public Channel Channel { get; set; } = null;
-
-        /// <summary>How to process it.</summary>
-        public SequenceMode Mode { get; set; } = SequenceMode.Once;
 
         /// <summary>Associated sequences.</summary>
         public Sequence[] Sequences { get; set; } = Array.Empty<Sequence>();

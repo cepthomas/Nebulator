@@ -27,87 +27,87 @@ void BuildComp()
     
     /////////////////////// Keys sequences /////////////////////////////////
 
-    Sequence seqKeysIntro = CreateSequence(16, new SequenceElements
+    Sequence seqKeysIntro = CreateSequence(8, new SequenceElements
     {
         //"|m...............|b...b...b...b...|tttttttttttttttt|tttttttttttttttt|
-        { "|9-------------  |9-------------  |9 9-----------  |9-----          |", 16, "E4.m", KEYS_VOL },
-        { "|                |                |                |        9 9     |", 16, "D5.m", KEYS_VOL },
-        { "|                |                |                |            9 9 |", 16, "A4.m", KEYS_VOL },
+        { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
+        { "|                |                |                |        9 9     |", "D5.m", KEYS_VOL },
+        { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },
     });
 
-    Sequence seqKeysVerse = CreateSequence(16, new SequenceElements
+    Sequence seqKeysVerse = CreateSequence(8, new SequenceElements
     {
-        { "|9-------------  |                |                |                |", 16, "B4.m", KEYS_VOL },
-        { "|                |9-------------  |                |                |", 16, "A4.m", KEYS_VOL },
-        { "|                |                |9---------------|----------      |", 16, "E4.m", KEYS_VOL },
+        { "|9-------------  |                |                |                |", "B4.m", KEYS_VOL },
+        { "|                |9-------------  |                |                |", "A4.m", KEYS_VOL },
+        { "|                |                |9---------------|----------      |", "E4.m", KEYS_VOL },
     });
 
-    Sequence seqKeysEnd = CreateSequence(16, new SequenceElements
+    Sequence seqKeysEnd = CreateSequence(8, new SequenceElements
     {
-        { "|9-------------  |9-------------  |9 9-----------  |9-----          |", 16, "E4.m", KEYS_VOL },
-        { "|                |                |                |        9 9     |", 16, "D5.m", KEYS_VOL },
-        { "|                |                |                |            9 9 |", 16, "A4.m", KEYS_VOL },
+        { "|9-------------  |9-------------  |9 9-----------  |9-----          |", "E4.m", KEYS_VOL },
+        { "|                |                |                |        9 9     |", "D5.m", KEYS_VOL },
+        { "|                |                |                |            9 9 |", "A4.m", KEYS_VOL },
     });
 
     /////////////////////// Drum sequences /////////////////////////////////
 
-    Sequence seqDrumsVerse = CreateSequence(16, new SequenceElements
+    Sequence seqDrumsVerse = CreateSequence(8, new SequenceElements
     {
-        { "|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|", 16, RideCymbal1,      DRUM_VOL*0.8 },
-        { "|....8.......8...|....8.......8...|....8.......8...|....8.......8...|", 16, SideStick,        DRUM_VOL*0.9 },
-        { "|8.....8.8.......|8.....8.8.......|8.....8.8.......|8.....8.8.......|", 16, AcousticBassDrum, DRUM_VOL },
+        { "|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|8.8.8.8.8.8.8.8.|", RideCymbal1,      DRUM_VOL*0.8 },
+        { "|....8.......8...|....8.......8...|....8.......8...|....8.......8...|", SideStick,        DRUM_VOL*0.9 },
+        { "|8.....8.8.......|8.....8.8.......|8.....8.8.......|8.....8.8.......|", AcousticBassDrum, DRUM_VOL },
     });
 
     /////////////////////// Bass sequences /////////////////////////////////
 
-    Sequence seqBassIntro = CreateSequence(16, new SequenceElements
+    Sequence seqBassIntro = CreateSequence(8, new SequenceElements
     {
-        { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", 16, "E2", BASS_VOL },
+        { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
 
-    Sequence seqBassVerse = CreateSequence(16, new SequenceElements
+    Sequence seqBassVerse = CreateSequence(8, new SequenceElements
     {
-        { "|9----.9.9------.|                |                |                |", 16, "B2", BASS_VOL },
-        { "|                |9----.9.9------.|                |                |", 16, "A2", BASS_VOL },
-        { "|                |                |9----.9.9------.|9----.9.9------.|", 16, "E2", BASS_VOL },
+        { "|9----.9.9------.|                |                |                |", "B2", BASS_VOL },
+        { "|                |9----.9.9------.|                |                |", "A2", BASS_VOL },
+        { "|                |                |9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
 
-    Sequence seqBassEnd = CreateSequence(16, new SequenceElements
+    Sequence seqBassEnd = CreateSequence(8, new SequenceElements
     {
-        { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", 16, "E2", BASS_VOL },
+        { "|9----.9.9------.|9----.9.9------.|9----.9.9------.|9----.9.9------.|", "E2", BASS_VOL },
     });
 
 
     /////////////////////// Synth sequences /////////////////////////////////
-    Sequence seqSynth1 = CreateSequence(16, new SequenceElements
+    Sequence seqSynth1 = CreateSequence(8, new SequenceElements
     {
-        { "|9------        7|                |               7|                |", 16, "B4", SYNTH_VOL },
-        { "|                |9-------       7|                |                |", 16, "A4", SYNTH_VOL },
-        { "|                |                |9-------        |5------------  5|", 16, "E5", SYNTH_VOL },
+        { "|9------        7|                |               7|                |", "B4", SYNTH_VOL },
+        { "|                |9-------       7|                |                |", "A4", SYNTH_VOL },
+        { "|                |                |9-------        |5------------  5|", "E5", SYNTH_VOL },
     });
 
     /////////////////////// sections /////////////////////////////////
 
     CreateSection(32, "Intro", new SectionElements
     {
-        { "keys",  Loop,  seqKeysIntro  },
-        { "drums", Loop,  seqDrumsVerse },
-        { "bass",  Loop,  seqBassIntro  },
-      //{ "synth", Loop,  seqSynth1     },
+        { "keys",  seqKeysIntro  },
+        { "drums", seqDrumsVerse },
+        { "bass",  seqBassIntro  },
+        { "synth", seqSynth1     },
     });
 
     CreateSection(64, "Middle", new SectionElements
     {
-        { "keys",  Loop,  seqKeysVerse  },
-        { "drums", Loop,  seqDrumsVerse },
-        { "bass",  Loop,  seqBassVerse  },
-        { "synth", Loop,  seqSynth1     },
+        { "keys",  seqKeysVerse  },
+        { "drums", seqDrumsVerse },
+        { "bass",  seqBassVerse  },
+        { "synth", seqSynth1     },
     });
 
     CreateSection(32, "End", new SectionElements
     {
-        { "keys",  Loop,  seqKeysEnd    },
-        { "drums", Loop,  seqDrumsVerse },
-        { "bass",  Loop,  seqBassEnd    },
+        { "keys",  seqKeysEnd    },
+        { "drums", seqDrumsVerse },
+        { "bass",  seqBassEnd    },
     });
 }

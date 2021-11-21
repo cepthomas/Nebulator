@@ -93,57 +93,38 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add("|5---    8       |7.......7654--- |", "G4.m7", 90);
+        /// Like: Z.Add("|5---    8       |7.......7654--- |", 4, "G4.m7", 90);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
         /// <param name="which">Specific note(s).</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, int resolution, string which, double volume)//xxx
+        public void Add(string pattern, string which, double volume)
         {
             foreach (double d in ScriptUtils.GetNotes(which))
             {
-                Add(pattern, resolution, d, volume);
+                Add(pattern, d, volume);
             }
         }
 
         /// <summary>
-        /// Like: Z.Add("|5---    8       |7.......7654--- |", RideCymbal1, 90);
+        /// Like: Z.Add("|5---    8       |7.......7654--- |", 4, RideCymbal1, 90);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
         /// <param name="which">Specific note(s).</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, int resolution, DrumDef which, double volume)//xxx
+        public void Add(string pattern, DrumDef which, double volume)
         {
-            Add(pattern, resolution, (int)which, volume);
+            Add(pattern, (int)which, volume);
         }
 
         /// <summary>
-        /// Like: Z.Add("|5---    8       |7.......7654--- |", 25, BASS_VOL);
+        /// Like: Z.Add("|5---    8       |7.......7654--- |", 4, 25, BASS_VOL);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="resolution">Resolution of chars in the pattern. 4 is quarter notes, etc.</param>
         /// <param name="which">Specific instrument or drum.</param>
         /// <param name="volume">Volume.</param>
-        public void Add(string pattern, int resolution, double which, double volume)//xxx
+        public void Add(string pattern, double which, double volume)
         {
-            // Needs to be a multiple of 2 up to 32 (min note for Time.SubdivsPerBeat).
-            switch(resolution)
-            {
-                case 1:
-                case 2:
-                case 4:
-                case 8:
-                case 16:
-                case 32:
-                    break;
-                default:
-                    throw new Exception($"Invalid resolution: {resolution}");
-            }
-
-            int scale = Time.SubdivsPerBeat * 4 / resolution;
-
             // Remove visual markers.
             pattern = pattern.Replace("|", "");
             int currentVol = 0; // default, not sounding
@@ -155,12 +136,8 @@ namespace Nebulator.Script
                 // Make a Note on.
                 double volmod = (double)currentVol / 10;
 
-                // Convert to internal resolution.
-                int startSubdivs = startIndex * scale;
-                int nowSubdivs = index * scale;
-
-                Time dur = new(nowSubdivs - startSubdivs);
-                Time when = new(startSubdivs);
+                Time dur = new(index - startIndex);
+                Time when = new(startIndex);
 
                 SequenceElement ncl = new(which)
                 {
@@ -202,7 +179,7 @@ namespace Nebulator.Script
                         // Do we need to end the current note?
                         if (currentVol > 0)
                         {
-                            MakeNoteEvent(patternIndex);
+                            MakeNoteEvent(patternIndex - 1);
                         }
 
                         // Start new note.
@@ -216,7 +193,7 @@ namespace Nebulator.Script
                         // Do we need to end the current note?
                         if (currentVol > 0)
                         {
-                            MakeNoteEvent(patternIndex);
+                            MakeNoteEvent(patternIndex - 1);
                         }
                         currentVol = 0;
                         break;
@@ -273,14 +250,6 @@ namespace Nebulator.Script
         {
             Notes.Add(noteNum);
         }
-
-        ///// <summary>
-        ///// Constructor from drum.
-        ///// </summary>
-        //public SequenceElement(MusicDefinitions.DrumDef drum)
-        //{
-        //    Notes.Add((double)drum);
-        //}
 
         /// <summary>
         /// Constructor from function.

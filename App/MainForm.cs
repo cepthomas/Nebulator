@@ -312,13 +312,13 @@ namespace Nebulator.App
                 compiler.Execute(_scriptFileName);
                 _script = (ScriptBase?)compiler.Script;
 
-                _watcher.WatchedFiles.ForEach(fn => _logger.Info($"file watcher before {compiler.SourceFiles.Count()}"));
+                _watcher.WatchedFiles.ForEach(fn => _logger.Debug($"file watcher before {compiler.SourceFiles.Count()}"));
 
                 // Update file watcher.
                 _watcher.Clear();
                 compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
 
-                _watcher.WatchedFiles.ForEach(fn => _logger.Info($"file watcher after {compiler.SourceFiles.Count()}"));
+                _watcher.WatchedFiles.ForEach(fn => _logger.Debug($"file watcher after {compiler.SourceFiles.Count()}"));
 
                 // Process errors. Some may be warnings.
                 int errorCount = compiler.Results.Count(w => w.ResultType == CompileResultType.Error);
@@ -408,6 +408,8 @@ namespace Nebulator.App
                     });
                 });
             }
+
+            File.WriteAllText("_dump.txt", _script.GetAllSteps().Dump());
 
             return ok;
         }
@@ -561,19 +563,12 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// 
+        /// Clean up from before.
         /// </summary>
         void DestroyChannelControls()
         {
-            foreach (Control ctl in Controls)
-            {
-                if (ctl is ChannelControl)
-                {
-                    ChannelControl? tctl = ctl as ChannelControl;
-                    tctl?.Dispose();
-                    Controls.Remove(tctl);
-                }
-            }
+            List<Control> toRemove = new(Controls.OfType<ChannelControl>());
+            toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
         }
         #endregion
 
@@ -940,7 +935,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void Watcher_Changed(object? sender, MultiFileWatcher.FileChangeEventArgs e)
         {
-            e.FileNames.ForEach(fn => _logger.Info($"Watcher_Changed {fn}"));
+            e.FileNames.ForEach(fn => _logger.Debug($"Watcher_Changed {fn}"));
 
             // Kick over to main UI thread.
             BeginInvoke((MethodInvoker) delegate ()

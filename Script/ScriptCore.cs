@@ -11,20 +11,12 @@ namespace Nebulator.Script
 {
     public partial class ScriptBase
     {
-        //#region Properties that can be referenced in the user script
-        ///// <summary>Is this script ok?</summary>
-        //public bool Valid { get; set; } = false;
-        //#endregion
-
         #region Fields - internal
         /// <summary>My logger.</summary>
         internal readonly Logger _logger = LogManager.GetLogger("Script");
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
-
-        /// <summary>All sequences.</summary>
-        internal List<Sequence> _sequences = new();
 
         /// <summary>All sections.</summary>
         internal List<Section> _sections = new();
@@ -62,17 +54,36 @@ namespace Nebulator.Script
         public void BuildSteps()
         {
             // Build all the steps.
-            int sectionTime = 0;
+            int sectionBeat = 0;
 
             foreach (Section section in _sections)
             {
-                foreach ((string ch, Sequence seq, int beat) v in section)
+                foreach (SectionElement sectel in section.Elements)
                 {
-                    AddSequence(v.ch, v.seq, sectionTime + v.beat);
+                    if (sectel.Sequences.Length > 0)
+                    {
+                        // Current index in the sequences list.
+                        int seqIndex = 0;
+
+                        // Current beat in the section.
+                        int beatInSect = 0;
+
+                        while (beatInSect < section.Beats)
+                        {
+                            var seq = sectel.Sequences[seqIndex];
+                            AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
+
+                            beatInSect += seq.Beats;
+                            if (seqIndex < sectel.Sequences.Length - 1)
+                            {
+                                seqIndex++;
+                            }
+                        }
+                    }
                 }
 
                 // Update accumulated time.
-                sectionTime += section.Beats;
+                sectionBeat += section.Beats;
             }
         }
 
@@ -199,7 +210,7 @@ namespace Nebulator.Script
         /// <summary>Send a named script sequence at some beat/time.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="seq">Which sequence to send.</param>
-        /// <param name="beat">When to send the sequence.</param>
+        /// <param name="beat">Which beat to send the sequence.</param>
         void AddSequence(string chanName, Sequence seq, int beat)
         {
             if (seq is null)
