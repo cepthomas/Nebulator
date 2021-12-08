@@ -1,162 +1,162 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>NBagOfTricks.UI</name>
+        <name>NBagOfUis</name>
     </assembly>
     <members>
-        <member name="T:NBagOfTricks.UI.BarBar">
+        <member name="T:NBagOfUis.BarBar">
             <summary>The control.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._length">
+        <member name="F:NBagOfUis.BarBar._length">
             <summary>Total length.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._start">
+        <member name="F:NBagOfUis.BarBar._start">
             <summary>First valid point.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._end">
+        <member name="F:NBagOfUis.BarBar._end">
             <summary>Last valid point.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._current">
+        <member name="F:NBagOfUis.BarBar._current">
             <summary>Current.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._lastXPos">
+        <member name="F:NBagOfUis.BarBar._lastXPos">
             <summary>For tracking mouse moves.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._toolTip">
+        <member name="F:NBagOfUis.BarBar._toolTip">
             <summary>Tooltip for mousing.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._brush">
+        <member name="F:NBagOfUis.BarBar._brush">
             <summary>The brush.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._penMarker">
+        <member name="F:NBagOfUis.BarBar._penMarker">
             <summary>The pen.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarBar._format">
+        <member name="F:NBagOfUis.BarBar._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.BeatsPerBar">
+        <member name="P:NBagOfUis.BarBar.BeatsPerBar">
             <summary>Our signature. Only tested with 4.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.SubdivsPerBeat">
+        <member name="P:NBagOfUis.BarBar.SubdivsPerBeat">
             <summary>Our resolution.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.Snap">
+        <member name="P:NBagOfUis.BarBar.Snap">
             <summary>How to snap.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.Length">
+        <member name="P:NBagOfUis.BarBar.Length">
             <summary>Total length.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.Start">
+        <member name="P:NBagOfUis.BarBar.Start">
             <summary>First valid point.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.End">
+        <member name="P:NBagOfUis.BarBar.End">
             <summary>Last valid point.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.Current">
+        <member name="P:NBagOfUis.BarBar.Current">
             <summary>Where we be now.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.ProgressColor">
+        <member name="P:NBagOfUis.BarBar.ProgressColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.MarkerColor">
+        <member name="P:NBagOfUis.BarBar.MarkerColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.FontLarge">
+        <member name="P:NBagOfUis.BarBar.FontLarge">
             <summary>Big font.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarBar.FontSmall">
+        <member name="P:NBagOfUis.BarBar.FontSmall">
             <summary>Baby font.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.BarBar.CurrentTimeChanged">
+        <member name="E:NBagOfUis.BarBar.CurrentTimeChanged">
             <summary>Value changed by user.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.#ctor">
+        <member name="M:NBagOfUis.BarBar.#ctor">
             <summary>
             Normal constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.BarBar.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.BarBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draw the control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.BarBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.BarBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle mouse position changes.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.BarBar.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.IncrementCurrent(System.Int32)">
+        <member name="M:NBagOfUis.BarBar.IncrementCurrent(System.Int32)">
             <summary>
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.GetSubdivFromMouse(System.Int32)">
+        <member name="M:NBagOfUis.BarBar.GetSubdivFromMouse(System.Int32)">
             <summary>
             Convert x pos to subdiv.
             </summary>
             <param name="x"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarBar.Scale(NBagOfTricks.UI.BarSpan)">
+        <member name="M:NBagOfUis.BarBar.Scale(NBagOfUis.BarSpan)">
             <summary>
             Map from time to UI pixels.
             </summary>
             <param name="val"></param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.UI.BarSpan">
+        <member name="T:NBagOfUis.BarSpan">
             <summary>Sort of like TimeSpan.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan.Zero">
+        <member name="F:NBagOfUis.BarSpan.Zero">
             <summary>A useful constant.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan.OneSubdiv">
+        <member name="F:NBagOfUis.BarSpan.OneSubdiv">
             <summary>A useful constant.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan._id">
+        <member name="F:NBagOfUis.BarSpan._id">
             <summary>For hashing.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan._all_ids">
+        <member name="F:NBagOfUis.BarSpan._all_ids">
             <summary>Increment for unique value.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan._beatsPerBar">
+        <member name="F:NBagOfUis.BarSpan._beatsPerBar">
             <summary>Global - set before using. Only tested with 4.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan._subdivsPerBeat">
+        <member name="F:NBagOfUis.BarSpan._subdivsPerBeat">
             <summary>Global - set before using. Our resolution.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.BarSpan._snapType">
+        <member name="F:NBagOfUis.BarSpan._snapType">
             <summary>Global - set before using.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarSpan.TotalSubdivs">
+        <member name="P:NBagOfUis.BarSpan.TotalSubdivs">
             <summary>The core.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarSpan.Bar">
+        <member name="P:NBagOfUis.BarSpan.Bar">
             <summary>The bar.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarSpan.Beat">
+        <member name="P:NBagOfUis.BarSpan.Beat">
             <summary>The beat.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.BarSpan.Subdiv">
+        <member name="P:NBagOfUis.BarSpan.Subdiv">
             <summary>The subdiv.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
+        <member name="M:NBagOfUis.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
             Constructor from args.
             </summary>
@@ -164,111 +164,111 @@
             <param name="beat"></param>
             <param name="subdiv"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarSpan.#ctor(System.Int32)">
+        <member name="M:NBagOfUis.BarSpan.#ctor(System.Int32)">
             <summary>
             Constructor from args.
             </summary>
             <param name="subdivs"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarSpan.Reset">
+        <member name="M:NBagOfUis.BarSpan.Reset">
             <summary>
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.BarSpan.Constrain(NBagOfTricks.UI.BarSpan,NBagOfTricks.UI.BarSpan)">
+        <member name="M:NBagOfUis.BarSpan.Constrain(NBagOfUis.BarSpan,NBagOfUis.BarSpan)">
             <summary>
             
             </summary>
             <param name="lower"></param>
             <param name="upper"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarSpan.Increment(System.Int32)">
+        <member name="M:NBagOfUis.BarSpan.Increment(System.Int32)">
             <summary>
             
             </summary>
             <param name="num"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarSpan.DoSnap(System.Int32)">
+        <member name="M:NBagOfUis.BarSpan.DoSnap(System.Int32)">
             <summary>
             Snap to closest boundary.
             </summary>
             <param name="subdiv"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.BarSpan.ToString">
+        <member name="M:NBagOfUis.BarSpan.ToString">
             <summary>
             
             </summary>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.UI.ClickGrid">
+        <member name="T:NBagOfUis.ClickGrid">
             <summary>
             ClickGrid control.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._stateTypes">
+        <member name="F:NBagOfUis.ClickGrid._stateTypes">
             <summary>State enumeration.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._indicators">
+        <member name="F:NBagOfUis.ClickGrid._indicators">
             <summary>All the indicators.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._cols">
+        <member name="F:NBagOfUis.ClickGrid._cols">
             <summary>Number of columns.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._rows">
+        <member name="F:NBagOfUis.ClickGrid._rows">
             <summary>Number of rows.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._indWidth">
+        <member name="F:NBagOfUis.ClickGrid._indWidth">
             <summary>Indicator geometry.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._indHeight">
+        <member name="F:NBagOfUis.ClickGrid._indHeight">
             <summary>Indicator geometry.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._defaultForeBrush">
+        <member name="F:NBagOfUis.ClickGrid._defaultForeBrush">
             <summary>Used for unspecified states.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.ClickGrid._defaultBackBrush">
+        <member name="F:NBagOfUis.ClickGrid._defaultBackBrush">
             <summary>Used for unspecified states.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.ClickGrid.IndicatorEvent">
+        <member name="E:NBagOfUis.ClickGrid.IndicatorEvent">
             <summary>ClickGrid value changed event.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.#ctor">
+        <member name="M:NBagOfUis.ClickGrid.#ctor">
             <summary>
             Creates a new default control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.ClickGrid_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.ClickGrid.ClickGrid_Load(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.ClickGrid.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.AddIndicator(System.String,System.Int32)">
+        <member name="M:NBagOfUis.ClickGrid.AddIndicator(System.String,System.Int32)">
             <summary>
             
             </summary>
             <param name="text"></param>
             <param name="id"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.Show(System.Int32,System.Int32,System.Int32)">
+        <member name="M:NBagOfUis.ClickGrid.Show(System.Int32,System.Int32,System.Int32)">
             <summary>
             Normal construction.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.SetIndicator(System.Int32,System.Int32)">
+        <member name="M:NBagOfUis.ClickGrid.SetIndicator(System.Int32,System.Int32)">
             <summary>
             
             </summary>
             <param name="id"></param>
             <param name="state"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.AddStateType(System.Int32,System.Drawing.Color,System.Drawing.Color)">
+        <member name="M:NBagOfUis.ClickGrid.AddStateType(System.Int32,System.Drawing.Color,System.Drawing.Color)">
             <summary>
             
             </summary>
@@ -276,241 +276,244 @@
             <param name="foreColor"></param>
             <param name="backColor"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.Clear">
+        <member name="M:NBagOfUis.ClickGrid.Clear">
             <summary>
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.ClickGrid.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draw the control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.OnResize(System.EventArgs)">
+        <member name="M:NBagOfUis.ClickGrid.OnResize(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.ClickGrid.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.ClickGrid.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="T:NBagOfTricks.UI.IndicatorEventArgs">
+        <member name="T:NBagOfUis.IndicatorEventArgs">
             <summary>
             Click event data.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.UI.Indicator">
+        <member name="T:NBagOfUis.Indicator">
             <summary>
             Everything about one indicator.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Indicator.Id">
+        <member name="P:NBagOfUis.Indicator.Id">
             <summary>User tag.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Indicator.Text">
+        <member name="P:NBagOfUis.Indicator.Text">
             <summary>The text.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Indicator.State">
+        <member name="P:NBagOfUis.Indicator.State">
             <summary>User tag.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.IndicatorStateType">
+        <member name="T:NBagOfUis.IndicatorStateType">
             <summary>
             Describes one state.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.UI.IndicatorStateType.ForeBrush">
+        <member name="P:NBagOfUis.IndicatorStateType.ForeBrush">
             <summary>The foreground brush/pen.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.IndicatorStateType.BackBrush">
+        <member name="P:NBagOfUis.IndicatorStateType.BackBrush">
             <summary>The background brush.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._cpuPerf">
+        <member name="F:NBagOfUis.CpuMeter._cpuPerf">
             <summary>Total usage.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._processesPerf">
+        <member name="F:NBagOfUis.CpuMeter._processesPerf">
             <summary>Logical processes.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._inited">
+        <member name="F:NBagOfUis.CpuMeter._inited">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._timer">
+        <member name="F:NBagOfUis.CpuMeter._timer">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._min">
+        <member name="F:NBagOfUis.CpuMeter._min">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._max">
+        <member name="F:NBagOfUis.CpuMeter._max">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._processesBuffs">
+        <member name="F:NBagOfUis.CpuMeter._processesBuffs">
             <summary>Storage.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._cpuBuff">
+        <member name="F:NBagOfUis.CpuMeter._cpuBuff">
             <summary>Storage.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._buffIndex">
+        <member name="F:NBagOfUis.CpuMeter._buffIndex">
             <summary>Storage.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._pen">
+        <member name="F:NBagOfUis.CpuMeter._logicalProcessors">
+            <summary>CPU info.</summary>
+        </member>
+        <member name="F:NBagOfUis.CpuMeter._pen">
             <summary>The pen.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.CpuMeter._format">
+        <member name="F:NBagOfUis.CpuMeter._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.CpuMeter.Label">
+        <member name="P:NBagOfUis.CpuMeter.Label">
             <summary>User can change.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.CpuMeter.Enable">
+        <member name="P:NBagOfUis.CpuMeter.Enable">
             <summary> </summary>
         </member>
-        <member name="P:NBagOfTricks.UI.CpuMeter.UpdateFreq">
+        <member name="P:NBagOfUis.CpuMeter.UpdateFreq">
             <summary>Default is 500 msec. Change if you like.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.CpuMeter.DrawColor">
+        <member name="P:NBagOfUis.CpuMeter.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.#ctor">
+        <member name="M:NBagOfUis.CpuMeter.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.CpuMeter_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.CpuMeter.CpuMeter_Load(System.Object,System.EventArgs)">
             <summary>
             Initialize everything.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.CpuMeter.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.CpuMeter.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paints the volume meter.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.OnResize(System.EventArgs)">
+        <member name="M:NBagOfUis.CpuMeter.OnResize(System.EventArgs)">
             <summary>
             Update drawing area.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.SetBuffs">
+        <member name="M:NBagOfUis.CpuMeter.SetBuffs">
             <summary>
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.Timer_Tick(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.CpuMeter.Timer_Tick(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.CpuMeter.InitPerf">
+        <member name="M:NBagOfUis.CpuMeter.InitPerf">
             <summary>
             Defer init as they are slow processes.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.UI.FilTree">
+        <member name="T:NBagOfUis.FilTree">
             <summary>
             Tree control with tags and filters.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.FilTree._taggedPaths">
+        <member name="F:NBagOfUis.FilTree._taggedPaths">
             <summary>Key is file or dir path, value is associated tags.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.FilTree._activeFilters">
+        <member name="F:NBagOfUis.FilTree._activeFilters">
             <summary>Filter by these tags.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.FilTree.TaggedPaths">
+        <member name="P:NBagOfUis.FilTree.TaggedPaths">
             <summary>Key is path to file or directory, value is space separated associated tags.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.FilTree.AllTags">
+        <member name="P:NBagOfUis.FilTree.AllTags">
             <summary>All possible tags and whether they are active.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.FilTree.RootDirs">
+        <member name="P:NBagOfUis.FilTree.RootDirs">
             <summary>Base path(s) for the tree.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.FilTree.FilterExts">
+        <member name="P:NBagOfUis.FilTree.FilterExts">
             <summary>Show only these file types.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.FilTree.DoubleClickSelect">
+        <member name="P:NBagOfUis.FilTree.DoubleClickSelect">
             <summary>Generate event with single or double click.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.FilTree.FileSelectedEvent">
+        <member name="E:NBagOfUis.FilTree.FileSelectedEvent">
             <summary>User has selected a file.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.#ctor">
+        <member name="M:NBagOfUis.FilTree.#ctor">
             <summary>
             Default constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.FilTree_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.FilTree.FilTree_Load(System.Object,System.EventArgs)">
             <summary>
             Initialize controls.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.Init">
+        <member name="M:NBagOfUis.FilTree.Init">
             <summary>
             Populate everything from the properties.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.TreeView_NodeMouseClick(System.Object,System.Windows.Forms.TreeNodeMouseClickEventArgs)">
+        <member name="M:NBagOfUis.FilTree.TreeView_NodeMouseClick(System.Object,System.Windows.Forms.TreeNodeMouseClickEventArgs)">
             <summary>
             Drill down through dirs/files.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.PopulateTreeView">
+        <member name="M:NBagOfUis.FilTree.PopulateTreeView">
             <summary>
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.ShowDirectories(System.IO.DirectoryInfo[],System.Windows.Forms.TreeNode)">
+        <member name="M:NBagOfUis.FilTree.ShowDirectories(System.IO.DirectoryInfo[],System.Windows.Forms.TreeNode)">
             <summary>
             Recursively drill down through the directory structure and populate the tree.
             </summary>
             <param name="dirs"></param>
             <param name="parentNode"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.PopulateFiles(System.Windows.Forms.TreeNode)">
+        <member name="M:NBagOfUis.FilTree.PopulateFiles(System.Windows.Forms.TreeNode)">
             <summary>
             Populate the file selector.
             </summary>
             <param name="node">Selected directory.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.ListFiles_MouseClick(System.Object,System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.FilTree.ListFiles_MouseClick(System.Object,System.Windows.Forms.MouseEventArgs)">
             <summary>
             Single click file selection.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.ListFiles_MouseDoubleClick(System.Object,System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.FilTree.ListFiles_MouseDoubleClick(System.Object,System.Windows.Forms.MouseEventArgs)">
             <summary>
             Double click file selection.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.MenuFiles_Opening(System.Object,System.ComponentModel.CancelEventArgs)">
+        <member name="M:NBagOfUis.FilTree.MenuFiles_Opening(System.Object,System.ComponentModel.CancelEventArgs)">
             <summary>
             Populate the context menu.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.MenuFiles_Click(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.FilTree.MenuFiles_Click(System.Object,System.EventArgs)">
             <summary>
             Context menu handler.
             Select the tags for this file.
@@ -518,67 +521,67 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.PopulateFilters">
+        <member name="M:NBagOfUis.FilTree.PopulateFilters">
             <summary>
             Update the clickable label showing active filters.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.ActiveFilters_Click(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.FilTree.ActiveFilters_Click(System.Object,System.EventArgs)">
             <summary>
             Edit the tag filters for this file.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.TreeView_DrawNode(System.Object,System.Windows.Forms.DrawTreeNodeEventArgs)">
+        <member name="M:NBagOfUis.FilTree.TreeView_DrawNode(System.Object,System.Windows.Forms.DrawTreeNodeEventArgs)">
             <summary>
             See above.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.FilTree_Resize(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.FilTree.FilTree_Resize(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.GetTaggedPaths">
+        <member name="M:NBagOfUis.FilTree.GetTaggedPaths">
             <summary>
             Property accessor helper.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.SetTaggedPaths(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:NBagOfUis.FilTree.SetTaggedPaths(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Property accessor helper.
             </summary>
             <param name="paths"></param>
         </member>
-        <member name="F:NBagOfTricks.UI.FilTree.components">
+        <member name="F:NBagOfUis.FilTree.components">
             <summary> 
             Required designer variable.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.FilTree.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.FilTree.InitializeComponent">
+        <member name="M:NBagOfUis.FilTree.InitializeComponent">
             <summary> 
             Required method for Designer support - do not modify 
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.UI.GraphicsUtils">
+        <member name="T:NBagOfUis.GraphicsUtils">
             <summary>
             Static general utility functions.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.GraphicsUtils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
+        <member name="M:NBagOfUis.GraphicsUtils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
             <summary>
             Resize the image to the specified width and height.
             </summary>
@@ -587,7 +590,7 @@
             <param name="height">The height to resize to.</param>
             <returns>The resized image.</returns>
         </member>
-        <member name="M:NBagOfTricks.UI.GraphicsUtils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
+        <member name="M:NBagOfUis.GraphicsUtils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
             <summary>
             Colorize a bitmap.
             </summary>
@@ -595,7 +598,7 @@
             <param name="newcol"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.UI.GraphicsUtils.GetSequenceColor(System.Int32,System.Boolean)">
+        <member name="M:NBagOfUis.GraphicsUtils.GetSequenceColor(System.Int32,System.Boolean)">
             <summary>
             Helper to get next contrast color in the sequence.
             From http://colorbrewer2.org qualitative.
@@ -604,7 +607,7 @@
             <param name="dark">Dark or light series, usually dark.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.UI.GraphicsUtils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
+        <member name="M:NBagOfUis.GraphicsUtils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
             <summary>
             Mix two colors.
             </summary>
@@ -612,667 +615,734 @@
             <param name="two"></param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.UI.KeyUtils">
+        <member name="T:NBagOfUis.InternalHelpers">
+            <summary>Most of these are borrowed from NBOT. I am too lazy to figure out git nested submodules.</summary>
+        </member>
+        <member name="M:NBagOfUis.InternalHelpers.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Immediately executes the given action on each element in the source sequence.
+            </summary>
+            <typeparam name="T">The type of the elements in the sequence</typeparam>
+            <param name="source">The sequence of elements</param>
+            <param name="action">The action to execute on each element</param>
+        </member>
+        <member name="M:NBagOfUis.InternalHelpers.SplitByToken(System.String,System.String,System.Boolean)">
+            <summary>
+            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
+            </summary>
+            <param name="text">The string to split up.</param>
+            <param name="splitby">The string to split by.</param>
+            <param name="trim">Remove whitespace at each end.</param>
+            <returns>Return the parts as a list.</returns>
+        </member>
+        <member name="M:NBagOfUis.InternalHelpers.Constrain(System.Double,System.Double,System.Double)">
+            <summary>
+            Bounds limits a value.
+            </summary>
+            <param name="val"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.InternalHelpers.Constrain(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Bounds limits a value.
+            </summary>
+            <param name="val"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.InternalHelpers.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Remap a value to new coordinates.
+            </summary>
+            <param name="val"></param>
+            <param name="start1"></param>
+            <param name="stop1"></param>
+            <param name="start2"></param>
+            <param name="stop2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.InternalHelpers.Map(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Remap a value to new coordinates.
+            </summary>
+            <param name="val"></param>
+            <param name="start1"></param>
+            <param name="stop1"></param>
+            <param name="start2"></param>
+            <param name="stop2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.InternalHelpers.RMS(System.Single[])">
+            <summary>
+            The root mean square value of a quantity is the square root of the mean value of the squared values of the quantity taken over an interval.
+            </summary>
+            <param name="inputArray"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfUis.KeyUtils">
             <summary>
             Static keyboard processing functions.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.UI.KeyUtils.KeyState">
+        <member name="T:NBagOfUis.KeyUtils.KeyState">
             <summary>Api version of win32.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.KeyUtils.KeyState.NotPressed">
+        <member name="F:NBagOfUis.KeyUtils.KeyState.NotPressed">
             <summary>Nothing going on.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.KeyUtils.KeyState.Pressed">
+        <member name="F:NBagOfUis.KeyUtils.KeyState.Pressed">
             <summary>Transient press.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.KeyUtils.KeyState.Toggled">
+        <member name="F:NBagOfUis.KeyUtils.KeyState.Toggled">
             <summary>e.g. caps lock.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+        <member name="M:NBagOfUis.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
             <summary>
             Generic UI helper. Allows user to enter only integer or double values.
             s</summary>
             <param name="sender">Sender control.</param>
             <param name="e">Event args.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.KeyUtils.TestForInteger_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+        <member name="M:NBagOfUis.KeyUtils.TestForInteger_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
             <summary>
             Generic UI helper. Allows user to enter only integer values.
             </summary>
             <param name="sender">Sender control.</param>
             <param name="e">Event args.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.KeyUtils.TestForAlphanumeric_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
+        <member name="M:NBagOfUis.KeyUtils.TestForAlphanumeric_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
             <summary>
             Generic UI helper. Allows user to enter only alphanumeric values.
             </summary>
             <param name="sender">Sender control.</param>
             <param name="e">Event args.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.KeyUtils.KeyToChar(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
+        <member name="M:NBagOfUis.KeyUtils.KeyToChar(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
             <summary>General purpose decoder for keys. Because windows makes it kind of difficult.</summary>
             <param name="key"></param>
             <param name="modifiers"></param>
             <returns>Tuple of Converted char (0 if not convertible) and keyCode(s).</returns>
         </member>
-        <member name="M:NBagOfTricks.UI.KeyUtils.GetKeyState(System.Windows.Forms.Keys)">
+        <member name="M:NBagOfUis.KeyUtils.GetKeyState(System.Windows.Forms.Keys)">
             <summary>Key state query. Based on https://stackoverflow.com/a/9356006. </summary>
             <param name="key">Which key.</param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.UI.MeterType">
+        <member name="T:NBagOfUis.MeterType">
             <summary>Display types.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.Meter">
+        <member name="T:NBagOfUis.Meter">
             <summary>
             Implements a rudimentary volume meter.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Meter._buff">
+        <member name="F:NBagOfUis.Meter._buff">
             <summary>Storage.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Meter._buffIndex">
+        <member name="F:NBagOfUis.Meter._buffIndex">
             <summary>Storage.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Meter._pen">
+        <member name="F:NBagOfUis.Meter._pen">
             <summary>The pen.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Meter._brush">
+        <member name="F:NBagOfUis.Meter._brush">
             <summary>The brush.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Meter._format">
+        <member name="F:NBagOfUis.Meter._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Meter.Label">
+        <member name="P:NBagOfUis.Meter.Label">
             <summary>Optional label.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Meter.DrawColor">
+        <member name="P:NBagOfUis.Meter.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Meter.MeterType">
+        <member name="P:NBagOfUis.Meter.MeterType">
             <summary>How the meter responds.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Meter.Minimum">
+        <member name="P:NBagOfUis.Meter.Minimum">
             <summary>Minimum value. If Log type, this is in db - usually -60;</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Meter.Maximum">
+        <member name="P:NBagOfUis.Meter.Maximum">
             <summary>Maximum value. If Log type, this is in db - usually +18.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Meter.Orientation">
+        <member name="P:NBagOfUis.Meter.Orientation">
             <summary>Meter orientation.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Meter.#ctor">
+        <member name="M:NBagOfUis.Meter.#ctor">
             <summary>
             Basic volume meter.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Meter.Meter_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.Meter.Meter_Load(System.Object,System.EventArgs)">
             <summary>
             Init stuff.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Meter.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.Meter.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.Meter.AddValue(System.Double)">
+        <member name="M:NBagOfUis.Meter.AddValue(System.Double)">
             <summary>
             Add a new data point. If Log, this will convert for you.
             </summary>
             <param name="val"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.Meter.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.Meter.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paints the volume meter.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Meter.OnResize(System.EventArgs)">
+        <member name="M:NBagOfUis.Meter.OnResize(System.EventArgs)">
             <summary>
             Update drawing area.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.OptionsEditor._values">
+        <member name="F:NBagOfUis.OptionsEditor._values">
             <summary>Working values so we don't destroy originals.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.OptionsEditor.Values">
+        <member name="P:NBagOfUis.OptionsEditor.Values">
             <summary>The values to edit. Key is text, value is bool enable. Clone in case user cancels.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.OptionsEditor.Title">
+        <member name="P:NBagOfUis.OptionsEditor.Title">
             <summary>Custom label.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.OptionsEditor.AllowEdit">
+        <member name="P:NBagOfUis.OptionsEditor.AllowEdit">
             <summary>If true, user can add and delete values, otherwise just select.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.OptionsEditor.#ctor">
+        <member name="M:NBagOfUis.OptionsEditor.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.OptionsEditor.OptionsEditor_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.OptionsEditor.OptionsEditor_Load(System.Object,System.EventArgs)">
             <summary>
             Initialization. If editing not allowed, adjust the ui.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.OptionsEditor.Add_Click(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.OptionsEditor.Add_Click(System.Object,System.EventArgs)">
             <summary>
             User is adding a new value.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.OptionsEditor.Values_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.OptionsEditor.Values_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
             User might be removing a value.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.OptionsEditor.OptionsEditor_FormClosing(System.Object,System.Windows.Forms.FormClosingEventArgs)">
+        <member name="M:NBagOfUis.OptionsEditor.OptionsEditor_FormClosing(System.Object,System.Windows.Forms.FormClosingEventArgs)">
             <summary>
             Collect list contents.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="F:NBagOfTricks.UI.OptionsEditor.components">
+        <member name="F:NBagOfUis.OptionsEditor.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.OptionsEditor.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.OptionsEditor.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.OptionsEditor.InitializeComponent">
+        <member name="M:NBagOfUis.OptionsEditor.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.UI.Pan">
+        <member name="T:NBagOfUis.Pan">
             <summary>
             Pan slider control
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pan._value">
+        <member name="F:NBagOfUis.Pan._value">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pan._brush">
+        <member name="F:NBagOfUis.Pan._brush">
             <summary>The brush.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pan._format">
+        <member name="F:NBagOfUis.Pan._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pan.Value">
+        <member name="P:NBagOfUis.Pan.Value">
             <summary>The current Pan setting.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pan.DrawColor">
+        <member name="P:NBagOfUis.Pan.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.Pan.ValueChanged">
+        <member name="E:NBagOfUis.Pan.ValueChanged">
             <summary>True when pan value changed.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.#ctor">
+        <member name="M:NBagOfUis.Pan.#ctor">
             <summary>
             Creates a new PanSlider control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.Pan_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.Pan.Pan_Load(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.Pan.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.Pan.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draw control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Pan.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Pan.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.SetValueFromMouse(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Pan.SetValueFromMouse(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Calculate position.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.Pan.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.Pan.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
             Handle the nudge key.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="T:NBagOfTricks.UI.Taper">
+        <member name="T:NBagOfUis.Taper">
             <summary></summary>
         </member>
-        <member name="T:NBagOfTricks.UI.Pot">
+        <member name="T:NBagOfUis.Pot">
             <summary>
             Control potentiometer.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._minimum">
+        <member name="F:NBagOfUis.Pot._minimum">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._maximum">
+        <member name="F:NBagOfUis.Pot._maximum">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._value">
+        <member name="F:NBagOfUis.Pot._value">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._beginDragValue">
+        <member name="F:NBagOfUis.Pot._beginDragValue">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._beginDragY">
+        <member name="F:NBagOfUis.Pot._beginDragY">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._dragging">
+        <member name="F:NBagOfUis.Pot._dragging">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._pen">
+        <member name="F:NBagOfUis.Pot._pen">
             <summary>For drawing.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Pot._format">
+        <member name="F:NBagOfUis.Pot._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pot.DrawColor">
+        <member name="P:NBagOfUis.Pot.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pot.Label">
+        <member name="P:NBagOfUis.Pot.Label">
             <summary>Name etc.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pot.Taper">
+        <member name="P:NBagOfUis.Pot.Taper">
             <summary>Taper.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pot.DecPlaces">
+        <member name="P:NBagOfUis.Pot.DecPlaces">
             <summary>Number of decimal places to display.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pot.Minimum">
+        <member name="P:NBagOfUis.Pot.Minimum">
             <summary>Minimum Value of the Pot.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pot.Maximum">
+        <member name="P:NBagOfUis.Pot.Maximum">
             <summary>Maximum Value of the Pot.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Pot.Value">
+        <member name="P:NBagOfUis.Pot.Value">
             <summary>The current value of the pot.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.Pot.ValueChanged">
+        <member name="E:NBagOfUis.Pot.ValueChanged">
             <summary>Value changed event.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.#ctor">
+        <member name="M:NBagOfUis.Pot.#ctor">
             <summary>
             Creates a new pot control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.Pot_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.Pot.Pot_Load(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.Pot.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.Pot.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draws the control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Pot.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handles the mouse down event to allow changing value by dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Pot.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handles the mouse up event to allow changing value by dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Pot.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handles the mouse down event to allow changing value by dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Pot.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.Pot.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
             Handle the nudge key.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="T:NBagOfTricks.UI.PropertyGridEx">
+        <member name="T:NBagOfUis.PropertyGridEx">
             <summary>Extends the PropertyGrid to add some features.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEvent">
+        <member name="E:NBagOfUis.PropertyGridEx.PropertyGridExEvent">
             <summary>The property grid is reporting something.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEventArgs">
+        <member name="T:NBagOfUis.PropertyGridEx.PropertyGridExEventArgs">
             <summary>General event for raising events not natively supported by the property grid.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEventArgs.EventType">
+        <member name="P:NBagOfUis.PropertyGridEx.PropertyGridExEventArgs.EventType">
             <summary>General info.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.PropertyGridExEventArgs.EventData">
+        <member name="P:NBagOfUis.PropertyGridEx.PropertyGridExEventArgs.EventData">
             <summary>General data.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.RaisePropertyGridExEvent(System.String,System.Object)">
+        <member name="M:NBagOfUis.PropertyGridEx.RaisePropertyGridExEvent(System.String,System.Object)">
             <summary>Children can call this to send something back to the host.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.ToolStrip">
+        <member name="P:NBagOfUis.PropertyGridEx.ToolStrip">
             <summary>Gets the tool strip.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocComment">
+        <member name="P:NBagOfUis.PropertyGridEx.DocComment">
             <summary>Gets the doc comment.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocCommentTitle">
+        <member name="P:NBagOfUis.PropertyGridEx.DocCommentTitle">
             <summary>Gets the doc comment title.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocCommentDescription">
+        <member name="P:NBagOfUis.PropertyGridEx.DocCommentDescription">
             <summary>Gets the doc comment description.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.DocCommentImage">
+        <member name="P:NBagOfUis.PropertyGridEx.DocCommentImage">
             <summary>Gets or sets the help comment image.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.PropertyGridEx.Dirty">
+        <member name="P:NBagOfUis.PropertyGridEx.Dirty">
             <summary>Edited flag.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.#ctor">
+        <member name="M:NBagOfUis.PropertyGridEx.#ctor">
             <summary>Initializes a new instance of the class.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.Edit_PropertyValueChanged(System.Object,System.Windows.Forms.PropertyValueChangedEventArgs)">
+        <member name="M:NBagOfUis.PropertyGridEx.Edit_PropertyValueChanged(System.Object,System.Windows.Forms.PropertyValueChangedEventArgs)">
             <summary>User edited something.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.AddButton(System.String,System.Drawing.Image,System.String,System.EventHandler)">
+        <member name="M:NBagOfUis.PropertyGridEx.AddButton(System.String,System.Drawing.Image,System.String,System.EventHandler)">
             <summary>Add a custom button to the property grid.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.AddLabel(System.String,System.Drawing.Image,System.String)">
+        <member name="M:NBagOfUis.PropertyGridEx.AddLabel(System.String,System.Drawing.Image,System.String)">
             <summary>Add a label to the property grid.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.MoveSplitter(System.Int32)">
+        <member name="M:NBagOfUis.PropertyGridEx.MoveSplitter(System.Int32)">
             <summary>Moves the vertical splitter.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.ResizeDescriptionArea(System.Int32)">
+        <member name="M:NBagOfUis.PropertyGridEx.ResizeDescriptionArea(System.Int32)">
             <summary>Alter the bottom description area.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.ExpandGroup(System.String,System.Boolean)">
+        <member name="M:NBagOfUis.PropertyGridEx.ExpandGroup(System.String,System.Boolean)">
             <summary>Expand or collapse the group.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.PropertyGridEx.ShowProperty(System.String,System.Boolean)">
+        <member name="M:NBagOfUis.PropertyGridEx.ShowProperty(System.String,System.Boolean)">
             <summary>Show or hide a named property.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.Slider">
+        <member name="T:NBagOfUis.Slider">
             <summary>
             Slider control.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Slider._value">
+        <member name="F:NBagOfUis.Slider._value">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Slider._resetVal">
+        <member name="F:NBagOfUis.Slider._resetVal">
             <summary> </summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Slider._brush">
+        <member name="F:NBagOfUis.Slider._brush">
             <summary>The brush.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.Slider._format">
+        <member name="F:NBagOfUis.Slider._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.Label">
+        <member name="P:NBagOfUis.Slider.Label">
             <summary>Optional label.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.DrawColor">
+        <member name="P:NBagOfUis.Slider.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.DecPlaces">
+        <member name="P:NBagOfUis.Slider.DecPlaces">
             <summary>Number of decimal places to display.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.Orientation">
+        <member name="P:NBagOfUis.Slider.Orientation">
             <summary>Fader orientation</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.Maximum">
+        <member name="P:NBagOfUis.Slider.Maximum">
             <summary>Maximum value of this slider.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.Minimum">
+        <member name="P:NBagOfUis.Slider.Minimum">
             <summary>Minimum value of this slider.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.ResetValue">
+        <member name="P:NBagOfUis.Slider.ResetValue">
             <summary>Reset value of this slider.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.Slider.Value">
+        <member name="P:NBagOfUis.Slider.Value">
             <summary>The value for this slider.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.Slider.ValueChanged">
+        <member name="E:NBagOfUis.Slider.ValueChanged">
             <summary>
             Slider value changed event.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.#ctor">
+        <member name="M:NBagOfUis.Slider.#ctor">
             <summary>
             Creates a new Slider control.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.Slider_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.Slider.Slider_Load(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.Slider.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.Slider.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draw the slider.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Slider.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Slider.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.SetValueFromMouse(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.Slider.SetValueFromMouse(System.Windows.Forms.MouseEventArgs)">
             <summary>
             ommon updater.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.Slider.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.Slider.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
             Handle the nudge key.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="P:NBagOfTricks.UI.TextViewer.Colors">
+        <member name="P:NBagOfUis.TextViewer.Colors">
             <summary>The colors to display when text is matched.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TextViewer.MaxText">
+        <member name="P:NBagOfUis.TextViewer.MaxText">
             <summary>Limit the size.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TextViewer.#ctor">
+        <member name="M:NBagOfUis.TextViewer.#ctor">
             <summary>
             Constructor sets some defaults.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TextViewer.TextViewer_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.TextViewer.TextViewer_Load(System.Object,System.EventArgs)">
             <summary>
             Initialize everything.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.TextViewer.AddLine(System.String,System.Boolean)">
+        <member name="M:NBagOfUis.TextViewer.AddLine(System.String,System.Boolean)">
             <summary>
             A message to display to the user. Adds EOL.
             </summary>
             <param name="text">The message.</param>
             <param name="trim">True to truncate continuous displays.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.TextViewer.Add(System.String,System.Boolean)">
+        <member name="M:NBagOfUis.TextViewer.Add(System.String,System.Boolean)">
             <summary>
             A message to display to the user. Doesn't add EOL.
             </summary>
             <param name="text">The message.</param>
             <param name="trim">True to truncate continuous displays.</param>
         </member>
-        <member name="T:NBagOfTricks.UI.TimeBar">
+        <member name="T:NBagOfUis.TimeBar">
             <summary>The control.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._length">
+        <member name="F:NBagOfUis.TimeBar._length">
             <summary>Total length.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._current">
+        <member name="F:NBagOfUis.TimeBar._current">
             <summary>Current time/position.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._start">
+        <member name="F:NBagOfUis.TimeBar._start">
             <summary>One marker.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._end">
+        <member name="F:NBagOfUis.TimeBar._end">
             <summary>Other marker.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._lastXPos">
+        <member name="F:NBagOfUis.TimeBar._lastXPos">
             <summary>For tracking mouse moves.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._toolTip">
+        <member name="F:NBagOfUis.TimeBar._toolTip">
             <summary>Tooltip for mousing.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._brush">
+        <member name="F:NBagOfUis.TimeBar._brush">
             <summary>The brush.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._penMarker">
+        <member name="F:NBagOfUis.TimeBar._penMarker">
             <summary>The pen.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar._format">
+        <member name="F:NBagOfUis.TimeBar._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar.LARGE_CHANGE">
+        <member name="F:NBagOfUis.TimeBar.LARGE_CHANGE">
             <summary>Constant.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar.SMALL_CHANGE">
+        <member name="F:NBagOfUis.TimeBar.SMALL_CHANGE">
             <summary>Constant.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.TimeBar.TS_FORMAT">
+        <member name="F:NBagOfUis.TimeBar.TS_FORMAT">
             <summary>For viewing purposes.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.Current">
+        <member name="P:NBagOfUis.TimeBar.Current">
             <summary>Where we be now.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.Length">
+        <member name="P:NBagOfUis.TimeBar.Length">
             <summary>Total length.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.Start">
+        <member name="P:NBagOfUis.TimeBar.Start">
             <summary>One marker.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.End">
+        <member name="P:NBagOfUis.TimeBar.End">
             <summary>Other marker.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.SnapMsec">
+        <member name="P:NBagOfUis.TimeBar.SnapMsec">
             <summary>Snap to this increment value.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.ProgressColor">
+        <member name="P:NBagOfUis.TimeBar.ProgressColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.MarkerColor">
+        <member name="P:NBagOfUis.TimeBar.MarkerColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.FontLarge">
+        <member name="P:NBagOfUis.TimeBar.FontLarge">
             <summary>Big font.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.TimeBar.FontSmall">
+        <member name="P:NBagOfUis.TimeBar.FontSmall">
             <summary>Baby font.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.TimeBar.CurrentTimeChanged">
+        <member name="E:NBagOfUis.TimeBar.CurrentTimeChanged">
             <summary>Value changed by user.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.#ctor">
+        <member name="M:NBagOfUis.TimeBar.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.TimeBar.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.IncrementCurrent(System.Int32)">
+        <member name="M:NBagOfUis.TimeBar.IncrementCurrent(System.Int32)">
             <summary>
             Offset current by msec.
             </summary>
             <param name="msec"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.TimeBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draw the slider.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.TimeBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.OnPreviewKeyDown(System.Windows.Forms.PreviewKeyDownEventArgs)">
+        <member name="M:NBagOfUis.TimeBar.OnPreviewKeyDown(System.Windows.Forms.PreviewKeyDownEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.TimeBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle mouse position changes.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.TimeBar.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle dragging.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.GetTimeFromMouse(System.Int32)">
+        <member name="M:NBagOfUis.TimeBar.GetTimeFromMouse(System.Int32)">
             <summary>
             Convert x pos to TimeSpan.
             </summary>
             <param name="x"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.DoSnap(System.Int32)">
+        <member name="M:NBagOfUis.TimeBar.DoSnap(System.Int32)">
             <summary>
             
             </summary>
             <param name="msec"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.Constrain(System.TimeSpan,System.TimeSpan,System.TimeSpan)">
+        <member name="M:NBagOfUis.TimeBar.Constrain(System.TimeSpan,System.TimeSpan,System.TimeSpan)">
             <summary>
             
             </summary>
@@ -1281,155 +1351,155 @@
             <param name="upper"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.UI.TimeBar.Scale(System.TimeSpan)">
+        <member name="M:NBagOfUis.TimeBar.Scale(System.TimeSpan)">
             <summary>
             Map from time to UI pixels.
             </summary>
             <param name="val"></param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.UI.CheckBoxRenderer">
+        <member name="T:NBagOfUis.CheckBoxRenderer">
             <summary>Custom renderer for toolstrip checkbox color.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.CheckBoxRenderer.SelectedColor">
+        <member name="P:NBagOfUis.CheckBoxRenderer.SelectedColor">
             <summary>
             Color to use when check box is selected.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
+        <member name="M:NBagOfUis.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
             <summary>
             Override for drawing.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="T:NBagOfTricks.UI.TsRenderer">
+        <member name="T:NBagOfUis.TsRenderer">
             <summary>Toolstrip checkbox button colorizer.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.ListEditor">
+        <member name="T:NBagOfUis.ListEditor">
             <summary>Generic property editor for lists of strings.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.MonospaceFontEditor">
+        <member name="T:NBagOfUis.MonospaceFontEditor">
             <summary>Selector for monospaced fonts.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.VirtualKeyboard">
+        <member name="T:NBagOfUis.VirtualKeyboard">
             <summary>
             Virtual keyboard control borrowed from Leslie Sanford with extras.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.UI.VirtualKeyboard.ShowNoteNames">
+        <member name="P:NBagOfUis.VirtualKeyboard.ShowNoteNames">
             <summary>Draw the names on the keys.</summary>
         </member>
-        <member name="T:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs">
+        <member name="T:NBagOfUis.VirtualKeyboard.KeyboardEventArgs">
             <summary>Device has received something.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.ChannelNumber">
+        <member name="P:NBagOfUis.VirtualKeyboard.KeyboardEventArgs.ChannelNumber">
             <summary>Channel number. Client can set it.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.NoteId">
+        <member name="P:NBagOfUis.VirtualKeyboard.KeyboardEventArgs.NoteId">
             <summary>Midi note id.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.VirtualKeyboard.KeyboardEventArgs.Velocity">
+        <member name="P:NBagOfUis.VirtualKeyboard.KeyboardEventArgs.Velocity">
             <summary>Midi velocity. 0 means note off.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.VirtualKeyboard._keys">
+        <member name="F:NBagOfUis.VirtualKeyboard._keys">
             <summary>All the created piano keys.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.VirtualKeyboard._keyMap">
+        <member name="F:NBagOfUis.VirtualKeyboard._keyMap">
             <summary>Map from Keys value to the index in _keys.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.VirtualKeyboard._keyDown">
+        <member name="F:NBagOfUis.VirtualKeyboard._keyDown">
             <summary>Known bug?</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.#ctor">
+        <member name="M:NBagOfUis.VirtualKeyboard.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.VirtualKeyboard.Keyboard_Load(System.Object,System.EventArgs)">
             <summary>
             Initialize everything.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_Resize(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.VirtualKeyboard.Keyboard_Resize(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.VirtualKeyboard.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.IsNatural(System.Int32)">
+        <member name="M:NBagOfUis.VirtualKeyboard.IsNatural(System.Int32)">
             <summary>
             Is it a white key?
             </summary>
             <param name="notenum">Which note</param>
             <returns>True/false</returns>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.CreateKeyMap">
+        <member name="M:NBagOfUis.VirtualKeyboard.CreateKeyMap">
             <summary>
             Create the midi note/keyboard mapping.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.VirtualKeyboard.Keyboard_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
             Use alpha keyboard to drive piano.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_KeyUp(System.Object,System.Windows.Forms.KeyEventArgs)">
+        <member name="M:NBagOfUis.VirtualKeyboard.Keyboard_KeyUp(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
             Use alpha keyboard to drive piano.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.Keyboard_VKeyEvent(System.Object,NBagOfTricks.UI.VirtualKey.VKeyEventArgs)">
+        <member name="M:NBagOfUis.VirtualKeyboard.Keyboard_VKeyEvent(System.Object,NBagOfUis.VirtualKey.VKeyEventArgs)">
             <summary>
             Pass along an event from a virtual key.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.CreateKeys">
+        <member name="M:NBagOfUis.VirtualKeyboard.CreateKeys">
             <summary>
             Create the key controls.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKeyboard.DrawKeys">
+        <member name="M:NBagOfUis.VirtualKeyboard.DrawKeys">
             <summary>
             Re/draw the keys.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.UI.VirtualKey">
+        <member name="T:NBagOfUis.VirtualKey">
             <summary>One individual key.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.VirtualKey._owner">
+        <member name="F:NBagOfUis.VirtualKey._owner">
             <summary>Hook to owner.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.VirtualKey._noteNames">
+        <member name="F:NBagOfUis.VirtualKey._noteNames">
             <summary>For showing names.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.VirtualKey.IsPressed">
+        <member name="P:NBagOfUis.VirtualKey.IsPressed">
             <summary>Key status.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.VirtualKey.IsNatural">
+        <member name="P:NBagOfUis.VirtualKey.IsNatural">
             <summary>Key status.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.VirtualKey.NoteId">
+        <member name="P:NBagOfUis.VirtualKey.NoteId">
             <summary>Associated midi note.</summary>
         </member>
-        <member name="E:NBagOfTricks.UI.VirtualKey.VKeyEvent">
+        <member name="E:NBagOfUis.VirtualKey.VKeyEvent">
             <summary>Notify handlers of key change.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.#ctor(NBagOfTricks.UI.VirtualKeyboard,System.Boolean,System.Int32)">
+        <member name="M:NBagOfUis.VirtualKey.#ctor(NBagOfUis.VirtualKeyboard,System.Boolean,System.Int32)">
             <summary>
             Normal constructor.
             </summary>
@@ -1437,160 +1507,160 @@
             <param name="isNatural"></param>
             <param name="noteId"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.PressVKey(System.Int32)">
+        <member name="M:NBagOfUis.VirtualKey.PressVKey(System.Int32)">
             <summary>
             
             </summary>
             <param name="velocity"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.ReleaseVKey">
+        <member name="M:NBagOfUis.VirtualKey.ReleaseVKey">
             <summary>
             
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.CalcVelocity">
+        <member name="M:NBagOfUis.VirtualKey.CalcVelocity">
             <summary>
             Calc velocity from Y position.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseEnter(System.EventArgs)">
+        <member name="M:NBagOfUis.VirtualKey.OnMouseEnter(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseLeave(System.EventArgs)">
+        <member name="M:NBagOfUis.VirtualKey.OnMouseLeave(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.VirtualKey.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.VirtualKey.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.VirtualKey.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.VirtualKey.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.VirtualKey.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="T:NBagOfTricks.UI.WaitCursor">
+        <member name="T:NBagOfUis.WaitCursor">
             <summary>Class that provides a better wait cursor. Clients should use it with using (new WaitCursor()) { slow code }</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaitCursor.m_cursorOld">
+        <member name="F:NBagOfUis.WaitCursor.m_cursorOld">
             <summary>Restore original cursor</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaitCursor._disposedValue">
+        <member name="F:NBagOfUis.WaitCursor._disposedValue">
             <summary>To detect redundant call</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaitCursor._start">
+        <member name="F:NBagOfUis.WaitCursor._start">
             <summary>For metrics</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaitCursor.#ctor">
+        <member name="M:NBagOfUis.WaitCursor.#ctor">
             <summary>Constructor</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaitCursor.Dispose">
+        <member name="M:NBagOfUis.WaitCursor.Dispose">
             <summary>Dispose</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaitCursor.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.WaitCursor.Dispose(System.Boolean)">
             <summary>Dispose</summary>
             <param name="disposing"></param>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._rawVals">
+        <member name="F:NBagOfUis.WaveViewer._rawVals">
             <summary>From client.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._rawMax">
+        <member name="F:NBagOfUis.WaveViewer._rawMax">
             <summary>Maximum value of _rawVals (+-).</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._buff">
+        <member name="F:NBagOfUis.WaveViewer._buff">
             <summary>Storage for display.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._penDraw">
+        <member name="F:NBagOfUis.WaveViewer._penDraw">
             <summary>For drawing.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._textFont">
+        <member name="F:NBagOfUis.WaveViewer._textFont">
             <summary>For drawing text.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._format">
+        <member name="F:NBagOfUis.WaveViewer._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="F:NBagOfTricks.UI.WaveViewer._smplPerPixel">
+        <member name="F:NBagOfUis.WaveViewer._smplPerPixel">
             <summary>Ratio of data point to visual point.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.WaveViewer.DrawColor">
+        <member name="P:NBagOfUis.WaveViewer.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.WaveViewer.Mode">
+        <member name="P:NBagOfUis.WaveViewer.Mode">
             <summary>How to draw.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.WaveViewer.Marker1">
+        <member name="P:NBagOfUis.WaveViewer.Marker1">
             <summary>Marker 1.</summary>
         </member>
-        <member name="P:NBagOfTricks.UI.WaveViewer.Marker2">
+        <member name="P:NBagOfUis.WaveViewer.Marker2">
             <summary>Marker 2.</summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.#ctor">
+        <member name="M:NBagOfUis.WaveViewer.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.WaveViewer_Load(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.WaveViewer.WaveViewer_Load(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.Dispose(System.Boolean)">
+        <member name="M:NBagOfUis.WaveViewer.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.Init(System.Single[],System.Single)">
+        <member name="M:NBagOfUis.WaveViewer.Init(System.Single[],System.Single)">
             <summary>
             Populate with data.
             </summary>
             <param name="vals"></param>
             <param name="max"></param>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.Reset">
+        <member name="M:NBagOfUis.WaveViewer.Reset">
             <summary>
             Hard reset.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:NBagOfUis.WaveViewer.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paints the waveform.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.Rescale">
+        <member name="M:NBagOfUis.WaveViewer.Rescale">
             <summary>
             Scale raw values to fit in available space.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.OnResize(System.EventArgs)">
+        <member name="M:NBagOfUis.WaveViewer.OnResize(System.EventArgs)">
             <summary>
             Update drawing area.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.UI.WaveViewer.Dump(System.Single[],System.String)">
+        <member name="M:NBagOfUis.WaveViewer.Dump(System.Single[],System.String)">
             <summary>
             Simple utility.
             </summary>

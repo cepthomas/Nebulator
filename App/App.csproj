@@ -39,11 +39,8 @@
     <Reference Include="NBagOfTricks">
       <HintPath>..\lib\NBagOfTricks.dll</HintPath>
     </Reference>
-    <Reference Include="NBagOfTricks.ScriptCompiler">
-      <HintPath>..\lib\NBagOfTricks.ScriptCompiler.dll</HintPath>
-    </Reference>
-    <Reference Include="NBagOfTricks.UI">
-      <HintPath>..\lib\NBagOfTricks.UI.dll</HintPath>
+    <Reference Include="NBagOfUis">
+      <HintPath>..\lib\NBagOfUis.dll</HintPath>
     </Reference>
     <Reference Include="NebOsc">
       <HintPath>..\lib\NebOsc.dll</HintPath>

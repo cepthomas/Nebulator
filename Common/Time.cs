@@ -113,8 +113,10 @@ namespace Nebulator.Common
             }
 
             var (integral, fractional) = MathUtils.SplitDouble(tts);
-            Beat = (int)integral;
-            Subdiv = (int)Math.Round(fractional * 10.0);
+            var subdivs = (int)Math.Round(fractional * 10.0);
+
+            Beat = (int)integral + subdivs / SubdivsPerBeat;
+            Subdiv = subdivs % SubdivsPerBeat;
 
             if (Subdiv >= SubdivsPerBeat)
             {

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.vkey = new NBagOfTricks.UI.VirtualKeyboard();
+            this.vkey = new NBagOfUis.VirtualKeyboard();
             this.SuspendLayout();
             // 
             // vkey
@@ -58,6 +58,6 @@
 
         #endregion
 
-        private NBagOfTricks.UI.VirtualKeyboard vkey;
+        private NBagOfUis.VirtualKeyboard vkey;
     }
 }

@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFiles", "DocFiles", "{4DEF0736-26BA-4D08-B0E9-D6CAFAAB8C1F}"
 	ProjectSection(SolutionItems) = preProject
-		DocFiles\Nebulator.md = DocFiles\Nebulator.md
 		DocFiles\Internals.md = DocFiles\Internals.md
 		DocFiles\MusicDefinitions.md = DocFiles\MusicDefinitions.md
+		DocFiles\Nebulator.md = DocFiles\Nebulator.md
 		DocFiles\ScriptApi.md = DocFiles\ScriptApi.md
 		DocFiles\ScriptSyntax.md = DocFiles\ScriptSyntax.md
 	EndProjectSection

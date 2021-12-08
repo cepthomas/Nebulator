@@ -86,16 +86,32 @@
         <member name="T:NBagOfTricks.Commands">
             <summary>Specialized container. Has Add() to support initialization.</summary>
         </member>
+        <member name="M:NBagOfTricks.Commands.Add(System.String,System.String,NBagOfTricks.Arguments,System.Func{System.String,System.Boolean})">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <param name="desc"></param>
+            <param name="args"></param>
+            <param name="func"></param>
+        </member>
         <member name="T:NBagOfTricks.Arguments">
             <summary>Specialized container. Has Add() to support initialization.</summary>
+        </member>
+        <member name="M:NBagOfTricks.Arguments.Add(System.String,System.String,NBagOfTricks.ArgOptType,NBagOfTricks.ArgOptType,System.Func{System.String,System.Boolean})">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <param name="desc"></param>
+            <param name="argopt"></param>
+            <param name="valopt"></param>
+            <param name="func"></param>
         </member>
         <member name="T:NBagOfTricks.JsonColorConverter">
             <summary>Serialize prettier.</summary>
         </member>
         <member name="T:NBagOfTricks.JsonPointFConverter">
-            <summary>Serialize prettier.</summary>
-        </member>
-        <member name="T:NBagOfTricks.JsonFontConverter">
             <summary>Serialize prettier.</summary>
         </member>
         <member name="T:NBagOfTricks.Dumper">
@@ -365,16 +381,6 @@
             <param name="ts"></param>
             <returns>Time in seconds.</returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.DeepClone``1(``0)">
-            <summary>
-            Perform a blind deep copy of an object. The class must be marked as [Serializable] in order for this to work.
-            There are many ways to do this: http://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-an-object-in-net-c-specifically/11308879
-            The binary serialization is apparently slower but safer. Feel free to reimplement with a better way.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="obj"></param>
-            <returns></returns>
-        </member>
         <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
             <summary>
             Get a subset of an array.
@@ -587,7 +593,7 @@
         </member>
         <member name="M:NBagOfTricks.MultiFileWatcher.Add(System.String)">
             <summary>
-            Add anew listener.
+            Add a new listener.
             </summary>
             <param name="path"></param>
         </member>
@@ -813,6 +819,477 @@
             <param name="font">Main font-family.</param>
             <param name="show">If true open in browser.</param>
             <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.OutputFormat">
+            <summary>
+            Generate a human readable or junit format output.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.TestContext">
+            <summary>
+            Accumulates general test info.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.Format">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentSuiteId">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentSuitePass">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumSuitesRun">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumSuitesFailed">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentCasePass">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumCasesRun">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.NumCasesFailed">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.OutputLines">
+            <summary></summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestContext.PropertyLines">
+            <summary></summary>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.AssertException">
+            <summary>
+            Specific exception type.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.TestRunner">
+            <summary>
+            The orchestrator of the test execution.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.PNUT.TestRunner.TIME_FORMAT">
+            <summary>Format string.</summary>
+        </member>
+        <member name="F:NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT">
+            <summary>Format string.</summary>
+        </member>
+        <member name="F:NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT_MSEC">
+            <summary>Format string.</summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestRunner.Context">
+            <summary>The test context.</summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestRunner.#ctor(NBagOfTricks.PNUT.OutputFormat)">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestRunner.RunSuites(System.String[])">
+            <summary>
+            Run selected cases.
+            </summary>
+            <param name="which">List of names of test cases to run. If the test case names begin with these values they will run.</param>
+        </member>
+        <member name="T:NBagOfTricks.PNUT.TestSuite">
+            <summary>
+            Defining class for an individual test suite.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestSuite.CaseCnt">
+            <summary>Accumulated count.</summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestSuite.CaseFailCnt">
+            <summary>Accumulated count.</summary>
+        </member>
+        <member name="P:NBagOfTricks.PNUT.TestSuite.Context">
+            <summary>Common context info.</summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RunSuite">
+            <summary>
+            All test case specifications must supply this.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordResult(System.Boolean,System.String,System.String,System.Int32)">
+            <summary>
+            Record a test result.
+            </summary>
+            <param name="pass"></param>
+            <param name="message"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordProperty(System.String,System.String)">
+            <summary>
+            Record a property into the report.
+            </summary>
+            <param name="name"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordVerbatim(System.String)">
+            <summary>
+            Record a verbatim text line into the report.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_INFO(System.String,System.Object[])">
+            <summary>
+            Print some info to the report.
+            </summary>
+            <param name="message">Info text</param>
+            <param name="vars">Optional vars to print</param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_PROPERTY``1(System.String,``0)">
+            <summary>
+            Add an element to the property collection.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_TRUE(System.Boolean,System.String,System.Int32)">
+            <summary>
+            Checks whether the given condition is true.
+            </summary>
+            <param name="condition"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_FALSE(System.Boolean,System.String,System.Int32)">
+            <summary>
+            Checks whether the given condition is false.
+            </summary>
+            <param name="condition"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_ASSERT``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Prints the condition and gens assert/exception.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_NOT_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is not equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_LESS``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is less than the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_LESS_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is less than or equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_GREATER``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is greater than the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_GREATER_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is greater than or equal to the second.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_CLOSE(System.Double,System.Double,System.Double,System.String,System.Int32)">
+            <summary>
+            Checks whether the first parameter is within the given tolerance from the second parameter.
+            This is useful for comparing floating point values.
+            </summary>
+            <param name="value1"></param>
+            <param name="value2"></param>
+            <param name="tolerance"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.ScriptCompiler.CompileResultType">
+            <summary>General script result - error/warn etc.</summary>
+        </member>
+        <member name="T:NBagOfTricks.ScriptCompiler.CompileResult">
+            <summary>General script result container.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.ResultType">
+            <summary>Where it came from.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.SourceFile">
+            <summary>Original source file.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.LineNumber">
+            <summary>Original source line number. -1 means invalid or unknown.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.Message">
+            <summary>Content.</summary>
+        </member>
+        <member name="T:NBagOfTricks.ScriptCompiler.FileContext">
+            <summary>Parser helper class.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.FileContext.SourceFile">
+            <summary>Current source file.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.FileContext.LineNumber">
+            <summary>Current source line.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.FileContext.CodeLines">
+            <summary>Accumulated script code lines.</summary>
+        </member>
+        <member name="T:NBagOfTricks.ScriptCompiler.ScriptCompilerCore">
+            <summary>Parses/compiles script file(s).</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.WorkPath">
+            <summary>Client needs to tell us this.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.IgnoreWarnings">
+            <summary>Client needs to tell us this.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.SystemDlls">
+            <summary>Default system dlls. Client can add or subtract.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.LocalDlls">
+            <summary>App dlls.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Usings">
+            <summary>Additional using statements not supplied by dlls.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Script">
+            <summary>The compiled script.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Results">
+            <summary>Accumulated errors/results.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.SourceFiles">
+            <summary>All active source files. Provided so client can monitor for external changes.</summary>
+        </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.TempDir">
+            <summary>Compile products are here.</summary>
+        </member>
+        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._scriptName">
+            <summary>Script info.</summary>
+        </member>
+        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._initLines">
+            <summary>Accumulated lines to go in the constructor.</summary>
+        </member>
+        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._filesToCompile">
+            <summary>Products of file preprocess. Key is generated file name.</summary>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreExecute">
+            <summary>Hook to override.</summary>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PostExecute">
+            <summary>Hook to override.</summary>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessFile(System.String,NBagOfTricks.ScriptCompiler.FileContext)">
+            <summary>Hook to override.</summary>
+            <param name="sline">Trimmed line</param>
+            <param name="pcont">File context</param>
+            <returns>True if handled</returns>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Execute(System.String)">
+            <summary>
+            Run the Compiler.
+            </summary>
+            <param name="scriptfn">Fully qualified path to main file.</param>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileNative(System.String)">
+            <summary>
+            The actual compiler driver.
+            </summary>
+            <returns>Compiled script</returns>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessFile(NBagOfTricks.ScriptCompiler.FileContext)">
+            <summary>
+            Parse one file. Recursive to support nested include(fn).
+            </summary>
+            <param name="pcont">The parse context.</param>
+            <returns>True if a valid file.</returns>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.GenTopOfFile(System.String)">
+            <summary>
+            Create the boilerplate file top stuff.
+            </summary>
+            <param name="fn">Source file name. Empty means it's an internal file.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.GenBottomOfFile">
+            <summary>
+            Create the boilerplate file bottom stuff.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.SimpleIpc.ClientStatus">
+            <summary>Possible outcomes.</summary>
+        </member>
+        <member name="T:NBagOfTricks.SimpleIpc.Client">
+            <summary>Companion client to server. This runs in a new process.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.Client._pipeName">
+            <summary>Pipe name.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.Client._log">
+            <summary>My logger.</summary>
+        </member>
+        <member name="P:NBagOfTricks.SimpleIpc.Client.Error">
+            <summary>Caller may be able to use this.</summary>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.Client.#ctor(System.String,System.String)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="pipeName">Pipe name to use.</param>
+            <param name="logfn"></param>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.Client.Send(System.String,System.Int32)">
+            <summary>
+            Blocking send string.
+            </summary>
+            <param name="s">String to send.</param>
+            <param name="timeout">Msec to wait for completion.</param>
+            <returns></returns>
+        </member>
+        <member name="T:NBagOfTricks.SimpleIpc.MpLog">
+            <summary>
+            A simple logger which handles client calls from multiple processes/threads.
+            This is not intended to be a general purpose logger but one that serves a specific purpose,
+            to debug the SimpleIpc component.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.MpLog.MUTEX_GUID">
+            <summary>File lock id.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.MpLog._filename">
+            <summary>Which file.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.MpLog._category">
+            <summary>For sorting.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.MpLog._maxSize">
+            <summary>Rollover size.</summary>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.MpLog.#ctor(System.String,System.String)">
+            <summary>
+            Init the log file.
+            </summary>
+            <param name="filename">The file.</param>
+            <param name="category">The category.</param>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.MpLog.Write(System.String,System.Boolean)">
+            <summary>
+            Add a line.
+            </summary>
+            <param name="s"></param>
+            <param name="error">T/F</param>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.MpLog.Clear">
+            <summary>
+            Empty the log file.
+            </summary>
+        </member>
+        <member name="T:NBagOfTricks.SimpleIpc.ConnectionStatus">
+            <summary>Possible states/outcomes.</summary>
+        </member>
+        <member name="T:NBagOfTricks.SimpleIpc.ConnectionState">
+            <summary>Per connection.</summary>
+        </member>
+        <member name="T:NBagOfTricks.SimpleIpc.ServerEventArgs">
+            <summary>Notify client of some connection event.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.Server._pipeName">
+            <summary>Named pipe name.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.Server._thread">
+            <summary>The server thread.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.Server._running">
+            <summary>Flag to unblock the listen and end the thread.</summary>
+        </member>
+        <member name="E:NBagOfTricks.SimpleIpc.Server.ServerEvent">
+            <summary>Something happened. Client will have to take care of thread issues.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.Server._cancelEvent">
+            <summary>The canceller.</summary>
+        </member>
+        <member name="F:NBagOfTricks.SimpleIpc.Server._log">
+            <summary>My logger.</summary>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.Server.#ctor(System.String,System.String)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="pipeName"></param>
+            <param name="logfn"></param>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.Server.Start">
+            <summary>
+            Run it.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.Server.Stop">
+            <summary>
+            Stop the server - called from main.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.Server.Dispose">
+            <summary>
+            Required.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.SimpleIpc.Server.ServerThread">
+            <summary>
+            Listen for client messages. Interruptible by setting _cancelEvent.
+            </summary>
         </member>
     </members>
 </doc>

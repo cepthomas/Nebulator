@@ -9,7 +9,7 @@ using NAudio.Midi;
 using NAudio.Wave;
 using NLog;
 using NBagOfTricks;
-using NBagOfTricks.UI;
+using NBagOfUis;
 using Nebulator.Common;
 using Nebulator.Script;
 using Nebulator.Midi;
@@ -93,7 +93,7 @@ namespace Nebulator.App
             }
 
             InitializeComponent();
-            toolStrip1.Renderer = new NBagOfTricks.UI.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
+            toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
         }
 
         /// <summary>
@@ -409,7 +409,7 @@ namespace Nebulator.App
                 });
             }
 
-            File.WriteAllText("_dump.txt", _script.GetAllSteps().Dump());
+            File.WriteAllText(@"..\..\..\_dump.txt", _script.GetAllSteps().Dump());
 
             return ok;
         }

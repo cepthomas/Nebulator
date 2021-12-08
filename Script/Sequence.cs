@@ -269,7 +269,7 @@ namespace Nebulator.Script
             ScriptFunction = seqel.ScriptFunction;
             When = new Time(seqel.When);
             Duration = new Time(seqel.Duration);
-            Notes = seqel.Notes.DeepClone();
+            // TODO replace         Notes = seqel.Notes.DeepClone();
         }
 
         /// <summary>

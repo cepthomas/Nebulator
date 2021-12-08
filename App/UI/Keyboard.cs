@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using NLog;
-using NBagOfTricks.UI;
+using NBagOfUis;
 using Nebulator.Common;
 using Nebulator.Midi;
 

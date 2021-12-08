@@ -16,7 +16,7 @@ hdr_mod = '''
 <!-- make code stand out: -->
 <style>.md code { color: #f3f }</style>
 '''
-# <!-- toc needs to be wider and/or adjustable: TODO doesnt work right -->
+# <!-- toc needs to be wider and/or adjustable: doesnt work right -->
 # <style>.md .longTOC { width:300px; }</style>
 
 ftr = '''

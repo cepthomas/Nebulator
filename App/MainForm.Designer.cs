@@ -18,8 +18,8 @@
             this.components = new System.ComponentModel.Container();
             Nebulator.Common.Time time1 = new Nebulator.Common.Time();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.sldVolume = new NBagOfTricks.UI.Slider();
-            this.potSpeed = new NBagOfTricks.UI.Pot();
+            this.sldVolume = new NBagOfUis.Slider();
+            this.potSpeed = new NBagOfUis.Pot();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnCompile = new System.Windows.Forms.Button();
             this.btnRewind = new System.Windows.Forms.Button();
@@ -38,7 +38,7 @@
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.btnKeyboard = new System.Windows.Forms.ToolStripButton();
-            this.textViewer = new NBagOfTricks.UI.TextViewer();
+            this.textViewer = new NBagOfUis.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
             this.timeMaster = new Nebulator.UI.TimeControl();
@@ -76,7 +76,7 @@
             this.potSpeed.Name = "potSpeed";
             this.potSpeed.Size = new System.Drawing.Size(43, 49);
             this.potSpeed.TabIndex = 33;
-            this.potSpeed.Taper = NBagOfTricks.UI.Taper.Linear;
+            this.potSpeed.Taper = NBagOfUis.Taper.Linear;
             this.toolTip.SetToolTip(this.potSpeed, "Speed in BPM");
             this.potSpeed.Value = 100D;
             this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
@@ -362,9 +362,9 @@
         }
 
         #endregion
-        private NBagOfTricks.UI.Slider sldVolume;
+        private NBagOfUis.Slider sldVolume;
         private System.Windows.Forms.CheckBox chkPlay;
-        private NBagOfTricks.UI.Pot potSpeed;
+        private NBagOfUis.Pot potSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
         private UI.TimeControl timeMaster;
@@ -378,7 +378,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnKillComm;
         private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
-        private NBagOfTricks.UI.TextViewer textViewer;
+        private NBagOfUis.TextViewer textViewer;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
         private System.Windows.Forms.Label lblSolo;

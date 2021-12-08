@@ -9,7 +9,7 @@ What the script supports.
 Time is described as a fixed point value `Beat.Subdiv` where:
 - Beat as in the traditional definition = quarter note. From 0 to N.
 - `Subdiv` is the subdivision of `Beat`.
-- `Time.SubdivsPerBeat` gives you another possibly useful bit of information.
+- `Time.SubdivsPerBeat` defaults to 8 but you can change it if you dare.
 
 Neb doesn't care about measures, that's up to you.
 
