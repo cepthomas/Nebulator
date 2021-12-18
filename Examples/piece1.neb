@@ -24,15 +24,13 @@ public override void Setup()
 ///// Make the music.
 void BuildComp()
 {
-    
     /////////////////////// Keys sequences /////////////////////////////////
 
     Sequence seqKeysIntro = CreateSequence(8, new SequenceElements
     {
-      //{ "|........|........|........|........|........|........|........|........|"},
-        { "|9-------|------  |9-------|------  |9 9-----|------  |9-----  |        |", "E4.m", KEYS_VOL },
-        { "|        |        |        |        |        |        |        |9 9     |", "D5.m", KEYS_VOL },
-        { "|        |        |        |        |        |        |        |    9 9 |", "A4.m", KEYS_VOL },
+        { "|9-------|------  |9-------|------  |9 9-----|------  |        |        |", "E4.m", KEYS_VOL },
+        { "|        |        |        |        |        |        |9   9   |        |", "D5.m", KEYS_VOL },
+        { "|        |        |        |        |        |        |        |9   9   |", "A4.m", KEYS_VOL },
     });
 
     Sequence seqKeysVerse = CreateSequence(8, new SequenceElements
@@ -44,25 +42,26 @@ void BuildComp()
 
     Sequence seqKeysEnd = CreateSequence(8, new SequenceElements
     {
-        { "|9-------|------  |9-------|------  |9 9-----|------  |9-----  |        |", "E4.m", KEYS_VOL },
-        { "|        |        |        |        |        |        |        |9 9     |", "D5.m", KEYS_VOL },
-        { "|        |        |        |        |        |        |        |    9 9 |", "A4.m", KEYS_VOL },
+        { "|9-------|------  |9-------|------  |9 9-----|------  |        |        |", "E4.m", KEYS_VOL },
+        { "|        |        |        |        |        |        |9   9   |        |", "D5.m", KEYS_VOL },
+        { "|        |        |        |        |        |        |        |9   9   |", "A4.m", KEYS_VOL },
     });
 
     /////////////////////// Drum sequences /////////////////////////////////
 
     Sequence seqDrumsVerse = CreateSequence(8, new SequenceElements
     {
-        { "|8.8.8.8.|8.8.8.8.|8.8.8.8.|8.8.8.8.|8.8.8.8.|8.8.8.8.|8.8.8.8.|8.8.8.8.|", RideCymbal1,      DRUM_VOL*0.8 },
-        { "|....8...|....8...|....8...|....8...|....8...|....8...|....8...|....8...|", SideStick,        DRUM_VOL*0.9 },
-        { "|8.....8.|8.......|8.....8.|8.......|8.....8.|8.......|8.....8.|8.......|", AcousticBassDrum, DRUM_VOL },
+      //{ "|8.......|8.......|8.......|8.......|8.......|8.......|8.......|8.......|", RideCymbal1,      DRUM_VOL*0.8 },
+        { "|8...8...|8...8...|8...8...|8...8...|8...8...|8...8...|8...8...|8...8...|", RideCymbal1,      DRUM_VOL*0.8 },
+        { "|....8...|........|....8...|........|....8...|........|....8...|........|", SideStick,        DRUM_VOL*0.9 },
+        { "|8.......|......8.|8.......|......8.|8.......|......8.|8.......|......8.|", AcousticBassDrum, DRUM_VOL     },
     });
 
     /////////////////////// Bass sequences /////////////////////////////////
 
     Sequence seqBassIntro = CreateSequence(8, new SequenceElements
     {
-        { "|9----.9.|9------.|9----.9.|9------.|9----.9.|9------.|9----.9.|9------.|", "E2", BASS_VOL },
+        { "|9----...|9----.9.|9----...|9----.9.|9----...|9----.9.|9----...|9----.9.|", "E2", BASS_VOL },
     });
 
     Sequence seqBassVerse = CreateSequence(8, new SequenceElements

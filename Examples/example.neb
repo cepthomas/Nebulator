@@ -96,12 +96,12 @@ public void BuildComp()
     });
 
     // This is probably the better way to do drums and rhythmic instruments.
-    Sequence seqDrumsVerse = CreateSequence(4, new SequenceElements
+    Sequence seqDrumsVerse = CreateSequence(8, new SequenceElements
     {
       //{ "|........|........|........|........|"},
-        { "|8       |8       |8       |8       |", AcousticBassDrum, DRUM_VOL },
-        { "|    8   |    8   |    8   |    8 8 |", AcousticSnare,    DRUM_VOL*0.9 },
-        { "|      88|      88|      88|      88|", ClosedHiHat,      DRUM_VOL*1.1 },
+        { "|8       |        |8       |        |8       |        |8       |        |", AcousticBassDrum, DRUM_VOL },
+        { "|    8   |        |    8   |    8   |    8   |        |    8   |    8   |", AcousticSnare,    DRUM_VOL*0.9 },
+        { "|        |     8 8|        |     8 8|        |     8 8|        |     8 8|", ClosedHiHat,      DRUM_VOL*1.1 },
     });
 
     // Single note (melodic) sequence could be either way.
@@ -138,10 +138,10 @@ public void BuildComp()
     // Sequence triggered in script.
     seqDynamic = CreateSequence(8, new SequenceElements
     {
-        { 0.0, "G3 ", 0.7, 0.1 },
-        { 1.0, "A3 ", 0.7, 0.1 },
-        { 2.0, "Bb3", 0.7, 0.1 },
-        { 6.0, "C4 ", 0.7, 0.1 },
+        { 0.0, "G3 ", 0.7, 0.5 },
+        { 1.0, "A3 ", 0.7, 0.5 },
+        { 2.0, "Bb3", 0.7, 0.5 },
+        { 6.0, "C4 ", 0.7, 0.5 },
     });
 
 
@@ -198,5 +198,5 @@ public virtual void InputControl(DeviceType dev, int channel, ControllerDef ctli
 void AlgoFunc()
 {
     int notenum = Random(0, _scaleNotes.Count());
-    SendNote("synth", _scaleNotes[notenum], 0.7, 0.1);
+    SendNote("synth", _scaleNotes[notenum], 0.7, 0.5);
 }

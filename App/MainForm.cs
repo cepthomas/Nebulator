@@ -409,8 +409,6 @@ namespace Nebulator.App
                 });
             }
 
-            File.WriteAllText(@"..\..\..\_dump.txt", _script.GetAllSteps().Dump());
-
             return ok;
         }
 
@@ -1199,7 +1197,9 @@ namespace Nebulator.App
                 InternalPpq = Time.SubdivsPerBeat,
                 Tempo = potSpeed.Value
             };
-            _mmTimer.SetTimer(mt.RoundedInternalPeriod(), MmTimerCallback);
+
+            var per = mt.RoundedInternalPeriod();
+            _mmTimer.SetTimer(per, MmTimerCallback);
         }
         #endregion
 
