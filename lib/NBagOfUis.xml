@@ -1588,10 +1588,13 @@
         <member name="F:NBagOfUis.WaveViewer._rawMax">
             <summary>Maximum value of _rawVals (+-).</summary>
         </member>
-        <member name="F:NBagOfUis.WaveViewer._buff">
+        <member name="F:NBagOfUis.WaveViewer._scaledBuff">
             <summary>Storage for display.</summary>
         </member>
         <member name="F:NBagOfUis.WaveViewer._penDraw">
+            <summary>For drawing.</summary>
+        </member>
+        <member name="F:NBagOfUis.WaveViewer._penMarker">
             <summary>For drawing.</summary>
         </member>
         <member name="F:NBagOfUis.WaveViewer._textFont">
@@ -1606,14 +1609,17 @@
         <member name="P:NBagOfUis.WaveViewer.DrawColor">
             <summary>For styling.</summary>
         </member>
+        <member name="P:NBagOfUis.WaveViewer.MarkerColor">
+            <summary>For styling.</summary>
+        </member>
         <member name="P:NBagOfUis.WaveViewer.Mode">
             <summary>How to draw.</summary>
         </member>
         <member name="P:NBagOfUis.WaveViewer.Marker1">
-            <summary>Marker 1.</summary>
+            <summary>Marker 1 data index or -1 to disable.</summary>
         </member>
         <member name="P:NBagOfUis.WaveViewer.Marker2">
-            <summary>Marker 2.</summary>
+            <summary>Marker 2 data index or -1 to disable.</summary>
         </member>
         <member name="M:NBagOfUis.WaveViewer.#ctor">
             <summary>
