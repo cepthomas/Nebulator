@@ -17,6 +17,8 @@ using Nebulator.OSC;
 using Nebulator.UI;
 using NBagOfTricks.ScriptCompiler;
 
+// TODO Clean out icons.
+
 namespace Nebulator.App
 {
     public partial class MainForm : Form
