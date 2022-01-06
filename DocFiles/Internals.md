@@ -120,7 +120,7 @@ inside of the diagram. In fact, any plain text      *      v            |      *
 may appear in the diagram. In addition to labels,   *  .-------.   .----+----. *
 any un-beautified text will remain in place for     * | Security|  |  File   | *
 use as ASCII art. Thus, the diagram is rarely       * | Policy  +->| Manager | *
-distored by the beautification process.             *  '-------'   '---------' *
+distorted by the beautification process.             *  '-------'   '---------' *
                                                     ****************************
 
 
