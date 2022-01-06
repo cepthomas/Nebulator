@@ -38,7 +38,7 @@ for df in dfiles:
         all_text.append(srcf.read() + '\n')
 
 # Output to
-outfn = os.path.join(repo_path, dfiles[0] + '.html')
+outfn = os.path.join(repo_path, 'Nebulator.html')
 with open(outfn, "w+") as outf:
     outf.write(hdr)
     # outf.write(hdr_mod)

@@ -8,7 +8,7 @@
 
 ## Design
 
-- Three projects. `Common` and `BaseScript` are compiled separately into assemblies
+- Three projects. `Common` and `Script` are compiled separately into assemblies
   so that they can be linked with the compiled user script dynamically.
 - Main UI and non user script stuff is all in the `App` project.
 - Channels and Controllers follow the midi model. Devices represent ports (and corresponding physical dvices.)
@@ -22,9 +22,9 @@
 root
 |   Nebulator.sln 
 |   README.md
-|   LICENSE
+|   Nebulator.html (generated doc file)
 |   version.txt (contains current version string)
-|   mkdoc.py (builds the single doc file Nebulator.md.html)
+|   mkdoc.py (builds Nebulator.html from DocFiles/*)
 |   
 +---App (main app and UI)
 |   |   App.csproj
@@ -81,7 +81,7 @@ root
 |       
 +---Test (pathetic test stuff)
 |
-\---DocFiles (source for doc build)
+\---DocFiles
         Nebulator.md
         ScriptSyntax.md
         ScriptApi.md
@@ -95,7 +95,7 @@ This project contains a bunch of components that are either recycled or created 
 
 - Midi and OSC classes may be useful elsewhere in conjunction with NAudio.
 - Embedded Roslyn in-memory compiler.
-- See [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks) for more goodies.
+- Uses my [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks) and [NBagOfUis](https://github.com/cepthomas/NBagOfUis).
 
 
 ## Third Party
@@ -106,22 +106,4 @@ This application uses these FOSS components.
 - Markdown rendering: [Markdeep](https://casual-effects.com/markdeep).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
-
-
-# Diagrams
-
-Diagrams can be inserted alongside, as in this      ****************************
-example, or between paragraphs of text as shown     * .---------.              *
-below.                                              * |  Server |<------.      *
-                                                    * '----+----'       |      *
-The diagram parser leaves symbols used as labels    *      |            |      *
-unmodified, so characters like > and ( can appear   *      | DATA CYCLE |      *
-inside of the diagram. In fact, any plain text      *      v            |      *
-may appear in the diagram. In addition to labels,   *  .-------.   .----+----. *
-any un-beautified text will remain in place for     * | Security|  |  File   | *
-use as ASCII art. Thus, the diagram is rarely       * | Policy  +->| Manager | *
-distored by the beautification process.             *  '-------'   '---------' *
-                                                    ****************************
-
-
 

@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Nebulator.md.html" Link="Nebulator.md.html">
+    <Content Include="..\Nebulator.html" Link="Nebulator.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
