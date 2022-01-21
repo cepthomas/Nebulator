@@ -108,12 +108,6 @@
             <param name="valopt"></param>
             <param name="func"></param>
         </member>
-        <member name="T:NBagOfTricks.JsonColorConverter">
-            <summary>Serialize prettier.</summary>
-        </member>
-        <member name="T:NBagOfTricks.JsonPointFConverter">
-            <summary>Serialize prettier.</summary>
-        </member>
         <member name="T:NBagOfTricks.Dumper">
             <summary>
             Dumps: objects, dictionaries of objects, or lists of objects.
@@ -158,6 +152,18 @@
             Common output formatter.
             </summary>
             <param name="s"></param>
+        </member>
+        <member name="T:NBagOfTricks.JsonColorConverter">
+            <summary>Serialize prettier.</summary>
+        </member>
+        <member name="T:NBagOfTricks.JsonPointFConverter">
+            <summary>Serialize prettier.</summary>
+        </member>
+        <member name="T:NBagOfTricks.JsonRectangleConverter">
+            <summary>Serialize prettier.</summary>
+        </member>
+        <member name="T:NBagOfTricks.JsonFontConverter">
+            <summary>Serialize prettier.</summary>
         </member>
         <member name="T:NBagOfTricks.MathUtils">
             <summary>

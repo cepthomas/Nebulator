@@ -59,10 +59,9 @@ namespace Nebulator.UI
         void Keyboard_Load(object sender, EventArgs e)
         {
             StartPosition = FormStartPosition.Manual;
-            Size = new Size(UserSettings.TheSettings.KeyboardInfo.Width, UserSettings.TheSettings.KeyboardInfo.Height);
             TopMost = false;
-            Location = new Point(UserSettings.TheSettings.KeyboardInfo.X, UserSettings.TheSettings.KeyboardInfo.Y);
-
+            Size = new Size(UserSettings.TheSettings.KeyboardFormGeometry.Width, UserSettings.TheSettings.KeyboardFormGeometry.Height);
+            Location = new Point(UserSettings.TheSettings.KeyboardFormGeometry.X, UserSettings.TheSettings.KeyboardFormGeometry.Y);
             vkey.KeyboardEvent += Vkey_KeyboardEvent;
         }
 

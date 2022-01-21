@@ -25,7 +25,7 @@
             <summary>
             Format to binary form.
             </summary>
-            <returns>The byte array or null if error occurred.</returns>
+            <returns>The byte array or empty if error occurred.</returns>
         </member>
         <member name="M:NebOsc.Bundle.Unpack(System.Byte[])">
             <summary>
@@ -153,7 +153,7 @@
             <summary>
             Format to binary form.
             </summary>
-            <returns>The byte array or null if error occurred.</returns>
+            <returns>The byte array or empty if error occurred.</returns>
         </member>
         <member name="M:NebOsc.Message.Unpack(System.Byte[])">
             <summary>

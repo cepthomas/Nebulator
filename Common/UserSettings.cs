@@ -103,10 +103,12 @@ namespace Nebulator.Common
         public bool Valid { get; set; } = false;
 
         [Browsable(false)]
-        public FormInfo MainFormInfo { get; set; } = new FormInfo();
+        [JsonConverter(typeof(JsonRectangleConverter))]
+        public Rectangle MainFormGeometry { get; set; } = new Rectangle(50, 50, 600, 400);
 
         [Browsable(false)]
-        public FormInfo KeyboardInfo { get; set; } = new FormInfo() { Height = 100, Width = 1000 };
+        [JsonConverter(typeof(JsonRectangleConverter))]
+        public Rectangle KeyboardFormGeometry { get; set; } = new Rectangle(50, 50, 600, 400);
 
         [Browsable(false)]
         public bool MonitorInput { get; set; } = false;
@@ -172,17 +174,6 @@ namespace Nebulator.Common
         }
         #endregion
     }
-
-    /// <summary>General purpose container for persistence.</summary>
-    [Serializable]
-    public class FormInfo
-    {
-        public int X { get; set; } = 50;
-        public int Y { get; set; } = 50;
-        public int Width { get; set; } = 1000;
-        public int Height { get; set; } = 700;
-    }
-
 
     /// <summary>Converter for selecting property value from known lists.
     public class MidiDeviceTypeConverter : TypeConverter

@@ -105,8 +105,8 @@ namespace Nebulator.App
         {
             #region Init UI from settings
             // Main form.
-            Location = new Point(UserSettings.TheSettings.MainFormInfo.X, UserSettings.TheSettings.MainFormInfo.Y);
-            Size = new Size(UserSettings.TheSettings.MainFormInfo.Width, UserSettings.TheSettings.MainFormInfo.Height);
+            Location = new Point(UserSettings.TheSettings.MainFormGeometry.X, UserSettings.TheSettings.MainFormGeometry.Y);
+            Size = new Size(UserSettings.TheSettings.MainFormGeometry.Width, UserSettings.TheSettings.MainFormGeometry.Height);
             WindowState = FormWindowState.Normal;
             BackColor = UserSettings.TheSettings.BackColor;
 
@@ -224,7 +224,7 @@ namespace Nebulator.App
             Kill();
 
             // Save user settings.
-            UserSettings.TheSettings.MainFormInfo = new()
+            UserSettings.TheSettings.MainFormGeometry = new()
             {
                 X = Location.X,
                 Y = Location.Y,
@@ -233,7 +233,7 @@ namespace Nebulator.App
             };
 
             Keyboard kbd = (Keyboard)_inputDevices[DeviceType.Vkey];
-            UserSettings.TheSettings.KeyboardInfo = new()
+            UserSettings.TheSettings.KeyboardFormGeometry = new()
             {
                 X = kbd.Location.X,
                 Y = kbd.Location.Y,
