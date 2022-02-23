@@ -1,8 +1,13 @@
 
 # What This Is
+
+![MarkS][./DocFiles/marks.jpg]
+
 Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
 
-Windows only... uses some Win32 calls but they could be re-worked for Linux.
+It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of synth parameters using code.
+
+Requires VS2019 and .NET5. Windows only... uses some Win32 calls but they could be re-worked for Linux.
 
 I played around with various scripting concepts, but ended up realizing that C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
 
