@@ -29,7 +29,7 @@ namespace Nebulator.UI
         /// </summary>
         private void InitializeComponent()
         {
-            this.pg = new System.Windows.Forms.PropertyGrid();
+            this.pg = new NBagOfUis.PropertyGridEx();
             this.rtbInfo = new System.Windows.Forms.RichTextBox();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -102,7 +102,7 @@ namespace Nebulator.UI
 
         #endregion
 
-        private System.Windows.Forms.PropertyGrid pg;
+        private NBagOfUis.PropertyGridEx pg;
         private System.Windows.Forms.RichTextBox rtbInfo;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;

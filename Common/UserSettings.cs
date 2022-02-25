@@ -76,7 +76,7 @@ namespace Nebulator.Common
         [Description("Where you keep your neb files.")]
         [Category("Functionality")]
         [Browsable(true)]
-        [Editor(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
         public string WorkPath { get; set; } = "";
 
         [DisplayName("Auto Compile")]

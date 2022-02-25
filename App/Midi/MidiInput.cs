@@ -19,9 +19,6 @@ namespace Nebulator.Midi
 
         /// <summary>Midi input device.</summary>
         MidiIn? _midiIn;
-
-        /// <summary>Resource clean up.</summary>
-        bool _disposed = false;
         #endregion
 
         #region Events
@@ -95,24 +92,9 @@ namespace Nebulator.Midi
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing)
-            {
-                _midiIn?.Stop();
-                _midiIn?.Dispose();
-                _midiIn = null;
-
-                _disposed = true;
-            }
+            _midiIn?.Stop();
+            _midiIn?.Dispose();
+            _midiIn = null;
         }
         #endregion
 

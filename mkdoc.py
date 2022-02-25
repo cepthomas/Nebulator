@@ -37,7 +37,7 @@ for df in dfiles:
     with open(srcfn, "r") as srcf:
         all_text.append(srcf.read() + '\n')
 
-# Output to
+# Output to html file.
 outfn = os.path.join(repo_path, 'Nebulator.html')
 with open(outfn, "w+") as outf:
     outf.write(hdr)

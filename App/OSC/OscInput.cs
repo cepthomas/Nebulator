@@ -18,9 +18,6 @@ namespace Nebulator.OSC
 
         /// <summary>OSC input device.</summary>
         NebOsc.Input? _oscInput = null;
-
-        /// <summary>Resource clean up.</summary>
-        bool _disposed = false;
         #endregion
 
         #region Events
@@ -80,23 +77,8 @@ namespace Nebulator.OSC
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing)
-            {
-                _oscInput?.Dispose();
-                _oscInput = null;
-
-                _disposed = true;
-            }
+            _oscInput?.Dispose();
+            _oscInput = null;
         }
         #endregion
 

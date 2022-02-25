@@ -423,20 +423,9 @@
         </member>
         <member name="T:NBagOfUis.FilTree">
             <summary>
-            Tree control with tags and filters.
+            Tree control with file type filters.
+            TODO: limit/lazy L/R population, filter pattern matching, include/exclude, filter specs global/local.
             </summary>
-        </member>
-        <member name="F:NBagOfUis.FilTree._taggedPaths">
-            <summary>Key is file or dir path, value is associated tags.</summary>
-        </member>
-        <member name="F:NBagOfUis.FilTree._activeFilters">
-            <summary>Filter by these tags.</summary>
-        </member>
-        <member name="P:NBagOfUis.FilTree.TaggedPaths">
-            <summary>Key is path to file or directory, value is space separated associated tags.</summary>
-        </member>
-        <member name="P:NBagOfUis.FilTree.AllTags">
-            <summary>All possible tags and whether they are active.</summary>
         </member>
         <member name="P:NBagOfUis.FilTree.RootDirs">
             <summary>Base path(s) for the tree.</summary>
@@ -444,7 +433,7 @@
         <member name="P:NBagOfUis.FilTree.FilterExts">
             <summary>Show only these file types.</summary>
         </member>
-        <member name="P:NBagOfUis.FilTree.DoubleClickSelect">
+        <member name="P:NBagOfUis.FilTree.SingleClickSelect">
             <summary>Generate event with single or double click.</summary>
         </member>
         <member name="E:NBagOfUis.FilTree.FileSelectedEvent">
@@ -476,7 +465,7 @@
         </member>
         <member name="M:NBagOfUis.FilTree.PopulateTreeView">
             <summary>
-            
+            Fill the tree.
             </summary>
         </member>
         <member name="M:NBagOfUis.FilTree.ShowDirectories(System.IO.DirectoryInfo[],System.Windows.Forms.TreeNode)">
@@ -521,18 +510,6 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfUis.FilTree.PopulateFilters">
-            <summary>
-            Update the clickable label showing active filters.
-            </summary>
-        </member>
-        <member name="M:NBagOfUis.FilTree.ActiveFilters_Click(System.Object,System.EventArgs)">
-            <summary>
-            Edit the tag filters for this file.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
         <member name="M:NBagOfUis.FilTree.TreeView_DrawNode(System.Object,System.Windows.Forms.DrawTreeNodeEventArgs)">
             <summary>
             See above.
@@ -546,18 +523,6 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
-        </member>
-        <member name="M:NBagOfUis.FilTree.GetTaggedPaths">
-            <summary>
-            Property accessor helper.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfUis.FilTree.SetTaggedPaths(System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            Property accessor helper.
-            </summary>
-            <param name="paths"></param>
         </member>
         <member name="F:NBagOfUis.FilTree.components">
             <summary> 
@@ -1037,6 +1002,9 @@
         <member name="T:NBagOfUis.PropertyGridEx">
             <summary>Extends the PropertyGrid to add some features.</summary>
         </member>
+        <member name="P:NBagOfUis.PropertyGridEx.Dirty">
+            <summary>Edited flag.</summary>
+        </member>
         <member name="E:NBagOfUis.PropertyGridEx.PropertyGridExEvent">
             <summary>The property grid is reporting something.</summary>
         </member>
@@ -1052,47 +1020,45 @@
         <member name="M:NBagOfUis.PropertyGridEx.RaisePropertyGridExEvent(System.String,System.Object)">
             <summary>Children can call this to send something back to the host.</summary>
         </member>
-        <member name="P:NBagOfUis.PropertyGridEx.ToolStrip">
-            <summary>Gets the tool strip.</summary>
-        </member>
-        <member name="P:NBagOfUis.PropertyGridEx.DocComment">
-            <summary>Gets the doc comment.</summary>
-        </member>
-        <member name="P:NBagOfUis.PropertyGridEx.DocCommentTitle">
-            <summary>Gets the doc comment title.</summary>
-        </member>
-        <member name="P:NBagOfUis.PropertyGridEx.DocCommentDescription">
-            <summary>Gets the doc comment description.</summary>
-        </member>
-        <member name="P:NBagOfUis.PropertyGridEx.DocCommentImage">
-            <summary>Gets or sets the help comment image.</summary>
-        </member>
-        <member name="P:NBagOfUis.PropertyGridEx.Dirty">
-            <summary>Edited flag.</summary>
-        </member>
         <member name="M:NBagOfUis.PropertyGridEx.#ctor">
             <summary>Initializes a new instance of the class.</summary>
         </member>
-        <member name="M:NBagOfUis.PropertyGridEx.Edit_PropertyValueChanged(System.Object,System.Windows.Forms.PropertyValueChangedEventArgs)">
-            <summary>User edited something.</summary>
-        </member>
         <member name="M:NBagOfUis.PropertyGridEx.AddButton(System.String,System.Drawing.Image,System.String,System.EventHandler)">
             <summary>Add a custom button to the property grid.</summary>
+            <param name="text"></param>
+            <param name="image"></param>
+            <param name="tooltip"></param>
+            <param name="onClick"></param>
+            <returns>The button or null if failed.</returns>
         </member>
         <member name="M:NBagOfUis.PropertyGridEx.AddLabel(System.String,System.Drawing.Image,System.String)">
             <summary>Add a label to the property grid.</summary>
+            <param name="text"></param>
+            <param name="image"></param>
+            <param name="tooltip"></param>
+            <returns>The label or null if failed.</returns>
+        </member>
+        <member name="M:NBagOfUis.PropertyGridEx.AddSeparator">
+            <summary>Add a separator to the property grid.</summary>
+            <returns>The separator or null if failed.</returns>
         </member>
         <member name="M:NBagOfUis.PropertyGridEx.MoveSplitter(System.Int32)">
             <summary>Moves the vertical splitter.</summary>
+            <param name="x"></param>
         </member>
         <member name="M:NBagOfUis.PropertyGridEx.ResizeDescriptionArea(System.Int32)">
             <summary>Alter the bottom description area.</summary>
+            <param name="x">Number of lines to show.</param>
         </member>
         <member name="M:NBagOfUis.PropertyGridEx.ExpandGroup(System.String,System.Boolean)">
             <summary>Expand or collapse the group.</summary>
+            <param name="groupName">Name of the group to act on.</param>
+            <param name="expand">Expand or collapse.</param>
         </member>
         <member name="M:NBagOfUis.PropertyGridEx.ShowProperty(System.String,System.Boolean)">
             <summary>Show or hide a named property.</summary>
+            <param name="which">Name of the property.</param>
+            <param name="visible">True or false.</param>
         </member>
         <member name="T:NBagOfUis.Slider">
             <summary>
@@ -1358,13 +1324,17 @@
             <param name="val"></param>
             <returns></returns>
         </member>
+        <member name="T:NBagOfUis.StringListEditor">
+            <summary>Generic property editor for lists of strings.</summary>
+        </member>
+        <member name="T:NBagOfUis.MonospaceFontEditor">
+            <summary>Selector for monospaced fonts.</summary>
+        </member>
         <member name="T:NBagOfUis.CheckBoxRenderer">
             <summary>Custom renderer for toolstrip checkbox color.</summary>
         </member>
         <member name="P:NBagOfUis.CheckBoxRenderer.SelectedColor">
-            <summary>
-            Color to use when check box is selected.
-            </summary>
+            <summary>Color to use when check box is selected.</summary>
         </member>
         <member name="M:NBagOfUis.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
             <summary>
@@ -1372,14 +1342,22 @@
             </summary>
             <param name="e"></param>
         </member>
-        <member name="T:NBagOfUis.TsRenderer">
-            <summary>Toolstrip checkbox button colorizer.</summary>
+        <member name="F:NBagOfUis.UserControl1.components">
+            <summary> 
+            Required designer variable.
+            </summary>
         </member>
-        <member name="T:NBagOfUis.ListEditor">
-            <summary>Generic property editor for lists of strings.</summary>
+        <member name="M:NBagOfUis.UserControl1.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="T:NBagOfUis.MonospaceFontEditor">
-            <summary>Selector for monospaced fonts.</summary>
+        <member name="M:NBagOfUis.UserControl1.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
         </member>
         <member name="T:NBagOfUis.VirtualKeyboard">
             <summary>
@@ -1496,7 +1474,7 @@
         <member name="P:NBagOfUis.VirtualKey.NoteId">
             <summary>Associated midi note.</summary>
         </member>
-        <member name="E:NBagOfUis.VirtualKey.VKeyEvent">
+        <member name="T:NBagOfUis.VirtualKey.VKeyEventArgs">
             <summary>Notify handlers of key change.</summary>
         </member>
         <member name="M:NBagOfUis.VirtualKey.#ctor(NBagOfUis.VirtualKeyboard,System.Boolean,System.Int32)">
@@ -1566,9 +1544,6 @@
         <member name="F:NBagOfUis.WaitCursor.m_cursorOld">
             <summary>Restore original cursor</summary>
         </member>
-        <member name="F:NBagOfUis.WaitCursor._disposedValue">
-            <summary>To detect redundant call</summary>
-        </member>
         <member name="F:NBagOfUis.WaitCursor._start">
             <summary>For metrics</summary>
         </member>
@@ -1577,10 +1552,6 @@
         </member>
         <member name="M:NBagOfUis.WaitCursor.Dispose">
             <summary>Dispose</summary>
-        </member>
-        <member name="M:NBagOfUis.WaitCursor.Dispose(System.Boolean)">
-            <summary>Dispose</summary>
-            <param name="disposing"></param>
         </member>
         <member name="F:NBagOfUis.WaveViewer._rawVals">
             <summary>From client.</summary>

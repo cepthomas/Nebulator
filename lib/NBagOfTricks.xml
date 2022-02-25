@@ -40,7 +40,7 @@
         </member>
         <member name="P:NBagOfTricks.Command.Name">
             <summary>
-            The command name(s). The first one is the main command name and aliases follow.
+            The command name(s) space separated. The first one is the main command name and aliases follow.
             If it's empty or null, there is no separate command name.
             </summary>
         </member>
@@ -453,6 +453,9 @@
         <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.elapsed">
             <summary>Actual accumulated msec since last event.</summary> 
         </member>
+        <member name="P:NBagOfTricks.MmTimerEx.Running">
+            <summary>Indicates whether or not the timer is running.</summary>
+        </member>
         <member name="F:NBagOfTricks.MmTimerEx._timers">
             <summary>All the timer instances. Key is id.</summary>
         </member>
@@ -462,17 +465,11 @@
         <member name="F:NBagOfTricks.MmTimerEx._timerID">
             <summary>Multimedia timer identifier. -1 is not inited, 0 is fail to init, other is valid id.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._running">
-            <summary>Indicates whether or not the timer is running.</summary>
-        </member>
         <member name="F:NBagOfTricks.MmTimerEx._startTicks">
             <summary>Stopwatch support.</summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx._lastTicks">
             <summary>Stopwatch support.</summary>
-        </member>
-        <member name="F:NBagOfTricks.MmTimerEx._disposed">
-            <summary>Indicates whether or not the timer has been disposed.</summary>
         </member>
         <member name="F:NBagOfTricks.MmTimerEx.MMTIMER_PERIOD">
             <summary>Msec for mm timer tick.</summary>
@@ -525,16 +522,6 @@
             Frees timer resources.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Dispose(System.Boolean)">
-            <summary>
-            Frees timer resources.
-            </summary>
-        </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Finalize">
-            <summary>
-            Finalizer.
-            </summary>
-        </member>
         <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.Int32,NBagOfTricks.MmTimerEx.TimeProc)">
             <summary>
             Add or update a timer instance.
@@ -582,9 +569,6 @@
         <member name="F:NBagOfTricks.MultiFileWatcher.DELAY">
             <summary>The delay before reporting. Seems like a reasonable number for human edit interface.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._disposed">
-            <summary>Resource clean up.</summary>
-        </member>
         <member name="M:NBagOfTricks.MultiFileWatcher.#ctor">
             <summary>
             Constructor.
@@ -602,6 +586,7 @@
             Add a new listener.
             </summary>
             <param name="path"></param>
+            <return>Pass/fail</return>
         </member>
         <member name="M:NBagOfTricks.MultiFileWatcher.Clear">
             <summary>
@@ -619,12 +604,6 @@
             <summary>
             Resource clean up.
             </summary>
-        </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Dispose(System.Boolean)">
-            <summary>
-            Resource clean up.
-            </summary>
-            <param name="disposing"></param>
         </member>
         <member name="T:NBagOfTricks.StringUtils">
             <summary>
@@ -879,9 +858,6 @@
         <member name="F:NBagOfTricks.PNUT.TestRunner.TIME_FORMAT">
             <summary>Format string.</summary>
         </member>
-        <member name="F:NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT">
-            <summary>Format string.</summary>
-        </member>
         <member name="F:NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT_MSEC">
             <summary>Format string.</summary>
         </member>
@@ -973,6 +949,24 @@
             <param name="line"></param>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_NULL(System.Object,System.String,System.Int32)">
+            <summary>
+            Checks whether the given object is null.
+            </summary>
+            <param name="obj"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_NOT_NULL(System.Object,System.String,System.Int32)">
+            <summary>
+            Checks whether the given object is not null.
+            </summary>
+            <param name="obj"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
         <member name="M:NBagOfTricks.PNUT.TestSuite.UT_ASSERT``1(``0,``0,System.String,System.Int32)">
             <summary>
             Prints the condition and gens assert/exception.
@@ -1056,7 +1050,7 @@
             </summary>
             <param name="value1"></param>
             <param name="value2"></param>
-            <param name="tolerance"></param>
+            <param name="tolerance">Absolute</param>
             <param name="file"></param>
             <param name="line"></param>
             <returns></returns>

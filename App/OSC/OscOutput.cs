@@ -24,9 +24,6 @@ namespace Nebulator.OSC
 
         /// <summary>Notes to stop later.</summary>
         readonly List<StepNoteOff> _stops = new();
-
-        /// <summary>Resource clean up.</summary>
-        bool _disposed = false;
         #endregion
 
         #region Properties
@@ -84,23 +81,8 @@ namespace Nebulator.OSC
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Resource clean up.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing)
-            {
-                _oscOutput?.Dispose();
-                _oscOutput = null;
-
-                _disposed = true;
-            }
+            _oscOutput?.Dispose();
+            _oscOutput = null;
         }
         #endregion
 

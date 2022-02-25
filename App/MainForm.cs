@@ -78,24 +78,7 @@ namespace Nebulator.App
         /// </summary>
         public MainForm()
         {
-            // Need to load settings before creating controls in MainForm_Load().
-            string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-            DirectoryInfo di = new(appDir);
-            di.Create();
-
-            var set = UserSettings.Load(appDir);
-            if (set is not null)
-            {
-                UserSettings.TheSettings = set;
-            }
-            else
-            {
-                MessageBox.Show($"Wooops - bad user settings - goodbye");
-                Environment.Exit(1);
-            }
-
             InitializeComponent();
-            toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
         }
 
         /// <summary>
@@ -103,7 +86,15 @@ namespace Nebulator.App
         /// </summary>
         void MainForm_Load(object? sender, EventArgs e)
         {
+            // Get settings.
+            string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
+            DirectoryInfo di = new(appDir);
+            di.Create();
+            UserSettings.TheSettings = UserSettings.Load(appDir);
+
             #region Init UI from settings
+            toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
+            
             // Main form.
             Location = new Point(UserSettings.TheSettings.MainFormGeometry.X, UserSettings.TheSettings.MainFormGeometry.Y);
             Size = new Size(UserSettings.TheSettings.MainFormGeometry.Width, UserSettings.TheSettings.MainFormGeometry.Height);

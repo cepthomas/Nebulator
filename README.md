@@ -1,8 +1,6 @@
 
 # What This Is
 
-![MarkS][./DocFiles/marks.png]
-
 Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
 
 It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of synth parameters using code.
