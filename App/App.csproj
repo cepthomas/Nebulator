@@ -15,7 +15,8 @@
     <NoWarn>CS1591;CA1822</NoWarn>
     <Nullable>enable</Nullable>
     <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
-    <SatelliteResourceLanguages>none</SatelliteResourceLanguages> <!-- en none -->
+    <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
+    <ApplicationIcon>Resources\medusa.ico</ApplicationIcon> <!-- en none -->
   </PropertyGroup>
 
   <ItemGroup>
