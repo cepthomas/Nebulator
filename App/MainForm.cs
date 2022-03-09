@@ -107,20 +107,20 @@ namespace Nebulator.App
             textViewer.Colors.Add(" E ", Color.LightPink);
             textViewer.Colors.Add(" W ", Color.Plum);
 
-            btnMonIn.Image = GraphicsUtils.ColorizeBitmap(btnMonIn.Image, UserSettings.TheSettings.IconColor);
-            btnMonOut.Image = GraphicsUtils.ColorizeBitmap(btnMonOut.Image, UserSettings.TheSettings.IconColor);
-            btnKillComm.Image = GraphicsUtils.ColorizeBitmap(btnKillComm.Image, UserSettings.TheSettings.IconColor);
-            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap(fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
-            btnRewind.Image = GraphicsUtils.ColorizeBitmap(btnRewind.Image, UserSettings.TheSettings.IconColor);
-            btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
-            btnClear.Image = GraphicsUtils.ColorizeBitmap(btnClear.Image, UserSettings.TheSettings.IconColor);
-            btnWrap.Image = GraphicsUtils.ColorizeBitmap(btnWrap.Image, UserSettings.TheSettings.IconColor);
-            btnKeyboard.Image = GraphicsUtils.ColorizeBitmap(btnKeyboard.Image, UserSettings.TheSettings.IconColor);
+            btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, UserSettings.TheSettings.IconColor);
+            btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, UserSettings.TheSettings.IconColor);
+            btnKillComm.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKillComm.Image, UserSettings.TheSettings.IconColor);
+            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
+            btnRewind.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnRewind.Image, UserSettings.TheSettings.IconColor);
+            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, UserSettings.TheSettings.IconColor);
+            btnClear.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnClear.Image, UserSettings.TheSettings.IconColor);
+            btnWrap.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnWrap.Image, UserSettings.TheSettings.IconColor);
+            btnKeyboard.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKeyboard.Image, UserSettings.TheSettings.IconColor);
 
             btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
 
-            chkPlay.Image = GraphicsUtils.ColorizeBitmap(chkPlay.Image, UserSettings.TheSettings.IconColor);
+            chkPlay.Image = GraphicsUtils.ColorizeBitmap((Bitmap)chkPlay.Image, UserSettings.TheSettings.IconColor);
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
@@ -413,12 +413,12 @@ namespace Nebulator.App
         {
             if (compileStatus)
             {
-                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, UserSettings.TheSettings.IconColor);
+                btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, UserSettings.TheSettings.IconColor);
                 _needCompile = false;
             }
             else
             {
-                btnCompile.Image = GraphicsUtils.ColorizeBitmap(btnCompile.Image, Color.Red);
+                btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, Color.Red);
                 _needCompile = true;
             }
         }

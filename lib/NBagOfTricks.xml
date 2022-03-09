@@ -373,6 +373,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.MiscUtils.GetSourcePath(System.String)">
+            <summary>
+            Get the dir name of the caller source file.
+            </summary>
+            <param name="callerPath"></param>
+            <returns>Caller source dir.</returns>
+        </member>
         <member name="M:NBagOfTricks.MiscUtils.SecondsToTimeSpan(System.Double)">
             <summary>
             Convert time to TimeSpan.

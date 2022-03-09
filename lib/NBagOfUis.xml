@@ -546,21 +546,51 @@
             Static general utility functions.
             </summary>
         </member>
-        <member name="M:NBagOfUis.GraphicsUtils.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)">
+        <member name="M:NBagOfUis.GraphicsUtils.CreateIcon(System.String)">
+            <summary>
+            Create icon from a file.
+            </summary>
+            <param name="fn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.GraphicsUtils.CreateIcon(System.Drawing.Bitmap,System.Int32)">
+            <summary>
+            Create icon from a bitmap.
+            </summary>
+            <param name="bmp"></param>
+            <param name="size">Specific size or 0 for all common windows sizes.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.GraphicsUtils.SaveIcon(System.Drawing.Icon,System.String)">
+            <summary>
+            Save to file.
+            </summary>
+            <param name="ico"></param>
+            <param name="fn"></param>
+        </member>
+        <member name="M:NBagOfUis.GraphicsUtils.ConvertToGrayscale(System.Drawing.Bitmap)">
+            <summary>
+            De-colorize.
+            </summary>
+            <param name="bmp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.GraphicsUtils.ResizeBitmap(System.Drawing.Bitmap,System.Int32,System.Int32)">
             <summary>
             Resize the image to the specified width and height.
             </summary>
-            <param name="image">The image to resize.</param>
+            <param name="bmp">The image to resize.</param>
             <param name="width">The width to resize to.</param>
             <param name="height">The height to resize to.</param>
             <returns>The resized image.</returns>
         </member>
-        <member name="M:NBagOfUis.GraphicsUtils.ColorizeBitmap(System.Drawing.Image,System.Drawing.Color)">
+        <member name="M:NBagOfUis.GraphicsUtils.ColorizeBitmap(System.Drawing.Bitmap,System.Drawing.Color,System.Drawing.Color)">
             <summary>
-            Colorize a bitmap.
+            Colorize a bitmap. Mainly for beautifying glyphicons.
             </summary>
             <param name="original"></param>
             <param name="newcol"></param>
+            <param name="replace">Optional source color to replace. Defaults to black.</param>
             <returns></returns>
         </member>
         <member name="M:NBagOfUis.GraphicsUtils.GetSequenceColor(System.Int32,System.Boolean)">
@@ -578,73 +608,6 @@
             </summary>
             <param name="one"></param>
             <param name="two"></param>
-            <returns></returns>
-        </member>
-        <member name="T:NBagOfUis.InternalHelpers">
-            <summary>Most of these are borrowed from NBOT. I am too lazy to figure out git nested submodules.</summary>
-        </member>
-        <member name="M:NBagOfUis.InternalHelpers.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
-            <summary>
-            Immediately executes the given action on each element in the source sequence.
-            </summary>
-            <typeparam name="T">The type of the elements in the sequence</typeparam>
-            <param name="source">The sequence of elements</param>
-            <param name="action">The action to execute on each element</param>
-        </member>
-        <member name="M:NBagOfUis.InternalHelpers.SplitByToken(System.String,System.String,System.Boolean)">
-            <summary>
-            Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
-            </summary>
-            <param name="text">The string to split up.</param>
-            <param name="splitby">The string to split by.</param>
-            <param name="trim">Remove whitespace at each end.</param>
-            <returns>Return the parts as a list.</returns>
-        </member>
-        <member name="M:NBagOfUis.InternalHelpers.Constrain(System.Double,System.Double,System.Double)">
-            <summary>
-            Bounds limits a value.
-            </summary>
-            <param name="val"></param>
-            <param name="min"></param>
-            <param name="max"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfUis.InternalHelpers.Constrain(System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Bounds limits a value.
-            </summary>
-            <param name="val"></param>
-            <param name="min"></param>
-            <param name="max"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfUis.InternalHelpers.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
-            <summary>
-            Remap a value to new coordinates.
-            </summary>
-            <param name="val"></param>
-            <param name="start1"></param>
-            <param name="stop1"></param>
-            <param name="start2"></param>
-            <param name="stop2"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfUis.InternalHelpers.Map(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Remap a value to new coordinates.
-            </summary>
-            <param name="val"></param>
-            <param name="start1"></param>
-            <param name="stop1"></param>
-            <param name="start2"></param>
-            <param name="stop2"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfUis.InternalHelpers.RMS(System.Single[])">
-            <summary>
-            The root mean square value of a quantity is the square root of the mean value of the squared values of the quantity taken over an interval.
-            </summary>
-            <param name="inputArray"></param>
             <returns></returns>
         </member>
         <member name="T:NBagOfUis.KeyUtils">
@@ -1341,23 +1304,6 @@
             Override for drawing.
             </summary>
             <param name="e"></param>
-        </member>
-        <member name="F:NBagOfUis.UserControl1.components">
-            <summary> 
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:NBagOfUis.UserControl1.Dispose(System.Boolean)">
-            <summary> 
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:NBagOfUis.UserControl1.InitializeComponent">
-            <summary> 
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
         </member>
         <member name="T:NBagOfUis.VirtualKeyboard">
             <summary>
