@@ -17,7 +17,6 @@ using Nebulator.OSC;
 using Nebulator.UI;
 using NBagOfTricks.ScriptCompiler;
 
-// TODO Clean out icons.
 
 namespace Nebulator.App
 {
@@ -88,16 +87,14 @@ namespace Nebulator.App
         {
             // Get settings.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-            DirectoryInfo di = new(appDir);
-            di.Create();
-            UserSettings.TheSettings = UserSettings.Load(appDir);
+            UserSettings.TheSettings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
 
             #region Init UI from settings
             toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
-            
+
             // Main form.
-            Location = new Point(UserSettings.TheSettings.MainFormGeometry.X, UserSettings.TheSettings.MainFormGeometry.Y);
-            Size = new Size(UserSettings.TheSettings.MainFormGeometry.Width, UserSettings.TheSettings.MainFormGeometry.Height);
+            Location = UserSettings.TheSettings.FormGeometry.Location;
+            Size = UserSettings.TheSettings.FormGeometry.Size;
             WindowState = FormWindowState.Normal;
             BackColor = UserSettings.TheSettings.BackColor;
 
@@ -215,7 +212,7 @@ namespace Nebulator.App
             Kill();
 
             // Save user settings.
-            UserSettings.TheSettings.MainFormGeometry = new()
+            UserSettings.TheSettings.FormGeometry = new()
             {
                 X = Location.X,
                 Y = Location.Y,
@@ -1041,7 +1038,7 @@ namespace Nebulator.App
         {
             BeginInvoke((MethodInvoker) delegate ()
            {
-               textViewer.AddLine(msg);
+               textViewer.AppendLine(msg);
            });
         }
 
@@ -1080,7 +1077,7 @@ namespace Nebulator.App
             string logFileName = Path.Combine(appDir, "log.txt");
             using (new WaitCursor())
             {
-                File.ReadAllLines(logFileName).ForEach(l => tv.AddLine(l)); //TODO still a little broken.
+                File.ReadAllLines(logFileName).ForEach(l => tv.AppendText(l));
             }
 
             f.ShowDialog();
@@ -1093,13 +1090,7 @@ namespace Nebulator.App
         /// </summary>
         void UserSettings_Click(object? sender, EventArgs e)
         {
-            using SettingsEditor f = new() { Settings = UserSettings.TheSettings };
-
-            if(f.ShowDialog() == DialogResult.OK)
-            {
-                UserSettings.TheSettings.Save();
-                MessageBox.Show("Settings changes require a restart to take effect.");
-            }
+            UserSettings.TheSettings.Edit("User Settings");
         }
         #endregion
 

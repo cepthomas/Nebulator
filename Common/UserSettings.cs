@@ -9,11 +9,13 @@ using System.Windows.Forms.Design;
 using System.Drawing.Design;
 using NAudio.Midi;
 using NBagOfTricks;
+using NBagOfUis;
+
 
 namespace Nebulator.Common
 {
     [Serializable]
-    public class UserSettings
+    public class UserSettings : Settings
     {
         /// <summary>Current global user settings.</summary>
         public static UserSettings TheSettings { get; set; } = new();
@@ -105,10 +107,6 @@ namespace Nebulator.Common
 
         [Browsable(false)]
         [JsonConverter(typeof(JsonRectangleConverter))]
-        public Rectangle MainFormGeometry { get; set; } = new Rectangle(50, 50, 600, 400);
-
-        [Browsable(false)]
-        [JsonConverter(typeof(JsonRectangleConverter))]
         public Rectangle KeyboardFormGeometry { get; set; } = new Rectangle(50, 50, 600, 400);
 
         [Browsable(false)]
@@ -122,57 +120,6 @@ namespace Nebulator.Common
 
         [Browsable(false)]
         public bool Keyboard { get; set; } = true;
-
-        [Browsable(false)]
-        public List<string> RecentFiles { get; set; } = new List<string>();
-        #endregion
-
-        #region Fields
-        /// <summary>The file name.</summary>
-        string _fn = Definitions.UNKNOWN_STRING;
-        #endregion
-
-        #region Persistence
-        /// <summary>Create object from file.</summary>
-        public static UserSettings Load(string appDir)
-        {
-            UserSettings set = new();
-            string fn = Path.Combine(appDir, "settings.json");
-
-            if (File.Exists(fn))
-            {
-                string json = File.ReadAllText(fn);
-                var jobj = JsonSerializer.Deserialize<UserSettings>(json);
-                if (jobj is not null)
-                {
-                    set = jobj;
-                    set._fn = fn;
-                    set.Valid = true;
-                }
-            }
-            else
-            {
-                // Doesn't exist, create a new one.
-                set = new UserSettings()
-                {
-                    _fn = fn,
-                    Valid = true
-                };
-            }
-
-            return set;
-        }
-
-        /// <summary>Save object to file.</summary>
-        public void Save()
-        {
-            if(Valid)
-            {
-                JsonSerializerOptions opts = new() { WriteIndented = true };
-                string json = JsonSerializer.Serialize(this, opts);
-                File.WriteAllText(_fn, json);
-            }
-        }
         #endregion
     }
 

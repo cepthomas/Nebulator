@@ -33,6 +33,9 @@
     <Reference Include="NBagOfTricks">
       <HintPath>..\lib\NBagOfTricks.dll</HintPath>
     </Reference>
+    <Reference Include="NBagOfUis">
+      <HintPath>..\lib\NBagOfUis.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

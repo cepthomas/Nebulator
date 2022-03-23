@@ -1023,6 +1023,35 @@
             <param name="which">Name of the property.</param>
             <param name="visible">True or false.</param>
         </member>
+        <member name="F:NBagOfUis.Settings._fp">
+            <summary>The fully  qualified file path.</summary>
+        </member>
+        <member name="M:NBagOfUis.Settings.Load(System.String,System.Type,System.String)">
+            <summary>
+            Create object from file.
+            </summary>
+            <param name="dir">Where the file lives.</param>
+            <param name="t">Derived type please.</param>
+            <param name="fn">The file name, default is settings.json.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.Settings.Save">
+            <summary>
+            Save object to file.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Settings.Edit(System.String)">
+            <summary>
+            Edit the properties in a dialog.
+            </summary>
+            <param name="title">To show.</param>
+            <returns>List of tuples of name,ccategory.</returns>
+        </member>
+        <member name="M:NBagOfUis.Settings.Cleanup">
+            <summary>
+            Remove duplicate and invalid file names.
+            </summary>
+        </member>
         <member name="T:NBagOfUis.Slider">
             <summary>
             Slider control.
@@ -1117,33 +1146,36 @@
             <summary>The colors to display when text is matched.</summary>
         </member>
         <member name="P:NBagOfUis.TextViewer.MaxText">
-            <summary>Limit the size.</summary>
+            <summary>Limit the size. Set to 0 to disable.</summary>
+        </member>
+        <member name="P:NBagOfUis.TextViewer.BackColor">
+            <summary>Cosmetics.</summary>
+        </member>
+        <member name="P:NBagOfUis.TextViewer.WordWrap">
+            <summary></summary>
+        </member>
+        <member name="F:NBagOfUis.TextViewer._rtb">
+            <summary>Contained control.</summary>
         </member>
         <member name="M:NBagOfUis.TextViewer.#ctor">
             <summary>
             Constructor sets some defaults.
             </summary>
         </member>
-        <member name="M:NBagOfUis.TextViewer.TextViewer_Load(System.Object,System.EventArgs)">
-            <summary>
-            Initialize everything.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
+        <member name="M:NBagOfUis.TextViewer.Clear">
+            <summary></summary>
         </member>
-        <member name="M:NBagOfUis.TextViewer.AddLine(System.String,System.Boolean)">
+        <member name="M:NBagOfUis.TextViewer.AppendLine(System.String)">
             <summary>
             A message to display to the user. Adds EOL.
             </summary>
             <param name="text">The message.</param>
-            <param name="trim">True to truncate continuous displays.</param>
         </member>
-        <member name="M:NBagOfUis.TextViewer.Add(System.String,System.Boolean)">
+        <member name="M:NBagOfUis.TextViewer.AppendText(System.String)">
             <summary>
             A message to display to the user. Doesn't add EOL.
             </summary>
             <param name="text">The message.</param>
-            <param name="trim">True to truncate continuous displays.</param>
         </member>
         <member name="T:NBagOfUis.TimeBar">
             <summary>The control.</summary>
@@ -1292,6 +1324,9 @@
         </member>
         <member name="T:NBagOfUis.MonospaceFontEditor">
             <summary>Selector for monospaced fonts.</summary>
+        </member>
+        <member name="T:NBagOfUis.PathListEditor_Future">
+            <summary>Broken - don't use.</summary>
         </member>
         <member name="T:NBagOfUis.CheckBoxRenderer">
             <summary>Custom renderer for toolstrip checkbox color.</summary>

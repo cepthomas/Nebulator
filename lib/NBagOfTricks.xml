@@ -361,21 +361,15 @@
         </member>
         <member name="M:NBagOfTricks.MiscUtils.GetAppDataDir(System.String,System.String)">
             <summary>
-            Get the user app dir.
+            Get the user app dir. Creates it if it doesn't exist.
             </summary>
             <param name="appName"></param>
-            <param name="company">Optional nest under company name.</param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetExeDir">
-            <summary>
-            Get the executable dir.
-            </summary>
+            <param name="company">Optionally nest under company name.</param>
             <returns></returns>
         </member>
         <member name="M:NBagOfTricks.MiscUtils.GetSourcePath(System.String)">
             <summary>
-            Get the dir name of the caller source file.
+            Get the dir name of the caller's source file.
             </summary>
             <param name="callerPath"></param>
             <returns>Caller source dir.</returns>
