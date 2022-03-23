@@ -1091,6 +1091,31 @@ namespace Nebulator.App
         void UserSettings_Click(object? sender, EventArgs e)
         {
             UserSettings.TheSettings.Edit("User Settings");
+
+
+
+// Detect changes of interest.
+bool midiChange = false;
+bool audioChange = false;
+bool navChange = false;
+bool restart = false;
+
+// Figure out what changed - each handled differently.
+foreach (var (name, cat) in changes)
+{
+    restart |= name.EndsWith("Device");
+    restart |= cat == "Cosmetics";
+    midiChange |= cat == "Midi";
+    audioChange |= cat == "Audio";
+    navChange |= cat == "Navigator";
+}
+
+if (restart)
+{
+    MessageBox.Show("Restart required for device changes to take effect");
+}
+
+            
         }
         #endregion
 
