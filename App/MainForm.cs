@@ -126,7 +126,6 @@ namespace Nebulator.App
             potSpeed.Invalidate();
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.DecPlaces = 2;
             sldVolume.Invalidate();
 
             timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
@@ -1090,32 +1089,22 @@ namespace Nebulator.App
         /// </summary>
         void UserSettings_Click(object? sender, EventArgs e)
         {
-            UserSettings.TheSettings.Edit("User Settings");
+            var changes = UserSettings.TheSettings.Edit("User Settings");
 
+            // Detect changes of interest.
+            bool restart = false;
 
+            // Figure out what changed - each handled differently.
+            foreach (var (name, cat) in changes)
+            {
+                restart |= cat == "Cosmetics";
+                restart |= cat == "Devices";
+            }
 
-// Detect changes of interest.
-bool midiChange = false;
-bool audioChange = false;
-bool navChange = false;
-bool restart = false;
-
-// Figure out what changed - each handled differently.
-foreach (var (name, cat) in changes)
-{
-    restart |= name.EndsWith("Device");
-    restart |= cat == "Cosmetics";
-    midiChange |= cat == "Midi";
-    audioChange |= cat == "Audio";
-    navChange |= cat == "Navigator";
-}
-
-if (restart)
-{
-    MessageBox.Show("Restart required for device changes to take effect");
-}
-
-            
+            if (restart)
+            {
+                MessageBox.Show("Restart required for device changes to take effect");
+            }
         }
         #endregion
 

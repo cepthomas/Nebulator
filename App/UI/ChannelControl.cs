@@ -36,7 +36,7 @@ namespace Nebulator.UI
             chkMute.FlatAppearance.CheckedBackColor = Color.Red;
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.DecPlaces = 2;
+            sldVolume.Resolution = 0.05;
             sldVolume.Label = BoundChannel.ChannelName;
             sldVolume.Maximum = 1.0;
             sldVolume.Value = BoundChannel.Volume;

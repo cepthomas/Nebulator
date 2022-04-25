@@ -34,6 +34,9 @@
         <member name="F:NBagOfUis.BarBar._format">
             <summary>For drawing text.</summary>
         </member>
+        <member name="P:NBagOfUis.BarBar.ZeroBased">
+            <summary>Option for engineers, not musicians.</summary>
+        </member>
         <member name="P:NBagOfUis.BarBar.BeatsPerBar">
             <summary>Our signature. Only tested with 4.</summary>
         </member>
@@ -106,6 +109,7 @@
             <summary>
             
             </summary>
+            <param name="num">Subdivs/ticks.</param>
         </member>
         <member name="M:NBagOfUis.BarBar.GetSubdivFromMouse(System.Int32)">
             <summary>
@@ -186,7 +190,7 @@
             <summary>
             
             </summary>
-            <param name="num"></param>
+            <param name="num">Subdivs/ticks.</param>
         </member>
         <member name="M:NBagOfUis.BarSpan.DoSnap(System.Int32)">
             <summary>
@@ -194,9 +198,16 @@
             </summary>
             <param name="subdiv"></param>
         </member>
+        <member name="M:NBagOfUis.BarSpan.Format(System.Boolean)">
+            <summary>
+            Format a readable string.
+            </summary>
+            <param name="zeroBased"></param>
+            <returns></returns>
+        </member>
         <member name="M:NBagOfUis.BarSpan.ToString">
             <summary>
-            
+            Format a readable string.
             </summary>
             <returns></returns>
         </member>
@@ -879,6 +890,12 @@
         <member name="F:NBagOfUis.Pot._value">
             <summary> </summary>
         </member>
+        <member name="F:NBagOfUis.Pot._resolution">
+            <summary>Restrict to discrete steps.</summary>
+        </member>
+        <member name="F:NBagOfUis.Pot._resetVal">
+            <summary>If user resets. This is the first value assigned to Value.</summary>
+        </member>
         <member name="F:NBagOfUis.Pot._beginDragValue">
             <summary> </summary>
         </member>
@@ -903,17 +920,17 @@
         <member name="P:NBagOfUis.Pot.Taper">
             <summary>Taper.</summary>
         </member>
-        <member name="P:NBagOfUis.Pot.DecPlaces">
-            <summary>Number of decimal places to display.</summary>
+        <member name="P:NBagOfUis.Pot.Resolution">
+            <summary>Per step resolution of this slider.</summary>
         </member>
         <member name="P:NBagOfUis.Pot.Minimum">
-            <summary>Minimum Value of the Pot.</summary>
+            <summary>Minimum Value of the slider.</summary>
         </member>
         <member name="P:NBagOfUis.Pot.Maximum">
-            <summary>Maximum Value of the Pot.</summary>
+            <summary>Maximum Value of the slider.</summary>
         </member>
         <member name="P:NBagOfUis.Pot.Value">
-            <summary>The current value of the pot.</summary>
+            <summary>The current value of the slider.</summary>
         </member>
         <member name="E:NBagOfUis.Pot.ValueChanged">
             <summary>Value changed event.</summary>
@@ -935,6 +952,11 @@
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfUis.Pot.Rescale">
+            <summary>
+            If min or max or resolution changed by client.
+            </summary>
         </member>
         <member name="M:NBagOfUis.Pot.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
@@ -1045,7 +1067,7 @@
             Edit the properties in a dialog.
             </summary>
             <param name="title">To show.</param>
-            <returns>List of tuples of name,ccategory.</returns>
+            <returns>List of tuples of name, category.</returns>
         </member>
         <member name="M:NBagOfUis.Settings.Cleanup">
             <summary>
@@ -1058,10 +1080,19 @@
             </summary>
         </member>
         <member name="F:NBagOfUis.Slider._value">
-            <summary> </summary>
+            <summary>Current value.</summary>
+        </member>
+        <member name="F:NBagOfUis.Slider._minimum">
+            <summary>Min value.</summary>
+        </member>
+        <member name="F:NBagOfUis.Slider._maximum">
+            <summary>Max value.</summary>
+        </member>
+        <member name="F:NBagOfUis.Slider._resolution">
+            <summary>Restrict to discrete steps.</summary>
         </member>
         <member name="F:NBagOfUis.Slider._resetVal">
-            <summary> </summary>
+            <summary>If user resets. This is the first value assigned to Value.</summary>
         </member>
         <member name="F:NBagOfUis.Slider._brush">
             <summary>The brush.</summary>
@@ -1075,28 +1106,23 @@
         <member name="P:NBagOfUis.Slider.DrawColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:NBagOfUis.Slider.DecPlaces">
-            <summary>Number of decimal places to display.</summary>
-        </member>
         <member name="P:NBagOfUis.Slider.Orientation">
             <summary>Fader orientation</summary>
         </member>
-        <member name="P:NBagOfUis.Slider.Maximum">
-            <summary>Maximum value of this slider.</summary>
+        <member name="P:NBagOfUis.Slider.Resolution">
+            <summary>Per step resolution of this slider.</summary>
         </member>
         <member name="P:NBagOfUis.Slider.Minimum">
-            <summary>Minimum value of this slider.</summary>
+            <summary>Minimum Value of the slider.</summary>
         </member>
-        <member name="P:NBagOfUis.Slider.ResetValue">
-            <summary>Reset value of this slider.</summary>
+        <member name="P:NBagOfUis.Slider.Maximum">
+            <summary>Maximum Value of the slider.</summary>
         </member>
         <member name="P:NBagOfUis.Slider.Value">
-            <summary>The value for this slider.</summary>
+            <summary>The current value of the slider.</summary>
         </member>
         <member name="E:NBagOfUis.Slider.ValueChanged">
-            <summary>
-            Slider value changed event.
-            </summary>
+            <summary>Slider value changed event.</summary>
         </member>
         <member name="M:NBagOfUis.Slider.#ctor">
             <summary>
@@ -1113,6 +1139,11 @@
         <member name="M:NBagOfUis.Slider.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Slider.Rescale">
+            <summary>
+            If min or max or resolution changed by client.
             </summary>
         </member>
         <member name="M:NBagOfUis.Slider.OnPaint(System.Windows.Forms.PaintEventArgs)">
@@ -1149,6 +1180,9 @@
             <summary>Limit the size. Set to 0 to disable.</summary>
         </member>
         <member name="P:NBagOfUis.TextViewer.BackColor">
+            <summary>Cosmetics.</summary>
+        </member>
+        <member name="P:NBagOfUis.TextViewer.Font">
             <summary>Cosmetics.</summary>
         </member>
         <member name="P:NBagOfUis.TextViewer.WordWrap">

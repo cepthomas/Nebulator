@@ -69,7 +69,7 @@
             // 
             // sldVolume
             // 
-            this.sldVolume.DecPlaces = 1;
+            this.sldVolume.Resolution = 0.05D;
             this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "";
             this.sldVolume.Location = new System.Drawing.Point(12, 0);
@@ -78,7 +78,6 @@
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.sldVolume.ResetValue = 0D;
             this.sldVolume.Size = new System.Drawing.Size(88, 52);
             this.sldVolume.TabIndex = 5;
             this.toolTip.SetToolTip(this.sldVolume, "Channel volume");

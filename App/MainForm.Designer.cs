@@ -48,7 +48,7 @@
             // sldVolume
             // 
             this.sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.sldVolume.DecPlaces = 1;
+            this.sldVolume.Resolution = 0.05D;
             this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
             this.sldVolume.Location = new System.Drawing.Point(224, 49);
@@ -57,7 +57,6 @@
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.sldVolume.ResetValue = 0D;
             this.sldVolume.Size = new System.Drawing.Size(88, 52);
             this.sldVolume.TabIndex = 36;
             this.toolTip.SetToolTip(this.sldVolume, "Master volume");
@@ -66,7 +65,7 @@
             // 
             // potSpeed
             // 
-            this.potSpeed.DecPlaces = 0;
+            this.potSpeed.Resolution = 5;
             this.potSpeed.DrawColor = System.Drawing.Color.Black;
             this.potSpeed.Label = "";
             this.potSpeed.Location = new System.Drawing.Point(170, 49);

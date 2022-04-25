@@ -291,6 +291,22 @@
             <param name="max"></param>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Ensure integral multiple of resolution, GTE min, LTE max.
+            </summary>
+            <param name="val"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <param name="resolution"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MathUtils.DecPlaces(System.Double)">
+            <summary>
+            Figure a reasonable number of dps to print based on value range.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:NBagOfTricks.MidiTime">
             <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
         </member>
