@@ -1,3 +1,4 @@
+TODO update for midilib
 
 # Internals
 
@@ -88,7 +89,16 @@ root
         Internals.md
         MusicDefinitions.md
 ```
-      
+
+## Midi Controllers
+
+Nebulator adds a couple of hidden controller values for internal use.
+
+Controller          | Number |
+----------          | ------ |
+NoteControl         | 250    |
+PitchControl        | 251    |
+
 
 ## Bonus Stuff
 This project contains a bunch of components that are either recycled or created for this. Chunks could be stripped out for subsequent reuse.

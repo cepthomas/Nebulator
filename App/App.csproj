@@ -6,7 +6,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Deterministic>False</Deterministic>
-    <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\..\version.txt"))</Version>
+    <Version>$([System.DateTime]::UtcNow.ToString(yy.MM.dd))</Version> 
     <Description>Nebulator application</Description>
     <Copyright>MIT License</Copyright>
     <OutputPath>bin\</OutputPath>

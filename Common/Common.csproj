@@ -5,7 +5,7 @@
     <AssemblyName>Nebulator.Common</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
     <Deterministic>False</Deterministic>
-    <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\..\version.txt"))</Version>
+    <Version>$([System.DateTime]::UtcNow.ToString(yy.MM.dd))</Version> 
     <Description>Nebulator common stuff</Description>
     <Copyright>MIT License</Copyright>
     <OutputPath>bin\</OutputPath>
