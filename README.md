@@ -17,4 +17,12 @@ Uses:
 - [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks/blob/main/README.md)
 - [NBagOfUis](https://github.com/cepthomas/NBagOfUis/blob/main/README.md)
 
-See [Main Documentation](DocFiles/Nebulator.md).
+
+# Documentation
+
+- [Main Documentation](DocFiles/Nebulator.md).
+- [Script Syntax](DocFiles/ScriptSyntax.md).
+- [Script API](DocFiles/ScriptApi.md).
+- [Music Definitions](DocFiles/MusicDefinitions.md).
+- [Internals](DocFiles/Internals.md).
+
