@@ -307,64 +307,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.MidiTime">
-            <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
-        </member>
-        <member name="P:NBagOfTricks.MidiTime.MidiPpq">
-            <summary>Resolution for midi events aka DeltaTicksPerQuarterNote.</summary>
-        </member>
-        <member name="P:NBagOfTricks.MidiTime.InternalPpq">
-            <summary>Resolution for internal format.</summary>
-        </member>
-        <member name="P:NBagOfTricks.MidiTime.Tempo">
-            <summary>Tempo aka BPM.</summary>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.InternalToMidi(System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.MidiToInternal(System.Int64)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.InternalToMsec(System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.MidiToSec(System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.MidiPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.InternalPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfTricks.MidiTime.RoundedInternalPeriod">
-            <summary>
-            Integer time between events.
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:NBagOfTricks.MiscUtils">
             <summary>
             Static general utility functions.
@@ -389,6 +331,13 @@
             </summary>
             <param name="callerPath"></param>
             <returns>Caller source dir.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.ShowReadme(System.String)">
+            <summary>
+            Display the application readme.
+            </summary>
+            <param name="appName"></param>
+            <returns></returns>
         </member>
         <member name="M:NBagOfTricks.MiscUtils.SecondsToTimeSpan(System.Double)">
             <summary>

@@ -7,6 +7,9 @@
         <member name="T:NBagOfUis.BarBar">
             <summary>The control.</summary>
         </member>
+        <member name="T:NBagOfUis.BarBar.SnapType">
+            <summary>User selection options.</summary>
+        </member>
         <member name="F:NBagOfUis.BarBar._length">
             <summary>Total length.</summary>
         </member>
@@ -17,7 +20,7 @@
             <summary>Last valid point.</summary>
         </member>
         <member name="F:NBagOfUis.BarBar._current">
-            <summary>Current.</summary>
+            <summary>Current time.</summary>
         </member>
         <member name="F:NBagOfUis.BarBar._lastXPos">
             <summary>For tracking mouse moves.</summary>
@@ -35,7 +38,7 @@
             <summary>For drawing text.</summary>
         </member>
         <member name="P:NBagOfUis.BarBar.ZeroBased">
-            <summary>Option for engineers, not musicians.</summary>
+            <summary>Option for engineers instead of musicians.</summary>
         </member>
         <member name="P:NBagOfUis.BarBar.BeatsPerBar">
             <summary>Our signature. Only tested with 4.</summary>
@@ -91,7 +94,7 @@
         </member>
         <member name="M:NBagOfUis.BarBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
-            
+            Handle selection operations.
             </summary>
             <param name="e"></param>
         </member>
@@ -107,7 +110,7 @@
         </member>
         <member name="M:NBagOfUis.BarBar.IncrementCurrent(System.Int32)">
             <summary>
-            
+            Change current time. 
             </summary>
             <param name="num">Subdivs/ticks.</param>
         </member>
@@ -176,21 +179,21 @@
         </member>
         <member name="M:NBagOfUis.BarSpan.Reset">
             <summary>
-            
+            Hard reset.
             </summary>
         </member>
         <member name="M:NBagOfUis.BarSpan.Constrain(NBagOfUis.BarSpan,NBagOfUis.BarSpan)">
             <summary>
-            
+            Utility helper function.
             </summary>
             <param name="lower"></param>
             <param name="upper"></param>
         </member>
         <member name="M:NBagOfUis.BarSpan.Increment(System.Int32)">
             <summary>
-            
+            Update current value.
             </summary>
-            <param name="num">Subdivs/ticks.</param>
+            <param name="subdivs">Number of subdivs.</param>
         </member>
         <member name="M:NBagOfUis.BarSpan.DoSnap(System.Int32)">
             <summary>
@@ -435,7 +438,6 @@
         <member name="T:NBagOfUis.FilTree">
             <summary>
             Tree control with file type filters.
-            TODO: limit/lazy L/R population, filter pattern matching, include/exclude, filter specs global/local.
             </summary>
         </member>
         <member name="P:NBagOfUis.FilTree.RootDirs">
@@ -1293,7 +1295,7 @@
         </member>
         <member name="M:NBagOfUis.TimeBar.IncrementCurrent(System.Int32)">
             <summary>
-            Offset current by msec.
+            Update current time.
             </summary>
             <param name="msec"></param>
         </member>
@@ -1304,13 +1306,13 @@
         </member>
         <member name="M:NBagOfUis.TimeBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
-            
+            Handle selection operations.
             </summary>
             <param name="e"></param>
         </member>
         <member name="M:NBagOfUis.TimeBar.OnPreviewKeyDown(System.Windows.Forms.PreviewKeyDownEventArgs)">
             <summary>
-            
+            Hook to intercept keys.
             </summary>
             <param name="e"></param>
         </member>
@@ -1332,14 +1334,14 @@
         </member>
         <member name="M:NBagOfUis.TimeBar.DoSnap(System.Int32)">
             <summary>
-            
+            Snap to user preference.
             </summary>
             <param name="msec"></param>
             <returns></returns>
         </member>
         <member name="M:NBagOfUis.TimeBar.Constrain(System.TimeSpan,System.TimeSpan,System.TimeSpan)">
             <summary>
-            
+            Utility helper function.
             </summary>
             <param name="val"></param>
             <param name="lower"></param>
