@@ -20,9 +20,8 @@ Uses:
 
 # Documentation
 
-- [Main Documentation](DocFiles/Nebulator.md).
-- [Script Syntax](DocFiles/ScriptSyntax.md).
-- [Script API](DocFiles/ScriptApi.md).
-- [Music Definitions](DocFiles/MusicDefinitions.md).
-- [Internals](DocFiles/Internals.md).
-
+- [Main Documentation](DocFiles/Nebulator.md)
+- [Script Syntax](DocFiles/ScriptSyntax.md)
+- [Script API](DocFiles/ScriptApi.md)
+- [Music Definitions](DocFiles/MusicDefinitions.md)
+- [Internals](DocFiles/Internals.md)

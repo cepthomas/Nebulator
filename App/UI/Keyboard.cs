@@ -49,15 +49,7 @@ namespace Nebulator.UI
         
             // Intercept all keyboard events.
             //KeyPreview = true;
-        }
 
-        /// <summary>
-        /// Initialize everything.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Keyboard_Load(object sender, EventArgs e)
-        {
             StartPosition = FormStartPosition.Manual;
             TopMost = false;
             Size = new Size(UserSettings.TheSettings.KeyboardFormGeometry.Width, UserSettings.TheSettings.KeyboardFormGeometry.Height);

@@ -78,13 +78,7 @@ namespace Nebulator.App
         public MainForm()
         {
             InitializeComponent();
-        }
 
-        /// <summary>
-        /// Initialize form controls.
-        /// </summary>
-        void MainForm_Load(object? sender, EventArgs e)
-        {
             // Get settings.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             UserSettings.TheSettings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
@@ -121,11 +115,11 @@ namespace Nebulator.App
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            potSpeed.DrawColor = UserSettings.TheSettings.IconColor;
+            potSpeed.DrawColor = UserSettings.TheSettings.IconColor; make into slider
             potSpeed.BackColor = UserSettings.TheSettings.BackColor;
             potSpeed.Invalidate();
 
-            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor; 
             sldVolume.Invalidate();
 
             timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
@@ -201,7 +195,7 @@ namespace Nebulator.App
         /// <summary>
         /// Clean up on shutdown.
         /// </summary>
-        void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
             _logger.Info("Shutting down.");
 
@@ -524,7 +518,7 @@ namespace Nebulator.App
                 if (_outputDevices.TryGetValue(t.DeviceType, out IOutputDevice? dev))
                 {
                     t.Device = dev;
-                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", 0.8);
+                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", def);
                     t.State = (ChannelState)_nppVals.GetInteger(t.ChannelName, "state", (int)ChannelState.Normal);
 
                     ChannelControl tctl = new()
@@ -822,7 +816,7 @@ namespace Nebulator.App
         /// </summary>
         void Open_Click(object? sender, EventArgs e)
         {
-            OpenFileDialog openDlg = new()
+            OpenFileDialog openDlg = new() use using
             {
                 Filter = "Nebulator files | *.neb",
                 Title = "Select a Nebulator file"
@@ -862,7 +856,7 @@ namespace Nebulator.App
                         // Get the persisted properties.
                         _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         potSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                        sldVolume.Value = _nppVals.GetDouble("master", "volume", 0.8);
+                        sldVolume.Value = _nppVals.GetDouble("master", "volume", def);
 
                         SetCompileStatus(true);
                         AddToRecentDefs(fn);
@@ -1171,7 +1165,7 @@ namespace Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void MainForm_KeyDown(object? sender, KeyEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
             {
@@ -1208,7 +1202,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ExportMidi_Click(object? sender, EventArgs e)
         {
-            SaveFileDialog saveDlg = new()
+            SaveFileDialog saveDlg = new() use using
             {
                 Filter = "Midi files (*.mid)|*.mid",
                 Title = "Export to midi file",

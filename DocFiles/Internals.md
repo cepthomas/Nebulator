@@ -1,5 +1,3 @@
-TODO update for midilib
-
 # Internals
 
 - VS 2019 solution, targets .NET5 WinForms.
@@ -23,9 +21,6 @@ TODO update for midilib
 root
 |   Nebulator.sln 
 |   README.md
-|   Nebulator.html (generated doc file)
-|   version.txt (contains current version string)
-|   mkdoc.py (builds Nebulator.html from DocFiles/*)
 |   
 +---App (main app and UI)
 |   |   App.csproj

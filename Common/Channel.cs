@@ -45,7 +45,7 @@ namespace Nebulator.Common
 
         /// <summary>Current volume.</summary>
         [Browsable(false)]
-        public double Volume { get; set; } = 0.8;
+        public double Volume { get; set; } = def;
 
         /// <summary>Current state for this channel.</summary>
         [Browsable(false)]

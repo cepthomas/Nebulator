@@ -81,15 +81,7 @@ namespace Nebulator.UI
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
-        }
 
-        /// <summary>
-        /// Initialize everything.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TimeControl_Load(object sender, EventArgs e)
-        {
             toolTip.SetToolTip(this, "Current time");
             Invalidate();
         }
@@ -180,7 +172,7 @@ namespace Nebulator.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TimeControl_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
         {
             switch (e.KeyData)
             {

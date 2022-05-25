@@ -38,8 +38,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "TimeControl";
             this.Size = new System.Drawing.Size(94, 34);
-            this.Load += new System.EventHandler(this.TimeControl_Load);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.TimeControl_PreviewKeyDown);
             this.ResumeLayout(false);
 
         }

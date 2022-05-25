@@ -24,14 +24,7 @@ namespace Nebulator.UI
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
-            sldVolume.Label = Definitions.UNKNOWN_STRING;
-        }
 
-        /// <summary>
-        /// Initialize the UI from the object.
-        /// </summary>
-        void ChannelControl_Load(object sender, EventArgs e)
-        {
             chkSolo.FlatAppearance.CheckedBackColor = Color.Green;
             chkMute.FlatAppearance.CheckedBackColor = Color.Red;
 
