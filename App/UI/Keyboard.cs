@@ -12,6 +12,7 @@ using NLog;
 using NBagOfUis;
 using Nebulator.Common;
 using Nebulator.Midi;
+using MidiLib;
 
 
 namespace Nebulator.UI

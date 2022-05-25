@@ -17,6 +17,9 @@ namespace Nebulator.Common
     //[Serializable]
     public class Channel
     {
+        public const double DEF_VOL_TODO = 0.8;
+
+
         /// <summary>Same as midi.</summary>
         public const int NUM_CHANNELS = 16;
 
@@ -45,7 +48,7 @@ namespace Nebulator.Common
 
         /// <summary>Current volume.</summary>
         [Browsable(false)]
-        public double Volume { get; set; } = def;
+        public double Volume { get; set; } = DEF_VOL_TODO;
 
         /// <summary>Current state for this channel.</summary>
         [Browsable(false)]

@@ -19,7 +19,7 @@
             Nebulator.Common.Time time1 = new Nebulator.Common.Time();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.sldVolume = new NBagOfUis.Slider();
-            this.potSpeed = new NBagOfUis.Pot();
+            this.sldSpeed = new NBagOfUis.Slider();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnCompile = new System.Windows.Forms.Button();
             this.btnRewind = new System.Windows.Forms.Button();
@@ -63,22 +63,21 @@
             this.sldVolume.Value = 1D;
             this.sldVolume.ValueChanged += new System.EventHandler(this.Volume_ValueChanged);
             // 
-            // potSpeed
+            // sldSpeed
             // 
-            this.potSpeed.Resolution = 5;
-            this.potSpeed.DrawColor = System.Drawing.Color.Black;
-            this.potSpeed.Label = "";
-            this.potSpeed.Location = new System.Drawing.Point(170, 49);
-            this.potSpeed.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.potSpeed.Maximum = 200D;
-            this.potSpeed.Minimum = 30D;
-            this.potSpeed.Name = "potSpeed";
-            this.potSpeed.Size = new System.Drawing.Size(43, 49);
-            this.potSpeed.TabIndex = 33;
-            this.potSpeed.Taper = NBagOfUis.Taper.Linear;
-            this.toolTip.SetToolTip(this.potSpeed, "Speed in BPM");
-            this.potSpeed.Value = 100D;
-            this.potSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
+            this.sldSpeed.Resolution = 5;
+            this.sldSpeed.DrawColor = System.Drawing.Color.Black;
+            this.sldSpeed.Label = "";
+            this.sldSpeed.Location = new System.Drawing.Point(170, 49);
+            this.sldSpeed.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.sldSpeed.Maximum = 200D;
+            this.sldSpeed.Minimum = 30D;
+            this.sldSpeed.Name = "sldSpeed";
+            this.sldSpeed.Size = new System.Drawing.Size(43, 49);
+            this.sldSpeed.TabIndex = 33;
+            this.toolTip.SetToolTip(this.sldSpeed, "Speed in BPM");
+            this.sldSpeed.Value = 100D;
+            this.sldSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
             // 
             // toolTip
             // 
@@ -343,7 +342,7 @@
             this.Controls.Add(this.btnCompile);
             this.Controls.Add(this.timeMaster);
             this.Controls.Add(this.sldVolume);
-            this.Controls.Add(this.potSpeed);
+            this.Controls.Add(this.sldSpeed);
             this.Controls.Add(this.btnRewind);
             this.Controls.Add(this.chkPlay);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -360,7 +359,7 @@
         #endregion
         private NBagOfUis.Slider sldVolume;
         private System.Windows.Forms.CheckBox chkPlay;
-        private NBagOfUis.Pot potSpeed;
+        private NBagOfUis.Slider sldSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
         private UI.TimeControl timeMaster;

@@ -16,6 +16,7 @@ using Nebulator.Midi;
 using Nebulator.OSC;
 using Nebulator.UI;
 using NBagOfTricks.ScriptCompiler;
+// using MidiLib;
 
 
 namespace Nebulator.App
@@ -115,9 +116,9 @@ namespace Nebulator.App
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            potSpeed.DrawColor = UserSettings.TheSettings.IconColor; make into slider
-            potSpeed.BackColor = UserSettings.TheSettings.BackColor;
-            potSpeed.Invalidate();
+            sldSpeed.DrawColor = UserSettings.TheSettings.IconColor;
+            sldSpeed.BackColor = UserSettings.TheSettings.BackColor;
+            sldSpeed.Invalidate();
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor; 
             sldVolume.Invalidate();
@@ -257,7 +258,7 @@ namespace Nebulator.App
         void SaveProjectValues()
         {
             _nppVals.Clear();
-            _nppVals.SetValue("master", "speed", potSpeed.Value);
+            _nppVals.SetValue("master", "speed", sldSpeed.Value);
             _nppVals.SetValue("master", "volume", sldVolume.Value);
 
             foreach (var ch in _channels)
@@ -518,7 +519,7 @@ namespace Nebulator.App
                 if (_outputDevices.TryGetValue(t.DeviceType, out IOutputDevice? dev))
                 {
                     t.Device = dev;
-                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", def);
+                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", Channel.DEF_VOL_TODO);
                     t.State = (ChannelState)_nppVals.GetInteger(t.ChannelName, "state", (int)ChannelState.Normal);
 
                     ChannelControl tctl = new()
@@ -715,7 +716,7 @@ namespace Nebulator.App
                 _script.Playing = chkPlay.Checked;
                 _script.StepTime = _stepTime;
                 _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
-                _script.Speed = potSpeed.Value;
+                _script.Speed = sldSpeed.Value;
                 _script.MasterVolume = sldVolume.Value;
             }
         }
@@ -727,9 +728,9 @@ namespace Nebulator.App
         {
             if (_script is not null)
             {
-                if (Math.Abs(_script.Speed - potSpeed.Value) > 0.001)
+                if (Math.Abs(_script.Speed - sldSpeed.Value) > 0.001)
                 {
-                    potSpeed.Value = _script.Speed;
+                    sldSpeed.Value = _script.Speed;
                     SetFastTimerPeriod();
                 }
 
@@ -816,7 +817,7 @@ namespace Nebulator.App
         /// </summary>
         void Open_Click(object? sender, EventArgs e)
         {
-            OpenFileDialog openDlg = new() use using
+            using OpenFileDialog openDlg = new()
             {
                 Filter = "Nebulator files | *.neb",
                 Title = "Select a Nebulator file"
@@ -855,8 +856,8 @@ namespace Nebulator.App
 
                         // Get the persisted properties.
                         _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
-                        potSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                        sldVolume.Value = _nppVals.GetDouble("master", "volume", def);
+                        sldSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
+                        sldVolume.Value = _nppVals.GetDouble("master", "volume", Channel.DEF_VOL_TODO);
 
                         SetCompileStatus(true);
                         AddToRecentDefs(fn);
@@ -1183,10 +1184,10 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTime mt = new()
+            MidiLib.MidiTime mt = new()
             {
                 InternalPpq = Time.SubdivsPerBeat,
-                Tempo = potSpeed.Value
+                Tempo = sldSpeed.Value
             };
 
             var per = mt.RoundedInternalPeriod();
@@ -1202,7 +1203,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ExportMidi_Click(object? sender, EventArgs e)
         {
-            SaveFileDialog saveDlg = new() use using
+            using SaveFileDialog saveDlg = new()
             {
                 Filter = "Midi files (*.mid)|*.mid",
                 Title = "Export to midi file",
@@ -1233,7 +1234,7 @@ namespace Nebulator.App
                 {
                     Dictionary<int, string> channels = new();
                     _channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
-                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, potSpeed.Value, "Converted from " + _scriptFileName);
+                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
                 }
             }
         }

@@ -303,7 +303,6 @@
             <summary>
             
             </summary>
-            <param name="sender"></param>
             <param name="e"></param>
         </member>
         <member name="F:NBagOfUis.FilTree.components">
@@ -476,7 +475,6 @@
             <summary>
             Collect list contents.
             </summary>
-            <param name="sender"></param>
             <param name="e"></param>
         </member>
         <member name="F:NBagOfUis.OptionsEditor.components">
