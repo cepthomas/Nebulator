@@ -299,7 +299,7 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfUis.FilTree.FilTree_Resize(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.FilTree.OnResize(System.EventArgs)">
             <summary>
             
             </summary>
@@ -472,7 +472,7 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfUis.OptionsEditor.OptionsEditor_FormClosing(System.Object,System.Windows.Forms.FormClosingEventArgs)">
+        <member name="M:NBagOfUis.OptionsEditor.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)">
             <summary>
             Collect list contents.
             </summary>
