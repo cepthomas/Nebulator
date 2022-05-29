@@ -7,21 +7,6 @@
         <member name="T:MidiLib.BarBar">
             <summary>The control.</summary>
         </member>
-        <member name="T:MidiLib.BarBar.SnapType">
-            <summary>User selection options.</summary>
-        </member>
-        <member name="F:MidiLib.BarBar._length">
-            <summary>Total length.</summary>
-        </member>
-        <member name="F:MidiLib.BarBar._start">
-            <summary>First valid point.</summary>
-        </member>
-        <member name="F:MidiLib.BarBar._end">
-            <summary>Last valid point.</summary>
-        </member>
-        <member name="F:MidiLib.BarBar._current">
-            <summary>Current time.</summary>
-        </member>
         <member name="F:MidiLib.BarBar._lastXPos">
             <summary>For tracking mouse moves.</summary>
         </member>
@@ -37,26 +22,14 @@
         <member name="F:MidiLib.BarBar._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.ZeroBased">
-            <summary>Option for engineers instead of musicians.</summary>
-        </member>
-        <member name="P:MidiLib.BarBar.BeatsPerBar">
-            <summary>Our signature. Only tested with 4.</summary>
-        </member>
-        <member name="P:MidiLib.BarBar.SubdivsPerBeat">
-            <summary>Our resolution.</summary>
-        </member>
-        <member name="P:MidiLib.BarBar.Snap">
-            <summary>How to snap.</summary>
-        </member>
         <member name="P:MidiLib.BarBar.Length">
-            <summary>Total length.</summary>
+            <summary>Total length of the bar.</summary>
         </member>
         <member name="P:MidiLib.BarBar.Start">
-            <summary>First valid point.</summary>
+            <summary>Start of marked region.</summary>
         </member>
         <member name="P:MidiLib.BarBar.End">
-            <summary>Last valid point.</summary>
+            <summary>End of marked region.</summary>
         </member>
         <member name="P:MidiLib.BarBar.Current">
             <summary>Where we be now.</summary>
@@ -128,13 +101,7 @@
             <returns></returns>
         </member>
         <member name="T:MidiLib.BarSpan">
-            <summary>Sort of like TimeSpan.</summary>
-        </member>
-        <member name="F:MidiLib.BarSpan.Zero">
-            <summary>A useful constant.</summary>
-        </member>
-        <member name="F:MidiLib.BarSpan.OneSubdiv">
-            <summary>A useful constant.</summary>
+            <summary>Sort of like DateTime but for musical terminlogy.</summary>
         </member>
         <member name="F:MidiLib.BarSpan._id">
             <summary>For hashing.</summary>
@@ -142,26 +109,17 @@
         <member name="F:MidiLib.BarSpan._all_ids">
             <summary>Increment for unique value.</summary>
         </member>
-        <member name="F:MidiLib.BarSpan._beatsPerBar">
-            <summary>Global - set before using. Only tested with 4.</summary>
-        </member>
-        <member name="F:MidiLib.BarSpan._subdivsPerBeat">
-            <summary>Global - set before using. Our resolution.</summary>
-        </member>
-        <member name="F:MidiLib.BarSpan._snapType">
-            <summary>Global - set before using.</summary>
-        </member>
         <member name="P:MidiLib.BarSpan.TotalSubdivs">
-            <summary>The core.</summary>
+            <summary>The length.</summary>
         </member>
         <member name="P:MidiLib.BarSpan.Bar">
-            <summary>The bar.</summary>
+            <summary>The bar number.</summary>
         </member>
         <member name="P:MidiLib.BarSpan.Beat">
-            <summary>The beat.</summary>
+            <summary>The beat number in the bar.</summary>
         </member>
         <member name="P:MidiLib.BarSpan.Subdiv">
-            <summary>The subdiv.</summary>
+            <summary>The subdiv in the beat.</summary>
         </member>
         <member name="M:MidiLib.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
@@ -175,7 +133,7 @@
             <summary>
             Constructor from args.
             </summary>
-            <param name="subdivs"></param>
+            <param name="subdivs">Number of subdivs.</param>
         </member>
         <member name="M:MidiLib.BarSpan.Reset">
             <summary>
@@ -193,13 +151,15 @@
             <summary>
             Update current value.
             </summary>
-            <param name="subdivs">Number of subdivs.</param>
+            <param name="subdivs">By this number of subdivs.</param>
         </member>
-        <member name="M:MidiLib.BarSpan.DoSnap(System.Int32)">
+        <member name="M:MidiLib.BarSpan.SetRounded(System.Int32,MidiLib.SnapType,System.Boolean)">
             <summary>
-            Snap to closest boundary.
+            Set to subdiv using specified rounding.
             </summary>
             <param name="subdiv"></param>
+            <param name="snapType"></param>
+            <param name="up">To ceiling otherwise closest.</param>
         </member>
         <member name="M:MidiLib.BarSpan.Format(System.Boolean)">
             <summary>
@@ -213,6 +173,17 @@
             Format a readable string.
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:MidiLib.BarSpan.#ctor(MidiLib.BarSpan)">
+            <summary>
+            Copy constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarSpan.#ctor(System.Double)">
+            <summary>
+            Constructor from Beat.Subdiv representation as a double. TODOX this is broken for 32 discrete values.
+            </summary>
+            <param name="tts"></param>
         </member>
         <member name="T:MidiLib.Channel">
             <summary>Describes one midi channel.</summary>
@@ -294,7 +265,7 @@
             <param name="chnum">From this channel...</param>
             <param name="control">...to this control.</param>
         </member>
-        <member name="M:MidiLib.ChannelCollection.SetEvents(System.Int32,System.Collections.Generic.IEnumerable{MidiLib.EventDesc},MidiLib.MidiTime)">
+        <member name="M:MidiLib.ChannelCollection.SetEvents(System.Int32,System.Collections.Generic.IEnumerable{MidiLib.EventDesc},MidiLib.MidiTimeConverter)">
             <summary>
             Set events for channel.
             </summary>
@@ -437,14 +408,29 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:MidiLib.MidiState">
-            <summary>Player state.</summary>
-        </member>
         <member name="T:MidiLib.ChannelState">
             <summary>Channel state.</summary>
         </member>
+        <member name="T:MidiLib.SnapType">
+            <summary>User selection options.</summary>
+        </member>
         <member name="T:MidiLib.NullMidiEvent">
             <summary>Placeholder to avoid handling null everywhere.</summary>
+        </member>
+        <member name="F:MidiLib.InternalDefs.BEATS_PER_BAR">
+            <summary>Only 4/4 time supported.</summary>
+        </member>
+        <member name="F:MidiLib.InternalDefs.SUBDIVS_PER_BEAT">
+            <summary>Internal time resolution aka ppq or DeltaTicksPerQuarterNote.</summary>
+        </member>
+        <member name="F:MidiLib.InternalDefs.SUBDIVS_PER_BAR">
+            <summary>Convenience.</summary>
+        </member>
+        <member name="P:MidiLib.MidiSettings.ZeroBased">
+            <summary>Option for engineers instead of musicians.</summary>
+        </member>
+        <member name="P:MidiLib.MidiSettings.Snap">
+            <summary>How to snap.</summary>
         </member>
         <member name="T:MidiLib.MidiEventArgs">
             <summary>
@@ -734,6 +720,9 @@
         <member name="F:MidiLib.MidiListener._midiTraceFile">
             <summary>Where to log to.</summary>
         </member>
+        <member name="P:MidiLib.MidiListener.Valid">
+            <summary>Are we ok?</summary>
+        </member>
         <member name="P:MidiLib.MidiListener.LogMidi">
             <summary>Log outbound traffic. Warning - can get busy.</summary>
         </member>
@@ -749,11 +738,6 @@
             </summary>
             <param name="midiDevice">Client supplies name of device.</param>
             <param name="midiTracePath">Where to log.</param>
-        </member>
-        <member name="M:MidiLib.MidiListener.#ctor">
-            <summary>
-            Empty constructor to satisfy nullability.
-            </summary>
         </member>
         <member name="M:MidiLib.MidiListener.Dispose">
             <summary>
@@ -793,7 +777,10 @@
         <member name="F:MidiLib.MidiPlayer._midiLogFile">
             <summary>Where to log to.</summary>
         </member>
-        <member name="P:MidiLib.MidiPlayer.State">
+        <member name="P:MidiLib.MidiPlayer.Valid">
+            <summary>Are we ok?</summary>
+        </member>
+        <member name="P:MidiLib.MidiPlayer.Playing">
             <summary>What are we doing right now.</summary>
         </member>
         <member name="P:MidiLib.MidiPlayer.Volume">
@@ -813,11 +800,6 @@
             <param name="channels">The actual channels.</param>
             <param name="midiLogPath">Where to log wire events (optional).</param>
         </member>
-        <member name="M:MidiLib.MidiPlayer.#ctor">
-            <summary>
-            Empty constructor to satisfy nullability.
-            </summary>
-        </member>
         <member name="M:MidiLib.MidiPlayer.Dispose">
             <summary> 
             Clean up any resources being used.
@@ -834,18 +816,12 @@
             </summary>
             <param name="go"></param>
         </member>
-        <member name="M:MidiLib.MidiPlayer.UpdateCurrent(System.Int32)">
-            <summary>
-            Set position.
-            </summary>
-            <param name="newval"></param>
-        </member>
         <member name="M:MidiLib.MidiPlayer.DoNextStep">
             <summary>
             Synchronously outputs the next midi events. Does solo/mute.
             This is running on the background thread.
             </summary>
-            <returns></returns>
+            <returns>True if sequence completed.</returns>
         </member>
         <member name="M:MidiLib.MidiPlayer.Kill(System.Int32)">
             <summary>
@@ -864,59 +840,63 @@
             </summary>
             <param name="evt"></param>
         </member>
-        <member name="T:MidiLib.MidiTime">
+        <member name="T:MidiLib.MidiTimeConverter">
             <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
         </member>
-        <member name="P:MidiLib.MidiTime.MidiPpq">
-            <summary>Resolution for midi events aka DeltaTicksPerQuarterNote.</summary>
+        <member name="F:MidiLib.MidiTimeConverter._midiPpq">
+            <summary>Resolution for midi file events aka DeltaTicksPerQuarterNote.</summary>
         </member>
-        <member name="P:MidiLib.MidiTime.InternalPpq">
-            <summary>Resolution for internal format.</summary>
-        </member>
-        <member name="P:MidiLib.MidiTime.Tempo">
+        <member name="F:MidiLib.MidiTimeConverter._tempo">
             <summary>Tempo aka BPM.</summary>
         </member>
-        <member name="M:MidiLib.MidiTime.InternalToMidi(System.Int32)">
+        <member name="M:MidiLib.MidiTimeConverter.#ctor(System.Int32,System.Double)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="midiPpq"></param>
+            <param name="tempo"></param>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.InternalToMidi(System.Int32)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTime.MidiToInternal(System.Int64)">
+        <member name="M:MidiLib.MidiTimeConverter.MidiToInternal(System.Int64)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTime.InternalToMsec(System.Int32)">
+        <member name="M:MidiLib.MidiTimeConverter.InternalToMsec(System.Int32)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTime.MidiToSec(System.Int32)">
+        <member name="M:MidiLib.MidiTimeConverter.MidiToSec(System.Int32)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTime.MidiPeriod">
+        <member name="M:MidiLib.MidiTimeConverter.MidiPeriod">
             <summary>
             Exact time between events.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTime.InternalPeriod">
+        <member name="M:MidiLib.MidiTimeConverter.InternalPeriod">
             <summary>
             Exact time between events.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTime.RoundedInternalPeriod">
+        <member name="M:MidiLib.MidiTimeConverter.RoundedInternalPeriod">
             <summary>
             Integer time between events.
             </summary>
@@ -985,7 +965,6 @@
             <summary>
             
             </summary>
-            <param name="sender"></param>
             <param name="e"></param>
         </member>
         <member name="M:MidiLib.VirtualKeyboard.Dispose(System.Boolean)">
@@ -1010,14 +989,12 @@
             <summary>
             Use alpha keyboard to drive piano.
             </summary>
-            <param name="sender"></param>
             <param name="e"></param>
         </member>
         <member name="M:MidiLib.VirtualKeyboard.OnKeyUp(System.Windows.Forms.KeyEventArgs)">
             <summary>
             Use alpha keyboard to drive piano.
             </summary>
-            <param name="sender"></param>
             <param name="e"></param>
         </member>
         <member name="M:MidiLib.VirtualKeyboard.Keyboard_VKeyEvent(System.Object,MidiLib.VirtualKey.VKeyEventArgs)">
