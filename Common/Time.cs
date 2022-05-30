@@ -19,7 +19,7 @@ namespace Nebulator.Common
         ///   - 100 bpm = 800 subdiv/min = 13.33 subdiv/sec = 0.01333 subdiv/msec = 75.0 msec/subdiv
         ///   - 99 bpm = 792 subdiv/min = 13.20 subdiv/sec = 0.0132 subdiv/msec  = 75.757 msec/subdiv
         /// </remarks>
-        public const int SubdivsPerBeat  = 8;
+        public const int SubdivsPerBeat = 8;
         #endregion
 
         #region Properties

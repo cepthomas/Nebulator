@@ -38,13 +38,13 @@
             // chkMute
             // 
             this.chkMute.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkMute.BackColor = System.Drawing.SystemColors.Control;
+            this.chkMute.BackColor = System.Drawing.SystemColors.ControlDark;
             this.chkMute.FlatAppearance.BorderSize = 0;
             this.chkMute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkMute.Location = new System.Drawing.Point(0, 0);
             this.chkMute.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkMute.Name = "chkMute";
-            this.chkMute.Size = new System.Drawing.Size(13, 52);
+            this.chkMute.Size = new System.Drawing.Size(12, 52);
             this.chkMute.TabIndex = 1;
             this.chkMute.Text = "M";
             this.toolTip.SetToolTip(this.chkMute, "Mute channel");
@@ -54,13 +54,13 @@
             // chkSolo
             // 
             this.chkSolo.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkSolo.BackColor = System.Drawing.SystemColors.Control;
+            this.chkSolo.BackColor = System.Drawing.SystemColors.ControlDark;
             this.chkSolo.FlatAppearance.BorderSize = 0;
             this.chkSolo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkSolo.Location = new System.Drawing.Point(99, 0);
+            this.chkSolo.Location = new System.Drawing.Point(100, 0);
             this.chkSolo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkSolo.Name = "chkSolo";
-            this.chkSolo.Size = new System.Drawing.Size(13, 52);
+            this.chkSolo.Size = new System.Drawing.Size(12, 52);
             this.chkSolo.TabIndex = 4;
             this.chkSolo.Text = "S";
             this.toolTip.SetToolTip(this.chkSolo, "Solo channel");
@@ -69,7 +69,6 @@
             // 
             // sldVolume
             // 
-            this.sldVolume.Resolution = 0.05D;
             this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "";
             this.sldVolume.Location = new System.Drawing.Point(12, 0);
@@ -78,6 +77,7 @@
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.sldVolume.Resolution = 0.05D;
             this.sldVolume.Size = new System.Drawing.Size(88, 52);
             this.sldVolume.TabIndex = 5;
             this.toolTip.SetToolTip(this.sldVolume, "Channel volume");

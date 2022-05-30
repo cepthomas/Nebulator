@@ -93,12 +93,6 @@ namespace Nebulator.Common
         [Category("Functionality")]
         [Browsable(true)]
         public bool IgnoreWarnings { get; set; } = true;
-
-        [DisplayName("CPU Meter")] //TODO useful? improve?
-        [Description("Show a CPU usage meter. Note that this slows start up a bit.")]
-        [Category("Functionality")]
-        [Browsable(true)]
-        public bool CpuMeter { get; set; } = true;
         #endregion
 
         #region Properties - internal
@@ -117,9 +111,6 @@ namespace Nebulator.Common
 
         [Browsable(false)]
         public bool MonitorOutput { get; set; } = false;
-
-        [Browsable(false)]
-        public bool Keyboard { get; set; } = true;
         #endregion
     }
 

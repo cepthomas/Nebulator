@@ -106,7 +106,6 @@ namespace Nebulator.App
             btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnClear.Image, UserSettings.TheSettings.IconColor);
             btnWrap.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnWrap.Image, UserSettings.TheSettings.IconColor);
-            btnKeyboard.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKeyboard.Image, UserSettings.TheSettings.IconColor);
 
             btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
@@ -115,8 +114,7 @@ namespace Nebulator.App
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            sldSpeed.DrawColor = UserSettings.TheSettings.IconColor;
-            sldSpeed.BackColor = UserSettings.TheSettings.BackColor;
+            sldSpeed.DrawColor = UserSettings.TheSettings.ControlColor;
             sldSpeed.Invalidate();
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor; 
@@ -124,21 +122,6 @@ namespace Nebulator.App
 
             timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
             timeMaster.Invalidate();
-
-            if (UserSettings.TheSettings.CpuMeter)
-            {
-                CpuMeter cpuMeter = new()
-                {
-                    Width = 50,
-                    Height = toolStrip1.Height,
-                    DrawColor = Color.Red
-                };
-                // This took way too long to find out:
-                //https://stackoverflow.com/questions/12823400/statusstrip-hosting-a-usercontrol-fails-to-call-usercontrols-onpaint-event
-                cpuMeter.MinimumSize = cpuMeter.Size;
-                cpuMeter.Enable = true;
-                toolStrip1.Items.Add(new ToolStripControlHost(cpuMeter));
-            }
 
             btnWrap.Checked = UserSettings.TheSettings.WordWrap;
             textViewer.WordWrap = btnWrap.Checked;
@@ -222,16 +205,6 @@ namespace Nebulator.App
                 Height = Height
             };
 
-            Keyboard kbd = (Keyboard)_inputDevices[DeviceType.Vkey];
-            UserSettings.TheSettings.KeyboardFormGeometry = new()
-            {
-                X = kbd.Location.X,
-                Y = kbd.Location.Y,
-                Width = kbd.Width,
-                Height = kbd.Height
-            };
-
-            UserSettings.TheSettings.Keyboard = btnKeyboard.Checked;
             UserSettings.TheSettings.WordWrap = btnWrap.Checked;
 
             UserSettings.TheSettings.Save();
@@ -432,13 +405,6 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            // Keyboard.
-            var kbd = new Keyboard();
-            RegDevice(kbd);
-            kbd.Visible = UserSettings.TheSettings.Keyboard;
-            btnKeyboard.Checked = UserSettings.TheSettings.Keyboard;
-            btnKeyboard.Click += (object? _, EventArgs __) => { kbd.Visible = btnKeyboard.Checked; };
-
             if (UserSettings.TheSettings.MidiIn != "")
             {
                 RegDevice(new MidiInput());
@@ -527,7 +493,7 @@ namespace Nebulator.App
                 if (_outputDevices.TryGetValue(t.DeviceType, out IOutputDevice? dev))
                 {
                     t.Device = dev;
-                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", Channel.DEF_VOL_TODO);
+                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", Channel.DEF_VOL);
                     t.State = (ChannelState)_nppVals.GetInteger(t.ChannelName, "state", (int)ChannelState.Normal);
 
                     ChannelControl tctl = new()
@@ -865,7 +831,7 @@ namespace Nebulator.App
                         // Get the persisted properties.
                         _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         sldSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                        sldVolume.Value = _nppVals.GetDouble("master", "volume", Channel.DEF_VOL_TODO);
+                        sldVolume.Value = _nppVals.GetDouble("master", "volume", Channel.DEF_VOL);
 
                         SetCompileStatus(true);
                         AddToRecentDefs(fn);

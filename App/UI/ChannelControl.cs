@@ -29,9 +29,18 @@ namespace Nebulator.UI
             chkMute.FlatAppearance.CheckedBackColor = Color.Red;
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
+            sldVolume.BackColor = UserSettings.TheSettings.BackColor;
             sldVolume.Resolution = 0.05;
-            sldVolume.Label = BoundChannel.ChannelName;
             sldVolume.Maximum = 1.0;
+        }
+
+        /// <summary>
+        /// Post construct init.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnLoad(EventArgs e)
+        {
+            sldVolume.Label = BoundChannel.ChannelName;
             sldVolume.Value = BoundChannel.Volume;
 
             switch (BoundChannel.State)
@@ -49,6 +58,8 @@ namespace Nebulator.UI
                     chkMute.Checked = true;
                     break;
             }
+
+            base.OnLoad(e);
         }
 
         /// <summary>

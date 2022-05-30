@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//TODOX temp home while moving. Remove later.
+// TODOX temp home while migrating to midilib. Remove later.
 
 
 namespace Nebulator.Common
@@ -20,9 +20,6 @@ namespace Nebulator.Common
 
         /// <summary>Tempo aka BPM.</summary>
         public double Tempo { get; set; } = 0.0;
-
-        ///// <summary>Time signature Future?</summary>
-        // public string TimeSig { get; set; } = "";
 
         /// <summary>
         /// 

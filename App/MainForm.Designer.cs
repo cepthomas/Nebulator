@@ -37,7 +37,6 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
-            this.btnKeyboard = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new NBagOfUis.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
@@ -48,15 +47,15 @@
             // sldVolume
             // 
             this.sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.sldVolume.Resolution = 0.05D;
             this.sldVolume.DrawColor = System.Drawing.Color.Orange;
             this.sldVolume.Label = "vol";
-            this.sldVolume.Location = new System.Drawing.Point(224, 49);
+            this.sldVolume.Location = new System.Drawing.Point(267, 49);
             this.sldVolume.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.sldVolume.Maximum = 1D;
             this.sldVolume.Minimum = 0D;
             this.sldVolume.Name = "sldVolume";
             this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.sldVolume.Resolution = 0.05D;
             this.sldVolume.Size = new System.Drawing.Size(88, 52);
             this.sldVolume.TabIndex = 36;
             this.toolTip.SetToolTip(this.sldVolume, "Master volume");
@@ -65,15 +64,17 @@
             // 
             // sldSpeed
             // 
-            this.sldSpeed.Resolution = 5;
-            this.sldSpeed.DrawColor = System.Drawing.Color.Black;
-            this.sldSpeed.Label = "";
+            this.sldSpeed.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.sldSpeed.DrawColor = System.Drawing.Color.LightGray;
+            this.sldSpeed.Label = "bpm";
             this.sldSpeed.Location = new System.Drawing.Point(170, 49);
             this.sldSpeed.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.sldSpeed.Maximum = 200D;
             this.sldSpeed.Minimum = 30D;
             this.sldSpeed.Name = "sldSpeed";
-            this.sldSpeed.Size = new System.Drawing.Size(43, 49);
+            this.sldSpeed.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.sldSpeed.Resolution = 5D;
+            this.sldSpeed.Size = new System.Drawing.Size(88, 52);
             this.sldSpeed.TabIndex = 33;
             this.toolTip.SetToolTip(this.sldSpeed, "Speed in BPM");
             this.sldSpeed.Value = 100D;
@@ -144,8 +145,7 @@
             this.btnMonOut,
             this.btnKillComm,
             this.btnClear,
-            this.btnWrap,
-            this.btnKeyboard});
+            this.btnWrap});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(976, 27);
@@ -172,27 +172,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
@@ -201,7 +201,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -209,7 +209,7 @@
             // 
             this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.settingsToolStripMenuItem.Text = "Settings...";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
             // 
@@ -268,31 +268,19 @@
             this.btnWrap.Text = "toolStripButton1";
             this.btnWrap.ToolTipText = "Enable wordwrap";
             // 
-            // btnKeyboard
-            // 
-            this.btnKeyboard.CheckOnClick = true;
-            this.btnKeyboard.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnKeyboard.Image = global::App.Properties.Resources.glyphicons_327_piano;
-            this.btnKeyboard.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnKeyboard.Name = "btnKeyboard";
-            this.btnKeyboard.Size = new System.Drawing.Size(29, 24);
-            this.btnKeyboard.Text = "toolStripButton1";
-            this.btnKeyboard.ToolTipText = "Show piano keyboard";
-            // 
             // textViewer
             // 
             this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textViewer.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textViewer.Location = new System.Drawing.Point(13, 194);
             this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
             this.textViewer.Size = new System.Drawing.Size(952, 633);
             this.textViewer.TabIndex = 41;
-            this.textViewer.Text = "";
+            this.textViewer.WordWrap = true;
             // 
             // lblSolo
             // 
@@ -319,7 +307,7 @@
             time1.Subdiv = 0;
             this.timeMaster.CurrentTime = time1;
             this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.timeMaster.Location = new System.Drawing.Point(321, 49);
+            this.timeMaster.Location = new System.Drawing.Point(371, 49);
             this.timeMaster.Margin = new System.Windows.Forms.Padding(12, 14, 12, 14);
             this.timeMaster.MaxBeat = 0;
             this.timeMaster.Name = "timeMaster";
@@ -380,8 +368,6 @@
         private System.Windows.Forms.Label lblMute;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        // private System.Windows.Forms.ToolStripMenuItem configToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton btnKeyboard;
     }
 }
 
