@@ -151,7 +151,14 @@ namespace Nebulator.App
             //// For testing.
             //lblSolo.Hide();
             //lblMute.Hide();
+        }
 
+        /// <summary>
+        /// Post create init.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnLoad(EventArgs e)
+        {
             InitLogging();
             _logger.Info("============================ Starting up ===========================");
 
@@ -190,6 +197,8 @@ namespace Nebulator.App
                 _logger.Error($"Couldn't open script file: {sopen}");
             }
             #endregion
+
+            base.OnLoad(e);
         }
 
         /// <summary>
@@ -566,7 +575,7 @@ namespace Nebulator.App
             //}
 
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker) delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
            {
                if (_script is not null)
                {
@@ -1028,10 +1037,10 @@ namespace Nebulator.App
         /// <param name="msg">The message.</param>
         void Log_ClientNotification(LogLevel level, string msg)
         {
-            BeginInvoke((MethodInvoker) delegate ()
-           {
-               textViewer.AppendLine(msg);
-           });
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                textViewer.AppendLine(msg);
+            });
         }
 
         /// <summary>
