@@ -28,25 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.vkey = new MidiLib.VirtualKeyboard();
+//TODOX            this.vkey = new VirtualKeyboard();
             this.SuspendLayout();
             // 
             // vkey
             // 
-            this.vkey.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.vkey.Location = new System.Drawing.Point(0, 0);
-            this.vkey.Margin = new System.Windows.Forms.Padding(5, 8, 5, 8);
-            this.vkey.Name = "vkey";
-            this.vkey.ShowNoteNames = false;
-            this.vkey.Size = new System.Drawing.Size(880, 198);
-            this.vkey.TabIndex = 0;
+            //this.vkey.Dock = System.Windows.Forms.DockStyle.Fill;
+            //this.vkey.Location = new System.Drawing.Point(0, 0);
+            //this.vkey.Margin = new System.Windows.Forms.Padding(5, 8, 5, 8);
+            //this.vkey.Name = "vkey";
+            //this.vkey.ShowNoteNames = false;
+            //this.vkey.Size = new System.Drawing.Size(880, 198);
+            //this.vkey.TabIndex = 0;
             // 
             // Keyboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(880, 198);
-            this.Controls.Add(this.vkey);
+//TODOX            this.Controls.Add(this.vkey);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Keyboard";
@@ -57,6 +57,6 @@
 
         #endregion
 
-        private MidiLib.VirtualKeyboard vkey;
+//TODOX        private VirtualKeyboard vkey;
     }
 }

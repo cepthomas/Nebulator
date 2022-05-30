@@ -16,7 +16,6 @@ using Nebulator.Midi;
 using Nebulator.OSC;
 using Nebulator.UI;
 using NBagOfTricks.ScriptCompiler;
-// using MidiLib;
 
 
 namespace Nebulator.App
@@ -1184,7 +1183,7 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiLib.MidiTime mt = new()
+            MidiTime mt = new()
             {
                 InternalPpq = Time.SubdivsPerBeat,
                 Tempo = sldSpeed.Value

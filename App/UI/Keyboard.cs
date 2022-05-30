@@ -12,7 +12,6 @@ using NLog;
 using NBagOfUis;
 using Nebulator.Common;
 using Nebulator.Midi;
-using MidiLib;
 
 
 namespace Nebulator.UI
@@ -55,7 +54,7 @@ namespace Nebulator.UI
             TopMost = false;
             Size = new Size(UserSettings.TheSettings.KeyboardFormGeometry.Width, UserSettings.TheSettings.KeyboardFormGeometry.Height);
             Location = new Point(UserSettings.TheSettings.KeyboardFormGeometry.X, UserSettings.TheSettings.KeyboardFormGeometry.Y);
-            vkey.KeyboardEvent += Vkey_KeyboardEvent;
+ //TODOX           vkey.KeyboardEvent += Vkey_KeyboardEvent;
         }
 
         /// <inheritdoc />
@@ -82,48 +81,48 @@ namespace Nebulator.UI
         }
         #endregion
 
-        #region Events
-        /// <summary>
-        /// Handle key events.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Vkey_KeyboardEvent(object? sender, VirtualKeyboard.KeyboardEventArgs e)
-        {
-            if (DeviceInputEvent is not null)
-            {
-                Step step;
+        #region Events TODOX
+        ///// <summary>
+        ///// Handle key events.
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //void Vkey_KeyboardEvent(object? sender, VirtualKeyboard.KeyboardEventArgs e)
+        //{
+        //    if (DeviceInputEvent is not null)
+        //    {
+        //        Step step;
 
-                if (e.Velocity != 0)
-                {
-                    step = new StepNoteOn()
-                    {
-                        Device = this,
-                        ChannelNumber = e.ChannelNumber,
-                        NoteNumber = e.NoteId,
-                        Velocity = e.Velocity,
-                        VelocityToPlay = e.Velocity,    
-                        Duration = new Time(0)
-                    };
-                }
-                else
-                {
-                    step = new StepNoteOff()
-                    {
-                        Device = this,
-                        ChannelNumber = e.ChannelNumber,
-                        NoteNumber = e.NoteId,
-                        Velocity = 0,
-                    };
-                }
+        //        if (e.Velocity != 0)
+        //        {
+        //            step = new StepNoteOn()
+        //            {
+        //                Device = this,
+        //                ChannelNumber = e.ChannelNumber,
+        //                NoteNumber = e.NoteId,
+        //                Velocity = e.Velocity,
+        //                VelocityToPlay = e.Velocity,    
+        //                Duration = new Time(0)
+        //            };
+        //        }
+        //        else
+        //        {
+        //            step = new StepNoteOff()
+        //            {
+        //                Device = this,
+        //                ChannelNumber = e.ChannelNumber,
+        //                NoteNumber = e.NoteId,
+        //                Velocity = 0,
+        //            };
+        //        }
 
-                DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
-                if(UserSettings.TheSettings.MonitorInput)
-                {
-                    _logger.Trace($"{TraceCat.RCV} KbdIn:{step}");
-                }
-            }
-        }
+        //        DeviceInputEvent?.Invoke(this, new DeviceInputEventArgs() { Step = step });
+        //        if(UserSettings.TheSettings.MonitorInput)
+        //        {
+        //            _logger.Trace($"{TraceCat.RCV} KbdIn:{step}");
+        //        }
+        //    }
+        //}
         #endregion
     }
 }
