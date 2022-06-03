@@ -100,15 +100,16 @@ This project contains a bunch of components that are either recycled or created 
 
 - Midi and OSC classes may be useful elsewhere in conjunction with NAudio.
 - Embedded Roslyn in-memory compiler.
-- Uses my [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks) and [NBagOfUis](https://github.com/cepthomas/NBagOfUis).
 
 
-## Third Party
-This application uses these FOSS components.
+# Third Party
 
-- NAudio including modified controls and midi file utilities: [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License).
+This application uses these FOSS components:
+- [NAudio](https://github.com/naudio/NAudio) (Microsoft Public License).
 - Logging: [NLog](http://nlog-project.org/) (BSD 3-Clause).
-- Markdown rendering: [Markdeep](https://casual-effects.com/markdeep).
 - Main icon: [Charlotte Schmidt](http://pattedemouche.free.fr/) (Copyright © 2009 of Charlotte Schmidt).
 - Button icons: [Glyphicons Free](http://glyphicons.com/) (CC BY 3.0).
+- Markdown rendering: [Markdeep](https://casual-effects.com/markdeep).
+- [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks/blob/main/README.md)
+- [NBagOfUis](https://github.com/cepthomas/NBagOfUis/blob/main/README.md)
 

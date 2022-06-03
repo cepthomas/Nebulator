@@ -13,10 +13,6 @@ It supports midi and OSC.
 
 While the primary intent is to generate music-by-code, runtime interaction is also supported using midi/OSC inputs.
 
-Uses:
-- [NBagOfTricks](https://github.com/cepthomas/NBagOfTricks/blob/main/README.md)
-- [NBagOfUis](https://github.com/cepthomas/NBagOfUis/blob/main/README.md)
-
 
 # Documentation
 
