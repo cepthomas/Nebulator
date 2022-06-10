@@ -1257,5 +1257,160 @@
             Listen for client messages. Interruptible by setting _cancelEvent.
             </summary>
         </member>
+        <member name="T:NBagOfTricks.Slog.Level">
+            <summary>Log level options.</summary>
+        </member>
+        <member name="T:NBagOfTricks.Slog.LogEntry">
+            <summary>Internal log entry data container.</summary>
+        </member>
+        <member name="T:NBagOfTricks.Slog.LogEventArgs">
+            <summary>Log event for notification.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.Definitions.TIME_FORMAT">
+            <summary>Verbose timestamp.</summary>
+        </member>
+        <member name="T:NBagOfTricks.Slog.Scoper">
+            <summary>Experimental class to log enter/exit scope. Use syntax "using new Scoper(...);"</summary>
+        </member>
+        <member name="T:NBagOfTricks.Slog.Logger">
+            <summary>Client creates as many of these as needed.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Slog.Logger.Name">
+            <summary>ID for this logger.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Slog.Logger.Enable">
+            <summary>Turn logger on or off.</summary>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.#ctor(System.String)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="name">Client assigned name.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.LogTrace(System.String,System.String,System.Int32)">
+            <summary>
+            Convenience function.
+            </summary>
+            <param name="msg">Content.</param>
+            <param name="file">Ignore - compiler use.</param>
+            <param name="line">Ignore - compiler use.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.LogDebug(System.String,System.String,System.Int32)">
+            <summary>
+            Convenience function.
+            </summary>
+            <param name="msg">Content.</param>
+            <param name="file">Ignore - compiler use.</param>
+            <param name="line">Ignore - compiler use.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.LogInfo(System.String,System.String,System.Int32)">
+            <summary>
+            Convenience function.
+            </summary>
+            <param name="msg">Content.</param>
+            <param name="file">Ignore - compiler use.</param>
+            <param name="line">Ignore - compiler use.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.LogWarn(System.String,System.String,System.Int32)">
+            <summary>
+            Convenience function.
+            </summary>
+            <param name="msg">Content.</param>
+            <param name="file">Ignore - compiler use.</param>
+            <param name="line">Ignore - compiler use.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.LogError(System.String,System.String,System.Int32)">
+            <summary>
+            Convenience function.
+            </summary>
+            <param name="msg">Content.</param>
+            <param name="file">Ignore - compiler use.</param>
+            <param name="line">Ignore - compiler use.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.LogException(System.Exception,System.String,System.String,System.Int32)">
+            <summary>
+            Log an exception.
+            </summary>
+            <param name="ex">The exception.</param>
+            <param name="msg">Extra info.</param>
+            <param name="file">Ignore - compiler use.</param>
+            <param name="line">Ignore - compiler use.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.Logger.AddEntry(NBagOfTricks.Slog.Level,System.String,System.String,System.Int32)">
+            <summary>
+            Private common function.
+            </summary>
+            <param name="level"></param>
+            <param name="msg"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+        </member>
+        <member name="T:NBagOfTricks.Slog.LogManager">
+            <summary>Global server.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.LogManager._instance">
+            <summary>Lazy singleton. https://csharpindepth.com/Articles/Singleton.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.LogManager._loggers">
+            <summary>All loggers. Key is client supplied name.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.LogManager._queue">
+            <summary>Log record queue.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.LogManager._housekeepTime">
+            <summary>For checking file rollover.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.LogManager._levelNames">
+            <summary>Constant width strings for visual aid.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.LogManager._running">
+            <summary>Queue management.</summary>
+        </member>
+        <member name="F:NBagOfTricks.Slog.LogManager._tokenSource">
+            <summary>Queue management.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Slog.LogManager.Instance">
+            <summary>Singleton accessor.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Slog.LogManager.MinLevelFile">
+            <summary>Event filter for file.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Slog.LogManager.MinLevelNotif">
+            <summary>Event filter for callback event.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Slog.LogManager.TimeFormat">
+            <summary>Format for file records.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Slog.LogManager.QueueSize">
+            <summary>For diagnostics.</summary>
+        </member>
+        <member name="E:NBagOfTricks.Slog.LogManager.LogEvent">
+            <summary>Callback event.</summary>
+        </member>
+        <member name="M:NBagOfTricks.Slog.LogManager.CreateLogger(System.String)">
+            <summary>
+            Create a new client side logger.
+            </summary>
+            <param name="name">Unique ID.</param>
+            <returns>Minty fresh logger.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Slog.LogManager.Run(System.String,System.Int32)">
+            <summary>
+            Inititialize builtin file logger.
+            </summary>
+            <param name="logFilePath">Builtin logger file path.</param>
+            <param name="logSize">Builtin logger max size. 0 means no file logger, just notifications.</param>
+        </member>
+        <member name="M:NBagOfTricks.Slog.LogManager.Stop">
+            <summary>
+            Be polite, shut it down.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Slog.LogManager.LogThis(NBagOfTricks.Slog.LogEntry)">
+            <summary>
+            Client logger wants to log something.
+            </summary>
+            <param name="le"></param>
+        </member>
     </members>
 </doc>

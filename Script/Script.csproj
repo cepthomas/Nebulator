@@ -1,45 +1,40 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <AssemblyName>Nebulator.Script</AssemblyName>
-    <UseWindowsForms>true</UseWindowsForms>
-    <Deterministic>False</Deterministic>
-    <Version>$([System.DateTime]::UtcNow.ToString(yy.MM.dd))</Version> 
-    <Description>Nebulator script stuff</Description>
-    <Copyright>MIT License</Copyright>
-    <OutputPath>bin\</OutputPath>
-    <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>CS1591;CA1822</NoWarn>
-    <Nullable>enable</Nullable>
-    <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningsAsErrors>NU1605 </WarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
-    <PackageReference Include="NAudio" Version="2.1.0" />
-    <PackageReference Include="NLog" Version="4.7.11" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="NBagOfTricks">
-      <HintPath>..\lib\NBagOfTricks.dll</HintPath>
-    </Reference>
-    <Reference Include="NBagOfUis">
-      <HintPath>..\lib\NBagOfUis.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
+﻿<?xml version="1.0" ?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <AssemblyName>Nebulator.Script</AssemblyName>
+        <UseWindowsForms>true</UseWindowsForms>
+        <Deterministic>False</Deterministic>
+        <Version>$([System.DateTime]::UtcNow.ToString(yy.MM.dd))</Version>
+        <Description>Nebulator script stuff</Description>
+        <Copyright>MIT License</Copyright>
+        <OutputPath>bin\</OutputPath>
+        <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
+        <WarningLevel>4</WarningLevel>
+        <!-- <NoWarn>CS1591;CA1822</NoWarn> -->
+        <Nullable>enable</Nullable>
+        <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <WarningsAsErrors>NU1605</WarningsAsErrors>
+        <DebugType>portable</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0"/>
+        <PackageReference Include="NAudio" Version="2.1.0"/>
+        <PackageReference Include="NLog" Version="4.7.11"/>
+        <PackageReference Include="System.Drawing.Common" Version="6.0.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Common\Common.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="NBagOfTricks">
+            <HintPath>..\lib\NBagOfTricks.dll</HintPath>
+        </Reference>
+        <Reference Include="NBagOfUis">
+            <HintPath>..\lib\NBagOfUis.dll</HintPath>
+        </Reference>
+    </ItemGroup>
 </Project>

@@ -212,6 +212,7 @@ namespace Nebulator.App
             SaveProjectValues();
 
             DestroyDevices();
+            base.OnFormClosing(e);
         }
 
         /// <summary>
