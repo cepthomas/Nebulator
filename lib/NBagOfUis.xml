@@ -494,6 +494,59 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="T:NBagOfUis.PixelBitmap">
+            <summary>
+            Borrowed from https://stackoverflow.com/a/34801225
+            </summary>
+        </member>
+        <member name="F:NBagOfUis.PixelBitmap._buff">
+            <summary>Unmanaged buffer.</summary>
+        </member>
+        <member name="F:NBagOfUis.PixelBitmap._hBuff">
+            <summary>Unmanaged buffer handle.</summary>
+        </member>
+        <member name="P:NBagOfUis.PixelBitmap.Bitmap">
+            <summary>Managed image for client consumption.</summary>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Normal constructor.
+            </summary>
+            <param name="width"></param>
+            <param name="height"></param>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)">
+            <summary>
+            
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="colour"></param>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="a"></param>
+            <param name="r"></param>
+            <param name="g"></param>
+            <param name="b"></param>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.GetPixel(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.Dispose">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:NBagOfUis.PropertyGridEx">
             <summary>Extends the PropertyGrid to add some features.</summary>
         </member>
