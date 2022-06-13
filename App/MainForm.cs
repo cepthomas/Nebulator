@@ -195,7 +195,7 @@ namespace Nebulator.App
         /// </summary>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            _logger.Info("Shutting down.");
+            LogManager.Stop();
 
             ProcessPlay(PlayCommand.Stop);
 
@@ -997,47 +997,6 @@ namespace Nebulator.App
                 this.InvokeIfRequired(_ => { textViewer.AppendLine($"{e.Message}"); });
             }
         }
-
-        // /// <summary>
-        // /// Show the log file.
-        // /// </summary>
-        // /// <param name="sender"></param>
-        // /// <param name="e"></param>
-        // void LogShow_Click(object? sender, EventArgs e)
-        // {
-        //     using Form f = new()
-        //     {
-        //         Text = "Log Viewer",
-        //         Size = new Size(900, 600),
-        //         BackColor = UserSettings.TheSettings.BackColor,
-        //         StartPosition = FormStartPosition.Manual,
-        //         Location = new Point(20, 20),
-        //         FormBorderStyle = FormBorderStyle.SizableToolWindow,
-        //         ShowIcon = false,
-        //         ShowInTaskbar = false
-        //     };
-
-        //     TextViewer tv = new()
-        //     {
-        //         Dock = DockStyle.Fill,
-        //         WordWrap = true,
-        //         MaxText = 50000
-        //     };
-
-        //     tv.Colors.Add("ERR", Color.LightPink);
-        //     tv.Colors.Add("WRN", Color.Plum);
-        //     //tv.Colors.Add(" SND???:", Color.LightGreen);
-        //     f.Controls.Add(tv);
-
-        //     string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-        //     string logFileName = Path.Combine(appDir, "log.txt");
-        //     using (new WaitCursor())
-        //     {
-        //         File.ReadAllLines(logFileName).ForEach(l => tv.AppendText(l));
-        //     }
-
-        //     f.ShowDialog();
-        // }
         #endregion
 
         #region User settings

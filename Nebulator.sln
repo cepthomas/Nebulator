@@ -18,6 +18,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFiles", "DocFiles", "{4D
 		DocFiles\ScriptSyntax.md = DocFiles\ScriptSyntax.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{C96541B3-854A-4405-A6AD-8F7D676905CE}"
+	ProjectSection(SolutionItems) = preProject
+		Examples\airport.neb = Examples\airport.neb
+		Examples\example.neb = Examples\example.neb
+		Examples\piece1.neb = Examples\piece1.neb
+		Examples\scale.neb = Examples\scale.neb
+		Examples\utils.neb = Examples\utils.neb
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
