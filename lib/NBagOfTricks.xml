@@ -1054,9 +1054,6 @@
         <member name="T:NBagOfTricks.ScriptCompiler.ScriptCompilerCore">
             <summary>Parses/compiles script file(s).</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.WorkPath">
-            <summary>Client needs to tell us this.</summary>
-        </member>
         <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.IgnoreWarnings">
             <summary>Client needs to tell us this.</summary>
         </member>
@@ -1257,7 +1254,7 @@
             Listen for client messages. Interruptible by setting _cancelEvent.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.Slog.Level">
+        <member name="T:NBagOfTricks.Slog.LogLevel">
             <summary>Log level options.</summary>
         </member>
         <member name="T:NBagOfTricks.Slog.LogEntry">
@@ -1265,9 +1262,6 @@
         </member>
         <member name="T:NBagOfTricks.Slog.LogEventArgs">
             <summary>Log event for notification.</summary>
-        </member>
-        <member name="F:NBagOfTricks.Slog.Definitions.TIME_FORMAT">
-            <summary>Verbose timestamp.</summary>
         </member>
         <member name="T:NBagOfTricks.Slog.Scoper">
             <summary>Experimental class to log enter/exit scope. Use syntax "using new Scoper(...);"</summary>
@@ -1287,7 +1281,7 @@
             </summary>
             <param name="name">Client assigned name.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.LogTrace(System.String,System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Slog.Logger.Trace(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1295,7 +1289,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.LogDebug(System.String,System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Slog.Logger.Debug(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1303,7 +1297,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.LogInfo(System.String,System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Slog.Logger.Info(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1311,7 +1305,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.LogWarn(System.String,System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Slog.Logger.Warn(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1319,7 +1313,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.LogError(System.String,System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Slog.Logger.Error(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1327,7 +1321,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.LogException(System.Exception,System.String,System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Slog.Logger.Exception(System.Exception,System.String,System.String,System.Int32)">
             <summary>
             Log an exception.
             </summary>
@@ -1336,7 +1330,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.AddEntry(NBagOfTricks.Slog.Level,System.String,System.String,System.Int32)">
+        <member name="M:NBagOfTricks.Slog.Logger.AddEntry(NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32)">
             <summary>
             Private common function.
             </summary>
@@ -1391,7 +1385,7 @@
             <summary>
             Create a new client side logger.
             </summary>
-            <param name="name">Unique ID.</param>
+            <param name="name">Logger ID. Can be shared.</param>
             <returns>Minty fresh logger.</returns>
         </member>
         <member name="M:NBagOfTricks.Slog.LogManager.Run(System.String,System.Int32)">

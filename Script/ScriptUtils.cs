@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using NLog;
 using NBagOfTricks;
+using NBagOfTricks.Slog;
 using Nebulator.Common;
 
 
@@ -20,7 +20,7 @@ namespace Nebulator.Script
 
         #region Fields
         /// <summary>My logger - used only for Print() function.</summary>
-        static readonly Logger _logger = LogManager.GetLogger("Print");
+        static readonly Logger _logger = LogManager.CreateLogger("Print");
 
         /// <summary>Script randomizer.</summary>
         static readonly Random _rand = new();

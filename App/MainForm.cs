@@ -7,7 +7,6 @@ using System.IO;
 using System.Diagnostics;
 using NAudio.Midi;
 using NAudio.Wave;
-using NLog;
 using NBagOfTricks;
 using NBagOfUis;
 using Nebulator.Common;
@@ -16,6 +15,7 @@ using Nebulator.Midi;
 using Nebulator.OSC;
 using Nebulator.UI;
 using NBagOfTricks.ScriptCompiler;
+using NBagOfTricks.Slog;
 
 
 namespace Nebulator.App
@@ -29,7 +29,7 @@ namespace Nebulator.App
 
         #region Fields
         /// <summary>App logger.</summary>
-        readonly Logger _logger = LogManager.GetLogger("MainForm");
+        readonly Logger _logger = LogManager.CreateLogger("Main");
 
         /// <summary>Fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
@@ -83,6 +83,13 @@ namespace Nebulator.App
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             UserSettings.TheSettings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
 
+            // Init logging.
+            string logFileName = Path.Combine(appDir, "log.txt");
+            LogManager.MinLevelFile = LogLevel.Debug;
+            LogManager.MinLevelNotif = LogLevel.Info;
+            LogManager.LogEvent += LogManager_LogEvent;
+            LogManager.Run(logFileName, 100000);
+
             #region Init UI from settings
             toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = UserSettings.TheSettings.SelectedColor };
 
@@ -95,8 +102,8 @@ namespace Nebulator.App
             // The rest of the controls.
             textViewer.WordWrap = false;
             textViewer.BackColor = UserSettings.TheSettings.BackColor;
-            textViewer.Colors.Add(" E ", Color.LightPink);
-            textViewer.Colors.Add(" W ", Color.Plum);
+            textViewer.Colors.Add("ERR", Color.LightPink);
+            textViewer.Colors.Add("WRN", Color.Plum);
 
             btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, UserSettings.TheSettings.IconColor);
@@ -142,7 +149,6 @@ namespace Nebulator.App
         /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
-            InitLogging();
             _logger.Info("============================ Starting up ===========================");
 
             PopulateRecentMenu();
@@ -274,7 +280,7 @@ namespace Nebulator.App
                 timeMaster.TimeDefs.Clear();
 
                 // Compile script now.
-                Compiler compiler = new() { WorkPath = UserSettings.TheSettings.WorkPath };
+                Compiler compiler = new();
                 compiler.Execute(_scriptFileName);
                 _script = (ScriptBase?)compiler.Script;
 
@@ -345,33 +351,33 @@ namespace Nebulator.App
                 // Log/show results.
                 compiler.Results.ForEach(r =>
                 {
-                    LogLevel level = LogLevel.Info;
+                    string msg;
 
-                    switch(r.ResultType)
+                    if (r.LineNumber > 0)
+                    {
+                        msg = $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}";
+                    }
+                    else if (r.SourceFile != "")
+                    {
+                        msg = $"{r.SourceFile}: {r.Message}";
+                    }
+                    else
+                    {
+                        msg = r.Message;
+                    }
+
+                    switch (r.ResultType)
                     {
                         case CompileResultType.Error:
-                            level = LogLevel.Error;
+                            _logger.Error(msg);
                             break;
                         case CompileResultType.Warning:
-                            level = LogLevel.Warn;
+                            _logger.Warn(msg);
                             break;
                         case CompileResultType.Info:
-                            level = LogLevel.Info;
+                            _logger.Info(msg);
                             break;
                     }
-
-                    string msg = r.Message; // default
-
-                    if (r.SourceFile != "")
-                    {
-                        msg = r.LineNumber > 0 ? $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}" : $"{r.SourceFile}: {r.Message}";
-                    }
-
-                    _logger.Log(new LogEventInfo()
-                    {
-                        Level = level,
-                        Message = msg
-                    });
                 });
             }
 
@@ -979,77 +985,59 @@ namespace Nebulator.App
 
         #region Messages and logging
         /// <summary>
-        /// Init all logging functions.
-        /// </summary>
-        void InitLogging()
-        {
-            // Do log maintenance.
-            string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-
-            FileInfo fi = new(Path.Combine(appDir, "log.txt"));
-            if (fi.Exists && fi.Length > 100000)
-            {
-                File.Copy(fi.FullName, fi.FullName.Replace("log.", "log2."), true);
-                File.Delete(fi.FullName);
-            }
-
-            // Hook to client window.
-            LogClientNotificationTarget.ClientNotification += Log_ClientNotification;
-        }
-
-        /// <summary>
-        /// A message from the logger to display to the user.
-        /// </summary>
-        /// <param name="level">Level.</param>
-        /// <param name="msg">The message.</param>
-        void Log_ClientNotification(LogLevel level, string msg)
-        {
-            BeginInvoke((MethodInvoker)delegate ()
-            {
-                textViewer.AppendLine(msg);
-            });
-        }
-
-        /// <summary>
-        /// Show the log file.
+        /// Show log events.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void LogShow_Click(object? sender, EventArgs e)
+        void LogManager_LogEvent(object? sender, LogEventArgs e)
         {
-            using Form f = new()
+            // Usually come from a different thread.
+            if(IsHandleCreated)
             {
-                Text = "Log Viewer",
-                Size = new Size(900, 600),
-                BackColor = UserSettings.TheSettings.BackColor,
-                StartPosition = FormStartPosition.Manual,
-                Location = new Point(20, 20),
-                FormBorderStyle = FormBorderStyle.SizableToolWindow,
-                ShowIcon = false,
-                ShowInTaskbar = false
-            };
-
-            TextViewer tv = new()
-            {
-                Dock = DockStyle.Fill,
-                WordWrap = true,
-                MaxText = 50000
-            };
-
-            tv.Colors.Add(" E ", Color.LightPink);
-            tv.Colors.Add(" W ", Color.Plum);
-            //tv.Colors.Add(" SND???:", Color.LightGreen);
-            f.Controls.Add(tv);
-
-            string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-            string logFileName = Path.Combine(appDir, "log.txt");
-            using (new WaitCursor())
-            {
-                File.ReadAllLines(logFileName).ForEach(l => tv.AppendText(l));
+                this.InvokeIfRequired(_ => { textViewer.AppendLine($"{e.Message}"); });
             }
-
-            f.ShowDialog();
         }
+
+        // /// <summary>
+        // /// Show the log file.
+        // /// </summary>
+        // /// <param name="sender"></param>
+        // /// <param name="e"></param>
+        // void LogShow_Click(object? sender, EventArgs e)
+        // {
+        //     using Form f = new()
+        //     {
+        //         Text = "Log Viewer",
+        //         Size = new Size(900, 600),
+        //         BackColor = UserSettings.TheSettings.BackColor,
+        //         StartPosition = FormStartPosition.Manual,
+        //         Location = new Point(20, 20),
+        //         FormBorderStyle = FormBorderStyle.SizableToolWindow,
+        //         ShowIcon = false,
+        //         ShowInTaskbar = false
+        //     };
+
+        //     TextViewer tv = new()
+        //     {
+        //         Dock = DockStyle.Fill,
+        //         WordWrap = true,
+        //         MaxText = 50000
+        //     };
+
+        //     tv.Colors.Add("ERR", Color.LightPink);
+        //     tv.Colors.Add("WRN", Color.Plum);
+        //     //tv.Colors.Add(" SND???:", Color.LightGreen);
+        //     f.Controls.Add(tv);
+
+        //     string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
+        //     string logFileName = Path.Combine(appDir, "log.txt");
+        //     using (new WaitCursor())
+        //     {
+        //         File.ReadAllLines(logFileName).ForEach(l => tv.AppendText(l));
+        //     }
+
+        //     f.ShowDialog();
+        // }
         #endregion
 
         #region User settings

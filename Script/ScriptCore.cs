@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NLog;
+using NBagOfTricks.Slog;
 using Nebulator.Common;
 
 
@@ -13,7 +13,7 @@ namespace Nebulator.Script
     {
         #region Fields - internal
         /// <summary>My logger.</summary>
-        internal readonly Logger _logger = LogManager.GetLogger("Script");
+        internal readonly Logger _logger = LogManager.CreateLogger("Script");
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;

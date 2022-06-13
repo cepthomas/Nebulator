@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using NAudio.Midi;
-using NLog;
 using NBagOfTricks;
+using NBagOfTricks.Slog;
 using Nebulator.Common;
 
 
@@ -15,7 +15,7 @@ namespace Nebulator.Midi
     {
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetLogger("MidiOutput");
+        readonly Logger _logger = LogManager.CreateLogger("MidiOutput");
 
         /// <summary>Midi output device.</summary>
         MidiOut? _midiOut = null;

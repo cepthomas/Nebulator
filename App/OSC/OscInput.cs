@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using NLog;
 using NBagOfTricks;
+using NBagOfTricks.Slog;
 using Nebulator.Common;
 
 
@@ -14,7 +14,7 @@ namespace Nebulator.OSC
     {
         #region Fields
         /// <summary>My logger.</summary>
-        readonly Logger _logger = LogManager.GetLogger("OscInput");
+        readonly Logger _logger = LogManager.CreateLogger("OscInput");
 
         /// <summary>OSC input device.</summary>
         NebOsc.Input? _oscInput = null;

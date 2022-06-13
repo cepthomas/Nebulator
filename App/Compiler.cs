@@ -37,7 +37,7 @@ namespace Nebulator.App
 
             LocalDlls = new()
             {
-                "NAudio", "NLog", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script"
+                "NAudio", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script"
             };
 
             Usings.AddRange(new List<string>()

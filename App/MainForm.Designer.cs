@@ -195,7 +195,6 @@
             this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
-            this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.LogShow_Click);
             // 
             // aboutToolStripMenuItem
             // 
