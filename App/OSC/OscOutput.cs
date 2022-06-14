@@ -10,7 +10,7 @@ namespace Nebulator.OSC
     /// <summary>
     /// Abstraction layer between OSC comm and Nebulator steps. aka OSC client.
     /// </summary>
-    public class OscOutput : IOutputDevice
+    public sealed class OscOutput : IOutputDevice
     {
         #region Fields
         /// <summary>My logger.</summary>

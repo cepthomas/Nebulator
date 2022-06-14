@@ -10,7 +10,7 @@ namespace Nebulator.OSC
     /// <summary>
     /// Abstraction layer between OSC comm and Nebulator steps. aka OSC server.
     /// </summary>
-    public class OscInput : IInputDevice
+    public sealed class OscInput : IInputDevice
     {
         #region Fields
         /// <summary>My logger.</summary>

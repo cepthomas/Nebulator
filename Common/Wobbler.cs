@@ -12,7 +12,7 @@ namespace Nebulator.Common
     public class Wobbler
     {
         /// <summary>Randomizer.</summary>
-        readonly Random _rand = new Random();
+        readonly Random _rand = new();
 
         /// <summary>Minimum range for randomizing - 3 sigma.</summary>
         public double RangeLow { get; set; } = 0;

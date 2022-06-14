@@ -12,7 +12,7 @@
         <OutputPath>bin\</OutputPath>
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
         <WarningLevel>4</WarningLevel>
-        <NoWarn>CA1816</NoWarn> 
+        <NoWarn>CA1822</NoWarn> 
         <Nullable>enable</Nullable>
         <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
         <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
