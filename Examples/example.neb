@@ -6,6 +6,7 @@
 Include(C:\Dev\repos\Nebulator\Examples\utils.neb);
 Include(C:\Dev\repos\Nebulator\Examples\scale.neb);
 
+
 ///// All the channel/outputs.
 Channel("keys",  MidiOut, 1,  AcousticGrandPiano,  0.1);
 Channel("bass",  MidiOut, 2,  AcousticBass,  0.1);

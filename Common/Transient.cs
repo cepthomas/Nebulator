@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// TODOX temp home while migrating to midilib. Remove later.
+// TODO temp home while migrating to midilib. Remove later.
 
 
 namespace Nebulator.Common

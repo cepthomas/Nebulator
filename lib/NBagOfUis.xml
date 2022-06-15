@@ -505,6 +505,9 @@
         <member name="F:NBagOfUis.PixelBitmap._hBuff">
             <summary>Unmanaged buffer handle.</summary>
         </member>
+        <member name="F:NBagOfUis.PixelBitmap._disposed">
+            <summary>Resource management.</summary>
+        </member>
         <member name="P:NBagOfUis.PixelBitmap.Bitmap">
             <summary>Managed image for client consumption.</summary>
         </member>
@@ -514,6 +517,21 @@
             </summary>
             <param name="width"></param>
             <param name="height"></param>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.Finalize">
+            <summary>
+            Override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.Dispose">
+            <summary>
+            Boilerplate.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.PixelBitmap.Dispose(System.Boolean)">
+            <summary>
+            Boilerplate.
+            </summary>
         </member>
         <member name="M:NBagOfUis.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)">
             <summary>
@@ -541,11 +559,6 @@
             <param name="x"></param>
             <param name="y"></param>
             <returns></returns>
-        </member>
-        <member name="M:NBagOfUis.PixelBitmap.Dispose">
-            <summary>
-            
-            </summary>
         </member>
         <member name="T:NBagOfUis.PropertyGridEx">
             <summary>Extends the PropertyGrid to add some features.</summary>
@@ -793,9 +806,6 @@
         </member>
         <member name="F:NBagOfUis.WaitCursor.m_cursorOld">
             <summary>Restore original cursor</summary>
-        </member>
-        <member name="F:NBagOfUis.WaitCursor._start">
-            <summary>For metrics</summary>
         </member>
         <member name="M:NBagOfUis.WaitCursor.#ctor">
             <summary>Constructor</summary>

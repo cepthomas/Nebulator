@@ -288,7 +288,7 @@ namespace Nebulator.App
 
                 // Update file watcher.
                 _watcher.Clear();
-                compiler.SourceFiles.ForEach(f => { if (f != "") _watcher.Add(f); });
+                compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
 
                 _watcher.WatchedFiles.ForEach(fn => _logger.Debug($"file watcher after {compiler.SourceFiles.Count()}"));
 
@@ -548,13 +548,13 @@ namespace Nebulator.App
             //}
 
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker)delegate ()
-           {
-               if (_script is not null)
-               {
-                   NextStep();
-               }
-           });
+            this.InvokeIfRequired(_ =>
+            {
+                if (_script is not null)
+                {
+                    NextStep();
+                }
+            });
         }
 
         /// <summary>
@@ -661,7 +661,7 @@ namespace Nebulator.App
         /// </summary>
         void Device_InputEvent(object? sender, DeviceInputEventArgs e)
         {
-            BeginInvoke((MethodInvoker) delegate ()
+            this.InvokeIfRequired(_ =>
             {
                if (_script is not null && sender is not null)
                {
@@ -901,7 +901,7 @@ namespace Nebulator.App
             e.FileNames.ForEach(fn => _logger.Debug($"Watcher_Changed {fn}"));
 
             // Kick over to main UI thread.
-            BeginInvoke((MethodInvoker) delegate ()
+            this.InvokeIfRequired(_ =>
             {
                if (UserSettings.TheSettings.AutoCompile)
                {

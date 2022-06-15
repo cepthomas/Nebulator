@@ -365,13 +365,7 @@
         </member>
         <member name="M:NBagOfTricks.MiscUtils.InvokeIfRequired``1(``0,NBagOfTricks.MiscUtils.InvokeIfRequiredDelegate{``0})">
             <summary>
-            Invoke helper. See http://stackoverflow.com/a/29497681
-            Usage:
-            progressBar1.InvokeIfRequired(o => 
-            {
-                o.Style = ProgressBarStyle.Marquee;
-                o.MarqueeAnimationSpeed = 40;
-            });
+            Invoke helper, maybe.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="obj"></param>
@@ -443,6 +437,9 @@
         <member name="F:NBagOfTricks.MmTimerEx._timeProc">
             <summary>Called by Windows when a mm timer event occurs.</summary>
         </member>
+        <member name="F:NBagOfTricks.MmTimerEx._disposed">
+            <summary>Resource management.</summary>
+        </member>
         <member name="T:NBagOfTricks.MmTimerEx.NativeMethods">
             <summary>Win32 Multimedia Timer Functions.</summary>
         </member>
@@ -483,9 +480,19 @@
             Initializes a new instance of the Timer class.
             </summary>
         </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Finalize">
+            <summary>
+            Override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources.
+            </summary>
+        </member>
         <member name="M:NBagOfTricks.MmTimerEx.Dispose">
             <summary>
-            Frees timer resources.
+            Boilerplate.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.MmTimerEx.Dispose(System.Boolean)">
+            <summary>
+            Boilerplate.
             </summary>
         </member>
         <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.Int32,NBagOfTricks.MmTimerEx.TimeProc)">
@@ -1038,6 +1045,9 @@
         </member>
         <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.Message">
             <summary>Content.</summary>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.CompileResult.ToString">
+            <summary>For humans.</summary>
         </member>
         <member name="T:NBagOfTricks.ScriptCompiler.FileContext">
             <summary>Parser helper class.</summary>
