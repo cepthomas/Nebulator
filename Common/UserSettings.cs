@@ -49,31 +49,45 @@ namespace Nebulator.Common
         [JsonConverter(typeof(JsonColorConverter))]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
-        [DisplayName("Midi Input")]
+        [DisplayName("Midi Input 1")]
         [Description("Valid device if handling midi input.")]
         [Category("Devices")]
         [Browsable(true)]
         [TypeConverter(typeof(MidiDeviceTypeConverter))]
-        public string MidiIn { get; set; } = "None";
+        public string MidiIn1 { get; set; } = "";
 
-        [DisplayName("Midi Output")]
+        [DisplayName("Midi Input 2")]
+        [Description("Valid device if handling midi input.")]
+        [Category("Devices")]
+        [Browsable(true)]
+        [TypeConverter(typeof(MidiDeviceTypeConverter))]
+        public string MidiIn2 { get; set; } = "";
+
+        [DisplayName("Midi Output 1")]
         [Description("Valid device if sending midi output.")]
         [Category("Devices")]
         [Browsable(true)]
         [TypeConverter(typeof(MidiDeviceTypeConverter))]
-        public string MidiOut { get; set; } = "None";
+        public string MidiOut1 { get; set; } = "";
 
-        [DisplayName("OSC Input")]
-        [Description("Valid port number if handling OSC input.")]
+        [DisplayName("Midi Output 2")]
+        [Description("Valid device if sending midi output.")]
         [Category("Devices")]
         [Browsable(true)]
-        public string OscIn { get; set; } = "None";
+        [TypeConverter(typeof(MidiDeviceTypeConverter))]
+        public string MidiOut2 { get; set; } = "";
 
-        [DisplayName("OSC Output")]
-        [Description("Valid url:port if sending OSC output.")]
-        [Category("Devices")]
-        [Browsable(true)]
-        public string OscOut { get; set; } = "None";
+        //[DisplayName("OSC Input")]
+        //[Description("Valid port number if handling OSC input.")]
+        //[Category("Devices")]
+        //[Browsable(true)]
+        //public string OscIn { get; set; } = "None";
+
+        //[DisplayName("OSC Output")]
+        //[Description("Valid url:port if sending OSC output.")]
+        //[Category("Devices")]
+        //[Browsable(true)]
+        //public string OscOut { get; set; } = "None";
 
         [DisplayName("Auto Compile")]
         [Description("Compile current file when change detected.")]

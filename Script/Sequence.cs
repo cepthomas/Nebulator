@@ -43,7 +43,7 @@ namespace Nebulator.Script
         /// <param name="when">Time to play at.</param>
         /// <param name="what">What to play.</param>
         /// <param name="volume">Base volume.</param>
-        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
+        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>  TODOX fix like below.
         public void Add(double when, string what, double volume, double duration = 0)
         {
             SequenceElement sel = new(what)
@@ -56,24 +56,24 @@ namespace Nebulator.Script
             Add(sel);
         }
 
-        /// <summary>
-        /// Like: Z.Add(00.0, 66, 90, 1.1) or Z.Add(00.0, CrashCymbal1, 90, 1.1);
-        /// </summary>
-        /// <param name="when">Time to play at.</param>
-        /// <param name="what">What to play.</param>
-        /// <param name="volume">Base volume.</param>
-        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
-        public void Add(double when, DrumDef what, double volume, double duration = 0)
-        {
-            SequenceElement sel = new((int)what)
-            {
-                When = new Time(when),
-                Volume = volume,
-                Duration = new Time(duration)
-            };
+        ///// <summary>
+        ///// Like: Z.Add(00.0, 66, 90, 1.1) or Z.Add(00.0, CrashCymbal1, 90, 1.1);
+        ///// </summary>
+        ///// <param name="when">Time to play at.</param>
+        ///// <param name="what">What to play.</param>
+        ///// <param name="volume">Base volume.</param>
+        ///// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
+        //public void Add(double when, string what, double volume, double duration = 0)
+        //{
+        //    SequenceElement sel = new((int)what)
+        //    {
+        //        When = new Time(when),
+        //        Volume = volume,
+        //        Duration = new Time(duration)
+        //    };
 
-            Add(sel);
-        }
+        //    Add(sel);
+        //}
 
         /// <summary>
         /// Like: Z.Add(01.0, algoDynamic, 90);
@@ -98,7 +98,7 @@ namespace Nebulator.Script
         /// <param name="pattern">Ascii pattern string.</param>
         /// <param name="which">Specific note(s).</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, string which, double volume)
+        public void Add(string pattern, string which, double volume)//  TODOX fix like below.
         {
             foreach (double d in ScriptUtils.GetNotes(which))
             {
@@ -106,16 +106,16 @@ namespace Nebulator.Script
             }
         }
 
-        /// <summary>
-        /// Like: Z.Add("|5---    8       |7.......7654--- |", 4, RideCymbal1, 90);
-        /// </summary>
-        /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="which">Specific note(s).</param>
-        /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, DrumDef which, double volume)
-        {
-            Add(pattern, (int)which, volume);
-        }
+        ///// <summary>
+        ///// Like: Z.Add("|5---    8       |7.......7654--- |", 4, RideCymbal1, 90);
+        ///// </summary>
+        ///// <param name="pattern">Ascii pattern string.</param>
+        ///// <param name="which">Specific note(s).</param>
+        ///// <param name="volume">Base volume.</param>
+        //public void Add(string pattern, DrumDef which, double volume)
+        //{
+        //    Add(pattern, (int)which, volume);
+        //}
 
         /// <summary>
         /// Like: Z.Add("|5---    8       |7.......7654--- |", 4, 25, BASS_VOL);

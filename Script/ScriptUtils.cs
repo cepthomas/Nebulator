@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using NBagOfTricks;
 using NBagOfTricks.Slog;
+using MidiLib;
 using Nebulator.Common;
 
 
@@ -233,8 +234,7 @@ namespace Nebulator.Script
         /// <returns>The drum name</returns>
         internal static string FormatDrum(int note)
         {
-            var n = Enum.GetName(typeof(DrumDef), note);
-            string drumName = n is not null ? n : $"Drum{note}";
+            var drumName = MidiDefs.GetDrumName(note);
             return drumName;
         }
 

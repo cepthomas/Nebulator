@@ -12,8 +12,8 @@ namespace Nebulator.Common
     /// </summary>
     public abstract class Step
     {
-        /// <summary>Associated comm device to use.</summary>
-        public IDevice? Device { get; set; } = null;
+        ///// <summary>Associated comm device to use.</summary>
+        //public IDevice? Device { get; set; } = null;
 
         /// <summary>Channel number 1-16.</summary>
         public int ChannelNumber { get; set; } = 1;
@@ -48,7 +48,7 @@ namespace Nebulator.Common
         public void Adjust(double masterVolume, double channelVolume)
         {
             // Maybe alter note velocity.
-            if (Device is IOutputDevice)
+//            if (Device is IOutputDevice)
             {
                 double vel = Velocity * channelVolume * masterVolume;
                 VelocityToPlay = MathUtils.Constrain(vel, 0, 1.0);
@@ -92,38 +92,38 @@ namespace Nebulator.Common
     public class StepControllerChange : Step
     {
         /// <summary>Specific controller. See also specials in ControllerType.</summary>
-        public ControllerDef ControllerId { get; set; } = ControllerDef.None;
+        public int ControllerId { get; set; } = -1;
 
         /// <summary>The payload. CC value, midi pitch value, note number.</summary>
         public double Value { get; set; } = 0;
 
-        /// <summary>For viewing pleasure.</summary>
-        public override string ToString()
-        {
-            StringBuilder sb = new($"StepControllerChange: {base.ToString()}");
+        ///// <summary>For viewing pleasure.</summary>
+        //public override string ToString()
+        //{
+        //    StringBuilder sb = new($"StepControllerChange: {base.ToString()}");
 
-            if (ControllerId == ControllerDef.NoteControl)
-            {
-                sb.Append($" Note:{Value:F2}");
-            }
-            else if (ControllerId == ControllerDef.PitchControl)
-            {
-                sb.Append($" Pitch:{Value:F2}");
-            }
-            else // CC
-            {
-                sb.Append($" ControllerId:{ControllerId} value:{Value:F2}");
-            }
+        //    if (ControllerId == ControllerDef.NoteControl)
+        //    {
+        //        sb.Append($" Note:{Value:F2}");
+        //    }
+        //    else if (ControllerId == ControllerDef.PitchControl)
+        //    {
+        //        sb.Append($" Pitch:{Value:F2}");
+        //    }
+        //    else // CC
+        //    {
+        //        sb.Append($" ControllerId:{ControllerId} value:{Value:F2}");
+        //    }
 
-            return sb.ToString();
-        }
+        //    return sb.ToString();
+        //}
     }
 
     /// <summary>Used for patches.</summary>
     public class StepPatch : Step
     {
         /// <summary>Specific patch.</summary>
-        public InstrumentDef Patch { get; set; } = InstrumentDef.AcousticGrandPiano;
+        public int Patch { get; set; } = -1;
 
         /// <summary>For viewing pleasure.</summary>
         public override string ToString()

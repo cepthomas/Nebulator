@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NBagOfTricks.Slog;
+using MidiLib;
 using Nebulator.Common;
 
 
@@ -9,6 +10,22 @@ using Nebulator.Common;
 
 namespace Nebulator.Script
 {
+    // map between
+    public class Channel_XXX
+    {
+        /// <summary>The associated midi channel object.</summary>
+        public Channel Channel { get; set; }
+
+        ///// <summary>The device used by this channel.  Used to find and bind the device at runtime.</summary>
+        public string DeviceName { get; set; }
+        //public string DeviceType { get; set; }
+        //public DeviceType DeviceType { get; set; } = DeviceType.None;
+
+        /// <summary>The associated device object.</summary>
+        public IMidiOutputDevice? Device { get; set; } = null;
+    }
+
+
     public partial class ScriptBase
     {
         #region Fields - internal
@@ -28,21 +45,21 @@ namespace Nebulator.Script
         internal StepCollection _transientSteps = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel> _channelMap = new();
+        readonly Dictionary<string, Channel_XXX> _channelMap_XXX = new(); //TODOX redo this
         #endregion
 
         #region Lifecycle
         /// <summary>
         /// Set up runtime stuff. Good time to send initial patches.
         /// </summary>
-        /// <param name="channels"></param>
-        public void Init(List<Channel> channels)
+        /// <param name="channels">All output channels.</param>
+        public void Init(List<Channel_XXX> channels)
         {
-            _channelMap.Clear();
+            _channelMap_XXX.Clear();
             channels.ForEach(ch =>
             {
-                _channelMap[ch.ChannelName] = ch;
-                SendPatch(ch.ChannelName, ch.Patch);
+                _channelMap_XXX[ch.Channel.ChannelName] = ch;
+                SendPatch(ch.Channel.ChannelName, ch.Channel.Patch);
             });
         }
         #endregion
@@ -169,8 +186,8 @@ namespace Nebulator.Script
                     {
                         StepFunction step = new()
                         {
-                            Device = channel.Device,
-                            ChannelNumber = channel.ChannelNumber,
+                            //Device = channel.Device,
+                            ChannelNumber = channel.Channel.ChannelNumber,
                             ScriptFunction = seqel.ScriptFunction
                         };
                         steps.AddStep(startNoteTime, step);
@@ -181,11 +198,11 @@ namespace Nebulator.Script
                         foreach (int noteNum in seqel.Notes)
                         {
                             ///// Note on.
-                            double vel = channel.NextVol(seqel.Volume);
+                            double vel = channel.Channel.NextVol(seqel.Volume);
                             StepNoteOn step = new()
                             {
-                                Device = channel.Device,
-                                ChannelNumber = channel.ChannelNumber,
+                                //Device = channel.Device,
+                                ChannelNumber = channel.Channel.ChannelNumber,
                                 NoteNumber = noteNum,
                                 Velocity = vel,
                                 VelocityToPlay = vel,
@@ -227,14 +244,14 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="chanName"></param>
         /// <returns></returns>
-        Channel GetChannel(string chanName)
+        Channel_XXX GetChannel(string chanName)
         {
-            if (!_channelMap.TryGetValue(chanName, out var channel))
+            if (!_channelMap_XXX.TryGetValue(chanName, out var channel))
             {
                 throw new Exception($"Invalid Channel Name: {chanName}");
             }
 
-            if (channel is null || channel.Device is null)
+            if (channel is null)// || channel.Device is null)
             {
                 throw new Exception($"Invalid device for channel: {chanName}");
             }

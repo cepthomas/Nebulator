@@ -9,10 +9,9 @@ using NAudio.Midi;
 using NAudio.Wave;
 using NBagOfTricks;
 using NBagOfUis;
+using MidiLib;
 using Nebulator.Common;
 using Nebulator.Script;
-using Nebulator.Midi;
-using Nebulator.OSC;
 using Nebulator.UI;
 using NBagOfTricks.ScriptCompiler;
 using NBagOfTricks.Slog;
@@ -41,7 +40,7 @@ namespace Nebulator.App
         ScriptBase? _script = new();
 
         /// <summary>The current channels.</summary>
-        List<Channel> _channels = new();
+        List<Channel_XXX> _channels = new();
 
         /// <summary>Persisted internal values for current script file.</summary>
         Bag _nppVals = new();
@@ -64,11 +63,15 @@ namespace Nebulator.App
         ///// <summary>Diagnostics for timing measurement.</summary>
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
-        /// <summary>All devices to use for send.</summary>
-        readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new();
+        /// <summary>All devices to use for send. TODOX OSC?</summary>
+        readonly List<IMidiOutputDevice> _outputDevices = new();
+        //readonly Dictionary<string, MidiSender> _outputDevices = new();
+        //readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new();
 
-        /// <summary>All devices to use for receive.</summary>
-        readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new();
+        /// <summary>All devices to use for receive. TODOX OSC?</summary>
+        readonly List<IMidiInputDevice> _inputDevices = new();
+        //readonly Dictionary<string, MidiListener> _inputDevices = new();
+        //readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new();
         #endregion
 
         #region Lifecycle
@@ -217,7 +220,7 @@ namespace Nebulator.App
 
             SaveProjectValues();
 
-            DestroyDevices();
+//            DestroyDevices();
             base.OnFormClosing(e);
         }
 
@@ -231,6 +234,11 @@ namespace Nebulator.App
             {
                 _mmTimer.Stop();
                 _mmTimer.Dispose();
+
+                _inputDevices.ForEach(d => d.Dispose());
+                _inputDevices.Clear();
+                _outputDevices.ForEach(d => d.Dispose());
+                _outputDevices.Clear();
 
                 components?.Dispose();
             }
@@ -251,8 +259,8 @@ namespace Nebulator.App
 
             foreach (var ch in _channels)
             {
-                _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
-                _nppVals.SetValue(ch.ChannelName, "state", ch.State);
+                _nppVals.SetValue(ch.Channel.ChannelName, "volume", ch.Channel.Volume);
+                _nppVals.SetValue(ch.Channel.ChannelName, "state", ch.Channel.State);
             }
 
             _nppVals.Save();
@@ -298,15 +306,15 @@ namespace Nebulator.App
                 if (errorCount == 0 && _script is not null)
                 {
                     // Check for changes to channels.
-                    if (compiler.Channels.Count > 0)
+                    if (compiler.Channels_XXX.Count > 0)
                     {
                         // Update.
                         DestroyChannelControls();
-                        _channels = compiler.Channels;
+                        _channels = compiler.Channels_XXX;
                         CreateChannelControls();
                     }
 
-                    _script.Init(compiler.Channels);
+                    _script.Init(compiler.Channels_XXX);
 
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
@@ -408,78 +416,60 @@ namespace Nebulator.App
         /// Create all devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
-        bool CreateDevices()
+        bool CreateDevices() // TODOX detect failure to init.
         {
             bool ok = true;
 
-            if (UserSettings.TheSettings.MidiIn != "")
+            if (UserSettings.TheSettings.MidiIn1 != "")
             {
-                RegDevice(new MidiInput());
+                var ml = new MidiListener(UserSettings.TheSettings.MidiIn1);
+                ml.InputEvent += Device_InputEvent;
+                _inputDevices.Add(ml);
             }
 
-            if (UserSettings.TheSettings.MidiOut != "")
+            if (UserSettings.TheSettings.MidiIn2 != "")
             {
-                RegDevice(new MidiOutput());
+                var ml = new MidiListener(UserSettings.TheSettings.MidiIn1);
+                ml.InputEvent += Device_InputEvent;
+                _inputDevices.Add(ml);
             }
 
-            if (UserSettings.TheSettings.OscIn != "")
+            if (UserSettings.TheSettings.MidiOut1 != "")
             {
-                RegDevice(new OscInput());
+                var ml = new MidiSender(UserSettings.TheSettings.MidiOut1);
+                _outputDevices.Add(ml);
             }
 
-            if (UserSettings.TheSettings.OscOut != "")
+            if (UserSettings.TheSettings.MidiOut2 != "")
             {
-                RegDevice(new OscOutput());
-            }
-
-            // Local function.
-            void RegDevice(IDevice dt)
-            {
-                if (dt.Init())
-                {
-                    if (dt is IInputDevice)
-                    {
-                        IInputDevice? nin = dt as IInputDevice;
-                        nin!.DeviceInputEvent += Device_InputEvent;
-                        _inputDevices.Add(nin.DeviceType, nin);
-                    }
-                    else
-                    {
-                        IOutputDevice? nout = dt as IOutputDevice;
-                        _outputDevices.Add(nout!.DeviceType, nout);
-                    }
-                }
-                else
-                {
-                    _logger.Error($"Failed to init device:{dt.DeviceType}");
-                    ok = false;
-                }
+                var ml = new MidiSender(UserSettings.TheSettings.MidiOut2);
+                _outputDevices.Add(ml);
             }
 
             return ok;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        void DestroyDevices()
-        {
-            // Destroy devices.
-            _inputDevices.ForEach(i =>
-            {
-                i.Value.DeviceInputEvent -= Device_InputEvent;
-                i.Value.Stop();
-                i.Value.Dispose();
-            });
-            _inputDevices.Clear();
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //void DestroyDevices()
+        //{
+        //    // Destroy devices.
+        //    _inputDevices.ForEach(i =>
+        //    {
+        //        i.Value.DeviceInputEvent -= Device_InputEvent;
+        //        i.Value.Stop();
+        //        i.Value.Dispose();
+        //    });
+        //    _inputDevices.Clear();
 
-            _outputDevices.ForEach(o =>
-            {
-                o.Value.Stop();
-                o.Value.Dispose();
-            });
-            _outputDevices.Clear();
-        }
+        //    _outputDevices.ForEach(o =>
+        //    {
+        //        o.Value.Stop();
+        //        o.Value.Dispose();
+        //    });
+        //    _outputDevices.Clear();
+        //}
         #endregion
 
         #region Channel controls
@@ -495,31 +485,57 @@ namespace Nebulator.App
             int y = timeMaster.Bottom + CONTROL_SPACING;
 
             // Create new channel controls.
-            foreach (Channel t in _channels)
+            foreach (Channel_XXX t in _channels)
             {
-                if (_outputDevices.TryGetValue(t.DeviceType, out IOutputDevice? dev))
+                // Locate the device for this channel.
+                var od = _outputDevices.Where(d => d.DeviceName == t.DeviceName);
+                if(od.Any())
                 {
-                    t.Device = dev;
-                    t.Volume = _nppVals.GetDouble(t.ChannelName, "volume", Channel.DEF_VOL);
-                    t.State = (ChannelState)_nppVals.GetInteger(t.ChannelName, "state", (int)ChannelState.Normal);
+                    t.Device = od.First();
+                    t.Channel.Volume = _nppVals.GetDouble(t.Channel.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
+                    t.Channel.State = (ChannelState)_nppVals.GetInteger(t.Channel.ChannelName, "state", (int)ChannelState.Normal);
 
-                    ChannelControl tctl = new()
+                    Nebulator.UI.ChannelControl tctl = new()
                     {
                         Location = new Point(x, y),
-                        BoundChannel = t,
+ //                       BoundChannel = t,
                         BorderStyle = BorderStyle.FixedSingle
                     };
                     Controls.Add(tctl);
 
                     x += tctl.Width + CONTROL_SPACING;
                 }
-
-                if (dev is null)
+                else
                 {
-                    _logger.Error($"Invalid device: {t.DeviceType} for channel: {t.ChannelName}");
+                    _logger.Error($"Invalid device: {t.DeviceName} for channel: {t.Channel.ChannelName}");
                     ok = false;
                     break;
                 }
+
+                //// Locate the device for this channel.
+                //if (_outputDevices.TryGetValue(t.DeviceType, out MidiSender? dev))
+                //{
+                //    t.Device = dev;
+                //    t.Channel.Volume = _nppVals.GetDouble(t.Channel.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
+                //    t.Channel.State = (ChannelState)_nppVals.GetInteger(t.Channel.ChannelName, "state", (int)ChannelState.Normal);
+
+                //    Nebulator.UI.ChannelControl tctl = new()
+                //    {
+                //        Location = new Point(x, y),
+                //        BoundChannel = t,
+                //        BorderStyle = BorderStyle.FixedSingle
+                //    };
+                //    Controls.Add(tctl);
+
+                //    x += tctl.Width + CONTROL_SPACING;
+                //}
+
+                //if (dev is null)
+                //{
+                //    _logger.Error($"Invalid device: {t.DeviceType} for channel: {t.Channel.ChannelName}");
+                //    ok = false;
+                //    break;
+                //}
             }
 
             return ok;
@@ -530,7 +546,7 @@ namespace Nebulator.App
         /// </summary>
         void DestroyChannelControls()
         {
-            List<Control> toRemove = new(Controls.OfType<ChannelControl>());
+            List<Control> toRemove = new(Controls.OfType<UI.ChannelControl>());
             toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
         }
         #endregion
@@ -585,8 +601,8 @@ namespace Nebulator.App
                 //}
 
                 // Process any sequence steps.
-                bool anySolo = _channels.Where(t => t.State == ChannelState.Solo).Any();
-                bool anyMute = _channels.Where(t => t.State == ChannelState.Mute).Any();
+                bool anySolo = _channels.Where(t => t.Channel.State == ChannelState.Solo).Any();
+                bool anyMute = _channels.Where(t => t.Channel.State == ChannelState.Mute).Any();
                 lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
@@ -594,10 +610,10 @@ namespace Nebulator.App
 
                 foreach (var step in steps)
                 {
-                    Channel channel = _channels.Where(t => t.ChannelNumber == step.ChannelNumber).First();
+                    Channel_XXX channel = _channels.Where(t => t.Channel.ChannelNumber == step.ChannelNumber).First();
 
                     // Is it ok to play now?
-                    bool play = channel is not null && (channel.State == ChannelState.Solo || (channel.State == ChannelState.Normal && !anySolo));
+                    bool play = channel is not null && (channel.Channel.State == ChannelState.Solo || (channel.Channel.State == ChannelState.Normal && !anySolo));
 
                     if (play)
                     {
@@ -616,15 +632,15 @@ namespace Nebulator.App
                                 break;
 
                             default:
-                                if (step.Device is IOutputDevice dev)
-                                {
-                                    // Maybe tweak values.
-                                    if (step is StepNoteOn on && channel is not null)
-                                    {
-                                        on.Adjust(sldVolume.Value, channel.Volume);
-                                    }
-                                    dev.Send(step);
-                                }
+                                // TODOX if (step.Device is IOutputDevice dev)
+                                //{
+                                //    // Maybe tweak values.
+                                //    if (step is StepNoteOn on && channel is not null)
+                                //    {
+                                //        on.Adjust(sldVolume.Value, channel.Channel.Volume);
+                                //    }
+                                //    dev.Send(step);
+                                //}
                                 break;
                         }
                     }
@@ -651,36 +667,44 @@ namespace Nebulator.App
             // Process whatever the script did.
             ProcessRuntime();
 
-            // Process any lingering noteoffs etc.
-            _outputDevices.ForEach(o => o.Value?.Housekeep());
-            _inputDevices.ForEach(i => i.Value?.Housekeep());
+            //// Process any lingering noteoffs etc. TODOX
+            _outputDevices.ForEach(o => o.Housekeep());
         }
 
         /// <summary>
         /// Process input event.
         /// </summary>
-        void Device_InputEvent(object? sender, DeviceInputEventArgs e)
+        void Device_InputEvent(object? sender, InputEventArgs e)
         {
             this.InvokeIfRequired(_ =>
             {
                if (_script is not null && sender is not null)
                {
-                   var dev = (IInputDevice)sender;
+                    var dev = (IMidiInputDevice)sender;
 
-                   switch (e.Step)
-                   {
-                       case StepNoteOn ston:
-                           _script.InputNote(dev.DeviceType, ston.ChannelNumber, ston.NoteNumber);
-                           break;
+                    // TODOX ?use IEnumerable<EventDesc> descs = (e.Note, e.Velocity, e.ControllerId) switch
+                    //{
+                    //    (>= 0, _, _) => AllEvents.AsEnumerable(),
+                    //    (0, > 0) => AllEvents.Where(e => channels.Contains(e.ChannelNumber)),
+                    //    ( > 0, 0) => AllEvents.Where(e => patternName == e.PatternName),
+                    //    ( > 0, > 0) => AllEvents.Where(e => patternName == e.PatternName && channels.Contains(e.ChannelNumber))
+                    //};
 
-                       case StepNoteOff stoff:
-                           _script.InputNote(dev.DeviceType, stoff.ChannelNumber, -stoff.NoteNumber);
-                           break;
-
-                       case StepControllerChange stctl:
-                            _script.InputControl(dev.DeviceType, stctl.ChannelNumber, stctl.ControllerId, stctl.Value);
-                           break;
-                   }
+                    if (e.Note != -1)
+                    {
+                        if (e.Value != -1)
+                        {
+                            _script.InputNote(dev.DeviceName, e.Channel, e.Note);
+                        }
+                        else
+                        {
+                            _script.InputNote(dev.DeviceName, e.Channel, -e.Note);
+                        }
+                    }
+                    else if (e.Controller != -1)
+                    {
+                        _script.InputControl(dev.DeviceName, e.Channel, e.Controller, e.Value);
+                    }
                }
            });
         }
@@ -838,7 +862,7 @@ namespace Nebulator.App
                         // Get the persisted properties.
                         _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         sldSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                        sldVolume.Value = _nppVals.GetDouble("master", "volume", Channel.DEF_VOL);
+                        sldVolume.Value = _nppVals.GetDouble("master", "volume", InternalDefs.VOLUME_DEFAULT);
 
                         SetCompileStatus(true);
                         AddToRecentDefs(fn);
@@ -1076,7 +1100,7 @@ namespace Nebulator.App
             // Always do this.
             timeMaster.CurrentTime = _stepTime;
 
-            _outputDevices.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
+//            _outputDevices.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }
@@ -1106,11 +1130,12 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTime mt = new()
-            {
-                InternalPpq = Time.SubdivsPerBeat,
-                Tempo = sldSpeed.Value
-            };
+            MidiTimeConverter mt = new(Time.SubdivsPerBeat, sldSpeed.Value);
+            //MidiTime mt = new()
+            //{
+            //    InternalPpq = Time.SubdivsPerBeat,
+            //    Tempo = sldSpeed.Value
+            //};
 
             var per = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer(per, MmTimerCallback);
@@ -1155,8 +1180,8 @@ namespace Nebulator.App
                 if (ok)
                 {
                     Dictionary<int, string> channels = new();
-                    _channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
-                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
+                    _channels.ForEach(t => channels.Add(t.Channel.ChannelNumber, t.Channel.ChannelName));
+//TODOX                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
                 }
             }
         }
@@ -1166,7 +1191,7 @@ namespace Nebulator.App
         /// </summary>
         void Kill()
         {
-            _outputDevices.ForEach(o => o.Value?.Kill());
+            _outputDevices.ForEach(o => o.KillAll());
         }
         #endregion
     }

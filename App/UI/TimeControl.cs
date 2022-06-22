@@ -19,6 +19,10 @@ namespace Nebulator.UI
         readonly Font _fontSmall = new("Consolas", 14, FontStyle.Regular, GraphicsUnit.Point, 0);
         #endregion
 
+        /// <summary>General UI.</summary>
+        const int BORDER_WIDTH = 1;
+
+
         #region Properties
         /// <summary>
         /// Current value. Copy in and out to avoid holding a reference to the global time.
@@ -99,7 +103,7 @@ namespace Nebulator.UI
             //Pen pen = new Pen(ControlColor);
 
             // Draw border.
-            Pen penBorder = new(Color.Black, Definitions.BORDER_WIDTH);
+            Pen penBorder = new(Color.Black, BORDER_WIDTH);
             pe.Graphics.DrawRectangle(penBorder,
                 0,
                 0,
@@ -112,10 +116,10 @@ namespace Nebulator.UI
             if(ShowProgress && MaxBeat != 0 && _current.Beat < _maxBeat)
             {
                 pe.Graphics.FillRectangle(brush,
-                    Definitions.BORDER_WIDTH,
-                    Definitions.BORDER_WIDTH,
-                    (Width - 2 * Definitions.BORDER_WIDTH) * _current.Beat / _maxBeat,
-                    Height - 2 * Definitions.BORDER_WIDTH);
+                    BORDER_WIDTH,
+                    BORDER_WIDTH,
+                    (Width - 2 * BORDER_WIDTH) * _current.Beat / _maxBeat,
+                    Height - 2 * BORDER_WIDTH);
             }
 
             // Text.

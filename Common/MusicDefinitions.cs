@@ -9,50 +9,6 @@ using System.Diagnostics;
 
 namespace Nebulator.Common
 {
-    /// <summary>The patch types. Numerical value is the midi number. Also includes GM drum kit defs for convenience.</summary>
-    public enum InstrumentDef
-    {
-        AcousticGrandPiano = 0, BrightAcousticPiano, ElectricGrandPiano, HonkyTonkPiano, ElectricPiano1, ElectricPiano2, Harpsichord,
-        Clavinet, Celesta, Glockenspiel, MusicBox, Vibraphone, Marimba, Xylophone, TubularBells, Dulcimer, DrawbarOrgan,
-        PercussiveOrgan, RockOrgan, ChurchOrgan, ReedOrgan, Accordion, Harmonica, TangoAccordion, AcousticGuitarNylon,
-        AcousticGuitarSteel, ElectricGuitarJazz, ElectricGuitarClean, ElectricGuitarMuted, OverdrivenGuitar, DistortionGuitar,
-        GuitarHarmonics, AcousticBass, ElectricBassFinger, ElectricBassPick, FretlessBass, SlapBass1, SlapBass2, SynthBass1,
-        SynthBass2, Violin, Viola, Cello, Contrabass, TremoloStrings, PizzicatoStrings, OrchestralHarp, Timpani,
-        StringEnsemble1, StringEnsemble2, SynthStrings1, SynthStrings2, ChoirAahs, VoiceOohs, SynthVoice, OrchestraHit,
-        Trumpet, Trombone, Tuba, MutedTrumpet, FrenchHorn, BrassSection, SynthBrass1, SynthBrass2, SopranoSax, AltoSax,
-        TenorSax, BaritoneSax, Oboe, EnglishHorn, Bassoon, Clarinet, Piccolo, Flute, Recorder, PanFlute, BlownBottle,
-        Shakuhachi, Whistle, Ocarina, Lead1Square, Lead2Sawtooth, Lead3Calliope, Lead4Chiff, Lead5Charang, Lead6Voice,
-        Lead7Fifths, Lead8BassAndLead, Pad1NewAge, Pad2Warm, Pad3Polysynth, Pad4Choir, Pad5Bowed, Pad6Metallic, Pad7Halo,
-        Pad8Sweep, Fx1Rain, Fx2Soundtrack, Fx3Crystal, Fx4Atmosphere, Fx5Brightness, Fx6Goblins, Fx7Echoes, Fx8SciFi,
-        Sitar, Banjo, Shamisen, Koto, Kalimba, BagPipe, Fiddle, Shanai, TinkleBell, Agogo, SteelDrums, Woodblock,
-        TaikoDrum, MelodicTom, SynthDrum, ReverseCymbal, GuitarFretNoise, BreathNoise, Seashore, BirdTweet, TelephoneRing,
-        Helicopter, Applause, Gunshot,
-        // GM Drum Kits
-        Standard = 0, Room = 8, Power = 16, Electronic = 24, TR808 = 25, Jazz = 32, Brush = 40, Orchestra = 48, SFX = 56
-    };
-
-    /// <summary>Supported drum names.</summary>
-    public enum DrumDef
-    {
-        AcousticBassDrum = 35, BassDrum1 = 36, SideStick = 37, AcousticSnare = 38, HandClap = 39, ElectricSnare = 40, LowFloorTom = 41,
-        ClosedHiHat = 42, HighFloorTom = 43, PedalHiHat = 44, LowTom = 45, OpenHiHat = 46, LowMidTom = 47, HiMidTom = 48, CrashCymbal1 = 49,
-        HighTom = 50, RideCymbal1 = 51, ChineseCymbal = 52, RideBell = 53, Tambourine = 54, SplashCymbal = 55, Cowbell = 56, CrashCymbal2 = 57,
-        Vibraslap = 58, RideCymbal2 = 59, HiBongo = 60, LowBongo = 61, MuteHiConga = 62, OpenHiConga = 63, LowConga = 64, HighTimbale = 65,
-        LowTimbale = 66, HighAgogo = 67, LowAgogo = 68, Cabasa = 69, Maracas = 70, ShortWhistle = 71, LongWhistle = 72, ShortGuiro = 73,
-        LongGuiro = 74, Claves = 75, HiWoodBlock = 76, LowWoodBlock = 77, MuteCuica = 78, OpenCuica = 79, MuteTriangle = 80, OpenTriangle = 81
-    }
-
-    /// <summary>Supported controllers.</summary>
-    public enum ControllerDef
-    {
-        BankSelect = 0, Modulation = 1, BreathController = 2, FootController = 4, PortamentoTime = 5, Volume = 7, Balance = 8, Pan = 10,
-        Expression = 11, BankSelectLSB = 32, ModulationLSB = 33, BreathControllerLSB = 34, FootControllerLSB = 36, PortamentoTimeLSB = 37,
-        VolumeLSB = 39, BalanceLSB = 40, PanLSB = 42, ExpressionLSB = 43, Sustain = 64, Portamento = 65, Sostenuto = 66, SoftPedal = 67,
-        Legato = 68, Sustain2 = 69, PortamentoControl = 84, AllSoundOff = 120, ResetAllControllers = 121, LocalKeyboard = 122, AllNotesOff = 123,
-        // Specials for internal use.
-        NoteControl = 250, PitchControl = 251, None = 252
-    }
-
     /// <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
     public static class MusicDefinitions
     {

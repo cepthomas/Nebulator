@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NBagOfTricks;
+using MidiLib;
 using Nebulator.Common;
 
 
@@ -38,10 +39,10 @@ namespace Nebulator.Script
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputNote(DeviceType dev, int channel, double note) { }
+        public virtual void InputNote(string dev, int channel, double note) { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputControl(DeviceType dev, int channel, ControllerDef ctlid, double value) { }
+        public virtual void InputControl(string dev, int channel, int ctlid, double value) { } //string ctlid
         #endregion
 
         #region Script callable functions - composition
@@ -101,7 +102,7 @@ namespace Nebulator.Script
 
             if(channel is not null)
             {
-                double vel = channel.NextVol(vol);
+                double vel = channel.Channel.NextVol(vol);
                 double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
 
                 // If vol is positive and the note is not negative, it's note on, else note off.
@@ -109,27 +110,27 @@ namespace Nebulator.Script
                 {
                     StepNoteOn step = new()
                     {
-                        Device = channel.Device,
-                        ChannelNumber = channel.ChannelNumber,
+                        //Device = channel.Device,
+                        ChannelNumber = channel.Channel.ChannelNumber,
                         NoteNumber = absnote,
                         Velocity = vel,
                         VelocityToPlay = vel,
                         Duration = dur
                     };
 
-                    step.Adjust(MasterVolume, channel.Volume);
-                    channel.Device?.Send(step);
+                    step.Adjust(MasterVolume, channel.Channel.Volume);
+                    channel.Device?.SendEvent(step);
                 }
                 else
                 {
                     StepNoteOff step = new()
                     {
-                        Device = channel.Device,
-                        ChannelNumber = channel.ChannelNumber,
+                        //Device = channel.Device,
+                        ChannelNumber = channel.Channel.ChannelNumber,
                         NoteNumber = absnote
                     };
 
-                    channel.Device?.Send(step);
+                    channel.Device?.SendEvent(step);
                 }
             }
         }
@@ -186,39 +187,39 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="ctlid">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string chanName, ControllerDef ctlid, double val)
+        protected void SendController(string chanName, int ctlid, double val)
         {
             var channel = GetChannel(chanName);
             if (channel is not null)
             {
                 StepControllerChange step = new()
                 {
-                    Device = channel.Device,
-                    ChannelNumber = channel.ChannelNumber,
+                    //Device = channel.Device,
+                    ChannelNumber = channel.Channel.ChannelNumber,
                     ControllerId = ctlid,
                     Value = val
                 };
 
-                channel.Device?.Send(step);
+                channel.Device?.SendEvent(step);
             }
         }
 
         /// <summary>Send a midi patch immediately.</summary>
         /// <param name="chanName"></param>
         /// <param name="patch"></param>
-        protected void SendPatch(string chanName, InstrumentDef patch)
+        protected void SendPatch(string chanName, int patch)
         {
             var channel = GetChannel(chanName);
             if (channel is not null)
             {
                 StepPatch step = new()
                 {
-                    Device = channel.Device,
-                    ChannelNumber = channel.ChannelNumber,
+                    //Device = channel.Device,
+                    ChannelNumber = channel.Channel.ChannelNumber,
                     Patch = patch
                 };
 
-                channel.Device?.Send(step);
+                channel.Device?.SendEvent(step);
             }
         }
 
