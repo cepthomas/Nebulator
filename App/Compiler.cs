@@ -18,7 +18,7 @@ namespace Nebulator.App
     {
         #region Properties
         /// <summary>Channel info collected from the script.</summary>
-        public List<Channel_XXX> Channels_XXX { get; set; } = new();
+        public List<Channel> Channels { get; set; } = new();
         #endregion
 
         #region Fields
@@ -35,7 +35,7 @@ namespace Nebulator.App
         /// <inheritdoc />
         public override void PreExecute()
         {
-            Channels_XXX.Clear();
+            Channels.Clear();
 
             LocalDlls = new()
             {
@@ -69,18 +69,13 @@ namespace Nebulator.App
                         Channel ch = new()
                         {
                             ChannelName = parts[1].Replace("\"", ""),
+                            DeviceName = parts[2],
                             ChannelNumber = int.Parse(parts[3]),
                             Patch = MidiDefs.GetInstrumentNumber(parts[4]),
                             //VolumeWobbleRange = double.Parse(parts[5])
                         };
 
-                        Channel_XXX ch_XXX = new()
-                        {
-                            DeviceName = parts[2],
-                            Channel = ch
-                        };
-
-                        Channels_XXX.Add(ch_XXX);
+                        Channels.Add(ch);
                     }
                     catch (Exception)
                     {

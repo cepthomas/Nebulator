@@ -40,7 +40,7 @@ namespace Nebulator.App
         ScriptBase? _script = new();
 
         /// <summary>The current channels.</summary>
-        List<Channel_XXX> _channels = new();
+        List<Channel> _channels = new();
 
         /// <summary>Persisted internal values for current script file.</summary>
         Bag _nppVals = new();
@@ -255,8 +255,8 @@ namespace Nebulator.App
 
             foreach (var ch in _channels)
             {
-                _nppVals.SetValue(ch.Channel.ChannelName, "volume", ch.Channel.Volume);
-                _nppVals.SetValue(ch.Channel.ChannelName, "state", ch.Channel.State);
+                _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
+                _nppVals.SetValue(ch.ChannelName, "state", ch.State);
             }
 
             _nppVals.Save();
@@ -302,15 +302,15 @@ namespace Nebulator.App
                 if (errorCount == 0 && _script is not null)
                 {
                     // Check for changes to channels.
-                    if (compiler.Channels_XXX.Count > 0)
+                    if (compiler.Channels.Count > 0)
                     {
                         // Update.
                         DestroyChannelControls();
-                        _channels = compiler.Channels_XXX;
+                        _channels = compiler.Channels;
                         CreateChannelControls();
                     }
 
-                    _script.Init(compiler.Channels_XXX);
+                    _script.Init(compiler.Channels);
 
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
@@ -481,20 +481,20 @@ namespace Nebulator.App
             int y = timeMaster.Bottom + CONTROL_SPACING;
 
             // Create new channel controls.
-            foreach (Channel_XXX t in _channels)
+            foreach (Channel ch in _channels)
             {
-                // Locate the device for this channel.
-                var od = _outputDevices.Where(d => d.DeviceName == t.DeviceName);
+                // Locate the output device for this channel.
+                var od = _outputDevices.Where(d => d.DeviceName == ch.DeviceName);
                 if(od.Any())
                 {
-                    t.Device = od.First();
-                    t.Channel.Volume = _nppVals.GetDouble(t.Channel.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
-                    t.Channel.State = (ChannelState)_nppVals.GetInteger(t.Channel.ChannelName, "state", (int)ChannelState.Normal);
+                    ch.Device = od.First();
+                    ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
+                    ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
 
-                    Nebulator.UI.ChannelControl tctl = new()
+                    UI.ChannelControl tctl = new()
                     {
                         Location = new Point(x, y),
- //                       BoundChannel = t,
+//                        BoundChannel = t,
                         BorderStyle = BorderStyle.FixedSingle
                     };
                     Controls.Add(tctl);
@@ -503,7 +503,7 @@ namespace Nebulator.App
                 }
                 else
                 {
-                    _logger.Error($"Invalid device: {t.DeviceName} for channel: {t.Channel.ChannelName}");
+                    _logger.Error($"Invalid device: {ch.DeviceName} for channel: {ch.ChannelName}");
                     ok = false;
                     break;
                 }
@@ -597,8 +597,8 @@ namespace Nebulator.App
                 //}
 
                 // Process any sequence steps.
-                bool anySolo = _channels.Where(t => t.Channel.State == ChannelState.Solo).Any();
-                bool anyMute = _channels.Where(t => t.Channel.State == ChannelState.Mute).Any();
+                bool anySolo = _channels.Where(t => t.State == ChannelState.Solo).Any();
+                bool anyMute = _channels.Where(t => t.State == ChannelState.Mute).Any();
                 lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
@@ -606,10 +606,10 @@ namespace Nebulator.App
 
                 foreach (var evt in events)
                 {
-                    Channel_XXX channel = _channels.Where(t => t.Channel.ChannelNumber == evt.ChannelNumber).First();
+                    Channel ch = _channels.Where(t => t.ChannelNumber == evt.ChannelNumber).First();
 
                     // Is it ok to play now?
-                    bool play = channel is not null && (channel.Channel.State == ChannelState.Solo || (channel.Channel.State == ChannelState.Normal && !anySolo));
+                    bool play = ch is not null && (ch.State == ChannelState.Solo || (ch.State == ChannelState.Normal && !anySolo));
 
                     if (play)
                     {
@@ -628,8 +628,7 @@ namespace Nebulator.App
                                 break;
 
                             default:
-                                // TODO1 if (step.Device is IOutputDevice dev)
-                                dev.Send(evt);
+                                ch.Device.Send(evt);
                                 break;
                         }
                     }
@@ -1166,7 +1165,7 @@ namespace Nebulator.App
                 if (ok)
                 {
                     Dictionary<int, string> channels = new();
-                    _channels.ForEach(t => channels.Add(t.Channel.ChannelNumber, t.Channel.ChannelName));
+                    _channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
 //TODO2                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
                 }
             }

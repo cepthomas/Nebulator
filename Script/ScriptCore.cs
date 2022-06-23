@@ -13,17 +13,17 @@ using NBagOfTricks;
 namespace Nebulator.Script
 {
     
-    public class Channel_XXX // TODO0 home for this
-    {
-        /// <summary>The associated midi channel object.</summary>
-        public Channel Channel { get; set; }
+    //public class Channel_XXX // TODO0 home for this
+    //{
+    //    /// <summary>The associated midi channel object.</summary>
+    //    public Channel Channel { get; set; }
 
-        ///// <summary>The device used by this channel.  Used to find and bind the device at runtime.</summary>
-        public string DeviceName { get; set; }
+    //    ///// <summary>The device used by this channel.  Used to find and bind the device at runtime.</summary>
+    //    public string DeviceName { get; set; }
 
-        /// <summary>The associated device object.</summary>
-        public IMidiOutputDevice? Device { get; set; } = null;
-    }
+    //    /// <summary>The associated device object.</summary>
+    //    public IMidiOutputDevice? Device { get; set; } = null;
+    //}
 
 
 
@@ -51,7 +51,7 @@ namespace Nebulator.Script
         internal PatternInfo _transientEvents = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel_XXX> _channelMap_XXX = new(); //TODO0 redo this
+        readonly Dictionary<string, Channel> _channelMap = new(); //TODO0 redo this
 
 
         #endregion
@@ -61,14 +61,14 @@ namespace Nebulator.Script
         /// Set up runtime stuff.
         /// </summary>
         /// <param name="channels">All output channels.</param>
-        public void Init(List<Channel_XXX> channels)
+        public void Init(List<Channel> channels)
         {
-            _channelMap_XXX.Clear();
+            _channelMap.Clear();
             channels.ForEach(ch =>
             {
-                _channelMap_XXX[ch.Channel.ChannelName] = ch;
+                _channelMap[ch.ChannelName] = ch;
                 // Good time to send initial patches.
-                SendPatch(ch.Channel.ChannelName, ch.Channel.Patch);
+                SendPatch(ch.ChannelName, ch.Patch);
             });
         }
         #endregion
@@ -193,7 +193,7 @@ namespace Nebulator.Script
                     // Is it a function?
                     if (seqel.ScriptFunction is not null)
                     {
-                        FunctionMidiEvent evt = new(startNoteTime.TotalSubdivs, channel.Channel.ChannelNumber, seqel.ScriptFunction);
+                        FunctionMidiEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, seqel.ScriptFunction);
                         events.Add(new(evt));
                     }
                     else // plain ordinary
@@ -202,11 +202,11 @@ namespace Nebulator.Script
                         foreach (int noteNum in seqel.Notes)
                         {
                             ///// Note on.
-                            double vel = channel.Channel.NextVol(seqel.Volume) * MasterVolume;
+                            double vel = channel.NextVol(seqel.Volume) * MasterVolume;
                             int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                             velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                            NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.Channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
+                            NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
                             events.Add(new(evt));
                         }
                     }
@@ -236,9 +236,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="chanName"></param>
         /// <returns></returns>
-        Channel_XXX GetChannel(string chanName)
+        Channel GetChannel(string chanName)
         {
-            if (!_channelMap_XXX.TryGetValue(chanName, out var channel))
+            if (!_channelMap.TryGetValue(chanName, out var channel))
             {
                 throw new ArgumentException($"Invalid Channel Name: {chanName}");
             }

@@ -108,11 +108,11 @@ namespace Nebulator.Script
                 // If vol is positive and the note is not negative, it's note on, else note off.
                 if (vol > 0 && notenum > 0)
                 {
-                    double vel = channel.Channel.NextVol(vol) * MasterVolume;
+                    double vel = channel.NextVol(vol) * MasterVolume;
                     int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                     velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                    NoteOnEvent evt = new(0, channel.Channel.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
+                    NoteOnEvent evt = new(0, channel.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
 
                     //if (dur.TotalSubdivs > 0) // specific duration TODO2 needed?
                     //{
@@ -142,7 +142,7 @@ namespace Nebulator.Script
                 }
                 else
                 {
-                    NoteEvent evt = new(0, channel.Channel.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
+                    NoteEvent evt = new(0, channel.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
                     channel.Device?.SendEvent(evt);
                 }
             }
@@ -205,7 +205,7 @@ namespace Nebulator.Script
             var channel = GetChannel(chanName);
             if (channel is not null)
             {
-                ControlChangeEvent evt = new(0, channel.Channel.ChannelNumber, (MidiController)ctlid, val);
+                ControlChangeEvent evt = new(0, channel.ChannelNumber, (MidiController)ctlid, val);
                 channel.Device?.SendEvent(evt);
             }
         }
@@ -218,7 +218,7 @@ namespace Nebulator.Script
             var channel = GetChannel(chanName);
             if (channel is not null)
             {
-                PatchChangeEvent evt = new(0, channel.Channel.ChannelNumber, patch);
+                PatchChangeEvent evt = new(0, channel.ChannelNumber, patch);
                 channel.Device?.SendEvent(evt);
             }
         }
