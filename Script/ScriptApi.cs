@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NBagOfTricks;
 using MidiLib;
 using Nebulator.Common;
+using NAudio.Midi;
 
 
 // Nebulator script API stuff.
@@ -90,47 +91,59 @@ namespace Nebulator.Script
         }
         #endregion
 
-        #region Script callable functions - send
-        /// <summary>Send a note immediately. Lowest level sender. Adds a note off to play after dur time.</summary>
+        #region Script callable functions - send immediately
+        /// <summary>Send a note immediately. Lowest level sender.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(string chanName, double notenum, double vol, Time dur)
+        protected void SendNote(string chanName, int notenum, double vol, Time dur)
         {
             var channel = GetChannel(chanName);
 
-            if(channel is not null)
-            {
-                double vel = channel.Channel.NextVol(vol);
-                double absnote = MathUtils.Constrain(Math.Abs(notenum), 0, 127);
+            int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
+            if (channel is not null)
+            {
                 // If vol is positive and the note is not negative, it's note on, else note off.
                 if (vol > 0 && notenum > 0)
                 {
-                    StepNoteOn step = new()
-                    {
-                        //Device = channel.Device,
-                        ChannelNumber = channel.Channel.ChannelNumber,
-                        NoteNumber = absnote,
-                        Velocity = vel,
-                        VelocityToPlay = vel,
-                        Duration = dur
-                    };
+                    double vel = channel.Channel.NextVol(vol) * MasterVolume;
+                    int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
+                    velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                    step.Adjust(MasterVolume, channel.Channel.Volume);
-                    channel.Device?.SendEvent(step);
+                    NoteOnEvent evt = new(0, channel.Channel.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
+
+                    //if (dur.TotalSubdivs > 0) // specific duration TODOX needed?
+                    //{
+                    //    // Remove any lingering note offs and add a fresh one.
+                    //    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
+
+                    //    _stops.Add(new()
+                    //    {
+                    //        Device = stt.Device,
+                    //        ChannelNumber = stt.ChannelNumber,
+                    //        NoteNumber = MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
+                    //        Expiry = stt.Duration.TotalSubdivs
+                    //    });
+                    //}
+                    ///// <summary>Notes to stop later.</summary>
+                    //readonly List<StepNoteOff_XXX> _stops = new();
+                    // public void Housekeep()
+                    // {
+                    //     // Send any stops due.
+                    //     _stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
+
+                    //     // Reset.
+                    //     _stops.RemoveAll(s => s.Expiry < 0);
+                    // }
+
+                    channel.Device?.SendEvent(evt);
                 }
                 else
                 {
-                    StepNoteOff step = new()
-                    {
-                        //Device = channel.Device,
-                        ChannelNumber = channel.Channel.ChannelNumber,
-                        NoteNumber = absnote
-                    };
-
-                    channel.Device?.SendEvent(step);
+                    NoteEvent evt = new(0, channel.Channel.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
+                    channel.Device?.SendEvent(evt);
                 }
             }
         }
@@ -146,12 +159,12 @@ namespace Nebulator.Script
             note.Notes.ForEach(n => SendNote(chanName, n, vol, dur));
         }
 
-        /// <summary>Send a note immediately. Lowest level sender. Adds a note off to play after dur time.</summary>
+        /// <summary>Send a note immediately.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(string chanName, double notenum, double vol, double dur = 0.0)
+        protected void SendNote(string chanName, int notenum, double vol, double dur = 0.0)
         {
             SendNote(chanName, notenum, vol, new Time(dur));
         }
@@ -170,7 +183,7 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
-        protected void SendNoteOn(string chanName, double notenum, double vol)
+        protected void SendNoteOn(string chanName, int notenum, double vol)
         {
             SendNote(chanName, notenum, vol);
         }
@@ -178,7 +191,7 @@ namespace Nebulator.Script
         /// <summary>Send a note off immediately.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
-        protected void SendNoteOff(string chanName, double notenum)
+        protected void SendNoteOff(string chanName, int notenum)
         {
             SendNote(chanName, notenum, 0);
         }
@@ -187,20 +200,13 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="ctlid">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string chanName, int ctlid, double val)
+        protected void SendController(string chanName, int ctlid, int val)
         {
             var channel = GetChannel(chanName);
             if (channel is not null)
             {
-                StepControllerChange step = new()
-                {
-                    //Device = channel.Device,
-                    ChannelNumber = channel.Channel.ChannelNumber,
-                    ControllerId = ctlid,
-                    Value = val
-                };
-
-                channel.Device?.SendEvent(step);
+                ControlChangeEvent evt = new(0, channel.Channel.ChannelNumber, (MidiController)ctlid, val);
+                channel.Device?.SendEvent(evt);
             }
         }
 
@@ -212,31 +218,25 @@ namespace Nebulator.Script
             var channel = GetChannel(chanName);
             if (channel is not null)
             {
-                StepPatch step = new()
-                {
-                    //Device = channel.Device,
-                    ChannelNumber = channel.Channel.ChannelNumber,
-                    Patch = patch
-                };
-
-                channel.Device?.SendEvent(step);
+                PatchChangeEvent evt = new(0, channel.Channel.ChannelNumber, patch);
+                channel.Device?.SendEvent(evt);
             }
-        }
-
-        /// <summary>Send a named sequence at some point.</summary>
-        /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="seq">Which sequence to send.</param>
-        /// <param name="beat">When to send the sequence. Must be in the future.</param>
-        protected void SendSequence(string chanName, Sequence seq, int beat)
-        {
-            if (seq is null)
-            {
-                throw new Exception($"Invalid Sequence");
-            }
-
-            StepCollection scoll = ConvertToSteps(chanName, seq, beat);
-            _transientSteps.Add(scoll);
         }
         #endregion
+
+        ///// <summary>Send a named sequence at some point.</summary>
+        ///// <param name="chanName">Which channel to send it on.</param>
+        ///// <param name="seq">Which sequence to send.</param>
+        ///// <param name="beat">When to send the sequence. Must be in the future.</param>
+        //protected void SendSequence(string chanName, Sequence seq, int beat) //TODOX
+        //{
+        //    if (seq is null)
+        //    {
+        //        throw new Exception($"Invalid Sequence");
+        //    }
+
+        //    StepCollection scoll = ConvertToSteps(chanName, seq, beat);
+        //    _transientSteps.Add(scoll);
+        //}
     }
 }

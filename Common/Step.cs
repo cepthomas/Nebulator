@@ -10,7 +10,7 @@ namespace Nebulator.Common
     /// <summary>
     /// Base class for representation of a received event or a compiled event to be sent.
     /// </summary>
-    public abstract class Step
+    public abstract class Step_XXX
     {
         ///// <summary>Associated comm device to use.</summary>
         //public IDevice? Device { get; set; } = null;
@@ -28,7 +28,7 @@ namespace Nebulator.Common
     /// <summary>
     /// One note on.
     /// </summary>
-    public class StepNoteOn : Step
+    public class StepNoteOn_XXX : Step_XXX
     {
         /// <summary>The note to play.</summary>
         public double NoteNumber { get; set; }
@@ -48,11 +48,11 @@ namespace Nebulator.Common
         public void Adjust(double masterVolume, double channelVolume)
         {
             // Maybe alter note velocity.
-//            if (Device is IOutputDevice)
-            {
+            //if (Device is IOutputDevice)
+            //{
                 double vel = Velocity * channelVolume * masterVolume;
                 VelocityToPlay = MathUtils.Constrain(vel, 0, 1.0);
-            }
+            //}
         }
 
         /// <summary>For viewing pleasure.</summary>
@@ -65,7 +65,7 @@ namespace Nebulator.Common
     /// <summary>
     /// One note off.
     /// </summary>
-    public class StepNoteOff : Step
+    public class StepNoteOff_XXX : Step_XXX
     {
         /// <summary>The note to stop.</summary>
         public double NoteNumber { get; set; }
@@ -89,7 +89,7 @@ namespace Nebulator.Common
     ///   - pitch (rather than have a separate type)
     ///   - notes that can be used as controller inputs
     /// </summary>
-    public class StepControllerChange : Step
+    public class StepControllerChange_XXX : Step_XXX
     {
         /// <summary>Specific controller. See also specials in ControllerType.</summary>
         public int ControllerId { get; set; } = -1;
@@ -120,7 +120,7 @@ namespace Nebulator.Common
     }
 
     /// <summary>Used for patches.</summary>
-    public class StepPatch : Step
+    public class StepPatch_XXX : Step_XXX
     {
         /// <summary>Specific patch.</summary>
         public int Patch { get; set; } = -1;
@@ -133,7 +133,7 @@ namespace Nebulator.Common
     }
 
     /// <summary>Step that calls a function.</summary>
-    public class StepFunction : Step
+    public class StepFunction_XXX : Step_XXX
     {
         /// <summary>A function to call.</summary>
         public Action? ScriptFunction { get; set; }

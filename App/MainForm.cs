@@ -34,7 +34,7 @@ namespace Nebulator.App
         readonly MmTimerEx _mmTimer = new();
 
         /// <summary>Current np file name.</summary>
-        string _scriptFileName = Definitions.UNKNOWN_STRING;
+        string _scriptFileName = "";
 
         /// <summary>The current script.</summary>
         ScriptBase? _script = new();
@@ -275,7 +275,7 @@ namespace Nebulator.App
         {
             bool ok = true;
 
-            if (_scriptFileName == Definitions.UNKNOWN_STRING)
+            if (_scriptFileName == "")
             {
                 _logger.Warn("No script file loaded.");
                 ok = false;
@@ -606,24 +606,24 @@ namespace Nebulator.App
                 lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
-                var steps = _script.GetSteps(_stepTime);
+                var events = _script.GetEvents(_stepTime);
 
-                foreach (var step in steps)
+                foreach (var evt in events)
                 {
-                    Channel_XXX channel = _channels.Where(t => t.Channel.ChannelNumber == step.ChannelNumber).First();
+                    Channel_XXX channel = _channels.Where(t => t.Channel.ChannelNumber == evt.ChannelNumber).First();
 
                     // Is it ok to play now?
                     bool play = channel is not null && (channel.Channel.State == ChannelState.Solo || (channel.Channel.State == ChannelState.Normal && !anySolo));
 
                     if (play)
                     {
-                        switch (step)
+                        switch (evt.MidiEvent)
                         {
-                            case StepFunction sf:
+                            case FunctionMidiEvent fe:
                                 // Need exception handling here to protect from user script errors.
                                 try
                                 {
-                                    sf.ScriptFunction?.Invoke();
+                                    fe.ScriptFunction?.Invoke();
                                 }
                                 catch (Exception ex)
                                 {

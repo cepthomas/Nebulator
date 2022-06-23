@@ -23,7 +23,7 @@ namespace Nebulator.App
 
         #region Fields
         /// <summary>Main source file name.</summary>
-        readonly string _nebfn = Definitions.UNKNOWN_STRING;
+        readonly string _nebfn = "";
 
         /// <summary>Code lines that define channels.</summary>
         readonly List<string> _channelDescriptors = new();

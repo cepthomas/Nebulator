@@ -15,7 +15,7 @@ namespace Nebulator.Common
     {
         /// <summary>The file name.</summary> 
         [JsonIgnore]
-        string FileName { get; set; } = Definitions.UNKNOWN_STRING;
+        string FileName { get; set; } = "";
 
         /// <summary>Misc dynamic values that we want to persist. Needs to be public so serializer can see it.</summary>
         public Dictionary<string, object> Values { get; set; } = new Dictionary<string, object>();
@@ -151,7 +151,7 @@ namespace Nebulator.Common
         /// </summary>
         public void Save()
         {
-            if (Valid && FileName != Definitions.UNKNOWN_STRING)
+            if (Valid)
             {
                 JsonSerializerOptions opts = new() { WriteIndented = true };
                 string json = JsonSerializer.Serialize(this, opts);

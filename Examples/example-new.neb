@@ -23,10 +23,10 @@ Sequence seqDynamic;
 
 // ======= Vars =======
 ////// Simple variables for functions.
-List<double> _scaleNotes = GetNotes("G3.Algerian"); // used in AlgoFunc()
-List<double> _chordNotes = GetNotes("C4.o7");
-List<double> _myChordNotes;
-List<double> _myScaleNotes;
+List<int> _scaleNotes = GetNotes("G3.Algerian"); // used in AlgoFunc()
+List<int> _chordNotes = GetNotes("C4.o7");
+List<int> _myChordNotes;
+List<int> _myScaleNotes;
 
 
 // ======= Req funcs =======

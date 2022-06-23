@@ -63,9 +63,9 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="noteString">Standard string to parse.</param>
         /// <returns>List of note numbers - empty if invalid.</returns>
-        public static List<double> GetNotes(string noteString)
+        public static List<int> GetNotes(string noteString)
         {
-            List<double> notes = new();
+            List<int> notes = new();
 
             // Parse the input value.
             // Note: Need exception handling here to protect from user script errors.

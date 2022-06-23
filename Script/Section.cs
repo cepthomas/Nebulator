@@ -64,7 +64,7 @@ namespace Nebulator.Script
     {
         #region Properties
         /// <summary>Associated channel.</summary>
-        public string Channel { get; set; } = Definitions.UNKNOWN_STRING;
+        public string Channel { get; set; } = "???";
 
         /// <summary>Associated sequences.</summary>
         public Sequence[] Sequences { get; set; } = Array.Empty<Sequence>();

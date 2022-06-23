@@ -7,7 +7,7 @@ const double VEL = 0.8;
 
 // int notavar = 911;
 
-bool Boing(double notenum = 0)
+bool Boing(int notenum = 0)
 {
     bool boinged = false;
 

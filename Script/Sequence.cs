@@ -17,7 +17,7 @@ namespace Nebulator.Script
     {
         #region Properties
         /// <summary>List of notes or other elements.</summary>
-        public SequenceElements Elements { get; set; } = new SequenceElements();
+        public SequenceElements Elements { get; set; } = new();
 
         /// <summary>Length in beats.</summary>
         public int Beats { get; set; } = 1;
@@ -100,9 +100,9 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string which, double volume)//  TODOX fix like below.
         {
-            foreach (double d in ScriptUtils.GetNotes(which))
+            foreach (int n in ScriptUtils.GetNotes(which))
             {
-                Add(pattern, d, volume);
+                Add(pattern, n, volume);
             }
         }
 
@@ -123,7 +123,7 @@ namespace Nebulator.Script
         /// <param name="pattern">Ascii pattern string.</param>
         /// <param name="which">Specific instrument or drum.</param>
         /// <param name="volume">Volume.</param>
-        public void Add(string pattern, double which, double volume)
+        public void Add(string pattern, int which, double volume)
         {
             // Remove visual markers.
             pattern = pattern.Replace("|", "");
@@ -222,13 +222,13 @@ namespace Nebulator.Script
         public double Volume { get; set; } = 90;
 
         /// <summary>When to play in Sequence.</summary>
-        public Time When { get; set; } = new Time();
+        public Time When { get; set; } = new();
 
         /// <summary>Time between note on/off. 0 (default) means not used.</summary>
-        public Time Duration { get; set; } = new Time(0);
+        public Time Duration { get; set; } = new(0);
 
         /// <summary>The 0th is the root note and other values comprise possible chord notes. TODO notes below the root.</summary>
-        public List<double> Notes { get; private set; } = new List<double>();
+        public List<int> Notes { get; private set; } = new();
 
         /// <summary>Call a script function.</summary>
         public Action? ScriptFunction { get; set; } = null;
@@ -246,7 +246,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Constructor from note number.
         /// </summary>
-        public SequenceElement(double noteNum)
+        public SequenceElement(int noteNum)
         {
             Notes.Add(noteNum);
         }
@@ -269,7 +269,7 @@ namespace Nebulator.Script
             ScriptFunction = seqel.ScriptFunction;
             When = new Time(seqel.When);
             Duration = new Time(seqel.Duration);
-            Notes = new List<double>(seqel.Notes);
+            Notes = new List<int>(seqel.Notes);
         }
 
         /// <summary>
