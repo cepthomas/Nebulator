@@ -43,7 +43,7 @@ namespace Nebulator.Script
         /// <param name="when">Time to play at.</param>
         /// <param name="what">What to play.</param>
         /// <param name="volume">Base volume.</param>
-        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>  TODOX fix like below.
+        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>  TODO1 fix like below.
         public void Add(double when, string what, double volume, double duration = 0)
         {
             SequenceElement sel = new(what)
@@ -98,7 +98,7 @@ namespace Nebulator.Script
         /// <param name="pattern">Ascii pattern string.</param>
         /// <param name="which">Specific note(s).</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, string which, double volume)//  TODOX fix like below.
+        public void Add(string pattern, string which, double volume)//  TODO1 fix like below.
         {
             foreach (int n in ScriptUtils.GetNotes(which))
             {

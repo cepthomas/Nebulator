@@ -12,8 +12,8 @@ using NBagOfTricks;
 
 namespace Nebulator.Script
 {
-    // TODOX home for these classes...
-    public class Channel_XXX
+    
+    public class Channel_XXX // TODO0 home for this
     {
         /// <summary>The associated midi channel object.</summary>
         public Channel Channel { get; set; }
@@ -28,31 +28,6 @@ namespace Nebulator.Script
 
 
 
-    /// <summary>Custom type to support runtime functions.</summary>
-    public class FunctionMidiEvent : MidiEvent
-    {
-        /// <summary>
-        /// Single constructor.
-        /// </summary>
-        /// <param name="time"></param>
-        /// <param name="channel"></param>
-        /// <param name="scriptFunc"></param>
-        public FunctionMidiEvent(int time, int channel, Action scriptFunc) : base(time, channel, MidiCommandCode.MetaEvent)
-        {
-            ScriptFunction = scriptFunc;
-        }
-
-        /// <summary>The function to call.</summary>
-        public Action ScriptFunction { get; init; }
-
-        //MidiEvent(long absoluteTime, int channel, MidiCommandCode commandCode);
-
-        /// <summary>For viewing pleasure.</summary>
-        public override string ToString()
-        {
-            return $"FunctionMidiEvent: {base.ToString()} function:{ScriptFunction}";
-        }
-    }
 
 
 
@@ -70,20 +45,20 @@ namespace Nebulator.Script
         internal List<Section> _sections = new();
 
         /// <summary>The events being executed.</summary>
-        //internal StepCollection _scriptSteps = new();
         internal PatternInfo _scriptEvents = new();
 
         /// <summary>Script functions may add sequences at runtime.</summary>
-        //internal StepCollection _transientSteps = new();
         internal PatternInfo _transientEvents = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel_XXX> _channelMap_XXX = new(); //TODOX redo this
+        readonly Dictionary<string, Channel_XXX> _channelMap_XXX = new(); //TODO0 redo this
+
+
         #endregion
 
         #region Lifecycle
         /// <summary>
-        /// Set up runtime stuff. Good time to send initial patches.
+        /// Set up runtime stuff.
         /// </summary>
         /// <param name="channels">All output channels.</param>
         public void Init(List<Channel_XXX> channels)
@@ -92,6 +67,7 @@ namespace Nebulator.Script
             channels.ForEach(ch =>
             {
                 _channelMap_XXX[ch.Channel.ChannelName] = ch;
+                // Good time to send initial patches.
                 SendPatch(ch.Channel.ChannelName, ch.Channel.Patch);
             });
         }
@@ -232,13 +208,6 @@ namespace Nebulator.Script
 
                             NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.Channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
                             events.Add(new(evt));
-
-                            //// Maybe add a deferred stop note. TODOX old/unused
-                            //if (stopNoteTime != startNoteTime)
-                            //{
-                            //    events.AddStep(stopNoteTime, new StepNoteOff(event));
-                            //}
-                            //// else client is taking care of it.
                         }
                     }
                 }
@@ -255,7 +224,7 @@ namespace Nebulator.Script
         {
             if (seq is null)
             {
-                throw new Exception($"Invalid Sequence");
+                throw new ArgumentException($"Invalid Sequence");
             }
 
             var ecoll = ConvertToEvents(chanName, seq, beat);
@@ -271,12 +240,12 @@ namespace Nebulator.Script
         {
             if (!_channelMap_XXX.TryGetValue(chanName, out var channel))
             {
-                throw new Exception($"Invalid Channel Name: {chanName}");
+                throw new ArgumentException($"Invalid Channel Name: {chanName}");
             }
 
             if (channel is null)// || channel.Device is null)
             {
-                throw new Exception($"Invalid device for channel: {chanName}");
+                throw new ArgumentException($"Invalid device for channel: {chanName}");
             }
 
             return channel;

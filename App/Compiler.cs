@@ -71,7 +71,7 @@ namespace Nebulator.App
                             ChannelName = parts[1].Replace("\"", ""),
                             ChannelNumber = int.Parse(parts[3]),
                             Patch = MidiDefs.GetInstrumentNumber(parts[4]),
-                            VolumeWobbleRange = double.Parse(parts[5])
+                            //VolumeWobbleRange = double.Parse(parts[5])
                         };
 
                         Channel_XXX ch_XXX = new()

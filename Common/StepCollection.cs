@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 namespace Nebulator.Common
 {
     /// <summary>A convenience container for Steps.</summary>
-    public class StepCollection_XXX
+    public class StepCollection_XXX_
     {
         #region Fields
         ///<summary>The main collection of Steps. The key is the time to send the list.</summary>
-        readonly Dictionary<Time, List<Step_XXX>> _steps = new();
+        readonly Dictionary<Time, List<Step_XXX_>> _steps = new();
         #endregion
 
         #region Properties
@@ -30,11 +30,11 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="time"></param>
         /// <param name="step"></param>
-        public void AddStep(Time time, Step_XXX step)
+        public void AddStep(Time time, Step_XXX_ step)
         {
             if (!_steps.ContainsKey(time))
             {
-                _steps.Add(time, new List<Step_XXX>());
+                _steps.Add(time, new List<Step_XXX_>());
             }
             _steps[time].Add(step);
 
@@ -45,9 +45,9 @@ namespace Nebulator.Common
         /// Concatenate another collection to this.
         /// </summary>
         /// <param name="stepsToAdd"></param>
-        public void Add(StepCollection_XXX stepsToAdd)
+        public void Add(StepCollection_XXX_ stepsToAdd)
         {
-            foreach(KeyValuePair<Time, List<Step_XXX>> kv in stepsToAdd._steps)
+            foreach(KeyValuePair<Time, List<Step_XXX_>> kv in stepsToAdd._steps)
             {
                 kv.Value.ForEach(s => AddStep(kv.Key, s));
             }
@@ -58,9 +58,9 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="time">Specific time</param>
         /// <returns>Iterator</returns>
-        public IEnumerable<Step_XXX> GetSteps(Time time)
+        public IEnumerable<Step_XXX_> GetSteps(Time time)
         {
-            return _steps.ContainsKey(time) ? _steps[time] : Enumerable.Empty<Step_XXX>();
+            return _steps.ContainsKey(time) ? _steps[time] : Enumerable.Empty<Step_XXX_>();
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Nebulator.Common
 
             foreach (Time time in Times)
             {
-                foreach (Step_XXX step in GetSteps(time))
+                foreach (Step_XXX_ step in GetSteps(time))
                 {
                     sb.Append($"{time} {step}{Environment.NewLine}");
                 }

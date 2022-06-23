@@ -61,7 +61,7 @@ namespace Nebulator.Common
         {
             if (beat < 0)
             {
-                //throw new Exception("Negative value is invalid");
+                //throw new ArgumentException("Negative value is invalid");
                 beat = 0;
             }
 
@@ -86,7 +86,7 @@ namespace Nebulator.Common
         {
             if (subdivs < 0)
             {
-                throw new Exception("Negative value is invalid");
+                throw new ArgumentException("Negative value is invalid");
             }
 
             Beat = subdivs / SubdivsPerBeat;
@@ -109,7 +109,7 @@ namespace Nebulator.Common
         {
             if (tts < 0)
             {
-                throw new Exception($"Negative value is invalid: {tts}");
+                throw new ArgumentException($"Negative value is invalid: {tts}");
             }
 
             var (integral, fractional) = MathUtils.SplitDouble(tts);
@@ -120,7 +120,7 @@ namespace Nebulator.Common
 
             if (Subdiv >= SubdivsPerBeat)
             {
-                throw new Exception($"Invalid subdiv value: {tts}");
+                throw new ArgumentException($"Invalid subdiv value: {tts}");
             }
         }
         #endregion

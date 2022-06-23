@@ -63,15 +63,11 @@ namespace Nebulator.App
         ///// <summary>Diagnostics for timing measurement.</summary>
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
 
-        /// <summary>All devices to use for send. TODOX OSC?</summary>
+        /// <summary>All devices to use for send. TODO2 OSC?</summary>
         readonly List<IMidiOutputDevice> _outputDevices = new();
-        //readonly Dictionary<string, MidiSender> _outputDevices = new();
-        //readonly Dictionary<DeviceType, IOutputDevice> _outputDevices = new();
 
-        /// <summary>All devices to use for receive. TODOX OSC?</summary>
+        /// <summary>All devices to use for receive. TODO2 OSC?</summary>
         readonly List<IMidiInputDevice> _inputDevices = new();
-        //readonly Dictionary<string, MidiListener> _inputDevices = new();
-        //readonly Dictionary<DeviceType, IInputDevice> _inputDevices = new();
         #endregion
 
         #region Lifecycle
@@ -416,7 +412,7 @@ namespace Nebulator.App
         /// Create all devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
-        bool CreateDevices() // TODOX detect failure to init.
+        bool CreateDevices() // TODO1 detect failure to init.
         {
             bool ok = true;
 
@@ -632,15 +628,8 @@ namespace Nebulator.App
                                 break;
 
                             default:
-                                // TODOX if (step.Device is IOutputDevice dev)
-                                //{
-                                //    // Maybe tweak values.
-                                //    if (step is StepNoteOn on && channel is not null)
-                                //    {
-                                //        on.Adjust(sldVolume.Value, channel.Channel.Volume);
-                                //    }
-                                //    dev.Send(step);
-                                //}
+                                // TODO1 if (step.Device is IOutputDevice dev)
+                                dev.Send(evt);
                                 break;
                         }
                     }
@@ -666,9 +655,6 @@ namespace Nebulator.App
 
             // Process whatever the script did.
             ProcessRuntime();
-
-            //// Process any lingering noteoffs etc. TODOX
-            _outputDevices.ForEach(o => o.Housekeep());
         }
 
         /// <summary>
@@ -682,7 +668,7 @@ namespace Nebulator.App
                {
                     var dev = (IMidiInputDevice)sender;
 
-                    // TODOX ?use IEnumerable<EventDesc> descs = (e.Note, e.Velocity, e.ControllerId) switch
+                    // TODO2 ?use IEnumerable<EventDesc> descs = (e.Note, e.Velocity, e.ControllerId) switch
                     //{
                     //    (>= 0, _, _) => AllEvents.AsEnumerable(),
                     //    (0, > 0) => AllEvents.Where(e => channels.Contains(e.ChannelNumber)),
@@ -1181,7 +1167,7 @@ namespace Nebulator.App
                 {
                     Dictionary<int, string> channels = new();
                     _channels.ForEach(t => channels.Add(t.Channel.ChannelNumber, t.Channel.ChannelName));
-//TODOX                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
+//TODO2                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
                 }
             }
         }

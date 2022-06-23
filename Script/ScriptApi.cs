@@ -114,7 +114,7 @@ namespace Nebulator.Script
 
                     NoteOnEvent evt = new(0, channel.Channel.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
 
-                    //if (dur.TotalSubdivs > 0) // specific duration TODOX needed?
+                    //if (dur.TotalSubdivs > 0) // specific duration TODO2 needed?
                     //{
                     //    // Remove any lingering note offs and add a fresh one.
                     //    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
@@ -228,7 +228,7 @@ namespace Nebulator.Script
         ///// <param name="chanName">Which channel to send it on.</param>
         ///// <param name="seq">Which sequence to send.</param>
         ///// <param name="beat">When to send the sequence. Must be in the future.</param>
-        //protected void SendSequence(string chanName, Sequence seq, int beat) //TODOX
+        //protected void SendSequence(string chanName, Sequence seq, int beat) //TODO1
         //{
         //    if (seq is null)
         //    {
