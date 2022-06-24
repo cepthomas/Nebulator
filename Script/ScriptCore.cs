@@ -12,26 +12,6 @@ using NBagOfTricks;
 
 namespace Nebulator.Script
 {
-    
-    //public class Channel_XXX // TODO0 home for this
-    //{
-    //    /// <summary>The associated midi channel object.</summary>
-    //    public Channel Channel { get; set; }
-
-    //    ///// <summary>The device used by this channel.  Used to find and bind the device at runtime.</summary>
-    //    public string DeviceName { get; set; }
-
-    //    /// <summary>The associated device object.</summary>
-    //    public IMidiOutputDevice? Device { get; set; } = null;
-    //}
-
-
-
-
-
-
-
-
     public partial class ScriptBase
     {
         #region Fields - internal
@@ -51,9 +31,10 @@ namespace Nebulator.Script
         internal PatternInfo _transientEvents = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel> _channelMap = new(); //TODO0 redo this
+        readonly Dictionary<string, Channel> _channels = new();
 
-
+        /// <summary>Script randomizer.</summary>
+        static readonly Random _rand = new();
         #endregion
 
         #region Lifecycle
@@ -63,10 +44,10 @@ namespace Nebulator.Script
         /// <param name="channels">All output channels.</param>
         public void Init(List<Channel> channels)
         {
-            _channelMap.Clear();
+            _channels.Clear();
             channels.ForEach(ch =>
             {
-                _channelMap[ch.ChannelName] = ch;
+                _channels[ch.ChannelName] = ch;
                 // Good time to send initial patches.
                 SendPatch(ch.ChannelName, ch.Patch);
             });
@@ -179,7 +160,7 @@ namespace Nebulator.Script
             List<MidiEventDesc> events = new();
 
             var channel = GetChannel(chanName);
-            if(channel is not null)
+            if (channel is not null)
             {
                 foreach (SequenceElement seqel in seq.Elements)
                 {
@@ -238,17 +219,17 @@ namespace Nebulator.Script
         /// <returns></returns>
         Channel GetChannel(string chanName)
         {
-            if (!_channelMap.TryGetValue(chanName, out var channel))
+            if (!_channels.TryGetValue(chanName, out var ch))
             {
                 throw new ArgumentException($"Invalid Channel Name: {chanName}");
             }
 
-            if (channel is null)// || channel.Device is null)
+            if (ch is null || ch.Tag is null)
             {
                 throw new ArgumentException($"Invalid device for channel: {chanName}");
             }
 
-            return channel;
+            return ch;
         }
         #endregion
     }

@@ -100,7 +100,7 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string which, double volume)//  TODO1 fix like below.
         {
-            foreach (int n in ScriptUtils.GetNotes(which))
+            foreach (int n in MusicDefinitions.GetNotesFromString(which))
             {
                 Add(pattern, n, volume);
             }
@@ -162,7 +162,7 @@ namespace Nebulator.Script
                         else
                         {
                             // invalid condition
-                            throw new Exception("Invalid \'-\'' in pattern string");
+                            throw new InvalidOperationException("Invalid \'-\'' in pattern string");
                         }
                         break;
 
@@ -200,7 +200,7 @@ namespace Nebulator.Script
 
                     default:
                         ///// Invalid char.
-                        throw new Exception($"Invalid char in pattern string:{pattern[patternIndex]}");
+                        throw new InvalidOperationException($"Invalid char in pattern string:{pattern[patternIndex]}");
                 }
             }
 
@@ -240,7 +240,7 @@ namespace Nebulator.Script
         /// <param name="s"></param>
         public SequenceElement(string s)
         {
-            Notes = ScriptUtils.GetNotes(s);
+            Notes = MusicDefinitions.GetNotesFromString(s);
         }
 
         /// <summary>

@@ -4,7 +4,7 @@
 public class Scale
 {
     int _count = 0;
-    List<double> _scaleNotes;
+    List<int> _scaleNotes;
     int[] _noteWeights;
     int _totalWeight = 100;
     int _down = 0;
@@ -40,10 +40,10 @@ public class Scale
         }        
     }
 
-    public double randomNote()
+    public int randomNote()
     {
-        double note = 0;
-        double r = Random(_totalWeight);
+        int note = 0;
+        int r = Random(_totalWeight);
         
         int offset = 0;
 

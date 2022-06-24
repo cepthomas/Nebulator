@@ -31,7 +31,7 @@
     </ItemGroup>
     <ItemGroup>
         <Reference Include="NBagOfTricks">
-            <HintPath>..\lib\NBagOfTricks.dll</HintPath>
+          <HintPath>..\..\NProcessing\lib\NBagOfTricks.dll</HintPath>
         </Reference>
         <Reference Include="NBagOfUis">
             <HintPath>..\lib\NBagOfUis.dll</HintPath>

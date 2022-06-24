@@ -2,10 +2,10 @@
 Include(C:\Dev\repos\Nebulator\Examplesutils.neb);
 Include(C:\Dev\repos\Nebulator\Examplesscale.neb);
 
-Channel("keys",  MidiOut, 1,  ElectricGrandPiano,  0.1);
-Channel("bass",  MidiOut, 2,  AcousticBass,  0.1);
-Channel("synth", MidiOut, 3,  Pad5Bowed,  0.1);
-Channel("drums", MidiOut, 10, Jazz, 0.1); // for drums = kit
+Channel("keys",  MidiOut, 1,  ElectricGrandPiano);
+Channel("bass",  MidiOut, 2,  AcousticBass);
+Channel("synth", MidiOut, 3,  Pad5Bowed);
+Channel("drums", MidiOut, 10, Jazz); // for drums = kit
 
 // Volumes
 const double KEYS_VOL = 0.8;

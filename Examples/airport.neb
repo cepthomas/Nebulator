@@ -1,7 +1,7 @@
 
 // A take on Eno's "algorithmic" Music for Airports - ported from github.com/teropa/musicforairports.js
 
-Channel("sound",  MidiOut, 1,  Pad2Warm,  0.1);
+Channel("sound",  MidiOut, 1,  Pad2Warm);
 
 const double SOUND_VOL = 0.8;
 
@@ -15,8 +15,8 @@ class TapeLoop
     {
         snote = nt;
         duration = new Time(dur);
-        delay =  new Time(del);
-        nextStart =  new Time(del);
+        delay = new Time(del);
+        nextStart = new Time(del);
     }
 }
 

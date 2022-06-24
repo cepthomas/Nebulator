@@ -183,12 +183,12 @@ public override void Step()
     }
 }
 
-public override void InputNote(string dev, int channel, double note)
+public override void InputNote(string dev, int channel, int note)
 {
     Print("Input note", dev, channel, note);
 }
 
-public virtual void InputControl(string dev, int channel, ControllerDef ctlid, double value)
+public virtual void InputControl(string dev, int channel, int ctlid, int value)
 {
     Print("Input control", dev, channel, ctlid, value);
 }

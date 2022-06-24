@@ -8,13 +8,13 @@ using System.Diagnostics;
 using NAudio.Midi;
 using NAudio.Wave;
 using NBagOfTricks;
+using NBagOfTricks.ScriptCompiler;
+using NBagOfTricks.Slog;
 using NBagOfUis;
 using MidiLib;
 using Nebulator.Common;
 using Nebulator.Script;
 using Nebulator.UI;
-using NBagOfTricks.ScriptCompiler;
-using NBagOfTricks.Slog;
 
 
 namespace Nebulator.App
@@ -123,7 +123,7 @@ namespace Nebulator.App
             sldSpeed.DrawColor = UserSettings.TheSettings.ControlColor;
             sldSpeed.Invalidate();
 
-            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor; 
+            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
             sldVolume.Invalidate();
 
             timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
@@ -152,8 +152,6 @@ namespace Nebulator.App
 
             PopulateRecentMenu();
 
-            MusicDefinitions.Init();
-
             CreateDevices();
 
             // Fast mm timer.
@@ -166,10 +164,8 @@ namespace Nebulator.App
 
             Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
 
-            #region Command line args
-            string sopen = "";
-
             // Look for filename passed in.
+            string sopen = "";
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
@@ -184,7 +180,6 @@ namespace Nebulator.App
             {
                 _logger.Error($"Couldn't open script file: {sopen}");
             }
-            #endregion
 
             base.OnLoad(e);
         }
@@ -216,7 +211,6 @@ namespace Nebulator.App
 
             SaveProjectValues();
 
-//            DestroyDevices();
             base.OnFormClosing(e);
         }
 
@@ -286,15 +280,11 @@ namespace Nebulator.App
                 // Compile script now.
                 Compiler compiler = new();
                 compiler.Execute(_scriptFileName);
-                _script = (ScriptBase?)compiler.Script;
+                _script = compiler.Script as ScriptBase;
 
-                _watcher.WatchedFiles.ForEach(fn => _logger.Debug($"file watcher before {compiler.SourceFiles.Count()}"));
-
-                // Update file watcher.
+                // Update file watcher. TODO1 working?
                 _watcher.Clear();
                 compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
-
-                _watcher.WatchedFiles.ForEach(fn => _logger.Debug($"file watcher after {compiler.SourceFiles.Count()}"));
 
                 // Process errors. Some may be warnings.
                 int errorCount = compiler.Results.Count(w => w.ResultType == CompileResultType.Error);
@@ -475,7 +465,6 @@ namespace Nebulator.App
         bool CreateChannelControls()
         {
             bool ok = true;
-
             const int CONTROL_SPACING = 10;
             int x = btnRewind.Left; // timeMaster.Right + CONTROL_SPACING;
             int y = timeMaster.Bottom + CONTROL_SPACING;
@@ -485,16 +474,16 @@ namespace Nebulator.App
             {
                 // Locate the output device for this channel.
                 var od = _outputDevices.Where(d => d.DeviceName == ch.DeviceName);
-                if(od.Any())
+                if (od.Any())
                 {
-                    ch.Device = od.First();
+                    ch.Tag = od.First(); // TODO1 kind of a cheat.
                     ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
                     ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
 
                     UI.ChannelControl tctl = new()
                     {
                         Location = new Point(x, y),
-//                        BoundChannel = t,
+                        BoundChannel = ch,
                         BorderStyle = BorderStyle.FixedSingle
                     };
                     Controls.Add(tctl);
@@ -507,31 +496,6 @@ namespace Nebulator.App
                     ok = false;
                     break;
                 }
-
-                //// Locate the device for this channel.
-                //if (_outputDevices.TryGetValue(t.DeviceType, out MidiSender? dev))
-                //{
-                //    t.Device = dev;
-                //    t.Channel.Volume = _nppVals.GetDouble(t.Channel.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
-                //    t.Channel.State = (ChannelState)_nppVals.GetInteger(t.Channel.ChannelName, "state", (int)ChannelState.Normal);
-
-                //    Nebulator.UI.ChannelControl tctl = new()
-                //    {
-                //        Location = new Point(x, y),
-                //        BoundChannel = t,
-                //        BorderStyle = BorderStyle.FixedSingle
-                //    };
-                //    Controls.Add(tctl);
-
-                //    x += tctl.Width + CONTROL_SPACING;
-                //}
-
-                //if (dev is null)
-                //{
-                //    _logger.Error($"Invalid device: {t.DeviceType} for channel: {t.Channel.ChannelName}");
-                //    ok = false;
-                //    break;
-                //}
             }
 
             return ok;
@@ -628,7 +592,7 @@ namespace Nebulator.App
                                 break;
 
                             default:
-                                ch.Device.Send(evt);
+                                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt.MidiEvent);
                                 break;
                         }
                     }
@@ -663,8 +627,8 @@ namespace Nebulator.App
         {
             this.InvokeIfRequired(_ =>
             {
-               if (_script is not null && sender is not null)
-               {
+                if (_script is not null && sender is not null)
+                {
                     var dev = (IMidiInputDevice)sender;
 
                     // TODO2 ?use IEnumerable<EventDesc> descs = (e.Note, e.Velocity, e.ControllerId) switch
@@ -677,21 +641,14 @@ namespace Nebulator.App
 
                     if (e.Note != -1)
                     {
-                        if (e.Value != -1)
-                        {
-                            _script.InputNote(dev.DeviceName, e.Channel, e.Note);
-                        }
-                        else
-                        {
-                            _script.InputNote(dev.DeviceName, e.Channel, -e.Note);
-                        }
+                        _script.InputNote(dev.DeviceName, e.Channel, e.Value != -1 ? e.Note : -e.Note);
                     }
                     else if (e.Controller != -1)
                     {
                         _script.InputControl(dev.DeviceName, e.Channel, e.Controller, e.Value);
                     }
-               }
-           });
+                }
+            });
         }
         #endregion
 
@@ -701,7 +658,7 @@ namespace Nebulator.App
         /// </summary>
         void InitRuntime()
         {
-            if(_script is not null)
+            if (_script is not null)
             {
                 _script.Playing = chkPlay.Checked;
                 _script.StepTime = _stepTime;
@@ -912,15 +869,15 @@ namespace Nebulator.App
             // Kick over to main UI thread.
             this.InvokeIfRequired(_ =>
             {
-               if (UserSettings.TheSettings.AutoCompile)
-               {
-                   CompileScript();
-               }
-               else
-               {
-                   SetCompileStatus(false);
-               }
-           });
+                if (UserSettings.TheSettings.AutoCompile)
+                {
+                    CompileScript();
+                }
+                else
+                {
+                    SetCompileStatus(false);
+                }
+            });
         }
         #endregion
 
@@ -1001,7 +958,7 @@ namespace Nebulator.App
         void LogManager_LogEvent(object? sender, LogEventArgs e)
         {
             // Usually come from a different thread.
-            if(IsHandleCreated)
+            if (IsHandleCreated)
             {
                 this.InvokeIfRequired(_ => { textViewer.AppendLine($"{e.Message}"); });
             }
@@ -1085,7 +1042,7 @@ namespace Nebulator.App
             // Always do this.
             timeMaster.CurrentTime = _stepTime;
 
-//            _outputDevices.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
+            //            _outputDevices.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }
@@ -1166,7 +1123,7 @@ namespace Nebulator.App
                 {
                     Dictionary<int, string> channels = new();
                     _channels.ForEach(t => channels.Add(t.ChannelNumber, t.ChannelName));
-//TODO2                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
+                    //TODO2                    MidiUtils.ExportToMidi(_script.GetAllSteps(), fn, channels, sldSpeed.Value, "Converted from " + _scriptFileName);
                 }
             }
         }

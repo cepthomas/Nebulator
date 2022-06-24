@@ -40,10 +40,10 @@ namespace Nebulator.Script
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputNote(string dev, int channel, double note) { }
+        public virtual void InputNote(string dev, int channel, int note) { } // TODO use name for channel.
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputControl(string dev, int channel, int ctlid, double value) { } //string ctlid
+        public virtual void InputControl(string dev, int channel, int controller, int value) { } // TODO use name for channel.
         #endregion
 
         #region Script callable functions - composition
@@ -75,7 +75,7 @@ namespace Nebulator.Script
             {
                 if (el.Channel is null)
                 {
-                    throw new Exception($"Invalid Channel at index {elements.IndexOf(el)}");
+                    throw new InvalidOperationException($"Invalid Channel at index {elements.IndexOf(el)}");
                 }
             }
 
@@ -89,6 +89,16 @@ namespace Nebulator.Script
             _sections.Add(nsect);
             return nsect;
         }
+
+        /// <summary>
+        /// Add a named chord or scale definition.
+        /// </summary>
+        /// <param name="name">"MY_CHORD"</param>
+        /// <param name="parts">Like "1 4 6 b13"</param>
+        public void CreateNotes(string name, string parts)
+        {
+            MusicDefinitions.AddChordScale(name, parts);
+        }
         #endregion
 
         #region Script callable functions - send immediately
@@ -99,20 +109,20 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, Time dur)
         {
-            var channel = GetChannel(chanName);
+            var ch = GetChannel(chanName);
 
-            int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
-
-            if (channel is not null)
+            if (ch is not null)
             {
+                int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+
                 // If vol is positive and the note is not negative, it's note on, else note off.
                 if (vol > 0 && notenum > 0)
                 {
-                    double vel = channel.NextVol(vol) * MasterVolume;
+                    double vel = ch.NextVol(vol) * MasterVolume;
                     int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                     velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                    NoteOnEvent evt = new(0, channel.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
+                    NoteOnEvent evt = new(0, ch.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
 
                     //if (dur.TotalSubdivs > 0) // specific duration TODO2 needed?
                     //{
@@ -138,13 +148,17 @@ namespace Nebulator.Script
                     //     _stops.RemoveAll(s => s.Expiry < 0);
                     // }
 
-                    channel.Device?.SendEvent(evt);
+                    (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
                 }
                 else
                 {
-                    NoteEvent evt = new(0, channel.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
-                    channel.Device?.SendEvent(evt);
+                    NoteEvent evt = new(0, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
+                    (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
                 }
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid Channel {chanName}");
             }
         }
 
@@ -198,15 +212,24 @@ namespace Nebulator.Script
 
         /// <summary>Send a controller immediately.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="ctlid">Controller.</param>
+        /// <param name="controller">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string chanName, int ctlid, int val)
+        protected void SendController(string chanName, string controller, int val)
         {
-            var channel = GetChannel(chanName);
-            if (channel is not null)
+            var ch = GetChannel(chanName);
+            int ctlrid = MidiDefs.GetControllerNumber(controller);
+            if (ch is not null && ctlrid > 0)
             {
-                ControlChangeEvent evt = new(0, channel.ChannelNumber, (MidiController)ctlid, val);
-                channel.Device?.SendEvent(evt);
+                ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
+                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+            }
+            else if (ch is null)
+            {
+                throw new ArgumentException($"Invalid Channel {chanName}");
+            }
+            else if (ctlrid > 0)
+            {
+                throw new ArgumentException($"Invalid Controller {controller}");
             }
         }
 
@@ -215,11 +238,32 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         protected void SendPatch(string chanName, int patch)
         {
-            var channel = GetChannel(chanName);
-            if (channel is not null)
+            var ch = GetChannel(chanName);
+            if (ch is not null)
             {
-                PatchChangeEvent evt = new(0, channel.ChannelNumber, patch);
-                channel.Device?.SendEvent(evt);
+                PatchChangeEvent evt = new(0, ch.ChannelNumber, patch);
+                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid Channel {chanName}");
+            }
+        }
+
+        /// <summary>Send a midi patch immediately.</summary>
+        /// <param name="chanName"></param>
+        /// <param name="patch"></param>
+        protected void SendPatch(string chanName, string patch)
+        {
+            int patchid = MidiDefs.GetInstrumentNumber(patch);
+            
+            if (patchid >= 0)
+            {
+                SendPatch(chanName, patchid);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid Patch {patch}");
             }
         }
         #endregion
@@ -232,11 +276,39 @@ namespace Nebulator.Script
         //{
         //    if (seq is null)
         //    {
-        //        throw new Exception($"Invalid Sequence");
+        //        throw new InvalidOperationException($"Invalid Sequence");
         //    }
 
         //    StepCollection scoll = ConvertToSteps(chanName, seq, beat);
         //    _transientSteps.Add(scoll);
         //}
+
+        #region General utilities
+        public double Random(double max)
+        {
+            return _rand.NextDouble() * max;
+        }
+
+        public double Random(double min, double max)
+        {
+            return min + _rand.NextDouble() * (max - min);
+        }
+
+        public int Random(int max)
+        {
+            return _rand.Next(max);
+        }
+
+        public int Random(int min, int max)
+        {
+            return _rand.Next(min, max);
+        }
+
+        public void Print(params object[] vars)
+        {
+            _logger.Info(string.Join(", ", vars));
+        }
+        #endregion
+
     }
 }

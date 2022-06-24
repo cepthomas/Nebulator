@@ -4,6 +4,78 @@
         <name>NBagOfTricks</name>
     </assembly>
     <members>
+        <member name="T:NBagOfTricks.Bag">
+            <summary>
+            General purpose storage for things using a two part key.
+            </summary>
+        </member>
+        <member name="P:NBagOfTricks.Bag.FileName">
+            <summary>The file name.</summary> 
+        </member>
+        <member name="P:NBagOfTricks.Bag.Values">
+            <summary>Misc dynamic values that we want to persist. Needs to be public so serializer can see it.</summary>
+        </member>
+        <member name="P:NBagOfTricks.Bag.Valid">
+            <summary>Is this bag ok?</summary>
+        </member>
+        <member name="M:NBagOfTricks.Bag.Clear">
+            <summary>
+            Reset everything.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Bag.GetDouble(System.String,System.String,System.Double)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="defval"></param>
+            <returns>The value or default if not in the collection.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Bag.GetInteger(System.String,System.String,System.Int32)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="defval"></param>
+            <returns>The value or default if not in the collection.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Bag.GetString(System.String,System.String,System.String)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="defval"></param>
+            <returns>The value or default if not in the collection.</returns>
+        </member>
+        <member name="M:NBagOfTricks.Bag.SetValue(System.String,System.String,System.Object)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:NBagOfTricks.Bag.MakeKey(System.String,System.String)">
+            <summary>
+            Common key maker.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.Bag.Save">
+            <summary>
+            Save to json file.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.Bag.Load(System.String)">
+            <summary>
+            Create from json file.
+            </summary>
+        </member>
         <member name="T:NBagOfTricks.ArgOptType">
             <summary>Argument and value options: None, required, optional.</summary>
         </member>
@@ -339,6 +411,20 @@
             <param name="appName"></param>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.MiscUtils.FixEndian(System.UInt32)">
+            <summary>
+            Endian support.
+            </summary>
+            <param name="i">Number to fix.</param>
+            <returns>Fixed number.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MiscUtils.FixEndian(System.UInt16)">
+            <summary>
+            Endian support.
+            </summary>
+            <param name="i">Number to fix.</param>
+            <returns>Fixed number.</returns>
+        </member>
         <member name="M:NBagOfTricks.MiscUtils.SecondsToTimeSpan(System.Double)">
             <summary>
             Convert time to TimeSpan.
@@ -577,6 +663,105 @@
             <summary>
             Resource clean up.
             </summary>
+        </member>
+        <member name="T:NBagOfTricks.MusicDefinitions">
+            <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MusicDefinitions._chordsScales">
+            <summary>The chord/scale note definitions. Key is chord/scale name, value is list of constituent notes.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MusicDefinitions.NOTES_PER_OCTAVE">
+            <summary>all the notes.</summary>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.#cctor">
+            <summary>
+            Load chord and scale definitions.
+            </summary>
+        </member>
+        <member name="F:NBagOfTricks.MusicDefinitions._noteNames">
+            <summary>All possible note names and aliases.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MusicDefinitions._naturals">
+            <summary>Helpers.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MusicDefinitions._intervals">
+            <summary>Helpers.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MusicDefinitions._chordDefs">
+            <summary>All the builtin chord defs.</summary>
+        </member>
+        <member name="F:NBagOfTricks.MusicDefinitions._scaleDefs">
+            <summary>All the builtin scale defs.</summary>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.NoteNumberToName(System.Int32)">
+            <summary>
+            Convert note number into name.
+            </summary>
+            <param name="inote"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.NoteNameToNumber(System.String)">
+            <summary>
+            Convert note name into number.
+            </summary>
+            <param name="snote">The root of the note without octave.</param>
+            <returns>The number or null if invalid.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.GetNotesFromString(System.String)">
+            <summary>
+            Parse note or notes from input value.
+            </summary>
+            <param name="noteString">Standard string to parse.</param>
+            <returns>List of note numbers - empty if invalid.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.IsNatural(System.Int32)">
+            <summary>
+            Is it a white key?
+            </summary>
+            <param name="notenum">Which note</param>
+            <returns>True/false</returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.SplitNoteNumber(System.Int32)">
+            <summary>
+            Split a midi note number into root note and octave.
+            </summary>
+            <param name="notenum">Absolute note number</param>
+            <returns>tuple of root and octave</returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.GetInterval(System.String)">
+            <summary>
+            Get interval offset from name.
+            </summary>
+            <param name="sinterval"></param>
+            <returns>Offset or null if invalid.</returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.GetInterval(System.Int32)">
+            <summary>
+            Get interval name from note number offset.
+            </summary>
+            <param name="iint">The name or empty if invalid.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.FormatNotes(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Try to make a note and/or chord string from the param. If it can't find a chord return the individual notes.
+            </summary>
+            <param name="notes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.AddChordScale(System.String,System.String)">
+            <summary>
+            Add a new chord or scale definition.
+            </summary>
+            <param name="name">which</param>
+            <param name="notes">what</param>
+        </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.GetChordScale(System.String)">
+            <summary>
+            Get a defined chord or scale definition.
+            </summary>
+            <param name="name">which</param>
+            <returns>The notes.</returns>
         </member>
         <member name="T:NBagOfTricks.StringUtils">
             <summary>

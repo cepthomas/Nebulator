@@ -37,16 +37,8 @@ namespace Nebulator.App
         {
             Channels.Clear();
 
-            LocalDlls = new()
-            {
-                "NAudio", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script"
-            };
-
-            Usings.AddRange(new List<string>()
-            {
-                "static Nebulator.Script.ScriptUtils", "static Nebulator.Common.InstrumentDef",
-                "static Nebulator.Common.DrumDef", "static Nebulator.Common.ControllerDef"
-            });
+            LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script" };
+            Usings.AddRange(new List<string>() { "static Nebulator.Script.ScriptUtils" });
 
             // Save hash of current channel descriptors to detect change in source code.
             _chHash = string.Join("", _channelDescriptors).GetHashCode();
@@ -91,19 +83,19 @@ namespace Nebulator.App
             }
         }
 
-        ///// <inheritdoc />
-        //public override bool PreprocessFile(string sline, FileContext pcont)
-        //{
-        //    bool handled = false;
+        /// <inheritdoc />
+        public override bool PreprocessFile(string sline, FileContext pcont)
+        {
+            bool handled = false;
 
-        //    if (sline.StartsWith("Channel"))
-        //    {
-        //       // Exclude from output file.
-        //       _channelDescriptors.Add(sline);
-        //       handled = true;
-        //    }
+            if (sline.StartsWith("Channel"))
+            {
+                // Exclude from output file.
+                _channelDescriptors.Add(sline);
+                handled = true;
+            }
 
-        //    return handled;
-        //}
+            return handled;
+        }
     }
 }
