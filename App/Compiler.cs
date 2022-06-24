@@ -38,7 +38,8 @@ namespace Nebulator.App
             Channels.Clear();
 
             LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script" };
-            Usings.AddRange(new List<string>() { "static Nebulator.Script.ScriptUtils" });
+
+            Usings.Add("static Nebulator.Script.ScriptUtils");
 
             // Save hash of current channel descriptors to detect change in source code.
             _chHash = string.Join("", _channelDescriptors).GetHashCode();
@@ -63,8 +64,7 @@ namespace Nebulator.App
                             ChannelName = parts[1].Replace("\"", ""),
                             DeviceName = parts[2],
                             ChannelNumber = int.Parse(parts[3]),
-                            Patch = MidiDefs.GetInstrumentNumber(parts[4]),
-                            //VolumeWobbleRange = double.Parse(parts[5])
+                            Patch = MidiDefs.GetInstrumentNumber(parts[4])
                         };
 
                         Channels.Add(ch);
