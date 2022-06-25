@@ -678,6 +678,12 @@
             Load chord and scale definitions.
             </summary>
         </member>
+        <member name="M:NBagOfTricks.MusicDefinitions.FormatDoc">
+            <summary>
+            Make markdown content from the definitions.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="F:NBagOfTricks.MusicDefinitions._noteNames">
             <summary>All possible note names and aliases.</summary>
         </member>
@@ -953,7 +959,7 @@
             <param name="limit"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.String,System.String,System.Boolean)">
+        <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.Drawing.Color,System.Drawing.Font,System.Boolean)">
             <summary>
             Convert list of markdown lines to html.
             </summary>
@@ -1283,13 +1289,13 @@
             <summary>Products of file preprocess. Key is generated file name.</summary>
         </member>
         <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreExecute">
-            <summary>Hook to override.</summary>
+            <summary>Called before compiler starts.</summary>
         </member>
         <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PostExecute">
-            <summary>Hook to override.</summary>
+            <summary>Called after compiler finished.</summary>
         </member>
         <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessFile(System.String,NBagOfTricks.ScriptCompiler.FileContext)">
-            <summary>Hook to override.</summary>
+            <summary>Called for each line in the source file.</summary>
             <param name="sline">Trimmed line</param>
             <param name="pcont">File context</param>
             <returns>True if handled</returns>

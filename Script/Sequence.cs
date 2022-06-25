@@ -38,15 +38,16 @@ namespace Nebulator.Script
     public class SequenceElements : List<SequenceElement>
     {
         /// <summary>
-        /// Like: Z.Add(00.0, "G3", 90, 1.1);
+        /// Like: Z.Add(05.3, "G3", 0.7, 1.1);
+        /// Like: Z.Add(11.0, "AcousticBassDrum", 0.45);
         /// </summary>
         /// <param name="when">Time to play at.</param>
         /// <param name="what">What to play.</param>
         /// <param name="volume">Base volume.</param>
-        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>  TODO1 fix like below.
+        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, string what, double volume, double duration = 0)
         {
-            SequenceElement sel = new(what)
+            SequenceElement sel = new(what)//TODO1 what may be drum
             {
                 When = new Time(when),
                 Volume = volume,
@@ -56,24 +57,17 @@ namespace Nebulator.Script
             Add(sel);
         }
 
-        ///// <summary>
-        ///// Like: Z.Add(00.0, 66, 90, 1.1) or Z.Add(00.0, CrashCymbal1, 90, 1.1);
-        ///// </summary>
-        ///// <param name="when">Time to play at.</param>
-        ///// <param name="what">What to play.</param>
-        ///// <param name="volume">Base volume.</param>
-        ///// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
-        //public void Add(double when, string what, double volume, double duration = 0)
-        //{
-        //    SequenceElement sel = new((int)what)
-        //    {
-        //        When = new Time(when),
-        //        Volume = volume,
-        //        Duration = new Time(duration)
-        //    };
-
-        //    Add(sel);
-        //}
+        /// <summary>
+        /// Like: Z.Add("|5---    8       |7.......7654--- |", "G4.m7", 90);
+        /// Like: Z.Add("|8       |       |8       |       |", "AcousticBassDrum", 90);
+        /// </summary>
+        /// <param name="pattern">Ascii pattern string.</param>
+        /// <param name="what">Specific note(s).</param>
+        /// <param name="volume">Base volume.</param>
+        public void Add(string pattern, string what, double volume)
+        {
+            MusicDefinitions.GetNotesFromString(what).ForEach(n => Add(pattern, n, volume));//TODO1 what may be drum
+        }
 
         /// <summary>
         /// Like: Z.Add(01.0, algoDynamic, 90);
@@ -93,37 +87,12 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Like: Z.Add("|5---    8       |7.......7654--- |", 4, "G4.m7", 90);
-        /// </summary>
-        /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="which">Specific note(s).</param>
-        /// <param name="volume">Base volume.</param>
-        public void Add(string pattern, string which, double volume)//  TODO1 fix like below.
-        {
-            foreach (int n in MusicDefinitions.GetNotesFromString(which))
-            {
-                Add(pattern, n, volume);
-            }
-        }
-
-        ///// <summary>
-        ///// Like: Z.Add("|5---    8       |7.......7654--- |", 4, RideCymbal1, 90);
-        ///// </summary>
-        ///// <param name="pattern">Ascii pattern string.</param>
-        ///// <param name="which">Specific note(s).</param>
-        ///// <param name="volume">Base volume.</param>
-        //public void Add(string pattern, DrumDef which, double volume)
-        //{
-        //    Add(pattern, (int)which, volume);
-        //}
-
-        /// <summary>
-        /// Like: Z.Add("|5---    8       |7.......7654--- |", 4, 25, BASS_VOL);
+        /// Helper function.
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
         /// <param name="which">Specific instrument or drum.</param>
         /// <param name="volume">Volume.</param>
-        public void Add(string pattern, int which, double volume)
+        void Add(string pattern, int which, double volume)
         {
             // Remove visual markers.
             pattern = pattern.Replace("|", "");

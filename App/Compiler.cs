@@ -32,21 +32,20 @@ namespace Nebulator.App
         int _chHash = 0;
         #endregion
 
-        /// <inheritdoc />
+        /// <summary>Called before compiler starts.</summary>
         public override void PreExecute()
         {
             Channels.Clear();
 
             LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script" };
-
-            Usings.Add("static Nebulator.Script.ScriptUtils");
+            //Usings.Add("static Nebulator.Script.ScriptUtils");
 
             // Save hash of current channel descriptors to detect change in source code.
             _chHash = string.Join("", _channelDescriptors).GetHashCode();
             _channelDescriptors.Clear();
         }
 
-        /// <inheritdoc />
+        /// <summary>Called after compiler finished.</summary>
         public override void PostExecute()
         {
             // Check for changed channel descriptors.
@@ -64,7 +63,7 @@ namespace Nebulator.App
                             ChannelName = parts[1].Replace("\"", ""),
                             DeviceName = parts[2],
                             ChannelNumber = int.Parse(parts[3]),
-                            Patch = MidiDefs.GetInstrumentNumber(parts[4])
+                            Patch = MidiDefs.GetInstrumentNumber(parts[4]) //TODO1 may be a drum
                         };
 
                         Channels.Add(ch);
@@ -83,7 +82,7 @@ namespace Nebulator.App
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>Called for each line in the source file.</summary>
         public override bool PreprocessFile(string sline, FileContext pcont)
         {
             bool handled = false;

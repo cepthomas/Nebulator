@@ -273,11 +273,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textViewer.Location = new System.Drawing.Point(13, 194);
+            this.textViewer.Location = new System.Drawing.Point(13, 334);
             this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(952, 633);
+            this.textViewer.Size = new System.Drawing.Size(952, 493);
             this.textViewer.TabIndex = 41;
             this.textViewer.WordWrap = true;
             // 

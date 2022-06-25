@@ -16,6 +16,8 @@ using Nebulator.Common;
 using Nebulator.Script;
 using Nebulator.UI;
 
+// TODO1 show mididefs, musicdefs.
+
 
 namespace Nebulator.App
 {
@@ -402,34 +404,62 @@ namespace Nebulator.App
         /// Create all devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
-        bool CreateDevices() // TODO1 detect failure to init.
+        bool CreateDevices()
         {
             bool ok = true;
 
             if (UserSettings.TheSettings.MidiIn1 != "")
             {
                 var ml = new MidiListener(UserSettings.TheSettings.MidiIn1);
-                ml.InputEvent += Device_InputEvent;
-                _inputDevices.Add(ml);
+                if(ml.Valid)
+                {
+                    ml.InputEvent += Device_InputEvent;
+                    _inputDevices.Add(ml);
+                }
+                else
+                {
+                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiIn1}");
+                }
             }
 
             if (UserSettings.TheSettings.MidiIn2 != "")
             {
-                var ml = new MidiListener(UserSettings.TheSettings.MidiIn1);
-                ml.InputEvent += Device_InputEvent;
-                _inputDevices.Add(ml);
+                var ml = new MidiListener(UserSettings.TheSettings.MidiIn2);
+                if (ml.Valid)
+                {
+                    ml.InputEvent += Device_InputEvent;
+                    _inputDevices.Add(ml);
+                }
+                else
+                {
+                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiIn2}");
+                }
             }
 
             if (UserSettings.TheSettings.MidiOut1 != "")
             {
                 var ml = new MidiSender(UserSettings.TheSettings.MidiOut1);
-                _outputDevices.Add(ml);
+                if (ml.Valid)
+                {
+                    _outputDevices.Add(ml);
+                }
+                else
+                {
+                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiOut1}");
+                }
             }
 
             if (UserSettings.TheSettings.MidiOut2 != "")
             {
                 var ml = new MidiSender(UserSettings.TheSettings.MidiOut2);
-                _outputDevices.Add(ml);
+                if (ml.Valid)
+                {
+                    _outputDevices.Add(ml);
+                }
+                else
+                {
+                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiOut2}");
+                }
             }
 
             return ok;
@@ -476,7 +506,7 @@ namespace Nebulator.App
                 var od = _outputDevices.Where(d => d.DeviceName == ch.DeviceName);
                 if (od.Any())
                 {
-                    ch.Tag = od.First(); // TODO1 kind of a cheat.
+                    ch.Tag = od.First(); // TODO2 kind of a cheat.
                     ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
                     ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
 

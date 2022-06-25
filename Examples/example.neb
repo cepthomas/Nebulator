@@ -89,6 +89,7 @@ public void BuildComp()
 
     Sequence seqDrumsChorus = CreateSequence(8, new SequenceElements
     {
+        { 0.0, "AcousticBassDrum",  DRUM_VOL },
         { 0.0, dbass,  DRUM_VOL },
         { 1.0, dride,  DRUM_VOL },
         { 1.2, dride,  DRUM_VOL },
