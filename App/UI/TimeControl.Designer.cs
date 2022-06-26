@@ -1,6 +1,6 @@
 ﻿namespace Nebulator.UI
 {
-    partial class TimeControl
+    partial class TimeControl_XXX
     {
         /// <summary> 
         /// Required designer variable.

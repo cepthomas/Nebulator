@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MidiLib;
 using NBagOfTricks;
 using Nebulator.Common;
 
@@ -47,11 +48,11 @@ namespace Nebulator.Script
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
         public void Add(double when, string what, double volume, double duration = 0)
         {
-            SequenceElement sel = new(what)//TODO1 what may be drum
+            SequenceElement sel = new(what)
             {
-                When = new Time(when),
+                When = new BarTime(when),
                 Volume = volume,
-                Duration = new Time(duration)
+                Duration = new BarTime(duration)
             };
 
             Add(sel);
@@ -66,7 +67,17 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string what, double volume)
         {
-            MusicDefinitions.GetNotesFromString(what).ForEach(n => Add(pattern, n, volume));//TODO1 what may be drum
+            List<int> notes = MusicDefinitions.GetNotesFromString(what);
+            if (notes.Count == 0)
+            {
+                // It might be a drum.
+                try
+                {
+                    int idrum = MidiDefs.GetDrumNumber(what);
+                    notes.Add(idrum);
+                }
+                catch { }
+            }
         }
 
         /// <summary>
@@ -79,7 +90,7 @@ namespace Nebulator.Script
         {
             SequenceElement sel = new(func)
             {
-                When = new Time(when),
+                When = new BarTime(when),
                 Volume = volume
             };
 
@@ -105,8 +116,8 @@ namespace Nebulator.Script
                 // Make a Note on.
                 double volmod = (double)currentVol / 10;
 
-                Time dur = new(index - startIndex);
-                Time when = new(startIndex);
+                BarTime dur = new(index - startIndex);
+                BarTime when = new(startIndex);
 
                 SequenceElement ncl = new(which)
                 {
@@ -191,10 +202,10 @@ namespace Nebulator.Script
         public double Volume { get; set; } = 90;
 
         /// <summary>When to play in Sequence.</summary>
-        public Time When { get; set; } = new();
+        public BarTime When { get; set; } = new();
 
         /// <summary>Time between note on/off. 0 (default) means not used.</summary>
-        public Time Duration { get; set; } = new(0);
+        public BarTime Duration { get; set; } = new();
 
         /// <summary>The 0th is the root note and other values comprise possible chord notes. TODO notes below the root.</summary>
         public List<int> Notes { get; private set; } = new();
@@ -210,6 +221,16 @@ namespace Nebulator.Script
         public SequenceElement(string s)
         {
             Notes = MusicDefinitions.GetNotesFromString(s);
+            if(Notes.Count == 0)
+            {
+                // It might be a drum.
+                try
+                {
+                    int idrum = MidiDefs.GetDrumNumber(s);
+                    Notes.Add(idrum);
+                }
+                catch { }
+            }
         }
 
         /// <summary>
@@ -229,17 +250,17 @@ namespace Nebulator.Script
             Notes.Clear();
         }
 
-        /// <summary>
-        /// Copy constructor.
-        /// </summary>
-        public SequenceElement(SequenceElement seqel)
-        {
-            Volume = seqel.Volume;
-            ScriptFunction = seqel.ScriptFunction;
-            When = new Time(seqel.When);
-            Duration = new Time(seqel.Duration);
-            Notes = new List<int>(seqel.Notes);
-        }
+        ///// <summary>
+        ///// Copy constructor.
+        ///// </summary>
+        //public SequenceElement(SequenceElement seqel)
+        //{
+        //    Volume = seqel.Volume;
+        //    ScriptFunction = seqel.ScriptFunction;
+        //    When = new Time(seqel.When);
+        //    Duration = new Time(seqel.Duration);
+        //    Notes = new List<int>(seqel.Notes);
+        //}
 
         /// <summary>
         /// For viewing pleasure.

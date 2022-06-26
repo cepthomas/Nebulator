@@ -9,10 +9,10 @@ using Nebulator.Common;
 
 namespace Nebulator.UI
 {
-    public partial class TimeControl : UserControl
+    public partial class TimeControl_XXX : UserControl
     {
         #region Fields
-        Time _current = new();
+        Time_XXX _current = new();
         int _maxBeat = 0;
         int _lastPos = 0;
         readonly Font _fontLarge = new("Consolas", 24, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -27,15 +27,15 @@ namespace Nebulator.UI
         /// <summary>
         /// Current value. Copy in and out to avoid holding a reference to the global time.
         /// </summary>
-        public Time CurrentTime
+        public Time_XXX CurrentTime
         {
             get
             {
-                return new Time(_current);
+                return new Time_XXX(_current);
             }
             set
             {
-                _current = new Time(value);
+                _current = new Time_XXX(value);
                 if (_current.Subdiv == 0)
                 {
                     Invalidate();
@@ -81,7 +81,7 @@ namespace Nebulator.UI
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TimeControl()
+        public TimeControl_XXX()
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
@@ -98,7 +98,7 @@ namespace Nebulator.UI
         protected override void OnPaint(PaintEventArgs pe)
         {
             // Setup.
-            pe.Graphics.Clear(UserSettings.TheSettings.BackColor);
+ //           pe.Graphics.Clear(UserSettings.TheSettings.BackColor);
             Brush brush = new SolidBrush(ControlColor);
             //Pen pen = new Pen(ControlColor);
 

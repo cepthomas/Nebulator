@@ -51,7 +51,7 @@ namespace Nebulator.App
         DateTime _startTime = DateTime.Now;
 
         /// <summary>Current step time clock.</summary>
-        Time _stepTime = new();
+        BarTime _stepTime = new();
 
         /// <summary>Detect changed script files.</summary>
         readonly MultiFileWatcher _watcher = new();
@@ -83,6 +83,7 @@ namespace Nebulator.App
             // Get settings.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             UserSettings.TheSettings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
+            MidiSettings.TheSettings = (MidiSettings)Settings.Load(appDir, typeof(MidiSettings), "midi.json");
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
@@ -123,13 +124,20 @@ namespace Nebulator.App
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
             sldSpeed.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldSpeed.Invalidate();
+//            sldSpeed.Invalidate();
 
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.Invalidate();
+            //           sldVolume.Invalidate();
+
+
+            // Time controller.
+            barBar.ProgressColor = UserSettings.TheSettings.ControlColor;
+            barBar.CurrentTimeChanged += BarBar_CurrentTimeChanged;
+
 
             timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
-            timeMaster.Invalidate();
+ //           timeMaster.Invalidate();
+//            barBar.Invalidate();
 
             btnWrap.Checked = UserSettings.TheSettings.WordWrap;
             textViewer.WordWrap = btnWrap.Checked;
@@ -211,6 +219,8 @@ namespace Nebulator.App
 
             UserSettings.TheSettings.Save();
 
+            MidiSettings.TheSettings.Save();
+
             SaveProjectValues();
 
             base.OnFormClosing(e);
@@ -227,10 +237,7 @@ namespace Nebulator.App
                 _mmTimer.Stop();
                 _mmTimer.Dispose();
 
-                _inputDevices.ForEach(d => d.Dispose());
-                _inputDevices.Clear();
-                _outputDevices.ForEach(d => d.Dispose());
-                _outputDevices.Clear();
+                DestroyDevices();
 
                 components?.Dispose();
             }
@@ -238,6 +245,19 @@ namespace Nebulator.App
             base.Dispose(disposing);
         }
         #endregion
+
+        /// <summary>
+        /// User has changed the time.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void BarBar_CurrentTimeChanged(object? sender, EventArgs e)
+        {
+            _stepTime = new(barBar.Current.TotalSubdivs);
+//            _stepTime = timeMaster.CurrentTime;
+            ProcessPlay(PlayCommand.UpdateUiTime);
+//            _player.CurrentSubdiv = barBar.Current.TotalSubdivs;
+        }
 
         #region Project persistence
         /// <summary>
@@ -277,6 +297,7 @@ namespace Nebulator.App
                 ProcessPlay(PlayCommand.StopRewind);
 
                 // Clean up any old.
+                barBar.TimeDefs.Clear();
                 timeMaster.TimeDefs.Clear();
 
                 // Compile script now.
@@ -302,7 +323,7 @@ namespace Nebulator.App
                         CreateChannelControls();
                     }
 
-                    _script.Init(compiler.Channels);
+                    _script.Init(compiler.Channels); //TODO1 dev not set yet
 
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
@@ -319,10 +340,12 @@ namespace Nebulator.App
                         // Script may have altered shared values.
                         ProcessRuntime();
 
-                        // Build all the steps.
+                        // Build all the events from the sequences and sections.
                         _script.BuildSteps();
 
                         // Init the timeclock.
+                        barBar.TimeDefs = _script.GetSectionMarkers();
+                        barBar.Length = new(barBar.TimeDefs.Keys.Max());
                         timeMaster.TimeDefs = _script.GetSectionMarkers();
                         timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
 
@@ -401,16 +424,19 @@ namespace Nebulator.App
 
         #region Devices
         /// <summary>
-        /// Create all devices from user settings.
+        /// Create all I/O devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
         bool CreateDevices()
         {
             bool ok = true;
 
-            if (UserSettings.TheSettings.MidiIn1 != "")
+            // First...
+            DestroyDevices();
+
+            if (MidiSettings.TheSettings.MidiIn1 != "")
             {
-                var ml = new MidiListener(UserSettings.TheSettings.MidiIn1);
+                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn1);
                 if(ml.Valid)
                 {
                     ml.InputEvent += Device_InputEvent;
@@ -418,13 +444,13 @@ namespace Nebulator.App
                 }
                 else
                 {
-                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiIn1}");
+                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiIn1}");
                 }
             }
 
-            if (UserSettings.TheSettings.MidiIn2 != "")
+            if (MidiSettings.TheSettings.MidiIn2 != "")
             {
-                var ml = new MidiListener(UserSettings.TheSettings.MidiIn2);
+                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn2);
                 if (ml.Valid)
                 {
                     ml.InputEvent += Device_InputEvent;
@@ -432,60 +458,49 @@ namespace Nebulator.App
                 }
                 else
                 {
-                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiIn2}");
+                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiIn2}");
                 }
             }
 
-            if (UserSettings.TheSettings.MidiOut1 != "")
+            if (MidiSettings.TheSettings.MidiOut1 != "")
             {
-                var ml = new MidiSender(UserSettings.TheSettings.MidiOut1);
+                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut1);
                 if (ml.Valid)
                 {
                     _outputDevices.Add(ml);
                 }
                 else
                 {
-                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiOut1}");
+                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiOut1}");
                 }
             }
 
-            if (UserSettings.TheSettings.MidiOut2 != "")
+            if (MidiSettings.TheSettings.MidiOut2 != "")
             {
-                var ml = new MidiSender(UserSettings.TheSettings.MidiOut2);
+                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut2);
                 if (ml.Valid)
                 {
                     _outputDevices.Add(ml);
                 }
                 else
                 {
-                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiOut2}");
+                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiOut2}");
                 }
             }
 
             return ok;
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //void DestroyDevices()
-        //{
-        //    // Destroy devices.
-        //    _inputDevices.ForEach(i =>
-        //    {
-        //        i.Value.DeviceInputEvent -= Device_InputEvent;
-        //        i.Value.Stop();
-        //        i.Value.Dispose();
-        //    });
-        //    _inputDevices.Clear();
-
-        //    _outputDevices.ForEach(o =>
-        //    {
-        //        o.Value.Stop();
-        //        o.Value.Dispose();
-        //    });
-        //    _outputDevices.Clear();
-        //}
+        /// <summary>
+        /// Clean up.
+        /// </summary>
+        void DestroyDevices()
+        {
+            _inputDevices.ForEach(d => d.Dispose());
+            _inputDevices.Clear();
+            _outputDevices.ForEach(d => d.Dispose());
+            _outputDevices.Clear();
+        }
         #endregion
 
         #region Channel controls
@@ -496,8 +511,106 @@ namespace Nebulator.App
         {
             bool ok = true;
             const int CONTROL_SPACING = 10;
-            int x = btnRewind.Left; // timeMaster.Right + CONTROL_SPACING;
-            int y = timeMaster.Bottom + CONTROL_SPACING;
+            int x = btnRewind.Left;
+            int y = barBar.Bottom + CONTROL_SPACING;
+
+            // Create new channel controls.
+            foreach (Channel ch in _channels)
+            {
+                // Locate the output device for this channel.
+                var outDev = _outputDevices.Where(d => d.DeviceName == ch.DeviceName);
+                if (outDev.Any())
+                {
+                    ch.Tag = outDev.First(); // TODO2 kind of a cheat.
+                    ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
+                    ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
+
+                    PlayerControl tctl = new()
+                    {
+                        Location = new Point(x, y),
+                        BorderStyle = BorderStyle.FixedSingle,
+                        Channel = ch
+                    };
+                    tctl.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
+                    Controls.Add(tctl);
+
+                    y += tctl.Height + CONTROL_SPACING;
+                }
+                else
+                {
+                    _logger.Error($"Invalid device: {ch.DeviceName} for channel: {ch.ChannelName}");
+                    ok = false;
+                    break;
+                }
+            }
+
+            return ok;
+        }
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void ChannelControl_ChannelChangeEvent(object? sender, ChannelChangeEventArgs e)
+        {
+            PlayerControl chc = (PlayerControl)sender!; //TODO2 factor device name too.
+
+            if (e.StateChange)
+            {
+                switch (chc.State)
+                {
+                    case ChannelState.Normal:
+                        break;
+
+                    case ChannelState.Solo:
+                        // Mute any other non-solo channels.
+                        for (int i = 0; i < MidiDefs.NUM_CHANNELS; i++)
+                        {
+                            int chnum = i + 1;
+                            if (chnum != chc.ChannelNumber && chc.State != ChannelState.Solo)
+                            {
+                                _outputDevices.ForEach(d => d.Kill(chnum));
+                            }
+                        }
+                        break;
+
+                    case ChannelState.Mute:
+                        _outputDevices.ForEach(d => d.Kill(chc.ChannelNumber));
+                        break;
+                }
+            }
+
+            if (e.PatchChange && chc.Patch >= 0)
+            {
+                _outputDevices.ForEach(d => d.SendPatch(chc.ChannelNumber, chc.Patch));
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Clean up from before.
+        /// </summary>
+        void DestroyChannelControls()
+        {
+            List<Control> toRemove = new(Controls.OfType<ChannelControl>());
+            toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
+        }
+
+        /// <summary>
+        /// Create the channel controls from the user script.
+        /// </summary>
+        bool CreateChannelControls___old()
+        {
+            bool ok = true;
+            const int CONTROL_SPACING = 10;
+            int x = btnRewind.Left;
+            int y = barBar.Bottom + CONTROL_SPACING;
 
             // Create new channel controls.
             foreach (Channel ch in _channels)
@@ -510,7 +623,7 @@ namespace Nebulator.App
                     ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
                     ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
 
-                    UI.ChannelControl tctl = new()
+                    UI.ChannelControl_XXX tctl = new()
                     {
                         Location = new Point(x, y),
                         BoundChannel = ch,
@@ -534,9 +647,9 @@ namespace Nebulator.App
         /// <summary>
         /// Clean up from before.
         /// </summary>
-        void DestroyChannelControls()
+        void DestroyChannelControls___old()
         {
-            List<Control> toRemove = new(Controls.OfType<UI.ChannelControl>());
+            List<Control> toRemove = new(Controls.OfType<UI.ChannelControl_XXX>());
             toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
         }
         #endregion
@@ -622,20 +735,39 @@ namespace Nebulator.App
                                 break;
 
                             default:
-                                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt.MidiEvent);
+                                if (ch is not null && ch.Tag is not null)
+                                {
+                                    (ch.Tag as IMidiOutputDevice)!.SendEvent(evt.MidiEvent);
+                                }
+                                else // TODO2 something?
+                                {
+                                    //throw new ArgumentException($"Invalid channel: {chanName}");
+                                }
                                 break;
                         }
                     }
                 }
 
                 ///// Bump time.
-                _stepTime.Advance();
+                _stepTime.Increment(1);
+                barBar.IncrementCurrent(1);
+
+                //// Check for end of play. If no steps or not selected, free running mode so always keep going.
+                //if (timeMaster.TimeDefs.Count > 1)
+                //{
+                //    // Check for end.
+                //    if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
+                //    {
+                //        ProcessPlay(PlayCommand.StopRewind);
+                //        Kill(); // just in case
+                //    }
+                //}
 
                 // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                if (timeMaster.TimeDefs.Count > 1)
+                if (barBar.TimeDefs.Count > 1)
                 {
                     // Check for end.
-                    if (_stepTime.Beat > timeMaster.TimeDefs.Last().Key)
+                    if (_stepTime.Beat > barBar.Current.Beat)
                     {
                         ProcessPlay(PlayCommand.StopRewind);
                         Kill(); // just in case
@@ -856,6 +988,10 @@ namespace Nebulator.App
                 }
             }
 
+            // Update bar.
+            barBar.Start = new();
+            barBar.Current = new();
+
             return ret;
         }
 
@@ -953,18 +1089,9 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// User updated the time.
-        /// </summary>
-        void Time_ValueChanged(object? sender, EventArgs e)
-        {
-            _stepTime = timeMaster.CurrentTime;
-            ProcessPlay(PlayCommand.UpdateUiTime);
-        }
-
-        /// <summary>
         /// Monitor comm messages. Note that monitoring slows down processing so use judiciously.
         /// </summary>
-        void Mon_Click(object? sender, EventArgs e)
+        void Monitor_Click(object? sender, EventArgs e)
         {
             UserSettings.TheSettings.MonitorInput = btnMonIn.Checked;
             UserSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
@@ -1057,6 +1184,7 @@ namespace Nebulator.App
 
                 case PlayCommand.Rewind:
                     _stepTime.Reset();
+                    barBar.Current = new();
                     break;
 
                 case PlayCommand.StopRewind:
@@ -1070,9 +1198,10 @@ namespace Nebulator.App
             }
 
             // Always do this.
-            timeMaster.CurrentTime = _stepTime;
+            barBar.Current = new(_stepTime.TotalSubdivs);
+ //           timeMaster.CurrentTime = _stepTime;
 
-            //            _outputDevices.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
+            //_outputDevices.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }
@@ -1102,7 +1231,7 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTimeConverter mt = new(Time.SubdivsPerBeat, sldSpeed.Value);
+            MidiTimeConverter mt = new(MidiSettings.TheSettings.SubdivsPerBeat, sldSpeed.Value);
             //MidiTime mt = new()
             //{
             //    InternalPpq = Time.SubdivsPerBeat,

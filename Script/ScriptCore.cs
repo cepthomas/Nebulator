@@ -120,7 +120,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="time">Specific time.</param>
         /// <returns>Enumerator for events at time.</returns>
-        public IEnumerable<MidiEventDesc> GetEvents(Time time)
+        public IEnumerable<MidiEventDesc> GetEvents(BarTime time)
         {
             if(time.Beat == 0 && time.Subdiv == 0)
             {
@@ -149,12 +149,12 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
-        /// <param name="startBeat">Which beat to start at.</param>
+        /// <param name="startBeat">Which beat to start sequence at.</param>
         List<MidiEventDesc> ConvertToEvents(string chanName, Sequence seq, int startBeat)
         {
             if (seq is null)
             {
-                throw new ArgumentException($"Invalid Sequence");
+                throw new ArgumentException($"Invalid sequence");
             }
 
             List<MidiEventDesc> events = new();
@@ -165,11 +165,11 @@ namespace Nebulator.Script
                 foreach (SequenceElement seqel in seq.Elements)
                 {
                     // Create the note start and stop times.
-                    int toffset = 0;
-                    //int toffset = startBeat == -1 ? 0 : channel.NextTime();
+                    //int toffset = 0;
+                    // int toffset = startBeat == -1 ? 0 : channel.NextTime();
 
-                    Time startNoteTime = new Time(startBeat, toffset) + seqel.When;
-                    Time stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new Time(0.1) : seqel.Duration); // 0.1 is a short hit
+                    BarTime startNoteTime = new BarTime(startBeat, 0, 0) + seqel.When;
+                    BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new BarTime(0.1) : seqel.Duration); // 0.1 is a short hit
 
                     // Is it a function?
                     if (seqel.ScriptFunction is not null)
@@ -205,7 +205,7 @@ namespace Nebulator.Script
         {
             if (seq is null)
             {
-                throw new ArgumentException($"Invalid Sequence");
+                throw new ArgumentException($"Invalid equence");
             }
 
             var ecoll = ConvertToEvents(chanName, seq, beat);
@@ -216,18 +216,20 @@ namespace Nebulator.Script
         /// Utility to look up channel.
         /// </summary>
         /// <param name="chanName"></param>
-        /// <returns></returns>
+        /// <returns>The channel object or null if invalid.</returns>
         Channel GetChannel(string chanName)
         {
-            if (!_channels.TryGetValue(chanName, out var ch))
+            Channel? ch = null;
+
+            if (!_channels.TryGetValue(chanName, out ch))
             {
-                throw new ArgumentException($"Invalid Channel Name: {chanName}");
+                throw new ArgumentException($"Invalid channel: {chanName}");
             }
 
-            if (ch is null || ch.Tag is null)
-            {
-                throw new ArgumentException($"Invalid device for channel: {chanName}");
-            }
+            //if (ch is null || ch.Tag is null)
+            //{
+            //    throw new ArgumentException($"Invalid device for channel: {chanName}");
+            //}
 
             return ch;
         }

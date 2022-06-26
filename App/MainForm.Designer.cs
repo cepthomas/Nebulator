@@ -16,7 +16,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Nebulator.Common.Time time1 = new Nebulator.Common.Time();
+            Nebulator.Common.Time_XXX time1 = new Nebulator.Common.Time_XXX();
+            MidiLib.Channel channel1 = new MidiLib.Channel();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.sldVolume = new NBagOfUis.Slider();
             this.sldSpeed = new NBagOfUis.Slider();
@@ -40,7 +41,9 @@
             this.textViewer = new NBagOfUis.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
-            this.timeMaster = new Nebulator.UI.TimeControl();
+            this.timeMaster = new Nebulator.UI.TimeControl_XXX();
+            this.barBar = new MidiLib.BarBar();
+            this.playerControl1 = new MidiLib.PlayerControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -172,27 +175,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             // 
@@ -200,7 +203,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -208,7 +211,7 @@
             // 
             this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.settingsToolStripMenuItem.Text = "Settings...";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
             // 
@@ -222,7 +225,7 @@
             this.btnMonIn.Size = new System.Drawing.Size(29, 24);
             this.btnMonIn.Text = "toolStripButton1";
             this.btnMonIn.ToolTipText = "Monitor messages in";
-            this.btnMonIn.Click += new System.EventHandler(this.Mon_Click);
+            this.btnMonIn.Click += new System.EventHandler(this.Monitor_Click);
             // 
             // btnMonOut
             // 
@@ -234,7 +237,7 @@
             this.btnMonOut.Size = new System.Drawing.Size(29, 24);
             this.btnMonOut.Text = "toolStripButton1";
             this.btnMonOut.ToolTipText = "Monitor messages out";
-            this.btnMonOut.Click += new System.EventHandler(this.Mon_Click);
+            this.btnMonOut.Click += new System.EventHandler(this.Monitor_Click);
             // 
             // btnKillComm
             // 
@@ -273,11 +276,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textViewer.Location = new System.Drawing.Point(13, 334);
+            this.textViewer.Location = new System.Drawing.Point(13, 531);
             this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textViewer.MaxText = 5000;
             this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(952, 493);
+            this.textViewer.Size = new System.Drawing.Size(952, 296);
             this.textViewer.TabIndex = 41;
             this.textViewer.WordWrap = true;
             // 
@@ -313,7 +316,43 @@
             this.timeMaster.ShowProgress = true;
             this.timeMaster.Size = new System.Drawing.Size(233, 52);
             this.timeMaster.TabIndex = 37;
-            this.timeMaster.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
+            // 
+            // barBar
+            // 
+            this.barBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.barBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.barBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.barBar.Location = new System.Drawing.Point(12, 123);
+            this.barBar.MarkerColor = System.Drawing.Color.Black;
+            this.barBar.Name = "barBar";
+            this.barBar.ProgressColor = System.Drawing.Color.White;
+            this.barBar.Size = new System.Drawing.Size(790, 55);
+            this.barBar.TabIndex = 44;
+            // 
+            // playerControl1
+            // 
+            this.playerControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            channel1.ChannelName = "";
+            channel1.ChannelNumber = -1;
+            channel1.DeviceName = "";
+            channel1.IsDrums = false;
+            channel1.Patch = -1;
+            channel1.Selected = false;
+            channel1.State = MidiLib.ChannelState.Normal;
+            channel1.Tag = null;
+            channel1.Volume = 0.8D;
+            this.playerControl1.Channel = channel1;
+            this.playerControl1.IsDrums = false;
+            this.playerControl1.Location = new System.Drawing.Point(12, 213);
+            this.playerControl1.Name = "playerControl1";
+            this.playerControl1.Patch = -1;
+            this.playerControl1.Selected = false;
+            this.playerControl1.SelectedColor = System.Drawing.Color.Aquamarine;
+            this.playerControl1.Size = new System.Drawing.Size(431, 48);
+            this.playerControl1.State = MidiLib.ChannelState.Normal;
+            this.playerControl1.TabIndex = 45;
+            this.playerControl1.UnselectedColor = System.Drawing.SystemColors.Control;
+            this.playerControl1.Volume = 0.8D;
             // 
             // MainForm
             // 
@@ -322,6 +361,8 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(976, 838);
+            this.Controls.Add(this.playerControl1);
+            this.Controls.Add(this.barBar);
             this.Controls.Add(this.lblMute);
             this.Controls.Add(this.lblSolo);
             this.Controls.Add(this.textViewer);
@@ -349,7 +390,7 @@
         private NBagOfUis.Slider sldSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
-        private UI.TimeControl timeMaster;
+        private UI.TimeControl_XXX timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnMonIn;
@@ -367,6 +408,8 @@
         private System.Windows.Forms.Label lblMute;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private MidiLib.BarBar barBar;
+        private MidiLib.PlayerControl playerControl1;
     }
 }
 

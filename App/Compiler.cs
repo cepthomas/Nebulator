@@ -33,12 +33,14 @@ namespace Nebulator.App
         #endregion
 
         /// <summary>Called before compiler starts.</summary>
-        public override void PreExecute()
+        public override void PreCompile()
         {
             Channels.Clear();
 
-            LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "Nebulator.Common", "Nebulator.Script" };
-            //Usings.Add("static Nebulator.Script.ScriptUtils");
+            LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "MidiLib", "Nebulator.Script" };
+
+            Usings.Add("static NBagOfTricks.MusicDefinitions");
+            //Usings.Add("static Nebulator.Script.ScriptBase");
 
             // Save hash of current channel descriptors to detect change in source code.
             _chHash = string.Join("", _channelDescriptors).GetHashCode();
@@ -46,7 +48,7 @@ namespace Nebulator.App
         }
 
         /// <summary>Called after compiler finished.</summary>
-        public override void PostExecute()
+        public override void PostCompile()
         {
             // Check for changed channel descriptors.
             if (string.Join("", _channelDescriptors).GetHashCode() != _chHash)
@@ -63,7 +65,7 @@ namespace Nebulator.App
                             ChannelName = parts[1].Replace("\"", ""),
                             DeviceName = parts[2],
                             ChannelNumber = int.Parse(parts[3]),
-                            Patch = MidiDefs.GetInstrumentNumber(parts[4]) //TODO1 may be a drum
+                            Patch = MidiDefs.GetInstrumentOrDrumKitNumber(parts[4])
                         };
 
                         Channels.Add(ch);
@@ -82,8 +84,8 @@ namespace Nebulator.App
             }
         }
 
-        /// <summary>Called for each line in the source file.</summary>
-        public override bool PreprocessFile(string sline, FileContext pcont)
+        /// <summary>Called for each line in the source file before compiling.</summary>
+        public override bool PreprocessLine(string sline, FileContext pcont)
         {
             bool handled = false;
 

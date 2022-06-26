@@ -20,7 +20,7 @@ namespace Nebulator.Script
         public bool Playing { get; set; } = false;
 
         /// <summary>Current Nebulator step time. Main:W Script:R</summary>
-        public Time StepTime { get; set; } = new Time();
+        public BarTime StepTime { get; set; } = new BarTime(0);
 
         /// <summary>Actual time since start pressed. Main:W Script:R</summary>
         public double RealTime { get; set; } = 0.0;
@@ -107,7 +107,7 @@ namespace Nebulator.Script
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(string chanName, int notenum, double vol, Time dur)
+        protected void SendNote(string chanName, int notenum, double vol, BarTime dur)
         {
             var ch = GetChannel(chanName);
 
@@ -138,7 +138,7 @@ namespace Nebulator.Script
                     //    });
                     //}
                     ///// <summary>Notes to stop later.</summary>
-                    //readonly List<StepNoteOff_XXX> _stops = new();
+                    //readonly List<StepNoteOff> _stops = new();
                     // public void Housekeep()
                     // {
                     //     // Send any stops due.
@@ -148,17 +148,31 @@ namespace Nebulator.Script
                     //     _stops.RemoveAll(s => s.Expiry < 0);
                     // }
 
-                    (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+                    if (ch is not null && ch.Tag is not null)
+                    {
+                        (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+                    }
+                    else // TODO2 something?
+                    {
+                        //throw new ArgumentException($"Invalid channel: {chanName}");
+                    }
                 }
                 else
                 {
                     NoteEvent evt = new(0, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
-                    (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+                    if (ch is not null && ch.Tag is not null)
+                    {
+                        (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+                    }
+                    else // TODO2 something?
+                    {
+                        //throw new ArgumentException($"Invalid channel: {chanName}");
+                    }
                 }
             }
             else
             {
-                throw new ArgumentException($"Invalid Channel {chanName}");
+                throw new ArgumentException($"Invalid channel: {chanName}");
             }
         }
 
@@ -167,7 +181,7 @@ namespace Nebulator.Script
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        protected void SendNote(string chanName, string notestr, double vol, Time dur)
+        protected void SendNote(string chanName, string notestr, double vol, BarTime dur)
         {
             SequenceElement note = new(notestr);
             note.Notes.ForEach(n => SendNote(chanName, n, vol, dur));
@@ -180,7 +194,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, double dur = 0.0)
         {
-            SendNote(chanName, notenum, vol, new Time(dur));
+            SendNote(chanName, notenum, vol, new BarTime(dur));
         }
 
         /// <summary>Send one or more named notes immediately.</summary>
@@ -190,7 +204,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         protected void SendNote(string chanName, string notestr, double vol, double dur = 0.0)
         {
-            SendNote(chanName, notestr, vol, new Time(dur));
+            SendNote(chanName, notestr, vol, new BarTime(dur));
         }
 
         /// <summary>Send a note on immediately.</summary>
@@ -218,18 +232,15 @@ namespace Nebulator.Script
         {
             var ch = GetChannel(chanName);
             int ctlrid = MidiDefs.GetControllerNumber(controller);
-            if (ch is not null && ctlrid > 0)
+
+            if (ch is not null && ch.Tag is not null)
             {
                 ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
                 (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
             }
-            else if (ch is null)
+            else // TODO2 something?
             {
-                throw new ArgumentException($"Invalid Channel {chanName}");
-            }
-            else if (ctlrid > 0)
-            {
-                throw new ArgumentException($"Invalid Controller {controller}");
+                //throw new ArgumentException($"Invalid channel: {chanName}");
             }
         }
 
@@ -239,14 +250,13 @@ namespace Nebulator.Script
         protected void SendPatch(string chanName, int patch)
         {
             var ch = GetChannel(chanName);
-            if (ch is not null)
+            if (ch is not null && ch.Tag is not null)
             {
-                PatchChangeEvent evt = new(0, ch.ChannelNumber, patch);
-                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+                (ch.Tag as IMidiOutputDevice)!.SendPatch(ch.ChannelNumber, patch);
             }
-            else
+            else // TODO2 something?
             {
-                throw new ArgumentException($"Invalid Channel {chanName}");
+                //throw new ArgumentException($"Invalid channel: {chanName}");
             }
         }
 
@@ -263,7 +273,7 @@ namespace Nebulator.Script
             }
             else
             {
-                throw new ArgumentException($"Invalid Patch {patch}");
+                throw new ArgumentException($"Invalid patch: {patch}");
             }
         }
         #endregion
@@ -284,27 +294,27 @@ namespace Nebulator.Script
         //}
 
         #region General utilities
-        public double Random(double max)
+        protected double Random(double max)
         {
             return _rand.NextDouble() * max;
         }
 
-        public double Random(double min, double max)
+        protected double Random(double min, double max)
         {
             return min + _rand.NextDouble() * (max - min);
         }
 
-        public int Random(int max)
+        protected int Random(int max)
         {
             return _rand.Next(max);
         }
 
-        public int Random(int min, int max)
+        protected int Random(int min, int max)
         {
             return _rand.Next(min, max);
         }
 
-        public void Print(params object[] vars)
+        protected void Print(params object[] vars)
         {
             _logger.Info(string.Join(", ", vars));
         }

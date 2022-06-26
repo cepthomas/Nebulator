@@ -425,20 +425,6 @@
             <param name="i">Number to fix.</param>
             <returns>Fixed number.</returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.SecondsToTimeSpan(System.Double)">
-            <summary>
-            Convert time to TimeSpan.
-            </summary>
-            <param name="sec">Time in seconds.</param>
-            <returns>TimeSpan</returns>
-        </member>
-        <member name="M:NBagOfTricks.MiscUtils.TimeSpanToSeconds(System.TimeSpan)">
-            <summary>
-            Convert TimeSpan to time.
-            </summary>
-            <param name="ts"></param>
-            <returns>Time in seconds.</returns>
-        </member>
         <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
             <summary>
             Get a subset of an array.
@@ -711,7 +697,7 @@
             Convert note name into number.
             </summary>
             <param name="snote">The root of the note without octave.</param>
-            <returns>The number or null if invalid.</returns>
+            <returns>The number or -1 if invalid.</returns>
         </member>
         <member name="M:NBagOfTricks.MusicDefinitions.GetNotesFromString(System.String)">
             <summary>
@@ -739,7 +725,7 @@
             Get interval offset from name.
             </summary>
             <param name="sinterval"></param>
-            <returns>Offset or null if invalid.</returns>
+            <returns>Offset or -1 if invalid.</returns>
         </member>
         <member name="M:NBagOfTricks.MusicDefinitions.GetInterval(System.Int32)">
             <summary>
@@ -767,7 +753,7 @@
             Get a defined chord or scale definition.
             </summary>
             <param name="name">which</param>
-            <returns>The notes.</returns>
+            <returns>The list of notes or empty if invalid.</returns>
         </member>
         <member name="T:NBagOfTricks.StringUtils">
             <summary>
@@ -1288,14 +1274,14 @@
         <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._filesToCompile">
             <summary>Products of file preprocess. Key is generated file name.</summary>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreExecute">
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreCompile">
             <summary>Called before compiler starts.</summary>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PostExecute">
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PostCompile">
             <summary>Called after compiler finished.</summary>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessFile(System.String,NBagOfTricks.ScriptCompiler.FileContext)">
-            <summary>Called for each line in the source file.</summary>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessLine(System.String,NBagOfTricks.ScriptCompiler.FileContext)">
+            <summary>Called for each line in the source file before compiling.</summary>
             <param name="sline">Trimmed line</param>
             <param name="pcont">File context</param>
             <returns>True if handled</returns>

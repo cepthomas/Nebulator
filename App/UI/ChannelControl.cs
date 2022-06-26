@@ -11,7 +11,7 @@ namespace Nebulator.UI
     /// <summary>
     /// Common channel controller.
     /// </summary>
-    public partial class ChannelControl : UserControl
+    public partial class ChannelControl_XXX : UserControl
     {
         #region Properties
         /// <summary>Corresponding channel object.</summary>
@@ -21,7 +21,7 @@ namespace Nebulator.UI
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ChannelControl()
+        public ChannelControl_XXX()
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
@@ -29,8 +29,8 @@ namespace Nebulator.UI
             chkSolo.FlatAppearance.CheckedBackColor = Color.Green;
             chkMute.FlatAppearance.CheckedBackColor = Color.Red;
 
-            sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldVolume.BackColor = UserSettings.TheSettings.BackColor;
+            //sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
+            //sldVolume.BackColor = UserSettings.TheSettings.BackColor;
             sldVolume.Resolution = 0.05;
             sldVolume.Maximum = 1.0;
         }

@@ -1,6 +1,6 @@
 ﻿namespace Nebulator.UI
 {
-    partial class ChannelControl
+    partial class ChannelControl_XXX
     {
         /// <summary> 
         /// Required designer variable.

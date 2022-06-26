@@ -8,7 +8,7 @@ namespace Nebulator.Common
     /// <summary>
     /// Unit of musical time.
     /// </summary>
-    public class Time
+    public class Time_XXX // TODO1 use BarSpan
     {
         #region Constants
         /// <summary>
@@ -37,7 +37,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Time()
+        public Time_XXX()
         {
             Beat = 0;
             Subdiv = 0;
@@ -46,7 +46,7 @@ namespace Nebulator.Common
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        public Time(Time other)
+        public Time_XXX(Time_XXX other)
         {
             Beat = other.Beat;
             Subdiv = other.Subdiv;
@@ -57,7 +57,7 @@ namespace Nebulator.Common
         /// </summary>
         /// <param name="beat"></param>
         /// <param name="subdiv">Sub to set - can be negative.</param>
-        public Time(int beat, int subdiv)
+        public Time_XXX(int beat, int subdiv)
         {
             if (beat < 0)
             {
@@ -82,7 +82,7 @@ namespace Nebulator.Common
         /// Constructor from total subdivs.
         /// </summary>
         /// <param name="subdivs"></param>
-        public Time(int subdivs)
+        public Time_XXX(int subdivs)
         {
             if (subdivs < 0)
             {
@@ -97,7 +97,7 @@ namespace Nebulator.Common
         /// Constructor from total subdivs.
         /// </summary>
         /// <param name="subdivs"></param>
-        public Time(long subdivs) : this((int)subdivs)
+        public Time_XXX(long subdivs) : this((int)subdivs)
         {
         }
 
@@ -105,7 +105,7 @@ namespace Nebulator.Common
         /// Constructor from Beat.Subdiv representation as a double. TODO a bit crude but other ways (e.g. string) clutter the syntax.
         /// </summary>
         /// <param name="tts"></param>
-        public Time(double tts)
+        public Time_XXX(double tts)
         {
             if (tts < 0)
             {
@@ -139,11 +139,11 @@ namespace Nebulator.Common
                 return true;
             }
 
-            return other.GetType() == GetType() && Equals((Time)other);
+            return other.GetType() == GetType() && Equals((Time_XXX)other);
         }
 
         // Compare contents.
-        public bool Equals(Time other)
+        public bool Equals(Time_XXX other)
         {
             if (other is null)
             {
@@ -159,7 +159,7 @@ namespace Nebulator.Common
         }
 
         // Compare identity.
-        public static bool operator ==(Time obj1, Time obj2)
+        public static bool operator ==(Time_XXX obj1, Time_XXX obj2)
         {
             if (ReferenceEquals(obj1, obj2))
             {
@@ -180,40 +180,40 @@ namespace Nebulator.Common
         }
 
         // Compare identity.
-        public static bool operator !=(Time obj1, Time obj2)
+        public static bool operator !=(Time_XXX obj1, Time_XXX obj2)
         {
             return !(obj1 == obj2);
         }
 
         // Compare identity.
-        public static bool operator >(Time t1, Time t2)
+        public static bool operator >(Time_XXX t1, Time_XXX t2)
         {
             return t1 is null || t2 is null || t1.TotalSubdivs > t2.TotalSubdivs;
         }
 
         // Compare identity.
-        public static bool operator >=(Time t1, Time t2)
+        public static bool operator >=(Time_XXX t1, Time_XXX t2)
         {
             return t1 is null || t2 is null || t1.TotalSubdivs >= t2.TotalSubdivs;
         }
 
         // Compare identity.
-        public static bool operator <(Time t1, Time t2)
+        public static bool operator <(Time_XXX t1, Time_XXX t2)
         {
             return t1 is null || t2 is null || t1.TotalSubdivs < t2.TotalSubdivs;
         }
 
         // Compare identity.
-        public static bool operator <=(Time t1, Time t2)
+        public static bool operator <=(Time_XXX t1, Time_XXX t2)
         {
             return t1 is null || t2 is null || t1.TotalSubdivs <= t2.TotalSubdivs;
         }
 
-        public static Time operator +(Time t1, Time t2)
+        public static Time_XXX operator +(Time_XXX t1, Time_XXX t2)
         {
             int beat = t1.Beat + t2.Beat + (t1.Subdiv + t2.Subdiv) / SubdivsPerBeat;
             int incr = (t1.Subdiv + t2.Subdiv) % SubdivsPerBeat;
-            return new Time(beat, incr);
+            return new Time_XXX(beat, incr);
         }
 
         public override int GetHashCode()

@@ -11,30 +11,31 @@ bool Boing(int notenum = 0)
 {
     bool boinged = false;
 
-    // Print("boing");
-    if(notenum == 0)
-    {
-        notenum = Random(30, 80);
-        boinged = true;
-    }
-
-    //SendNote("synth", notenum, VEL, 1.0);
+//    // Print("boing");
+//    if(notenum == 0)
+//    {
+//        notenum = Random(30, 80);
+//        boinged = true;
+//    }
+//
+//    //SendNote("synth", notenum, VEL, 1.0);
     return boinged;
 }
 
 
-// Example of an included class.
-public class Dummy
-{
-    int _thing = 0;
-
-    public Dummy(int thing)
-    {
-        _thing = thing;
-    }
-
-    public int GetThing(int value)
-    {
-        return _thing * Random(value);
-    }
-}
+//// Example of an included class.
+//public class Dummy
+//{
+//    int _thing = 0;
+//
+//    public Dummy(int thing)
+//    {
+//        _thing = thing;
+//    }
+//
+//    public int GetThing(int value)
+//    {
+//        return _thing * Random(value);
+//    }
+//}
+//
