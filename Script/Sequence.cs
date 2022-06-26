@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using MidiLib;
 using NBagOfTricks;
-using Nebulator.Common;
 
 
 namespace Nebulator.Script

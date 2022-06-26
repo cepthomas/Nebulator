@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using NBagOfTricks;
 using MidiLib;
-using Nebulator.Common;
 using NAudio.Midi;
 
 

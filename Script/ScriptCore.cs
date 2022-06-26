@@ -4,7 +4,6 @@ using System.Linq;
 using NAudio.Midi;
 using NBagOfTricks.Slog;
 using MidiLib;
-using Nebulator.Common;
 using NBagOfTricks;
 
 

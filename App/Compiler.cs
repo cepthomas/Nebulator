@@ -8,7 +8,6 @@ using System.Diagnostics;
 using NBagOfTricks;
 using NBagOfTricks.ScriptCompiler;
 using MidiLib;
-using Nebulator.Common;
 using Nebulator.Script;
 
 
@@ -63,9 +62,9 @@ namespace Nebulator.App
                         Channel ch = new()
                         {
                             ChannelName = parts[1].Replace("\"", ""),
-                            DeviceName = parts[2],
+                            DeviceId = parts[2].Replace("\"", ""),
                             ChannelNumber = int.Parse(parts[3]),
-                            Patch = MidiDefs.GetInstrumentOrDrumKitNumber(parts[4])
+                            Patch = MidiDefs.GetInstrumentOrDrumKitNumber(parts[4].Replace("\"", ""))
                         };
 
                         Channels.Add(ch);

@@ -3,15 +3,16 @@
 //----- Warning: this is not actual music! --------
 
 ///// Directives/preprocess: Include config and lib files. /////
-Include(C:\Dev\repos\Nebulator\Examples\utils.neb);
-Include(C:\Dev\repos\Nebulator\Examples\scale.neb);
+Include("C:\Dev\repos\Nebulator\Examples\utils.neb");
+Include("C:\Dev\repos\Nebulator\Examples\scale.neb");
 
+// TODO1 probably revert to classes.
 
 ///// All the channel/outputs.
-Channel("keys",  MidiOut1, 1,  AcousticGrandPiano);
-Channel("bass",  MidiOut1, 2,  AcousticBass);
-Channel("synth", MidiOut1, 3,  Lead1Square);
-Channel("drums", MidiOut1, 10, Jazz); // for drums = kit
+Channel("keys",  "MidiOut1", 1,  "AcousticGrandPiano");
+Channel("bass",  "MidiOut1", 2,  "AcousticBass");
+Channel("synth", "MidiOut1", 3,  "Lead1Square");
+Channel("drums", "MidiOut1", 10, "Jazz"); // for drums = kit
 
 ///// Volumes.
 const double KEYS_VOL = 0.8;

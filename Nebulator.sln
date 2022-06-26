@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Script", "Script\Script.csproj", "{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{7FB56B40-1555-438C-94B2-9D2C7DF763E2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFiles", "DocFiles", "{4DEF0736-26BA-4D08-B0E9-D6CAFAAB8C1F}"
 	ProjectSection(SolutionItems) = preProject
 		DocFiles\Internals.md = DocFiles\Internals.md
@@ -42,10 +40,6 @@ Global
 		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FB56B40-1555-438C-94B2-9D2C7DF763E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C1B94030-5B42-4631-884D-672372ACFEEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C1B94030-5B42-4631-884D-672372ACFEEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1B94030-5B42-4631-884D-672372ACFEEB}.Release|Any CPU.ActiveCfg = Release|Any CPU

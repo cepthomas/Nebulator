@@ -12,11 +12,9 @@ using NBagOfTricks.ScriptCompiler;
 using NBagOfTricks.Slog;
 using NBagOfUis;
 using MidiLib;
-using Nebulator.Common;
 using Nebulator.Script;
-using Nebulator.UI;
 
-// TODO1 show mididefs, musicdefs.
+// TODO1 show docs: mididefs, musicdefs.
 
 
 namespace Nebulator.App
@@ -124,20 +122,14 @@ namespace Nebulator.App
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
             sldSpeed.DrawColor = UserSettings.TheSettings.ControlColor;
-//            sldSpeed.Invalidate();
-
+            sldSpeed.Invalidate();
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
-            //           sldVolume.Invalidate();
-
+            sldVolume.Invalidate();
 
             // Time controller.
             barBar.ProgressColor = UserSettings.TheSettings.ControlColor;
             barBar.CurrentTimeChanged += BarBar_CurrentTimeChanged;
-
-
-            timeMaster.ControlColor = UserSettings.TheSettings.ControlColor;
- //           timeMaster.Invalidate();
-//            barBar.Invalidate();
+            barBar.Invalidate();
 
             btnWrap.Checked = UserSettings.TheSettings.WordWrap;
             textViewer.WordWrap = btnWrap.Checked;
@@ -254,9 +246,7 @@ namespace Nebulator.App
         void BarBar_CurrentTimeChanged(object? sender, EventArgs e)
         {
             _stepTime = new(barBar.Current.TotalSubdivs);
-//            _stepTime = timeMaster.CurrentTime;
             ProcessPlay(PlayCommand.UpdateUiTime);
-//            _player.CurrentSubdiv = barBar.Current.TotalSubdivs;
         }
 
         #region Project persistence
@@ -298,7 +288,6 @@ namespace Nebulator.App
 
                 // Clean up any old.
                 barBar.TimeDefs.Clear();
-                timeMaster.TimeDefs.Clear();
 
                 // Compile script now.
                 Compiler compiler = new();
@@ -323,7 +312,7 @@ namespace Nebulator.App
                         CreateChannelControls();
                     }
 
-                    _script.Init(compiler.Channels); //TODO1 dev not set yet
+                    _script.Init(compiler.Channels);
 
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
@@ -346,8 +335,6 @@ namespace Nebulator.App
                         // Init the timeclock.
                         barBar.TimeDefs = _script.GetSectionMarkers();
                         barBar.Length = new(barBar.TimeDefs.Keys.Max());
-                        timeMaster.TimeDefs = _script.GetSectionMarkers();
-                        timeMaster.MaxBeat = timeMaster.TimeDefs.Keys.Max();
 
                         SetFastTimerPeriod();
                     }
@@ -436,8 +423,8 @@ namespace Nebulator.App
 
             if (MidiSettings.TheSettings.MidiIn1 != "")
             {
-                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn1);
-                if(ml.Valid)
+                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn1, "MidiIn1");
+                if (ml.Valid)
                 {
                     ml.InputEvent += Device_InputEvent;
                     _inputDevices.Add(ml);
@@ -450,7 +437,7 @@ namespace Nebulator.App
 
             if (MidiSettings.TheSettings.MidiIn2 != "")
             {
-                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn2);
+                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn2, "MidiIn2");
                 if (ml.Valid)
                 {
                     ml.InputEvent += Device_InputEvent;
@@ -464,7 +451,7 @@ namespace Nebulator.App
 
             if (MidiSettings.TheSettings.MidiOut1 != "")
             {
-                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut1);
+                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut1, "MidiOut1");
                 if (ml.Valid)
                 {
                     _outputDevices.Add(ml);
@@ -477,7 +464,7 @@ namespace Nebulator.App
 
             if (MidiSettings.TheSettings.MidiOut2 != "")
             {
-                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut2);
+                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut2, "MidiOut2");
                 if (ml.Valid)
                 {
                     _outputDevices.Add(ml);
@@ -518,7 +505,7 @@ namespace Nebulator.App
             foreach (Channel ch in _channels)
             {
                 // Locate the output device for this channel.
-                var outDev = _outputDevices.Where(d => d.DeviceName == ch.DeviceName);
+                var outDev = _outputDevices.Where(d => d.DeviceId == ch.DeviceId);
                 if (outDev.Any())
                 {
                     ch.Tag = outDev.First(); // TODO2 kind of a cheat.
@@ -538,7 +525,7 @@ namespace Nebulator.App
                 }
                 else
                 {
-                    _logger.Error($"Invalid device: {ch.DeviceName} for channel: {ch.ChannelName}");
+                    _logger.Error($"Invalid device: {ch.DeviceId} for channel: {ch.ChannelName}");
                     ok = false;
                     break;
                 }
@@ -547,11 +534,17 @@ namespace Nebulator.App
             return ok;
         }
 
-
-
+        /// <summary>
+        /// Clean up from before.
+        /// </summary>
+        void DestroyChannelControls()
+        {
+            List<Control> toRemove = new(Controls.OfType<ChannelControl>());
+            toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
+        }
 
         /// <summary>
-        /// 
+        /// UI changed something.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -588,69 +581,6 @@ namespace Nebulator.App
             {
                 _outputDevices.ForEach(d => d.SendPatch(chc.ChannelNumber, chc.Patch));
             }
-        }
-
-
-
-
-        /// <summary>
-        /// Clean up from before.
-        /// </summary>
-        void DestroyChannelControls()
-        {
-            List<Control> toRemove = new(Controls.OfType<ChannelControl>());
-            toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
-        }
-
-        /// <summary>
-        /// Create the channel controls from the user script.
-        /// </summary>
-        bool CreateChannelControls___old()
-        {
-            bool ok = true;
-            const int CONTROL_SPACING = 10;
-            int x = btnRewind.Left;
-            int y = barBar.Bottom + CONTROL_SPACING;
-
-            // Create new channel controls.
-            foreach (Channel ch in _channels)
-            {
-                // Locate the output device for this channel.
-                var od = _outputDevices.Where(d => d.DeviceName == ch.DeviceName);
-                if (od.Any())
-                {
-                    ch.Tag = od.First(); // TODO2 kind of a cheat.
-                    ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
-                    ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
-
-                    UI.ChannelControl_XXX tctl = new()
-                    {
-                        Location = new Point(x, y),
-                        BoundChannel = ch,
-                        BorderStyle = BorderStyle.FixedSingle
-                    };
-                    Controls.Add(tctl);
-
-                    x += tctl.Width + CONTROL_SPACING;
-                }
-                else
-                {
-                    _logger.Error($"Invalid device: {ch.DeviceName} for channel: {ch.ChannelName}");
-                    ok = false;
-                    break;
-                }
-            }
-
-            return ok;
-        }
-
-        /// <summary>
-        /// Clean up from before.
-        /// </summary>
-        void DestroyChannelControls___old()
-        {
-            List<Control> toRemove = new(Controls.OfType<UI.ChannelControl_XXX>());
-            toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
         }
         #endregion
 
@@ -1126,9 +1056,18 @@ namespace Nebulator.App
         /// <summary>
         /// Edit the common options in a property grid.
         /// </summary>
-        void UserSettings_Click(object? sender, EventArgs e)
+        void Settings_Click(object? sender, EventArgs e)
         {
-            var changes = UserSettings.TheSettings.Edit("User Settings");
+            List<(string name, string cat)> changes = new();
+
+            if (sender == userToolStripMenuItem)
+            {
+                changes = UserSettings.TheSettings.Edit("User Settings");
+            }
+            else if (sender == midiToolStripMenuItem)
+            {
+                changes = MidiSettings.TheSettings.Edit("Midi Settings");
+            }
 
             // Detect changes of interest.
             bool restart = false;
@@ -1138,6 +1077,7 @@ namespace Nebulator.App
             {
                 restart |= cat == "Cosmetics";
                 restart |= cat == "Devices";
+                restart |= name == "InternalTimeResolution";
             }
 
             if (restart)

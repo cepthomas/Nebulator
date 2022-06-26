@@ -16,8 +16,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Nebulator.Common.Time_XXX time1 = new Nebulator.Common.Time_XXX();
-            MidiLib.Channel channel1 = new MidiLib.Channel();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.sldVolume = new NBagOfUis.Slider();
             this.sldSpeed = new NBagOfUis.Slider();
@@ -33,6 +31,8 @@
             this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.userToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.midiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnMonIn = new System.Windows.Forms.ToolStripButton();
             this.btnMonOut = new System.Windows.Forms.ToolStripButton();
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
@@ -41,9 +41,7 @@
             this.textViewer = new NBagOfUis.TextViewer();
             this.lblSolo = new System.Windows.Forms.Label();
             this.lblMute = new System.Windows.Forms.Label();
-            this.timeMaster = new Nebulator.UI.TimeControl_XXX();
             this.barBar = new MidiLib.BarBar();
-            this.playerControl1 = new MidiLib.PlayerControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -209,11 +207,27 @@
             // 
             // settingsToolStripMenuItem
             // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.userToolStripMenuItem,
+            this.midiToolStripMenuItem});
             this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
-            this.settingsToolStripMenuItem.Text = "Settings...";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.UserSettings_Click);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // userToolStripMenuItem
+            // 
+            this.userToolStripMenuItem.Name = "userToolStripMenuItem";
+            this.userToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+            this.userToolStripMenuItem.Text = "User";
+            this.userToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
+            // 
+            // midiToolStripMenuItem
+            // 
+            this.midiToolStripMenuItem.Name = "midiToolStripMenuItem";
+            this.midiToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+            this.midiToolStripMenuItem.Text = "Midi";
+            this.midiToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
             // 
             // btnMonIn
             // 
@@ -302,21 +316,6 @@
             this.lblMute.TabIndex = 43;
             this.lblMute.Text = "Mute";
             // 
-            // timeMaster
-            // 
-            this.timeMaster.ControlColor = System.Drawing.Color.Orange;
-            time1.Beat = 0;
-            time1.Subdiv = 0;
-            this.timeMaster.CurrentTime = time1;
-            this.timeMaster.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.timeMaster.Location = new System.Drawing.Point(371, 49);
-            this.timeMaster.Margin = new System.Windows.Forms.Padding(12, 14, 12, 14);
-            this.timeMaster.MaxBeat = 0;
-            this.timeMaster.Name = "timeMaster";
-            this.timeMaster.ShowProgress = true;
-            this.timeMaster.Size = new System.Drawing.Size(233, 52);
-            this.timeMaster.TabIndex = 37;
-            // 
             // barBar
             // 
             this.barBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -329,31 +328,6 @@
             this.barBar.Size = new System.Drawing.Size(790, 55);
             this.barBar.TabIndex = 44;
             // 
-            // playerControl1
-            // 
-            this.playerControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            channel1.ChannelName = "";
-            channel1.ChannelNumber = -1;
-            channel1.DeviceName = "";
-            channel1.IsDrums = false;
-            channel1.Patch = -1;
-            channel1.Selected = false;
-            channel1.State = MidiLib.ChannelState.Normal;
-            channel1.Tag = null;
-            channel1.Volume = 0.8D;
-            this.playerControl1.Channel = channel1;
-            this.playerControl1.IsDrums = false;
-            this.playerControl1.Location = new System.Drawing.Point(12, 213);
-            this.playerControl1.Name = "playerControl1";
-            this.playerControl1.Patch = -1;
-            this.playerControl1.Selected = false;
-            this.playerControl1.SelectedColor = System.Drawing.Color.Aquamarine;
-            this.playerControl1.Size = new System.Drawing.Size(431, 48);
-            this.playerControl1.State = MidiLib.ChannelState.Normal;
-            this.playerControl1.TabIndex = 45;
-            this.playerControl1.UnselectedColor = System.Drawing.SystemColors.Control;
-            this.playerControl1.Volume = 0.8D;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -361,14 +335,12 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(976, 838);
-            this.Controls.Add(this.playerControl1);
             this.Controls.Add(this.barBar);
             this.Controls.Add(this.lblMute);
             this.Controls.Add(this.lblSolo);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btnCompile);
-            this.Controls.Add(this.timeMaster);
             this.Controls.Add(this.sldVolume);
             this.Controls.Add(this.sldSpeed);
             this.Controls.Add(this.btnRewind);
@@ -390,7 +362,6 @@
         private NBagOfUis.Slider sldSpeed;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
-        private UI.TimeControl_XXX timeMaster;
         private System.Windows.Forms.Button btnCompile;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnMonIn;
@@ -409,7 +380,8 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private MidiLib.BarBar barBar;
-        private MidiLib.PlayerControl playerControl1;
+        private System.Windows.Forms.ToolStripMenuItem userToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem midiToolStripMenuItem;
     }
 }
 

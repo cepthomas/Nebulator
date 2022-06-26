@@ -30,7 +30,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\MidiLib\MidiLib.csproj" />
-        <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Reference Include="NBagOfTricks">
