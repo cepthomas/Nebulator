@@ -81,7 +81,7 @@ namespace Nebulator.App
             // Get settings.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             UserSettings.TheSettings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
-            MidiSettings.TheSettings = (MidiSettings)Settings.Load(appDir, typeof(MidiSettings), "midi.json");
+            MidiSettings.LibSettings = UserSettings.TheSettings.MidiSettings;
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
@@ -210,8 +210,6 @@ namespace Nebulator.App
             UserSettings.TheSettings.WordWrap = btnWrap.Checked;
 
             UserSettings.TheSettings.Save();
-
-            MidiSettings.TheSettings.Save();
 
             SaveProjectValues();
 
@@ -421,9 +419,9 @@ namespace Nebulator.App
             // First...
             DestroyDevices();
 
-            if (MidiSettings.TheSettings.MidiIn1 != "")
+            if (UserSettings.TheSettings.MidiSettings.MidiInDevice != "")
             {
-                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn1, "MidiIn1");
+                var ml = new MidiListener(UserSettings.TheSettings.MidiSettings.MidiInDevice, "MidiInDevice");
                 if (ml.Valid)
                 {
                     ml.InputEvent += Device_InputEvent;
@@ -431,47 +429,20 @@ namespace Nebulator.App
                 }
                 else
                 {
-                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiIn1}");
+                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiSettings.MidiInDevice}");
                 }
             }
 
-            if (MidiSettings.TheSettings.MidiIn2 != "")
+            if (UserSettings.TheSettings.MidiSettings.MidiOutDevice != "")
             {
-                var ml = new MidiListener(MidiSettings.TheSettings.MidiIn2, "MidiIn2");
-                if (ml.Valid)
-                {
-                    ml.InputEvent += Device_InputEvent;
-                    _inputDevices.Add(ml);
-                }
-                else
-                {
-                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiIn2}");
-                }
-            }
-
-            if (MidiSettings.TheSettings.MidiOut1 != "")
-            {
-                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut1, "MidiOut1");
+                var ml = new MidiSender(UserSettings.TheSettings.MidiSettings.MidiOutDevice, "MidiOutDevice");
                 if (ml.Valid)
                 {
                     _outputDevices.Add(ml);
                 }
                 else
                 {
-                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiOut1}");
-                }
-            }
-
-            if (MidiSettings.TheSettings.MidiOut2 != "")
-            {
-                var ml = new MidiSender(MidiSettings.TheSettings.MidiOut2, "MidiOut2");
-                if (ml.Valid)
-                {
-                    _outputDevices.Add(ml);
-                }
-                else
-                {
-                    _logger.Error($"Something wrong with your device: {MidiSettings.TheSettings.MidiOut2}");
+                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiSettings.MidiOutDevice}");
                 }
             }
 
@@ -509,7 +480,7 @@ namespace Nebulator.App
                 if (outDev.Any())
                 {
                     ch.Tag = outDev.First(); // TODO2 kind of a cheat.
-                    ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", InternalDefs.VOLUME_DEFAULT);
+                    ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", VolumeDefs.DEFAULT);
                     ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
 
                     PlayerControl tctl = new()
@@ -896,7 +867,7 @@ namespace Nebulator.App
                         // Get the persisted properties.
                         _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                         sldSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                        sldVolume.Value = _nppVals.GetDouble("master", "volume", InternalDefs.VOLUME_DEFAULT);
+                        sldVolume.Value = _nppVals.GetDouble("master", "volume", VolumeDefs.DEFAULT);
 
                         SetCompileStatus(true);
                         AddToRecentDefs(fn);
@@ -1059,25 +1030,25 @@ namespace Nebulator.App
         void Settings_Click(object? sender, EventArgs e)
         {
             List<(string name, string cat)> changes = new();
-
-            if (sender == userToolStripMenuItem)
-            {
-                changes = UserSettings.TheSettings.Edit("User Settings");
-            }
-            else if (sender == midiToolStripMenuItem)
-            {
-                changes = MidiSettings.TheSettings.Edit("Midi Settings");
-            }
+            changes = UserSettings.TheSettings.Edit("User Settings", 500);
 
             // Detect changes of interest.
             bool restart = false;
 
-            // Figure out what changed - each handled differently.
             foreach (var (name, cat) in changes)
             {
-                restart |= cat == "Cosmetics";
-                restart |= cat == "Devices";
-                restart |= name == "InternalTimeResolution";
+                switch (name)
+                {
+                    case "MidiInDevice":
+                    case "MidiOutDevice":
+                    case "InternalTimeResolution":
+                    case "PPQ":
+                    case "ControlColor":
+                    case "SelectedColor":
+                    case "BackColor":
+                        restart = true;
+                        break;
+                }
             }
 
             if (restart)
@@ -1171,7 +1142,7 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTimeConverter mt = new(MidiSettings.TheSettings.SubdivsPerBeat, sldSpeed.Value);
+            MidiTimeConverter mt = new(UserSettings.TheSettings.MidiSettings.SubdivsPerBeat, sldSpeed.Value);
             //MidiTime mt = new()
             //{
             //    InternalPpq = Time.SubdivsPerBeat,

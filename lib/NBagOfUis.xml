@@ -638,11 +638,12 @@
             Save object to file.
             </summary>
         </member>
-        <member name="M:NBagOfUis.Settings.Edit(System.String)">
+        <member name="M:NBagOfUis.Settings.Edit(System.String,System.Int32)">
             <summary>
             Edit the properties in a dialog.
             </summary>
             <param name="title">To show.</param>
+            <param name="height">Adjustable.</param>
             <returns>List of tuples of name, category.</returns>
         </member>
         <member name="M:NBagOfUis.Settings.Cleanup">

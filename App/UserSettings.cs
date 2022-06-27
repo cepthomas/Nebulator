@@ -10,6 +10,7 @@ using System.Drawing.Design;
 using NAudio.Midi;
 using NBagOfTricks;
 using NBagOfUis;
+using MidiLib;
 
 
 namespace Nebulator.App
@@ -23,43 +24,43 @@ namespace Nebulator.App
         #region Properties - persisted editable
         [DisplayName("Icon Color")]
         [Description("The color used for button icons.")]
-        [Category("Cosmetics")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color IconColor { get; set; } = Color.Purple;
 
         [DisplayName("Control Color")]
         [Description("The color used for active control surfaces.")]
-        [Category("Cosmetics")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color ControlColor { get; set; } = Color.Yellow;
 
         [DisplayName("Selected Color")]
         [Description("The color used for selected controls.")]
-        [Category("Cosmetics")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color SelectedColor { get; set; } = Color.Violet;
 
         [DisplayName("Background Color")]
         [Description("The color used for overall background.")]
-        [Category("Cosmetics")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color BackColor { get; set; } = Color.AliceBlue;
 
         [DisplayName("Auto Compile")]
         [Description("Compile current file when change detected.")]
-        [Category("Functionality")]
         [Browsable(true)]
         public bool AutoCompile { get; set; } = true;
 
         [DisplayName("Ignore Warnings")]
-        [Description("Ignore warnings otherwise treat them as errors.")]
-        [Category("Functionality")]
+        [Description("Ignore compiler warnings otherwise treat them as errors.")]
         [Browsable(true)]
         public bool IgnoreWarnings { get; set; } = true;
+
+        [DisplayName("Midi Settings")]
+        [Description("Edit midi settings.")]
+        [Browsable(true)]
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public MidiSettings MidiSettings { get; set; } = new();
         #endregion
 
         #region Properties - internal

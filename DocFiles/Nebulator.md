@@ -7,6 +7,7 @@
 - Basically open a .neb file, press compile, then run.
 - Rather than spending the effort on a built-in script editor, use your favorite external text editor. The application will watch for
   changes you make and indicate that recompile is needed. I use Sublime - you can associate .neb files with C# for pretty-close syntax coloring.
+- Click on the settings icon to edit your options. Note that not all presented midi options pertain to this application.
 
 
 ## Example Script Files
