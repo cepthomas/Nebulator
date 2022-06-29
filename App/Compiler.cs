@@ -17,7 +17,7 @@ namespace Nebulator.App
     {
         #region Properties
         /// <summary>Channel info collected from the script.</summary>
-        public List<Channel> Channels { get; set; } = new();
+        public List<Channel> Channels { get; init; } = new();
         #endregion
 
         #region Fields

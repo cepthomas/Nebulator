@@ -24,7 +24,7 @@ namespace Nebulator.Script
         internal List<Section> _sections = new();
 
         /// <summary>The events being executed.</summary>
-        internal PatternInfo _scriptEvents = new();
+        internal PatternInfo _pattern = new();
 
         /// <summary>Script functions may add sequences at runtime.</summary>
         internal PatternInfo _transientEvents = new();
@@ -128,21 +128,12 @@ namespace Nebulator.Script
             }
 
             // Check both collections.
-            var events = _scriptEvents.GetEvents(time.TotalSubdivs).Concat(_transientEvents.GetEvents(time.TotalSubdivs));
+            var events = _pattern.GetEvents(time.TotalSubdivs).Concat(_transientEvents.GetEvents(time.TotalSubdivs));
             return events;
         }
-
-        ///// <summary>
-        ///// All the script events.
-        ///// </summary>
-        ///// <returns></returns>
-        //public StepCollection GetAllSteps()
-        //{
-        //    return _scriptSteps;
-        //}
         #endregion
 
-        #region Utilities
+        #region Private utilities
         /// <summary>
         /// Generate events from sequence notes.
         /// </summary>
@@ -204,11 +195,11 @@ namespace Nebulator.Script
         {
             if (seq is null)
             {
-                throw new ArgumentException($"Invalid equence");
+                throw new ArgumentException($"Invalid sequence");
             }
 
             var ecoll = ConvertToEvents(chanName, seq, beat);
-            _scriptEvents.Events.AddRange(ecoll);
+            ecoll.ForEach(e => _pattern.AddEvent(e));
         }
 
         /// <summary>
@@ -218,19 +209,30 @@ namespace Nebulator.Script
         /// <returns>The channel object or null if invalid.</returns>
         Channel GetChannel(string chanName)
         {
-            Channel? ch = null;
-
+            Channel? ch;
             if (!_channels.TryGetValue(chanName, out ch))
             {
                 throw new ArgumentException($"Invalid channel: {chanName}");
             }
-
-            //if (ch is null || ch.Tag is null)
-            //{
-            //    throw new ArgumentException($"Invalid device for channel: {chanName}");
-            //}
-
             return ch;
+        }
+
+        /// <summary>
+        /// Utility that does sanity checking.
+        /// </summary>
+        /// <param name="chanName"></param>
+        /// <param name="evt"></param>
+        void SafeSendEvent(string chanName, MidiEvent evt)
+        {
+            var ch = GetChannel(chanName);
+            if (ch is not null && ch.Tag is not null)
+            {
+                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid channel: {chanName}");
+            }
         }
         #endregion
     }

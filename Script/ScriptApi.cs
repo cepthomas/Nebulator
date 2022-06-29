@@ -39,10 +39,10 @@ namespace Nebulator.Script
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputNote(string dev, int channel, int note) { } // TODO use name for channel.
+        public virtual void InputNote(string dev, int channel, int note) { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputControl(string dev, int channel, int controller, int value) { } // TODO use name for channel.
+        public virtual void InputControl(string dev, int channel, int controller, int value) { }
         #endregion
 
         #region Script callable functions - composition
@@ -122,51 +122,12 @@ namespace Nebulator.Script
                     velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
                     NoteOnEvent evt = new(0, ch.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
-
-                    //if (dur.TotalSubdivs > 0) // specific duration TODO2 needed?
-                    //{
-                    //    // Remove any lingering note offs and add a fresh one.
-                    //    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
-
-                    //    _stops.Add(new()
-                    //    {
-                    //        Device = stt.Device,
-                    //        ChannelNumber = stt.ChannelNumber,
-                    //        NoteNumber = MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
-                    //        Expiry = stt.Duration.TotalSubdivs
-                    //    });
-                    //}
-                    ///// <summary>Notes to stop later.</summary>
-                    //readonly List<StepNoteOff> _stops = new();
-                    // public void Housekeep()
-                    // {
-                    //     // Send any stops due.
-                    //     _stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
-
-                    //     // Reset.
-                    //     _stops.RemoveAll(s => s.Expiry < 0);
-                    // }
-
-                    if (ch is not null && ch.Tag is not null)
-                    {
-                        (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
-                    }
-                    else // TODO2 something?
-                    {
-                        //throw new ArgumentException($"Invalid channel: {chanName}");
-                    }
+                    SafeSendEvent(chanName, evt);
                 }
                 else
                 {
                     NoteEvent evt = new(0, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
-                    if (ch is not null && ch.Tag is not null)
-                    {
-                        (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
-                    }
-                    else // TODO2 something?
-                    {
-                        //throw new ArgumentException($"Invalid channel: {chanName}");
-                    }
+                    SafeSendEvent(chanName, evt);
                 }
             }
             else
@@ -230,17 +191,10 @@ namespace Nebulator.Script
         protected void SendController(string chanName, string controller, int val)
         {
             var ch = GetChannel(chanName);
-            int ctlrid = MidiDefs.GetControllerNumber(controller);
 
-            if (ch is not null && ch.Tag is not null)
-            {
-                ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
-                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
-            }
-            else // TODO2 something?
-            {
-                //throw new ArgumentException($"Invalid channel: {chanName}");
-            }
+            int ctlrid = MidiDefs.GetControllerNumber(controller);
+            ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
+            SafeSendEvent(chanName, evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -249,14 +203,9 @@ namespace Nebulator.Script
         protected void SendPatch(string chanName, int patch)
         {
             var ch = GetChannel(chanName);
-            if (ch is not null && ch.Tag is not null)
-            {
-                (ch.Tag as IMidiOutputDevice)!.SendPatch(ch.ChannelNumber, patch);
-            }
-            else // TODO2 something?
-            {
-                //throw new ArgumentException($"Invalid channel: {chanName}");
-            }
+
+            PatchChangeEvent evt = new(0, ch.ChannelNumber, patch);
+            SafeSendEvent(chanName, evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -275,22 +224,22 @@ namespace Nebulator.Script
                 throw new ArgumentException($"Invalid patch: {patch}");
             }
         }
+
+        /// <summary>Send a named sequence at some point.</summary>
+        /// <param name="chanName">Which channel to send it on.</param>
+        /// <param name="seq">Which sequence to send.</param>
+        /// <param name="beat">When to send the sequence. Must be in the future.</param>
+        protected void SendSequence(string chanName, Sequence seq, int beat)
+        {
+           if (seq is null)
+           {
+               throw new InvalidOperationException($"Invalid Sequence");
+           }
+
+           var ecoll = ConvertToEvents(chanName, seq, beat);
+           ecoll.ForEach(e => _transientEvents.AddEvent(e));
+        }
         #endregion
-
-        ///// <summary>Send a named sequence at some point.</summary>
-        ///// <param name="chanName">Which channel to send it on.</param>
-        ///// <param name="seq">Which sequence to send.</param>
-        ///// <param name="beat">When to send the sequence. Must be in the future.</param>
-        //protected void SendSequence(string chanName, Sequence seq, int beat) //TODO1
-        //{
-        //    if (seq is null)
-        //    {
-        //        throw new InvalidOperationException($"Invalid Sequence");
-        //    }
-
-        //    StepCollection scoll = ConvertToSteps(chanName, seq, beat);
-        //    _transientSteps.Add(scoll);
-        //}
 
         #region General utilities
         protected double Random(double max)
@@ -318,6 +267,5 @@ namespace Nebulator.Script
             _logger.Info(string.Join(", ", vars));
         }
         #endregion
-
     }
 }
