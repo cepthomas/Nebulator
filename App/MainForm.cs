@@ -479,7 +479,7 @@ namespace Nebulator.App
                     {
                         Location = new Point(x, y),
                         BorderStyle = BorderStyle.FixedSingle,
-                        Channel = ch
+                        BoundChannel = ch
                     };
                     tctl.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
                     Controls.Add(tctl);
