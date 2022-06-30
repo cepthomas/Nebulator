@@ -68,10 +68,6 @@ namespace Nebulator.App
         public bool Valid { get; set; } = false;
 
         [Browsable(false)]
-        [JsonConverter(typeof(JsonRectangleConverter))]
-        public Rectangle KeyboardFormGeometry { get; set; } = new Rectangle(50, 50, 600, 400);
-
-        [Browsable(false)]
         public bool MonitorInput { get; set; } = false;
 
         [Browsable(false)]

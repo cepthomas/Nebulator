@@ -18,7 +18,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.sldVolume = new NBagOfUis.Slider();
-            this.sldSpeed = new NBagOfUis.Slider();
+            this.sldTempo = new NBagOfUis.Slider();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnCompile = new System.Windows.Forms.Button();
             this.btnRewind = new System.Windows.Forms.Button();
@@ -61,23 +61,23 @@
             this.sldVolume.Value = 1D;
             this.sldVolume.ValueChanged += new System.EventHandler(this.Volume_ValueChanged);
             // 
-            // sldSpeed
+            // sldTempo
             // 
-            this.sldSpeed.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.sldSpeed.DrawColor = System.Drawing.Color.LightGray;
-            this.sldSpeed.Label = "bpm";
-            this.sldSpeed.Location = new System.Drawing.Point(170, 49);
-            this.sldSpeed.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.sldSpeed.Maximum = 200D;
-            this.sldSpeed.Minimum = 30D;
-            this.sldSpeed.Name = "sldSpeed";
-            this.sldSpeed.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.sldSpeed.Resolution = 5D;
-            this.sldSpeed.Size = new System.Drawing.Size(88, 52);
-            this.sldSpeed.TabIndex = 33;
-            this.toolTip.SetToolTip(this.sldSpeed, "Speed in BPM");
-            this.sldSpeed.Value = 100D;
-            this.sldSpeed.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
+            this.sldTempo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.sldTempo.DrawColor = System.Drawing.Color.LightGray;
+            this.sldTempo.Label = "bpm";
+            this.sldTempo.Location = new System.Drawing.Point(170, 49);
+            this.sldTempo.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.sldTempo.Maximum = 200D;
+            this.sldTempo.Minimum = 30D;
+            this.sldTempo.Name = "sldTempo";
+            this.sldTempo.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.sldTempo.Resolution = 5D;
+            this.sldTempo.Size = new System.Drawing.Size(88, 52);
+            this.sldTempo.TabIndex = 33;
+            this.toolTip.SetToolTip(this.sldTempo, "Speed in BPM");
+            this.sldTempo.Value = 100D;
+            this.sldTempo.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
             // 
             // toolTip
             // 
@@ -324,7 +324,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btnCompile);
             this.Controls.Add(this.sldVolume);
-            this.Controls.Add(this.sldSpeed);
+            this.Controls.Add(this.sldTempo);
             this.Controls.Add(this.btnRewind);
             this.Controls.Add(this.chkPlay);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -341,7 +341,7 @@
         #endregion
         private NBagOfUis.Slider sldVolume;
         private System.Windows.Forms.CheckBox chkPlay;
-        private NBagOfUis.Slider sldSpeed;
+        private NBagOfUis.Slider sldTempo;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Button btnCompile;

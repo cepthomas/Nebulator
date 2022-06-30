@@ -42,10 +42,10 @@ namespace Nebulator.App
         /// <summary>The current channels.</summary>
         Dictionary<int, Channel> _channels = new();
 
-        /// <summary>All devices to use for send.</summary>
+        /// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
         readonly Dictionary<string, IMidiOutputDevice> _outputDevices = new();
 
-        /// <summary>All devices to use for receive.</summary>
+        /// <summary>All devices to use for receive. Key is name/id, not the system name.</summary>
         readonly Dictionary<string, IMidiInputDevice> _inputDevices = new();
 
         /// <summary>Persisted internal values for current script file.</summary>
@@ -121,8 +121,8 @@ namespace Nebulator.App
             chkPlay.BackColor = UserSettings.TheSettings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = UserSettings.TheSettings.SelectedColor;
 
-            sldSpeed.DrawColor = UserSettings.TheSettings.ControlColor;
-            sldSpeed.Invalidate();
+            sldTempo.DrawColor = UserSettings.TheSettings.ControlColor;
+            sldTempo.Invalidate();
             sldVolume.DrawColor = UserSettings.TheSettings.ControlColor;
             sldVolume.Invalidate();
 
@@ -243,7 +243,7 @@ namespace Nebulator.App
         void SaveProjectValues()
         {
             _nppVals.Clear();
-            _nppVals.SetValue("master", "speed", sldSpeed.Value);
+            _nppVals.SetValue("master", "speed", sldTempo.Value);
             _nppVals.SetValue("master", "volume", sldVolume.Value);
 
             foreach (var ch in _channels.Values)
@@ -513,7 +513,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ChannelControl_ChannelChangeEvent(object? sender, ChannelChangeEventArgs e)
         {
-            PlayerControl chc = (PlayerControl)sender!; //TODO1-1 factor device name (or id) too.
+            PlayerControl chc = (PlayerControl)sender!;
 
             if (e.StateChange)
             {
@@ -701,7 +701,7 @@ namespace Nebulator.App
                 _script.Playing = chkPlay.Checked;
                 _script.StepTime = _stepTime;
                 _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
-                _script.Speed = sldSpeed.Value;
+                _script.Tempo = (int)sldTempo.Value;
                 _script.MasterVolume = sldVolume.Value;
             }
         }
@@ -713,9 +713,9 @@ namespace Nebulator.App
         {
             if (_script is not null)
             {
-                if (Math.Abs(_script.Speed - sldSpeed.Value) > 0.001)
+                if (_script.Tempo != (int)sldTempo.Value)
                 {
-                    sldSpeed.Value = _script.Speed;
+                    sldTempo.Value = _script.Tempo;
                     SetFastTimerPeriod();
                 }
 
@@ -841,7 +841,7 @@ namespace Nebulator.App
 
                         // Get the persisted properties.
                         _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
-                        sldSpeed.Value = _nppVals.GetDouble("master", "speed", 100.0);
+                        sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
                         sldVolume.Value = _nppVals.GetDouble("master", "volume", VolumeDefs.DEFAULT);
 
                         SetCompileStatus(true);
@@ -1016,8 +1016,7 @@ namespace Nebulator.App
                 {
                     case "MidiInDevice":
                     case "MidiOutDevice":
-                    case "InternalTimeResolution":
-                    case "PPQ":
+                    case "InternalPPQ":
                     case "ControlColor":
                     case "SelectedColor":
                     case "BackColor":
@@ -1127,11 +1126,11 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTimeConverter mt = new(UserSettings.TheSettings.MidiSettings.SubdivsPerBeat, sldSpeed.Value);
+            MidiTimeConverter mt = new(UserSettings.TheSettings.MidiSettings.SubdivsPerBeat, sldTempo.Value);
             //MidiTime mt = new()
             //{
             //    InternalPpq = Time.SubdivsPerBeat,
-            //    Tempo = sldSpeed.Value
+            //    Tempo = sldTempo.Value
             //};
 
             var per = mt.RoundedInternalPeriod();
@@ -1156,11 +1155,57 @@ namespace Nebulator.App
 
             if (saveDlg.ShowDialog() == DialogResult.OK)
             {
-                // TODO1 was ExportMidi(saveDlg.FileName);
+                // Make a thing and call the formatter.
+                //        public PatternInfo(List<MidiEventDesc> events, List<Channel> channels, int tempo) : this()
+
+                PatternInfo pattern = new(_script.GetEvents(), _channels.Values, _script.Tempo);)
+                {
+                    Tempo = 99,
+                };
+
+                // public int Tempo { get; set; } = 0;
+                // public int[] Patches { get; set; } = new int[MidiDefs.NUM_CHANNELS];
+                // List<MidiEventDesc> _events = new();
+
+                Dictionary<string, int> meta = new()
+                {
+                    { "MidiFileType", 0 },
+                    { "DeltaTicksPerQuarterNote", UserSettings.TheSettings.MidiSettings.SubdivsPerBeat },
+                    { "NumTracks", 1 }
+                };
+
+                MidiExport.ExportMidi(saveDlg.FileName, pattern, _channels.Values.ToList(), meta);
+
+
+                // TODO1-1 was ExportMidi(saveDlg.FileName);
                 // MidiExport:
                 // public string ExportAllEvents(string outPath, List<int> channels)
                 // public string ExportGroupedEvents(string outPath, string patternName, List<int> channels, bool includeOther)
                 // public string ExportMidi(string outPath, string patternName, List<int> channels, int ppq)
+
+                // public string ExportAllEvents(string outPath, List<Channel> channels)
+                // {
+                //     var newfn = MidiExport.MakeExportFileName(outPath, _fn, "all", "csv");
+                //     MidiExport.ExportAllEvents(newfn, _patterns, channels, MakeMeta());
+                //     return newfn;            
+                // }
+
+                // public string ExportGroupedEvents(string outPath, string patternName, List<Channel> channels, bool includeAll)
+                // {
+                //     var pattern = _patterns.Where(p => p.PatternName == patternName).First();
+                //     var newfn = MidiExport.MakeExportFileName(outPath, _fn, patternName, "csv");
+                //     MidiExport.ExportGroupedEvents(newfn, pattern, channels, MakeMeta(), includeAll);
+                //     return newfn;
+                // }
+
+                // public string ExportMidi(string outPath, string patternName, List<Channel> channels, int ppq)
+                // {
+                //     var pattern = _patterns.Where(p => p.PatternName == patternName).First();
+                //     var newfn = MidiExport.MakeExportFileName(outPath, _fn, patternName, "mid");
+                //     MidiExport.ExportMidi(newfn, pattern, channels, MakeMeta());
+                //     return newfn;
+                // }
+
             }
         }
 

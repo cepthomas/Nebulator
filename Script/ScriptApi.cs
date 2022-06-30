@@ -25,7 +25,7 @@ namespace Nebulator.Script
         public double RealTime { get; set; } = 0.0;
 
         /// <summary>Nebulator Speed in bpm. Main:RW Script:RW</summary>
-        public double Speed { get; set; } = 0.0;
+        public int Tempo { get; set; } = 0;
 
         /// <summary>Nebulator master Volume. Main:RW Script:RW</summary>
         public double MasterVolume { get; set; } = 0;
@@ -237,7 +237,7 @@ namespace Nebulator.Script
            }
 
            var ecoll = ConvertToEvents(chanName, seq, beat);
-           ecoll.ForEach(e => _transientEvents.AddEvent(e));
+            _transientEvents.AddRange(ecoll);
         }
         #endregion
 

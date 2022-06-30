@@ -24,10 +24,10 @@ namespace Nebulator.Script
         internal List<Section> _sections = new();
 
         /// <summary>The events being executed.</summary>
-        internal PatternInfo _pattern = new();
+        internal List<MidiEventDesc> _mainEvents = new();
 
         /// <summary>Script functions may add sequences at runtime.</summary>
-        internal PatternInfo _transientEvents = new();
+        internal List<MidiEventDesc> _transientEvents = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
         readonly Dictionary<string, Channel> _channels = new();
@@ -124,11 +124,11 @@ namespace Nebulator.Script
             if(time.Beat == 0 && time.Subdiv == 0)
             {
                 // Starting/looping. Clean up transient.
-                _transientEvents = new();
+                _transientEvents.Clear();
             }
 
             // Check both collections.
-            var events = _pattern.GetEvents(time.TotalSubdivs).Concat(_transientEvents.GetEvents(time.TotalSubdivs));
+            var events = _mainEvents.GetEvents(time.TotalSubdivs).Concat(_transientEvents.GetEvents(time.TotalSubdivs));
             return events;
         }
         #endregion
@@ -199,7 +199,7 @@ namespace Nebulator.Script
             }
 
             var ecoll = ConvertToEvents(chanName, seq, beat);
-            ecoll.ForEach(e => _pattern.AddEvent(e));
+            _mainEvents.AddRange(ecoll);
         }
 
         /// <summary>
