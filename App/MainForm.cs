@@ -76,12 +76,12 @@ namespace Nebulator.App
         /// </summary>
         public MainForm()
         {
-            InitializeComponent();
-
-            // Get settings.
+            // Must do this first before initializing.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             UserSettings.TheSettings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
             MidiSettings.LibSettings = UserSettings.TheSettings.MidiSettings;
+
+            InitializeComponent();
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
