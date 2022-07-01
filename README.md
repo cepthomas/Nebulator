@@ -5,7 +5,7 @@ Most music software uses piano roll midi editors. This is an alternative - writi
 
 It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of synth parameters using code.
 
-Requires VS2019 and .NET6. Windows only... uses some Win32 calls but they could be re-worked for Linux.
+Requires VS2022 and .NET6. Windows only... uses some Win32 calls but they could be re-worked for Linux.
 
 I played around with various scripting concepts, but ended up realizing that C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
 
