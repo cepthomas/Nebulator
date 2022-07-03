@@ -1,7 +1,7 @@
 
 ///// Scale helper class and utilities /////
 
-public class Scale
+public class Scale : ScriptBase
 {
     int _count = 0;
     List<int> _scaleNotes;

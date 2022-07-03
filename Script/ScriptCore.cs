@@ -17,23 +17,28 @@ namespace Nebulator.Script
         /// <summary>My logger.</summary>
         internal readonly Logger _logger = LogManager.CreateLogger("Script");
 
-        /// <summary>Resource clean up.</summary>
-        internal bool _disposed = false;
-
         /// <summary>All sections.</summary>
         internal List<Section> _sections = new();
 
-        /// <summary>The events being executed.</summary>
-        internal List<MidiEventDesc> _mainEvents = new();
+        /// <summary>All the defined script events.</summary>
+        internal List<MidiEventDesc> _scriptEvents = new();
 
         /// <summary>Script functions may add sequences at runtime.</summary>
-        internal List<MidiEventDesc> _transientEvents = new();
+        internal List<MidiEventDesc> _dynamicEvents = new();
 
-        /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel> _channels = new();
+        ///// <summary>All the channels - key is user assigned name.</summary>
+        //readonly Dictionary<string, Channel> _channels = new();
+
+        Dictionary<string, Channel> _channelMap = new(); //TODO1 need something like this - put in mngr?
+
+        /// <summary>All the channels.</summary>
+        internal ChannelManager _channelManager = new();
 
         /// <summary>Script randomizer.</summary>
         static readonly Random _rand = new();
+
+        /// <summary>Resource clean up.</summary>
+        internal bool _disposed = false;
         #endregion
 
         #region Lifecycle
@@ -41,16 +46,27 @@ namespace Nebulator.Script
         /// Set up runtime stuff.
         /// </summary>
         /// <param name="channels">All output channels.</param>
-        public void Init(List<Channel> channels)
+        public void Init(ChannelManager channelManager)
         {
-            _channels.Clear();
-            channels.ForEach(ch =>
-            {
-                _channels[ch.ChannelName] = ch;
-                // Good time to send initial patches.
-                SendPatch(ch.ChannelName, ch.Patch);
-            });
+            _channelManager = channelManager;
+            // Good time to send initial patches.
+            _channelManager.ForEach(ch => { SendPatch(ch.ChannelName, ch.Patch); });
         }
+
+        ///// <summary>
+        ///// Set up runtime stuff.
+        ///// </summary>
+        ///// <param name="channels">All output channels.</param>
+        //public void Init(List<Channel> channels)
+        //{
+        //    _channels.Clear();
+        //    channels.ForEach(ch =>
+        //    {
+        //        _channels[ch.ChannelName] = ch;
+        //        // Good time to send initial patches.
+        //        SendPatch(ch.ChannelName, ch.Patch);
+        //    });
+        //}
         #endregion
 
         #region Client functions
@@ -115,22 +131,31 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Get events at specific time.
+        /// Get all events.
         /// </summary>
-        /// <param name="time">Specific time.</param>
-        /// <returns>Enumerator for events at time.</returns>
-        public IEnumerable<MidiEventDesc> GetEvents(BarTime time)
+        /// <returns>Enumerator for all events.</returns>
+        public IEnumerable<MidiEventDesc> GetEvents()
         {
-            if(time.Beat == 0 && time.Subdiv == 0)
-            {
-                // Starting/looping. Clean up transient.
-                _transientEvents.Clear();
-            }
-
-            // Check both collections.
-            var events = _mainEvents.GetEvents(time.TotalSubdivs).Concat(_transientEvents.GetEvents(time.TotalSubdivs));
-            return events;
+            return _scriptEvents;
         }
+
+        ///// <summary>
+        ///// Get events at specific time.
+        ///// </summary>
+        ///// <param name="time">Specific time.</param>
+        ///// <returns>Enumerator for events at time.</returns>
+        //public IEnumerable<MidiEventDesc> GetEvents(BarTime time)
+        //{
+        //    if (time.Beat == 0 && time.Subdiv == 0)
+        //    {
+        //        // Starting/looping. Clean up transient.
+        //        _dynamicEvents.Clear();
+        //    }
+
+        //    // Check both collections. TODO1 should create a dict for this?
+        //    var events = _scriptEvents.Where(e => e.ScaledTime == time.TotalSubdivs).Concat(_dynamicEvents.Where(e => e.ScaledTime == time.TotalSubdivs));
+        //    return events;
+        //}
         #endregion
 
         #region Private utilities
@@ -199,7 +224,7 @@ namespace Nebulator.Script
             }
 
             var ecoll = ConvertToEvents(chanName, seq, beat);
-            _mainEvents.AddRange(ecoll);
+            _scriptEvents.AddRange(ecoll);
         }
 
         /// <summary>
@@ -210,7 +235,8 @@ namespace Nebulator.Script
         Channel GetChannel(string chanName)
         {
             Channel? ch;
-            if (!_channels.TryGetValue(chanName, out ch))
+
+            if (!_channelMap.TryGetValue(chanName, out ch))
             {
                 throw new ArgumentException($"Invalid channel: {chanName}");
             }
@@ -225,9 +251,9 @@ namespace Nebulator.Script
         void SafeSendEvent(string chanName, MidiEvent evt)
         {
             var ch = GetChannel(chanName);
-            if (ch is not null && ch.Tag is not null)
+            if (ch is not null && ch.Device is not null)
             {
-                (ch.Tag as IMidiOutputDevice)!.SendEvent(evt);
+                ch.Device.SendEvent(evt);
             }
             else
             {

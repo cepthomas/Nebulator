@@ -6,14 +6,11 @@ What the script supports.
 ## Basics
 
 ### Time
-Time is described as a fixed point value `Beat.Subdiv` where:
-- Beat as in the traditional definition = quarter note. From 0 to N.
-- `Subdiv` is the subdivision of `Beat`.
-- `Time.SubdivsPerBeat` defaults to 8 but you can change it if you dare.
+Time uses the `BarTime` class.
 
 Neb doesn't care about measures, that's up to you.
 
-Previous incarnations used a floating point number instead of the `Time` class but this caused some annoying edge conditions.
+Previous incarnations used a floating point number instead of the `BarTime` class but this caused some annoying edge conditions.
 
 Some pieces work better with absolute time so scripts have access to a `Now` property that supplies the number of seconds since the start button was pressed.
 
@@ -59,7 +56,7 @@ If one were to get grandiose, a true import could be implemented.
 
 ### Channel
 ```c#
-Channel("chname", device, chnum, volWobble)
+Channel("chname", device, chnum)
 ```
 
 Defines an output comm channel.
@@ -67,7 +64,6 @@ Defines an output comm channel.
 - chname: For display in the UI.
 - device: Type of `MidiOut` or `OscOut`.
 - chnum: Channel number to play on.
-- volWobble: Optional value to add some randomization - from 0.0 to 1.0.
 
 
 ## Composition
@@ -87,10 +83,10 @@ should help clarify.)
     - { when, function, volume }
     - { pattern, which, volume, dur }
     - { pattern, drum, volume }
-        - when: When to play the element in the sequence, in `Beat.Subdiv` format.
+        - when: When to play the element in the sequence, as beat.
         - which/drum: One of [Notes](#scriptapi/basics/musicalnotes) or [Drums](#musicdefinitions/generalmididrums).
-        - volume: Note volume. Normalized to 0.0 - 1.0.
-        - dur: Optional duration in `Beat.Subdiv` format e.g. 2.2. Drums and functions don't use duration.
+        - volume: Note volume, range 0.0 - 2.0.
+        - dur: Optional duration in beats. Drums and functions don't use duration.
         - function: Name of a defined function - executed at when.
         - pattern: describes a sequence of notes, kind of like a piano roll. `1 to 9` (volume) starts a note which is held 
           for subsequent `-`. The note is ended with any other character than `-`. `|`, `.` and ` ` are ignored, 
@@ -143,7 +139,7 @@ bool Playing
 Indicates that script is executing. Read only.
 
 ```c#
-Time StepTime
+BarTime StepTime
 ```
 Current Nebulator step time object. Read only. Also use for StepTime.Beat and StepTime.subdiv.
 
@@ -207,7 +203,7 @@ Send a note immediately. Respects solo/mute. Adds a note off to play after dur t
 - chname: Channel name to send it on.
 - note: One of [Notes](#scriptapi/basics/musicalnotes).
 - vol: Note volume. Normalized to 0.0 - 1.0. 0.0 means note off.
-- dur: How long it lasts in Beat.Subdiv or Time object representation.
+- dur: How long it lasts in beats or BarTime object representation.
 
 ```c#
 void SendNoteOn("chname", note, vol)

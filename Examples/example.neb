@@ -6,7 +6,7 @@
 Include("C:\Dev\repos\Nebulator\Examples\utils.neb");
 Include("C:\Dev\repos\Nebulator\Examples\scale.neb");
 
-// TODO1-1 revert to classes.
+// TODO1-1 revert to classes. also affects NProcessing?
 
 ///// All the channel/outputs.
 Channel("keys",  MidiOutDevice, 1,  "AcousticGrandPiano");
@@ -14,193 +14,199 @@ Channel("bass",  MidiOutDevice, 2,  "AcousticBass");
 Channel("synth", MidiOutDevice, 3,  "Lead1Square");
 Channel("drums", MidiOutDevice, 10, "Jazz"); // for drums = kit
 
+public class example : ScriptBase
+{
 ///// Volumes.
-const double KEYS_VOL = 0.8;
-const double DRUM_VOL = 0.8;
+    const double KEYS_VOL = 0.8;
+    const double DRUM_VOL = 0.8;
 
-///// Sequences
-Sequence seqDynamic;
+    ///// Sequences
+    Sequence seqDynamic;
 
-// Compiler tests.
-//unknown statement
-//int _unused = 48;
+    // Compiler tests.
+    //unknown statement
+    //int _unused = 48;
 
-////// Simple variables for functions.
-List<int> scaleNotes;
-List<int> chordNotes;
-List<int> myChordNotes;
-List<int> myScaleNotes;
+    ////// Simple variables for functions.
+    List<int> scaleNotes;
+    List<int> chordNotes;
+    List<int> myChordNotes;
+    List<int> myScaleNotes;
+
+    utils u = new();
 
 
-////// Nebulator setup stuff
-public override void Setup()
-{
-    // Create sets of notes.
-    CreateNotes("MY_SCALE", "1 3 4 b7");
-    myScaleNotes = GetNotesFromString("B4.MY_SCALE");
-    // Get some stock chords and scales.
-    scaleNotes = GetNotesFromString("G3.Algerian");
-    chordNotes = GetNotesFromString("C4.o7");
-
-    bool b = Boing(60);
-
-    BuildComp();
-}    
-
-///// Make the music.
-public void BuildComp()
-{
-    /////////////////////// sequences /////////////////////////////////
-
-    Sequence seqKeysVerse = CreateSequence(8, new SequenceElements
+    ////// Nebulator setup stuff
+    public override void Setup()
     {
-      //{ "|........|........|........|........|........|........|........|........|"},
-        { "|7-------|--      |        |        |7-------|--      |        |        |", "G4.m7", KEYS_VOL },
-        { "|        |        |        |5---    |        |        |        |5-8---  |", "G4.m6", KEYS_VOL*0.9 }
-    });
+        // Create sets of notes.
+        CreateNotes("MY_SCALE", "1 3 4 b7");
+        myScaleNotes = GetNotesFromString("B4.MY_SCALE");
+        // Get some stock chords and scales.
+        scaleNotes = GetNotesFromString("G3.Algerian");
+        chordNotes = GetNotesFromString("C4.o7");
 
-    // This is probably the better way to do chordal instruments.
-    Sequence seqKeysChorus = CreateSequence(8, new SequenceElements
+        bool b = u.Boing(60);
+
+        BuildComp();
+    }    
+
+    ///// Make the music.
+    public void BuildComp()
     {
-        { 0.0, "F4",    0.7,      0.2 },
-        { 0.4, "D#4",   KEYS_VOL, 0.2 },
-        { 1.0, "C4",    0.7,      0.2 },
-        { 1.4, "B4.m7", 0.7,      0.2 },
-        { 2.0, "F5",    0.7,      0.2 },
-        { 2.4, "D#5",   KEYS_VOL, 0.2 },
-        { 3.0, "C5",    0.7,      0.2 },
-        { 3.4, "B5.m7", 0.7,      0.2 },
-        { 4.0, "F3",    0.7,      0.2 },
-        { 4.4, "D#3",   KEYS_VOL, 0.2 },
-        { 5.0, "C3",    0.7,      0.2 },
-        { 5.4, "B3.m7", 0.7,      0.2 },
-        { 6.0, "F2",    0.7,      0.2 },
-        { 6.4, "D#2",   KEYS_VOL, 0.2 },
-        { 7.0, "C2",    0.7,      0.2 },
-        { 7.4, "B2.m7", 0.7,      0.2 },
-    });
+        /////////////////////// sequences /////////////////////////////////
+
+        Sequence seqKeysVerse = CreateSequence(8, new SequenceElements
+        {
+          //{ "|........|........|........|........|........|........|........|........|"},
+            { "|7-------|--      |        |        |7-------|--      |        |        |", "G4.m7", KEYS_VOL },
+            { "|        |        |        |5---    |        |        |        |5-8---  |", "G4.m6", KEYS_VOL*0.9 }
+        });
+
+        // This is probably the better way to do chordal instruments.
+        Sequence seqKeysChorus = CreateSequence(8, new SequenceElements
+        {
+            { 0.0, "F4",    0.7,      0.2 },
+            { 0.4, "D#4",   KEYS_VOL, 0.2 },
+            { 1.0, "C4",    0.7,      0.2 },
+            { 1.4, "B4.m7", 0.7,      0.2 },
+            { 2.0, "F5",    0.7,      0.2 },
+            { 2.4, "D#5",   KEYS_VOL, 0.2 },
+            { 3.0, "C5",    0.7,      0.2 },
+            { 3.4, "B5.m7", 0.7,      0.2 },
+            { 4.0, "F3",    0.7,      0.2 },
+            { 4.4, "D#3",   KEYS_VOL, 0.2 },
+            { 5.0, "C3",    0.7,      0.2 },
+            { 5.4, "B3.m7", 0.7,      0.2 },
+            { 6.0, "F2",    0.7,      0.2 },
+            { 6.4, "D#2",   KEYS_VOL, 0.2 },
+            { 7.0, "C2",    0.7,      0.2 },
+            { 7.4, "B2.m7", 0.7,      0.2 },
+        });
 
 
-    Sequence seqDrumsChorus = CreateSequence(8, new SequenceElements
+        Sequence seqDrumsChorus = CreateSequence(8, new SequenceElements
+        {
+            { 0.0, "AcousticBassDrum",  DRUM_VOL },
+            { 0.0, "AcousticBassDrum",  DRUM_VOL },
+            { 1.0, "RideCymbal1",       DRUM_VOL },
+            { 1.2, "RideCymbal1",       DRUM_VOL },
+            { 1.4, "HiMidTom",          DRUM_VOL },
+            { 2.0, "AcousticBassDrum",  DRUM_VOL },
+            { 3.0, "RideCymbal1",       DRUM_VOL },
+            { 3.2, "RideCymbal1",       DRUM_VOL },
+            { 4.0, "AcousticBassDrum",  DRUM_VOL },
+            { 5.0, "RideCymbal1",       DRUM_VOL },
+            { 5.2, "RideCymbal1",       DRUM_VOL },
+            { 5.4, "HiMidTom",          DRUM_VOL },
+            { 6.0, "AcousticBassDrum",  DRUM_VOL },
+            { 7.0, "CrashCymbal2",      DRUM_VOL },
+        });
+
+        // This is probably the better way to do drums and rhythmic instruments.
+        Sequence seqDrumsVerse = CreateSequence(8, new SequenceElements
+        {
+          //{ "|........|........|........|........|"},
+            { "|8       |        |8       |        |8       |        |8       |        |", "AcousticBassDrum", DRUM_VOL },
+            { "|    8   |        |    8   |    8   |    8   |        |    8   |    8   |", "AcousticSnare",    DRUM_VOL*0.9 },
+            { "|        |     8 8|        |     8 8|        |     8 8|        |     8 8|", "ClosedHiHat",      DRUM_VOL*1.1 },
+        });
+
+        // Single note (melodic) sequence could be either way.
+        Sequence seqBassVerse = CreateSequence(8, new SequenceElements
+        {
+            { 0.0, "C2",  0.7, 0.1 },
+            { 0.4, "C2",  0.7, 0.1 },
+            { 3.5, "E2",  0.7, 0.1 },
+            { 4.0, "C2",  0.7, 1.0 },
+            { 7.4, "A#2", 0.7, 0.1 },
+        });
+
+        Sequence seqBassChorus = CreateSequence(8, new SequenceElements
+        {
+            { 0.0, "C2",  0.7, 0.1 },
+            { 0.4, "C2",  0.7, 0.1 },
+            { 2.0, "C2",  0.7, 0.1 },
+            { 2.4, "C2",  0.7, 0.1 },
+            { 4.0, "C2",  0.7, 0.1 },
+            { 4.4, "C2",  0.7, 0.1 },
+            { 6.0, "C2",  0.7, 0.1 },
+            { 6.4, "C2",  0.7, 0.1 },
+        });
+
+        Sequence seqAlgo = CreateSequence(4, new SequenceElements
+        {
+            { 1.2, AlgoFunc, 0.8 },
+        });
+
+        Sequence seqEmpty = CreateSequence(4, new SequenceElements
+        {
+        });
+
+        // Sequence triggered in script.
+        seqDynamic = CreateSequence(8, new SequenceElements
+        {
+            { 0.0, "G3 ", 0.7, 0.5 },
+            { 1.0, "A3 ", 0.7, 0.5 },
+            { 2.0, "Bb3", 0.7, 0.5 },
+            { 6.0, "C4 ", 0.7, 0.5 },
+        });
+
+
+        /////////////////////// sections /////////////////////////////////
+
+        Section sectBeginning = CreateSection(32, "Beginning", new SectionElements
+        {
+            { "keys",  seqKeysVerse   },
+            { "drums", seqDrumsVerse  },
+            { "bass",  seqBassVerse   }
+        });
+
+        Section sectMiddle = CreateSection(32, "Middle", new SectionElements
+        {
+            { "keys",  seqKeysChorus  },
+            { "drums", seqDrumsChorus },
+            { "bass",  seqBassChorus  },
+            { "synth", seqAlgo, seqEmpty, seqAlgo, seqDynamic, seqEmpty }
+        });
+
+        Section sectEnding = CreateSection(32, "Ending", new SectionElements
+        {
+            { "keys",  seqKeysVerse   },
+            { "drums", seqDrumsVerse  },
+            { "bass",  seqBassVerse   }
+        });
+    }
+
+
+    ////////////////// overrides /////////////////////////////
+
+    public override void Step()
     {
-        { 0.0, "AcousticBassDrum",  DRUM_VOL },
-        { 0.0, "AcousticBassDrum",  DRUM_VOL },
-        { 1.0, "RideCymbal1",       DRUM_VOL },
-        { 1.2, "RideCymbal1",       DRUM_VOL },
-        { 1.4, "HiMidTom",          DRUM_VOL },
-        { 2.0, "AcousticBassDrum",  DRUM_VOL },
-        { 3.0, "RideCymbal1",       DRUM_VOL },
-        { 3.2, "RideCymbal1",       DRUM_VOL },
-        { 4.0, "AcousticBassDrum",  DRUM_VOL },
-        { 5.0, "RideCymbal1",       DRUM_VOL },
-        { 5.2, "RideCymbal1",       DRUM_VOL },
-        { 5.4, "HiMidTom",          DRUM_VOL },
-        { 6.0, "AcousticBassDrum",  DRUM_VOL },
-        { 7.0, "CrashCymbal2",      DRUM_VOL },
-    });
+        if(StepTime == new BarTime(0)) //TODO1 roslyn 5+?? https://stackoverflow.com/a/69318635
+        {
+            SendController("synth", "Pan", 90);
+            SendController("keys",  "Pan", 30);
+        }
+    }
 
-    // This is probably the better way to do drums and rhythmic instruments.
-    Sequence seqDrumsVerse = CreateSequence(8, new SequenceElements
+    public override void InputNote(string dev, int channel, int note)
     {
-      //{ "|........|........|........|........|"},
-        { "|8       |        |8       |        |8       |        |8       |        |", "AcousticBassDrum", DRUM_VOL },
-        { "|    8   |        |    8   |    8   |    8   |        |    8   |    8   |", "AcousticSnare",    DRUM_VOL*0.9 },
-        { "|        |     8 8|        |     8 8|        |     8 8|        |     8 8|", "ClosedHiHat",      DRUM_VOL*1.1 },
-    });
+        Print("Input note", dev, channel, note);
+    }
 
-    // Single note (melodic) sequence could be either way.
-    Sequence seqBassVerse = CreateSequence(8, new SequenceElements
+    public virtual void InputControl(string dev, int channel, int ctlid, int value)
     {
-        { 0.0, "C2",  0.7, 0.1 },
-        { 0.4, "C2",  0.7, 0.1 },
-        { 3.5, "E2",  0.7, 0.1 },
-        { 4.0, "C2",  0.7, 1.0 },
-        { 7.4, "A#2", 0.7, 0.1 },
-    });
+        Print("Input control", dev, channel, ctlid, value);
+    }
 
-    Sequence seqBassChorus = CreateSequence(8, new SequenceElements
+
+    ////////////////// custom functions /////////////////////////////
+
+    void AlgoFunc()
     {
-        { 0.0, "C2",  0.7, 0.1 },
-        { 0.4, "C2",  0.7, 0.1 },
-        { 2.0, "C2",  0.7, 0.1 },
-        { 2.4, "C2",  0.7, 0.1 },
-        { 4.0, "C2",  0.7, 0.1 },
-        { 4.4, "C2",  0.7, 0.1 },
-        { 6.0, "C2",  0.7, 0.1 },
-        { 6.4, "C2",  0.7, 0.1 },
-    });
-
-    Sequence seqAlgo = CreateSequence(4, new SequenceElements
-    {
-        { 1.2, AlgoFunc, 0.8 },
-    });
-
-    Sequence seqEmpty = CreateSequence(4, new SequenceElements
-    {
-    });
-
-    // Sequence triggered in script.
-    seqDynamic = CreateSequence(8, new SequenceElements
-    {
-        { 0.0, "G3 ", 0.7, 0.5 },
-        { 1.0, "A3 ", 0.7, 0.5 },
-        { 2.0, "Bb3", 0.7, 0.5 },
-        { 6.0, "C4 ", 0.7, 0.5 },
-    });
-
-
-    /////////////////////// sections /////////////////////////////////
-
-    Section sectBeginning = CreateSection(32, "Beginning", new SectionElements
-    {
-        { "keys",  seqKeysVerse   },
-        { "drums", seqDrumsVerse  },
-        { "bass",  seqBassVerse   }
-    });
-
-    Section sectMiddle = CreateSection(32, "Middle", new SectionElements
-    {
-        { "keys",  seqKeysChorus  },
-        { "drums", seqDrumsChorus },
-        { "bass",  seqBassChorus  },
-        { "synth", seqAlgo, seqEmpty, seqAlgo, seqDynamic, seqEmpty }
-    });
-
-    Section sectEnding = CreateSection(32, "Ending", new SectionElements
-    {
-        { "keys",  seqKeysVerse   },
-        { "drums", seqDrumsVerse  },
-        { "bass",  seqBassVerse   }
-    });
-}
-
-
-////////////////// overrides /////////////////////////////
-
-public override void Step()
-{
-    if(StepTime == new BarTime(0)) //TODO1 roslyn 5+??
-    {
-        SendController("synth", "Pan", 90);
-        SendController("keys",  "Pan", 30);
+        int notenum = Random(0, scaleNotes.Count());
+        SendNote("synth", scaleNotes[notenum], 0.7, 0.5);
     }
 }
-
-public override void InputNote(string dev, int channel, int note)
-{
-    Print("Input note", dev, channel, note);
-}
-
-public virtual void InputControl(string dev, int channel, int ctlid, int value)
-{
-    Print("Input control", dev, channel, ctlid, value);
-}
-
-
-////////////////// custom functions /////////////////////////////
-
-void AlgoFunc()
-{
-    int notenum = Random(0, scaleNotes.Count());
-    SendNote("synth", scaleNotes[notenum], 0.7, 0.5);
-}
+    

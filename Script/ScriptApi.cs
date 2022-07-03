@@ -237,7 +237,7 @@ namespace Nebulator.Script
            }
 
            var ecoll = ConvertToEvents(chanName, seq, beat);
-            _transientEvents.AddRange(ecoll);
+            _dynamicEvents.AddRange(ecoll);
         }
         #endregion
 

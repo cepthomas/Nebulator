@@ -1,30 +1,33 @@
 
-// Define some Neb vars.
-const double VEL = 0.8;
-
-
-///// Functions /////
-
-// int notavar = 911;
-
-bool Boing(int notenum = 0)
+public class utils : ScriptBase
 {
-    bool boinged = false;
+    // Define some Neb vars.
+    const double VEL = 0.8;
 
-    // Print("boing");
-    if(notenum == 0)
+
+    ///// Functions /////
+
+    // int notavar = 911;
+
+    public bool Boing(int notenum = 0)
     {
-        notenum = Random(30, 80);
-        boinged = true;
-    }
+        bool boinged = false;
 
-    //SendNote("synth", notenum, VEL, 1.0);
-    return boinged;
+        // Print("boing");
+        if(notenum == 0)
+        {
+            notenum = Random(30, 80);
+            boinged = true;
+        }
+
+        //SendNote("synth", notenum, VEL, 1.0);
+        return boinged;
+    }
 }
 
 
 // Example of an included class.
-public class Dummy
+public class Dummy : ScriptBase
 {
     int _thing = 0;
 

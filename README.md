@@ -19,4 +19,5 @@ While the primary intent is to generate music-by-code, runtime interaction is al
 - [Main Documentation](DocFiles/Nebulator.md)
 - [Script Syntax](DocFiles/ScriptSyntax.md)
 - [Script API](DocFiles/ScriptApi.md)
+- [Music Definitions](DocFiles/MusicDefinitions.md)
 - [Internals](DocFiles/Internals.md)

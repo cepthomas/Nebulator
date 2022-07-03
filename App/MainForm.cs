@@ -14,7 +14,22 @@ using NBagOfUis;
 using MidiLib;
 using Nebulator.Script;
 
-// TODO1 show docs: mididefs, musicdefs.
+// TODO1 get rid of parens in .neb files?
+
+// TODO1 fix midilib reference.
+
+// TODO1 show docs: mididefs, musicdefs. gen? these from internal defs:
+// - "F4.o7" - Named chord from [Chords](#musicdefinitions/chords) in the key of middle F.
+// - "F4.Aeolian" - Named scale from [Scales](#musicdefinitions/scales).
+// - SideStick - Drum name from [Drums](#musicdefinitions/generalmididrums).
+
+
+// TODO1 - Support multiple/generic ins/outs incl OSC, virtuals, ... channel access/id will require number + device.
+// - affects all user settings change detection.
+// - ChannelManager: readonly Channel[] _channels = new Channel[MidiDefs.NUM_CHANNELS]; // breaks for multi-devices.
+// - put OSC back.
+
+// TODO Add audio lib?
 
 
 namespace Nebulator.App
@@ -39,8 +54,10 @@ namespace Nebulator.App
         /// <summary>The current script.</summary>
         ScriptBase? _script = new();
 
-        /// <summary>The current channels.</summary>
-        Dictionary<int, Channel> _channels = new();
+        ///// <summary>The current channels.</summary>
+        //readonly Dictionary<int, Channel> _channels = new();
+        /// <summary>The internal channel objects.</summary>
+        readonly ChannelManager _channelManager = new();
 
         /// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
         readonly Dictionary<string, IMidiOutputDevice> _outputDevices = new();
@@ -246,11 +263,15 @@ namespace Nebulator.App
             _nppVals.SetValue("master", "speed", sldTempo.Value);
             _nppVals.SetValue("master", "volume", sldVolume.Value);
 
-            foreach (var ch in _channels.Values)
+            _channelManager.ForEach(ch =>
             {
-                _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
-                _nppVals.SetValue(ch.ChannelName, "state", ch.State);
-            }
+                if(ch.NumEvents > 0)
+                {
+                    _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
+                    _nppVals.SetValue(ch.ChannelName, "state", ch.State);
+                }
+
+            });
 
             _nppVals.Save();
         }
@@ -271,41 +292,29 @@ namespace Nebulator.App
             }
             else
             {
+                // Clean up old script stuff.
                 ProcessPlay(PlayCommand.StopRewind);
+                //List<Control> controlsToRemove = new(Controls.OfType<ChannelControl>());
+                //controlsToRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
+                (Controls.OfType<ChannelControl>()).ForEach(c => { c.Dispose(); Controls.Remove(c); });
+                _channelManager.Reset();
+                _watcher.Clear();
+                barBar.Reset();
 
-                // Clean up any old.
-                barBar.TimeDefs.Clear();
-
-                // Compile script now.
+                // Compile script.
                 Compiler compiler = new();
                 compiler.Execute(_scriptFileName);
                 _script = compiler.Script as ScriptBase;
 
-                // Update file watcher. TODO1 working?
-                _watcher.Clear();
-                compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
+                // Process errors. Some may only be warnings.
+                ok = !compiler.Results.Any(w => w.ResultType == CompileResultType.Error) && _script is not null;
 
-                // Process errors. Some may be warnings.
-                int errorCount = compiler.Results.Count(w => w.ResultType == CompileResultType.Error);
-
-                if (errorCount == 0 && _script is not null)
+                if (ok)
                 {
-                    // Check for changes to channels.
-                    if (compiler.Channels.Count > 0)
-                    {
-                        // Update.
-                        DestroyChannelControls();
-
-                        _channels.Clear();
-                        compiler.Channels.ForEach(ch => _channels.Add(ch.ChannelNumber, ch));
-
-                        CreateChannelControls();
-                    }
-
-                    _script.Init(compiler.Channels);
+                    //compiler.Channels.ForEach(ch => _channels.Add(ch.ChannelNumber, ch));
 
                     SetCompileStatus(true);
-                    _compileTempDir = compiler.TempDir;
+                    _compileTempDir = compiler.TempDir; //TODO1 go away?
 
                     // Need exception handling here to protect from user script errors.
                     try
@@ -321,58 +330,113 @@ namespace Nebulator.App
 
                         // Build all the events from the sequences and sections.
                         _script.BuildSteps();
-
-                        // Init the timeclock.
-                        barBar.TimeDefs = _script.GetSectionMarkers();
-                        barBar.Length = new(barBar.TimeDefs.Keys.Max());
-
-                        SetFastTimerPeriod();
                     }
                     catch (Exception ex)
                     {
                         ProcessScriptRuntimeError(ex);
                         ok = false;
                     }
-
-                    SetCompileStatus(ok);
                 }
-                else
+
+                ///// Script is sane - build the UI and internals.
+                if (ok)
+                {
+                    // Create channels and controls from event sets.
+                    const int CONTROL_SPACING = 10;
+                    int x = btnRewind.Left;
+                    int y = barBar.Bottom + CONTROL_SPACING;
+
+                    foreach (var chspec in compiler.ChannelSpecs)
+                    {
+                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == chspec.ChannelNumber && (e.MidiEvent is NoteEvent || e.MidiEvent is NoteOnEvent));
+
+                        // Is this channel pertinent?
+                        if (chEvents.Any())
+                        {
+                            _channelManager.SetEvents(chspec.ChannelNumber, chEvents);
+
+                            // Make new control.
+                            PlayerControl control = new()
+                            {
+                                Location = new(x, y),
+                                Name = $"channel{chspec.ChannelNumber}",
+                                BorderStyle = BorderStyle.FixedSingle
+                            };
+                            control.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
+                            Controls.Add(control);
+                            //_playerControls.Add(control);
+
+                            // TODO1 these:
+                            //        var outDev = _outputDevices[ch.DeviceId];
+                            //        ch.Device = outDev;
+                            //        ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", VolumeDefs.DEFAULT);
+                            //        ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
+
+                            // ChannelManager
+                            //     public int TotalSubdivs { get; private set; }
+                            //     public bool AnySolo { get { return _channels.Where(c => c.State == ChannelState.Solo).Any(); } }
+                            //     public bool AnyMute { get { return _channels.Where(c => c.State == ChannelState.Mute).Any(); } }
+                            //     public int NumSelected { get { return _channels.Where(c => c.Selected).Count(); } }
+                            //     public ChannelManager()
+                            //     public void Reset()
+                            //     public void Bind(int chnum, PlayerControl control)
+                            //     public void SetEvents(int channelNumber, IEnumerable<MidiEventDesc> events)
+                            //     public void SetChannelState(int channelNumber, ChannelState state)
+                            //     public bool IsDrums(int channelNumber)
+                            //     public void SetPatch(int channelNumber, int patch)
+
+
+
+                            // Bind to internal channel object then init it.
+                            _channelManager.Bind(chspec.ChannelNumber, control);
+                            _channelManager.SetPatch(chspec.ChannelNumber, chspec.Patch);
+                            //TODO1? control.IsDrums = GetDrumChannels().Contains(chnum);
+
+                            // Adjust positioning for next iteration.
+                            y += control.Height + 5;
+                        }
+                    }
+
+                    ///// Everything is sane - prepare to run.
+                    if(ok)
+                    {
+                        _script.Init(_channelManager);
+
+                        ///// Init the timeclock.
+                        barBar.TimeDefs = _script.GetSectionMarkers();
+                        //barBar.Length = new(barBar.TimeDefs.Keys.Max());
+                        barBar.Start = new(0);
+                        barBar.End = new(_channelManager.TotalSubdivs - 1);
+                        barBar.Length = new(_channelManager.TotalSubdivs);
+                        barBar.Current = new(0);
+
+                        // Start the clock.
+                        SetFastTimerPeriod();
+                    }
+
+                    // Update file watcher. TODO1 working?
+                    compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
+                }
+
+                SetCompileStatus(ok);
+
+                if(!ok)
                 {
                     _logger.Error("Compile failed.");
-                    ok = false;
-                    ProcessPlay(PlayCommand.StopRewind);
-                    SetCompileStatus(false);
+                    //ok = false;
+                    //ProcessPlay(PlayCommand.StopRewind);
+                    //SetCompileStatus(false);
                 }
 
-                // Log/show results.
+                // Log compiler results.
                 compiler.Results.ForEach(r =>
                 {
-                    string msg;
-
-                    if (r.LineNumber > 0)
-                    {
-                        msg = $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}";
-                    }
-                    else if (r.SourceFile != "")
-                    {
-                        msg = $"{r.SourceFile}: {r.Message}";
-                    }
-                    else
-                    {
-                        msg = r.Message;
-                    }
-
+                    string msg = r.SourceFile != "" ? $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}" : r.Message;
                     switch (r.ResultType)
                     {
-                        case CompileResultType.Error:
-                            _logger.Error(msg);
-                            break;
-                        case CompileResultType.Warning:
-                            _logger.Warn(msg);
-                            break;
-                        case CompileResultType.Info:
-                            _logger.Info(msg);
-                            break;
+                        case CompileResultType.Error: _logger.Error(msg); break;
+                        case CompileResultType.Warning: _logger.Warn(msg); break;
+                        default: _logger.Info(msg); break;
                     }
                 });
             }
@@ -454,57 +518,48 @@ namespace Nebulator.App
         #endregion
 
         #region Channel controls
-        /// <summary>
-        /// Create the channel controls from the user script.
-        /// </summary>
-        bool CreateChannelControls()
-        {
-            bool ok = true;
-            const int CONTROL_SPACING = 10;
-            int x = btnRewind.Left;
-            int y = barBar.Bottom + CONTROL_SPACING;
+        ///// <summary>
+        ///// Create the channel controls from the user script.
+        ///// </summary>
+        //bool CreateChannelControls()
+        //{
+        //    bool ok = true;
+        //    const int CONTROL_SPACING = 10;
+        //    int x = btnRewind.Left;
+        //    int y = barBar.Bottom + CONTROL_SPACING;
 
-            // Create new channel controls.
-            foreach (Channel ch in _channels.Values.OrderBy(c => c.ChannelNumber))
-            {
-                // Locate the output device for this channel.
-                if (_outputDevices.ContainsKey(ch.DeviceId))
-                {
-                    var outDev = _outputDevices[ch.DeviceId];
-                    ch.Tag = outDev; // TODO1 kind of a cheat.
-                    ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", VolumeDefs.DEFAULT);
-                    ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
+        //    // Create new channel controls.
+        //    foreach (Channel ch in _channels.Values.OrderBy(c => c.ChannelNumber))
+        //    {
+        //        // Locate the output device for this channel.
+        //        if (_outputDevices.ContainsKey(ch.DeviceId))
+        //        {
+        //            var outDev = _outputDevices[ch.DeviceId];
+        //            ch.Device = outDev;
+        //            ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", VolumeDefs.DEFAULT);
+        //            ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
 
-                    PlayerControl tctl = new()
-                    {
-                        Location = new Point(x, y),
-                        BorderStyle = BorderStyle.FixedSingle,
-                        BoundChannel = ch
-                    };
-                    tctl.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
-                    Controls.Add(tctl);
+        //            PlayerControl tctl = new()
+        //            {
+        //                Location = new Point(x, y),
+        //                BorderStyle = BorderStyle.FixedSingle,
+        //                BoundChannel = ch
+        //            };
+        //            tctl.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
+        //            Controls.Add(tctl);
 
-                    y += tctl.Height + CONTROL_SPACING;
-                }
-                else
-                {
-                    _logger.Error($"Invalid device: {ch.DeviceId} for channel: {ch.ChannelName}");
-                    ok = false;
-                    break;
-                }
-            }
+        //            y += tctl.Height + CONTROL_SPACING;
+        //        }
+        //        else
+        //        {
+        //            _logger.Error($"Invalid device: {ch.DeviceId} for channel: {ch.ChannelName}");
+        //            ok = false;
+        //            break;
+        //        }
+        //    }
 
-            return ok;
-        }
-
-        /// <summary>
-        /// Clean up from before.
-        /// </summary>
-        void DestroyChannelControls()
-        {
-            List<Control> toRemove = new(Controls.OfType<ChannelControl>());
-            toRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
-        }
+        //    return ok;
+        //}
 
         /// <summary>
         /// UI changed something.
@@ -596,31 +651,24 @@ namespace Nebulator.App
                 //}
 
                 // Check for inter-channel states.
-                bool anySolo = false;
-                bool anyMute = false;
-                _channels.Values.ForEach(ch =>
-                {
-                    anySolo |= ch.State == ChannelState.Solo;
-                    anyMute |= ch.State == ChannelState.Mute;
-                });
+                bool anySolo = _channelManager.AnySolo;
+                bool anyMute = _channelManager.AnyMute;
                 lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
                 // Process any sequence steps.
-                var events = _script.GetEvents(_stepTime);
 
-                foreach (var evt in events)
+                foreach(var ch in _channelManager)
                 {
-                    if(_channels.ContainsKey(evt.ChannelNumber))
+
+                    // Is it ok to play now?
+                    bool play = ch.State == ChannelState.Solo || (ch.State == ChannelState.Normal && !anySolo);
+
+                    if (play)
                     {
-                        Channel ch = _channels[evt.ChannelNumber];
-
-                        // Is it ok to play now?
-                        bool play = ch.State == ChannelState.Solo || (ch.State == ChannelState.Normal && !anySolo);
-
-                        if (play)
+                        foreach(var evt in ch.GetEvents(_stepTime.TotalSubdivs))
                         {
-                            switch (evt.MidiEvent)
+                            switch (evt)
                             {
                                 case FunctionMidiEvent fe:
                                     // Need exception handling here to protect from user script errors.
@@ -635,12 +683,11 @@ namespace Nebulator.App
                                     break;
 
                                 default:
-                                    (ch.Tag as IMidiOutputDevice)!.SendEvent(evt.MidiEvent);
+                                    ch.Device.SendEvent(evt);
                                     break;
                             }
                         }
                     }
-                    //else TODO1 should never happen!
                 }
 
                 ///// Bump time.
@@ -735,7 +782,7 @@ namespace Nebulator.App
             ProcessPlay(PlayCommand.Stop);
             SetCompileStatus(false);
 
-            // Locate the offending frame.
+            // Locate the offending frame by finding the file in the temp dir.
             string srcFile = "???";
             int srcLine = -1;
             string msg = ex.Message;
@@ -827,41 +874,40 @@ namespace Nebulator.App
         {
             string ret = "";
 
-            using (new WaitCursor())
+            try
             {
-                try
+                // Clean up the old.
+                SaveProjectValues();
+                barBar.TimeDefs.Clear();
+
+
+                if (File.Exists(fn))
                 {
-                    // Clean up the old.
-                    SaveProjectValues();
+                    _logger.Info($"Opening {fn}");
+                    _scriptFileName = fn;
 
-                    if (File.Exists(fn))
-                    {
-                        _logger.Info($"Opening {fn}");
-                        _scriptFileName = fn;
+                    // Get the persisted properties.
+                    _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
+                    sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
+                    sldVolume.Value = _nppVals.GetDouble("master", "volume", VolumeDefs.DEFAULT);
 
-                        // Get the persisted properties.
-                        _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
-                        sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                        sldVolume.Value = _nppVals.GetDouble("master", "volume", VolumeDefs.DEFAULT);
+                    SetCompileStatus(true);
+                    AddToRecentDefs(fn);
+                    bool ok = CompileScript();
+                    SetCompileStatus(ok);
 
-                        SetCompileStatus(true);
-                        AddToRecentDefs(fn);
-                        bool ok = CompileScript();
-                        SetCompileStatus(ok);
-
-                        Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
-                    }
-                    else
-                    {
-                        ret = $"Invalid file: {fn}";
-                    }
+                    Text = $"Nebulator {MiscUtils.GetVersionString()} - {fn}";
                 }
-                catch (Exception ex)
+                else
                 {
-                    ret = $"Couldn't open the script file: {fn} because: {ex.Message}";
-                    _logger.Error(ret);
-                    SetCompileStatus(false);
+                    ret = $"Invalid file: {fn}";
                 }
+            }
+            catch (Exception ex)
+            {
+                ret = $"Couldn't open the script file: {fn} because: {ex.Message}";
+                _logger.Error(ret);
+                SetCompileStatus(false);
             }
 
             // Update bar.
@@ -1004,8 +1050,7 @@ namespace Nebulator.App
         /// </summary>
         void Settings_Click(object? sender, EventArgs e)
         {
-            List<(string name, string cat)> changes = new();
-            changes = UserSettings.TheSettings.Edit("User Settings", 500);
+            List<(string name, string cat)> changes = UserSettings.TheSettings.Edit("User Settings", 500);
 
             // Detect changes of interest.
             bool restart = false;
@@ -1085,7 +1130,7 @@ namespace Nebulator.App
             // Always do this.
             barBar.Current = new(_stepTime.TotalSubdivs);
 
-//TODO1 ???            _outputDevices.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
+//TODO1-1 ???            _outputDevices.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }
@@ -1146,66 +1191,32 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ExportMidi_Click(object? sender, EventArgs e)
         {
-            using SaveFileDialog saveDlg = new()
+            if(_script is not null)
             {
-                Filter = "Midi files (*.mid)|*.mid",
-                Title = "Export to midi file",
-                FileName = Path.GetFileName(_scriptFileName.Replace(".neb", ".mid"))
-            };
-
-            if (saveDlg.ShowDialog() == DialogResult.OK)
-            {
-                // Make a thing and call the formatter.
-                //        public PatternInfo(List<MidiEventDesc> events, List<Channel> channels, int tempo) : this()
-
-                PatternInfo pattern = new(_script.GetEvents(), _channels.Values, _script.Tempo);)
+                using SaveFileDialog saveDlg = new()
                 {
-                    Tempo = 99,
+                    Filter = "Midi files (*.mid)|*.mid",
+                    Title = "Export to midi file",
+                    FileName = Path.GetFileName(_scriptFileName.Replace(".neb", ".mid"))
                 };
 
-                // public int Tempo { get; set; } = 0;
-                // public int[] Patches { get; set; } = new int[MidiDefs.NUM_CHANNELS];
-                // List<MidiEventDesc> _events = new();
-
-                Dictionary<string, int> meta = new()
+                if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
-                    { "MidiFileType", 0 },
-                    { "DeltaTicksPerQuarterNote", UserSettings.TheSettings.MidiSettings.SubdivsPerBeat },
-                    { "NumTracks", 1 }
-                };
+                    // Make a Pattern object and call the formatter.
+                    IEnumerable<Channel> channels = _channelManager.Where(ch => ch.NumEvents > 0);
 
-                MidiExport.ExportMidi(saveDlg.FileName, pattern, _channels.Values.ToList(), meta);
+                    PatternInfo pattern = new("export", UserSettings.TheSettings.MidiSettings.SubdivsPerBeat,
+                        _script.GetEvents(), channels, _script.Tempo);
 
+                    Dictionary<string, int> meta = new()
+                    {
+                        { "MidiFileType", 0 },
+                        { "DeltaTicksPerQuarterNote", UserSettings.TheSettings.MidiSettings.SubdivsPerBeat },
+                        { "NumTracks", 1 }
+                    };
 
-                // TODO1-1 was ExportMidi(saveDlg.FileName);
-                // MidiExport:
-                // public string ExportAllEvents(string outPath, List<int> channels)
-                // public string ExportGroupedEvents(string outPath, string patternName, List<int> channels, bool includeOther)
-                // public string ExportMidi(string outPath, string patternName, List<int> channels, int ppq)
-
-                // public string ExportAllEvents(string outPath, List<Channel> channels)
-                // {
-                //     var newfn = MidiExport.MakeExportFileName(outPath, _fn, "all", "csv");
-                //     MidiExport.ExportAllEvents(newfn, _patterns, channels, MakeMeta());
-                //     return newfn;            
-                // }
-
-                // public string ExportGroupedEvents(string outPath, string patternName, List<Channel> channels, bool includeAll)
-                // {
-                //     var pattern = _patterns.Where(p => p.PatternName == patternName).First();
-                //     var newfn = MidiExport.MakeExportFileName(outPath, _fn, patternName, "csv");
-                //     MidiExport.ExportGroupedEvents(newfn, pattern, channels, MakeMeta(), includeAll);
-                //     return newfn;
-                // }
-
-                // public string ExportMidi(string outPath, string patternName, List<Channel> channels, int ppq)
-                // {
-                //     var pattern = _patterns.Where(p => p.PatternName == patternName).First();
-                //     var newfn = MidiExport.MakeExportFileName(outPath, _fn, patternName, "mid");
-                //     MidiExport.ExportMidi(newfn, pattern, channels, MakeMeta());
-                //     return newfn;
-                // }
-
+                    MidiExport.ExportMidi(saveDlg.FileName, pattern, channels, meta);
+                }
             }
         }
 

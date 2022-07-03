@@ -1274,6 +1274,9 @@
         <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._filesToCompile">
             <summary>Products of file preprocess. Key is generated file name.</summary>
         </member>
+        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._addWrapper">
+            <summary>Add the class wrapper if not in script.</summary>
+        </member>
         <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreCompile">
             <summary>Called before compiler starts.</summary>
         </member>
