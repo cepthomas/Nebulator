@@ -272,7 +272,6 @@ namespace Nebulator.App
                     _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
                     _nppVals.SetValue(ch.ChannelName, "state", ch.State);
                 }
-
             });
 
             _nppVals.Save();
@@ -639,10 +638,8 @@ namespace Nebulator.App
                 lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
 
                 // Process any sequence steps.
-
                 foreach(var ch in _channelManager)
                 {
-
                     // Is it ok to play now?
                     bool play = ch.State == ChannelState.Solo || (ch.State == ChannelState.Normal && !anySolo);
 
