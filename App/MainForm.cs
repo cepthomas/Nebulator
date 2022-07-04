@@ -58,8 +58,14 @@ namespace Nebulator.App
 
         ///// <summary>The current channels.</summary>
         //readonly Dictionary<int, Channel> _channels = new();
-        /// <summary>The internal channel objects.</summary>
-        readonly ChannelManager _channelManager = new();
+        // /// <summary>The internal channel objects.</summary>
+        // readonly ChannelManager _channelManager = new();
+
+        /// <summary>All the channels - key is user assigned name.</summary>
+        Dictionary<string, Channel> _channels = new();
+
+        /// <summary>Longest length of channels in subdivs.</summary>
+        int _totalSubdivs = 0;
 
         /// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
         readonly Dictionary<string, IMidiOutputDevice> _outputDevices = new();
@@ -156,11 +162,13 @@ namespace Nebulator.App
 
             btnKillComm.Click += (object? _, EventArgs __) => { Kill(); };
             btnClear.Click += (object? _, EventArgs __) => { textViewer.Clear(); };
+
+            _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.TheSettings.MonitorOutput);
             #endregion
 
-            //// For testing.
-            //lblSolo.Hide();
-            //lblMute.Hide();
+            // // For testing.
+            // lblSolo.Hide();
+            // lblMute.Hide();
         }
 
         /// <summary>
@@ -265,7 +273,7 @@ namespace Nebulator.App
             _nppVals.SetValue("master", "speed", sldTempo.Value);
             _nppVals.SetValue("master", "volume", sldVolume.Value);
 
-            _channelManager.ForEach(ch =>
+            _channels.Values.ForEach(ch =>
             {
                 if(ch.NumEvents > 0)
                 {
@@ -298,8 +306,9 @@ namespace Nebulator.App
                 //List<Control> controlsToRemove = new(Controls.OfType<ChannelControl>());
                 //controlsToRemove.ForEach(c => { c.Dispose(); Controls.Remove(c); });
                 (Controls.OfType<ChannelControl>()).ForEach(c => { c.Dispose(); Controls.Remove(c); });
-                _channelManager.Reset();
+                _channels.Clear();
                 _watcher.Clear();
+                _totalSubdivs = 0;
                 barBar.Reset();
 
                 // Compile script.
@@ -312,8 +321,6 @@ namespace Nebulator.App
 
                 if (ok)
                 {
-                    //compiler.Channels.ForEach(ch => _channels.Add(ch.ChannelNumber, ch));
-
                     SetCompileStatus(true);
                     _compileTempDir = compiler.TempDir;
 
@@ -328,10 +335,6 @@ namespace Nebulator.App
 
                         // Script may have altered shared values.
                         ProcessRuntime();
-
-
-                        // Build all the events from the sequences and sections. TODO0 needs valid channels
- //>>>                       _script.BuildSteps();
                     }
                     catch (Exception ex)
                     {
@@ -340,7 +343,7 @@ namespace Nebulator.App
                     }
                 }
 
-                ///// Script is sane - build the UI.
+                ///// Script is sane - build the channels and UI.
                 if (ok)
                 {
                     // Create channels and controls from event sets.
@@ -350,24 +353,33 @@ namespace Nebulator.App
 
                     foreach (var chspec in compiler.ChannelSpecs)
                     {
-                        // Make new control.
+                        // Make new channel.
+                        Channel channel = new()
+                        {
+                            ChannelName = chspec.ChannelName,
+                            ChannelNumber = chspec.ChannelNumber,
+                            DeviceId = chspec.DeviceId, //TODOX needeed?
+                            Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", VolumeDefs.DEFAULT),
+                            State = (ChannelState)_nppVals.GetInteger(chspec.ChannelName, "state", (int)ChannelState.Normal),
+                            Patch = chspec.Patch,
+                            IsDrums = chspec.IsDrums,
+                            Selected = false,
+                            Device = _outputDevices[chspec.DeviceId]
+                        };
+                        _channels.Add(chspec.ChannelName, channel);
+
+                        // Make new control and bind to channel.
                         PlayerControl control = new()
                         {
                             Location = new(x, y),
-                            //Name = $"{chspec.ChannelName}",
-                            // Name = $"channel{chspec.ChannelNumber}",
-                            BorderStyle = BorderStyle.FixedSingle
+                            BorderStyle = BorderStyle.FixedSingle,
+                            BoundChannel = channel
                         };
                         control.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
                         Controls.Add(control);
 
-                        // Bind to internal channel object then init dynamic properties. TODOX this is clumsy, create control first then bind.
-                        _channelManager.Bind(chspec.ChannelNumber, control);
-                        control.Name = $"{chspec.ChannelName}";
-                        control.Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", VolumeDefs.DEFAULT);
-                        control.State = (ChannelState)_nppVals.GetInteger(chspec.ChannelName, "state", (int)ChannelState.Normal);
-                        control.Patch = chspec.Patch;
-                        control.IsDrums = chspec.IsDrums;
+                        // Good time to send initial patch.
+                        channel.Device.SendPatch(channel.ChannelNumber, channel.Patch);
 
                         // Adjust positioning for next iteration.
                         y += control.Height + 5;
@@ -378,29 +390,37 @@ namespace Nebulator.App
                 ///// Script is sane - build the events.
                 if (ok)
                 {
+                    _script.Init(_channels);
                     _script.BuildSteps();
 
-                    foreach (var chspec in compiler.ChannelSpecs)
+                    // Store the steps in the channel objects.
+                    MidiTimeConverter _mt = new((int)UserSettings.TheSettings.MidiSettings.InternalPPQ, UserSettings.TheSettings.MidiSettings.DefaultTempo);
+                    foreach (var channel in _channels.Values)
                     {
-                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == chspec.ChannelNumber &&
+                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == channel.ChannelNumber && //TODO0 needs device factor
                             (e.MidiEvent is NoteEvent || e.MidiEvent is NoteOnEvent));
 
-                        _channelManager.SetEvents(chspec.ChannelNumber, chEvents);
+                        // Scale time and give to channel.
+                        chEvents.ForEach(e => e.ScaledTime = _mt!.MidiToInternal(e.AbsoluteTime));
+                        channel.SetEvents(chEvents);
+
+
+                        // Round total up to next beat.
+                        BarTime bs = new();
+                        bs.SetRounded(channel.MaxSubdiv, SnapType.Beat, true);
+                        _totalSubdivs = Math.Max(_totalSubdivs, bs.TotalSubdivs);
                     }
                 }
-
 
                 ///// Everything is sane - prepare to run.
                 if (ok)
                 {
-                    _script.Init(_channelManager);
-
                     ///// Init the timeclock.
                     barBar.TimeDefs = _script.GetSectionMarkers();
-                    barBar.Length = new(_channelManager.TotalSubdivs);
+                    barBar.Length = new(_totalSubdivs);
                     //barBar.Length = new(barBar.TimeDefs.Keys.Max());
                     barBar.Start = new(0);
-                    barBar.End = new(_channelManager.TotalSubdivs - 1);
+                    barBar.End = new(_totalSubdivs - 1);
                     barBar.Current = new(0);
 
                     // Start the clock.
@@ -631,17 +651,15 @@ namespace Nebulator.App
                 //    _logger.Info($"NEB tan: {_tan.Mean}");
                 //}
 
-                // Check for inter-channel states.
-                bool anySolo = _channelManager.AnySolo;
-                bool anyMute = _channelManager.AnyMute;
-                lblSolo.BackColor = anySolo ? Color.Pink : SystemColors.Control;
-                lblMute.BackColor = anyMute ? Color.Pink : SystemColors.Control;
+                //// Check for inter-channel states.
+                //lblSolo.BackColor = AnySolo() ? Color.Pink : SystemColors.Control;
+                //lblMute.BackColor = AnyMute() ? Color.Pink : SystemColors.Control;
 
                 // Process any sequence steps.
-                foreach(var ch in _channelManager)
+                foreach(var ch in _channels.Values)
                 {
                     // Is it ok to play now?
-                    bool play = ch.State == ChannelState.Solo || (ch.State == ChannelState.Normal && !anySolo);
+                    bool play = ch.State == ChannelState.Solo || (ch.State == ChannelState.Normal && !AnySolo());
 
                     if (play)
                     {
@@ -665,6 +683,33 @@ namespace Nebulator.App
                                     ch.Device.SendEvent(evt);
                                     break;
                             }
+
+                            //if (dur.TotalSubdivs > 0) // TODO0 specific duration ?? needed?
+                            //{
+                            //    // Remove any lingering note offs and add a fresh one.
+                            //    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
+
+                            //    _stops.Add(new()
+                            //    {
+                            //        Device = stt.Device,
+                            //        ChannelNumber = stt.ChannelNumber,
+                            //        NoteNumber = MathUtils.Constrain(stt.NoteNumber, 0, Definitions.MAX_MIDI),
+                            //        Expiry = stt.Duration.TotalSubdivs
+                            //    });
+                            //}
+                            ///// <summary>Notes to stop later.</summary>
+                            //readonly List<StepNoteOff> _stops = new();
+                            // public void Housekeep()
+                            // {
+                            //     // Send any stops due.
+                            //     _stops.ForEach(s => { s.Expiry--; if (s.Expiry < 0) Send(s); });
+
+                            //     // Reset.
+                            //     _stops.RemoveAll(s => s.Expiry < 0);
+                            // }
+
+
+
                         }
                     }
                 }
@@ -996,6 +1041,8 @@ namespace Nebulator.App
         {
             UserSettings.TheSettings.MonitorInput = btnMonIn.Checked;
             UserSettings.TheSettings.MonitorOutput = btnMonOut.Checked;
+
+            _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.TheSettings.MonitorOutput);
         }
 
         /// <summary>
@@ -1182,7 +1229,7 @@ namespace Nebulator.App
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
                     // Make a Pattern object and call the formatter.
-                    IEnumerable<Channel> channels = _channelManager.Where(ch => ch.NumEvents > 0);
+                    IEnumerable<Channel> channels = _channels.Values.Where(ch => ch.NumEvents > 0);
 
                     PatternInfo pattern = new("export", UserSettings.TheSettings.MidiSettings.SubdivsPerBeat,
                         _script.GetEvents(), channels, _script.Tempo);
@@ -1205,6 +1252,26 @@ namespace Nebulator.App
         void Kill()
         {
             _outputDevices.Values.ForEach(o => o.KillAll());
+        }
+        #endregion
+
+        #region Misc utilities
+        /// <summary>
+        /// Has at least one solo channel.
+        /// </summary>
+        /// <returns>Yes/no</returns>
+        bool AnySolo()
+        {
+            return _channels.Values.Where(c => c.State == ChannelState.Solo).Any();
+        }
+
+        /// <summary>
+        /// Has at least one muted channel.
+        /// </summary>
+        /// <returns>Yes/no</returns>
+        bool AnyMute()
+        {
+            return _channels.Values.Where(c => c.State == ChannelState.Mute).Any();
         }
         #endregion
     }

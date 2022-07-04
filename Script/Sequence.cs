@@ -66,7 +66,14 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string what, double volume)
         {
+            // was:
+            //foreach (double d in ScriptUtils.GetNotes(which))
+            //{
+            //    Add(pattern, d, volume);
+            //}
+
             List<int> notes = MusicDefinitions.GetNotesFromString(what);
+
             if (notes.Count == 0)
             {
                 // It might be a drum.
@@ -75,7 +82,12 @@ namespace Nebulator.Script
                     int idrum = MidiDefs.GetDrumNumber(what);
                     notes.Add(idrum);
                 }
-                catch { }
+                catch { } // not a drum either - error
+            }
+
+            foreach (int i in notes)
+            {
+                Add(pattern, i, volume);
             }
         }
 

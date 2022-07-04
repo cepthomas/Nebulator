@@ -26,13 +26,8 @@ namespace Nebulator.Script
         /// <summary>Script functions may add sequences at runtime. TODO0 need to handle these</summary>
         internal List<MidiEventDesc> _dynamicEvents = new();
 
-        ///// <summary>All the channels - key is user assigned name.</summary>
-        //readonly Dictionary<string, Channel> _channels = new();
-
-        //Dictionary<string, Channel> _channelMap = new(); //TODOX need something like this - put in mngr?
-
-        /// <summary>All the channels.</summary>
-        internal ChannelManager _channelManager = new();
+        // /// <summary>All the channels.</summary>
+        // internal ChannelManager _channelManager = new();
 
         /// <summary>Script randomizer.</summary>
         static readonly Random _rand = new();
@@ -41,16 +36,20 @@ namespace Nebulator.Script
         internal bool _disposed = false;
         #endregion
 
+
+        /// <summary>All the channels information - key is user assigned name.</summary>
+        Dictionary<string, Channel> _channels = new();
+
+
+
         #region Lifecycle
         /// <summary>
         /// Set up runtime stuff.
         /// </summary>
         /// <param name="channels">All output channels.</param>
-        public void Init(ChannelManager channelManager)
+        public void Init(Dictionary<string, Channel> channels)
         {
-            _channelManager = channelManager;
-            // Good time to send initial patches.
-            _channelManager.ForEach(ch => { SendPatch(ch.ChannelName, ch.Patch); });
+            _channels = channels;
         }
 
         ///// <summary>
@@ -174,37 +173,35 @@ namespace Nebulator.Script
 
             List<MidiEventDesc> events = new();
 
-            var channel = GetChannel(chanName);
-            if (channel is not null)
+            var channel = _channels[chanName];
+
+            foreach (SequenceElement seqel in seq.Elements)
             {
-                foreach (SequenceElement seqel in seq.Elements)
+                // Create the note start and stop times.
+                //int toffset = 0;
+                // int toffset = startBeat == -1 ? 0 : channel.NextTime();
+
+                BarTime startNoteTime = new BarTime(startBeat, 0, 0) + seqel.When;
+                BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new BarTime(0.1) : seqel.Duration); // 0.1 is a short hit
+
+                // Is it a function?
+                if (seqel.ScriptFunction is not null)
                 {
-                    // Create the note start and stop times.
-                    //int toffset = 0;
-                    // int toffset = startBeat == -1 ? 0 : channel.NextTime();
-
-                    BarTime startNoteTime = new BarTime(startBeat, 0, 0) + seqel.When;
-                    BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new BarTime(0.1) : seqel.Duration); // 0.1 is a short hit
-
-                    // Is it a function?
-                    if (seqel.ScriptFunction is not null)
+                    FunctionMidiEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, seqel.ScriptFunction);
+                    events.Add(new(evt));
+                }
+                else // plain ordinary
+                {
+                    // Process all note numbers.
+                    foreach (int noteNum in seqel.Notes)
                     {
-                        FunctionMidiEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, seqel.ScriptFunction);
+                        ///// Note on.
+                        double vel = channel.NextVol(seqel.Volume) * MasterVolume;
+                        int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
+                        velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+
+                        NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
                         events.Add(new(evt));
-                    }
-                    else // plain ordinary
-                    {
-                        // Process all note numbers.
-                        foreach (int noteNum in seqel.Notes)
-                        {
-                            ///// Note on.
-                            double vel = channel.NextVol(seqel.Volume) * MasterVolume;
-                            int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
-                            velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
-
-                            NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
-                            events.Add(new(evt));
-                        }
                     }
                 }
             }
@@ -227,38 +224,68 @@ namespace Nebulator.Script
             _scriptEvents.AddRange(ecoll);
         }
 
-        /// <summary>
-        /// Utility to look up channel.
-        /// </summary>
-        /// <param name="chanName"></param>
-        /// <returns>The channel object or null if invalid.</returns>
-        Channel GetChannel(string chanName)
-        {
-            var chiter = _channelManager.Where(ch => ch.ChannelName == chanName); //TODOX needs a fast lookup.
-            if (chiter is null || chiter.Count() == 0)
-            {
-                throw new ArgumentException($"Invalid channel: {chanName}");
-            }
-            return chiter.First();
-        }
+        ///// <summary>
+        ///// Utility to look up channel.
+        ///// </summary>
+        ///// <param name="chanName"></param>
+        ///// <returns>The channel object or null if invalid.</returns>
+        //Channel? GetChannel(string chanName)
+        //{
+        //    return _channels.ContainsKey(chanName) ? _channels[chanName] : null;
+        //}
 
-        /// <summary>
-        /// Utility that does sanity checking.
-        /// </summary>
-        /// <param name="chanName"></param>
-        /// <param name="evt"></param>
-        void SafeSendEvent(string chanName, MidiEvent evt)
-        {
-            var ch = GetChannel(chanName);
-            if (ch is not null && ch.Device is not null)
-            {
-                ch.Device.SendEvent(evt);
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid channel: {chanName}");
-            }
-        }
+        ///// <summary>
+        ///// Utility to look up channel.
+        ///// </summary>
+        ///// <param name="chanName"></param>
+        ///// <returns>The channel object or null if invalid.</returns>
+        //Channel GetChannel(string chanName)
+        //{
+        //    var chiter = _channelManager.Where(ch => ch.ChannelName == chanName); //TODOX needs a fast lookup.
+        //    if (chiter is null || chiter.Count() == 0)
+        //    {
+        //        throw new ArgumentException($"Invalid channel: {chanName}");
+        //    }
+        //    return chiter.First();
+        //}
+
+
+        ///// <summary>
+        ///// Utility that does sanity checking.
+        ///// </summary>
+        ///// <param name="channel"></param>
+        ///// <param name="evt"></param>
+        //void SafeSendEvent(Channel channel, MidiEvent evt)
+        //{
+        //    if (ch is not null && ch.Device is not null)
+        //    {
+        //        channel.Device.SendEvent(evt);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException($"Invalid channel: {chanName}");
+        //    }
+        //}
+
+
+
+        ///// <summary>
+        ///// Utility that does sanity checking.
+        ///// </summary>
+        ///// <param name="chanName"></param>
+        ///// <param name="evt"></param>
+        //void SafeSendEvent(Channel chanName, MidiEvent evt)
+        //{
+        //    var ch = GetChannel(chanName);
+        //    if (ch is not null && ch.Device is not null)
+        //    {
+        //        ch.Device.SendEvent(evt);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException($"Invalid channel: {chanName}");
+        //    }
+        //}
         #endregion
     }
 }

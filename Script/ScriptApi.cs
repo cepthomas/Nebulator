@@ -31,6 +31,15 @@ namespace Nebulator.Script
         public double MasterVolume { get; set; } = 0;
         #endregion
 
+
+
+
+        ///// <summary>All the channels information - key is user assigned name.</summary>
+        //public Dictionary<string, Channel> Channels { get; set; } = new();
+
+
+
+
         #region Script functions that can be overridden
         /// <summary>Called to initialize Nebulator stuff.</summary>
         public virtual void Setup() { }
@@ -108,10 +117,10 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, BarTime dur)
         {
-            var ch = GetChannel(chanName);
-
-            if (ch is not null)
+            if (_channels.ContainsKey(chanName))
             {
+                var ch = _channels[chanName];
+
                 int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
                 // If vol is positive and the note is not negative, it's note on, else note off.
@@ -122,12 +131,15 @@ namespace Nebulator.Script
                     velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
                     NoteOnEvent evt = new(0, ch.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
-                    SafeSendEvent(chanName, evt);
+                    ch.Device.SendEvent(evt);
+
+                    //SafeSendEvent(chanName, evt);
                 }
                 else
                 {
                     NoteEvent evt = new(0, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
-                    SafeSendEvent(chanName, evt);
+                    ch.Device.SendEvent(evt);
+                    //SafeSendEvent(chanName, evt);
                 }
             }
             else
@@ -190,11 +202,11 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         protected void SendController(string chanName, string controller, int val)
         {
-            var ch = GetChannel(chanName);
-
+            var ch = _channels[chanName];
             int ctlrid = MidiDefs.GetControllerNumber(controller);
             ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
-            SafeSendEvent(chanName, evt);
+            ch.Device.SendEvent(evt);
+            //SafeSendEvent(chanName, evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -202,10 +214,10 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         protected void SendPatch(string chanName, int patch)
         {
-            var ch = GetChannel(chanName);
-
+            var ch = _channels[chanName];
             PatchChangeEvent evt = new(0, ch.ChannelNumber, patch);
-            SafeSendEvent(chanName, evt);
+            ch.Device.SendEvent(evt);
+            //SafeSendEvent(chanName, evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
