@@ -6,7 +6,6 @@
 Include("C:\Dev\repos\Nebulator\Examples\utils.neb");
 Include("C:\Dev\repos\Nebulator\Examples\scale.neb");
 
-// TODO1-1 revert to classes. also affects NProcessing?
 
 ///// All the channel/outputs.
 Channel("keys",  MidiOutDevice, 1,  "AcousticGrandPiano");
@@ -16,7 +15,7 @@ Channel("drums", MidiOutDevice, 10, "Jazz"); // for drums = kit
 
 public class example : ScriptBase
 {
-///// Volumes.
+    ///// Volumes.
     const double KEYS_VOL = 0.8;
     const double DRUM_VOL = 0.8;
 

@@ -15,7 +15,7 @@ namespace Nebulator.Script
     public class Section
     {
         #region Properties
-        /// <summary>List of sequences in this section.</summary>
+        /// <summary>Collection of sequences in this section.</summary>
         public SectionElements Elements { get; set; } = new SectionElements();
 
         /// <summary>Length in beats.</summary>

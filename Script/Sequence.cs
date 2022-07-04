@@ -16,7 +16,7 @@ namespace Nebulator.Script
     public class Sequence
     {
         #region Properties
-        /// <summary>List of notes or other elements.</summary>
+        /// <summary>Collection of notes or other elements.</summary>
         public SequenceElements Elements { get; set; } = new();
 
         /// <summary>Length in beats.</summary>

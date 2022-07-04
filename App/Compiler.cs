@@ -13,11 +13,10 @@ using Nebulator.Script;
 
 namespace Nebulator.App
 {
+    /// <summary>One channel definition.</summary>
+    public record ChannelSpec(string ChannelName, string DeviceId, int ChannelNumber, int Patch, bool IsDrums);
 
-    public record ChannelSpec(string ChannelName, string DeviceId, int ChannelNumber, int Patch);
-
-
-
+    /// <summary>Nebulator compiler.</summary>
     public class Compiler : ScriptCompilerCore
     {
         #region Properties
@@ -50,42 +49,10 @@ namespace Nebulator.App
             //_channelDescriptors.Clear();
         }
 
-        ///// <summary>Called after compiler finished.</summary>
-        //public override void PostCompile()
-        //{
-        //    // Check for changed channel descriptors.
-        //    if (string.Join("", _channelDescriptors).GetHashCode() != _chHash)
-        //    {
-        //        // Build new channels.
-        //        foreach (string sch in _channelDescriptors)
-        //        {
-        //            try
-        //            {
-        //                var parts = sch.SplitByTokens("(),;");
-
-        //                Channel ch = new()
-        //                {
-        //                    ChannelName = parts[1].Replace("\"", ""),
-        //                    DeviceId = parts[2].Replace("\"", ""),
-        //                    ChannelNumber = int.Parse(parts[3]),
-        //                    Patch = MidiDefs.GetInstrumentOrDrumKitNumber(parts[4].Replace("\"", ""))
-        //                };
-
-        //                Channels.Add(ch);
-        //            }
-        //            catch (Exception)
-        //            {
-        //                Results.Add(new()
-        //                {
-        //                    ResultType = CompileResultType.Error,
-        //                    Message = $"Bad statement:{sch}",
-        //                    SourceFile = _nebfn,
-        //                    LineNumber = -1
-        //                });
-        //            }
-        //        }
-        //    }
-        //}
+        /// <summary>Called after compiler finished.</summary>
+        public override void PostCompile()
+        {
+        }
 
         /// <summary>Called for each line in the source file before compiling.</summary>
         public override bool PreprocessLine(string sline, FileContext pcont)
@@ -98,7 +65,19 @@ namespace Nebulator.App
                 try
                 {
                     var parts = sline.Replace("\"", "").SplitByTokens("(),;");
-                    ChannelSpec ch = new(parts[1], parts[2], int.Parse(parts[3]), MidiDefs.GetInstrumentOrDrumKitNumber(parts[4]));
+                    // Is patch an instrument or drum?
+                    bool isDrums = false;
+                    int patch = MidiDefs.GetInstrumentNumber(parts[4]);
+                    if (patch == -1)
+                    {
+                        patch = MidiDefs.GetDrumKitNumber(parts[4]);
+                        isDrums = patch != -1;
+                    }
+                    if (patch == -1)
+                    {
+                        throw new ArgumentException("");
+                    }
+                    ChannelSpec ch = new(parts[1], parts[2], int.Parse(parts[3]), patch, isDrums);
                     ChannelSpecs.Add(ch);
                 }
                 catch (Exception)

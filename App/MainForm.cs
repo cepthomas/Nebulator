@@ -14,9 +14,9 @@ using NBagOfUis;
 using MidiLib;
 using Nebulator.Script;
 
-// TODO1 get rid of parens in .neb files?
+// TODO1 get rid of parens in .neb files? gen enums?
 
-// TODO1 fix midilib reference.
+// TODO1 fix midilib project reference.
 
 // TODO1 show docs: mididefs, musicdefs. gen? these from internal defs:
 // - "F4.o7" - Named chord from [Chords](#musicdefinitions/chords) in the key of middle F.
@@ -24,7 +24,9 @@ using Nebulator.Script;
 // - SideStick - Drum name from [Drums](#musicdefinitions/generalmididrums).
 
 
-// TODO1 - Support multiple/generic ins/outs incl OSC, virtuals, ... channel access/id will require number + device.
+// TODOX - Support multiple/generic ins/outs:
+// - inputs by name in the script.
+// - incl OSC, virtuals, ... channel access/id will require number + device.
 // - affects all user settings change detection.
 // - ChannelManager: readonly Channel[] _channels = new Channel[MidiDefs.NUM_CHANNELS]; // breaks for multi-devices.
 // - put OSC back.
@@ -314,7 +316,7 @@ namespace Nebulator.App
                     //compiler.Channels.ForEach(ch => _channels.Add(ch.ChannelNumber, ch));
 
                     SetCompileStatus(true);
-                    _compileTempDir = compiler.TempDir; //TODO1 go away?
+                    _compileTempDir = compiler.TempDir;
 
                     // Need exception handling here to protect from user script errors.
                     try
@@ -328,8 +330,9 @@ namespace Nebulator.App
                         // Script may have altered shared values.
                         ProcessRuntime();
 
-                        // Build all the events from the sequences and sections.
-                        _script.BuildSteps();
+
+                        // Build all the events from the sequences and sections. TODO0 needs valid channels
+ //>>>                       _script.BuildSteps();
                     }
                     catch (Exception ex)
                     {
@@ -338,7 +341,7 @@ namespace Nebulator.App
                     }
                 }
 
-                ///// Script is sane - build the UI and internals.
+                ///// Script is sane - build the UI.
                 if (ok)
                 {
                     // Create channels and controls from event sets.
@@ -348,84 +351,71 @@ namespace Nebulator.App
 
                     foreach (var chspec in compiler.ChannelSpecs)
                     {
-                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == chspec.ChannelNumber && (e.MidiEvent is NoteEvent || e.MidiEvent is NoteOnEvent));
-
-                        // Is this channel pertinent?
-                        if (chEvents.Any())
+                        // Make new control.
+                        PlayerControl control = new()
                         {
-                            _channelManager.SetEvents(chspec.ChannelNumber, chEvents);
+                            Location = new(x, y),
+                            //Name = $"{chspec.ChannelName}",
+                            // Name = $"channel{chspec.ChannelNumber}",
+                            BorderStyle = BorderStyle.FixedSingle
+                        };
+                        control.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
+                        Controls.Add(control);
 
-                            // Make new control.
-                            PlayerControl control = new()
-                            {
-                                Location = new(x, y),
-                                Name = $"channel{chspec.ChannelNumber}",
-                                BorderStyle = BorderStyle.FixedSingle
-                            };
-                            control.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
-                            Controls.Add(control);
-                            //_playerControls.Add(control);
+                        // Bind to internal channel object then init dynamic properties. TODOX this is clumsy, create control first then bind.
+                        _channelManager.Bind(chspec.ChannelNumber, control);
+                        control.Name = $"{chspec.ChannelName}";
+                        control.Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", VolumeDefs.DEFAULT);
+                        control.State = (ChannelState)_nppVals.GetInteger(chspec.ChannelName, "state", (int)ChannelState.Normal);
+                        control.Patch = chspec.Patch;
+                        control.IsDrums = chspec.IsDrums;
 
-                            // TODO1 these:
-                            //        var outDev = _outputDevices[ch.DeviceId];
-                            //        ch.Device = outDev;
-                            //        ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", VolumeDefs.DEFAULT);
-                            //        ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
-
-                            // ChannelManager
-                            //     public int TotalSubdivs { get; private set; }
-                            //     public bool AnySolo { get { return _channels.Where(c => c.State == ChannelState.Solo).Any(); } }
-                            //     public bool AnyMute { get { return _channels.Where(c => c.State == ChannelState.Mute).Any(); } }
-                            //     public int NumSelected { get { return _channels.Where(c => c.Selected).Count(); } }
-                            //     public ChannelManager()
-                            //     public void Reset()
-                            //     public void Bind(int chnum, PlayerControl control)
-                            //     public void SetEvents(int channelNumber, IEnumerable<MidiEventDesc> events)
-                            //     public void SetChannelState(int channelNumber, ChannelState state)
-                            //     public bool IsDrums(int channelNumber)
-                            //     public void SetPatch(int channelNumber, int patch)
-
-
-
-                            // Bind to internal channel object then init it.
-                            _channelManager.Bind(chspec.ChannelNumber, control);
-                            _channelManager.SetPatch(chspec.ChannelNumber, chspec.Patch);
-                            //TODO1? control.IsDrums = GetDrumChannels().Contains(chnum);
-
-                            // Adjust positioning for next iteration.
-                            y += control.Height + 5;
-                        }
+                        // Adjust positioning for next iteration.
+                        y += control.Height + 5;
                     }
-
-                    ///// Everything is sane - prepare to run.
-                    if(ok)
-                    {
-                        _script.Init(_channelManager);
-
-                        ///// Init the timeclock.
-                        barBar.TimeDefs = _script.GetSectionMarkers();
-                        //barBar.Length = new(barBar.TimeDefs.Keys.Max());
-                        barBar.Start = new(0);
-                        barBar.End = new(_channelManager.TotalSubdivs - 1);
-                        barBar.Length = new(_channelManager.TotalSubdivs);
-                        barBar.Current = new(0);
-
-                        // Start the clock.
-                        SetFastTimerPeriod();
-                    }
-
-                    // Update file watcher. TODO1 working?
-                    compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
                 }
+
+
+                ///// Script is sane - build the events.
+                if (ok)
+                {
+                    _script.BuildSteps();
+
+                    foreach (var chspec in compiler.ChannelSpecs)
+                    {
+                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == chspec.ChannelNumber &&
+                            (e.MidiEvent is NoteEvent || e.MidiEvent is NoteOnEvent));
+
+                        _channelManager.SetEvents(chspec.ChannelNumber, chEvents);
+                    }
+                }
+
+
+                ///// Everything is sane - prepare to run.
+                if (ok)
+                {
+                    _script.Init(_channelManager);
+
+                    ///// Init the timeclock.
+                    barBar.TimeDefs = _script.GetSectionMarkers();
+                    barBar.Length = new(_channelManager.TotalSubdivs);
+                    //barBar.Length = new(barBar.TimeDefs.Keys.Max());
+                    barBar.Start = new(0);
+                    barBar.End = new(_channelManager.TotalSubdivs - 1);
+                    barBar.Current = new(0);
+
+                    // Start the clock.
+                    SetFastTimerPeriod();
+                }
+
+                // Update file watcher. TODO1 working?
+                compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
 
                 SetCompileStatus(ok);
 
                 if(!ok)
                 {
                     _logger.Error("Compile failed.");
-                    //ok = false;
-                    //ProcessPlay(PlayCommand.StopRewind);
-                    //SetCompileStatus(false);
                 }
 
                 // Log compiler results.
@@ -450,16 +440,8 @@ namespace Nebulator.App
         /// <param name="compileStatus">True if compile is clean.</param>
         void SetCompileStatus(bool compileStatus)
         {
-            if (compileStatus)
-            {
-                btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, UserSettings.TheSettings.IconColor);
-                _needCompile = false;
-            }
-            else
-            {
-                btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, Color.Red);
-                _needCompile = true;
-            }
+            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, compileStatus ? UserSettings.TheSettings.IconColor : Color.Red);
+            _needCompile = !compileStatus;
         }
         #endregion
 
@@ -1130,7 +1112,7 @@ namespace Nebulator.App
             // Always do this.
             barBar.Current = new(_stepTime.TotalSubdivs);
 
-//TODO1-1 ???            _outputDevices.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
+            //TODO0 ??? _outputDevices.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }

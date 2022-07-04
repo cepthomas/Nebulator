@@ -23,13 +23,13 @@ namespace Nebulator.Script
         /// <summary>All the defined script events.</summary>
         internal List<MidiEventDesc> _scriptEvents = new();
 
-        /// <summary>Script functions may add sequences at runtime.</summary>
+        /// <summary>Script functions may add sequences at runtime. TODO0 need to handle these</summary>
         internal List<MidiEventDesc> _dynamicEvents = new();
 
         ///// <summary>All the channels - key is user assigned name.</summary>
         //readonly Dictionary<string, Channel> _channels = new();
 
-        Dictionary<string, Channel> _channelMap = new(); //TODO1 need something like this - put in mngr?
+        //Dictionary<string, Channel> _channelMap = new(); //TODOX need something like this - put in mngr?
 
         /// <summary>All the channels.</summary>
         internal ChannelManager _channelManager = new();
@@ -152,7 +152,7 @@ namespace Nebulator.Script
         //        _dynamicEvents.Clear();
         //    }
 
-        //    // Check both collections. TODO1 should create a dict for this?
+        //    // Check both collections.
         //    var events = _scriptEvents.Where(e => e.ScaledTime == time.TotalSubdivs).Concat(_dynamicEvents.Where(e => e.ScaledTime == time.TotalSubdivs));
         //    return events;
         //}
@@ -234,13 +234,12 @@ namespace Nebulator.Script
         /// <returns>The channel object or null if invalid.</returns>
         Channel GetChannel(string chanName)
         {
-            Channel? ch;
-
-            if (!_channelMap.TryGetValue(chanName, out ch))
+            var chiter = _channelManager.Where(ch => ch.ChannelName == chanName); //TODOX needs a fast lookup.
+            if (chiter is null || chiter.Count() == 0)
             {
                 throw new ArgumentException($"Invalid channel: {chanName}");
             }
-            return ch;
+            return chiter.First();
         }
 
         /// <summary>
