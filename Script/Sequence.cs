@@ -38,27 +38,29 @@ namespace Nebulator.Script
     public class SequenceElements : List<SequenceElement>
     {
         /// <summary>
-        /// Like: Z.Add(05.3, "G3", 0.7, 1.1);
+        /// Add one specific note or chord.
+        /// Like: Z.Add(5.3, "G3", 0.7, 1.1);
         /// Like: Z.Add(11.0, "AcousticBassDrum", 0.45);
         /// </summary>
         /// <param name="when">Time to play at.</param>
         /// <param name="what">What to play.</param>
         /// <param name="volume">Base volume.</param>
-        /// <param name="duration">Time to last. If 0 it's assumed to be a drum and we will supply the note off.</param>
+        /// <param name="duration">Time to last. If 0 it's assumed to be a drum.</param>
         public void Add(double when, string what, double volume, double duration = 0)
         {
             SequenceElement sel = new(what)
             {
-                When = new BarTime(when),
+                When = ScriptCommon.ToBarTime(when),
                 Volume = volume,
-                Duration = new BarTime(duration)
+                Duration = ScriptCommon.ToBarTime(duration)
             };
 
             Add(sel);
         }
 
         /// <summary>
-        /// Like: Z.Add("|5---    8       |7.......7654--- |", "G4.m7", 90);
+        /// Add a pattern. Note subdivs per beat is fixed at PPQ of 8.
+        /// Like: Z.Add("|5---    8       |7.......|7654-- |", "G4.m7", 90);
         /// Like: Z.Add("|8       |       |8       |       |", "AcousticBassDrum", 90);
         /// </summary>
         /// <param name="pattern">Ascii pattern string.</param>
@@ -66,33 +68,114 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string what, double volume)
         {
-            // was:
-            //foreach (double d in ScriptUtils.GetNotes(which))
-            //{
-            //    Add(pattern, d, volume);
-            //}
-
             List<int> notes = MusicDefinitions.GetNotesFromString(what);
 
             if (notes.Count == 0)
             {
                 // It might be a drum.
-                try
+                int idrum = MidiDefs.GetDrumNumber(what);
+                if(idrum >= 0)
                 {
-                    int idrum = MidiDefs.GetDrumNumber(what);
                     notes.Add(idrum);
                 }
-                catch { } // not a drum either - error
+                // else not a drum either - error!
             }
 
-            foreach (int i in notes)
+            // Remove visual markers.
+            pattern = pattern.Replace("|", "");
+
+            foreach (int n in notes)
             {
-                Add(pattern, i, volume);
+                // was:  Add(pattern, n, volume);
+                //void Add(string pattern, int which, double volume)
+                int currentVol = 0; // default, not sounding
+                int startIndex = 0; // index in pattern for the start of the current note
+
+                // Local function to package an event.
+                void MakeNoteEvent(int index)
+                {
+                    // Make a Note on.
+                    double volmod = (double)currentVol / 10;
+                    // Create scaled times.
+                    BarTime dur = new((index - startIndex) * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
+                    BarTime when = new(startIndex * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
+
+                    SequenceElement sel = new(n)
+                    {
+                        When = when,
+                        Volume = volume * volmod,
+                        Duration = dur
+                    };
+
+                    Add(sel);
+                }
+
+                for (int patternIndex = 0; patternIndex < pattern.Length; patternIndex++)
+                {
+                    switch (pattern[patternIndex])
+                    {
+                        case '-':
+                            ///// Continue current note.
+                            if (currentVol > 0)
+                            {
+                                // ok, do nothing
+                            }
+                            else
+                            {
+                                // invalid condition
+                                throw new InvalidOperationException("Invalid \'-\'' in pattern string");
+                            }
+                            break;
+
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                        case '7':
+                        case '8':
+                        case '9':
+                            ///// A new note starting.
+                            // Do we need to end the current note?
+                            if (currentVol > 0)
+                            {
+                                MakeNoteEvent(patternIndex - 1);
+                            }
+
+                            // Start new note.
+                            currentVol = pattern[patternIndex] - '0';
+                            startIndex = patternIndex;
+                            break;
+
+                        case '.':
+                        case ' ':
+                            ///// No sound.
+                            // Do we need to end the current note?
+                            if (currentVol > 0)
+                            {
+                                MakeNoteEvent(patternIndex - 1);
+                            }
+                            currentVol = 0;
+                            break;
+
+                        default:
+                            ///// Invalid char.
+                            throw new InvalidOperationException($"Invalid char in pattern string:{pattern[patternIndex]}");
+                    }
+                }
+
+                // Straggler?
+                if (currentVol > 0)
+                {
+                    MakeNoteEvent(pattern.Length);
+                }
             }
         }
 
         /// <summary>
-        /// Like: Z.Add(01.0, algoDynamic, 90);
+        /// Add a callback function.
+        /// Like: Z.Add(10.6, algoDynamic, 90);
         /// </summary>
         /// <param name="when">Time to play at.</param>
         /// <param name="func">Function to execute.</param>
@@ -101,105 +184,11 @@ namespace Nebulator.Script
         {
             SequenceElement sel = new(func)
             {
-                When = new BarTime(when),
+                When = ScriptCommon.ToBarTime(when),
                 Volume = volume
             };
 
             Add(sel);
-        }
-
-        /// <summary>
-        /// Helper function.
-        /// </summary>
-        /// <param name="pattern">Ascii pattern string.</param>
-        /// <param name="which">Specific instrument or drum.</param>
-        /// <param name="volume">Volume.</param>
-        void Add(string pattern, int which, double volume)
-        {
-            // Remove visual markers.
-            pattern = pattern.Replace("|", "");
-            int currentVol = 0; // default, not sounding
-            int startIndex = 0; // index in pattern for the start of the current note
-
-            // Local function to package an event.
-            void MakeNoteEvent(int index)
-            {
-                // Make a Note on.
-                double volmod = (double)currentVol / 10;
-
-                BarTime dur = new(index - startIndex);
-                BarTime when = new(startIndex);
-
-                SequenceElement ncl = new(which)
-                {
-                    When = when,
-                    Volume = volume * volmod,
-                    Duration = dur
-                };
-
-                Add(ncl);
-            }
-
-            for (int patternIndex = 0; patternIndex < pattern.Length; patternIndex++)
-            {
-                switch (pattern[patternIndex])
-                {
-                    case '-':
-                        ///// Continue current note.
-                        if(currentVol > 0)
-                        {
-                            // ok, do nothing
-                        }
-                        else
-                        {
-                            // invalid condition
-                            throw new InvalidOperationException("Invalid \'-\'' in pattern string");
-                        }
-                        break;
-
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        ///// A new note starting.
-                        // Do we need to end the current note?
-                        if (currentVol > 0)
-                        {
-                            MakeNoteEvent(patternIndex - 1);
-                        }
-
-                        // Start new note.
-                        currentVol = pattern[patternIndex] - '0';
-                        startIndex = patternIndex;
-                        break;
-
-                    case '.':
-                    case ' ':
-                        ///// No sound.
-                        // Do we need to end the current note?
-                        if (currentVol > 0)
-                        {
-                            MakeNoteEvent(patternIndex - 1);
-                        }
-                        currentVol = 0;
-                        break;
-
-                    default:
-                        ///// Invalid char.
-                        throw new InvalidOperationException($"Invalid char in pattern string:{pattern[patternIndex]}");
-                }
-            }
-
-            // Straggler?
-            if (currentVol > 0)
-            {
-                MakeNoteEvent(pattern.Length);
-            }
         }
     }
 

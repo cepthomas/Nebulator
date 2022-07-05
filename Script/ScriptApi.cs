@@ -31,15 +31,6 @@ namespace Nebulator.Script
         public double MasterVolume { get; set; } = 0;
         #endregion
 
-
-
-
-        ///// <summary>All the channels information - key is user assigned name.</summary>
-        //public Dictionary<string, Channel> Channels { get; set; } = new();
-
-
-
-
         #region Script functions that can be overridden
         /// <summary>Called to initialize Nebulator stuff.</summary>
         public virtual void Setup() { }
@@ -47,10 +38,10 @@ namespace Nebulator.Script
         /// <summary>Called every mmtimer increment.</summary>
         public virtual void Step() { }
 
-        /// <summary>Called when input arrives.</summary>
+        /// <summary>Called when input arrives. TODOX named dev like outputs.</summary>
         public virtual void InputNote(string dev, int channel, int note) { }
 
-        /// <summary>Called when input arrives.</summary>
+        /// <summary>Called when input arrives. TODOX named dev/controller like outputs.</summary>
         public virtual void InputControl(string dev, int channel, int controller, int value) { }
         #endregion
 
@@ -132,8 +123,6 @@ namespace Nebulator.Script
 
                     NoteOnEvent evt = new(0, ch.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
                     ch.Device.SendEvent(evt);
-
-                    //SafeSendEvent(chanName, evt);
                 }
                 else
                 {
@@ -166,7 +155,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, double dur = 0.0)
         {
-            SendNote(chanName, notenum, vol, new BarTime(dur));
+            SendNote(chanName, notenum, vol, ScriptCommon.ToBarTime(dur));
         }
 
         /// <summary>Send one or more named notes immediately.</summary>
@@ -176,7 +165,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         protected void SendNote(string chanName, string notestr, double vol, double dur = 0.0)
         {
-            SendNote(chanName, notestr, vol, new BarTime(dur));
+            SendNote(chanName, notestr, vol, ScriptCommon.ToBarTime(dur));
         }
 
         /// <summary>Send a note on immediately.</summary>
@@ -206,7 +195,6 @@ namespace Nebulator.Script
             int ctlrid = MidiDefs.GetControllerNumber(controller);
             ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
             ch.Device.SendEvent(evt);
-            //SafeSendEvent(chanName, evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -217,7 +205,6 @@ namespace Nebulator.Script
             var ch = _channels[chanName];
             PatchChangeEvent evt = new(0, ch.ChannelNumber, patch);
             ch.Device.SendEvent(evt);
-            //SafeSendEvent(chanName, evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>

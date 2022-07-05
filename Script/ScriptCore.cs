@@ -26,8 +26,8 @@ namespace Nebulator.Script
         /// <summary>Script functions may add sequences at runtime. TODO0 need to handle these</summary>
         internal List<MidiEventDesc> _dynamicEvents = new();
 
-        // /// <summary>All the channels.</summary>
-        // internal ChannelManager _channelManager = new();
+        /// <summary>All the channels - key is user assigned name.</summary>
+        Dictionary<string, Channel> _channels = new();
 
         /// <summary>Script randomizer.</summary>
         static readonly Random _rand = new();
@@ -35,12 +35,6 @@ namespace Nebulator.Script
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
         #endregion
-
-
-        /// <summary>All the channels information - key is user assigned name.</summary>
-        Dictionary<string, Channel> _channels = new();
-
-
 
         #region Lifecycle
         /// <summary>
@@ -51,21 +45,6 @@ namespace Nebulator.Script
         {
             _channels = channels;
         }
-
-        ///// <summary>
-        ///// Set up runtime stuff.
-        ///// </summary>
-        ///// <param name="channels">All output channels.</param>
-        //public void Init(List<Channel> channels)
-        //{
-        //    _channels.Clear();
-        //    channels.ForEach(ch =>
-        //    {
-        //        _channels[ch.ChannelName] = ch;
-        //        // Good time to send initial patches.
-        //        SendPatch(ch.ChannelName, ch.Patch);
-        //    });
-        //}
         #endregion
 
         #region Client functions
@@ -137,24 +116,6 @@ namespace Nebulator.Script
         {
             return _scriptEvents;
         }
-
-        ///// <summary>
-        ///// Get events at specific time.
-        ///// </summary>
-        ///// <param name="time">Specific time.</param>
-        ///// <returns>Enumerator for events at time.</returns>
-        //public IEnumerable<MidiEventDesc> GetEvents(BarTime time)
-        //{
-        //    if (time.Beat == 0 && time.Subdiv == 0)
-        //    {
-        //        // Starting/looping. Clean up transient.
-        //        _dynamicEvents.Clear();
-        //    }
-
-        //    // Check both collections.
-        //    var events = _scriptEvents.Where(e => e.ScaledTime == time.TotalSubdivs).Concat(_dynamicEvents.Where(e => e.ScaledTime == time.TotalSubdivs));
-        //    return events;
-        //}
         #endregion
 
         #region Private utilities
@@ -182,7 +143,7 @@ namespace Nebulator.Script
                 // int toffset = startBeat == -1 ? 0 : channel.NextTime();
 
                 BarTime startNoteTime = new BarTime(startBeat, 0, 0) + seqel.When;
-                BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new BarTime(0.1) : seqel.Duration); // 0.1 is a short hit
+                BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new(1) : seqel.Duration); // 1 is a short hit
 
                 // Is it a function?
                 if (seqel.ScriptFunction is not null)
@@ -223,69 +184,6 @@ namespace Nebulator.Script
             var ecoll = ConvertToEvents(chanName, seq, beat);
             _scriptEvents.AddRange(ecoll);
         }
-
-        ///// <summary>
-        ///// Utility to look up channel.
-        ///// </summary>
-        ///// <param name="chanName"></param>
-        ///// <returns>The channel object or null if invalid.</returns>
-        //Channel? GetChannel(string chanName)
-        //{
-        //    return _channels.ContainsKey(chanName) ? _channels[chanName] : null;
-        //}
-
-        ///// <summary>
-        ///// Utility to look up channel.
-        ///// </summary>
-        ///// <param name="chanName"></param>
-        ///// <returns>The channel object or null if invalid.</returns>
-        //Channel GetChannel(string chanName)
-        //{
-        //    var chiter = _channelManager.Where(ch => ch.ChannelName == chanName); //TODOX needs a fast lookup.
-        //    if (chiter is null || chiter.Count() == 0)
-        //    {
-        //        throw new ArgumentException($"Invalid channel: {chanName}");
-        //    }
-        //    return chiter.First();
-        //}
-
-
-        ///// <summary>
-        ///// Utility that does sanity checking.
-        ///// </summary>
-        ///// <param name="channel"></param>
-        ///// <param name="evt"></param>
-        //void SafeSendEvent(Channel channel, MidiEvent evt)
-        //{
-        //    if (ch is not null && ch.Device is not null)
-        //    {
-        //        channel.Device.SendEvent(evt);
-        //    }
-        //    else
-        //    {
-        //        throw new ArgumentException($"Invalid channel: {chanName}");
-        //    }
-        //}
-
-
-
-        ///// <summary>
-        ///// Utility that does sanity checking.
-        ///// </summary>
-        ///// <param name="chanName"></param>
-        ///// <param name="evt"></param>
-        //void SafeSendEvent(Channel chanName, MidiEvent evt)
-        //{
-        //    var ch = GetChannel(chanName);
-        //    if (ch is not null && ch.Device is not null)
-        //    {
-        //        ch.Device.SendEvent(evt);
-        //    }
-        //    else
-        //    {
-        //        throw new ArgumentException($"Invalid channel: {chanName}");
-        //    }
-        //}
         #endregion
     }
 }

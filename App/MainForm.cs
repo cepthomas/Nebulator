@@ -56,11 +56,6 @@ namespace Nebulator.App
         /// <summary>The current script.</summary>
         ScriptBase? _script = new();
 
-        ///// <summary>The current channels.</summary>
-        //readonly Dictionary<int, Channel> _channels = new();
-        // /// <summary>The internal channel objects.</summary>
-        // readonly ChannelManager _channelManager = new();
-
         /// <summary>All the channels - key is user assigned name.</summary>
         Dictionary<string, Channel> _channels = new();
 
@@ -110,8 +105,8 @@ namespace Nebulator.App
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
-            LogManager.MinLevelFile = LogLevel.Debug;
-            LogManager.MinLevelNotif = LogLevel.Info;
+            LogManager.MinLevelFile = LogLevel.Trace; // TODO1 adjust these later
+            LogManager.MinLevelNotif = LogLevel.Trace;
             LogManager.LogEvent += LogManager_LogEvent;
             LogManager.Run(logFileName, 100000);
 
@@ -162,8 +157,6 @@ namespace Nebulator.App
 
             btnKillComm.Click += (object? _, EventArgs __) => { Kill(); };
             btnClear.Click += (object? _, EventArgs __) => { textViewer.Clear(); };
-
-            _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.TheSettings.MonitorOutput);
             #endregion
 
             // // For testing.
@@ -253,6 +246,9 @@ namespace Nebulator.App
             {
                 _mmTimer.Stop();
                 _mmTimer.Dispose();
+
+                // Wait a bit in case there are some lingering events.
+                System.Threading.Thread.Sleep(100);
 
                 DestroyDevices();
 
@@ -369,7 +365,7 @@ namespace Nebulator.App
                         _channels.Add(chspec.ChannelName, channel);
 
                         // Make new control and bind to channel.
-                        PlayerControl control = new()
+                        ChannelControl control = new()
                         {
                             Location = new(x, y),
                             BorderStyle = BorderStyle.FixedSingle,
@@ -394,7 +390,7 @@ namespace Nebulator.App
                     _script.BuildSteps();
 
                     // Store the steps in the channel objects.
-                    MidiTimeConverter _mt = new((int)UserSettings.TheSettings.MidiSettings.InternalPPQ, UserSettings.TheSettings.MidiSettings.DefaultTempo);
+                    MidiTimeConverter _mt = new(Definitions.InternalPPQ, UserSettings.TheSettings.MidiSettings.DefaultTempo);
                     foreach (var channel in _channels.Values)
                     {
                         var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == channel.ChannelNumber && //TODO0 needs device factor
@@ -469,7 +465,7 @@ namespace Nebulator.App
         /// Create all I/O devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
-        bool CreateDevices()
+        bool CreateDevices()//TODOX add others
         {
             bool ok = true;
 
@@ -503,6 +499,8 @@ namespace Nebulator.App
                 }
             }
 
+            _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.TheSettings.MonitorOutput);
+
             return ok;
         }
 
@@ -519,49 +517,6 @@ namespace Nebulator.App
         #endregion
 
         #region Channel controls
-        ///// <summary>
-        ///// Create the channel controls from the user script.
-        ///// </summary>
-        //bool CreateChannelControls()
-        //{
-        //    bool ok = true;
-        //    const int CONTROL_SPACING = 10;
-        //    int x = btnRewind.Left;
-        //    int y = barBar.Bottom + CONTROL_SPACING;
-
-        //    // Create new channel controls.
-        //    foreach (Channel ch in _channels.Values.OrderBy(c => c.ChannelNumber))
-        //    {
-        //        // Locate the output device for this channel.
-        //        if (_outputDevices.ContainsKey(ch.DeviceId))
-        //        {
-        //            var outDev = _outputDevices[ch.DeviceId];
-        //            ch.Device = outDev;
-        //            ch.Volume = _nppVals.GetDouble(ch.ChannelName, "volume", VolumeDefs.DEFAULT);
-        //            ch.State = (ChannelState)_nppVals.GetInteger(ch.ChannelName, "state", (int)ChannelState.Normal);
-
-        //            PlayerControl tctl = new()
-        //            {
-        //                Location = new Point(x, y),
-        //                BorderStyle = BorderStyle.FixedSingle,
-        //                BoundChannel = ch
-        //            };
-        //            tctl.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
-        //            Controls.Add(tctl);
-
-        //            y += tctl.Height + CONTROL_SPACING;
-        //        }
-        //        else
-        //        {
-        //            _logger.Error($"Invalid device: {ch.DeviceId} for channel: {ch.ChannelName}");
-        //            ok = false;
-        //            break;
-        //        }
-        //    }
-
-        //    return ok;
-        //}
-
         /// <summary>
         /// UI changed something.
         /// </summary>
@@ -569,7 +524,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ChannelControl_ChannelChangeEvent(object? sender, ChannelChangeEventArgs e)
         {
-            PlayerControl chc = (PlayerControl)sender!;
+            ChannelControl chc = (ChannelControl)sender!;
 
             if (e.StateChange)
             {
@@ -1198,12 +1153,6 @@ namespace Nebulator.App
         {
             // Make a transformer.
             MidiTimeConverter mt = new(UserSettings.TheSettings.MidiSettings.SubdivsPerBeat, sldTempo.Value);
-            //MidiTime mt = new()
-            //{
-            //    InternalPpq = Time.SubdivsPerBeat,
-            //    Tempo = sldTempo.Value
-            //};
-
             var per = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer(per, MmTimerCallback);
         }
@@ -1211,7 +1160,7 @@ namespace Nebulator.App
 
         #region Midi utilities
         /// <summary>
-        /// Export to a text or midi file.
+        /// Export to a midi file.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
