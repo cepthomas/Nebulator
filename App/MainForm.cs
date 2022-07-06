@@ -23,13 +23,7 @@ using Nebulator.Script;
 // - "F4.Aeolian" - Named scale from [Scales](#musicdefinitions/scales).
 // - SideStick - Drum name from [Drums](#musicdefinitions/generalmididrums).
 
-
-// TODOX1 - Support multiple/generic ins/outs:
-// - inputs by name in the script.
-// - incl OSC, virtuals, ... channel access/id will require number + device.
-// - affects all user settings change detection.
-// - ChannelManager: readonly Channel[] _channels = new Channel[MidiDefs.NUM_CHANNELS]; // breaks for multi-devices.
-// - put OSC back.
+// TODOX3 put OSC back.
 
 // TODO Add audio lib?
 
@@ -464,39 +458,51 @@ namespace Nebulator.App
         /// Create all I/O devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
-        bool CreateDevices()//TODOX1 add others
+        bool CreateDevices()
         {
             bool ok = true;
 
             // First...
             DestroyDevices();
 
-            if (UserSettings.TheSettings.MidiSettings.MidiInDevice != "")
+            UserSettings.TheSettings.MidiSettings.GetInputDevices().ForEach(d =>
             {
-                var ml = new MidiListener(UserSettings.TheSettings.MidiSettings.MidiInDevice);//, "MidiInDevice");
-                if (ml.Valid)
+                //TODOX2 do something with vk and bb.
+                switch(d.name)
                 {
-                    ml.InputEvent += Device_InputEvent;
-                    _inputDevices.Add("MidiInDevice", ml);
-                }
-                else
-                {
-                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiSettings.MidiInDevice}");
-                }
-            }
+                    case "VirtualKeyboard":
+                        break;
 
-            if (UserSettings.TheSettings.MidiSettings.MidiOutDevice != "")
+                    case "BingBong":
+                        break;
+
+                    default:
+                        var ml = new MidiListener(d.name);
+                        if (ml.Valid)
+                        {
+                            ml.InputEvent += Device_InputEvent;
+                            _inputDevices.Add(d.id, ml);
+                        }
+                        else
+                        {
+                            _logger.Error($"Something wrong with your input device: {d.id}({d.name})");
+                        }
+                        break;
+                }
+            });
+
+            UserSettings.TheSettings.MidiSettings.GetOutputDevices().ForEach(d =>
             {
-                var ml = new MidiSender(UserSettings.TheSettings.MidiSettings.MidiOutDevice);//, "MidiOutDevice");
+                var ml = new MidiSender(d.name);
                 if (ml.Valid)
                 {
-                    _outputDevices.Add("MidiOutDevice", ml);
+                    _outputDevices.Add(d.id, ml);
                 }
                 else
                 {
-                    _logger.Error($"Something wrong with your device: {UserSettings.TheSettings.MidiSettings.MidiOutDevice}");
+                    _logger.Error($"Something wrong with your output device: {d.id}({d.name})");
                 }
-            }
+            });
 
             _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.TheSettings.MonitorOutput);
 
@@ -540,14 +546,12 @@ namespace Nebulator.App
                             if (chnum != chc.ChannelNumber && chc.State != ChannelState.Solo)
                             {
                                 chc.BoundChannel.Kill();
-                                //_outputDevices.Values.ForEach(d => d.Kill(chc.BoundChannel));
                             }
                         }
                         break;
 
                     case ChannelState.Mute:
                         chc.BoundChannel.Kill();
-                        //_outputDevices.Values.ForEach(d => d.Kill(chc.BoundChannel));
                         break;
                 }
             }
@@ -1199,6 +1203,7 @@ namespace Nebulator.App
         /// </summary>
         void KillAll()
         {
+            chkPlay.Checked = false;
             _channels.Values.ForEach(ch => ch.Kill());
         }
         #endregion

@@ -1,7 +1,8 @@
 
 // A take on Eno's "algorithmic" Music for Airports - ported from github.com/teropa/musicforairports.js
+TODOX2 fix this file
 
-Channel("sound",  MidiOut, 1,  Pad2Warm);
+Channel("sound",  OutputDevice1, 1,  Pad2Warm);
 
 const double SOUND_VOL = 0.8;
 

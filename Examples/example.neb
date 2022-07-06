@@ -8,10 +8,10 @@ Include("C:\Dev\repos\Nebulator\Examples\scale.neb");
 
 
 ///// All the channel/outputs.
-Channel("keys",  MidiOutDevice, 1,  "AcousticGrandPiano");
-Channel("bass",  MidiOutDevice, 2,  "AcousticBass");
-Channel("synth", MidiOutDevice, 3,  "Lead1Square");
-Channel("drums", MidiOutDevice, 10, "Jazz"); // for drums = kit
+Channel("keys",  OutputDevice1, 1,  "AcousticGrandPiano");
+Channel("bass",  OutputDevice1, 2,  "AcousticBass");
+Channel("synth", OutputDevice1, 3,  "Lead1Square");
+Channel("drums", OutputDevice1, 10, "Jazz"); // for drums = kit
 
 public class example : ScriptBase
 {
