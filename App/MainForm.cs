@@ -14,17 +14,17 @@ using NBagOfUis;
 using MidiLib;
 using Nebulator.Script;
 
-// TODO1 get rid of parens in .neb files? gen enums?
+// TODOX2 get rid of parens in .neb files? gen enums?
 
-// TODO1 fix midilib project reference.
+// TODOX3 fix midilib project reference.
 
-// TODO1 show docs: mididefs, musicdefs. gen? these from internal defs:
+// TODOX3 show docs: mididefs, musicdefs. gen? these from internal defs:
 // - "F4.o7" - Named chord from [Chords](#musicdefinitions/chords) in the key of middle F.
 // - "F4.Aeolian" - Named scale from [Scales](#musicdefinitions/scales).
 // - SideStick - Drum name from [Drums](#musicdefinitions/generalmididrums).
 
 
-// TODOX - Support multiple/generic ins/outs:
+// TODOX1 - Support multiple/generic ins/outs:
 // - inputs by name in the script.
 // - incl OSC, virtuals, ... channel access/id will require number + device.
 // - affects all user settings change detection.
@@ -105,7 +105,7 @@ namespace Nebulator.App
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
-            LogManager.MinLevelFile = LogLevel.Trace; // TODO1 adjust these later
+            LogManager.MinLevelFile = LogLevel.Trace; // TODOX2 put in settings - all projects.
             LogManager.MinLevelNotif = LogLevel.Trace;
             LogManager.LogEvent += LogManager_LogEvent;
             LogManager.Run(logFileName, 100000);
@@ -354,7 +354,7 @@ namespace Nebulator.App
                         {
                             ChannelName = chspec.ChannelName,
                             ChannelNumber = chspec.ChannelNumber,
-                            DeviceId = chspec.DeviceId, //TODOX needeed?
+                            DeviceId = chspec.DeviceId, //TODOX2 needeed?
                             Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", VolumeDefs.DEFAULT),
                             State = (ChannelState)_nppVals.GetInteger(chspec.ChannelName, "state", (int)ChannelState.Normal),
                             Patch = chspec.Patch,
@@ -393,7 +393,7 @@ namespace Nebulator.App
                     MidiTimeConverter _mt = new(Definitions.InternalPPQ, UserSettings.TheSettings.MidiSettings.DefaultTempo);
                     foreach (var channel in _channels.Values)
                     {
-                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == channel.ChannelNumber && //TODO0 needs device factor
+                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == channel.ChannelNumber && //TODOX1 needs device factor
                             (e.MidiEvent is NoteEvent || e.MidiEvent is NoteOnEvent));
 
                         // Scale time and give to channel.
@@ -423,7 +423,7 @@ namespace Nebulator.App
                     SetFastTimerPeriod();
                 }
 
-                // Update file watcher. TODO1 working?
+                // Update file watcher. TODOX3 working?
                 compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
 
                 SetCompileStatus(ok);
@@ -465,7 +465,7 @@ namespace Nebulator.App
         /// Create all I/O devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
-        bool CreateDevices()//TODOX add others
+        bool CreateDevices()//TODOX1 add others
         {
             bool ok = true;
 
@@ -639,7 +639,7 @@ namespace Nebulator.App
                                     break;
                             }
 
-                            //if (dur.TotalSubdivs > 0) // TODO0 specific duration ?? needed?
+                            //if (dur.TotalSubdivs > 0) // TODOX2 specific duration ?? needed?
                             //{
                             //    // Remove any lingering note offs and add a fresh one.
                             //    _stops.RemoveAll(s => s.NoteNumber == stt.NoteNumber && s.ChannelNumber == stt.ChannelNumber);
@@ -1110,8 +1110,6 @@ namespace Nebulator.App
 
             // Always do this.
             barBar.Current = new(_stepTime.TotalSubdivs);
-
-            //TODO0 ??? _outputDevices.Values.ForEach(o => { if (chkPlay.Checked) o.Start(); else o.Stop(); });
 
             return ret;
         }
