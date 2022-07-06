@@ -57,7 +57,7 @@ namespace Nebulator.App
         ScriptBase? _script = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        Dictionary<string, Channel> _channels = new();
+        readonly Dictionary<string, Channel> _channels = new();
 
         /// <summary>Longest length of channels in subdivs.</summary>
         int _totalSubdivs = 0;
@@ -155,7 +155,7 @@ namespace Nebulator.App
             textViewer.WordWrap = btnWrap.Checked;
             btnWrap.Click += (object? _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
 
-            btnKillComm.Click += (object? _, EventArgs __) => { Kill(); };
+            btnKillComm.Click += (object? _, EventArgs __) => { KillAll(); };
             btnClear.Click += (object? _, EventArgs __) => { textViewer.Clear(); };
             #endregion
 
@@ -216,7 +216,7 @@ namespace Nebulator.App
             ProcessPlay(PlayCommand.Stop);
 
             // Just in case.
-            Kill();
+            KillAll();
 
             // Save user settings.
             UserSettings.TheSettings.FormGeometry = new()
@@ -327,7 +327,7 @@ namespace Nebulator.App
                         InitRuntime();
 
                         // Setup script. This builds the sequences and sections.
-                        _script.Setup();
+                        _script!.Setup();
 
                         // Script may have altered shared values.
                         ProcessRuntime();
@@ -375,7 +375,7 @@ namespace Nebulator.App
                         Controls.Add(control);
 
                         // Good time to send initial patch.
-                        channel.Device.SendPatch(channel.ChannelNumber, channel.Patch);
+                        channel.SendPatch();
 
                         // Adjust positioning for next iteration.
                         y += control.Height + 5;
@@ -386,20 +386,19 @@ namespace Nebulator.App
                 ///// Script is sane - build the events.
                 if (ok)
                 {
-                    _script.Init(_channels);
+                    _script!.Init(_channels);
                     _script.BuildSteps();
 
                     // Store the steps in the channel objects.
                     MidiTimeConverter _mt = new(Definitions.InternalPPQ, UserSettings.TheSettings.MidiSettings.DefaultTempo);
                     foreach (var channel in _channels.Values)
                     {
-                        var chEvents = _script.GetEvents().Where(e => e.ChannelNumber == channel.ChannelNumber && //TODOX1 needs device factor
+                        var chEvents = _script.GetEvents().Where(e => e.ChannelName == channel.ChannelName &&
                             (e.MidiEvent is NoteEvent || e.MidiEvent is NoteOnEvent));
 
                         // Scale time and give to channel.
                         chEvents.ForEach(e => e.ScaledTime = _mt!.MidiToInternal(e.AbsoluteTime));
                         channel.SetEvents(chEvents);
-
 
                         // Round total up to next beat.
                         BarTime bs = new();
@@ -412,7 +411,7 @@ namespace Nebulator.App
                 if (ok)
                 {
                     ///// Init the timeclock.
-                    barBar.TimeDefs = _script.GetSectionMarkers();
+                    barBar.TimeDefs = _script!.GetSectionMarkers();
                     barBar.Length = new(_totalSubdivs);
                     //barBar.Length = new(barBar.TimeDefs.Keys.Max());
                     barBar.Start = new(0);
@@ -540,20 +539,22 @@ namespace Nebulator.App
                             int chnum = i + 1;
                             if (chnum != chc.ChannelNumber && chc.State != ChannelState.Solo)
                             {
-                                _outputDevices.Values.ForEach(d => d.Kill(chnum));
+                                chc.BoundChannel.Kill();
+                                //_outputDevices.Values.ForEach(d => d.Kill(chc.BoundChannel));
                             }
                         }
                         break;
 
                     case ChannelState.Mute:
-                        _outputDevices.Values.ForEach(d => d.Kill(chc.ChannelNumber));
+                        chc.BoundChannel.Kill();
+                        //_outputDevices.Values.ForEach(d => d.Kill(chc.BoundChannel));
                         break;
                 }
             }
 
             if (e.PatchChange && chc.Patch >= 0)
             {
-                _outputDevices.Values.ForEach(d => d.SendPatch(chc.ChannelNumber, chc.Patch));
+                chc.BoundChannel.SendPatch();
             }
         }
         #endregion
@@ -635,7 +636,7 @@ namespace Nebulator.App
                                     break;
 
                                 default:
-                                    ch.Device.SendEvent(evt);
+                                    ch.SendEvent(evt);
                                     break;
                             }
 
@@ -679,7 +680,7 @@ namespace Nebulator.App
                     if (_stepTime.Beat > barBar.Current.Beat)
                     {
                         ProcessPlay(PlayCommand.StopRewind);
-                        Kill(); // just in case
+                        KillAll(); // just in case
                     }
                 }
                 // else keep going
@@ -1090,7 +1091,7 @@ namespace Nebulator.App
                     _mmTimer.Stop();
 
                     // Send midi stop all notes just in case.
-                    Kill();
+                    KillAll();
                     break;
 
                 case PlayCommand.Rewind:
@@ -1196,9 +1197,9 @@ namespace Nebulator.App
         /// <summary>
         /// Kill em all.
         /// </summary>
-        void Kill()
+        void KillAll()
         {
-            _outputDevices.Values.ForEach(o => o.KillAll());
+            _channels.Values.ForEach(ch => ch.Kill());
         }
         #endregion
 

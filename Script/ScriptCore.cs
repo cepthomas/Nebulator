@@ -149,7 +149,7 @@ namespace Nebulator.Script
                 if (seqel.ScriptFunction is not null)
                 {
                     FunctionMidiEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, seqel.ScriptFunction);
-                    events.Add(new(evt));
+                    events.Add(new(evt, chanName));
                 }
                 else // plain ordinary
                 {
@@ -162,7 +162,7 @@ namespace Nebulator.Script
                         velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
                         NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
-                        events.Add(new(evt));
+                        events.Add(new(evt, chanName));
                     }
                 }
             }

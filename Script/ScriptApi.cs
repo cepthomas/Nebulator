@@ -122,13 +122,12 @@ namespace Nebulator.Script
                     velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
                     NoteOnEvent evt = new(0, ch.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
-                    ch.Device.SendEvent(evt);
+                    ch.SendEvent(evt);
                 }
                 else
                 {
                     NoteEvent evt = new(0, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
-                    ch.Device.SendEvent(evt);
-                    //SafeSendEvent(chanName, evt);
+                    ch.SendEvent(evt);
                 }
             }
             else
@@ -194,7 +193,7 @@ namespace Nebulator.Script
             var ch = _channels[chanName];
             int ctlrid = MidiDefs.GetControllerNumber(controller);
             ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
-            ch.Device.SendEvent(evt);
+            ch.SendEvent(evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -204,7 +203,7 @@ namespace Nebulator.Script
         {
             var ch = _channels[chanName];
             PatchChangeEvent evt = new(0, ch.ChannelNumber, patch);
-            ch.Device.SendEvent(evt);
+            ch.SendEvent(evt);
         }
 
         /// <summary>Send a midi patch immediately.</summary>
