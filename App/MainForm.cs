@@ -540,14 +540,13 @@ namespace Nebulator.App
 
                     case ChannelState.Solo:
                         // Mute any other non-solo channels.
-                        for (int i = 0; i < MidiDefs.NUM_CHANNELS; i++)
+                        _channels.Values.ForEach(ch =>
                         {
-                            int chnum = i + 1;
-                            if (chnum != chc.ChannelNumber && chc.State != ChannelState.Solo)
+                            if (ch.ChannelName != chc.BoundChannel.ChannelName && chc.State != ChannelState.Solo)
                             {
                                 chc.BoundChannel.Kill();
                             }
-                        }
+                        });
                         break;
 
                     case ChannelState.Mute:
