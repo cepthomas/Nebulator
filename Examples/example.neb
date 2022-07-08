@@ -8,34 +8,33 @@ Include("C:\Dev\repos\Nebulator\Examples\scale.neb");
 
 
 ///// All the channel/outputs.
-Channel("keys",  OutputDevice1, 1,  "AcousticGrandPiano");
-Channel("bass",  OutputDevice1, 2,  "AcousticBass");
-Channel("synth", OutputDevice1, 3,  "Lead1Square");
-Channel("drums", OutputDevice1, 10, "Jazz"); // for drums = kit
+Channel("keys",  OutputDevice, 1,  "AcousticGrandPiano");
+Channel("bass",  OutputDevice, 2,  "AcousticBass");
+Channel("synth", OutputDevice, 3,  "Lead1Square");
+Channel("drums", OutputDevice, 10, "Jazz"); // for drums = kit
 
 public class example : ScriptBase
 {
-    ///// Volumes.
+    utils u = new();
+
+    // Volumes.
     const double KEYS_VOL = 0.8;
     const double DRUM_VOL = 0.8;
 
-    ///// Sequences
+    // Sequences
     Sequence seqDynamic;
 
     // Compiler tests.
     //unknown statement
     //int _unused = 48;
 
-    ////// Simple variables for functions.
+    // Simple variables for functions.
     List<int> scaleNotes;
     List<int> chordNotes;
     List<int> myChordNotes;
     List<int> myScaleNotes;
 
-    utils u = new();
-
-
-    ////// Nebulator setup stuff
+    // Nebulator setup stuff
     public override void Setup()
     {
         // Create sets of notes.
@@ -50,7 +49,7 @@ public class example : ScriptBase
         BuildComp();
     }    
 
-    ///// Make the music.
+    // Make the music.
     public void BuildComp()
     {
         /////////////////////// sequences /////////////////////////////////

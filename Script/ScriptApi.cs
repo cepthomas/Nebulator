@@ -154,7 +154,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, double dur = 0.0)
         {
-            SendNote(chanName, notenum, vol, ScriptCommon.ToBarTime(dur));
+            SendNote(chanName, notenum, vol, new BarTime(dur));
         }
 
         /// <summary>Send one or more named notes immediately.</summary>
@@ -164,7 +164,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
         protected void SendNote(string chanName, string notestr, double vol, double dur = 0.0)
         {
-            SendNote(chanName, notestr, vol, ScriptCommon.ToBarTime(dur));
+            SendNote(chanName, notestr, vol, new BarTime(dur));
         }
 
         /// <summary>Send a note on immediately.</summary>

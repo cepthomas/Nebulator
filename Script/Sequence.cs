@@ -50,9 +50,9 @@ namespace Nebulator.Script
         {
             SequenceElement sel = new(what)
             {
-                When = ScriptCommon.ToBarTime(when),
+                When = new(when),
                 Volume = volume,
-                Duration = ScriptCommon.ToBarTime(duration)
+                Duration = new(duration)
             };
 
             Add(sel);
@@ -96,9 +96,11 @@ namespace Nebulator.Script
                 {
                     // Make a Note on.
                     double volmod = (double)currentVol / 10;
-                    // Create scaled times.
-                    BarTime dur = new((index - startIndex) * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
-                    BarTime when = new(startIndex * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
+                    BarTime dur = new(index - startIndex);
+                    BarTime when = new(startIndex);
+                    //// Create scaled times.
+                    //BarTime dur = new((index - startIndex) * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
+                    //BarTime when = new(startIndex * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
 
                     SequenceElement sel = new(n)
                     {
@@ -184,7 +186,7 @@ namespace Nebulator.Script
         {
             SequenceElement sel = new(func)
             {
-                When = ScriptCommon.ToBarTime(when),
+                When = new(when),
                 Volume = volume
             };
 

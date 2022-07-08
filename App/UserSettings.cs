@@ -56,6 +56,18 @@ namespace Nebulator.App
         [Browsable(true)]
         public bool IgnoreWarnings { get; set; } = true;
 
+        [DisplayName("Input Device")]
+        [Description("Valid device if handling input.")]
+        [Browsable(true)]
+        [TypeConverter(typeof(DeviceTypeConverter))]
+        public string InputDevice { get; set; } = "";
+
+        [DisplayName("Output Device")]
+        [Description("Valid device if sending output.")]
+        [Browsable(true)]
+        [TypeConverter(typeof(DeviceTypeConverter))]
+        public string OutputDevice { get; set; } = "";
+
         [DisplayName("Midi Settings")]
         [Description("Edit midi settings.")]
         [Browsable(true)]

@@ -142,7 +142,7 @@ namespace Nebulator.Script
                 //int toffset = 0;
                 // int toffset = startBeat == -1 ? 0 : channel.NextTime();
 
-                BarTime startNoteTime = new BarTime(startBeat, 0, 0) + seqel.When;
+                BarTime startNoteTime = new BarTime(startBeat * MidiSettings.LibSettings.SubdivsPerBeat) + seqel.When;
                 BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new(1) : seqel.Duration); // 1 is a short hit
 
                 // Is it a function?
@@ -161,8 +161,12 @@ namespace Nebulator.Script
                         int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                         velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                        NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
+                        NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, 0);// seqel.Duration.TotalSubdivs);
                         events.Add(new(evt, chanName));
+
+                        // Add explicit note off. TODOX1 this adds events after the last real one. Kind of ugly looking but...
+                        NoteEvent off = new((startNoteTime + seqel.Duration).TotalSubdivs, channel.ChannelNumber, MidiCommandCode.NoteOff, noteNum, 64);
+                        events.Add(new(off, chanName));
                     }
                 }
             }

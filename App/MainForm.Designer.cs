@@ -37,9 +37,8 @@
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new NBagOfUis.TextViewer();
-            this.lblSolo = new System.Windows.Forms.Label();
-            this.lblMute = new System.Windows.Forms.Label();
             this.barBar = new MidiLib.BarBar();
+            this.dumpMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -158,6 +157,7 @@
             this.openToolStripMenuItem,
             this.recentToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
+            this.dumpMidiToolStripMenuItem,
             this.viewLogToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.settingsToolStripMenuItem});
@@ -171,27 +171,27 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             // 
@@ -199,7 +199,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -207,7 +207,7 @@
             // 
             this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.settingsToolStripMenuItem.Text = "Settings...";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
             // 
@@ -280,24 +280,6 @@
             this.textViewer.TabIndex = 41;
             this.textViewer.WordWrap = true;
             // 
-            // lblSolo
-            // 
-            this.lblSolo.AutoSize = true;
-            this.lblSolo.Location = new System.Drawing.Point(843, 49);
-            this.lblSolo.Name = "lblSolo";
-            this.lblSolo.Size = new System.Drawing.Size(39, 20);
-            this.lblSolo.TabIndex = 42;
-            this.lblSolo.Text = "Solo";
-            // 
-            // lblMute
-            // 
-            this.lblMute.AutoSize = true;
-            this.lblMute.Location = new System.Drawing.Point(843, 80);
-            this.lblMute.Name = "lblMute";
-            this.lblMute.Size = new System.Drawing.Size(43, 20);
-            this.lblMute.TabIndex = 43;
-            this.lblMute.Text = "Mute";
-            // 
             // barBar
             // 
             this.barBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -310,6 +292,13 @@
             this.barBar.Size = new System.Drawing.Size(790, 55);
             this.barBar.TabIndex = 44;
             // 
+            // dumpMidiToolStripMenuItem
+            // 
+            this.dumpMidiToolStripMenuItem.Name = "dumpMidiToolStripMenuItem";
+            this.dumpMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.dumpMidiToolStripMenuItem.Text = "Dump midi";
+            this.dumpMidiToolStripMenuItem.Click += new System.EventHandler(this.DumpMidi_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -318,8 +307,6 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(976, 838);
             this.Controls.Add(this.barBar);
-            this.Controls.Add(this.lblMute);
-            this.Controls.Add(this.lblSolo);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btnCompile);
@@ -357,11 +344,10 @@
         private NBagOfUis.TextViewer textViewer;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
-        private System.Windows.Forms.Label lblSolo;
-        private System.Windows.Forms.Label lblMute;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private MidiLib.BarBar barBar;
+        private System.Windows.Forms.ToolStripMenuItem dumpMidiToolStripMenuItem;
     }
 }
 
