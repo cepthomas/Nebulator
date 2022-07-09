@@ -223,15 +223,6 @@ Send a note off immediately.
 - note: One of [Notes](#scriptapi/basics/musicalnotes).
 
 ```c#
-void SendSequence("chname", seq, beat) 
-```
-Send a sequence in the future.
-
-- chname: Channel name to send it on.
-- seq: Which defined Sequence to send.
-- beat: When to send.
-
-```c#
 void SendController("chname", ctl, val)
 ```
 Send a controller immediately. Useful for things like panning and bank select.

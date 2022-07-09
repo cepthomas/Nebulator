@@ -14,18 +14,13 @@ using NBagOfUis;
 using MidiLib;
 using Nebulator.Script;
 
-// TODOX2 get rid of parens in .neb files? gen enums?
 
-// TODOX3 fix midilib project reference.
+// TODOX fix midilib project reference.
 
-// TODOX3 show docs: mididefs, musicdefs. gen? these from internal defs:
-// - "F4.o7" - Named chord from [Chords](#musicdefinitions/chords) in the key of middle F.
-// - "F4.Aeolian" - Named scale from [Scales](#musicdefinitions/scales).
-// - SideStick - Drum name from [Drums](#musicdefinitions/generalmididrums).
+// TODOX show or generate docs: mididefs, musicdefinitions.
 
-// TODOX3 put OSC back.
+// TODOX put OSC back.
 
-// TODO Add audio lib?
 
 
 namespace Nebulator.App
@@ -104,7 +99,7 @@ namespace Nebulator.App
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
-            LogManager.MinLevelFile = LogLevel.Trace; //TODOX2 put all these in settings?
+            LogManager.MinLevelFile = LogLevel.Trace; //TODOX put all these in settings?
             LogManager.MinLevelNotif = LogLevel.Debug;
             LogManager.LogEvent += LogManager_LogEvent;
             LogManager.Run(logFileName, 100000);
@@ -356,13 +351,14 @@ namespace Nebulator.App
                         {
                             ChannelName = chspec.ChannelName,
                             ChannelNumber = chspec.ChannelNumber,
-                            DeviceId = chspec.DeviceId, //TODOX2 needeed?
+                            DeviceId = chspec.DeviceId,
                             Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", VolumeDefs.DEFAULT),
                             State = (ChannelState)_nppVals.GetInteger(chspec.ChannelName, "state", (int)ChannelState.Normal),
                             Patch = chspec.Patch,
                             IsDrums = chspec.IsDrums,
                             Selected = false,
-                            Device = _outputDevices[chspec.DeviceId]
+                            Device = _outputDevices[chspec.DeviceId],
+                            AddNoteOff = true
                         };
                         _channels.Add(chspec.ChannelName, channel);
 
@@ -433,7 +429,7 @@ namespace Nebulator.App
                     SetFastTimerPeriod();
                 }
 
-                // Update file watcher. TODOX3 working?
+                // Update file watcher. TODOX working?
                 compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
 
                 SetCompileStatus(ok);
@@ -482,14 +478,14 @@ namespace Nebulator.App
             // First...
             DestroyDevices();
 
-            switch (UserSettings.TheSettings.InputDevice)
+            switch (UserSettings.TheSettings.MidiSettings.InputDevice)
             {
-                case nameof(VirtualKeyboard)://TODOX2
+                case nameof(VirtualKeyboard)://TODOX implement
                     //vkey.InputEvent += Listener_InputEvent;
                     //_inputDevice = vkey;
                     break;
 
-                case nameof(BingBong)://TODOX2
+                case nameof(BingBong)://TODOX implement
                     //bb.InputEvent += Listener_InputEvent;
                     //_inputDevice = bb;
                     break;
@@ -499,7 +495,7 @@ namespace Nebulator.App
                     break;
 
                 default:
-                    var ml = new MidiListener(UserSettings.TheSettings.InputDevice);
+                    var ml = new MidiListener(UserSettings.TheSettings.MidiSettings.InputDevice);
                     if (ml.Valid)
                     {
                         ml.InputEvent += Device_InputEvent;
@@ -507,12 +503,12 @@ namespace Nebulator.App
                     }
                     else
                     {
-                        _logger.Error($"Something wrong with your input device: {UserSettings.TheSettings.InputDevice}");
+                        _logger.Error($"Something wrong with your input device: {UserSettings.TheSettings.MidiSettings.InputDevice}");
                     }
                     break;
             }
 
-            switch (UserSettings.TheSettings.OutputDevice)
+            switch (UserSettings.TheSettings.MidiSettings.OutputDevice)
             {
                 case "":
                     // None specified.
@@ -521,14 +517,14 @@ namespace Nebulator.App
                     break;
 
                 default:
-                    var ms = new MidiSender(UserSettings.TheSettings.OutputDevice);
+                    var ms = new MidiSender(UserSettings.TheSettings.MidiSettings.OutputDevice);
                     if (ms.Valid)
                     {
                         _outputDevices.Add("OutputDevice", ms);
                     }
                     else
                     {
-                        _logger.Error($"Something wrong with your output device: {UserSettings.TheSettings.OutputDevice}");
+                        _logger.Error($"Something wrong with your output device: {UserSettings.TheSettings.MidiSettings.OutputDevice}");
                     }
                     break;
             }
@@ -649,39 +645,28 @@ namespace Nebulator.App
 
                     if (play)
                     {
-                        foreach(var evt in ch.GetEvents(_stepTime.TotalSubdivs))
+                        // Need exception handling here to protect from user script errors.
+                        try
                         {
-                            switch (evt)
-                            {
-                                case FunctionMidiEvent fe:
-                                    // Need exception handling here to protect from user script errors.
-                                    try
-                                    {
-                                        fe.ScriptFunction?.Invoke();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        ProcessScriptRuntimeError(ex);
-                                    }
-                                    break;
-
-                                default:
-                                    ch.SendEvent(evt);
-                                    break;
-                            }
+                            ch.DoStep(_stepTime.TotalSubdivs);
+                        }
+                        catch (Exception ex)
+                        {
+                            ProcessScriptRuntimeError(ex);
                         }
                     }
                 }
 
                 ///// Bump time.
                 _stepTime.Increment(1);
-                barBar.IncrementCurrent(1);
+                bool done = barBar.IncrementCurrent(1);
                 // Check for end of play. If no steps or not selected, free running mode so always keep going.
                 if (barBar.TimeDefs.Count > 1)
                 {
                     // Check for end.
-                    if (_stepTime.Beat > barBar.Current.Beat)
+                    if (done)
                     {
+                        _channels.Values.ForEach(ch => ch.Flush(_stepTime.TotalSubdivs));
                         ProcessPlay(PlayCommand.StopRewind);
                         KillAll(); // just in case
                     }

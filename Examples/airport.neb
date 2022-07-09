@@ -52,7 +52,7 @@ public class airport : ScriptBase
             if(StepTime >= l.nextStart)
             {
                 Print("Starting note", l.snote);
-                SendNote("sound", l.snote, SOUND_VOL, l.duration); // TODOX1 need to send note off too!
+                SendNote("sound", l.snote, SOUND_VOL, l.duration);
                 // Calc next time.
                 l.nextStart = StepTime + l.delay + l.duration;
             }

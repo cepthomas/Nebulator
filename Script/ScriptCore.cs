@@ -23,9 +23,6 @@ namespace Nebulator.Script
         /// <summary>All the events defined in the script.</summary>
         internal List<MidiEventDesc> _scriptEvents = new();
 
-        /// <summary>Script functions may add sequences at runtime. TODOX1 need to handle these</summary>
-        internal List<MidiEventDesc> _dynamicEvents = new();
-
         /// <summary>All the channels - key is user assigned name.</summary>
         Dictionary<string, Channel> _channels = new();
 
@@ -71,7 +68,11 @@ namespace Nebulator.Script
                         while (beatInSect < section.Beats)
                         {
                             var seq = sectel.Sequences[seqIndex];
-                            AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
+                            //was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
+                            var ch = _channels[sectel.ChannelName];
+                            int beat = sectionBeat + beatInSect;
+                            var ecoll = ConvertToEvents(ch, seq, beat);
+                            _scriptEvents.AddRange(ecoll);
 
                             beatInSect += seq.Beats;
                             if (seqIndex < sectel.Sequences.Length - 1)
@@ -158,17 +159,6 @@ namespace Nebulator.Script
             }
 
             return events;
-        }
-
-        /// <summary>Send a named script sequence at some beat/time.</summary>
-        /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="seq">Which sequence to send.</param>
-        /// <param name="beat">Which beat to send the sequence.</param>
-        void AddSequence(string chanName, Sequence seq, int beat)
-        {
-            var ch = _channels[chanName];
-            var ecoll = ConvertToEvents(ch, seq, beat);
-            _scriptEvents.AddRange(ecoll);
         }
         #endregion
     }

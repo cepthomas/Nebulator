@@ -44,11 +44,11 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="sequences"></param>
-        public void Add(string channel, params Sequence[] sequences)
+        public void Add(string chname, params Sequence[] sequences)
         {
             SectionElement sel = new()
             {
-                Channel = channel,
+                ChannelName = chname,
                 Sequences = sequences
             };
 
@@ -63,7 +63,7 @@ namespace Nebulator.Script
     {
         #region Properties
         /// <summary>Associated channel.</summary>
-        public string Channel { get; set; } = "???";
+        public string ChannelName { get; set; } = "???";
 
         /// <summary>Associated sequences.</summary>
         public Sequence[] Sequences { get; set; } = Array.Empty<Sequence>();
@@ -74,7 +74,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"SectionElement: Channel:{Channel}";
+            return $"SectionElement: ChannelName:{ChannelName}";
         }
     }
 }
