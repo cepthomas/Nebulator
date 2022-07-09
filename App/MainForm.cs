@@ -18,8 +18,9 @@ using Nebulator.Script;
 // TODOX fix midilib project reference!!
 // TODOX show or generate docs: mididefs, musicdefinitions.
 // TODOX put OSC back.
- //TODOX roslyn 5+?? https://stackoverflow.com/a/69318635
 // TODOX get rid of parens in .neb files? gen enums?
+
+ //TODO roslyn 5+?? https://stackoverflow.com/a/69318635
 
 
 namespace Nebulator.App
@@ -1215,6 +1216,20 @@ namespace Nebulator.App
         {
             chkPlay.Checked = false;
             _channels.Values.ForEach(ch => ch.Kill());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void ShowDefinitions_Click(object sender, EventArgs e)
+        {
+            var docs = MusicDefinitions.FormatDoc();
+            Tools.MarkdownToHtml(docs, Color.LightYellow, new Font("arial", 16), true);
+
+            docs = MidiDefs.FormatDoc();
+            Tools.MarkdownToHtml(docs, Color.LightYellow, new Font("arial", 16), true);
         }
         #endregion
     }

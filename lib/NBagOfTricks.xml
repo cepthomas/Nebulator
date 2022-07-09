@@ -1450,6 +1450,9 @@
         <member name="T:NBagOfTricks.Slog.LogEntry">
             <summary>Internal log entry data container.</summary>
         </member>
+        <member name="M:NBagOfTricks.Slog.LogEntry.#ctor(System.DateTime,NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32,System.String)">
+            <summary>Internal log entry data container.</summary>
+        </member>
         <member name="T:NBagOfTricks.Slog.LogEventArgs">
             <summary>Log event for notification.</summary>
         </member>

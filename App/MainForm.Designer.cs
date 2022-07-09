@@ -28,9 +28,11 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dumpMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnMonIn = new System.Windows.Forms.ToolStripButton();
             this.btnMonOut = new System.Windows.Forms.ToolStripButton();
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
@@ -38,7 +40,6 @@
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new NBagOfUis.TextViewer();
             this.barBar = new MidiLib.BarBar();
-            this.dumpMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -159,6 +160,7 @@
             this.exportMidiToolStripMenuItem,
             this.dumpMidiToolStripMenuItem,
             this.viewLogToolStripMenuItem,
+            this.showDefinitionsToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.settingsToolStripMenuItem});
             this.fileDropDownButton.Image = global::App.Properties.Resources.glyphicons_37_file;
@@ -171,27 +173,34 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
+            // 
+            // dumpMidiToolStripMenuItem
+            // 
+            this.dumpMidiToolStripMenuItem.Name = "dumpMidiToolStripMenuItem";
+            this.dumpMidiToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
+            this.dumpMidiToolStripMenuItem.Text = "Dump midi";
+            this.dumpMidiToolStripMenuItem.Click += new System.EventHandler(this.DumpMidi_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log...";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             // 
@@ -199,7 +208,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_Click);
             // 
@@ -207,9 +216,16 @@
             // 
             this.settingsToolStripMenuItem.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.settingsToolStripMenuItem.Text = "Settings...";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
+            // 
+            // showDefinitionsToolStripMenuItem
+            // 
+            this.showDefinitionsToolStripMenuItem.Name = "showDefinitionsToolStripMenuItem";
+            this.showDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
+            this.showDefinitionsToolStripMenuItem.Text = "Show Definitions";
+            this.showDefinitionsToolStripMenuItem.Click += new System.EventHandler(this.ShowDefinitions_Click);
             // 
             // btnMonIn
             // 
@@ -292,13 +308,6 @@
             this.barBar.Size = new System.Drawing.Size(790, 55);
             this.barBar.TabIndex = 44;
             // 
-            // dumpMidiToolStripMenuItem
-            // 
-            this.dumpMidiToolStripMenuItem.Name = "dumpMidiToolStripMenuItem";
-            this.dumpMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.dumpMidiToolStripMenuItem.Text = "Dump midi";
-            this.dumpMidiToolStripMenuItem.Click += new System.EventHandler(this.DumpMidi_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -348,6 +357,7 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private MidiLib.BarBar barBar;
         private System.Windows.Forms.ToolStripMenuItem dumpMidiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showDefinitionsToolStripMenuItem;
     }
 }
 
