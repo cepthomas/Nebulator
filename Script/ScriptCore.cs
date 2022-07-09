@@ -20,10 +20,10 @@ namespace Nebulator.Script
         /// <summary>All sections.</summary>
         internal List<Section> _sections = new();
 
-        /// <summary>All the defined script events.</summary>
+        /// <summary>All the events defined in the script.</summary>
         internal List<MidiEventDesc> _scriptEvents = new();
 
-        /// <summary>Script functions may add sequences at runtime. TODO0 need to handle these</summary>
+        /// <summary>Script functions may add sequences at runtime. TODOX1 need to handle these</summary>
         internal List<MidiEventDesc> _dynamicEvents = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
@@ -122,26 +122,16 @@ namespace Nebulator.Script
         /// <summary>
         /// Generate events from sequence notes.
         /// </summary>
-        /// <param name="chanName">Which channel to send it on.</param>
+        /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start sequence at.</param>
-        List<MidiEventDesc> ConvertToEvents(string chanName, Sequence seq, int startBeat)
+        List<MidiEventDesc> ConvertToEvents(Channel channel, Sequence seq, int startBeat)
         {
-            if (seq is null)
-            {
-                throw new ArgumentException($"Invalid sequence");
-            }
-
             List<MidiEventDesc> events = new();
-
-            var channel = _channels[chanName];
 
             foreach (SequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
-                //int toffset = 0;
-                // int toffset = startBeat == -1 ? 0 : channel.NextTime();
-
                 BarTime startNoteTime = new BarTime(startBeat * MidiSettings.LibSettings.SubdivsPerBeat) + seqel.When;
                 BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new(1) : seqel.Duration); // 1 is a short hit
 
@@ -149,7 +139,7 @@ namespace Nebulator.Script
                 if (seqel.ScriptFunction is not null)
                 {
                     FunctionMidiEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, seqel.ScriptFunction);
-                    events.Add(new(evt, chanName));
+                    events.Add(new(evt, channel.ChannelName));
                 }
                 else // plain ordinary
                 {
@@ -161,12 +151,8 @@ namespace Nebulator.Script
                         int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                         velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                        NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, 0);// seqel.Duration.TotalSubdivs);
-                        events.Add(new(evt, chanName));
-
-                        // Add explicit note off. TODOX1 this adds events after the last real one. Kind of ugly looking but...
-                        NoteEvent off = new((startNoteTime + seqel.Duration).TotalSubdivs, channel.ChannelNumber, MidiCommandCode.NoteOff, noteNum, 64);
-                        events.Add(new(off, chanName));
+                        NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
+                        events.Add(new(evt, channel.ChannelName));
                     }
                 }
             }
@@ -180,12 +166,8 @@ namespace Nebulator.Script
         /// <param name="beat">Which beat to send the sequence.</param>
         void AddSequence(string chanName, Sequence seq, int beat)
         {
-            if (seq is null)
-            {
-                throw new ArgumentException($"Invalid sequence");
-            }
-
-            var ecoll = ConvertToEvents(chanName, seq, beat);
+            var ch = _channels[chanName];
+            var ecoll = ConvertToEvents(ch, seq, beat);
             _scriptEvents.AddRange(ecoll);
         }
         #endregion

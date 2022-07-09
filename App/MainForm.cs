@@ -104,8 +104,8 @@ namespace Nebulator.App
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
-            LogManager.MinLevelFile = LogLevel.Trace; // TODOX2 put in settings - all projects.
-            LogManager.MinLevelNotif = LogLevel.Trace;
+            LogManager.MinLevelFile = LogLevel.Trace; //TODOX2 put all these in settings?
+            LogManager.MinLevelNotif = LogLevel.Debug;
             LogManager.LogEvent += LogManager_LogEvent;
             LogManager.Run(logFileName, 100000);
 

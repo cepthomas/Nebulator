@@ -104,35 +104,33 @@ namespace Nebulator.Script
         /// <summary>Send a note immediately. Lowest level sender.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
-        /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
+        /// <param name="vol">Note volume. If 0, sends NoteOff.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(string chanName, int notenum, double vol, BarTime dur)
+        protected void SendNote(string chanName, int notenum, double vol, BarTime dur)//TODOX1
         {
-            if (_channels.ContainsKey(chanName))
+            if (!_channels.ContainsKey(chanName))
             {
-                var ch = _channels[chanName];
+                throw new ArgumentException($"Invalid channel: {chanName}");
+            }
 
-                int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+            var ch = _channels[chanName];
 
-                // If vol is positive and the note is not negative, it's note on, else note off.
-                if (vol > 0 && notenum > 0)
-                {
-                    double vel = ch.NextVol(vol) * MasterVolume;
-                    int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
-                    velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+            int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                    NoteOnEvent evt = new(0, ch.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);
-                    ch.SendEvent(evt);
-                }
-                else
-                {
-                    NoteEvent evt = new(0, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
-                    ch.SendEvent(evt);
-                }
+            // If vol is positive and the note is not negative, it's note on, else note off.
+            if (vol > 0 && notenum > 0)
+            {
+                double vel = ch.NextVol(vol) * MasterVolume;
+                int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
+                velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+
+                NoteOnEvent evt = new(0, ch.ChannelNumber, absnote, velPlay, dur.TotalSubdivs);//TODOX1
+                ch.SendEvent(evt);
             }
             else
             {
-                throw new ArgumentException($"Invalid channel: {chanName}");
+                NoteEvent evt = new(0, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
+                ch.SendEvent(evt);
             }
         }
 
@@ -140,7 +138,7 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
-        /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
+        /// <param name="dur">How long it lasts in Time representation.</param>
         protected void SendNote(string chanName, string notestr, double vol, BarTime dur)
         {
             SequenceElement note = new(notestr);
@@ -151,8 +149,8 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
-        /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(string chanName, int notenum, double vol, double dur = 0.0)
+        /// <param name="dur">How long it lasts in BarTime representation. Default is for things like drum hits.</param>
+        protected void SendNote(string chanName, int notenum, double vol, double dur = 0.1)
         {
             SendNote(chanName, notenum, vol, new BarTime(dur));
         }
@@ -161,13 +159,13 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
-        /// <param name="dur">How long it lasts in Time representation. 0 means no note off generated.</param>
-        protected void SendNote(string chanName, string notestr, double vol, double dur = 0.0)
+        /// <param name="dur">How long it lasts in BarTime representation. Default is for things like drum hits.</param>
+        protected void SendNote(string chanName, string notestr, double vol, double dur = 0.1)
         {
             SendNote(chanName, notestr, vol, new BarTime(dur));
         }
 
-        /// <summary>Send a note on immediately.</summary>
+        /// <summary>Send a note on immediately. Caller is responsible for sending note off later.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
@@ -190,10 +188,21 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         protected void SendController(string chanName, string controller, int val)
         {
+            if (!_channels.ContainsKey(chanName))
+            {
+                throw new ArgumentException($"Invalid channel: {chanName}");
+            }
+
             var ch = _channels[chanName];
             int ctlrid = MidiDefs.GetControllerNumber(controller);
-            ControlChangeEvent evt = new(0, ch.ChannelNumber, (MidiController)ctlrid, val);
-            ch.SendEvent(evt);
+            if (ctlrid >= 0)
+            {
+                ch.SendController((MidiController)ctlrid, val);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid controller: {controller}");
+            }
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -201,9 +210,14 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         protected void SendPatch(string chanName, int patch)
         {
+            if (!_channels.ContainsKey(chanName))
+            {
+                throw new ArgumentException($"Invalid channel: {chanName}");
+            }
+
             var ch = _channels[chanName];
-            PatchChangeEvent evt = new(0, ch.ChannelNumber, patch);
-            ch.SendEvent(evt);
+            ch.Patch = patch;
+            ch.SendPatch();
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -211,8 +225,12 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         protected void SendPatch(string chanName, string patch)
         {
+            if (!_channels.ContainsKey(chanName))
+            {
+                throw new ArgumentException($"Invalid channel: {chanName}");
+            }
+
             int patchid = MidiDefs.GetInstrumentNumber(patch);
-            
             if (patchid >= 0)
             {
                 SendPatch(chanName, patchid);
@@ -229,12 +247,18 @@ namespace Nebulator.Script
         /// <param name="beat">When to send the sequence. Must be in the future.</param>
         protected void SendSequence(string chanName, Sequence seq, int beat)
         {
-           if (seq is null)
-           {
-               throw new InvalidOperationException($"Invalid Sequence");
-           }
+            if (!_channels.ContainsKey(chanName))
+            {
+                throw new ArgumentException($"Invalid channel: {chanName}");
+            }
 
-           var ecoll = ConvertToEvents(chanName, seq, beat);
+            if (seq is null)
+            {
+                throw new InvalidOperationException($"Invalid Sequence");
+            }
+
+            var ch = _channels[chanName];
+            var ecoll = ConvertToEvents(ch, seq, beat);
             _dynamicEvents.AddRange(ecoll);
         }
         #endregion
