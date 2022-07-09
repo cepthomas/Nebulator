@@ -9,6 +9,7 @@ using System.Windows.Forms.Design;
 using System.Drawing.Design;
 using NAudio.Midi;
 using NBagOfTricks;
+using NBagOfTricks.Slog;
 using NBagOfUis;
 using MidiLib;
 
@@ -55,6 +56,16 @@ namespace Nebulator.App
         [Description("Ignore compiler warnings otherwise treat them as errors.")]
         [Browsable(true)]
         public bool IgnoreWarnings { get; set; } = true;
+
+        [DisplayName("File Log Level")]
+        [Description("Log level for file write.")]
+        [Browsable(true)]
+        public LogLevel FileLogLevel { get; set; } = LogLevel.Trace;
+
+        [DisplayName("File Log Level")]
+        [Description("Log level for UI notification.")]
+        [Browsable(true)]
+        public LogLevel NotifLogLevel { get; set; } = LogLevel.Debug;
 
         [DisplayName("Midi Settings")]
         [Description("Edit midi settings.")]

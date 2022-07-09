@@ -15,12 +15,11 @@ using MidiLib;
 using Nebulator.Script;
 
 
-// TODOX fix midilib project reference.
-
+// TODOX fix midilib project reference!!
 // TODOX show or generate docs: mididefs, musicdefinitions.
-
 // TODOX put OSC back.
-
+ //TODOX roslyn 5+?? https://stackoverflow.com/a/69318635
+// TODOX get rid of parens in .neb files? gen enums?
 
 
 namespace Nebulator.App
@@ -99,8 +98,8 @@ namespace Nebulator.App
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
-            LogManager.MinLevelFile = LogLevel.Trace; //TODOX put all these in settings?
-            LogManager.MinLevelNotif = LogLevel.Debug;
+            LogManager.MinLevelFile = UserSettings.TheSettings.FileLogLevel;
+            LogManager.MinLevelNotif = UserSettings.TheSettings.NotifLogLevel;
             LogManager.LogEvent += LogManager_LogEvent;
             LogManager.Run(logFileName, 100000);
 

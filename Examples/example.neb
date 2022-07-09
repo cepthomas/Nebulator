@@ -2,7 +2,6 @@
 // Example Nebulator composition file with some UI demo.
 //----- Warning: this is not actual music! --------
 
-// TODOX get rid of parens in .neb files? gen enums?
 
 ///// Directives/preprocess: Include config and lib files. /////
 Include("C:\Dev\repos\Nebulator\Examples\utils.neb");
@@ -183,7 +182,7 @@ public class example : ScriptBase
 
     public override void Step()
     {
-        if(StepTime == new BarTime(0)) //TODOX roslyn 5+?? https://stackoverflow.com/a/69318635
+        if(StepTime == new BarTime(0))
         {
             SendController("synth", "Pan", 90);
             SendController("keys",  "Pan", 30);
