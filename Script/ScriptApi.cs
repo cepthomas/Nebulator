@@ -38,10 +38,10 @@ namespace Nebulator.Script
         /// <summary>Called every mmtimer increment.</summary>
         public virtual void Step() { }
 
-        /// <summary>Called when input arrives. TODOX named dev like outputs.</summary>
+        /// <summary>Called when input arrives.</summary>
         public virtual void InputNote(string dev, int channel, int note) { }
 
-        /// <summary>Called when input arrives. TODOX named dev/controller like outputs.</summary>
+        /// <summary>Called when input arrives.</summary>
         public virtual void InputControl(string dev, int channel, int controller, int value) { }
         #endregion
 

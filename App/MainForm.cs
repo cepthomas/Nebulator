@@ -16,11 +16,14 @@ using Nebulator.Script;
 
 
 // TODOX fix midilib project reference!!
-// TODOX show or generate docs: mididefs, musicdefinitions.
-// TODOX put OSC back.
-// TODOX get rid of parens in .neb files? gen enums?
 
- //TODO roslyn 5+?? https://stackoverflow.com/a/69318635
+
+// TODOX .neb files changes:
+// - get rid of parens in .neb files?
+// - gen enums?
+// - named input devices and controllers like outputs
+
+ //TODO roslyn 5+ https://stackoverflow.com/a/69318635
 
 
 namespace Nebulator.App
@@ -690,6 +693,15 @@ namespace Nebulator.App
                 if (_script is not null && sender is not null)
                 {
                     var dev = (IInputDevice)sender;
+
+
+                    //TODOX check values
+                    //int channel = MathUtils.Constrain((int)m.Data[0], 0, 100);
+                    //double notenum = MathUtils.Constrain((int)m.Data[1], 0, Definitions.MAX_MIDI);
+                    //double velocity = MathUtils.Constrain((int)m.Data[2], 0, 1.0);
+                    //int ctlnum = (int)m.Data[1];
+                    //double value = MathUtils.Constrain((int)m.Data[2], 0, 10000);
+
 
                     if (e.Note != -1)
                     {

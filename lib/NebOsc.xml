@@ -89,9 +89,6 @@
         <member name="F:NebOsc.Input._udpClient">
             <summary>OSC input device.</summary>
         </member>
-        <member name="F:NebOsc.Input._disposed">
-            <summary>Resource clean up.</summary>
-        </member>
         <member name="E:NebOsc.Input.LogEvent">
             <summary>Request for logging service. May need Invoke() if client is UI.</summary>
         </member>
@@ -117,12 +114,6 @@
             <summary>
             Resource clean up.
             </summary>
-        </member>
-        <member name="M:NebOsc.Input.Dispose(System.Boolean)">
-            <summary>
-            Resource clean up.
-            </summary>
-            <param name="disposing"></param>
         </member>
         <member name="M:NebOsc.Input.ReceiveCallback(System.IAsyncResult)">
             <summary>
@@ -179,9 +170,6 @@
         <member name="F:NebOsc.Output._lock">
             <summary>Access synchronizer.</summary>
         </member>
-        <member name="F:NebOsc.Output._disposed">
-            <summary>Resource clean up.</summary>
-        </member>
         <member name="E:NebOsc.Output.LogEvent">
             <inheritdoc />
         </member>
@@ -206,12 +194,6 @@
             <summary>
             Resource clean up.
             </summary>
-        </member>
-        <member name="M:NebOsc.Output.Dispose(System.Boolean)">
-            <summary>
-            Resource clean up.
-            </summary>
-            <param name="disposing"></param>
         </member>
         <member name="M:NebOsc.Output.Send(NebOsc.Message)">
             <summary>
