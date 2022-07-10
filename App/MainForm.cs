@@ -23,8 +23,6 @@ using Nebulator.Script;
 // - gen enums?
 // - named input devices and controllers like outputs
 
- //TODO roslyn 5+ https://stackoverflow.com/a/69318635
-
 
 namespace Nebulator.App
 {
@@ -498,11 +496,11 @@ namespace Nebulator.App
                     break;
 
                 default:
-                    var ml = new MidiListener(UserSettings.TheSettings.MidiSettings.InputDevice);
-                    if (ml.Valid)
+                    var min = new MidiInput(UserSettings.TheSettings.MidiSettings.InputDevice);
+                    if (min.Valid)
                     {
-                        ml.InputEvent += Device_InputEvent;
-                        _inputDevices.Add("InputDevice", ml);
+                        min.InputEvent += Device_InputEvent;
+                        _inputDevices.Add("InputDevice", min);
                     }
                     else
                     {
@@ -520,10 +518,10 @@ namespace Nebulator.App
                     break;
 
                 default:
-                    var ms = new MidiSender(UserSettings.TheSettings.MidiSettings.OutputDevice);
-                    if (ms.Valid)
+                    var mout = new MidiOutput(UserSettings.TheSettings.MidiSettings.OutputDevice);
+                    if (mout.Valid)
                     {
-                        _outputDevices.Add("OutputDevice", ms);
+                        _outputDevices.Add("OutputDevice", mout);
                     }
                     else
                     {
