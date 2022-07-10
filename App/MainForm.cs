@@ -128,6 +128,8 @@ namespace Nebulator.App
             btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, UserSettings.TheSettings.IconColor);
             btnClear.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnClear.Image, UserSettings.TheSettings.IconColor);
             btnWrap.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnWrap.Image, UserSettings.TheSettings.IconColor);
+            btnAbout.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnAbout.Image, UserSettings.TheSettings.IconColor);
+            btnSettings.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnSettings.Image, UserSettings.TheSettings.IconColor);
 
             btnMonIn.Checked = UserSettings.TheSettings.MonitorInput;
             btnMonOut.Checked = UserSettings.TheSettings.MonitorOutput;
@@ -479,55 +481,78 @@ namespace Nebulator.App
             // First...
             DestroyDevices();
 
-            switch (UserSettings.TheSettings.MidiSettings.InputDevice)
+            foreach(var dev in UserSettings.TheSettings.MidiSettings.InputDevices)
             {
-                case nameof(VirtualKeyboard)://TODOX implement
-                    //vkey.InputEvent += Listener_InputEvent;
-                    //_inputDevice = vkey;
-                    break;
+                switch (dev.DeviceName)
+                {
+                    case nameof(VirtualKeyboard)://TODOX implement
+                        //vkey.InputEvent += Listener_InputEvent;
+                        //_inputDevice = vkey;
+                        break;
 
-                case nameof(BingBong)://TODOX implement
-                    //bb.InputEvent += Listener_InputEvent;
-                    //_inputDevice = bb;
-                    break;
+                    case nameof(BingBong)://TODOX implement
+                        //bb.InputEvent += Listener_InputEvent;
+                        //_inputDevice = bb;
+                        break;
 
-                case "":
-                    // None specified.
-                    break;
+                    case "":
+                        // None specified.
+                        break;
 
-                default:
-                    var min = new MidiInput(UserSettings.TheSettings.MidiSettings.InputDevice);
-                    if (min.Valid)
-                    {
-                        min.InputEvent += Device_InputEvent;
-                        _inputDevices.Add("InputDevice", min);
-                    }
-                    else
-                    {
-                        _logger.Error($"Something wrong with your input device: {UserSettings.TheSettings.MidiSettings.InputDevice}");
-                    }
-                    break;
+                    default:
+                        // Try midi.
+                        var min = new MidiInput(dev.DeviceName);
+                        if (min.Valid)
+                        {
+                            min.InputEvent += Device_InputEvent;
+                            _inputDevices.Add(dev.DeviceId, min);
+                        }
+                        else
+                        {
+                            // Try osc.
+                            try
+                            {
+                                var mosc = new OscInput(dev.DeviceName);
+                                mosc.InputEvent += Device_InputEvent;
+                                _inputDevices.Add(dev.DeviceId, mosc);
+                            }
+                            catch
+                            {
+                                _logger.Error($"Something wrong with your input device:{dev.DeviceName} id:{dev.DeviceId}");
+                                ok = false;
+                            }
+                        }
+                        break;
+                }
             }
 
-            switch (UserSettings.TheSettings.MidiSettings.OutputDevice)
+            foreach (var dev in UserSettings.TheSettings.MidiSettings.OutputDevices)
             {
-                case "":
-                    // None specified.
-                    _logger.Error($"You must specify an output device");
-                    ok = false;
-                    break;
-
-                default:
-                    var mout = new MidiOutput(UserSettings.TheSettings.MidiSettings.OutputDevice);
-                    if (mout.Valid)
-                    {
-                        _outputDevices.Add("OutputDevice", mout);
-                    }
-                    else
-                    {
-                        _logger.Error($"Something wrong with your output device: {UserSettings.TheSettings.MidiSettings.OutputDevice}");
-                    }
-                    break;
+                switch (dev.DeviceName)
+                {
+                    default:
+                        // Try midi.
+                        var mout = new MidiOutput(dev.DeviceName);
+                        if (mout.Valid)
+                        {
+                            _outputDevices.Add(dev.DeviceId, mout);
+                        }
+                        else
+                        {
+                            // Try osc.
+                            try
+                            {
+                                var mosc = new OscOutput(dev.DeviceName);
+                                _outputDevices.Add(dev.DeviceId, mosc);
+                            }
+                            catch
+                            {
+                                _logger.Error($"Something wrong with your output device:{dev.DeviceName} id:{dev.DeviceId}");
+                                ok = false;
+                            }
+                        }
+                        break;
+                }
             }
 
             _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.TheSettings.MonitorOutput);

@@ -104,9 +104,9 @@
         <member name="P:NebOsc.Input.Trace">
             <summary>Trace other than errors.</summary>
         </member>
-        <member name="M:NebOsc.Input.Init">
+        <member name="M:NebOsc.Input.#ctor(System.Int32)">
             <summary>
-            Set up listening for OSC messages.
+            Constructor. Set up listening for OSC messages.
             </summary>
             <returns></returns>
         </member>
@@ -185,8 +185,9 @@
         <member name="P:NebOsc.Output.Trace">
             <summary>Trace other than errors.</summary>
         </member>
-        <member name="M:NebOsc.Output.Init">
+        <member name="M:NebOsc.Output.#ctor(System.String,System.Int32)">
             <summary>
+            Constructor.
             </summary>
             <returns></returns>
         </member>
