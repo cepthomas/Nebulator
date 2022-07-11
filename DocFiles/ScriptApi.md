@@ -1,5 +1,5 @@
 
-# Script API TODOX scrub all
+# Script API
 
 What the script supports.
 
