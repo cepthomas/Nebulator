@@ -9,13 +9,14 @@
 
 - `Script.csproj` is compiled separately into an assembly so it can be linked with the user script.
 - Main UI and non user script stuff is all in the `App` project.
-- Channels and Controllers follow the midi model. Devices represent ports (and corresponding physical dvices.)
-- You can have up to 16 Channels attached to each IOutputDevice.
+- Channels and Controllers follow the midi model.
+- IOutputDevices represent ports (and corresponding physical dvices.)
+- You can have up to 16 Channels per each IOutputDevice.
 
 
 ## Midi Controllers
 
-Nebulator adds a couple of hidden controller values for internal use.
+Nebulator adds a couple of (unused) controller values for internal use.
 
 Controller          | Number |
 ----------          | ------ |
