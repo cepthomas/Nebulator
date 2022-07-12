@@ -15,15 +15,6 @@ using MidiLib;
 using Nebulator.Script;
 
 
-// TODOX fix midilib project reference!!
-
-
-// TODOX .neb files changes:
-// - get rid of parens in .neb files?
-// - gen enums?
-// - named input devices and controllers like outputs
-
-
 namespace Nebulator.App
 {
     public partial class MainForm : Form
@@ -309,7 +300,7 @@ namespace Nebulator.App
 
                 // Compile script.
                 Compiler compiler = new();
-                compiler.Execute(_scriptFileName);
+                compiler.CompileScript(_scriptFileName);
                 _script = compiler.Script as ScriptBase;
 
                 // Process errors. Some may only be warnings.
@@ -852,10 +843,24 @@ namespace Nebulator.App
         /// </summary>
         void Open_Click(object? sender, EventArgs e)
         {
+            string dir = ""; 
+            if (UserSettings.TheSettings.ScriptPath != "")
+            {
+                if(Directory.Exists(UserSettings.TheSettings.ScriptPath))
+                {
+                    dir = UserSettings.TheSettings.ScriptPath;
+                }
+                else
+                {
+                    _logger.Warn("Your script path is invalid, edit your settings");
+                }
+            }
+
             using OpenFileDialog openDlg = new()
             {
                 Filter = "Nebulator files | *.neb",
-                Title = "Select a Nebulator file"
+                Title = "Select a Nebulator file",
+                InitialDirectory = dir,
             };
 
             if (openDlg.ShowDialog() == DialogResult.OK)

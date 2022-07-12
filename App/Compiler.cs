@@ -24,17 +24,6 @@ namespace Nebulator.App
         public List<ChannelSpec> ChannelSpecs { get; init; } = new();
         #endregion
 
-        #region Fields
-        ///// <summary>Main source file name.</summary>
-        //readonly string _nebfn = "";
-
-        ///// <summary>Code lines that define channels.</summary>
-        //readonly List<string> _channelDescriptors = new();
-
-        ///// <summary>Current hash for lines of interest.</summary>
-        //int _chHash = 0;
-        #endregion
-
         /// <summary>Called before compiler starts.</summary>
         public override void PreCompile()
         {
@@ -43,6 +32,8 @@ namespace Nebulator.App
             LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "MidiLib", "Nebulator.Script" };
 
             Usings.Add("static NBagOfTricks.MusicDefinitions");
+
+            ScriptPath = UserSettings.TheSettings.ScriptPath;
 
             //// Save hash of current channel descriptors to detect change in source code.
             //_chHash = string.Join("", _channelDescriptors).GetHashCode();

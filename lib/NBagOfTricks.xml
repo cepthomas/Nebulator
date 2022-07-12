@@ -1244,6 +1244,9 @@
         <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.IgnoreWarnings">
             <summary>Client needs to tell us this.</summary>
         </member>
+        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.ScriptPath">
+            <summary>Client needs to tell us this for Include path - optional.</summary>
+        </member>
         <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.SystemDlls">
             <summary>Default system dlls. Client can add or subtract.</summary>
         </member>
@@ -1289,16 +1292,23 @@
             <param name="pcont">File context</param>
             <returns>True if handled</returns>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Execute(System.String)">
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileScript(System.String)">
             <summary>
-            Run the Compiler.
+            Run the compiler on a sript file.
             </summary>
             <param name="scriptfn">Fully qualified path to main file.</param>
+        </member>
+        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileText(System.String)">
+            <summary>
+            Run the compiler on a text block.
+            </summary>
+            <param name="text">Text to compile.</param>
         </member>
         <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileNative(System.String)">
             <summary>
             The actual compiler driver.
             </summary>
+            <param name="baseDir">Fully qualified path to main file.</param>
             <returns>Compiled script</returns>
         </member>
         <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessFile(NBagOfTricks.ScriptCompiler.FileContext)">

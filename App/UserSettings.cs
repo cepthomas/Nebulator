@@ -23,6 +23,32 @@ namespace Nebulator.App
         public static UserSettings TheSettings { get; set; } = new();
 
         #region Properties - persisted editable
+        [DisplayName("Script Path")]
+        [Description("Default location for user scripts.")]
+        [Browsable(true)]
+        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        public string ScriptPath { get; set; } = "";
+
+        [DisplayName("Auto Compile")]
+        [Description("Compile current file when change detected.")]
+        [Browsable(true)]
+        public bool AutoCompile { get; set; } = true;
+
+        [DisplayName("Ignore Warnings")]
+        [Description("Ignore compiler warnings otherwise treat them as errors.")]
+        [Browsable(true)]
+        public bool IgnoreWarnings { get; set; } = true;
+
+        [DisplayName("File Log Level")]
+        [Description("Log level for file write.")]
+        [Browsable(true)]
+        public LogLevel FileLogLevel { get; set; } = LogLevel.Trace;
+
+        [DisplayName("File Log Level")]
+        [Description("Log level for UI notification.")]
+        [Browsable(true)]
+        public LogLevel NotifLogLevel { get; set; } = LogLevel.Debug;
+
         [DisplayName("Icon Color")]
         [Description("The color used for button icons.")]
         [Browsable(true)]
@@ -46,26 +72,6 @@ namespace Nebulator.App
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color BackColor { get; set; } = Color.AliceBlue;
-
-        [DisplayName("Auto Compile")]
-        [Description("Compile current file when change detected.")]
-        [Browsable(true)]
-        public bool AutoCompile { get; set; } = true;
-
-        [DisplayName("Ignore Warnings")]
-        [Description("Ignore compiler warnings otherwise treat them as errors.")]
-        [Browsable(true)]
-        public bool IgnoreWarnings { get; set; } = true;
-
-        [DisplayName("File Log Level")]
-        [Description("Log level for file write.")]
-        [Browsable(true)]
-        public LogLevel FileLogLevel { get; set; } = LogLevel.Trace;
-
-        [DisplayName("File Log Level")]
-        [Description("Log level for UI notification.")]
-        [Browsable(true)]
-        public LogLevel NotifLogLevel { get; set; } = LogLevel.Debug;
 
         [DisplayName("Midi Settings")]
         [Description("Edit midi settings.")]
