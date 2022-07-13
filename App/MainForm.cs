@@ -423,7 +423,7 @@ namespace Nebulator.App
                     SetFastTimerPeriod();
                 }
 
-                // Update file watcher. TODOX working?
+                // Update file watcher.
                 compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
 
                 SetCompileStatus(ok);
@@ -455,7 +455,7 @@ namespace Nebulator.App
         /// <param name="compileStatus">True if compile is clean.</param>
         void SetCompileStatus(bool compileStatus)
         {
-            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, compileStatus ? UserSettings.TheSettings.IconColor : Color.Red);
+            btnCompile.BackColor = compileStatus ? UserSettings.TheSettings.BackColor : Color.Red;
             _needCompile = !compileStatus;
         }
         #endregion
