@@ -26,10 +26,12 @@
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\MidiLib\MidiLib.csproj" />
         <ProjectReference Include="..\Script\Script.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <Reference Include="MidiLib">
+          <HintPath>..\lib\MidiLib.dll</HintPath>
+        </Reference>
         <Reference Include="NBagOfTricks">
           <HintPath>..\..\NProcessing\lib\NBagOfTricks.dll</HintPath>
         </Reference>

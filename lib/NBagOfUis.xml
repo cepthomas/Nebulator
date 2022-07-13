@@ -787,7 +787,7 @@
         <member name="T:NBagOfUis.MonospaceFontEditor">
             <summary>Selector for monospaced fonts.</summary>
         </member>
-        <member name="T:NBagOfUis.PathListEditor_Future">
+        <member name="T:NBagOfUis.PathListEditor_TODO">
             <summary>Broken - don't use.</summary>
         </member>
         <member name="T:NBagOfUis.CheckBoxRenderer">

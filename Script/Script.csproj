@@ -29,9 +29,9 @@
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\MidiLib\MidiLib.csproj" />
-    </ItemGroup>
-    <ItemGroup>
+        <Reference Include="MidiLib">
+          <HintPath>..\lib\MidiLib.dll</HintPath>
+        </Reference>
         <Reference Include="NBagOfTricks">
             <HintPath>..\lib\NBagOfTricks.dll</HintPath>
         </Reference>

@@ -1,0 +1,1643 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MidiLib</name>
+    </assembly>
+    <members>
+        <member name="T:MidiLib.BarBar">
+            <summary>The control.</summary>
+        </member>
+        <member name="F:MidiLib.BarBar._lastXPos">
+            <summary>For tracking mouse moves.</summary>
+        </member>
+        <member name="F:MidiLib.BarBar._toolTip">
+            <summary>Tooltip for mousing.</summary>
+        </member>
+        <member name="F:MidiLib.BarBar._brush">
+            <summary>The brush.</summary>
+        </member>
+        <member name="F:MidiLib.BarBar._penMarker">
+            <summary>The pen.</summary>
+        </member>
+        <member name="F:MidiLib.BarBar._format">
+            <summary>For drawing text.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.Length">
+            <summary>Total length of the bar.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.Start">
+            <summary>Start of marked region.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.End">
+            <summary>End of marked region.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.Current">
+            <summary>Where we be now.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.ProgressColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.MarkerColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.FontLarge">
+            <summary>Big font.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.FontSmall">
+            <summary>Baby font.</summary>
+        </member>
+        <member name="P:MidiLib.BarBar.TimeDefs">
+            <summary>All the important beat points with their names. Used also by tooltip.</summary>
+        </member>
+        <member name="E:MidiLib.BarBar.CurrentTimeChanged">
+            <summary>Value changed by user.</summary>
+        </member>
+        <member name="M:MidiLib.BarBar.#ctor">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarBar.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:MidiLib.BarBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Draw the control.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handle selection operations.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.BarBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle mouse position changes.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarBar.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle dragging.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarBar.IncrementCurrent(System.Int32)">
+            <summary>
+            Change current time. 
+            </summary>
+            <param name="num">Subdivs/ticks.</param>
+            <returns>True if at the end of the sequence.</returns>
+        </member>
+        <member name="M:MidiLib.BarBar.Reset">
+            <summary>
+            Clear everything.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarBar.GetTimeDefString(System.Int32)">
+            <summary>
+            Gets the time def string associated with val.
+            </summary>
+            <param name="val"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.BarBar.GetSubdivFromMouse(System.Int32)">
+            <summary>
+            Convert x pos to subdiv.
+            </summary>
+            <param name="x"></param>
+        </member>
+        <member name="M:MidiLib.BarBar.Scale(MidiLib.BarTime)">
+            <summary>
+            Map from time to UI pixels.
+            </summary>
+            <param name="val"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MidiLib.BarTime">
+            <summary>Sort of like DateTime but for musical terminology.</summary>
+        </member>
+        <member name="F:MidiLib.BarTime._id">
+            <summary>For hashing.</summary>
+        </member>
+        <member name="F:MidiLib.BarTime._all_ids">
+            <summary>Increment for unique value.</summary>
+        </member>
+        <member name="F:MidiLib.BarTime._base">
+            <summary>Adjustment for 0/1-based.</summary>
+        </member>
+        <member name="F:MidiLib.BarTime.LOW_RES_PPQ">
+            <summary>Some features are at a lower resolution.</summary>
+        </member>
+        <member name="P:MidiLib.BarTime.TotalSubdivs">
+            <summary>The time in subdivs. Always zero-based.</summary>
+        </member>
+        <member name="P:MidiLib.BarTime.TotalBeats">
+            <summary>The time in beats. Always zero-based.</summary>
+        </member>
+        <member name="P:MidiLib.BarTime.Bar">
+            <summary>The bar number.</summary>
+        </member>
+        <member name="P:MidiLib.BarTime.Beat">
+            <summary>The beat number in the bar.</summary>
+        </member>
+        <member name="P:MidiLib.BarTime.Subdiv">
+            <summary>The subdiv in the beat.</summary>
+        </member>
+        <member name="M:MidiLib.BarTime.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarTime.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructor from bar/beat/subdiv.
+            </summary>
+            <param name="bar"></param>
+            <param name="beat"></param>
+            <param name="subdiv"></param>
+        </member>
+        <member name="M:MidiLib.BarTime.#ctor(System.Int32)">
+            <summary>
+            Constructor from subdivs.
+            </summary>
+            <param name="subdivs">Number of subdivs.</param>
+        </member>
+        <member name="M:MidiLib.BarTime.#ctor(System.Double)">
+            <summary>
+            Construct a BarTime from Beat.Subdiv representation as a double. Subdiv is LOW_RES_PPQ.
+            </summary>
+            <param name="beat"></param>
+            <returns>New BarTime.</returns>
+        </member>
+        <member name="M:MidiLib.BarTime.Reset">
+            <summary>
+            Hard reset.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarTime.Constrain(MidiLib.BarTime,MidiLib.BarTime)">
+            <summary>
+            Utility helper function.
+            </summary>
+            <param name="lower"></param>
+            <param name="upper"></param>
+        </member>
+        <member name="M:MidiLib.BarTime.Increment(System.Int32)">
+            <summary>
+            Update current value.
+            </summary>
+            <param name="subdivs">By this number of subdivs.</param>
+        </member>
+        <member name="M:MidiLib.BarTime.SetRounded(System.Int32,MidiLib.SnapType,System.Boolean)">
+            <summary>
+            Set to subdiv using specified rounding.
+            </summary>
+            <param name="subdiv"></param>
+            <param name="snapType"></param>
+            <param name="up">To ceiling otherwise closest.</param>
+        </member>
+        <member name="M:MidiLib.BarTime.Format">
+            <summary>
+            Format a readable string.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.BarTime.ToString">
+            <summary>
+            Format a readable string.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:MidiLib.BingBong">
+            <summary>
+            Experimental midi controller.
+            </summary>
+        </member>
+        <member name="F:MidiLib.BingBong._bmp">
+            <summary>Background image data.</summary>
+        </member>
+        <member name="F:MidiLib.BingBong._toolTip">
+            <summary>Tool tip.</summary>
+        </member>
+        <member name="F:MidiLib.BingBong._lastNote">
+            <summary>Last key down.</summary>
+        </member>
+        <member name="F:MidiLib.BingBong._pen">
+            <summary>The pen.</summary>
+        </member>
+        <member name="P:MidiLib.BingBong.Channel">
+            <summary>Channel number 1-based.</summary>
+        </member>
+        <member name="P:MidiLib.BingBong.MinNote">
+            <summary>Lowest note. Adjust to taste.</summary>
+        </member>
+        <member name="P:MidiLib.BingBong.MaxNote">
+            <summary>Highest note. Adjust to taste.</summary>
+        </member>
+        <member name="P:MidiLib.BingBong.MinControl">
+            <summary>Min control value. For velocity = off.</summary>
+        </member>
+        <member name="P:MidiLib.BingBong.MaxControl">
+            <summary>Max control value. For velocity = loudest.</summary>
+        </member>
+        <member name="P:MidiLib.BingBong.DrawNoteGrid">
+            <summary>Visibility.</summary>
+        </member>
+        <member name="P:MidiLib.BingBong.CaptureEnable">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.BingBong.DeviceName">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.BingBong.Valid">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.BingBong.LogEnable">
+            <inheritdoc />
+        </member>
+        <member name="E:MidiLib.BingBong.InputEvent">
+            <summary>Click press info.</summary>
+        </member>
+        <member name="M:MidiLib.BingBong.#ctor">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BingBong.OnLoad(System.EventArgs)">
+            <summary>
+            Init after properties set.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.BingBong.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:MidiLib.BingBong.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paint the surface.
+            </summary>
+            <param name="pe"></param>
+        </member>
+        <member name="M:MidiLib.BingBong.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Show the pixel info.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.BingBong.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Send info to client.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.BingBong.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.BingBong.OnResize(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.BingBong.DrawBitmap">
+            <summary>
+            Render.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BingBong.XyToMidi(System.Int32,System.Int32)">
+            <summary>
+            Map function.
+            </summary>
+            <param name="x">UI location.</param>
+            <param name="y">UI location.</param>
+            <returns>Tuple of note num and vertical value.</returns>
+        </member>
+        <member name="T:MidiLib.Channel">
+            <summary>Describes one midi output channel. Some properties are optional.</summary>
+        </member>
+        <member name="F:MidiLib.Channel._events">
+            <summary>The collection of playable events for this channel and pattern. Key is the internal subdiv/time.</summary>
+        </member>
+        <member name="F:MidiLib.Channel._transients">
+            <summary>Things that are executed once and disappear: NoteOffs, script send now. Key is the internal subdiv/time.</summary>
+        </member>
+        <member name="F:MidiLib.Channel._volume">
+            <summary>Backing.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.ChannelNumber">
+            <summary>Actual 1-based midi channel number - required.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.State">
+            <summary>For muting/soloing.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.Patch">
+            <summary>Current patch.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.Volume">
+            <summary>Current volume constrained to legal values.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.Device">
+            <summary>Associated device.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.AddNoteOff">
+            <summary>Add a ghost note off for note on.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.ChannelName">
+            <summary>Optional UI label/reference.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.IsDrums">
+            <summary>Drums may be handled differently.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.DeviceId">
+            <summary>The device used by this channel. Used to find and bind the device at runtime.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.Selected">
+            <summary>For UI user selection.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.MaxSubdiv">
+            <summary>The duration of the whole channel - calculated.</summary>
+        </member>
+        <member name="P:MidiLib.Channel.NumEvents">
+            <summary>Get the number of events - calculated.</summary>
+        </member>
+        <member name="M:MidiLib.Channel.SetEvents(System.Collections.Generic.IEnumerable{MidiLib.MidiEventDesc})">
+            <summary>
+            Set the time-ordered events for the channel.
+            </summary>
+            <param name="events"></param>
+        </member>
+        <member name="M:MidiLib.Channel.Reset">
+            <summary>
+            Clean the events for the channel.
+            </summary>
+        </member>
+        <member name="M:MidiLib.Channel.GetEvents(System.Int32)">
+            <summary>
+            Get the events for a specific subdiv.
+            </summary>
+            <param name="subdiv"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.Channel.GetAllEvents">
+            <summary>
+            Get all events.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.Channel.DoStep(System.Int32)">
+            <summary>
+            Process any events for this time.
+            </summary>
+            <param name="subdiv"></param>
+        </member>
+        <member name="M:MidiLib.Channel.Flush(System.Int32)">
+            <summary>
+            Execute any lingering transients and clear the collection.
+            </summary>
+            <param name="subdiv">After this time.</param>
+        </member>
+        <member name="M:MidiLib.Channel.NextVol(System.Double)">
+            <summary>Get the next volume.</summary>
+            <param name="def">Default value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.Channel.SendPatch">
+            <summary>
+            General patch sender.
+            </summary>
+        </member>
+        <member name="M:MidiLib.Channel.SendController(NAudio.Midi.MidiController,System.Int32)">
+            <summary>
+            Send a controller now.
+            </summary>
+            <param name="controller"></param>
+            <param name="val"></param>
+        </member>
+        <member name="M:MidiLib.Channel.Kill">
+            <summary>
+            Send midi all notes off.
+            </summary>
+        </member>
+        <member name="M:MidiLib.Channel.SendEvent(NAudio.Midi.MidiEvent)">
+            <summary>
+            Generic event sender.
+            </summary>
+            <param name="evt"></param>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="T:MidiLib.ChannelUtils">
+            <summary>Helper extension methods.</summary>
+        </member>
+        <member name="M:MidiLib.ChannelUtils.AnySolo``1(System.Collections.Generic.Dictionary{System.String,``0})">
+            <summary>
+            Any solo in collection.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="channels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.ChannelUtils.TotalSubdivs``1(System.Collections.Generic.Dictionary{System.String,``0})">
+            <summary>
+            Get subdivs for the collection, rounded to beat.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="channels"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MidiLib.ChannelControl">
+            <summary>Channel events and other properties.</summary>
+        </member>
+        <member name="E:MidiLib.ChannelControl.ChannelChangeEvent">
+            <summary>Notify host of asynchronous changes from user.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.BoundChannel">
+            <summary>Bound object.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.ChannelNumber">
+            <summary>Actual 1-based midi channel number for UI.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.State">
+            <summary>For muting/soloing.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.Patch">
+            <summary>Current patch.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.Volume">
+            <summary>Current volume. Channel.Volume performs the constraints.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.MaxSubdiv">
+            <summary>The duration of the whole channel.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.IsDrums">
+            <summary>Drum channel changed.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.Selected">
+            <summary>User has selected this channel.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.SelectedColor">
+            <summary>Indicate user selected.</summary>
+        </member>
+        <member name="P:MidiLib.ChannelControl.UnselectedColor">
+            <summary>Indicate user not selected.</summary>
+        </member>
+        <member name="M:MidiLib.ChannelControl.#ctor">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.ChannelControl.OnLoad(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.ChannelControl.Volume_ValueChanged(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.ChannelControl.SoloMute_Click(System.Object,System.EventArgs)">
+            <summary>
+            Handles solo and mute.
+            </summary>
+        </member>
+        <member name="M:MidiLib.ChannelControl.Patch_Click(System.Object,System.EventArgs)">
+            <summary>
+            User wants to change the patch.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.ChannelControl.ChannelNumber_Click(System.Object,System.EventArgs)">
+            <summary>
+            Handle selection.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.ChannelControl.UpdateUi">
+            <summary>
+            Draw mode checkboxes etc.
+            </summary>
+        </member>
+        <member name="M:MidiLib.ChannelControl.ToString">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:MidiLib.ChannelControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MidiLib.ChannelControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:MidiLib.ChannelControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:MidiLib.DevicesEditor.Devices">
+            <summary>
+            Items to edit.
+            </summary>
+        </member>
+        <member name="M:MidiLib.DevicesEditor.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.DevicesEditor.OnLoad(System.EventArgs)">
+            <summary>
+            Fill the grid with current selections.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.DevicesEditor.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)">
+            <summary>
+            Save current selections.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.DevicesEditor.OnDeviceNameMenu_Click(System.Object,System.EventArgs)">
+            <summary>
+            Get the clicked cell and fill with the selection.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.DevicesEditor.DeviceNameMenu_Opening(System.Object,System.ComponentModel.CancelEventArgs)">
+            <summary>
+            Make a list of options and add selection handler.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:MidiLib.DevicesEditor.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MidiLib.DevicesEditor.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:MidiLib.DevicesEditor.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:MidiLib.DevicesTypeEditor">
+            <summary>
+            Plug in to property grid.
+            </summary>
+        </member>
+        <member name="M:MidiLib.DevicesTypeEditor.EditValue(System.ComponentModel.ITypeDescriptorContext,System.IServiceProvider,System.Object)">
+            <summary>
+            Do the work.
+            </summary>
+            <param name="context"></param>
+            <param name="provider"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.DevicesTypeEditor.GetEditStyle(System.ComponentModel.ITypeDescriptorContext)">
+            <summary>
+            Identify yourself.
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MidiLib.DeviceTypeConverter">
+            <summary>Converter for selecting property value from known lists. TODO can be removed.</summary>
+        </member>
+        <member name="T:MidiLib.IDevice">
+            <summary>Abstraction layer to support all midi-like devices.</summary>
+        </member>
+        <member name="P:MidiLib.IDevice.DeviceName">
+            <summary>Device name as defined by the system.</summary>
+        </member>
+        <member name="P:MidiLib.IDevice.Valid">
+            <summary>Are we ok?</summary>
+        </member>
+        <member name="P:MidiLib.IDevice.LogEnable">
+            <summary>Log traffic at Trace level.</summary>
+        </member>
+        <member name="T:MidiLib.IInputDevice">
+            <summary>Abstraction layer to support input devices.</summary>
+        </member>
+        <member name="P:MidiLib.IInputDevice.CaptureEnable">
+            <summary>Capture on/off.</summary>
+        </member>
+        <member name="E:MidiLib.IInputDevice.InputEvent">
+            <summary>Handler for message arrived.</summary>
+        </member>
+        <member name="T:MidiLib.IOutputDevice">
+            <summary>Abstraction layer to support output devices.</summary>
+        </member>
+        <member name="M:MidiLib.IOutputDevice.SendEvent(NAudio.Midi.MidiEvent)">
+            <summary>Send midi event.</summary>
+            <param name="evt"></param>
+        </member>
+        <member name="T:MidiLib.ChannelState">
+            <summary>Channel state.</summary>
+        </member>
+        <member name="T:MidiLib.SnapType">
+            <summary>User selection options.</summary>
+        </member>
+        <member name="F:MidiLib.VolumeDefs.MIN">
+            <summary>Corresponds to midi velocity = 0.</summary>
+        </member>
+        <member name="F:MidiLib.VolumeDefs.MAX">
+            <summary>Corresponds to midi velocity = 127.</summary>
+        </member>
+        <member name="F:MidiLib.VolumeDefs.DEFAULT">
+            <summary>Default value.</summary>
+        </member>
+        <member name="F:MidiLib.VolumeDefs.MAX_GAIN">
+            <summary>Allow UI controls some more headroom.</summary>
+        </member>
+        <member name="T:MidiLib.NullMidiEvent">
+            <summary>Custom default type to avoid handling null everywhere.</summary>
+        </member>
+        <member name="M:MidiLib.NullMidiEvent.#ctor">
+            <summary>Single constructor.</summary>
+        </member>
+        <member name="T:MidiLib.FunctionMidiEvent">
+            <summary>Custom type to support runtime functions.</summary>
+        </member>
+        <member name="P:MidiLib.FunctionMidiEvent.ScriptFunction">
+            <summary>The function to call.</summary>
+        </member>
+        <member name="M:MidiLib.FunctionMidiEvent.#ctor(System.Int32,System.Int32,System.Action)">
+            <summary>
+            Single constructor.
+            </summary>
+            <param name="time"></param>
+            <param name="channel"></param>
+            <param name="scriptFunc"></param>
+        </member>
+        <member name="M:MidiLib.FunctionMidiEvent.ToString">
+            <summary>For viewing pleasure.</summary>
+        </member>
+        <member name="T:MidiLib.NullOutputDevice">
+            <summary>Sink that doesn't do anything.</summary>
+        </member>
+        <member name="T:MidiLib.ChannelChangeEventArgs">
+            <summary>Notify host of asynchronous changes from user.</summary>
+        </member>
+        <member name="T:MidiLib.InputEventArgs">
+            <summary>
+            Midi (real or sim) has received something. It's up to the client to make sense of it.
+            Property value of -1 indicates invalid or not pertinent e.g a controller event doesn't have velocity.
+            </summary>
+        </member>
+        <member name="P:MidiLib.InputEventArgs.Channel">
+            <summary>Channel number 1-based. Required.</summary>
+        </member>
+        <member name="P:MidiLib.InputEventArgs.Note">
+            <summary>The note number to play. NoteOn/Off only.</summary>
+        </member>
+        <member name="P:MidiLib.InputEventArgs.Controller">
+            <summary>Specific controller id.</summary>
+        </member>
+        <member name="P:MidiLib.InputEventArgs.Value">
+            <summary>For Note = velocity. For controller = payload.</summary>
+        </member>
+        <member name="P:MidiLib.InputEventArgs.ErrorInfo">
+            <summary>Something to tell the client.</summary>
+        </member>
+        <member name="F:MidiLib.InputEventArgs.PITCH_CONTROL">
+            <summary>Special controller id to carry pitch info.</summary>
+        </member>
+        <member name="M:MidiLib.InputEventArgs.ToString">
+            <summary>Read me.</summary>
+        </member>
+        <member name="T:MidiLib.MidiDataFile">
+            <summary>
+            Represents one complete collection of midi events, usually from a midi file.
+            Reads and processes standard midi or yamaha style files.
+            Writes subsets to various output formats.
+            </summary>
+        </member>
+        <member name="F:MidiLib.MidiDataFile._includeNoisy">
+            <summary>Include events like controller changes, pitch wheel, ...</summary>
+        </member>
+        <member name="F:MidiLib.MidiDataFile._lastStreamPos">
+            <summary>Save this for logging/debugging.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDataFile._patterns">
+            <summary>All file pattern sections. Plain midi files will have only one, unnamed.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDataFile._currentPattern">
+            <summary>Currently collecting this pattern.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDataFile._patternDefaults">
+            <summary>Default values if not supplied in pattern. Mainly for managing patches.</summary>
+        </member>
+        <member name="P:MidiLib.MidiDataFile.FileName">
+            <summary>Current loaded file.</summary>
+        </member>
+        <member name="P:MidiLib.MidiDataFile.MidiFileType">
+            <summary>What is it.</summary>
+        </member>
+        <member name="P:MidiLib.MidiDataFile.NumTracks">
+            <summary>How many tracks.</summary>
+        </member>
+        <member name="P:MidiLib.MidiDataFile.DeltaTicksPerQuarterNote">
+            <summary>Original resolution for all events.</summary>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.Read(System.String,System.Int32,System.Boolean)">
+            <summary>
+            Read a file.
+            </summary>
+            <param name="fn">The file to open.</param>
+            <param name="defaultTempo">Specified by client.</param>
+            <param name="includeNoisy"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.GetPattern(System.String)">
+            <summary>
+            Get the pattern by name.
+            </summary>
+            <param name="name">Which</param>
+            <returns>The pattern or null if invalid request.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.GetPatternNames">
+            <summary>
+            Get all pattern names.
+            </summary>
+            <returns>List of names.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadMThd(System.IO.BinaryReader)">
+            <summary>
+            Read the midi header section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadMTrk(System.IO.BinaryReader)">
+            <summary>
+            Read a midi track chunk.
+            </summary>
+            <param name="br"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadCASM(System.IO.BinaryReader)">
+            <summary>
+            Read the CASM section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadCSEG(System.IO.BinaryReader)">
+            <summary>
+            Read the CSEG section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadSdec(System.IO.BinaryReader)">
+            <summary>
+            Read the Sdec section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadCtab(System.IO.BinaryReader)">
+            <summary>
+            Read the Ctab section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadCntt(System.IO.BinaryReader)">
+            <summary>
+            Read the Cntt section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadOTSc(System.IO.BinaryReader)">
+            <summary>
+            Read the OTSc section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadFNRc(System.IO.BinaryReader)">
+            <summary>
+            Read the FNRc section of a style file.
+            </summary>
+            <param name="br"></param>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.CleanUpPattern">
+            <summary>
+            Fill in missing info using defaults.
+            </summary>
+        </member>
+        <member name="M:MidiLib.MidiDataFile.ReadStream(System.IO.BinaryReader,System.Int32)">
+            <summary>
+            Read a number from stream and adjust endianess.
+            </summary>
+            <param name="br"></param>
+            <param name="size"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MidiLib.MidiDefs">
+            <summary>Readable versions of midi numbers.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs.MIN_MIDI">
+            <summary>Midi caps.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs.MAX_MIDI">
+            <summary>Midi caps.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs.NUM_CHANNELS">
+            <summary>Midi caps.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs.DEFAULT_DRUM_CHANNEL">
+            <summary>The normal drum channel.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs._instrumentNumbers">
+            <summary>Reverse lookup.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs._drumKitNumbers">
+            <summary>Reverse lookup.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs._drumNumbers">
+            <summary>Reverse lookup.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs._controllerNumbers">
+            <summary>Reverse lookup.</summary>
+        </member>
+        <member name="M:MidiLib.MidiDefs.#cctor">
+            <summary>
+            Initialize some collections.
+            </summary>
+        </member>
+        <member name="M:MidiLib.MidiDefs.FormatDoc">
+            <summary>
+            Make markdown content from the definitions.
+            </summary>
+            <returns>Markdown content.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetInstrumentName(System.Int32)">
+            <summary>
+            Get patch name.
+            </summary>
+            <param name="which"></param>
+            <returns>The name.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetInstrumentNumber(System.String)">
+            <summary>
+            Get the instrument/patch number.
+            </summary>
+            <param name="which"></param>
+            <returns>The midi number or -1 if invalid.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetDrumName(System.Int32)">
+            <summary>
+            Get drum name.
+            </summary>
+            <param name="which"></param>
+            <returns>The drum name or a fabricated one if unknown.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetDrumNumber(System.String)">
+            <summary>
+            Get drum number.
+            </summary>
+            <param name="which"></param>
+            <returns>The midi number or -1 if invalid.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetControllerName(System.Int32)">
+            <summary>
+            Get controller name.
+            </summary>
+            <param name="which"></param>
+            <returns>The controller name or a fabricated one if unknown.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetControllerNumber(System.String)">
+            <summary>
+            Get the controller number.
+            </summary>
+            <param name="which"></param>
+            <returns>The midi number or -1 if invalid.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetDrumKitName(System.Int32)">
+            <summary>
+            Get GM drum kit name.
+            </summary>
+            <param name="which"></param>
+            <returns>The drumkit name or a fabricated one if unknown.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetDrumKitNumber(System.String)">
+            <summary>
+            Get GM drum kit number.
+            </summary>
+            <param name="which"></param>
+            <returns>The midi number or -1 if invalid.</returns>
+        </member>
+        <member name="M:MidiLib.MidiDefs.GetInstrumentOrDrumKitNumber(System.String)">
+            <summary>
+            Get the instrument/patch or drum number.
+            </summary>
+            <param name="which"></param>
+            <returns>The midi number or -1 if invalid.</returns>
+        </member>
+        <member name="F:MidiLib.MidiDefs._instruments">
+            <summary>The GM midi instrument definitions.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs._drumKits">
+            <summary>The GM midi drum kit definitions.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs._drums">
+            <summary>The GM midi drum definitions.</summary>
+        </member>
+        <member name="F:MidiLib.MidiDefs._controllers">
+            <summary>The midi controller definitions.</summary>
+        </member>
+        <member name="T:MidiLib.MidiEventDesc">
+            <summary>
+            Internal representation of one midi event.
+            </summary>
+        </member>
+        <member name="P:MidiLib.MidiEventDesc.ChannelNumber">
+            <summary>One-based channel number.</summary>
+        </member>
+        <member name="P:MidiLib.MidiEventDesc.ChannelName">
+            <summary>Associated channel name.</summary>
+        </member>
+        <member name="P:MidiLib.MidiEventDesc.AbsoluteTime">
+            <summary>Time (subdivs) from original file.</summary>
+        </member>
+        <member name="P:MidiLib.MidiEventDesc.ScaledTime">
+            <summary>Time (subdivs) scaled to internal units using send PPQ.</summary>
+        </member>
+        <member name="P:MidiLib.MidiEventDesc.MidiEvent">
+            <summary>The raw midi event.</summary>
+        </member>
+        <member name="M:MidiLib.MidiEventDesc.#ctor(NAudio.Midi.MidiEvent,System.String)">
+            <summary>Normal constructor from NAudio event.</summary>
+        </member>
+        <member name="M:MidiLib.MidiEventDesc.ToString">
+            <summary>Read me.</summary>
+        </member>
+        <member name="T:MidiLib.MidiExport">
+            <summary>
+            Writes to various output formats.
+            </summary>
+        </member>
+        <member name="M:MidiLib.MidiExport.ExportAllEvents(System.String,System.Collections.Generic.IEnumerable{MidiLib.PatternInfo},System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+            <summary>
+            Export the contents in a csv readable form. This is as the events appear in the original file.
+            </summary>
+            <param name="outFileName">Where to boss?</param>
+            <param name="patterns">Specific patterns.</param>
+            <param name="channels">Specific channnels or all if empty.</param>
+            <param name="meta">File meta data to include.</param>
+        </member>
+        <member name="M:MidiLib.MidiExport.ExportGroupedEvents(System.String,MidiLib.PatternInfo,System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32},System.Boolean)">
+            <summary>
+            Makes csv dumps of some events grouped by pattern/channel. This is as the events appear in the original file.
+            </summary>
+            <param name="outFileName">Where to boss?</param>
+            <param name="pattern">Specific pattern.</param>
+            <param name="channels">Specific channnels or all if empty.</param>
+            <param name="meta">File meta data to include.</param>
+            <param name="includeAll">False if just notes or true if everything.</param>
+        </member>
+        <member name="M:MidiLib.MidiExport.ExportMidi(System.String,MidiLib.PatternInfo,System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+            <summary>
+            Export pattern parts to individual midi files. This is as the events appear in the original file.
+            </summary>
+            <param name="outFileName">Where to boss?</param>
+            <param name="pattern">Specific pattern.</param>
+            <param name="channels">Specific channnels or all if empty.</param>
+            <param name="meta">File meta data to include.</param>
+        </member>
+        <member name="T:MidiLib.MidiInput">
+            <summary>
+            Midi input handler.
+            </summary>
+        </member>
+        <member name="F:MidiLib.MidiInput._midiIn">
+            <summary>Midi input device.</summary>
+        </member>
+        <member name="F:MidiLib.MidiInput._logger">
+            <summary>Midi send logging.</summary>
+        </member>
+        <member name="F:MidiLib.MidiInput._capturing">
+            <summary>Control.</summary>
+        </member>
+        <member name="P:MidiLib.MidiInput.DeviceName">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.MidiInput.Valid">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.MidiInput.LogEnable">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.MidiInput.CaptureEnable">
+            <summary>Capture on/off.</summary>
+        </member>
+        <member name="E:MidiLib.MidiInput.InputEvent">
+            <inheritdoc />
+        </member>
+        <member name="M:MidiLib.MidiInput.#ctor(System.String)">
+            <summary>
+            Normal constructor.
+            </summary>
+            <param name="deviceName">Client must supply name of device.</param>
+        </member>
+        <member name="M:MidiLib.MidiInput.Dispose">
+            <summary>
+            Resource clean up.
+            </summary>
+        </member>
+        <member name="M:MidiLib.MidiInput.MidiIn_MessageReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">
+            <summary>
+            Process input midi event.
+            </summary>
+        </member>
+        <member name="M:MidiLib.MidiInput.MidiIn_ErrorReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">
+            <summary>
+            Process error midi event - Parameter 1 is invalid.
+            </summary>
+        </member>
+        <member name="M:MidiLib.MidiInput.Log(MidiLib.InputEventArgs)">
+            <summary>
+            Send event information to the client to sort out.
+            </summary>
+            <param name="evt"></param>
+        </member>
+        <member name="T:MidiLib.OscInput">
+            <summary>Provides midi over OSC. Server side.</summary>
+        </member>
+        <member name="F:MidiLib.OscInput._logger">
+            <summary>My logger.</summary>
+        </member>
+        <member name="F:MidiLib.OscInput._oscInput">
+            <summary>OSC input device.</summary>
+        </member>
+        <member name="E:MidiLib.OscInput.InputEvent">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.OscInput.DeviceName">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.OscInput.CaptureEnable">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.OscInput.Valid">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.OscInput.LogEnable">
+            <inheritdoc />
+        </member>
+        <member name="M:MidiLib.OscInput.#ctor(System.String)">
+            <summary>
+            Constructor.
+            <param name="deviceName">Client must supply name of device.</param>
+            </summary>
+        </member>
+        <member name="M:MidiLib.OscInput.Dispose">
+            <summary>
+            Resource clean up.
+            </summary>
+        </member>
+        <member name="M:MidiLib.OscInput.OscInput_LogEvent(System.Object,NebOsc.LogEventArgs)">
+            <summary>
+            OSC has something to say.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.OscInput.OscInput_InputEvent(System.Object,NebOsc.InputEventArgs)">
+            <summary>
+            Handle a received message.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:MidiLib.OscOutput">
+            <summary>Provides midi over OSC. Client side.</summary>
+        </member>
+        <member name="F:MidiLib.OscOutput._logger">
+            <summary>My logger.</summary>
+        </member>
+        <member name="F:MidiLib.OscOutput._oscOutput">
+            <summary>OSC output device.</summary>
+        </member>
+        <member name="F:MidiLib.OscOutput._lock">
+            <summary>Access synchronizer.</summary>
+        </member>
+        <member name="P:MidiLib.OscOutput.DeviceName">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.OscOutput.Valid">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.OscOutput.LogEnable">
+            <inheritdoc />
+        </member>
+        <member name="M:MidiLib.OscOutput.#ctor(System.String)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="deviceName">Client must supply name of device.</param>
+        </member>
+        <member name="M:MidiLib.OscOutput.Dispose">
+            <summary>
+            Resource clean up.
+            </summary>
+        </member>
+        <member name="M:MidiLib.OscOutput.SendEvent(NAudio.Midi.MidiEvent)">
+            <inheritdoc />
+        </member>
+        <member name="M:MidiLib.OscOutput.OscOutput_LogEvent(System.Object,NebOsc.LogEventArgs)">
+            <summary>
+            OSC has something to say.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:MidiLib.MidiOutput">
+            <summary>
+            A midi output layer - associated with a single device.
+            </summary>
+        </member>
+        <member name="F:MidiLib.MidiOutput._midiOut">
+            <summary>Low level midi output device.</summary>
+        </member>
+        <member name="F:MidiLib.MidiOutput._logger">
+            <summary>Midi send logging.</summary>
+        </member>
+        <member name="P:MidiLib.MidiOutput.DeviceName">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.MidiOutput.Valid">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.MidiOutput.LogEnable">
+            <inheritdoc />
+        </member>
+        <member name="M:MidiLib.MidiOutput.#ctor(System.String)">
+            <summary>
+            Normal constructor.
+            </summary>
+            <param name="deviceName">Client must supply name of device.</param>
+        </member>
+        <member name="M:MidiLib.MidiOutput.Dispose">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:MidiLib.MidiOutput.SendEvent(NAudio.Midi.MidiEvent)">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.MidiSettings.LibSettings">
+            <summary>Current midi settings. Client must set this before accessing!</summary>
+        </member>
+        <member name="P:MidiLib.MidiSettings.Snap">
+            <summary>How to snap.</summary>
+        </member>
+        <member name="P:MidiLib.MidiSettings.BeatsPerBar">
+            <summary>Only 4/4 time supported.</summary>
+        </member>
+        <member name="P:MidiLib.MidiSettings.SubdivsPerBeat">
+            <summary>Convenience.</summary>
+        </member>
+        <member name="P:MidiLib.MidiSettings.SubdivsPerBar">
+            <summary>Convenience.</summary>
+        </member>
+        <member name="T:MidiLib.MidiTimeConverter">
+            <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
+        </member>
+        <member name="F:MidiLib.MidiTimeConverter._midiPpq">
+            <summary>Resolution for midi file events aka DeltaTicksPerQuarterNote.</summary>
+        </member>
+        <member name="F:MidiLib.MidiTimeConverter._tempo">
+            <summary>Tempo aka BPM.</summary>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.#ctor(System.Int32,System.Double)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="midiPpq">The file resolution.</param>
+            <param name="tempo">BPM may be needed for some calcs.</param>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.InternalToMidi(System.Int32)">
+            <summary>
+            Conversion function.
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.MidiToInternal(System.Int64)">
+            <summary>
+            Conversion function.
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.InternalToMsec(System.Int32)">
+            <summary>
+            Conversion function.
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.MidiToSec(System.Int32)">
+            <summary>
+            Conversion function.
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.MidiPeriod">
+            <summary>
+            Exact time between events.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.InternalPeriod">
+            <summary>
+            Exact time between events.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.MidiTimeConverter.RoundedInternalPeriod">
+            <summary>
+            Integer time between events.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:MidiLib.PatchPicker._lv">
+            <summary>Control.</summary>
+        </member>
+        <member name="P:MidiLib.PatchPicker.PatchNumber">
+            <summary>User selection.</summary>
+        </member>
+        <member name="M:MidiLib.PatchPicker.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.PatchPicker.List_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.PatchPicker.List_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Check for escape.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.PatchPicker.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="T:MidiLib.PatternInfo">
+            <summary>Represents the contents of a midi file pattern. If it is a plain midi file (not style) there will be one only.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.PatternName">
+            <summary>Pattern name. Empty indicates single pattern aka plain midi file.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.Tempo">
+            <summary>Tempo, if supplied by file. Default indicates invalid which will be filled in during read.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.TimeSig">
+            <summary>Time signature, if supplied by file.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.KeySig">
+            <summary>Key signature, if supplied by file.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.Patches">
+            <summary>All the channel patches. Index is 0-based, not channel number.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.ChannelNumbers">
+            <summary>All channel numbers in the pattern.</summary>
+        </member>
+        <member name="F:MidiLib.PatternInfo._events">
+            <summary>All the pattern midi events.</summary>
+        </member>
+        <member name="F:MidiLib.PatternInfo._eventsByTime">
+            <summary>All the pattern midi events, key is when to play (scaled time).</summary>
+        </member>
+        <member name="F:MidiLib.PatternInfo._mt">
+            <summary>For scaling subdivs to internal.</summary>
+        </member>
+        <member name="M:MidiLib.PatternInfo.#ctor">
+            <summary>
+            Default constructor. Use only for initialization!
+            </summary>
+        </member>
+        <member name="M:MidiLib.PatternInfo.#ctor(System.String,System.Int32)">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.PatternInfo.#ctor(System.String,System.Int32,System.Collections.Generic.IEnumerable{MidiLib.MidiEventDesc},System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Int32)">
+            <summary>
+            Constructor from existing data.
+            </summary>
+        </member>
+        <member name="M:MidiLib.PatternInfo.AddEvent(MidiLib.MidiEventDesc)">
+            <summary>
+            Add an event to the collection. This function does the scaling.
+            </summary>
+            <param name="evt">The event to add.</param>
+        </member>
+        <member name="M:MidiLib.PatternInfo.GetFilteredEvents(System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            Get enumerator for events using supplied filters.
+            </summary>
+            <param name="channels">Specific channnels.</param>
+            <returns>Enumerator sorted by scaled time.</returns>
+        </member>
+        <member name="M:MidiLib.PatternInfo.GetEventsWhen(System.Int32)">
+            <summary>
+            Get all events at a specific scaled time.
+            </summary>
+            <param name="when"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.PatternInfo.ToString">
+            <summary>
+            Readable version.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:MidiLib.SimpleChannelControl">
+            <summary>A simpler channel UI component.</summary>
+        </member>
+        <member name="P:MidiLib.SimpleChannelControl.ChannelNumber">
+            <summary>Actual 1-based midi channel number.</summary>
+        </member>
+        <member name="P:MidiLib.SimpleChannelControl.Patch">
+            <summary>Current patch.</summary>
+        </member>
+        <member name="P:MidiLib.SimpleChannelControl.Volume">
+            <summary>Current volume.</summary>
+        </member>
+        <member name="P:MidiLib.SimpleChannelControl.ControlColor">
+            <summary>Cosmetics.</summary>
+        </member>
+        <member name="E:MidiLib.SimpleChannelControl.ChannelChangeEvent">
+            <summary>Notify host of asynchronous changes from user.</summary>
+        </member>
+        <member name="M:MidiLib.SimpleChannelControl.#ctor">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.SimpleChannelControl.OnLoad(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.SimpleChannelControl.Patch_Click(System.Object,System.EventArgs)">
+            <summary>
+            User wants to change the patch.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:MidiLib.SimpleChannelControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MidiLib.SimpleChannelControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:MidiLib.SimpleChannelControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:MidiLib.VirtualKeyboard">
+            <summary>
+            Virtual keyboard control borrowed from Leslie Sanford with extras.
+            </summary>
+        </member>
+        <member name="P:MidiLib.VirtualKeyboard.Channel">
+            <summary>Channel number 1-based.</summary>
+        </member>
+        <member name="P:MidiLib.VirtualKeyboard.ShowNoteNames">
+            <summary>Draw the names on the keys.</summary>
+        </member>
+        <member name="P:MidiLib.VirtualKeyboard.KeySize">
+            <summary>Determines the overall size.</summary>
+        </member>
+        <member name="P:MidiLib.VirtualKeyboard.CaptureEnable">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.VirtualKeyboard.DeviceName">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.VirtualKeyboard.Valid">
+            <inheritdoc />
+        </member>
+        <member name="P:MidiLib.VirtualKeyboard.LogEnable">
+            <inheritdoc />
+        </member>
+        <member name="E:MidiLib.VirtualKeyboard.InputEvent">
+            <summary>Key press info.</summary>
+        </member>
+        <member name="F:MidiLib.VirtualKeyboard._keys">
+            <summary>All the created piano keys.</summary>
+        </member>
+        <member name="F:MidiLib.VirtualKeyboard._keyMap">
+            <summary>Map from Keys value to the index in _keys.</summary>
+        </member>
+        <member name="F:MidiLib.VirtualKeyboard._keyDown">
+            <summary>Known bug?</summary>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.#ctor">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.OnResize(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.IsNatural(System.Int32)">
+            <summary>
+            Is it a white key?
+            </summary>
+            <param name="notenum">Which note</param>
+            <returns>True/false</returns>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.CreateKeyMap">
+            <summary>
+            Create the midi note/keyboard mapping.
+            </summary>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Use alpha keyboard to drive piano.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.OnKeyUp(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Use alpha keyboard to drive piano.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.Keyboard_InputEvent(System.Object,MidiLib.InputEventArgs)">
+            <summary>
+            Pass along an event from a virtual key.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.CreateKeys">
+            <summary>
+            Create the key controls.
+            </summary>
+        </member>
+        <member name="M:MidiLib.VirtualKeyboard.DrawKeys">
+            <summary>
+            Re/draw the keys.
+            </summary>
+        </member>
+        <member name="T:MidiLib.VirtualKey">
+            <summary>One individual key.</summary>
+        </member>
+        <member name="F:MidiLib.VirtualKey._owner">
+            <summary>Hook to owner.</summary>
+        </member>
+        <member name="F:MidiLib.VirtualKey._noteNames">
+            <summary>For showing names.</summary>
+        </member>
+        <member name="P:MidiLib.VirtualKey.IsPressed">
+            <summary>Key status.</summary>
+        </member>
+        <member name="P:MidiLib.VirtualKey.IsNatural">
+            <summary>Key status.</summary>
+        </member>
+        <member name="P:MidiLib.VirtualKey.NoteId">
+            <summary>Associated midi note.</summary>
+        </member>
+        <member name="E:MidiLib.VirtualKey.InputEvent">
+            <summary>Notify handlers of key change.</summary>
+        </member>
+        <member name="M:MidiLib.VirtualKey.#ctor(MidiLib.VirtualKeyboard,System.Boolean,System.Int32)">
+            <summary>
+            Normal constructor.
+            </summary>
+            <param name="owner"></param>
+            <param name="isNatural"></param>
+            <param name="noteId"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKey.PressVKey(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="velocity"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKey.ReleaseVKey">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MidiLib.VirtualKey.CalcVelocity">
+            <summary>
+            Calc velocity from Y position.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.VirtualKey.OnMouseEnter(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKey.OnMouseLeave(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKey.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKey.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKey.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:MidiLib.VirtualKey.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="T:MidiLib.Wobbler">
+            <summary>
+            Statistical randomizer for time and volume. TODO useful??
+            </summary>
+        </member>
+        <member name="F:MidiLib.Wobbler._rand">
+            <summary>Randomizer.</summary>
+        </member>
+        <member name="P:MidiLib.Wobbler.RangeLow">
+            <summary>Minimum range for randomizing - 3 sigma.</summary>
+        </member>
+        <member name="P:MidiLib.Wobbler.RangeHigh">
+            <summary>Maximum range for randomizing - 3 sigma.</summary>
+        </member>
+        <member name="M:MidiLib.Wobbler.Next(System.Double)">
+            <summary>
+            Return next from standard distribution.
+            </summary>
+            <param name="val">Center distribution around this.</param>
+            <returns>Randomized value or val if ranges are 0 (default).</returns>
+        </member>
+    </members>
+</doc>
