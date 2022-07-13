@@ -476,14 +476,44 @@ namespace Nebulator.App
             {
                 switch (dev.DeviceName)
                 {
-                    case nameof(VirtualKeyboard)://TODOX implement
-                        //vkey.InputEvent += Listener_InputEvent;
-                        //_inputDevice = vkey;
+                    case nameof(VirtualKeyboard):
+                        {
+                            VirtualKeyboard vkey = new()
+                            {
+                                Dock = DockStyle.Fill,
+                            };
+                            vkey.InputEvent += Device_InputEvent;
+                            _inputDevices.Add(dev.DeviceId, vkey);
+
+                            Form f = new()
+                            {
+                                Text = "Virtual Keyboard",
+                                ClientSize = vkey.Size,
+                                FormBorderStyle = FormBorderStyle.SizableToolWindow,
+                            };
+                            f.Controls.Add(vkey);
+                            f.Show();
+                        }
                         break;
 
-                    case nameof(BingBong)://TODOX implement
-                        //bb.InputEvent += Listener_InputEvent;
-                        //_inputDevice = bb;
+                    case nameof(BingBong):
+                        {
+                            BingBong bb = new()
+                            {
+                                Dock = DockStyle.Fill,
+                            };
+                            bb.InputEvent += Device_InputEvent;
+                            _inputDevices.Add(dev.DeviceId, bb);
+
+                            Form f = new()
+                            {
+                                Text = "Bing Bong",
+                                ClientSize = bb.Size,
+                                FormBorderStyle = FormBorderStyle.SizableToolWindow,
+                            };
+                            f.Controls.Add(bb);
+                            f.Show();
+                        }
                         break;
 
                     case "":
