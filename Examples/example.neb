@@ -189,9 +189,10 @@ public class example : ScriptBase
         }
     }
 
-    public override void InputNote(string dev, int channel, int note)
+    public override void InputNote(string dev, int channel, int note, int vel)
     {
-        Print("Input note", dev, channel, note);
+        Print("Input note", dev, channel, note, vel);
+        SendNote("synth", note, vel, 0.5);
     }
 
     public virtual void InputControl(string dev, int channel, int ctlid, int value)

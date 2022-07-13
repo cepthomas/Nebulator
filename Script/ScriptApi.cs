@@ -39,7 +39,7 @@ namespace Nebulator.Script
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputNote(string dev, int channel, int note) { }
+        public virtual void InputNote(string dev, int channel, int note, int vel) { }
 
         /// <summary>Called when input arrives.</summary>
         public virtual void InputControl(string dev, int channel, int controller, int value) { }
@@ -116,7 +116,7 @@ namespace Nebulator.Script
             var ch = _channels[chanName];
             int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-            // If vol is positive and the note is not negative, it's note on, else note off.
+            // If vol is positive it's note on else note off.
             if (vol > 0)
             {
                 double vel = ch.NextVol(vol) * MasterVolume;

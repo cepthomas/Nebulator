@@ -247,7 +247,7 @@
             this.btnKillComm.Name = "btnKillComm";
             this.btnKillComm.Size = new System.Drawing.Size(29, 24);
             this.btnKillComm.Text = "toolStripButton1";
-            this.btnKillComm.ToolTipText = "Instant stop all devices";
+            this.btnKillComm.ToolTipText = "Kill all devices";
             // 
             // btnClear
             // 

@@ -738,19 +738,10 @@ namespace Nebulator.App
                 {
                     var dev = (IInputDevice)sender;
 
-
-                    //TODOX check values
-                    //int channel = MathUtils.Constrain((int)m.Data[0], 0, 100);
-                    //double notenum = MathUtils.Constrain((int)m.Data[1], 0, Definitions.MAX_MIDI);
-                    //double velocity = MathUtils.Constrain((int)m.Data[2], 0, 1.0);
-                    //int ctlnum = (int)m.Data[1];
-                    //double value = MathUtils.Constrain((int)m.Data[2], 0, 10000);
-
-
+                    // Hand over to the script.
                     if (e.Note != -1)
                     {
-                        // Send note on or off.
-                        _script.InputNote(dev.DeviceName, e.Channel, e.Value != -1 ? e.Note : -e.Note);
+                        _script.InputNote(dev.DeviceName, e.Channel, e.Note, e.Value);
                     }
                     else if (e.Controller != -1)
                     {

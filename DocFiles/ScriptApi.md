@@ -172,13 +172,14 @@ public override void Step();
 Called every Subdiv.
 
 ```c#
-public override void InputNote(dev, chnum, note);
+public override void InputNote(dev, chnum, note, vel);
 ```
 Called when input note arrives.
 
 - dev: DeviceType.
 - chnum: Channel number.
 - note: Note number.
+- vel: velocity
 
 ```c#
 public override void InputControl(dev, chnum, ctlid, value);
