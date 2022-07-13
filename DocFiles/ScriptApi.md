@@ -6,7 +6,8 @@ What the script supports.
 ## Basics
 
 ### Time
-Time uses the `BarTime` class. A shorthand is provided to specify a time using `var mytime = new BarTime(2.3)` where the 
+Time uses the `BarTime` class. A shorthand is provided to specify a time using `var mytime = new BarTime(2.3)` where the
+left of the decimal point is beats and the right is subdivs in the range of 0 to 7.
 
 Neb doesn't care about measures, that's up to you.
 
@@ -28,14 +29,16 @@ Since the built-in Windows GM player sounds terrible, there are a couple of opti
 - If you are using a DAW for sound generation, you can use a virtual midi loopback like [loopMIDI](http://www.tobias-erichsen.de/software/loopmidi.html) to send to it.
 
 ### Musical Notes/Chords/Scales
-Note groups are specified by strings like `"1 4 6 b13"` using `CreateNotes("FOO", "1 4 6 b13")`.
+Scales and chords are specified by strings like `"1 4 6 b13"`.
+There are many builtin which are listed by running `Show Definitions` from the File menu. This also includes midi definitions.
+Users can add their own by using `CreateNotes("FOO", "1 4 6 b13")`.
 
 Notes (single) and note groups (chords, scales) are referenced in several ways:
 - "F4" - Named note with octave.
-- "F4.o7" - Named chord from [Chords](#musicdefinitions/chords) in the key of middle F.
-- "F4.Aeolian" - Named scale from [Scales](#musicdefinitions/scales).
-- "F4.FOO" - Custom chord or scale created with `CreateNotes()` see above
-- SideStick - Drum name from [Drums](#musicdefinitions/generalmididrums).
+- "F4.o7" - Named chord in the key of middle F.
+- "F4.Aeolian" - Named scale in the key of middle F.
+- "F4.FOO" - Custom chord or scale created with `CreateNotes()`.
+- SideStick - Drum name from the definitions.
 - 57 - Simple midi note number.
 
 
@@ -159,17 +162,17 @@ Nebulator master volume. Read/write.
 These can be overridden in the user script.
 
 ```c#
-public override void Setup()
+public override void Setup();
 ```
 Called once to initialize your script stuff.
 
 ```c#
-public override void Step()
+public override void Step();
 ```
 Called every Subdiv.
 
 ```c#
-public override void InputNote(dev, chnum, note)
+public override void InputNote(dev, chnum, note);
 ```
 Called when input note arrives.
 
@@ -178,7 +181,7 @@ Called when input note arrives.
 - note: Note number.
 
 ```c#
-public override void InputControl(dev, chnum, ctlid, value)
+public override void InputControl(dev, chnum, ctlid, value);
 ```
 Called when input controller arrives.
 - dev: DeviceType.
@@ -196,7 +199,7 @@ void SendNote("chname", note, vol, dur)
 Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.
 
 - chname: Channel name to send it on.
-- note: One of [Notes](#scriptapi/basics/musicalnotes).
+- note: One of the note definitions.
 - vol: Note volume. Normalized to 0.0 - 1.0. 0.0 means note off.
 - dur: How long it lasts in beats or BarTime object representation.
 
@@ -206,7 +209,7 @@ void SendNoteOn("chname", note, vol)
 Send a note on immediately. Respects solo/mute. Doesn't add note off.
 
 - chname: Channel name to send it on.
-- note: One of [Notes](#scriptapi/basics/musicalnotes).
+- note: One of the note definitions.
 - vol: Note volume. Normalized to 0.0 - 1.0.
 
 ```c#
@@ -215,7 +218,7 @@ void SendNoteOff("chname", note)
 Send a note off immediately.
 
 - chname: Channel name to send it on.
-- note: One of [Notes](#scriptapi/basics/musicalnotes).
+- note: One of the note definitions.
 
 ```c#
 void SendController("chname", ctl, val)
@@ -223,7 +226,7 @@ void SendController("chname", ctl, val)
 Send a controller immediately. Useful for things like panning and bank select.
 
 - chname: Channel name to send it on.
-- ctl: Controller from [Controllers](#musicdefinitions/midicontrollers) or const() or simple integer.
+- ctl: Controller name from the definitions or const() or simple integer.
 - val: Controller value.
 
 ```c#
@@ -232,7 +235,7 @@ void SendPatch("chname", patch)
 Send a midi patch immediately. Really only needed if using the windows GM.
 
 - chname: Channel name to send it on.
-- patch: Instrument from [Instruments](#musicdefinitions/generalmidiinstruments).
+- patch: Instrument name from the definitions.
 
 ### Utilities
 
@@ -242,7 +245,7 @@ void CreateNotes("name", "parts")
 Define a group of notes for use as a note, or in a chord or scale.
 
 - name: Reference name.
-- note: List of [Notes](#scriptapi/basics/musicalnotes).
+- note: List of note definitions.
 
 ```c#
 List<double> GetNotes("scale_or_chord", "key")

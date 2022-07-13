@@ -953,7 +953,7 @@
             <param name="bgcolor">Background color for page.</param>
             <param name="font">Main font-family.</param>
             <param name="show">If true open in browser.</param>
-            <returns></returns>
+            <returns>Valid html.</returns>
         </member>
         <member name="T:NBagOfTricks.PNUT.OutputFormat">
             <summary>

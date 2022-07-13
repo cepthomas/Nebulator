@@ -1259,16 +1259,14 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// 
+        /// Show the builtin definitions.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void ShowDefinitions_Click(object sender, EventArgs e)
         {
-            var docs = MusicDefinitions.FormatDoc();
-            Tools.MarkdownToHtml(docs, Color.LightYellow, new Font("arial", 16), true);
-
-            docs = MidiDefs.FormatDoc();
+            var docs = MidiDefs.FormatDoc();
+            docs.AddRange(MusicDefinitions.FormatDoc());
             Tools.MarkdownToHtml(docs, Color.LightYellow, new Font("arial", 16), true);
         }
         #endregion

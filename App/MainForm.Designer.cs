@@ -178,7 +178,7 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.openToolStripMenuItem.Text = "Open...";
+            this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
@@ -205,7 +205,7 @@
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
             this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.viewLogToolStripMenuItem.Text = "Show Log...";
+            this.viewLogToolStripMenuItem.Text = "Show Log";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             // 
             // showDefinitionsToolStripMenuItem
