@@ -977,7 +977,7 @@
             <summary>One-based channel number.</summary>
         </member>
         <member name="P:MidiLib.MidiEventDesc.ChannelName">
-            <summary>Associated channel name.</summary>
+            <summary>Associated channel na</summary>
         </member>
         <member name="P:MidiLib.MidiEventDesc.AbsoluteTime">
             <summary>Time (subdivs) from original file.</summary>
@@ -992,14 +992,14 @@
             <summary>Normal constructor from NAudio event.</summary>
         </member>
         <member name="M:MidiLib.MidiEventDesc.ToString">
-            <summary>Read me.</summary>
+            <summary>Read </summary>
         </member>
         <member name="T:MidiLib.MidiExport">
             <summary>
             Writes to various output formats.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiExport.ExportAllEvents(System.String,System.Collections.Generic.IEnumerable{MidiLib.PatternInfo},System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+        <member name="M:MidiLib.MidiExport.ExportCsv(System.String,System.Collections.Generic.IEnumerable{MidiLib.PatternInfo},System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
             Export the contents in a csv readable form. This is as the events appear in the original file.
             </summary>
@@ -1007,16 +1007,6 @@
             <param name="patterns">Specific patterns.</param>
             <param name="channels">Specific channnels or all if empty.</param>
             <param name="meta">File meta data to include.</param>
-        </member>
-        <member name="M:MidiLib.MidiExport.ExportGroupedEvents(System.String,MidiLib.PatternInfo,System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32},System.Boolean)">
-            <summary>
-            Makes csv dumps of some events grouped by pattern/channel. This is as the events appear in the original file.
-            </summary>
-            <param name="outFileName">Where to boss?</param>
-            <param name="pattern">Specific pattern.</param>
-            <param name="channels">Specific channnels or all if empty.</param>
-            <param name="meta">File meta data to include.</param>
-            <param name="includeAll">False if just notes or true if everything.</param>
         </member>
         <member name="M:MidiLib.MidiExport.ExportMidi(System.String,MidiLib.PatternInfo,System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>

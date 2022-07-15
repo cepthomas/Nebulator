@@ -28,7 +28,7 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dumpMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnMonIn = new System.Windows.Forms.ToolStripButton();
@@ -36,12 +36,12 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.btnWrap = new System.Windows.Forms.ToolStripButton();
-            this.textViewer = new NBagOfUis.TextViewer();
-            this.barBar = new MidiLib.BarBar();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.textViewer = new NBagOfUis.TextViewer();
+            this.barBar = new MidiLib.BarBar();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -153,7 +153,7 @@
             this.toolStripSeparator2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(976, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(813, 27);
             this.toolStrip1.TabIndex = 39;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -164,7 +164,7 @@
             this.openToolStripMenuItem,
             this.recentToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
-            this.dumpMidiToolStripMenuItem,
+            this.exportCsvToolStripMenuItem,
             this.viewLogToolStripMenuItem,
             this.showDefinitionsToolStripMenuItem});
             this.fileDropDownButton.Image = global::App.Properties.Resources.glyphicons_37_file;
@@ -177,41 +177,41 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
             // 
             // recentToolStripMenuItem
             // 
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.recentToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.exportMidiToolStripMenuItem.Text = "Export Midi";
             this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
             // 
-            // dumpMidiToolStripMenuItem
+            // exportCsvToolStripMenuItem
             // 
-            this.dumpMidiToolStripMenuItem.Name = "dumpMidiToolStripMenuItem";
-            this.dumpMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.dumpMidiToolStripMenuItem.Text = "Dump midi";
-            this.dumpMidiToolStripMenuItem.Click += new System.EventHandler(this.DumpMidi_Click);
+            this.exportCsvToolStripMenuItem.Name = "exportCsvToolStripMenuItem";
+            this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
+            this.exportCsvToolStripMenuItem.Text = "Dump midi";
+            this.exportCsvToolStripMenuItem.Click += new System.EventHandler(this.ExportCsv_Click);
             // 
             // viewLogToolStripMenuItem
             // 
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.viewLogToolStripMenuItem.Text = "Show Log";
             this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             // 
             // showDefinitionsToolStripMenuItem
             // 
             this.showDefinitionsToolStripMenuItem.Name = "showDefinitionsToolStripMenuItem";
-            this.showDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.showDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.showDefinitionsToolStripMenuItem.Text = "Show Definitions";
             this.showDefinitionsToolStripMenuItem.Click += new System.EventHandler(this.ShowDefinitions_Click);
             // 
@@ -270,32 +270,6 @@
             this.btnWrap.Text = "toolStripButton1";
             this.btnWrap.ToolTipText = "Enable wordwrap";
             // 
-            // textViewer
-            // 
-            this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textViewer.Location = new System.Drawing.Point(13, 531);
-            this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textViewer.MaxText = 5000;
-            this.textViewer.Name = "textViewer";
-            this.textViewer.Size = new System.Drawing.Size(952, 296);
-            this.textViewer.TabIndex = 41;
-            this.textViewer.WordWrap = true;
-            // 
-            // barBar
-            // 
-            this.barBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.barBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.barBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.barBar.Location = new System.Drawing.Point(12, 123);
-            this.barBar.MarkerColor = System.Drawing.Color.Black;
-            this.barBar.Name = "barBar";
-            this.barBar.ProgressColor = System.Drawing.Color.White;
-            this.barBar.Size = new System.Drawing.Size(790, 55);
-            this.barBar.TabIndex = 44;
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -326,13 +300,39 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
             // 
+            // textViewer
+            // 
+            this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textViewer.Location = new System.Drawing.Point(13, 610);
+            this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textViewer.MaxText = 5000;
+            this.textViewer.Name = "textViewer";
+            this.textViewer.Size = new System.Drawing.Size(789, 217);
+            this.textViewer.TabIndex = 41;
+            this.textViewer.WordWrap = true;
+            // 
+            // barBar
+            // 
+            this.barBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.barBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.barBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.barBar.Location = new System.Drawing.Point(12, 123);
+            this.barBar.MarkerColor = System.Drawing.Color.Black;
+            this.barBar.Name = "barBar";
+            this.barBar.ProgressColor = System.Drawing.Color.White;
+            this.barBar.Size = new System.Drawing.Size(790, 55);
+            this.barBar.TabIndex = 44;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(976, 838);
+            this.ClientSize = new System.Drawing.Size(813, 838);
             this.Controls.Add(this.barBar);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
@@ -372,7 +372,7 @@
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnWrap;
         private MidiLib.BarBar barBar;
-        private System.Windows.Forms.ToolStripMenuItem dumpMidiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportCsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showDefinitionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnAbout;

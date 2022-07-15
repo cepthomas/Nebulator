@@ -1247,7 +1247,7 @@ namespace Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void DumpMidi_Click(object sender, EventArgs e)
+        void ExportCsv_Click(object sender, EventArgs e)
         {
             if (_script is not null)
             {
@@ -1265,7 +1265,7 @@ namespace Nebulator.App
                     { "NumTracks", 1 }
                 };
 
-                MidiExport.ExportAllEvents(fn, new List<PatternInfo>() { pattern }, channels, meta);
+                MidiExport.ExportCsv(fn, new List<PatternInfo>() { pattern }, channels, meta);
                 _logger.Info($"Exported to {fn}");
             }
         }
