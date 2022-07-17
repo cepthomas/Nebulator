@@ -628,7 +628,7 @@
             <returns></returns>
         </member>
         <member name="T:MidiLib.DeviceTypeConverter">
-            <summary>Converter for selecting property value from known lists. TODO can be removed.</summary>
+            <summary>Converter for selecting property value from known lists. Not currently used.</summary>
         </member>
         <member name="T:MidiLib.IDevice">
             <summary>Abstraction layer to support all midi-like devices.</summary>
@@ -1006,7 +1006,7 @@
             <param name="outFileName">Where to boss?</param>
             <param name="patterns">Specific patterns.</param>
             <param name="channels">Specific channnels or all if empty.</param>
-            <param name="meta">File meta data to include.</param>
+            <param name="global">File meta data to include.</param>
         </member>
         <member name="M:MidiLib.MidiExport.ExportMidi(System.String,MidiLib.PatternInfo,System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
@@ -1015,7 +1015,7 @@
             <param name="outFileName">Where to boss?</param>
             <param name="pattern">Specific pattern.</param>
             <param name="channels">Specific channnels or all if empty.</param>
-            <param name="meta">File meta data to include.</param>
+            <param name="global">File meta data to include.</param>
         </member>
         <member name="T:MidiLib.MidiInput">
             <summary>
@@ -1370,6 +1370,11 @@
             </summary>
             <param name="when"></param>
             <returns></returns>
+        </member>
+        <member name="P:MidiLib.PatternInfo.ValidPatches">
+            <summary>
+            Helper function.
+            </summary>
         </member>
         <member name="M:MidiLib.PatternInfo.ToString">
             <summary>
