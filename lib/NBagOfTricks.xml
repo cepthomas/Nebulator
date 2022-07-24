@@ -425,6 +425,16 @@
             <param name="i">Number to fix.</param>
             <returns>Fixed number.</returns>
         </member>
+        <member name="M:NBagOfTricks.MiscUtils.MakeExportFileName(System.String,System.String,System.String,System.String)">
+            <summary>
+            Create a new clean filename for export. Creates path if it doesn't exist.
+            </summary>
+            <param name="path">Export path</param>
+            <param name="baseFn">Root of the new file name</param>
+            <param name="mod">Modifier</param>
+            <param name="ext">File extension</param>
+            <returns></returns>
+        </member>
         <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
             <summary>
             Get a subset of an array.

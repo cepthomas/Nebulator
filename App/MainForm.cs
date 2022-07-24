@@ -110,6 +110,7 @@ namespace Nebulator.App
             textViewer.BackColor = UserSettings.TheSettings.BackColor;
             textViewer.Colors.Add("ERR", Color.LightPink);
             textViewer.Colors.Add("WRN", Color.Plum);
+            textViewer.Prompt = "> ";
 
             btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, UserSettings.TheSettings.IconColor);
             btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, UserSettings.TheSettings.IconColor);
@@ -117,8 +118,6 @@ namespace Nebulator.App
             fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image, UserSettings.TheSettings.IconColor);
             btnRewind.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnRewind.Image, UserSettings.TheSettings.IconColor);
             btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, UserSettings.TheSettings.IconColor);
-            btnClear.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnClear.Image, UserSettings.TheSettings.IconColor);
-            btnWrap.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnWrap.Image, UserSettings.TheSettings.IconColor);
             btnAbout.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnAbout.Image, UserSettings.TheSettings.IconColor);
             btnSettings.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnSettings.Image, UserSettings.TheSettings.IconColor);
 
@@ -139,12 +138,9 @@ namespace Nebulator.App
             barBar.CurrentTimeChanged += BarBar_CurrentTimeChanged;
             barBar.Invalidate();
 
-            btnWrap.Checked = UserSettings.TheSettings.WordWrap;
-            textViewer.WordWrap = btnWrap.Checked;
-            btnWrap.Click += (object? _, EventArgs __) => { textViewer.WordWrap = btnWrap.Checked; };
+            textViewer.WordWrap = UserSettings.TheSettings.WordWrap;
 
             btnKillComm.Click += (object? _, EventArgs __) => { KillAll(); };
-            btnClear.Click += (object? _, EventArgs __) => { textViewer.Clear(); };
             #endregion
         }
 
@@ -214,7 +210,7 @@ namespace Nebulator.App
                 Height = Height
             };
 
-            UserSettings.TheSettings.WordWrap = btnWrap.Checked;
+            UserSettings.TheSettings.WordWrap = textViewer.WordWrap;
 
             UserSettings.TheSettings.Save();
 
@@ -346,7 +342,7 @@ namespace Nebulator.App
                             ChannelName = chspec.ChannelName,
                             ChannelNumber = chspec.ChannelNumber,
                             DeviceId = chspec.DeviceId,
-                            Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", VolumeDefs.DEFAULT),
+                            Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", MidiLibDefs.VOLUME_DEFAULT),
                             State = (ChannelState)_nppVals.GetInteger(chspec.ChannelName, "state", (int)ChannelState.Normal),
                             Patch = chspec.Patch,
                             IsDrums = chspec.IsDrums,
@@ -386,7 +382,7 @@ namespace Nebulator.App
                     foreach (var channel in _channels.Values)
                     {
                         var chEvents = _script.GetEvents().Where(e => e.ChannelName == channel.ChannelName &&
-                            (e.MidiEvent is NoteEvent || e.MidiEvent is NoteOnEvent));
+                            (e.RawEvent is NoteEvent || e.RawEvent is NoteOnEvent));
 
                         // Scale time and give to channel.
                         chEvents.ForEach(e => e.ScaledTime = _mt!.MidiToInternal(e.AbsoluteTime));
@@ -917,7 +913,7 @@ namespace Nebulator.App
                     // Get the persisted properties.
                     _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                    sldVolume.Value = _nppVals.GetDouble("master", "volume", VolumeDefs.DEFAULT);
+                    sldVolume.Value = _nppVals.GetDouble("master", "volume", MidiLibDefs.VOLUME_DEFAULT);
 
                     SetCompileStatus(true);
                     AddToRecentDefs(fn);

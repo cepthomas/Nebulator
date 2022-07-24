@@ -756,7 +756,10 @@
             <summary>Cosmetics.</summary>
         </member>
         <member name="P:NBagOfUis.TextViewer.WordWrap">
-            <summary></summary>
+            <summary>Word wrap toggle.</summary>
+        </member>
+        <member name="P:NBagOfUis.TextViewer.Prompt">
+            <summary>Optional prompt.</summary>
         </member>
         <member name="F:NBagOfUis.TextViewer._rtb">
             <summary>Contained control.</summary>
@@ -764,6 +767,17 @@
         <member name="M:NBagOfUis.TextViewer.#ctor">
             <summary>
             Constructor sets some defaults.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.TextViewer.OnLoad(System.EventArgs)">
+            <summary>
+            Ready to see.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfUis.TextViewer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
             </summary>
         </member>
         <member name="M:NBagOfUis.TextViewer.Clear">
@@ -780,6 +794,13 @@
             A message to display to the user. Doesn't add EOL.
             </summary>
             <param name="text">The message.</param>
+        </member>
+        <member name="M:NBagOfUis.TextViewer.Rtb_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Catch a few keys.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
         </member>
         <member name="T:NBagOfUis.StringListEditor">
             <summary>Generic property editor for lists of strings.</summary>
