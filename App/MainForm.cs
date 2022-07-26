@@ -108,8 +108,8 @@ namespace Nebulator.App
             // The rest of the controls.
             textViewer.WordWrap = false;
             textViewer.BackColor = UserSettings.TheSettings.BackColor;
-            textViewer.Colors.Add("ERR", Color.LightPink);
-            textViewer.Colors.Add("WRN", Color.Plum);
+            textViewer.MatchColors.Add("ERR", Color.LightPink);
+            textViewer.MatchColors.Add("WRN", Color.Plum);
             textViewer.Prompt = "> ";
 
             btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, UserSettings.TheSettings.IconColor);

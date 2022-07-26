@@ -3,7 +3,6 @@
 
 Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
 
-
 Requires VS2022 and .NET6.
 
 C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
@@ -13,6 +12,8 @@ Supports midi and midi-over-OSC.
 While the primary intent is to generate music-by-code, runtime interaction is also supported using midi or OSC inputs.
 
 It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of synth parameters using code.
+
+![logo](marks.jpg)
 
 # Usage
 - Main window includes the transport control and one per channel controls.

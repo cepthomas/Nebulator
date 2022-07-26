@@ -440,6 +440,74 @@
             <param name="key">Which key.</param>
             <returns></returns>
         </member>
+        <member name="T:NBagOfUis.MeterType">
+            <summary>Display types.</summary>
+        </member>
+        <member name="T:NBagOfUis.Meter">
+            <summary>
+            Implements a rudimentary volume meter.
+            </summary>
+        </member>
+        <member name="F:NBagOfUis.Meter._buff">
+            <summary>Storage.</summary>
+        </member>
+        <member name="F:NBagOfUis.Meter._buffIndex">
+            <summary>Storage.</summary>
+        </member>
+        <member name="F:NBagOfUis.Meter._pen">
+            <summary>The pen.</summary>
+        </member>
+        <member name="F:NBagOfUis.Meter._brush">
+            <summary>The brush.</summary>
+        </member>
+        <member name="F:NBagOfUis.Meter._format">
+            <summary>For drawing text.</summary>
+        </member>
+        <member name="P:NBagOfUis.Meter.Label">
+            <summary>Optional label.</summary>
+        </member>
+        <member name="P:NBagOfUis.Meter.DrawColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:NBagOfUis.Meter.MeterType">
+            <summary>How the meter responds.</summary>
+        </member>
+        <member name="P:NBagOfUis.Meter.Minimum">
+            <summary>Minimum value. If Log type, this is in db - usually -60;</summary>
+        </member>
+        <member name="P:NBagOfUis.Meter.Maximum">
+            <summary>Maximum value. If Log type, this is in db - usually +18.</summary>
+        </member>
+        <member name="P:NBagOfUis.Meter.Orientation">
+            <summary>Meter orientation.</summary>
+        </member>
+        <member name="M:NBagOfUis.Meter.#ctor">
+            <summary>
+            Basic volume meter.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Meter.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfUis.Meter.AddValue(System.Double)">
+            <summary>
+            Add a new data point. If Log, this will convert for you.
+            </summary>
+            <param name="val"></param>
+        </member>
+        <member name="M:NBagOfUis.Meter.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paints the volume meter.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Meter.OnResize(System.EventArgs)">
+            <summary>
+            Update drawing area.
+            </summary>
+        </member>
         <member name="F:NBagOfUis.OptionsEditor._values">
             <summary>Working values so we don't destroy originals.</summary>
         </member>
@@ -493,6 +561,67 @@
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
+        </member>
+        <member name="T:NBagOfUis.Pan">
+            <summary>
+            Pan slider control
+            </summary>
+        </member>
+        <member name="F:NBagOfUis.Pan._value">
+            <summary> </summary>
+        </member>
+        <member name="F:NBagOfUis.Pan._brush">
+            <summary>The brush.</summary>
+        </member>
+        <member name="F:NBagOfUis.Pan._format">
+            <summary>For drawing text.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pan.Value">
+            <summary>The current Pan setting.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pan.DrawColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="E:NBagOfUis.Pan.ValueChanged">
+            <summary>True when pan value changed.</summary>
+        </member>
+        <member name="M:NBagOfUis.Pan.#ctor">
+            <summary>
+            Creates a new Pan control.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pan.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfUis.Pan.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Draw control.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pan.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pan.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pan.SetValueFromMouse(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Calculate position.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfUis.Pan.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handle the nudge key.
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="T:NBagOfUis.PixelBitmap">
             <summary>
@@ -559,6 +688,98 @@
             <param name="x"></param>
             <param name="y"></param>
             <returns></returns>
+        </member>
+        <member name="T:NBagOfUis.Taper">
+            <summary></summary>
+        </member>
+        <member name="T:NBagOfUis.Pot">
+            <summary>
+            Control potentiometer.
+            </summary>
+        </member>
+        <member name="F:NBagOfUis.Pot._resetVal">
+            <summary>If user resets. This is the first value assigned to Value.</summary>
+        </member>
+        <member name="F:NBagOfUis.Pot._beginDragValue">
+            <summary> </summary>
+        </member>
+        <member name="F:NBagOfUis.Pot._beginDragY">
+            <summary> </summary>
+        </member>
+        <member name="F:NBagOfUis.Pot._dragging">
+            <summary> </summary>
+        </member>
+        <member name="F:NBagOfUis.Pot._pen">
+            <summary>For drawing.</summary>
+        </member>
+        <member name="F:NBagOfUis.Pot._format">
+            <summary>For drawing text.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pot.DrawColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pot.Label">
+            <summary>Name etc.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pot.Taper">
+            <summary>Taper.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pot.Resolution">
+            <summary>Per step resolution of this pot.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pot.Minimum">
+            <summary>Minimum Value of the pot.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pot.Maximum">
+            <summary>Maximum Value of the pot.</summary>
+        </member>
+        <member name="P:NBagOfUis.Pot.Value">
+            <summary>The current value of the pot.</summary>
+        </member>
+        <member name="E:NBagOfUis.Pot.ValueChanged">
+            <summary>Value changed event.</summary>
+        </member>
+        <member name="M:NBagOfUis.Pot.#ctor">
+            <summary>
+            Creates a new pot control.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pot.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfUis.Pot.Rescale">
+            <summary>
+            If min or max or resolution changed by client.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pot.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Draws the control.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pot.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the mouse down event to allow changing value by dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pot.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the mouse up event to allow changing value by dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pot.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the mouse down event to allow changing value by dragging.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.Pot.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handle the nudge key.
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="T:NBagOfUis.PropertyGridEx">
             <summary>Extends the PropertyGrid to add some features.</summary>
@@ -656,18 +877,6 @@
             Slider control.
             </summary>
         </member>
-        <member name="F:NBagOfUis.Slider._value">
-            <summary>Current value.</summary>
-        </member>
-        <member name="F:NBagOfUis.Slider._minimum">
-            <summary>Min value.</summary>
-        </member>
-        <member name="F:NBagOfUis.Slider._maximum">
-            <summary>Max value.</summary>
-        </member>
-        <member name="F:NBagOfUis.Slider._resolution">
-            <summary>Restrict to discrete steps.</summary>
-        </member>
         <member name="F:NBagOfUis.Slider._resetVal">
             <summary>If user resets. This is the first value assigned to Value.</summary>
         </member>
@@ -743,7 +952,7 @@
             </summary>
             <param name="e"></param>
         </member>
-        <member name="P:NBagOfUis.TextViewer.Colors">
+        <member name="P:NBagOfUis.TextViewer.MatchColors">
             <summary>The colors to display when text is matched.</summary>
         </member>
         <member name="P:NBagOfUis.TextViewer.MaxText">
