@@ -29,7 +29,6 @@
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnMonIn = new System.Windows.Forms.ToolStripButton();
             this.btnMonOut = new System.Windows.Forms.ToolStripButton();
@@ -157,7 +156,6 @@
             this.recentToolStripMenuItem,
             this.exportMidiToolStripMenuItem,
             this.exportCsvToolStripMenuItem,
-            this.viewLogToolStripMenuItem,
             this.showDefinitionsToolStripMenuItem});
             this.fileDropDownButton.Image = global::App.Properties.Resources.glyphicons_37_file;
             this.fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -192,13 +190,6 @@
             this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.exportCsvToolStripMenuItem.Text = "Dump midi";
             this.exportCsvToolStripMenuItem.Click += new System.EventHandler(this.ExportCsv_Click);
-            // 
-            // viewLogToolStripMenuItem
-            // 
-            this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.viewLogToolStripMenuItem.Text = "Show Log";
-            this.viewLogToolStripMenuItem.ToolTipText = "Let\'s have a look at what happened";
             // 
             // showDefinitionsToolStripMenuItem
             // 
@@ -329,7 +320,6 @@
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnKillComm;
-        private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
         private NBagOfUis.TextViewer textViewer;
         private MidiLib.BarBar barBar;
         private System.Windows.Forms.ToolStripMenuItem exportCsvToolStripMenuItem;
