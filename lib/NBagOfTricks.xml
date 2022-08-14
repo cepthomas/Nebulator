@@ -293,6 +293,17 @@
             <param name="angle"></param>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.MathUtils.Map(System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Remap a value to new coordinates.
+            </summary>
+            <param name="val"></param>
+            <param name="start1"></param>
+            <param name="stop1"></param>
+            <param name="start2"></param>
+            <param name="stop2"></param>
+            <returns></returns>
+        </member>
         <member name="M:NBagOfTricks.MathUtils.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
             <summary>
             Remap a value to new coordinates.
