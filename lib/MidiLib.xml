@@ -1662,7 +1662,7 @@
         </member>
         <member name="T:MidiLib.Wobbler">
             <summary>
-            Statistical randomizer for time and volume. TODO useful?
+            Statistical randomizer for time and volume.
             </summary>
         </member>
         <member name="F:MidiLib.Wobbler._rand">
