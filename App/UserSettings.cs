@@ -17,10 +17,10 @@ using MidiLib;
 namespace Nebulator.App
 {
     [Serializable]
-    public class UserSettings : Settings
+    public sealed class UserSettings : Settings
     {
         /// <summary>Current global user settings.</summary>
-        public static UserSettings TheSettings { get; set; } = new();
+        public static UserSettings Settings { get; set; } = new(); //TODO =>>> MainForm.UserSettings _settings
 
         #region Properties - persisted editable
         [DisplayName("Script Path")]

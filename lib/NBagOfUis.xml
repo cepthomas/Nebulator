@@ -492,6 +492,11 @@
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
+        <member name="M:NBagOfUis.Meter.InitializeComponent">
+            <summary>
+            Designer.
+            </summary>
+        </member>
         <member name="M:NBagOfUis.Meter.AddValue(System.Double)">
             <summary>
             Add a new data point. If Log, this will convert for you.
@@ -507,6 +512,41 @@
             <summary>
             Update drawing area.
             </summary>
+        </member>
+        <member name="T:NBagOfUis.ToolStripMeter">
+            <summary>Simple toolstrip container for the meter.</summary>
+        </member>
+        <member name="F:NBagOfUis.ToolStripMeter._meter">
+            <summary>Contained control.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripMeter.Label">
+            <summary>Optional label.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripMeter.DrawColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripMeter.MeterType">
+            <summary>How the meter responds.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripMeter.Minimum">
+            <summary>Minimum Value of the slider.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripMeter.Maximum">
+            <summary>Maximum Value of the slider.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripMeter.BorderStyle">
+            <summary>Optional border.</summary>
+        </member>
+        <member name="M:NBagOfUis.ToolStripMeter.#ctor">
+            <summary>
+            Make one.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.ToolStripMeter.AddValue(System.Double)">
+            <summary>
+            Add a new data point. If Log, this will convert for you.
+            </summary>
+            <param name="val"></param>
         </member>
         <member name="F:NBagOfUis.OptionsEditor._values">
             <summary>Working values so we don't destroy originals.</summary>
@@ -595,6 +635,11 @@
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfUis.Pan.InitializeComponent">
+            <summary>
+            Designer.
+            </summary>
         </member>
         <member name="M:NBagOfUis.Pan.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
@@ -749,6 +794,11 @@
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NBagOfUis.Pot.InitializeComponent">
+            <summary>
+            Designer.
+            </summary>
         </member>
         <member name="M:NBagOfUis.Pot.Rescale">
             <summary>
@@ -920,6 +970,11 @@
             Clean up any resources being used.
             </summary>
         </member>
+        <member name="M:NBagOfUis.Slider.InitializeComponent">
+            <summary>
+            Designer.
+            </summary>
+        </member>
         <member name="M:NBagOfUis.Slider.Rescale">
             <summary>
             If min or max or resolution changed by client.
@@ -951,6 +1006,41 @@
             Handle the nudge key.
             </summary>
             <param name="e"></param>
+        </member>
+        <member name="T:NBagOfUis.ToolStripSlider">
+            <summary>Simple toolstrip container for the slider.</summary>
+        </member>
+        <member name="F:NBagOfUis.ToolStripSlider._slider">
+            <summary>Contained control.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripSlider.Label">
+            <summary>Optional label.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripSlider.DrawColor">
+            <summary>For styling.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripSlider.Resolution">
+            <summary>Per step resolution of this slider.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripSlider.Minimum">
+            <summary>Minimum Value of the slider.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripSlider.Maximum">
+            <summary>Maximum Value of the slider.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripSlider.Value">
+            <summary>The current value of the slider.</summary>
+        </member>
+        <member name="P:NBagOfUis.ToolStripSlider.BorderStyle">
+            <summary>Optional border.</summary>
+        </member>
+        <member name="E:NBagOfUis.ToolStripSlider.ValueChanged">
+            <summary>Slider value changed event.</summary>
+        </member>
+        <member name="M:NBagOfUis.ToolStripSlider.#ctor">
+            <summary>
+            Make one.
+            </summary>
         </member>
         <member name="P:NBagOfUis.TextViewer.MatchColors">
             <summary>The colors to display when text is matched.</summary>

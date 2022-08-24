@@ -33,7 +33,7 @@ namespace Nebulator.App
 
             Usings.Add("static NBagOfTricks.MusicDefinitions");
 
-            ScriptPath = UserSettings.TheSettings.ScriptPath;
+            ScriptPath = UserSettings.Settings.ScriptPath;
 
             //// Save hash of current channel descriptors to detect change in source code.
             //_chHash = string.Join("", _channelDescriptors).GetHashCode();

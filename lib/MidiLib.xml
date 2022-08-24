@@ -13,12 +13,6 @@
         <member name="F:MidiLib.BarBar._toolTip">
             <summary>Tooltip for mousing.</summary>
         </member>
-        <member name="F:MidiLib.BarBar._brush">
-            <summary>The brush.</summary>
-        </member>
-        <member name="F:MidiLib.BarBar._penMarker">
-            <summary>The pen.</summary>
-        </member>
         <member name="F:MidiLib.BarBar._format">
             <summary>For drawing text.</summary>
         </member>
@@ -327,7 +321,7 @@
             <summary>Things that are executed once and disappear: NoteOffs, script send now. Key is the internal subdiv/time.</summary>
         </member>
         <member name="F:MidiLib.Channel._volume">
-            <summary>Backing.</summary>
+            <summary>Current volume.</summary>
         </member>
         <member name="P:MidiLib.Channel.ChannelNumber">
             <summary>Actual 1-based midi channel number - required.</summary>
@@ -551,9 +545,7 @@
             </summary>
         </member>
         <member name="P:MidiLib.DevicesEditor.Devices">
-            <summary>
-            Items to edit.
-            </summary>
+            <summary>Items to edit.</summary>
         </member>
         <member name="M:MidiLib.DevicesEditor.#ctor">
             <summary>
@@ -683,7 +675,7 @@
             <summary>Custom default type to avoid handling null everywhere.</summary>
         </member>
         <member name="M:MidiLib.NullMidiEvent.#ctor">
-            <summary>Single constructor.</summary>
+            <summary>Constructor.</summary>
         </member>
         <member name="T:MidiLib.FunctionMidiEvent">
             <summary>Custom type to support runtime functions.</summary>
@@ -1328,15 +1320,6 @@
         <member name="T:MidiLib.PatternInfo">
             <summary>Represents the contents of a midi file pattern. If it is a plain midi file (not style) there will be one only.</summary>
         </member>
-        <member name="P:MidiLib.PatternInfo.PatternName">
-            <summary>Pattern name. Empty indicates single pattern aka plain midi file.</summary>
-        </member>
-        <member name="P:MidiLib.PatternInfo.Tempo">
-            <summary>Tempo, if supplied by file. Default indicates invalid which will be filled in during read.</summary>
-        </member>
-        <member name="P:MidiLib.PatternInfo.TimeSignature">
-            <summary>Time signature, if supplied by file.</summary>
-        </member>
         <member name="F:MidiLib.PatternInfo._events">
             <summary>All the pattern midi events.</summary>
         </member>
@@ -1351,6 +1334,15 @@
         </member>
         <member name="F:MidiLib.PatternInfo._hasNotes">
             <summary>Channels with real notes.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.PatternName">
+            <summary>Pattern name. Empty indicates single pattern aka plain midi file.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.Tempo">
+            <summary>Tempo, if supplied by file. Default indicates invalid which will be filled in during read.</summary>
+        </member>
+        <member name="P:MidiLib.PatternInfo.TimeSignature">
+            <summary>Time signature, if supplied by file.</summary>
         </member>
         <member name="M:MidiLib.PatternInfo.#ctor">
             <summary>
