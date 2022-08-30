@@ -301,7 +301,7 @@
         </member>
         <member name="M:NBagOfUis.FilTree.OnResize(System.EventArgs)">
             <summary>
-            
+            Resize.
             </summary>
             <param name="e"></param>
         </member>
