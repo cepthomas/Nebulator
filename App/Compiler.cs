@@ -24,6 +24,12 @@ namespace Nebulator.App
         public List<ChannelSpec> ChannelSpecs { get; init; } = new();
         #endregion
 
+        /// <summary>Normal constructor.</summary>
+        public Compiler(string scriptPath)
+        {
+            ScriptPath = scriptPath;
+        }
+
         /// <summary>Called before compiler starts.</summary>
         public override void PreCompile()
         {
@@ -32,8 +38,6 @@ namespace Nebulator.App
             LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "MidiLib", "Nebulator.Script" };
 
             Usings.Add("static NBagOfTricks.MusicDefinitions");
-
-            ScriptPath = UserSettings.Settings.ScriptPath;
 
             //// Save hash of current channel descriptors to detect change in source code.
             //_chHash = string.Join("", _channelDescriptors).GetHashCode();

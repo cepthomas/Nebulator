@@ -20,7 +20,7 @@ namespace Nebulator.App
     public sealed class UserSettings : Settings
     {
         /// <summary>Current global user settings.</summary>
-        public static UserSettings Settings { get; set; } = new(); //TODO =>>> MainForm.UserSettings _settings
+        //public static UserSettings Settings { get; set; } = new(); //TODO =>>> MainForm.UserSettings _settings
 
         #region Properties - persisted editable
         [DisplayName("Script Path")]

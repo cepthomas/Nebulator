@@ -28,6 +28,9 @@ namespace Nebulator.App
         /// <summary>App logger.</summary>
         readonly Logger _logger = LogManager.CreateLogger("Main");
 
+        /// <summary>App settings.</summary>
+        UserSettings _settings;
+
         /// <summary>Fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
 
@@ -82,8 +85,8 @@ namespace Nebulator.App
         {
             // Must do this first before initializing.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-            UserSettings.Settings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
-            MidiSettings.LibSettings = UserSettings.Settings.MidiSettings;
+            _settings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
+            MidiSettings.LibSettings = _settings.MidiSettings;
             // Force the resolution for this application.
             MidiSettings.LibSettings.InternalPPQ = BarTime.LOW_RES_PPQ;
 
@@ -91,54 +94,54 @@ namespace Nebulator.App
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
-            LogManager.MinLevelFile = UserSettings.Settings.FileLogLevel;
-            LogManager.MinLevelNotif = UserSettings.Settings.NotifLogLevel;
+            LogManager.MinLevelFile = _settings.FileLogLevel;
+            LogManager.MinLevelNotif = _settings.NotifLogLevel;
             LogManager.LogEvent += LogManager_LogEvent;
             LogManager.Run(logFileName, 100000);
 
             #region Init UI from settings
-            toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = UserSettings.Settings.SelectedColor };
+            toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
 
             // Main form.
-            Location = UserSettings.Settings.FormGeometry.Location;
-            Size = UserSettings.Settings.FormGeometry.Size;
+            Location = _settings.FormGeometry.Location;
+            Size = _settings.FormGeometry.Size;
             WindowState = FormWindowState.Normal;
-            BackColor = UserSettings.Settings.BackColor;
+            BackColor = _settings.BackColor;
 
             // The rest of the controls.
             textViewer.WordWrap = false;
-            textViewer.BackColor = UserSettings.Settings.BackColor;
+            textViewer.BackColor = _settings.BackColor;
             textViewer.MatchColors.Add("ERR", Color.LightPink);
             textViewer.MatchColors.Add("WRN", Color.Plum);
             textViewer.Prompt = "> ";
 
-            btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, UserSettings.Settings.IconColor);
-            btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, UserSettings.Settings.IconColor);
-            btnKillComm.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKillComm.Image, UserSettings.Settings.IconColor);
-            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image, UserSettings.Settings.IconColor);
-            btnRewind.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnRewind.Image, UserSettings.Settings.IconColor);
-            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, UserSettings.Settings.IconColor);
-            btnAbout.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnAbout.Image, UserSettings.Settings.IconColor);
-            btnSettings.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnSettings.Image, UserSettings.Settings.IconColor);
+            btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, _settings.IconColor);
+            btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, _settings.IconColor);
+            btnKillComm.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKillComm.Image, _settings.IconColor);
+            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image, _settings.IconColor);
+            btnRewind.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnRewind.Image, _settings.IconColor);
+            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, _settings.IconColor);
+            btnAbout.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnAbout.Image, _settings.IconColor);
+            btnSettings.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnSettings.Image, _settings.IconColor);
 
-            btnMonIn.Checked = UserSettings.Settings.MonitorInput;
-            btnMonOut.Checked = UserSettings.Settings.MonitorOutput;
+            btnMonIn.Checked = _settings.MonitorInput;
+            btnMonOut.Checked = _settings.MonitorOutput;
 
-            chkPlay.Image = GraphicsUtils.ColorizeBitmap((Bitmap)chkPlay.Image, UserSettings.Settings.IconColor);
-            chkPlay.BackColor = UserSettings.Settings.BackColor;
-            chkPlay.FlatAppearance.CheckedBackColor = UserSettings.Settings.SelectedColor;
+            chkPlay.Image = GraphicsUtils.ColorizeBitmap((Bitmap)chkPlay.Image, _settings.IconColor);
+            chkPlay.BackColor = _settings.BackColor;
+            chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 
-            sldTempo.DrawColor = UserSettings.Settings.ControlColor;
+            sldTempo.DrawColor = _settings.ControlColor;
             sldTempo.Invalidate();
-            sldVolume.DrawColor = UserSettings.Settings.ControlColor;
+            sldVolume.DrawColor = _settings.ControlColor;
             sldVolume.Invalidate();
 
             // Time controller.
-            barBar.ProgressColor = UserSettings.Settings.ControlColor;
+            barBar.ProgressColor = _settings.ControlColor;
             barBar.CurrentTimeChanged += BarBar_CurrentTimeChanged;
             barBar.Invalidate();
 
-            textViewer.WordWrap = UserSettings.Settings.WordWrap;
+            textViewer.WordWrap = _settings.WordWrap;
 
             btnKillComm.Click += (object? _, EventArgs __) => { KillAll(); };
             #endregion
@@ -202,7 +205,7 @@ namespace Nebulator.App
             KillAll();
 
             // Save user settings.
-            UserSettings.Settings.FormGeometry = new()
+            _settings.FormGeometry = new()
             {
                 X = Location.X,
                 Y = Location.Y,
@@ -210,9 +213,9 @@ namespace Nebulator.App
                 Height = Height
             };
 
-            UserSettings.Settings.WordWrap = textViewer.WordWrap;
+            _settings.WordWrap = textViewer.WordWrap;
 
-            UserSettings.Settings.Save();
+            _settings.Save();
 
             SaveProjectValues();
 
@@ -295,7 +298,7 @@ namespace Nebulator.App
                 barBar.Reset();
 
                 // Compile script.
-                Compiler compiler = new();
+                Compiler compiler = new(_settings.ScriptPath);
                 compiler.CompileScript(_scriptFileName);
                 _script = compiler.Script as ScriptBase;
 
@@ -378,7 +381,7 @@ namespace Nebulator.App
                     _script.BuildSteps();
 
                     // Store the steps in the channel objects.
-                    MidiTimeConverter _mt = new(BarTime.LOW_RES_PPQ, UserSettings.Settings.MidiSettings.DefaultTempo);
+                    MidiTimeConverter _mt = new(BarTime.LOW_RES_PPQ, _settings.MidiSettings.DefaultTempo);
                     foreach (var channel in _channels.Values)
                     {
                         var chEvents = _script.GetEvents().Where(e => e.ChannelName == channel.ChannelName &&
@@ -451,7 +454,7 @@ namespace Nebulator.App
         /// <param name="compileStatus">True if compile is clean.</param>
         void SetCompileStatus(bool compileStatus)
         {
-            btnCompile.BackColor = compileStatus ? UserSettings.Settings.BackColor : Color.Red;
+            btnCompile.BackColor = compileStatus ? _settings.BackColor : Color.Red;
             _needCompile = !compileStatus;
         }
         #endregion
@@ -468,7 +471,7 @@ namespace Nebulator.App
             // First...
             DestroyDevices();
 
-            foreach(var dev in UserSettings.Settings.MidiSettings.InputDevices)
+            foreach(var dev in _settings.MidiSettings.InputDevices)
             {
                 switch (dev.DeviceName)
                 {
@@ -543,7 +546,7 @@ namespace Nebulator.App
                 }
             }
 
-            foreach (var dev in UserSettings.Settings.MidiSettings.OutputDevices)
+            foreach (var dev in _settings.MidiSettings.OutputDevices)
             {
                 switch (dev.DeviceName)
                 {
@@ -572,7 +575,7 @@ namespace Nebulator.App
                 }
             }
 
-            _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.Settings.MonitorOutput);
+            _outputDevices.Values.ForEach(d => d.LogEnable = _settings.MonitorOutput);
 
             return ok;
         }
@@ -861,11 +864,11 @@ namespace Nebulator.App
         void Open_Click(object? sender, EventArgs e)
         {
             string dir = ""; 
-            if (UserSettings.Settings.ScriptPath != "")
+            if (_settings.ScriptPath != "")
             {
-                if(Directory.Exists(UserSettings.Settings.ScriptPath))
+                if(Directory.Exists(_settings.ScriptPath))
                 {
-                    dir = UserSettings.Settings.ScriptPath;
+                    dir = _settings.ScriptPath;
                 }
                 else
                 {
@@ -949,7 +952,7 @@ namespace Nebulator.App
             ToolStripItemCollection menuItems = recentToolStripMenuItem.DropDownItems;
             menuItems.Clear();
 
-            UserSettings.Settings.RecentFiles.ForEach(f =>
+            _settings.RecentFiles.ForEach(f =>
             {
                 ToolStripMenuItem menuItem = new(f, null, new EventHandler(Recent_Click));
                 menuItems.Add(menuItem);
@@ -964,7 +967,7 @@ namespace Nebulator.App
         {
             if (File.Exists(fn))
             {
-                UserSettings.Settings.RecentFiles.UpdateMru(fn);
+                _settings.RecentFiles.UpdateMru(fn);
                 PopulateRecentMenu();
             }
         }
@@ -981,7 +984,7 @@ namespace Nebulator.App
             // Kick over to main UI thread.
             this.InvokeIfRequired(_ =>
             {
-                if (UserSettings.Settings.AutoCompile)
+                if (_settings.AutoCompile)
                 {
                     CompileScript();
                 }
@@ -1039,10 +1042,10 @@ namespace Nebulator.App
         /// </summary>
         void Monitor_Click(object? sender, EventArgs e)
         {
-            UserSettings.Settings.MonitorInput = btnMonIn.Checked;
-            UserSettings.Settings.MonitorOutput = btnMonOut.Checked;
+            _settings.MonitorInput = btnMonIn.Checked;
+            _settings.MonitorOutput = btnMonOut.Checked;
 
-            _outputDevices.Values.ForEach(d => d.LogEnable = UserSettings.Settings.MonitorOutput);
+            _outputDevices.Values.ForEach(d => d.LogEnable = _settings.MonitorOutput);
         }
 
         /// <summary>
@@ -1076,7 +1079,7 @@ namespace Nebulator.App
         /// </summary>
         void Settings_Click(object? sender, EventArgs e)
         {
-            List<(string name, string cat)> changes = UserSettings.Settings.Edit("User Settings", 500);
+            List<(string name, string cat)> changes = _settings.Edit("User Settings", 500);
 
             // Detect changes of interest.
             bool restart = false;
@@ -1195,7 +1198,7 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTimeConverter mt = new(UserSettings.Settings.MidiSettings.SubdivsPerBeat, sldTempo.Value);
+            MidiTimeConverter mt = new(_settings.MidiSettings.SubdivsPerBeat, sldTempo.Value);
             var per = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer(per, MmTimerCallback);
         }
@@ -1223,13 +1226,13 @@ namespace Nebulator.App
                     // Make a Pattern object and call the formatter.
                     IEnumerable<Channel> channels = _channels.Values.Where(ch => ch.NumEvents > 0);
 
-                    PatternInfo pattern = new("export", UserSettings.Settings.MidiSettings.SubdivsPerBeat,
+                    PatternInfo pattern = new("export", _settings.MidiSettings.SubdivsPerBeat,
                         _script.GetEvents(), channels, _script.Tempo);
 
                     Dictionary<string, int> meta = new()
                     {
                         { "MidiFileType", 0 },
-                        { "DeltaTicksPerQuarterNote", UserSettings.Settings.MidiSettings.SubdivsPerBeat },
+                        { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubdivsPerBeat },
                         { "NumTracks", 1 }
                     };
 
@@ -1252,12 +1255,12 @@ namespace Nebulator.App
 
                 var fn = Path.GetFileName(_scriptFileName.Replace(".neb", ".csv"));
 
-                PatternInfo pattern = new("export", UserSettings.Settings.MidiSettings.SubdivsPerBeat, _script.GetEvents(), channels, _script.Tempo);
+                PatternInfo pattern = new("export", _settings.MidiSettings.SubdivsPerBeat, _script.GetEvents(), channels, _script.Tempo);
 
                 Dictionary<string, int> meta = new()
                 {
                     { "MidiFileType", 0 },
-                    { "DeltaTicksPerQuarterNote", UserSettings.Settings.MidiSettings.SubdivsPerBeat },
+                    { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubdivsPerBeat },
                     { "NumTracks", 1 }
                 };
 
