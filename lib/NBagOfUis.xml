@@ -548,6 +548,20 @@
             </summary>
             <param name="val"></param>
         </member>
+        <member name="P:NBagOfUis.MultipleChoiceSelector.SelectedOption">
+            <summary>What the user picked.</summary>
+        </member>
+        <member name="M:NBagOfUis.MultipleChoiceSelector.#ctor">
+            <summary>
+            Coonstructor.
+            </summary>
+        </member>
+        <member name="M:NBagOfUis.MultipleChoiceSelector.SetOptions(System.Collections.Generic.List{System.String})">
+            <summary>
+            Make selection buttons.
+            </summary>
+            <param name="options"></param>
+        </member>
         <member name="F:NBagOfUis.OptionsEditor._values">
             <summary>Working values so we don't destroy originals.</summary>
         </member>
@@ -972,7 +986,7 @@
         </member>
         <member name="M:NBagOfUis.Slider.InitializeComponent">
             <summary>
-            Designer.
+            From Designer.
             </summary>
         </member>
         <member name="M:NBagOfUis.Slider.Rescale">
