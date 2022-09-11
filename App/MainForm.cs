@@ -1188,6 +1188,7 @@ namespace Nebulator.App
                 ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start);
                 e.Handled = true;
             }
+            base.OnKeyDown(e);
         }
         #endregion
 

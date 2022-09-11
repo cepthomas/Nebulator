@@ -390,6 +390,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.MathUtils.NumDigits(System.Int32)">
+            <summary>
+            Number of digits in an int ignoring sign.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:NBagOfTricks.MiscUtils">
             <summary>
             Static general utility functions.
