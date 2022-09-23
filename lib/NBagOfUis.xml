@@ -410,7 +410,7 @@
         </member>
         <member name="M:NBagOfUis.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
             <summary>
-            Generic UI helper. Allows user to enter only integer or double values.
+            Generic UI helper. Allows user to enter only integer or floating point values.
             s</summary>
             <param name="sender">Sender control.</param>
             <param name="e">Event args.</param>

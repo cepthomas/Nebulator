@@ -396,6 +396,15 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:NBagOfTricks.MathUtils.Clamp(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Snap to closest neighbor.
+            </summary>
+            <param name="val"></param>
+            <param name="granularity">The neighbors property line.</param>
+            <param name="round">Round or truncate.</param>
+            <returns></returns>
+        </member>
         <member name="T:NBagOfTricks.MiscUtils">
             <summary>
             Static general utility functions.
