@@ -1,6 +1,5 @@
 # Internals
 
-- VS2022 solution, targets .NET6 WinForms.
 - Uses Roslyn for in-memory compilation.
 - No installer yet, it's a build-it-yerself for now. Eventually a nuget package might be created.
 - Settings and log are in `C:\Users\<user>\AppData\Local\Ephemera\Nebulator`.
