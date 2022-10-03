@@ -110,6 +110,84 @@
             <param name="val"></param>
             <returns></returns>
         </member>
+        <member name="T:MidiLib.BarSpan">
+            <summary>Sort of like TimeSpan but for musical terminology. TODO finish and integrate with BarTime.</summary>
+        </member>
+        <member name="F:MidiLib.BarSpan._id">
+            <summary>For hashing.</summary>
+        </member>
+        <member name="F:MidiLib.BarSpan._all_ids">
+            <summary>Increment for unique value.</summary>
+        </member>
+        <member name="P:MidiLib.BarSpan.TotalSubdivs">
+            <summary>The time in subdivs. Always zero-based.</summary>
+        </member>
+        <member name="P:MidiLib.BarSpan.Bar">
+            <summary>The bar number.</summary>
+        </member>
+        <member name="P:MidiLib.BarSpan.Beat">
+            <summary>The beat number in the bar.</summary>
+        </member>
+        <member name="P:MidiLib.BarSpan.Subdiv">
+            <summary>The subdiv in the beat.</summary>
+        </member>
+        <member name="M:MidiLib.BarSpan.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructor from bar/beat/subdiv.
+            </summary>
+            <param name="bar"></param>
+            <param name="beat"></param>
+            <param name="subdiv"></param>
+        </member>
+        <member name="M:MidiLib.BarSpan.#ctor(System.Int32)">
+            <summary>
+            Constructor from subdivs.
+            </summary>
+            <param name="subdivs">Number of subdivs.</param>
+        </member>
+        <member name="M:MidiLib.BarSpan.Reset">
+            <summary>
+            Hard reset.
+            </summary>
+        </member>
+        <member name="M:MidiLib.BarSpan.Constrain(MidiLib.BarSpan,MidiLib.BarSpan)">
+            <summary>
+            Utility helper function.
+            </summary>
+            <param name="lower"></param>
+            <param name="upper"></param>
+        </member>
+        <member name="M:MidiLib.BarSpan.Increment(System.Int32)">
+            <summary>
+            Update current value.
+            </summary>
+            <param name="subdivs">By this number of subdivs.</param>
+        </member>
+        <member name="M:MidiLib.BarSpan.SetRounded(System.Int32,MidiLib.SnapType,System.Boolean)">
+            <summary>
+            Set to subdiv using specified rounding.
+            </summary>
+            <param name="subdiv"></param>
+            <param name="snapType"></param>
+            <param name="up">To ceiling otherwise closest.</param>
+        </member>
+        <member name="M:MidiLib.BarSpan.Format">
+            <summary>
+            Format a readable string.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MidiLib.BarSpan.ToString">
+            <summary>
+            Format a readable string.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:MidiLib.BarTime">
             <summary>Sort of like DateTime but for musical terminology.</summary>
         </member>
