@@ -791,6 +791,28 @@
             <param name="name">which</param>
             <returns>The list of notes or empty if invalid.</returns>
         </member>
+        <member name="F:NBagOfTricks.SettingsCore._fp">
+            <summary>The fully  qualified file path.</summary>
+        </member>
+        <member name="M:NBagOfTricks.SettingsCore.Load(System.String,System.Type,System.String)">
+            <summary>
+            Create object from file.
+            </summary>
+            <param name="dir">Where the file lives.</param>
+            <param name="t">Derived type please.</param>
+            <param name="fn">The file name, default is settings.json.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NBagOfTricks.SettingsCore.Save">
+            <summary>
+            Save object to file.
+            </summary>
+        </member>
+        <member name="M:NBagOfTricks.SettingsCore.Cleanup">
+            <summary>
+            Remove duplicate and invalid file names.
+            </summary>
+        </member>
         <member name="T:NBagOfTricks.StringUtils">
             <summary>
             Misc string extension methods.

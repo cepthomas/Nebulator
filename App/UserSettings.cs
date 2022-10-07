@@ -17,7 +17,7 @@ using MidiLib;
 namespace Nebulator.App
 {
     [Serializable]
-    public sealed class UserSettings : Settings
+    public sealed class UserSettings : SettingsCore
     {
         #region Properties - persisted editable
         [DisplayName("Script Path")]

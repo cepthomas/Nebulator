@@ -85,7 +85,7 @@ namespace Nebulator.App
         {
             // Must do this first before initializing.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
-            _settings = (UserSettings)Settings.Load(appDir, typeof(UserSettings));
+            _settings = (UserSettings)SettingsCore.Load(appDir, typeof(UserSettings));
             MidiSettings.LibSettings = _settings.MidiSettings;
             // Force the resolution for this application.
             MidiSettings.LibSettings.InternalPPQ = BarTime.LOW_RES_PPQ;
@@ -1079,7 +1079,7 @@ namespace Nebulator.App
         /// </summary>
         void Settings_Click(object? sender, EventArgs e)
         {
-            List<(string name, string cat)> changes = _settings.Edit("User Settings", 500);
+            var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
 
             // Detect changes of interest.
             bool restart = false;

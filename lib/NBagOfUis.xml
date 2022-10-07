@@ -216,17 +216,14 @@
             Tree control with file type filters.
             </summary>
         </member>
-        <member name="P:NBagOfUis.FilTree.RootDirs">
-            <summary>Base path(s) for the tree.</summary>
-        </member>
-        <member name="P:NBagOfUis.FilTree.FilterExts">
-            <summary>Show only these file types. Empty is valid for files without extensions.</summary>
-        </member>
-        <member name="P:NBagOfUis.FilTree.SingleClickSelect">
-            <summary>Generate event with single or double click.</summary>
+        <member name="P:NBagOfUis.FilTree.Settings">
+            <summary>Stuff of interest to the user.</summary>
         </member>
         <member name="E:NBagOfUis.FilTree.FileSelectedEvent">
             <summary>User has selected a file.</summary>
+        </member>
+        <member name="T:NBagOfUis.FilTree.ListFileInfo">
+            <summary>Convenience container.</summary>
         </member>
         <member name="M:NBagOfUis.FilTree.#ctor">
             <summary>
@@ -237,13 +234,6 @@
             <summary>
             Populate everything from the properties.
             </summary>
-        </member>
-        <member name="M:NBagOfUis.FilTree.TreeView_NodeMouseClick(System.Object,System.Windows.Forms.TreeNodeMouseClickEventArgs)">
-            <summary>
-            Drill down through dirs/files.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
         </member>
         <member name="M:NBagOfUis.FilTree.PopulateTreeView">
             <summary>
@@ -257,52 +247,37 @@
             <param name="dirs"></param>
             <param name="parentNode"></param>
         </member>
-        <member name="M:NBagOfUis.FilTree.PopulateFiles(System.Windows.Forms.TreeNode)">
+        <member name="M:NBagOfUis.FilTree.TreeView_NodeMouseClick(System.Object,System.Windows.Forms.TreeNodeMouseClickEventArgs)">
+            <summary>
+            Drill down through dirs/files.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NBagOfUis.FilTree.PopulateFileList(System.Windows.Forms.TreeNode)">
             <summary>
             Populate the file selector.
             </summary>
-            <param name="node">Selected directory.</param>
+            <param name="node">Selected node.</param>
         </member>
-        <member name="M:NBagOfUis.FilTree.ListFiles_MouseClick(System.Object,System.Windows.Forms.MouseEventArgs)">
+        <member name="M:NBagOfUis.FilTree.FileSelected(System.Windows.Forms.MouseEventArgs)">
             <summary>
-            Single click file selection.
+            Handler for single or double mouse clicks.
             </summary>
-            <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfUis.FilTree.ListFiles_MouseDoubleClick(System.Object,System.Windows.Forms.MouseEventArgs)">
-            <summary>
-            Double click file selection.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:NBagOfUis.FilTree.MenuFiles_Opening(System.Object,System.ComponentModel.CancelEventArgs)">
-            <summary>
-            Populate the context menu.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:NBagOfUis.FilTree.MenuFiles_Click(System.Object,System.EventArgs)">
+        <member name="M:NBagOfUis.FilTree.GetInfo(System.Windows.Forms.Control,System.String)">
             <summary>
             Context menu handler.
-            Select the tags for this file.
+            </summary>
+            <param name="ctl"></param>
+            <param name="which"></param>
+        </member>
+        <member name="M:NBagOfUis.FilTree.Edit_Click(System.Object,System.EventArgs)">
+            <summary>
+            Edit the settings.
             </summary>
             <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:NBagOfUis.FilTree.TreeView_DrawNode(System.Object,System.Windows.Forms.DrawTreeNodeEventArgs)">
-            <summary>
-            See above.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:NBagOfUis.FilTree.OnResize(System.EventArgs)">
-            <summary>
-            Resize.
-            </summary>
             <param name="e"></param>
         </member>
         <member name="F:NBagOfUis.FilTree.components">
@@ -321,6 +296,9 @@
             Required method for Designer support - do not modify 
             the contents of this method with the code editor.
             </summary>
+        </member>
+        <member name="P:NBagOfUis.FilTreeSettings.IgnoreDirs">
+            <summary></summary>
         </member>
         <member name="T:NBagOfUis.GraphicsUtils">
             <summary>
@@ -906,35 +884,15 @@
             <param name="which">Name of the property.</param>
             <param name="visible">True or false.</param>
         </member>
-        <member name="F:NBagOfUis.Settings._fp">
-            <summary>The fully  qualified file path.</summary>
-        </member>
-        <member name="M:NBagOfUis.Settings.Load(System.String,System.Type,System.String)">
-            <summary>
-            Create object from file.
-            </summary>
-            <param name="dir">Where the file lives.</param>
-            <param name="t">Derived type please.</param>
-            <param name="fn">The file name, default is settings.json.</param>
-            <returns></returns>
-        </member>
-        <member name="M:NBagOfUis.Settings.Save">
-            <summary>
-            Save object to file.
-            </summary>
-        </member>
-        <member name="M:NBagOfUis.Settings.Edit(System.String,System.Int32)">
+        <member name="M:NBagOfUis.SettingsEditor.Edit(NBagOfTricks.SettingsCore,System.String,System.Int32,System.Boolean)">
             <summary>
             Edit the properties in a dialog.
             </summary>
+            <param name="settings">To edit.</param>
             <param name="title">To show.</param>
             <param name="height">Adjustable.</param>
+            <param name="expand">Default expansion.</param>
             <returns>List of tuples of name, category.</returns>
-        </member>
-        <member name="M:NBagOfUis.Settings.Cleanup">
-            <summary>
-            Remove duplicate and invalid file names.
-            </summary>
         </member>
         <member name="T:NBagOfUis.Slider">
             <summary>
@@ -1121,7 +1079,7 @@
         <member name="T:NBagOfUis.MonospaceFontEditor">
             <summary>Selector for monospaced fonts.</summary>
         </member>
-        <member name="T:NBagOfUis.PathListEditor_TODO">
+        <member name="T:NBagOfUis.PathListEditor">
             <summary>Broken - don't use.</summary>
         </member>
         <member name="T:NBagOfUis.CheckBoxRenderer">
