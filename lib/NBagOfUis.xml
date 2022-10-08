@@ -280,6 +280,11 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
+        <member name="M:NBagOfUis.FilTree.UpdateFromSettings">
+            <summary>
+            Update from settings.
+            </summary>
+        </member>
         <member name="F:NBagOfUis.FilTree.components">
             <summary> 
             Required designer variable.
@@ -871,8 +876,8 @@
             <param name="x"></param>
         </member>
         <member name="M:NBagOfUis.PropertyGridEx.ResizeDescriptionArea(System.Int32)">
-            <summary>Alter the bottom description area.</summary>
-            <param name="x">Number of lines to show.</param>
+            <summary>Alter the bottom description area. Must be in OnLoad()!</summary>
+            <param name="numl">Number of lines to show.</param>
         </member>
         <member name="M:NBagOfUis.PropertyGridEx.ExpandGroup(System.String,System.Boolean)">
             <summary>Expand or collapse the group.</summary>
@@ -886,7 +891,7 @@
         </member>
         <member name="M:NBagOfUis.SettingsEditor.Edit(NBagOfTricks.SettingsCore,System.String,System.Int32,System.Boolean)">
             <summary>
-            Edit the properties in a dialog.
+            Edit the properties in a dialog. Works with SettingsCore from nbot.
             </summary>
             <param name="settings">To edit.</param>
             <param name="title">To show.</param>
