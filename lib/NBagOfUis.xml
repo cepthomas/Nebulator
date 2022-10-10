@@ -219,6 +219,9 @@
         <member name="P:NBagOfUis.FilTree.Settings">
             <summary>Stuff of interest to the user.</summary>
         </member>
+        <member name="P:NBagOfUis.FilTree.RecentFiles">
+            <summary>Client supplies these.</summary>
+        </member>
         <member name="E:NBagOfUis.FilTree.FileSelectedEvent">
             <summary>User has selected a file.</summary>
         </member>
@@ -889,7 +892,7 @@
             <param name="which">Name of the property.</param>
             <param name="visible">True or false.</param>
         </member>
-        <member name="M:NBagOfUis.SettingsEditor.Edit(NBagOfTricks.SettingsCore,System.String,System.Int32,System.Boolean)">
+        <member name="M:NBagOfUis.SettingsEditor.Edit(System.Object,System.String,System.Int32,System.Boolean)">
             <summary>
             Edit the properties in a dialog. Works with SettingsCore from nbot.
             </summary>
