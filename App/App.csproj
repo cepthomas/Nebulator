@@ -2,7 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <AssemblyName>Nebulator</AssemblyName>
+        <AssemblyName>Ephemera.Nebulator.App</AssemblyName>
+        <RootNamespace>Ephemera.Nebulator.App</RootNamespace>
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <Deterministic>False</Deterministic>
@@ -12,9 +13,9 @@
         <OutputPath>bin\</OutputPath>
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
         <WarningLevel>4</WarningLevel>
-        <NoWarn>CA1822</NoWarn> 
+        <NoWarn>CA1822;CS1591</NoWarn> 
         <Nullable>enable</Nullable>
-        <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
         <ApplicationIcon>Resources\medusa.ico</ApplicationIcon>
         <!-- en none -->
@@ -29,17 +30,17 @@
         <ProjectReference Include="..\Script\Script.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Reference Include="MidiLib">
-          <HintPath>..\lib\MidiLib.dll</HintPath>
+        <Reference Include="Ephemera.MidiLib">
+            <HintPath>..\lib\Ephemera.MidiLib.dll</HintPath>
         </Reference>
-        <Reference Include="NBagOfTricks">
-          <HintPath>..\..\NProcessing\lib\NBagOfTricks.dll</HintPath>
+        <Reference Include="Ephemera.NBagOfTricks">
+            <HintPath>..\lib\Ephemera.NBagOfTricks.dll</HintPath>
         </Reference>
-        <Reference Include="NBagOfUis">
-            <HintPath>..\lib\NBagOfUis.dll</HintPath>
+        <Reference Include="Ephemera.NBagOfUis">
+            <HintPath>..\lib\Ephemera.NBagOfUis.dll</HintPath>
         </Reference>
-        <Reference Include="NebOsc">
-            <HintPath>..\lib\NebOsc.dll</HintPath>
+        <Reference Include="Ephemera.NebOsc">
+            <HintPath>..\lib\Ephemera.NebOsc.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>

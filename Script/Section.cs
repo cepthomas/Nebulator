@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NBagOfTricks;
+using Ephemera.NBagOfTricks;
 
 
-namespace Nebulator.Script
+namespace Ephemera.Nebulator.Script
 {
     /// <summary>
     /// One section definition.
@@ -42,7 +42,7 @@ namespace Nebulator.Script
         /// <summary>
         /// Add 0-N elements.
         /// </summary>
-        /// <param name="channel"></param>
+        /// <param name="chname"></param>
         /// <param name="sequences"></param>
         public void Add(string chname, params Sequence[] sequences)
         {

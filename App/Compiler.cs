@@ -5,13 +5,13 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
-using NBagOfTricks;
-using NBagOfTricks.ScriptCompiler;
-using MidiLib;
-using Nebulator.Script;
+using Ephemera.NBagOfTricks;
+using Ephemera.NBagOfTricks.ScriptCompiler;
+using Ephemera.MidiLib;
+using Ephemera.Nebulator.Script;
 
 
-namespace Nebulator.App
+namespace Ephemera.Nebulator.App
 {
     /// <summary>One channel definition.</summary>
     public record ChannelSpec(string ChannelName, string DeviceId, int ChannelNumber, int Patch, bool IsDrums);
@@ -35,9 +35,9 @@ namespace Nebulator.App
         {
             ChannelSpecs.Clear();
 
-            LocalDlls = new() { "NAudio", "NBagOfTricks", "NebOsc", "MidiLib", "Nebulator.Script" };
+            LocalDlls = new() { "NAudio", "Ephemera.NBagOfTricks", "Ephemera.NebOsc", "Ephemera.MidiLib", "Ephemera.Nebulator.Script" };
 
-            Usings.Add("static NBagOfTricks.MusicDefinitions");
+            Usings.Add("static Ephemera.NBagOfTricks.MusicDefinitions");
 
             //// Save hash of current channel descriptors to detect change in source code.
             //_chHash = string.Join("", _channelDescriptors).GetHashCode();

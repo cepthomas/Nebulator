@@ -8,13 +8,13 @@ using System.Text.Json.Serialization;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
 using NAudio.Midi;
-using NBagOfTricks;
-using NBagOfTricks.Slog;
-using NBagOfUis;
-using MidiLib;
+using Ephemera.NBagOfTricks;
+using Ephemera.NBagOfTricks.Slog;
+using Ephemera.NBagOfUis;
+using Ephemera.MidiLib;
 
 
-namespace Nebulator.App
+namespace Ephemera.Nebulator.App
 {
     [Serializable]
     public sealed class UserSettings : SettingsCore

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using NAudio.Midi;
-using NBagOfTricks.Slog;
-using MidiLib;
-using NBagOfTricks;
+using Ephemera.NBagOfTricks.Slog;
+using Ephemera.MidiLib;
+using Ephemera.NBagOfTricks;
 
 
 // The internal script stuff.
 
-namespace Nebulator.Script
+namespace Ephemera.Nebulator.Script
 {
     public partial class ScriptBase
     {

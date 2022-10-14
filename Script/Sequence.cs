@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MidiLib;
-using NBagOfTricks;
+using Ephemera.MidiLib;
+using Ephemera.NBagOfTricks;
 
 
-namespace Nebulator.Script
+namespace Ephemera.Nebulator.Script
 {
     /// <summary>
     /// One sequence definition.

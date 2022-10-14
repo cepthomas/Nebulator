@@ -1,4 +1,4 @@
-﻿namespace Nebulator.App
+﻿namespace Ephemera.Nebulator.App
 {
     partial class MainForm
     {
@@ -89,7 +89,7 @@
             // 
             this.btnCompile.FlatAppearance.BorderSize = 0;
             this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCompile.Image = global::App.Properties.Resources.glyphicons_366_restart;
+            this.btnCompile.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_366_restart;
             this.btnCompile.Location = new System.Drawing.Point(116, 49);
             this.btnCompile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCompile.Name = "btnCompile";
@@ -103,7 +103,7 @@
             // 
             this.btnRewind.FlatAppearance.BorderSize = 0;
             this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRewind.Image = global::App.Properties.Resources.glyphicons_173_rewind;
+            this.btnRewind.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_173_rewind;
             this.btnRewind.Location = new System.Drawing.Point(13, 49);
             this.btnRewind.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnRewind.Name = "btnRewind";
@@ -120,7 +120,7 @@
             this.chkPlay.FlatAppearance.BorderSize = 0;
             this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkPlay.Image = global::App.Properties.Resources.glyphicons_174_play;
+            this.chkPlay.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_174_play;
             this.chkPlay.Location = new System.Drawing.Point(65, 49);
             this.chkPlay.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkPlay.MaximumSize = new System.Drawing.Size(43, 49);
@@ -157,7 +157,7 @@
             this.exportMidiToolStripMenuItem,
             this.exportCsvToolStripMenuItem,
             this.showDefinitionsToolStripMenuItem});
-            this.fileDropDownButton.Image = global::App.Properties.Resources.glyphicons_37_file;
+            this.fileDropDownButton.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_37_file;
             this.fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.fileDropDownButton.Name = "fileDropDownButton";
             this.fileDropDownButton.Size = new System.Drawing.Size(34, 24);
@@ -202,7 +202,7 @@
             // 
             this.btnMonIn.CheckOnClick = true;
             this.btnMonIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnMonIn.Image = global::App.Properties.Resources.glyphicons_213_arrow_down;
+            this.btnMonIn.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_213_arrow_down;
             this.btnMonIn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMonIn.Name = "btnMonIn";
             this.btnMonIn.Size = new System.Drawing.Size(29, 24);
@@ -214,7 +214,7 @@
             // 
             this.btnMonOut.CheckOnClick = true;
             this.btnMonOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnMonOut.Image = global::App.Properties.Resources.glyphicons_214_arrow_up;
+            this.btnMonOut.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_214_arrow_up;
             this.btnMonOut.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMonOut.Name = "btnMonOut";
             this.btnMonOut.Size = new System.Drawing.Size(29, 24);
@@ -225,7 +225,7 @@
             // btnKillComm
             // 
             this.btnKillComm.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnKillComm.Image = global::App.Properties.Resources.glyphicons_206_electricity;
+            this.btnKillComm.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_206_electricity;
             this.btnKillComm.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnKillComm.Name = "btnKillComm";
             this.btnKillComm.Size = new System.Drawing.Size(29, 24);
@@ -235,7 +235,7 @@
             // btnAbout
             // 
             this.btnAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAbout.Image = global::App.Properties.Resources.glyphicons_195_question_sign;
+            this.btnAbout.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_195_question_sign;
             this.btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(29, 24);
@@ -245,7 +245,7 @@
             // btnSettings
             // 
             this.btnSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSettings.Image = global::App.Properties.Resources.glyphicons_137_cogwheel;
+            this.btnSettings.Image = global::Ephemera.Nebulator.App.Properties.Resources.glyphicons_137_cogwheel;
             this.btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(29, 24);

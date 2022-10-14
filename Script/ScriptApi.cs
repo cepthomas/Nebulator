@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NBagOfTricks;
-using MidiLib;
 using NAudio.Midi;
+using Ephemera.NBagOfTricks;
+using Ephemera.MidiLib;
 
 
 // Nebulator script API stuff.
 
-namespace Nebulator.Script
+namespace Ephemera.Nebulator.Script
 {
     public partial class ScriptBase
     {

@@ -7,15 +7,15 @@ using System.IO;
 using System.Diagnostics;
 using NAudio.Midi;
 using NAudio.Wave;
-using NBagOfTricks;
-using NBagOfTricks.ScriptCompiler;
-using NBagOfTricks.Slog;
-using NBagOfUis;
-using MidiLib;
-using Nebulator.Script;
+using Ephemera.NBagOfTricks;
+using Ephemera.NBagOfTricks.ScriptCompiler;
+using Ephemera.NBagOfTricks.Slog;
+using Ephemera.NBagOfUis;
+using Ephemera.MidiLib;
+using Ephemera.Nebulator.Script;
 
 
-namespace Nebulator.App
+namespace Ephemera.Nebulator.App
 {
     public partial class MainForm : Form
     {
@@ -1178,7 +1178,6 @@ namespace Nebulator.App
         /// <summary>
         /// Do some global key handling. Space bar is used for stop/start playing.
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
         protected override void OnKeyDown(KeyEventArgs e)
         {
