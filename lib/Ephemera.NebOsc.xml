@@ -1,72 +1,72 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>NebOsc</name>
+        <name>Ephemera.NebOsc</name>
     </assembly>
     <members>
-        <member name="T:NebOsc.Bundle">
+        <member name="T:Ephemera.NebOsc.Bundle">
             <summary>
             Representation of an OSC Bundle. For doc see README.md.
             </summary>
         </member>
-        <member name="F:NebOsc.Bundle.BUNDLE_ID">
+        <member name="F:Ephemera.NebOsc.Bundle.BUNDLE_ID">
             <summary>Bundle marker</summary>
         </member>
-        <member name="P:NebOsc.Bundle.TimeTag">
+        <member name="P:Ephemera.NebOsc.Bundle.TimeTag">
             <summary>The OSC timetag.</summary>
         </member>
-        <member name="P:NebOsc.Bundle.Messages">
+        <member name="P:Ephemera.NebOsc.Bundle.Messages">
             <summary>Contained messages.</summary>
         </member>
-        <member name="P:NebOsc.Bundle.Errors">
+        <member name="P:Ephemera.NebOsc.Bundle.Errors">
             <summary>Parse errors.</summary>
         </member>
-        <member name="M:NebOsc.Bundle.Pack">
+        <member name="M:Ephemera.NebOsc.Bundle.Pack">
             <summary>
             Format to binary form.
             </summary>
             <returns>The byte array or empty if error occurred.</returns>
         </member>
-        <member name="M:NebOsc.Bundle.Unpack(System.Byte[])">
+        <member name="M:Ephemera.NebOsc.Bundle.Unpack(System.Byte[])">
             <summary>
             Parser function.
             </summary>
             <param name="bytes"></param>
             <returns></returns>
         </member>
-        <member name="T:NebOsc.InputEventArgs">
+        <member name="T:Ephemera.NebOsc.InputEventArgs">
             <summary>OSC has received something.</summary>
         </member>
-        <member name="P:NebOsc.InputEventArgs.Messages">
+        <member name="P:Ephemera.NebOsc.InputEventArgs.Messages">
             <summary>Received data.</summary>
         </member>
-        <member name="T:NebOsc.LogEventArgs">
+        <member name="T:Ephemera.NebOsc.LogEventArgs">
             <summary>OSC wants to say something meta.</summary>
         </member>
-        <member name="P:NebOsc.LogEventArgs.IsError">
+        <member name="P:Ephemera.NebOsc.LogEventArgs.IsError">
             <summary>Category.</summary>
         </member>
-        <member name="P:NebOsc.LogEventArgs.Message">
+        <member name="P:Ephemera.NebOsc.LogEventArgs.Message">
             <summary>Text to log. Usually</summary>
         </member>
-        <member name="T:NebOsc.Utils">
+        <member name="T:Ephemera.NebOsc.Utils">
             <summary>
             Bunch of utilities for formatting and parsing.
             </summary>
         </member>
-        <member name="M:NebOsc.Utils.Pad(System.Collections.Generic.List{System.Byte})">
+        <member name="M:Ephemera.NebOsc.Utils.Pad(System.Collections.Generic.List{System.Byte})">
             <summary>
             Add 0s to make multiple of 4.
             </summary>
             <param name="bytes"></param>
         </member>
-        <member name="M:NebOsc.Utils.FixEndian(System.Collections.Generic.List{System.Byte})">
+        <member name="M:Ephemera.NebOsc.Utils.FixEndian(System.Collections.Generic.List{System.Byte})">
             <summary>
             Handle endianness.
             </summary>
             <param name="bytes">Data in place.</param>
         </member>
-        <member name="M:NebOsc.Utils.Dump(System.Collections.Generic.List{System.Byte},System.String)">
+        <member name="M:Ephemera.NebOsc.Utils.Dump(System.Collections.Generic.List{System.Byte},System.String)">
             <summary>
             Make readable string.
             </summary>
@@ -74,200 +74,200 @@
             <param name="delim"></param>
             <returns></returns>
         </member>
-        <member name="M:NebOsc.Utils.IsReadable(System.Byte)">
+        <member name="M:Ephemera.NebOsc.Utils.IsReadable(System.Byte)">
             <summary>
             Test for readable char.
             </summary>
             <param name="b"></param>
             <returns>True/false</returns>
         </member>
-        <member name="T:NebOsc.Input">
+        <member name="T:Ephemera.NebOsc.Input">
             <summary>
             OSC server.
             </summary>
         </member>
-        <member name="F:NebOsc.Input._udpClient">
+        <member name="F:Ephemera.NebOsc.Input._udpClient">
             <summary>OSC input device.</summary>
         </member>
-        <member name="E:NebOsc.Input.LogEvent">
+        <member name="E:Ephemera.NebOsc.Input.LogEvent">
             <summary>Request for logging service. May need Invoke() if client is UI.</summary>
         </member>
-        <member name="E:NebOsc.Input.InputEvent">
+        <member name="E:Ephemera.NebOsc.Input.InputEvent">
             <summary>Reporting a change to listeners. May need Invoke() if client is UI.</summary>
         </member>
-        <member name="P:NebOsc.Input.DeviceName">
+        <member name="P:Ephemera.NebOsc.Input.DeviceName">
             <summary>Name.</summary>
         </member>
-        <member name="P:NebOsc.Input.LocalPort">
+        <member name="P:Ephemera.NebOsc.Input.LocalPort">
             <summary>The receive port.</summary>
         </member>
-        <member name="P:NebOsc.Input.Trace">
+        <member name="P:Ephemera.NebOsc.Input.Trace">
             <summary>Trace other than errors.</summary>
         </member>
-        <member name="M:NebOsc.Input.#ctor(System.Int32)">
+        <member name="M:Ephemera.NebOsc.Input.#ctor(System.Int32)">
             <summary>
             Constructor. Set up listening for OSC messages.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NebOsc.Input.Dispose">
+        <member name="M:Ephemera.NebOsc.Input.Dispose">
             <summary>
             Resource clean up.
             </summary>
         </member>
-        <member name="M:NebOsc.Input.ReceiveCallback(System.IAsyncResult)">
+        <member name="M:Ephemera.NebOsc.Input.ReceiveCallback(System.IAsyncResult)">
             <summary>
             Handle a received message.
             </summary>
             <param name="ar"></param>
         </member>
-        <member name="M:NebOsc.Input.LogMsg(System.String,System.Boolean)">
+        <member name="M:Ephemera.NebOsc.Input.LogMsg(System.String,System.Boolean)">
             <summary>Ask host to do something with this.</summary>
             <param name="msg"></param>
             <param name="error"></param>
         </member>
-        <member name="T:NebOsc.Message">
+        <member name="T:Ephemera.NebOsc.Message">
             <summary>
             Representation of an OSC Message. For doc see README.md.
             </summary>
         </member>
-        <member name="P:NebOsc.Message.Address">
+        <member name="P:Ephemera.NebOsc.Message.Address">
             <summary>The OSC address.</summary>
         </member>
-        <member name="P:NebOsc.Message.Data">
+        <member name="P:Ephemera.NebOsc.Message.Data">
             <summary>OSC data elements in the message.</summary>
         </member>
-        <member name="P:NebOsc.Message.Errors">
+        <member name="P:Ephemera.NebOsc.Message.Errors">
             <summary>Parse errors.</summary>
         </member>
-        <member name="M:NebOsc.Message.Pack">
+        <member name="M:Ephemera.NebOsc.Message.Pack">
             <summary>
             Format to binary form.
             </summary>
             <returns>The byte array or empty if error occurred.</returns>
         </member>
-        <member name="M:NebOsc.Message.Unpack(System.Byte[])">
+        <member name="M:Ephemera.NebOsc.Message.Unpack(System.Byte[])">
             <summary>
             Parser function.
             </summary>
             <param name="bytes"></param>
             <returns></returns>
         </member>
-        <member name="M:NebOsc.Message.ToString">
+        <member name="M:Ephemera.NebOsc.Message.ToString">
             <summary>
             Readable.
             </summary>
             <returns></returns>
         </member>
-        <member name="T:NebOsc.Output">
+        <member name="T:Ephemera.NebOsc.Output">
             <summary>
             OSC client.
             </summary>
         </member>
-        <member name="F:NebOsc.Output._udpClient">
+        <member name="F:Ephemera.NebOsc.Output._udpClient">
             <summary>OSC output device.</summary>
         </member>
-        <member name="F:NebOsc.Output._lock">
+        <member name="F:Ephemera.NebOsc.Output._lock">
             <summary>Access synchronizer.</summary>
         </member>
-        <member name="E:NebOsc.Output.LogEvent">
+        <member name="E:Ephemera.NebOsc.Output.LogEvent">
             <inheritdoc />
         </member>
-        <member name="P:NebOsc.Output.DeviceName">
+        <member name="P:Ephemera.NebOsc.Output.DeviceName">
             <inheritdoc />
         </member>
-        <member name="P:NebOsc.Output.RemoteIP">
+        <member name="P:Ephemera.NebOsc.Output.RemoteIP">
             <summary>Where to?</summary>
         </member>
-        <member name="P:NebOsc.Output.RemotePort">
+        <member name="P:Ephemera.NebOsc.Output.RemotePort">
             <summary>Where to?</summary>
         </member>
-        <member name="P:NebOsc.Output.Trace">
+        <member name="P:Ephemera.NebOsc.Output.Trace">
             <summary>Trace other than errors.</summary>
         </member>
-        <member name="M:NebOsc.Output.#ctor(System.String,System.Int32)">
+        <member name="M:Ephemera.NebOsc.Output.#ctor(System.String,System.Int32)">
             <summary>
             Constructor.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NebOsc.Output.Dispose">
+        <member name="M:Ephemera.NebOsc.Output.Dispose">
             <summary>
             Resource clean up.
             </summary>
         </member>
-        <member name="M:NebOsc.Output.Send(NebOsc.Message)">
+        <member name="M:Ephemera.NebOsc.Output.Send(Ephemera.NebOsc.Message)">
             <summary>
             Send a message to output.
             </summary>
             <param name="msg"></param>
             <returns></returns>
         </member>
-        <member name="M:NebOsc.Output.LogMsg(System.String,System.Boolean)">
+        <member name="M:Ephemera.NebOsc.Output.LogMsg(System.String,System.Boolean)">
             <summary>Ask host to do something with this.</summary>
             <param name="msg"></param>
             <param name="error"></param>
         </member>
-        <member name="T:NebOsc.Packet">
+        <member name="T:Ephemera.NebOsc.Packet">
             <summary>
             Base class for OSC elements.
             </summary>
         </member>
-        <member name="T:NebOsc.TimeTag">
+        <member name="T:Ephemera.NebOsc.TimeTag">
             <summary>
             Representation of an OSC timetag. For doc see README.md.
             </summary>
         </member>
-        <member name="F:NebOsc.TimeTag.EPOCH_DT">
+        <member name="F:Ephemera.NebOsc.TimeTag.EPOCH_DT">
             <summary>DateTime at OSC epoch 1900-01-01 00:00:00.000.</summary>
         </member>
-        <member name="F:NebOsc.TimeTag.IMMEDIATELY">
+        <member name="F:Ephemera.NebOsc.TimeTag.IMMEDIATELY">
             <summary>The special case meaning "immediately."</summary>
         </member>
-        <member name="P:NebOsc.TimeTag.Raw">
+        <member name="P:Ephemera.NebOsc.TimeTag.Raw">
             <summary>Raw time.</summary>
         </member>
-        <member name="P:NebOsc.TimeTag.Seconds">
+        <member name="P:Ephemera.NebOsc.TimeTag.Seconds">
             <summary>Left of the decimal point.</summary>
         </member>
-        <member name="P:NebOsc.TimeTag.Fraction">
+        <member name="P:Ephemera.NebOsc.TimeTag.Fraction">
             <summary>Right of the decimal point.</summary>
         </member>
-        <member name="M:NebOsc.TimeTag.#ctor">
+        <member name="M:Ephemera.NebOsc.TimeTag.#ctor">
             <summary>
             Default constructor - "immediately". The most common scenario for this client.
             </summary>
         </member>
-        <member name="M:NebOsc.TimeTag.#ctor(System.DateTime)">
+        <member name="M:Ephemera.NebOsc.TimeTag.#ctor(System.DateTime)">
             <summary>
             Constructor from DateTime.
             </summary>
             <param name="when"></param>
         </member>
-        <member name="M:NebOsc.TimeTag.#ctor(System.UInt64)">
+        <member name="M:Ephemera.NebOsc.TimeTag.#ctor(System.UInt64)">
             <summary>
             Constructor from raw.
             </summary>
             <param name="raw"></param>
         </member>
-        <member name="M:NebOsc.TimeTag.#ctor(NebOsc.TimeTag)">
+        <member name="M:Ephemera.NebOsc.TimeTag.#ctor(Ephemera.NebOsc.TimeTag)">
             <summary>
             Copy constructor.
             </summary>
         </member>
-        <member name="M:NebOsc.TimeTag.ToString">
+        <member name="M:Ephemera.NebOsc.TimeTag.ToString">
             <summary>
             For viewing pleasure.
             </summary>
         </member>
-        <member name="M:NebOsc.TimeTag.FromDateTime(System.DateTime)">
+        <member name="M:Ephemera.NebOsc.TimeTag.FromDateTime(System.DateTime)">
             <summary>
             Conversion function.
             </summary>
             <param name="when"></param>
             <returns></returns>
         </member>
-        <member name="M:NebOsc.TimeTag.FromRaw(System.UInt64)">
+        <member name="M:Ephemera.NebOsc.TimeTag.FromRaw(System.UInt64)">
             <summary>
             Conversion function.
             </summary>

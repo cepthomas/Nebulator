@@ -1,29 +1,29 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>NBagOfTricks</name>
+        <name>Ephemera.NBagOfTricks</name>
     </assembly>
     <members>
-        <member name="T:NBagOfTricks.Bag">
+        <member name="T:Ephemera.NBagOfTricks.Bag">
             <summary>
             General purpose storage for things using a two part key.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.Bag.FileName">
+        <member name="P:Ephemera.NBagOfTricks.Bag.FileName">
             <summary>The file name.</summary> 
         </member>
-        <member name="P:NBagOfTricks.Bag.Values">
+        <member name="P:Ephemera.NBagOfTricks.Bag.Values">
             <summary>Misc dynamic values that we want to persist. Needs to be public so serializer can see it.</summary>
         </member>
-        <member name="P:NBagOfTricks.Bag.Valid">
+        <member name="P:Ephemera.NBagOfTricks.Bag.Valid">
             <summary>Is this bag ok?</summary>
         </member>
-        <member name="M:NBagOfTricks.Bag.Clear">
+        <member name="M:Ephemera.NBagOfTricks.Bag.Clear">
             <summary>
             Reset everything.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.Bag.GetDouble(System.String,System.String,System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.Bag.GetDouble(System.String,System.String,System.Double)">
             <summary>
             Lazy helper.
             </summary>
@@ -32,7 +32,7 @@
             <param name="defval"></param>
             <returns>The value or default if not in the collection.</returns>
         </member>
-        <member name="M:NBagOfTricks.Bag.GetInteger(System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Bag.GetInteger(System.String,System.String,System.Int32)">
             <summary>
             Lazy helper.
             </summary>
@@ -41,7 +41,7 @@
             <param name="defval"></param>
             <returns>The value or default if not in the collection.</returns>
         </member>
-        <member name="M:NBagOfTricks.Bag.GetString(System.String,System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Bag.GetString(System.String,System.String,System.String)">
             <summary>
             Lazy helper.
             </summary>
@@ -50,7 +50,7 @@
             <param name="defval"></param>
             <returns>The value or default if not in the collection.</returns>
         </member>
-        <member name="M:NBagOfTricks.Bag.SetValue(System.String,System.String,System.Object)">
+        <member name="M:Ephemera.NBagOfTricks.Bag.SetValue(System.String,System.String,System.Object)">
             <summary>
             Lazy helper.
             </summary>
@@ -58,7 +58,7 @@
             <param name="valname"></param>
             <param name="value"></param>
         </member>
-        <member name="M:NBagOfTricks.Bag.MakeKey(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Bag.MakeKey(System.String,System.String)">
             <summary>
             Common key maker.
             </summary>
@@ -66,35 +66,35 @@
             <param name="valname"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.Bag.Save">
+        <member name="M:Ephemera.NBagOfTricks.Bag.Save">
             <summary>
             Save to json file.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.Bag.Load(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Bag.Load(System.String)">
             <summary>
             Create from json file.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.ArgOptType">
+        <member name="T:Ephemera.NBagOfTricks.ArgOptType">
             <summary>Argument and value options: None, required, optional.</summary>
         </member>
-        <member name="T:NBagOfTricks.Processor">
+        <member name="T:Ephemera.NBagOfTricks.Processor">
             <summary>Main processor.</summary>
         </member>
-        <member name="P:NBagOfTricks.Processor.ArgumentPrefix">
+        <member name="P:Ephemera.NBagOfTricks.Processor.ArgumentPrefix">
             <summary>Denotes the start of an argument name.</summary>
         </member>
-        <member name="P:NBagOfTricks.Processor.Commands">
+        <member name="P:Ephemera.NBagOfTricks.Processor.Commands">
             <summary>All the commands.</summary>
         </member>
-        <member name="P:NBagOfTricks.Processor.CommandName">
+        <member name="P:Ephemera.NBagOfTricks.Processor.CommandName">
             <summary>Selected command name.</summary>
         </member>
-        <member name="P:NBagOfTricks.Processor.Errors">
+        <member name="P:Ephemera.NBagOfTricks.Processor.Errors">
             <summary>Missing args etc.</summary>
         </member>
-        <member name="M:NBagOfTricks.Processor.Parse(System.String,System.Boolean)">
+        <member name="M:Ephemera.NBagOfTricks.Processor.Parse(System.String,System.Boolean)">
             <summary>
             Parse the cmd string using our definitions.
             </summary>
@@ -102,63 +102,63 @@
             <param name="skipFirst">Ignore first string, usually the exe name.</param>
             <returns>The main command name or empty if failed.</returns>
         </member>
-        <member name="M:NBagOfTricks.Processor.GetUsage(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Processor.GetUsage(System.String)">
             <summary>Format the usage help text.</summary>
             <param name="scmd">Specific command or list of commands if empty.</param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.Command">
+        <member name="T:Ephemera.NBagOfTricks.Command">
             <summary>One possible command.</summary>
         </member>
-        <member name="P:NBagOfTricks.Command.Name">
+        <member name="P:Ephemera.NBagOfTricks.Command.Name">
             <summary>
             The command name(s) space separated. The first one is the main command name and aliases follow.
             If it's empty or null, there is no separate command name.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.Command.Description">
+        <member name="P:Ephemera.NBagOfTricks.Command.Description">
             <summary>For usage.</summary>
         </member>
-        <member name="P:NBagOfTricks.Command.Args">
+        <member name="P:Ephemera.NBagOfTricks.Command.Args">
             <summary>Possible arguments for this command.</summary>
         </member>
-        <member name="P:NBagOfTricks.Command.FileFunc">
+        <member name="P:Ephemera.NBagOfTricks.Command.FileFunc">
             <summary>Handler for processing stuff at the end, typically file names.</summary>
         </member>
-        <member name="P:NBagOfTricks.Command.Errors">
+        <member name="P:Ephemera.NBagOfTricks.Command.Errors">
             <summary>Missing args etc.</summary>
         </member>
-        <member name="P:NBagOfTricks.Command.NameParts">
+        <member name="P:Ephemera.NBagOfTricks.Command.NameParts">
             <summary>Split version of Name.</summary>
         </member>
-        <member name="M:NBagOfTricks.Command.Parse(System.Collections.Generic.List{System.String})">
+        <member name="M:Ephemera.NBagOfTricks.Command.Parse(System.Collections.Generic.List{System.String})">
             <summary>Parse the argument collection.</summary>
         </member>
-        <member name="T:NBagOfTricks.Argument">
+        <member name="T:Ephemera.NBagOfTricks.Argument">
             <summary>Client fills in specs and CommandParser does the rest.</summary>
         </member>
-        <member name="P:NBagOfTricks.Argument.Name">
+        <member name="P:Ephemera.NBagOfTricks.Argument.Name">
             <summary>The command line value.</summary>
         </member>
-        <member name="P:NBagOfTricks.Argument.Description">
+        <member name="P:Ephemera.NBagOfTricks.Argument.Description">
             <summary>For usage.</summary>
         </member>
-        <member name="P:NBagOfTricks.Argument.ArgOpt">
+        <member name="P:Ephemera.NBagOfTricks.Argument.ArgOpt">
             <summary>Argument options.</summary>
         </member>
-        <member name="P:NBagOfTricks.Argument.ValOpt">
+        <member name="P:Ephemera.NBagOfTricks.Argument.ValOpt">
             <summary>Value options.</summary>
         </member>
-        <member name="P:NBagOfTricks.Argument.ArgFunc">
+        <member name="P:Ephemera.NBagOfTricks.Argument.ArgFunc">
             <summary>How to process the arg. Can include validation - returns true/false.</summary>
         </member>
-        <member name="P:NBagOfTricks.Argument.Valid">
+        <member name="P:Ephemera.NBagOfTricks.Argument.Valid">
             <summary>Does it appear in the command line.</summary>
         </member>
-        <member name="T:NBagOfTricks.Commands">
+        <member name="T:Ephemera.NBagOfTricks.Commands">
             <summary>Specialized container. Has Add() to support initialization.</summary>
         </member>
-        <member name="M:NBagOfTricks.Commands.Add(System.String,System.String,NBagOfTricks.Arguments,System.Func{System.String,System.Boolean})">
+        <member name="M:Ephemera.NBagOfTricks.Commands.Add(System.String,System.String,Ephemera.NBagOfTricks.Arguments,System.Func{System.String,System.Boolean})">
             <summary>
             
             </summary>
@@ -167,10 +167,10 @@
             <param name="args"></param>
             <param name="func"></param>
         </member>
-        <member name="T:NBagOfTricks.Arguments">
+        <member name="T:Ephemera.NBagOfTricks.Arguments">
             <summary>Specialized container. Has Add() to support initialization.</summary>
         </member>
-        <member name="M:NBagOfTricks.Arguments.Add(System.String,System.String,NBagOfTricks.ArgOptType,NBagOfTricks.ArgOptType,System.Func{System.String,System.Boolean})">
+        <member name="M:Ephemera.NBagOfTricks.Arguments.Add(System.String,System.String,Ephemera.NBagOfTricks.ArgOptType,Ephemera.NBagOfTricks.ArgOptType,System.Func{System.String,System.Boolean})">
             <summary>
             
             </summary>
@@ -180,82 +180,82 @@
             <param name="valopt"></param>
             <param name="func"></param>
         </member>
-        <member name="T:NBagOfTricks.Dumper">
+        <member name="T:Ephemera.NBagOfTricks.Dumper">
             <summary>
             Dumps: objects, dictionaries of objects, or lists of objects.
             Output format is modified json.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.Dumper._writer">
+        <member name="F:Ephemera.NBagOfTricks.Dumper._writer">
             <summary>Output writer.</summary>
         </member>
-        <member name="F:NBagOfTricks.Dumper._indent">
+        <member name="F:Ephemera.NBagOfTricks.Dumper._indent">
             <summary>Output indent.</summary>
         </member>
-        <member name="F:NBagOfTricks.Dumper._indentSize">
+        <member name="F:Ephemera.NBagOfTricks.Dumper._indentSize">
             <summary>Output indent size.</summary>
         </member>
-        <member name="M:NBagOfTricks.Dumper.#ctor(System.IO.TextWriter)">
+        <member name="M:Ephemera.NBagOfTricks.Dumper.#ctor(System.IO.TextWriter)">
             <summary>
             Constructor
             </summary>
             <param name="writer">Output stream</param>
         </member>
-        <member name="M:NBagOfTricks.Dumper.Write(System.Object)">
+        <member name="M:Ephemera.NBagOfTricks.Dumper.Write(System.Object)">
             <summary>
             Top level writer.
             </summary>
             <param name="obj"></param>
         </member>
-        <member name="M:NBagOfTricks.Dumper.Write(System.Collections.Generic.Dictionary{System.String,System.Object})">
+        <member name="M:Ephemera.NBagOfTricks.Dumper.Write(System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
             Write a dictionary of objects.
             </summary>
             <param name="obj"></param>
         </member>
-        <member name="M:NBagOfTricks.Dumper.Write(System.Collections.Generic.List{System.Object})">
+        <member name="M:Ephemera.NBagOfTricks.Dumper.Write(System.Collections.Generic.List{System.Object})">
             <summary>
             Write a list of objects.
             </summary>
             <param name="obj"></param>
         </member>
-        <member name="M:NBagOfTricks.Dumper.WriteIndented(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Dumper.WriteIndented(System.String)">
             <summary>
             Common output formatter.
             </summary>
             <param name="s"></param>
         </member>
-        <member name="T:NBagOfTricks.JsonColorConverter">
+        <member name="T:Ephemera.NBagOfTricks.JsonColorConverter">
             <summary>Serialize prettier.</summary>
         </member>
-        <member name="T:NBagOfTricks.JsonPointFConverter">
+        <member name="T:Ephemera.NBagOfTricks.JsonPointFConverter">
             <summary>Serialize prettier.</summary>
         </member>
-        <member name="T:NBagOfTricks.JsonRectangleConverter">
+        <member name="T:Ephemera.NBagOfTricks.JsonRectangleConverter">
             <summary>Serialize prettier.</summary>
         </member>
-        <member name="T:NBagOfTricks.JsonFontConverter">
+        <member name="T:Ephemera.NBagOfTricks.JsonFontConverter">
             <summary>Serialize prettier.</summary>
         </member>
-        <member name="T:NBagOfTricks.MathUtils">
+        <member name="T:Ephemera.NBagOfTricks.MathUtils">
             <summary>
             Static math utility functions.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.InitRand(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.InitRand(System.Int32)">
             <summary>
             Seed the randomizer.
             </summary>
             <param name="seed"></param>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RandStr(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.RandStr(System.Int32)">
             <summary>
             Get a random alphanumeric string.
             </summary>
             <param name="num">String length.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RandRange(System.Int32,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.RandRange(System.Int32,System.Int32)">
             <summary>
             Get the next random integer in the range.
             </summary>
@@ -263,7 +263,7 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RandRange(System.Double,System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.RandRange(System.Double,System.Double)">
             <summary>
             Get the next random double in the range.
             </summary>
@@ -271,29 +271,29 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.IsClose(System.Double,System.Double,System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.IsClose(System.Double,System.Double,System.Double)">
             <summary>
             Compare two doubles "close enough".
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.SplitDouble(System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.SplitDouble(System.Double)">
             <summary>
             Split a double into two parts: each side of the dp.
             </summary>
             <param name="val"></param>
             <returns>tuple of integral and fractional</returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.DegreesToRadians(System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.DegreesToRadians(System.Double)">
             <summary>Conversion.</summary>
             <param name="angle"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RadiansToDegrees(System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.RadiansToDegrees(System.Double)">
             <summary>Conversion.</summary>
             <param name="angle"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Map(System.Single,System.Single,System.Single,System.Single,System.Single)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.Map(System.Single,System.Single,System.Single,System.Single,System.Single)">
             <summary>
             Remap a value to new coordinates.
             </summary>
@@ -304,7 +304,7 @@
             <param name="stop2"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.Map(System.Double,System.Double,System.Double,System.Double,System.Double)">
             <summary>
             Remap a value to new coordinates.
             </summary>
@@ -315,7 +315,7 @@
             <param name="stop2"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Map(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.Map(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             Remap a value to new coordinates.
             </summary>
@@ -326,28 +326,28 @@
             <param name="stop2"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.StandardDeviation(System.Collections.Generic.List{System.Double})">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.StandardDeviation(System.Collections.Generic.List{System.Double})">
             <summary>
             Calculate a Standard Deviation based on a List of doubles.
             </summary>
             <param name="inputArray">List of doubles</param>
             <returns>Double value of the Standard Deviation</returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.SumOfSquares(System.Collections.Generic.List{System.Double})">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.SumOfSquares(System.Collections.Generic.List{System.Double})">
             <summary>
             Calculate a Sum of Squares given a List of doubles.
             </summary>
             <param name="inputArray">List of doubles</param>
             <returns>Double value of the Sum of Squares</returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.RMS(System.Single[])">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.RMS(System.Single[])">
             <summary>
             The root mean square value of a quantity is the square root of the mean value of the squared values of the quantity taken over an interval.
             </summary>
             <param name="inputArray"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.NextGaussian(System.Random,System.Double,System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.NextGaussian(System.Random,System.Double,System.Double)">
             <summary>
             Generates normally distributed numbers.
             </summary>
@@ -356,7 +356,7 @@
             <param name="sigma">Sigma</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Double,System.Double,System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.Constrain(System.Double,System.Double,System.Double)">
             <summary>
             Bounds limits a value.
             </summary>
@@ -365,7 +365,7 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Int32,System.Int32,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.Constrain(System.Int32,System.Int32,System.Int32)">
             <summary>
             Bounds limits a value.
             </summary>
@@ -374,7 +374,7 @@
             <param name="max"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Constrain(System.Double,System.Double,System.Double,System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.Constrain(System.Double,System.Double,System.Double,System.Double)">
             <summary>
             Ensure integral multiple of resolution, GTE min, LTE max.
             </summary>
@@ -384,19 +384,19 @@
             <param name="resolution"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.DecPlaces(System.Double)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.DecPlaces(System.Double)">
             <summary>
             Figure a reasonable number of dps to print based on value range.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.NumDigits(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.NumDigits(System.Int32)">
             <summary>
             Number of digits in an int ignoring sign.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MathUtils.Clamp(System.Int32,System.Int32,System.Boolean)">
+        <member name="M:Ephemera.NBagOfTricks.MathUtils.Clamp(System.Int32,System.Int32,System.Boolean)">
             <summary>
             Snap to closest neighbor.
             </summary>
@@ -405,17 +405,17 @@
             <param name="round">Round or truncate.</param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.MiscUtils">
+        <member name="T:Ephemera.NBagOfTricks.MiscUtils">
             <summary>
             Static general utility functions.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetVersionString">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.GetVersionString">
             <summary>
             Returns a string with the application version information.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetAppDataDir(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.GetAppDataDir(System.String,System.String)">
             <summary>
             Get the user app dir. Creates it if it doesn't exist.
             </summary>
@@ -423,35 +423,35 @@
             <param name="company">Optionally nest under company name.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.GetSourcePath(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.GetSourcePath(System.String)">
             <summary>
             Get the dir name of the caller's source file.
             </summary>
             <param name="callerPath"></param>
             <returns>Caller source dir.</returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.ShowReadme(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.ShowReadme(System.String)">
             <summary>
             Display the application readme.
             </summary>
             <param name="appName"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.FixEndian(System.UInt32)">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.FixEndian(System.UInt32)">
             <summary>
             Endian support.
             </summary>
             <param name="i">Number to fix.</param>
             <returns>Fixed number.</returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.FixEndian(System.UInt16)">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.FixEndian(System.UInt16)">
             <summary>
             Endian support.
             </summary>
             <param name="i">Number to fix.</param>
             <returns>Fixed number.</returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.MakeExportFileName(System.String,System.String,System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.MakeExportFileName(System.String,System.String,System.String,System.String)">
             <summary>
             Create a new clean filename for export. Creates path if it doesn't exist.
             </summary>
@@ -461,7 +461,7 @@
             <param name="ext">File extension</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
             <summary>
             Get a subset of an array.
             </summary>
@@ -471,7 +471,7 @@
             <param name="length"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.InvokeIfRequired``1(``0,NBagOfTricks.MiscUtils.InvokeIfRequiredDelegate{``0})">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.InvokeIfRequired``1(``0,Ephemera.NBagOfTricks.MiscUtils.InvokeIfRequiredDelegate{``0})">
             <summary>
             Invoke helper, maybe.
             </summary>
@@ -479,7 +479,7 @@
             <param name="obj"></param>
             <param name="action"></param>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
             Immediately executes the given action on each element in the source sequence.
             </summary>
@@ -487,7 +487,7 @@
             <param name="source">The sequence of elements</param>
             <param name="action">The action to execute on each element</param>
         </member>
-        <member name="M:NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
             <summary>
             Immediately executes the given action on each element in the source sequence.
             Each element's index is used in the logic of the action.
@@ -497,7 +497,7 @@
             <param name="action">The action to execute on each element; the second parameter
             of the action represents the index of the source element.</param>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx">
+        <member name="T:Ephemera.NBagOfTricks.MmTimerEx">
             <summary>
             The win multimedia timer is erratic. Using a one msec tick (fastest), the measured interval is +-100 us.
             Also note that it takes about 10 ticks to settle down after start.
@@ -506,58 +506,58 @@
             It seems to be an improvement.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimeProc">
+        <member name="T:Ephemera.NBagOfTricks.MmTimerEx.TimeProc">
             <summary>Client callback occurs when the time period has elapsed.</summary>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.TimerInstance">
+        <member name="T:Ephemera.NBagOfTricks.MmTimerEx.TimerInstance">
             <summary>Tracking instances of client timers.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.period">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx.TimerInstance.period">
             <summary>The requested time between events in msec.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.handler">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx.TimerInstance.handler">
             <summary>User handler.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.TimerInstance.elapsed">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx.TimerInstance.elapsed">
             <summary>Actual accumulated msec since last event.</summary> 
         </member>
-        <member name="P:NBagOfTricks.MmTimerEx.Running">
+        <member name="P:Ephemera.NBagOfTricks.MmTimerEx.Running">
             <summary>Indicates whether or not the timer is running.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._timers">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx._timers">
             <summary>All the timer instances. Key is id.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._sw">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx._sw">
             <summary>Used for more accurate timing.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._timerID">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx._timerID">
             <summary>Multimedia timer identifier. -1 is not inited, 0 is fail to init, other is valid id.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._startTicks">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx._startTicks">
             <summary>Stopwatch support.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._lastTicks">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx._lastTicks">
             <summary>Stopwatch support.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.MMTIMER_PERIOD">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx.MMTIMER_PERIOD">
             <summary>Msec for mm timer tick.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._timeProc">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx._timeProc">
             <summary>Called by Windows when a mm timer event occurs.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx._disposed">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx._disposed">
             <summary>Resource management.</summary>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.NativeMethods">
+        <member name="T:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods">
             <summary>Win32 Multimedia Timer Functions.</summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.NativeMethods.timeGetDevCaps(NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps@,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.timeGetDevCaps(Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps@,System.Int32)">
             <summary></summary>
             <param name="caps"></param>
             <param name="sizeOfTimerCaps"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.NativeMethods.timeSetEvent(System.Int32,System.Int32,NBagOfTricks.MmTimerEx.NativeMethods.TimeProc,System.IntPtr,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.timeSetEvent(System.Int32,System.Int32,Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.TimeProc,System.IntPtr,System.Int32)">
             <summary>Start her up.</summary>
             <param name="delay">Event delay, in milliseconds.If this value is not in the range of the minimum and maximum event delays supported by the timer, the function returns an error.</param>
             <param name="resolution">Resolution of the timer event, in milliseconds. The resolution increases with smaller values; a resolution of 0 indicates periodic events should occur with the greatest possible accuracy. To reduce system overhead, however, you should use the maximum value appropriate for your application.</param>
@@ -566,61 +566,61 @@
             <param name="mode">Timer event type.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.NativeMethods.timeKillEvent(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.timeKillEvent(System.Int32)">
             <summary></summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.NativeMethods.TimeProc">
+        <member name="T:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.TimeProc">
             <summary>Called by Windows when a mm timer event occurs.</summary>
         </member>
-        <member name="T:NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps">
+        <member name="T:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps">
             <summary>Represents information about the multimedia timer capabilities.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps.periodMin">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps.periodMin">
             <summary>Minimum supported period in milliseconds.</summary>
         </member>
-        <member name="F:NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps.periodMax">
+        <member name="F:Ephemera.NBagOfTricks.MmTimerEx.NativeMethods.TimerCaps.periodMax">
             <summary>Maximum supported period in milliseconds.</summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.#ctor">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.#ctor">
             <summary>
             Initializes a new instance of the Timer class.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Finalize">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Finalize">
             <summary>
             Override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Dispose">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Dispose">
             <summary>
             Boilerplate.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Dispose(System.Boolean)">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Dispose(System.Boolean)">
             <summary>
             Boilerplate.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.SetTimer(System.Int32,NBagOfTricks.MmTimerEx.TimeProc)">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.SetTimer(System.Int32,Ephemera.NBagOfTricks.MmTimerEx.TimeProc)">
             <summary>
             Add or update a timer instance.
             </summary>
             <param name="period">Period in msec </param>
             <param name="handler">Client callback</param>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Start">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Start">
             <summary>
             Starts the periodic timer.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.Stop">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Stop">
             <summary>
             Stops timer.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MmTimerEx.MmTimerCallback(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MmTimerEx.MmTimerCallback(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             System multimedia timer callback. Don't trust the accuracy of the mm timer so measure actual using a stopwatch.
             </summary>
@@ -630,171 +630,171 @@
             <param name="param1">Reserved.</param>
             <param name="param2">Reserved.</param>
         </member>
-        <member name="T:NBagOfTricks.MultiFileWatcher">
+        <member name="T:Ephemera.NBagOfTricks.MultiFileWatcher">
             <summary>
             A watcher for multiple file changes. The underlying FileSystemWatcher is a bit sensitive to OS file system ops.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.MultiFileWatcher.FileChangeEventArgs">
+        <member name="T:Ephemera.NBagOfTricks.MultiFileWatcher.FileChangeEventArgs">
             <summary>Reporting a change to listeners.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._watchers">
+        <member name="F:Ephemera.NBagOfTricks.MultiFileWatcher._watchers">
             <summary>Detect changed files.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._timer">
+        <member name="F:Ephemera.NBagOfTricks.MultiFileWatcher._timer">
             <summary>Used to delay reporting to client as there can be multiple events for one file change.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher._touchedFiles">
+        <member name="F:Ephemera.NBagOfTricks.MultiFileWatcher._touchedFiles">
             <summary>Set by subordinate watchers.</summary>
         </member>
-        <member name="F:NBagOfTricks.MultiFileWatcher.DELAY">
+        <member name="F:Ephemera.NBagOfTricks.MultiFileWatcher.DELAY">
             <summary>The delay before reporting. Seems like a reasonable number for human edit interface.</summary>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.#ctor">
+        <member name="M:Ephemera.NBagOfTricks.MultiFileWatcher.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Timer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
+        <member name="M:Ephemera.NBagOfTricks.MultiFileWatcher.Timer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
             <summary>
             Handle timer tick. Sends event out if any constituents triggered.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Add(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MultiFileWatcher.Add(System.String)">
             <summary>
             Add a new listener.
             </summary>
             <param name="path"></param>
             <return>Pass/fail</return>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Clear">
+        <member name="M:Ephemera.NBagOfTricks.MultiFileWatcher.Clear">
             <summary>
             Remove all listeners.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Watcher_Changed(System.Object,System.IO.FileSystemEventArgs)">
+        <member name="M:Ephemera.NBagOfTricks.MultiFileWatcher.Watcher_Changed(System.Object,System.IO.FileSystemEventArgs)">
             <summary>
             Handle underlying change notification.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:NBagOfTricks.MultiFileWatcher.Dispose">
+        <member name="M:Ephemera.NBagOfTricks.MultiFileWatcher.Dispose">
             <summary>
             Resource clean up.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.MusicDefinitions">
+        <member name="T:Ephemera.NBagOfTricks.MusicDefinitions">
             <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
         </member>
-        <member name="F:NBagOfTricks.MusicDefinitions._chordsScales">
+        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._chordsScales">
             <summary>The chord/scale note definitions. Key is chord/scale name, value is list of constituent notes.</summary>
         </member>
-        <member name="F:NBagOfTricks.MusicDefinitions.NOTES_PER_OCTAVE">
+        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions.NOTES_PER_OCTAVE">
             <summary>all the notes.</summary>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.#cctor">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.#cctor">
             <summary>
             Load chord and scale definitions.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.FormatDoc">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.FormatDoc">
             <summary>
             Make markdown content from the definitions.
             </summary>
             <returns></returns>
         </member>
-        <member name="F:NBagOfTricks.MusicDefinitions._noteNames">
+        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._noteNames">
             <summary>All possible note names and aliases.</summary>
         </member>
-        <member name="F:NBagOfTricks.MusicDefinitions._naturals">
+        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._naturals">
             <summary>Helpers.</summary>
         </member>
-        <member name="F:NBagOfTricks.MusicDefinitions._intervals">
+        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._intervals">
             <summary>Helpers.</summary>
         </member>
-        <member name="F:NBagOfTricks.MusicDefinitions._chordDefs">
+        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._chordDefs">
             <summary>All the builtin chord defs.</summary>
         </member>
-        <member name="F:NBagOfTricks.MusicDefinitions._scaleDefs">
+        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._scaleDefs">
             <summary>All the builtin scale defs.</summary>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.NoteNumberToName(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.NoteNumberToName(System.Int32)">
             <summary>
             Convert note number into name.
             </summary>
             <param name="inote"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.NoteNameToNumber(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.NoteNameToNumber(System.String)">
             <summary>
             Convert note name into number.
             </summary>
             <param name="snote">The root of the note without octave.</param>
             <returns>The number or -1 if invalid.</returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.GetNotesFromString(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetNotesFromString(System.String)">
             <summary>
             Parse note or notes from input value.
             </summary>
             <param name="noteString">Standard string to parse.</param>
             <returns>List of note numbers - empty if invalid.</returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.IsNatural(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.IsNatural(System.Int32)">
             <summary>
             Is it a white key?
             </summary>
             <param name="notenum">Which note</param>
             <returns>True/false</returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.SplitNoteNumber(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.SplitNoteNumber(System.Int32)">
             <summary>
             Split a midi note number into root note and octave.
             </summary>
             <param name="notenum">Absolute note number</param>
             <returns>tuple of root and octave</returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.GetInterval(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetInterval(System.String)">
             <summary>
             Get interval offset from name.
             </summary>
             <param name="sinterval"></param>
             <returns>Offset or -1 if invalid.</returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.GetInterval(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetInterval(System.Int32)">
             <summary>
             Get interval name from note number offset.
             </summary>
             <param name="iint">The name or empty if invalid.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.FormatNotes(System.Collections.Generic.List{System.Int32})">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.FormatNotes(System.Collections.Generic.List{System.Int32})">
             <summary>
             Try to make a note and/or chord string from the param. If it can't find a chord return the individual notes.
             </summary>
             <param name="notes"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.AddChordScale(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.AddChordScale(System.String,System.String)">
             <summary>
             Add a new chord or scale definition.
             </summary>
             <param name="name">which</param>
             <param name="notes">what</param>
         </member>
-        <member name="M:NBagOfTricks.MusicDefinitions.GetChordScale(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetChordScale(System.String)">
             <summary>
             Get a defined chord or scale definition.
             </summary>
             <param name="name">which</param>
             <returns>The list of notes or empty if invalid.</returns>
         </member>
-        <member name="F:NBagOfTricks.SettingsCore._fp">
+        <member name="F:Ephemera.NBagOfTricks.SettingsCore._fp">
             <summary>The fully  qualified file path.</summary>
         </member>
-        <member name="M:NBagOfTricks.SettingsCore.Load(System.String,System.Type,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.SettingsCore.Load(System.String,System.Type,System.String)">
             <summary>
             Create object from file.
             </summary>
@@ -803,50 +803,50 @@
             <param name="fn">The file name, default is settings.json.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.SettingsCore.Save">
+        <member name="M:Ephemera.NBagOfTricks.SettingsCore.Save">
             <summary>
             Save object to file.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.SettingsCore.Cleanup">
+        <member name="M:Ephemera.NBagOfTricks.SettingsCore.Cleanup">
             <summary>
             Remove duplicate and invalid file names.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.StringUtils">
+        <member name="T:Ephemera.NBagOfTricks.StringUtils">
             <summary>
             Misc string extension methods.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsInteger(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.IsInteger(System.String)">
             <summary>
             Test for integer string.
             </summary>
             <param name="sourceString"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsFloat(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.IsFloat(System.String)">
             <summary>
             Test for float string.
             </summary>
             <param name="sourceString"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsAlpha(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.IsAlpha(System.String)">
             <summary>
             Test for alpha string.
             </summary>
             <param name="sourceString"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.IsReadable(System.Byte)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.IsReadable(System.Byte)">
             <summary>
             
             </summary>
             <param name="b"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.Right(System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.Right(System.String,System.Int32)">
             <summary>
             Returns the rightmost characters of a string based on the number of characters specified.
             </summary>
@@ -854,7 +854,7 @@
             <param name="numChars">The number of rightmost characters to return.</param>
             <returns>The rightmost characters of a string.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.Left(System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.Left(System.String,System.Int32)">
             <summary>
             Returns the leftmost number of chars in the string.
             </summary>
@@ -862,7 +862,7 @@
             <param name="numChars">The number of characters to get from the source string.</param>
             <returns>The leftmost number of characters to return from the source string supplied.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitByTokens(System.String,System.String,System.Boolean)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.SplitByTokens(System.String,System.String,System.Boolean)">
             <summary>
             Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
             </summary>
@@ -871,7 +871,7 @@
             <param name="trim">Remove whitespace at each end.</param>
             <returns>Return the parts as a list.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitByToken(System.String,System.String,System.Boolean)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.SplitByToken(System.String,System.String,System.Boolean)">
             <summary>
             Splits a tokenized (delimited) string into its parts and optionally trims whitespace.
             </summary>
@@ -880,7 +880,7 @@
             <param name="trim">Remove whitespace at each end.</param>
             <returns>Return the parts as a list.</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitKeepDelims(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.SplitKeepDelims(System.String,System.String)">
             <summary>
             Split by any of the delims but keep the delim.
             </summary>
@@ -888,7 +888,7 @@
             <param name="delims"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.SplitQuotedString(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.SplitQuotedString(System.String)">
             <summary>
             Specialized splitter, mainly for cmd line args.
             Input: 12345 "I HAVE SPACES" aaa bbb  "me too" ccc ddd "  and the last  "
@@ -897,7 +897,7 @@
             <param name="text"></param>
             <returns>Properly split values</returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.Contains(System.String,System.Char)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.Contains(System.String,System.Char)">
             <summary>
             Because .NET framework doesn't have this.
             </summary>
@@ -905,7 +905,7 @@
             <param name="c"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
             <summary>
             Update the MRU.
             </summary>
@@ -913,89 +913,89 @@
             <param name="newVal">New value(s) to perhaps insert.</param>
             <param name="mruSize">Optional max size.</param>
         </member>
-        <member name="M:NBagOfTricks.StringUtils.FormatSpecifier(System.Single)">
+        <member name="M:Ephemera.NBagOfTricks.StringUtils.FormatSpecifier(System.Single)">
             <summary>
             Gets the format specifier based upon the range of data.
             </summary>
             <param name="range">Data range</param>
             <returns>Format specifier</returns>
         </member>
-        <member name="T:NBagOfTricks.TimingAnalyzer">
+        <member name="T:Ephemera.NBagOfTricks.TimingAnalyzer">
             <summary>
             Diagnostics for timing measurement.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.TimingAnalyzer._watch">
+        <member name="F:Ephemera.NBagOfTricks.TimingAnalyzer._watch">
             <summary>The internal timer.</summary>
         </member>
-        <member name="F:NBagOfTricks.TimingAnalyzer._lastTicks">
+        <member name="F:Ephemera.NBagOfTricks.TimingAnalyzer._lastTicks">
             <summary>Last grab time for calculating diff.</summary>
         </member>
-        <member name="F:NBagOfTricks.TimingAnalyzer._skipCount">
+        <member name="F:Ephemera.NBagOfTricks.TimingAnalyzer._skipCount">
             <summary>Delay at start.</summary>
         </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.SampleSize">
+        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.SampleSize">
             <summary>Number of data points to grab for statistics.</summary>
         </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Skip">
+        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Skip">
             <summary>Number of initial data points to exclude from stats.</summary>
         </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Times">
+        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Times">
             <summary>Accumulated data points.</summary>
         </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Mean">
+        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Mean">
             <summary>Mean in msec.</summary>
         </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Min">
+        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Min">
             <summary>Min in msec.</summary>
         </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.Max">
+        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Max">
             <summary>Max in msec.</summary>
         </member>
-        <member name="P:NBagOfTricks.TimingAnalyzer.SD">
+        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.SD">
             <summary>SD in msec.</summary>
         </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.ToString">
+        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.ToString">
             <summary>
             Make readable.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.Stop">
+        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Stop">
             <summary>
             Stop accumulator.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.Arm">
+        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Arm">
             <summary>
             Execute this before measuring the duration of something.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.ReadOne">
+        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.ReadOne">
             <summary>
             Do one read since Arm().
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.Grab">
+        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Grab">
             <summary>
             Grab a data point. Also auto starts the timer.
             </summary>
             <returns>New stats are available.</returns>
         </member>
-        <member name="M:NBagOfTricks.TimingAnalyzer.TicksToMsec(System.Int64)">
+        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.TicksToMsec(System.Int64)">
             <summary>
             Conversion for stopwatch values.
             </summary>
             <param name="ticks"></param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.Tools">
+        <member name="T:Ephemera.NBagOfTricks.Tools">
             <summary>
             Higher level than Utils.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
             <summary>
             Reports non-ascii characters in a file. UTF-8 only.
             </summary>
@@ -1003,7 +1003,7 @@
             <param name="limit"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.Drawing.Color,System.Drawing.Font,System.Boolean)">
+        <member name="M:Ephemera.NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.Drawing.Color,System.Drawing.Font,System.Boolean)">
             <summary>
             Convert list of markdown lines to html.
             </summary>
@@ -1013,96 +1013,96 @@
             <param name="show">If true open in browser.</param>
             <returns>Valid html.</returns>
         </member>
-        <member name="T:NBagOfTricks.PNUT.OutputFormat">
+        <member name="T:Ephemera.NBagOfTricks.PNUT.OutputFormat">
             <summary>
             Generate a human readable or junit format output.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.PNUT.TestContext">
+        <member name="T:Ephemera.NBagOfTricks.PNUT.TestContext">
             <summary>
             Accumulates general test info.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.Format">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.Format">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentSuiteId">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.CurrentSuiteId">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentSuitePass">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.CurrentSuitePass">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.NumSuitesRun">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.NumSuitesRun">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.NumSuitesFailed">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.NumSuitesFailed">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.CurrentCasePass">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.CurrentCasePass">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.NumCasesRun">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.NumCasesRun">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.NumCasesFailed">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.NumCasesFailed">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.OutputLines">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.OutputLines">
             <summary></summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestContext.PropertyLines">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.PropertyLines">
             <summary></summary>
         </member>
-        <member name="T:NBagOfTricks.PNUT.AssertException">
+        <member name="T:Ephemera.NBagOfTricks.PNUT.AssertException">
             <summary>
             Specific exception type.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.PNUT.TestRunner">
+        <member name="T:Ephemera.NBagOfTricks.PNUT.TestRunner">
             <summary>
             The orchestrator of the test execution.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.PNUT.TestRunner.TIME_FORMAT">
+        <member name="F:Ephemera.NBagOfTricks.PNUT.TestRunner.TIME_FORMAT">
             <summary>Format string.</summary>
         </member>
-        <member name="F:NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT_MSEC">
+        <member name="F:Ephemera.NBagOfTricks.PNUT.TestRunner.DATE_TIME_FORMAT_MSEC">
             <summary>Format string.</summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestRunner.Context">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestRunner.Context">
             <summary>The test context.</summary>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestRunner.#ctor(NBagOfTricks.PNUT.OutputFormat)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestRunner.#ctor(Ephemera.NBagOfTricks.PNUT.OutputFormat)">
             <summary>
             Normal constructor.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestRunner.RunSuites(System.String[])">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestRunner.RunSuites(System.String[])">
             <summary>
             Run selected cases.
             </summary>
             <param name="which">List of names of test cases to run. If the test case names begin with these values they will run.</param>
         </member>
-        <member name="T:NBagOfTricks.PNUT.TestSuite">
+        <member name="T:Ephemera.NBagOfTricks.PNUT.TestSuite">
             <summary>
             Defining class for an individual test suite.
             </summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestSuite.CaseCnt">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestSuite.CaseCnt">
             <summary>Accumulated count.</summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestSuite.CaseFailCnt">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestSuite.CaseFailCnt">
             <summary>Accumulated count.</summary>
         </member>
-        <member name="P:NBagOfTricks.PNUT.TestSuite.Context">
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestSuite.Context">
             <summary>Common context info.</summary>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.RunSuite">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.RunSuite">
             <summary>
             All test case specifications must supply this.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordResult(System.Boolean,System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.RecordResult(System.Boolean,System.String,System.String,System.Int32)">
             <summary>
             Record a test result.
             </summary>
@@ -1111,27 +1111,27 @@
             <param name="file"></param>
             <param name="line"></param>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordProperty(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.RecordProperty(System.String,System.String)">
             <summary>
             Record a property into the report.
             </summary>
             <param name="name"></param>
             <param name="value"></param>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.RecordVerbatim(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.RecordVerbatim(System.String)">
             <summary>
             Record a verbatim text line into the report.
             </summary>
             <param name="message"></param>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_INFO(System.String,System.Object[])">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_INFO(System.String,System.Object[])">
             <summary>
             Print some info to the report.
             </summary>
             <param name="message">Info text</param>
             <param name="vars">Optional vars to print</param>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_PROPERTY``1(System.String,``0)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_PROPERTY``1(System.String,``0)">
             <summary>
             Add an element to the property collection.
             </summary>
@@ -1139,7 +1139,7 @@
             <param name="name"></param>
             <param name="value"></param>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_TRUE(System.Boolean,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_TRUE(System.Boolean,System.String,System.Int32)">
             <summary>
             Checks whether the given condition is true.
             </summary>
@@ -1148,7 +1148,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_FALSE(System.Boolean,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_FALSE(System.Boolean,System.String,System.Int32)">
             <summary>
             Checks whether the given condition is false.
             </summary>
@@ -1157,7 +1157,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_NULL(System.Object,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_NULL(System.Object,System.String,System.Int32)">
             <summary>
             Checks whether the given object is null.
             </summary>
@@ -1166,7 +1166,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_NOT_NULL(System.Object,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_NOT_NULL(System.Object,System.String,System.Int32)">
             <summary>
             Checks whether the given object is not null.
             </summary>
@@ -1175,7 +1175,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_ASSERT``1(``0,``0,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_ASSERT``1(``0,``0,System.String,System.Int32)">
             <summary>
             Prints the condition and gens assert/exception.
             </summary>
@@ -1185,7 +1185,7 @@
             <param name="file"></param>
             <param name="line"></param>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_EQUAL``1(``0,``0,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_EQUAL``1(``0,``0,System.String,System.Int32)">
             <summary>
             Checks whether the first parameter is equal to the second.
             </summary>
@@ -1196,7 +1196,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_NOT_EQUAL``1(``0,``0,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_NOT_EQUAL``1(``0,``0,System.String,System.Int32)">
             <summary>
             Checks whether the first parameter is not equal to the second.
             </summary>
@@ -1207,7 +1207,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_LESS``1(``0,``0,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_LESS``1(``0,``0,System.String,System.Int32)">
             <summary>
             Checks whether the first parameter is less than the second.
             </summary>
@@ -1218,7 +1218,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_LESS_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_LESS_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
             <summary>
             Checks whether the first parameter is less than or equal to the second.
             </summary>
@@ -1229,7 +1229,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_GREATER``1(``0,``0,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_GREATER``1(``0,``0,System.String,System.Int32)">
             <summary>
             Checks whether the first parameter is greater than the second.
             </summary>
@@ -1240,7 +1240,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_GREATER_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_GREATER_OR_EQUAL``1(``0,``0,System.String,System.Int32)">
             <summary>
             Checks whether the first parameter is greater than or equal to the second.
             </summary>
@@ -1251,7 +1251,7 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.PNUT.TestSuite.UT_CLOSE(System.Double,System.Double,System.Double,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_CLOSE(System.Double,System.Double,System.Double,System.String,System.Int32)">
             <summary>
             Checks whether the first parameter is within the given tolerance from the second parameter.
             This is useful for comparing floating point values.
@@ -1263,155 +1263,155 @@
             <param name="line"></param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.ScriptCompiler.CompileResultType">
+        <member name="T:Ephemera.NBagOfTricks.ScriptCompiler.CompileResultType">
             <summary>General script result - error/warn etc.</summary>
         </member>
-        <member name="T:NBagOfTricks.ScriptCompiler.CompileResult">
+        <member name="T:Ephemera.NBagOfTricks.ScriptCompiler.CompileResult">
             <summary>General script result container.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.ResultType">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.CompileResult.ResultType">
             <summary>Where it came from.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.SourceFile">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.CompileResult.SourceFile">
             <summary>Original source file.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.LineNumber">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.CompileResult.LineNumber">
             <summary>Original source line number. -1 means invalid or unknown.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.CompileResult.Message">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.CompileResult.Message">
             <summary>Content.</summary>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.CompileResult.ToString">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.CompileResult.ToString">
             <summary>For humans.</summary>
         </member>
-        <member name="T:NBagOfTricks.ScriptCompiler.FileContext">
+        <member name="T:Ephemera.NBagOfTricks.ScriptCompiler.FileContext">
             <summary>Parser helper class.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.FileContext.SourceFile">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.FileContext.SourceFile">
             <summary>Current source file.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.FileContext.LineNumber">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.FileContext.LineNumber">
             <summary>Current source line.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.FileContext.CodeLines">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.FileContext.CodeLines">
             <summary>Accumulated script code lines.</summary>
         </member>
-        <member name="T:NBagOfTricks.ScriptCompiler.ScriptCompilerCore">
+        <member name="T:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore">
             <summary>Parses/compiles script file(s).</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.IgnoreWarnings">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.IgnoreWarnings">
             <summary>Client needs to tell us this.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.ScriptPath">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.ScriptPath">
             <summary>Client needs to tell us this for Include path - optional.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.SystemDlls">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.SystemDlls">
             <summary>Default system dlls. Client can add or subtract.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.LocalDlls">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.LocalDlls">
             <summary>App dlls.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Usings">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Usings">
             <summary>Additional using statements not supplied by dlls.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Script">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Script">
             <summary>The compiled script.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Results">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.Results">
             <summary>Accumulated errors/results.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.SourceFiles">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.SourceFiles">
             <summary>All active source files. Provided so client can monitor for external changes.</summary>
         </member>
-        <member name="P:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.TempDir">
+        <member name="P:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.TempDir">
             <summary>Compile products are here.</summary>
         </member>
-        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._scriptName">
+        <member name="F:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore._scriptName">
             <summary>Script info.</summary>
         </member>
-        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._initLines">
+        <member name="F:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore._initLines">
             <summary>Accumulated lines to go in the constructor.</summary>
         </member>
-        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._filesToCompile">
+        <member name="F:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore._filesToCompile">
             <summary>Products of file preprocess. Key is generated file name.</summary>
         </member>
-        <member name="F:NBagOfTricks.ScriptCompiler.ScriptCompilerCore._addWrapper">
+        <member name="F:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore._addWrapper">
             <summary>Add the class wrapper if not in script.</summary>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreCompile">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreCompile">
             <summary>Called before compiler starts.</summary>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PostCompile">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PostCompile">
             <summary>Called after compiler finished.</summary>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessLine(System.String,NBagOfTricks.ScriptCompiler.FileContext)">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessLine(System.String,Ephemera.NBagOfTricks.ScriptCompiler.FileContext)">
             <summary>Called for each line in the source file before compiling.</summary>
             <param name="sline">Trimmed line</param>
             <param name="pcont">File context</param>
             <returns>True if handled</returns>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileScript(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileScript(System.String)">
             <summary>
             Run the compiler on a sript file.
             </summary>
             <param name="scriptfn">Fully qualified path to main file.</param>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileText(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileText(System.String)">
             <summary>
             Run the compiler on a text block.
             </summary>
             <param name="text">Text to compile.</param>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileNative(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.CompileNative(System.String)">
             <summary>
             The actual compiler driver.
             </summary>
             <param name="baseDir">Fully qualified path to main file.</param>
             <returns>Compiled script</returns>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessFile(NBagOfTricks.ScriptCompiler.FileContext)">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.PreprocessFile(Ephemera.NBagOfTricks.ScriptCompiler.FileContext)">
             <summary>
             Parse one file. Recursive to support nested include(fn).
             </summary>
             <param name="pcont">The parse context.</param>
             <returns>True if a valid file.</returns>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.GenTopOfFile(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.GenTopOfFile(System.String)">
             <summary>
             Create the boilerplate file top stuff.
             </summary>
             <param name="fn">Source file name. Empty means it's an internal file.</param>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.ScriptCompiler.ScriptCompilerCore.GenBottomOfFile">
+        <member name="M:Ephemera.NBagOfTricks.ScriptCompiler.ScriptCompilerCore.GenBottomOfFile">
             <summary>
             Create the boilerplate file bottom stuff.
             </summary>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.SimpleIpc.ClientStatus">
+        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.ClientStatus">
             <summary>Possible outcomes.</summary>
         </member>
-        <member name="T:NBagOfTricks.SimpleIpc.Client">
+        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.Client">
             <summary>Companion client to server. This runs in a new process.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.Client._pipeName">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Client._pipeName">
             <summary>Pipe name.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.Client._log">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Client._log">
             <summary>My logger.</summary>
         </member>
-        <member name="P:NBagOfTricks.SimpleIpc.Client.Error">
+        <member name="P:Ephemera.NBagOfTricks.SimpleIpc.Client.Error">
             <summary>Caller may be able to use this.</summary>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.Client.#ctor(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Client.#ctor(System.String,System.String)">
             <summary>
             Constructor.
             </summary>
             <param name="pipeName">Pipe name to use.</param>
             <param name="logfn"></param>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.Client.Send(System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Client.Send(System.String,System.Int32)">
             <summary>
             Blocking send string.
             </summary>
@@ -1419,130 +1419,130 @@
             <param name="timeout">Msec to wait for completion.</param>
             <returns></returns>
         </member>
-        <member name="T:NBagOfTricks.SimpleIpc.MpLog">
+        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.MpLog">
             <summary>
             A simple logger which handles client calls from multiple processes/threads.
             This is not intended to be a general purpose logger but one that serves a specific purpose,
             to debug the SimpleIpc component.
             </summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.MpLog.MUTEX_GUID">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.MpLog.MUTEX_GUID">
             <summary>File lock id.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.MpLog._filename">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.MpLog._filename">
             <summary>Which file.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.MpLog._category">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.MpLog._category">
             <summary>For sorting.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.MpLog._maxSize">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.MpLog._maxSize">
             <summary>Rollover size.</summary>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.MpLog.#ctor(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.MpLog.#ctor(System.String,System.String)">
             <summary>
             Init the log file.
             </summary>
             <param name="filename">The file.</param>
             <param name="category">The category.</param>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.MpLog.Write(System.String,System.Boolean)">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.MpLog.Write(System.String,System.Boolean)">
             <summary>
             Add a line.
             </summary>
             <param name="s"></param>
             <param name="error">T/F</param>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.MpLog.Clear">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.MpLog.Clear">
             <summary>
             Empty the log file.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.SimpleIpc.ConnectionStatus">
+        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.ConnectionStatus">
             <summary>Possible states/outcomes.</summary>
         </member>
-        <member name="T:NBagOfTricks.SimpleIpc.ConnectionState">
+        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.ConnectionState">
             <summary>Per connection.</summary>
         </member>
-        <member name="T:NBagOfTricks.SimpleIpc.ServerEventArgs">
+        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.ServerEventArgs">
             <summary>Notify client of some connection event.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.Server._pipeName">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._pipeName">
             <summary>Named pipe name.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.Server._thread">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._thread">
             <summary>The server thread.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.Server._running">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._running">
             <summary>Flag to unblock the listen and end the thread.</summary>
         </member>
-        <member name="E:NBagOfTricks.SimpleIpc.Server.ServerEvent">
+        <member name="E:Ephemera.NBagOfTricks.SimpleIpc.Server.ServerEvent">
             <summary>Something happened. Client will have to take care of thread issues.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.Server._cancelEvent">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._cancelEvent">
             <summary>The canceller.</summary>
         </member>
-        <member name="F:NBagOfTricks.SimpleIpc.Server._log">
+        <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._log">
             <summary>My logger.</summary>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.Server.#ctor(System.String,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Server.#ctor(System.String,System.String)">
             <summary>
             Constructor.
             </summary>
             <param name="pipeName"></param>
             <param name="logfn"></param>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.Server.Start">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Server.Start">
             <summary>
             Run it.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.Server.Stop">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Server.Stop">
             <summary>
             Stop the server - called from main.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.Server.Dispose">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Server.Dispose">
             <summary>
             Required.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.SimpleIpc.Server.ServerThread">
+        <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Server.ServerThread">
             <summary>
             Listen for client messages. Interruptible by setting _cancelEvent.
             </summary>
         </member>
-        <member name="T:NBagOfTricks.Slog.LogLevel">
+        <member name="T:Ephemera.NBagOfTricks.Slog.LogLevel">
             <summary>Log level options.</summary>
         </member>
-        <member name="T:NBagOfTricks.Slog.LogEntry">
+        <member name="T:Ephemera.NBagOfTricks.Slog.LogEntry">
             <summary>Internal log entry data container.</summary>
         </member>
-        <member name="M:NBagOfTricks.Slog.LogEntry.#ctor(System.DateTime,NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32,System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.LogEntry.#ctor(System.DateTime,Ephemera.NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32,System.String)">
             <summary>Internal log entry data container.</summary>
         </member>
-        <member name="T:NBagOfTricks.Slog.LogEventArgs">
+        <member name="T:Ephemera.NBagOfTricks.Slog.LogEventArgs">
             <summary>Log event for notification.</summary>
         </member>
-        <member name="T:NBagOfTricks.Slog.Scoper">
+        <member name="T:Ephemera.NBagOfTricks.Slog.Scoper">
             <summary>Experimental class to log enter/exit scope. Use syntax "using new Scoper(...);"</summary>
         </member>
-        <member name="T:NBagOfTricks.Slog.Logger">
+        <member name="T:Ephemera.NBagOfTricks.Slog.Logger">
             <summary>Client creates as many of these as needed.</summary>
         </member>
-        <member name="P:NBagOfTricks.Slog.Logger.Name">
+        <member name="P:Ephemera.NBagOfTricks.Slog.Logger.Name">
             <summary>ID for this logger.</summary>
         </member>
-        <member name="P:NBagOfTricks.Slog.Logger.Enable">
+        <member name="P:Ephemera.NBagOfTricks.Slog.Logger.Enable">
             <summary>Turn logger on or off.</summary>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.#ctor(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.#ctor(System.String)">
             <summary>
             Constructor.
             </summary>
             <param name="name">Client assigned name.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.Trace(System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Trace(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1550,7 +1550,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.Debug(System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Debug(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1558,7 +1558,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.Info(System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Info(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1566,7 +1566,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.Warn(System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Warn(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1574,7 +1574,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.Error(System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Error(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
             </summary>
@@ -1582,7 +1582,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.Exception(System.Exception,System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Exception(System.Exception,System.String,System.String,System.Int32)">
             <summary>
             Log an exception.
             </summary>
@@ -1591,7 +1591,7 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.Logger.AddEntry(NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.AddEntry(Ephemera.NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32)">
             <summary>
             Private common function.
             </summary>
@@ -1600,68 +1600,68 @@
             <param name="file"></param>
             <param name="line"></param>
         </member>
-        <member name="T:NBagOfTricks.Slog.LogManager">
+        <member name="T:Ephemera.NBagOfTricks.Slog.LogManager">
             <summary>Global server.</summary>
         </member>
-        <member name="F:NBagOfTricks.Slog.LogManager._instance">
+        <member name="F:Ephemera.NBagOfTricks.Slog.LogManager._instance">
             <summary>Lazy singleton. https://csharpindepth.com/Articles/Singleton.</summary>
         </member>
-        <member name="F:NBagOfTricks.Slog.LogManager._loggers">
+        <member name="F:Ephemera.NBagOfTricks.Slog.LogManager._loggers">
             <summary>All loggers. Key is client supplied name.</summary>
         </member>
-        <member name="F:NBagOfTricks.Slog.LogManager._queue">
+        <member name="F:Ephemera.NBagOfTricks.Slog.LogManager._queue">
             <summary>Log record queue.</summary>
         </member>
-        <member name="F:NBagOfTricks.Slog.LogManager._housekeepTime">
+        <member name="F:Ephemera.NBagOfTricks.Slog.LogManager._housekeepTime">
             <summary>For checking file rollover.</summary>
         </member>
-        <member name="F:NBagOfTricks.Slog.LogManager._levelNames">
+        <member name="F:Ephemera.NBagOfTricks.Slog.LogManager._levelNames">
             <summary>Constant width strings for visual aid.</summary>
         </member>
-        <member name="F:NBagOfTricks.Slog.LogManager._running">
+        <member name="F:Ephemera.NBagOfTricks.Slog.LogManager._running">
             <summary>Queue management.</summary>
         </member>
-        <member name="F:NBagOfTricks.Slog.LogManager._tokenSource">
+        <member name="F:Ephemera.NBagOfTricks.Slog.LogManager._tokenSource">
             <summary>Queue management.</summary>
         </member>
-        <member name="P:NBagOfTricks.Slog.LogManager.Instance">
+        <member name="P:Ephemera.NBagOfTricks.Slog.LogManager.Instance">
             <summary>Singleton accessor.</summary>
         </member>
-        <member name="P:NBagOfTricks.Slog.LogManager.MinLevelFile">
+        <member name="P:Ephemera.NBagOfTricks.Slog.LogManager.MinLevelFile">
             <summary>Event filter for file.</summary>
         </member>
-        <member name="P:NBagOfTricks.Slog.LogManager.MinLevelNotif">
+        <member name="P:Ephemera.NBagOfTricks.Slog.LogManager.MinLevelNotif">
             <summary>Event filter for callback event.</summary>
         </member>
-        <member name="P:NBagOfTricks.Slog.LogManager.TimeFormat">
+        <member name="P:Ephemera.NBagOfTricks.Slog.LogManager.TimeFormat">
             <summary>Format for file records.</summary>
         </member>
-        <member name="P:NBagOfTricks.Slog.LogManager.QueueSize">
+        <member name="P:Ephemera.NBagOfTricks.Slog.LogManager.QueueSize">
             <summary>For diagnostics.</summary>
         </member>
-        <member name="E:NBagOfTricks.Slog.LogManager.LogEvent">
+        <member name="E:Ephemera.NBagOfTricks.Slog.LogManager.LogEvent">
             <summary>Callback event.</summary>
         </member>
-        <member name="M:NBagOfTricks.Slog.LogManager.CreateLogger(System.String)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.LogManager.CreateLogger(System.String)">
             <summary>
             Create a new client side logger.
             </summary>
             <param name="name">Logger ID. Can be shared.</param>
             <returns>Minty fresh logger.</returns>
         </member>
-        <member name="M:NBagOfTricks.Slog.LogManager.Run(System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.LogManager.Run(System.String,System.Int32)">
             <summary>
             Inititialize builtin file logger.
             </summary>
             <param name="logFilePath">Builtin logger file path.</param>
             <param name="logSize">Builtin logger max size. 0 means no file logger, just notifications.</param>
         </member>
-        <member name="M:NBagOfTricks.Slog.LogManager.Stop">
+        <member name="M:Ephemera.NBagOfTricks.Slog.LogManager.Stop">
             <summary>
             Be polite, shut it down.
             </summary>
         </member>
-        <member name="M:NBagOfTricks.Slog.LogManager.LogThis(NBagOfTricks.Slog.LogEntry)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.LogManager.LogThis(Ephemera.NBagOfTricks.Slog.LogEntry)">
             <summary>
             Client logger wants to log something.
             </summary>

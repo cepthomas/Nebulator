@@ -1,142 +1,142 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>MidiLib</name>
+        <name>Ephemera.MidiLib</name>
     </assembly>
     <members>
-        <member name="T:MidiLib.BarBar">
+        <member name="T:Ephemera.MidiLib.BarBar">
             <summary>The control.</summary>
         </member>
-        <member name="F:MidiLib.BarBar._lastXPos">
+        <member name="F:Ephemera.MidiLib.BarBar._lastXPos">
             <summary>For tracking mouse moves.</summary>
         </member>
-        <member name="F:MidiLib.BarBar._toolTip">
+        <member name="F:Ephemera.MidiLib.BarBar._toolTip">
             <summary>Tooltip for mousing.</summary>
         </member>
-        <member name="F:MidiLib.BarBar._format">
+        <member name="F:Ephemera.MidiLib.BarBar._format">
             <summary>For drawing text.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.Length">
+        <member name="P:Ephemera.MidiLib.BarBar.Length">
             <summary>Total length of the bar.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.Start">
+        <member name="P:Ephemera.MidiLib.BarBar.Start">
             <summary>Start of marked region.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.End">
+        <member name="P:Ephemera.MidiLib.BarBar.End">
             <summary>End of marked region.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.Current">
+        <member name="P:Ephemera.MidiLib.BarBar.Current">
             <summary>Where we be now.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.ProgressColor">
+        <member name="P:Ephemera.MidiLib.BarBar.ProgressColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.MarkerColor">
+        <member name="P:Ephemera.MidiLib.BarBar.MarkerColor">
             <summary>For styling.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.FontLarge">
+        <member name="P:Ephemera.MidiLib.BarBar.FontLarge">
             <summary>Big font.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.FontSmall">
+        <member name="P:Ephemera.MidiLib.BarBar.FontSmall">
             <summary>Baby font.</summary>
         </member>
-        <member name="P:MidiLib.BarBar.TimeDefs">
+        <member name="P:Ephemera.MidiLib.BarBar.TimeDefs">
             <summary>All the important beat points with their names. Used also by tooltip.</summary>
         </member>
-        <member name="E:MidiLib.BarBar.CurrentTimeChanged">
+        <member name="E:Ephemera.MidiLib.BarBar.CurrentTimeChanged">
             <summary>Value changed by user.</summary>
         </member>
-        <member name="M:MidiLib.BarBar.#ctor">
+        <member name="M:Ephemera.MidiLib.BarBar.#ctor">
             <summary>
             Normal constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.BarBar.Dispose(System.Boolean)">
+        <member name="M:Ephemera.MidiLib.BarBar.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:MidiLib.BarBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:Ephemera.MidiLib.BarBar.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Draw the control.
             </summary>
         </member>
-        <member name="M:MidiLib.BarBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:Ephemera.MidiLib.BarBar.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
             Handle selection operations.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.BarBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.BarBar.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle mouse position changes.
             </summary>
         </member>
-        <member name="M:MidiLib.BarBar.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.BarBar.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handle dragging.
             </summary>
         </member>
-        <member name="M:MidiLib.BarBar.IncrementCurrent(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarBar.IncrementCurrent(System.Int32)">
             <summary>
             Change current time. 
             </summary>
             <param name="num">Subdivs/ticks.</param>
             <returns>True if at the end of the sequence.</returns>
         </member>
-        <member name="M:MidiLib.BarBar.Reset">
+        <member name="M:Ephemera.MidiLib.BarBar.Reset">
             <summary>
             Clear everything.
             </summary>
         </member>
-        <member name="M:MidiLib.BarBar.GetTimeDefString(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarBar.GetTimeDefString(System.Int32)">
             <summary>
             Gets the time def string associated with val.
             </summary>
             <param name="val"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.BarBar.GetSubdivFromMouse(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarBar.GetSubdivFromMouse(System.Int32)">
             <summary>
             Convert x pos to subdiv.
             </summary>
             <param name="x"></param>
         </member>
-        <member name="M:MidiLib.BarBar.Scale(MidiLib.BarTime)">
+        <member name="M:Ephemera.MidiLib.BarBar.Scale(Ephemera.MidiLib.BarTime)">
             <summary>
             Map from time to UI pixels.
             </summary>
             <param name="val"></param>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.BarSpan">
+        <member name="T:Ephemera.MidiLib.BarSpan">
             <summary>Sort of like TimeSpan but for musical terminology. TODO finish and integrate with BarTime.</summary>
         </member>
-        <member name="F:MidiLib.BarSpan._id">
+        <member name="F:Ephemera.MidiLib.BarSpan._id">
             <summary>For hashing.</summary>
         </member>
-        <member name="F:MidiLib.BarSpan._all_ids">
+        <member name="F:Ephemera.MidiLib.BarSpan._all_ids">
             <summary>Increment for unique value.</summary>
         </member>
-        <member name="P:MidiLib.BarSpan.TotalSubdivs">
+        <member name="P:Ephemera.MidiLib.BarSpan.TotalSubdivs">
             <summary>The time in subdivs. Always zero-based.</summary>
         </member>
-        <member name="P:MidiLib.BarSpan.Bar">
+        <member name="P:Ephemera.MidiLib.BarSpan.Bar">
             <summary>The bar number.</summary>
         </member>
-        <member name="P:MidiLib.BarSpan.Beat">
+        <member name="P:Ephemera.MidiLib.BarSpan.Beat">
             <summary>The beat number in the bar.</summary>
         </member>
-        <member name="P:MidiLib.BarSpan.Subdiv">
+        <member name="P:Ephemera.MidiLib.BarSpan.Subdiv">
             <summary>The subdiv in the beat.</summary>
         </member>
-        <member name="M:MidiLib.BarSpan.#ctor">
+        <member name="M:Ephemera.MidiLib.BarSpan.#ctor">
             <summary>
             Default constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
             Constructor from bar/beat/subdiv.
             </summary>
@@ -144,31 +144,31 @@
             <param name="beat"></param>
             <param name="subdiv"></param>
         </member>
-        <member name="M:MidiLib.BarSpan.#ctor(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarSpan.#ctor(System.Int32)">
             <summary>
             Constructor from subdivs.
             </summary>
             <param name="subdivs">Number of subdivs.</param>
         </member>
-        <member name="M:MidiLib.BarSpan.Reset">
+        <member name="M:Ephemera.MidiLib.BarSpan.Reset">
             <summary>
             Hard reset.
             </summary>
         </member>
-        <member name="M:MidiLib.BarSpan.Constrain(MidiLib.BarSpan,MidiLib.BarSpan)">
+        <member name="M:Ephemera.MidiLib.BarSpan.Constrain(Ephemera.MidiLib.BarSpan,Ephemera.MidiLib.BarSpan)">
             <summary>
             Utility helper function.
             </summary>
             <param name="lower"></param>
             <param name="upper"></param>
         </member>
-        <member name="M:MidiLib.BarSpan.Increment(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarSpan.Increment(System.Int32)">
             <summary>
             Update current value.
             </summary>
             <param name="subdivs">By this number of subdivs.</param>
         </member>
-        <member name="M:MidiLib.BarSpan.SetRounded(System.Int32,MidiLib.SnapType,System.Boolean)">
+        <member name="M:Ephemera.MidiLib.BarSpan.SetRounded(System.Int32,Ephemera.MidiLib.SnapType,System.Boolean)">
             <summary>
             Set to subdiv using specified rounding.
             </summary>
@@ -176,51 +176,51 @@
             <param name="snapType"></param>
             <param name="up">To ceiling otherwise closest.</param>
         </member>
-        <member name="M:MidiLib.BarSpan.Format">
+        <member name="M:Ephemera.MidiLib.BarSpan.Format">
             <summary>
             Format a readable string.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.BarSpan.ToString">
+        <member name="M:Ephemera.MidiLib.BarSpan.ToString">
             <summary>
             Format a readable string.
             </summary>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.BarTime">
+        <member name="T:Ephemera.MidiLib.BarTime">
             <summary>Sort of like DateTime but for musical terminology.</summary>
         </member>
-        <member name="F:MidiLib.BarTime._id">
+        <member name="F:Ephemera.MidiLib.BarTime._id">
             <summary>For hashing.</summary>
         </member>
-        <member name="F:MidiLib.BarTime._all_ids">
+        <member name="F:Ephemera.MidiLib.BarTime._all_ids">
             <summary>Increment for unique value.</summary>
         </member>
-        <member name="F:MidiLib.BarTime.LOW_RES_PPQ">
+        <member name="F:Ephemera.MidiLib.BarTime.LOW_RES_PPQ">
             <summary>Some features are at a lower resolution.</summary>
         </member>
-        <member name="P:MidiLib.BarTime.TotalSubdivs">
+        <member name="P:Ephemera.MidiLib.BarTime.TotalSubdivs">
             <summary>The time in subdivs. Always zero-based.</summary>
         </member>
-        <member name="P:MidiLib.BarTime.TotalBeats">
+        <member name="P:Ephemera.MidiLib.BarTime.TotalBeats">
             <summary>The time in beats. Always zero-based.</summary>
         </member>
-        <member name="P:MidiLib.BarTime.Bar">
+        <member name="P:Ephemera.MidiLib.BarTime.Bar">
             <summary>The bar number.</summary>
         </member>
-        <member name="P:MidiLib.BarTime.Beat">
+        <member name="P:Ephemera.MidiLib.BarTime.Beat">
             <summary>The beat number in the bar.</summary>
         </member>
-        <member name="P:MidiLib.BarTime.Subdiv">
+        <member name="P:Ephemera.MidiLib.BarTime.Subdiv">
             <summary>The subdiv in the beat.</summary>
         </member>
-        <member name="M:MidiLib.BarTime.#ctor">
+        <member name="M:Ephemera.MidiLib.BarTime.#ctor">
             <summary>
             Default constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.BarTime.#ctor(System.Int32,System.Int32,System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarTime.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
             Constructor from bar/beat/subdiv.
             </summary>
@@ -228,38 +228,38 @@
             <param name="beat"></param>
             <param name="subdiv"></param>
         </member>
-        <member name="M:MidiLib.BarTime.#ctor(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarTime.#ctor(System.Int32)">
             <summary>
             Constructor from subdivs.
             </summary>
             <param name="subdivs">Number of subdivs.</param>
         </member>
-        <member name="M:MidiLib.BarTime.#ctor(System.Double)">
+        <member name="M:Ephemera.MidiLib.BarTime.#ctor(System.Double)">
             <summary>
             Construct a BarTime from Beat.Subdiv representation as a double. Subdiv is LOW_RES_PPQ.
             </summary>
             <param name="beat"></param>
             <returns>New BarTime.</returns>
         </member>
-        <member name="M:MidiLib.BarTime.Reset">
+        <member name="M:Ephemera.MidiLib.BarTime.Reset">
             <summary>
             Hard reset.
             </summary>
         </member>
-        <member name="M:MidiLib.BarTime.Constrain(MidiLib.BarTime,MidiLib.BarTime)">
+        <member name="M:Ephemera.MidiLib.BarTime.Constrain(Ephemera.MidiLib.BarTime,Ephemera.MidiLib.BarTime)">
             <summary>
             Utility helper function.
             </summary>
             <param name="lower"></param>
             <param name="upper"></param>
         </member>
-        <member name="M:MidiLib.BarTime.Increment(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarTime.Increment(System.Int32)">
             <summary>
             Update current value.
             </summary>
             <param name="subdivs">By this number of subdivs.</param>
         </member>
-        <member name="M:MidiLib.BarTime.SetRounded(System.Int32,MidiLib.SnapType,System.Boolean)">
+        <member name="M:Ephemera.MidiLib.BarTime.SetRounded(System.Int32,Ephemera.MidiLib.SnapType,System.Boolean)">
             <summary>
             Set to subdiv using specified rounding.
             </summary>
@@ -267,121 +267,121 @@
             <param name="snapType"></param>
             <param name="up">To ceiling otherwise closest.</param>
         </member>
-        <member name="M:MidiLib.BarTime.Format">
+        <member name="M:Ephemera.MidiLib.BarTime.Format">
             <summary>
             Format a readable string.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.BarTime.ToString">
+        <member name="M:Ephemera.MidiLib.BarTime.ToString">
             <summary>
             Format a readable string.
             </summary>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.BingBong">
+        <member name="T:Ephemera.MidiLib.BingBong">
             <summary>
             Experimental midi controller.
             </summary>
         </member>
-        <member name="F:MidiLib.BingBong._bmp">
+        <member name="F:Ephemera.MidiLib.BingBong._bmp">
             <summary>Background image data.</summary>
         </member>
-        <member name="F:MidiLib.BingBong._toolTip">
+        <member name="F:Ephemera.MidiLib.BingBong._toolTip">
             <summary>Tool tip.</summary>
         </member>
-        <member name="F:MidiLib.BingBong._lastNote">
+        <member name="F:Ephemera.MidiLib.BingBong._lastNote">
             <summary>Last key down.</summary>
         </member>
-        <member name="F:MidiLib.BingBong._pen">
+        <member name="F:Ephemera.MidiLib.BingBong._pen">
             <summary>The pen.</summary>
         </member>
-        <member name="P:MidiLib.BingBong.Channel">
+        <member name="P:Ephemera.MidiLib.BingBong.Channel">
             <summary>Channel number 1-based.</summary>
         </member>
-        <member name="P:MidiLib.BingBong.MinNote">
+        <member name="P:Ephemera.MidiLib.BingBong.MinNote">
             <summary>Lowest note. Adjust to taste.</summary>
         </member>
-        <member name="P:MidiLib.BingBong.MaxNote">
+        <member name="P:Ephemera.MidiLib.BingBong.MaxNote">
             <summary>Highest note. Adjust to taste.</summary>
         </member>
-        <member name="P:MidiLib.BingBong.MinControl">
+        <member name="P:Ephemera.MidiLib.BingBong.MinControl">
             <summary>Min control value. For velocity = off.</summary>
         </member>
-        <member name="P:MidiLib.BingBong.MaxControl">
+        <member name="P:Ephemera.MidiLib.BingBong.MaxControl">
             <summary>Max control value. For velocity = loudest.</summary>
         </member>
-        <member name="P:MidiLib.BingBong.DrawNoteGrid">
+        <member name="P:Ephemera.MidiLib.BingBong.DrawNoteGrid">
             <summary>Visibility.</summary>
         </member>
-        <member name="P:MidiLib.BingBong.CaptureEnable">
+        <member name="P:Ephemera.MidiLib.BingBong.CaptureEnable">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.BingBong.DeviceName">
+        <member name="P:Ephemera.MidiLib.BingBong.DeviceName">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.BingBong.Valid">
+        <member name="P:Ephemera.MidiLib.BingBong.Valid">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.BingBong.LogEnable">
+        <member name="P:Ephemera.MidiLib.BingBong.LogEnable">
             <inheritdoc />
         </member>
-        <member name="E:MidiLib.BingBong.InputEvent">
+        <member name="E:Ephemera.MidiLib.BingBong.InputEvent">
             <summary>Click press info.</summary>
         </member>
-        <member name="M:MidiLib.BingBong.#ctor">
+        <member name="M:Ephemera.MidiLib.BingBong.#ctor">
             <summary>
             Normal constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.BingBong.OnLoad(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.BingBong.OnLoad(System.EventArgs)">
             <summary>
             Init after properties set.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.BingBong.Dispose(System.Boolean)">
+        <member name="M:Ephemera.MidiLib.BingBong.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:MidiLib.BingBong.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:Ephemera.MidiLib.BingBong.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paint the surface.
             </summary>
             <param name="pe"></param>
         </member>
-        <member name="M:MidiLib.BingBong.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.BingBong.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Show the pixel info.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.BingBong.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.BingBong.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Send info to client.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.BingBong.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.BingBong.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.BingBong.OnResize(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.BingBong.OnResize(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.BingBong.DrawBitmap">
+        <member name="M:Ephemera.MidiLib.BingBong.DrawBitmap">
             <summary>
             Render.
             </summary>
         </member>
-        <member name="M:MidiLib.BingBong.XyToMidi(System.Int32,System.Int32)">
+        <member name="M:Ephemera.MidiLib.BingBong.XyToMidi(System.Int32,System.Int32)">
             <summary>
             Map function.
             </summary>
@@ -389,123 +389,123 @@
             <param name="y">UI location.</param>
             <returns>Tuple of note num and vertical value.</returns>
         </member>
-        <member name="T:MidiLib.Channel">
+        <member name="T:Ephemera.MidiLib.Channel">
             <summary>Describes one midi output channel. Some properties are optional.</summary>
         </member>
-        <member name="F:MidiLib.Channel._events">
+        <member name="F:Ephemera.MidiLib.Channel._events">
             <summary>The collection of playable events for this channel and pattern. Key is the internal subdiv/time.</summary>
         </member>
-        <member name="F:MidiLib.Channel._transients">
+        <member name="F:Ephemera.MidiLib.Channel._transients">
             <summary>Things that are executed once and disappear: NoteOffs, script send now. Key is the internal subdiv/time.</summary>
         </member>
-        <member name="F:MidiLib.Channel._volume">
+        <member name="F:Ephemera.MidiLib.Channel._volume">
             <summary>Current volume.</summary>
         </member>
-        <member name="P:MidiLib.Channel.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.Channel.ChannelNumber">
             <summary>Actual 1-based midi channel number - required.</summary>
         </member>
-        <member name="P:MidiLib.Channel.State">
+        <member name="P:Ephemera.MidiLib.Channel.State">
             <summary>For muting/soloing.</summary>
         </member>
-        <member name="P:MidiLib.Channel.Patch">
+        <member name="P:Ephemera.MidiLib.Channel.Patch">
             <summary>Current patch.</summary>
         </member>
-        <member name="P:MidiLib.Channel.Volume">
+        <member name="P:Ephemera.MidiLib.Channel.Volume">
             <summary>Current volume constrained to legal values.</summary>
         </member>
-        <member name="P:MidiLib.Channel.Device">
+        <member name="P:Ephemera.MidiLib.Channel.Device">
             <summary>Associated device.</summary>
         </member>
-        <member name="P:MidiLib.Channel.AddNoteOff">
+        <member name="P:Ephemera.MidiLib.Channel.AddNoteOff">
             <summary>Add a ghost note off for note on.</summary>
         </member>
-        <member name="P:MidiLib.Channel.ChannelName">
+        <member name="P:Ephemera.MidiLib.Channel.ChannelName">
             <summary>Optional UI label/reference.</summary>
         </member>
-        <member name="P:MidiLib.Channel.IsDrums">
+        <member name="P:Ephemera.MidiLib.Channel.IsDrums">
             <summary>Drums may be handled differently.</summary>
         </member>
-        <member name="P:MidiLib.Channel.DeviceId">
+        <member name="P:Ephemera.MidiLib.Channel.DeviceId">
             <summary>The device used by this channel. Used to find and bind the device at runtime.</summary>
         </member>
-        <member name="P:MidiLib.Channel.Selected">
+        <member name="P:Ephemera.MidiLib.Channel.Selected">
             <summary>For UI user selection.</summary>
         </member>
-        <member name="P:MidiLib.Channel.MaxSubdiv">
+        <member name="P:Ephemera.MidiLib.Channel.MaxSubdiv">
             <summary>The duration of the whole channel - calculated.</summary>
         </member>
-        <member name="P:MidiLib.Channel.NumEvents">
+        <member name="P:Ephemera.MidiLib.Channel.NumEvents">
             <summary>Get the number of events - calculated.</summary>
         </member>
-        <member name="M:MidiLib.Channel.SetEvents(System.Collections.Generic.IEnumerable{MidiLib.MidiEventDesc})">
+        <member name="M:Ephemera.MidiLib.Channel.SetEvents(System.Collections.Generic.IEnumerable{Ephemera.MidiLib.MidiEventDesc})">
             <summary>
             Set the time-ordered events for the channel.
             </summary>
             <param name="events"></param>
         </member>
-        <member name="M:MidiLib.Channel.Reset">
+        <member name="M:Ephemera.MidiLib.Channel.Reset">
             <summary>
             Clean the events for the channel.
             </summary>
         </member>
-        <member name="M:MidiLib.Channel.GetEvents(System.Int32)">
+        <member name="M:Ephemera.MidiLib.Channel.GetEvents(System.Int32)">
             <summary>
             Get the events for a specific subdiv.
             </summary>
             <param name="subdiv"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.Channel.GetAllEvents">
+        <member name="M:Ephemera.MidiLib.Channel.GetAllEvents">
             <summary>
             Get all events.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.Channel.DoStep(System.Int32)">
+        <member name="M:Ephemera.MidiLib.Channel.DoStep(System.Int32)">
             <summary>
             Process any events for this time.
             </summary>
             <param name="subdiv"></param>
         </member>
-        <member name="M:MidiLib.Channel.Flush(System.Int32)">
+        <member name="M:Ephemera.MidiLib.Channel.Flush(System.Int32)">
             <summary>
             Execute any lingering transients and clear the collection.
             </summary>
             <param name="subdiv">After this time.</param>
         </member>
-        <member name="M:MidiLib.Channel.NextVol(System.Double)">
+        <member name="M:Ephemera.MidiLib.Channel.NextVol(System.Double)">
             <summary>Get the next volume.</summary>
             <param name="def">Default value.</param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.Channel.SendPatch">
+        <member name="M:Ephemera.MidiLib.Channel.SendPatch">
             <summary>
             General patch sender.
             </summary>
         </member>
-        <member name="M:MidiLib.Channel.SendController(NAudio.Midi.MidiController,System.Int32)">
+        <member name="M:Ephemera.MidiLib.Channel.SendController(NAudio.Midi.MidiController,System.Int32)">
             <summary>
             Send a controller now.
             </summary>
             <param name="controller"></param>
             <param name="val"></param>
         </member>
-        <member name="M:MidiLib.Channel.Kill">
+        <member name="M:Ephemera.MidiLib.Channel.Kill">
             <summary>
             Send midi all notes off.
             </summary>
         </member>
-        <member name="M:MidiLib.Channel.SendEvent(NAudio.Midi.MidiEvent)">
+        <member name="M:Ephemera.MidiLib.Channel.SendEvent(NAudio.Midi.MidiEvent)">
             <summary>
             Generic event sender.
             </summary>
             <param name="evt"></param>
             <exception cref="T:System.InvalidOperationException"></exception>
         </member>
-        <member name="T:MidiLib.ChannelUtils">
+        <member name="T:Ephemera.MidiLib.ChannelUtils">
             <summary>Helper extension methods.</summary>
         </member>
-        <member name="M:MidiLib.ChannelUtils.AnySolo``1(System.Collections.Generic.Dictionary{System.String,``0})">
+        <member name="M:Ephemera.MidiLib.ChannelUtils.AnySolo``1(System.Collections.Generic.Dictionary{System.String,``0})">
             <summary>
             Any solo in collection.
             </summary>
@@ -513,7 +513,7 @@
             <param name="channels"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.ChannelUtils.TotalSubdivs``1(System.Collections.Generic.Dictionary{System.String,``0})">
+        <member name="M:Ephemera.MidiLib.ChannelUtils.TotalSubdivs``1(System.Collections.Generic.Dictionary{System.String,``0})">
             <summary>
             Get subdivs for the collection, rounded to beat.
             </summary>
@@ -521,164 +521,164 @@
             <param name="channels"></param>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.ChannelControl">
+        <member name="T:Ephemera.MidiLib.ChannelControl">
             <summary>Channel events and other properties.</summary>
         </member>
-        <member name="E:MidiLib.ChannelControl.ChannelChangeEvent">
+        <member name="E:Ephemera.MidiLib.ChannelControl.ChannelChangeEvent">
             <summary>Notify host of asynchronous changes from user.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.BoundChannel">
+        <member name="P:Ephemera.MidiLib.ChannelControl.BoundChannel">
             <summary>Bound object.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.ChannelControl.ChannelNumber">
             <summary>Actual 1-based midi channel number for UI.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.State">
+        <member name="P:Ephemera.MidiLib.ChannelControl.State">
             <summary>For muting/soloing.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.Patch">
+        <member name="P:Ephemera.MidiLib.ChannelControl.Patch">
             <summary>Current patch.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.Volume">
+        <member name="P:Ephemera.MidiLib.ChannelControl.Volume">
             <summary>Current volume. Channel.Volume performs the constraints.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.MaxSubdiv">
+        <member name="P:Ephemera.MidiLib.ChannelControl.MaxSubdiv">
             <summary>The duration of the whole channel.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.IsDrums">
+        <member name="P:Ephemera.MidiLib.ChannelControl.IsDrums">
             <summary>Drum channel changed.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.Selected">
+        <member name="P:Ephemera.MidiLib.ChannelControl.Selected">
             <summary>User has selected this channel.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.SelectedColor">
+        <member name="P:Ephemera.MidiLib.ChannelControl.SelectedColor">
             <summary>Indicate user selected.</summary>
         </member>
-        <member name="P:MidiLib.ChannelControl.UnselectedColor">
+        <member name="P:Ephemera.MidiLib.ChannelControl.UnselectedColor">
             <summary>Indicate user not selected.</summary>
         </member>
-        <member name="M:MidiLib.ChannelControl.#ctor">
+        <member name="M:Ephemera.MidiLib.ChannelControl.#ctor">
             <summary>
             Normal constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.ChannelControl.OnLoad(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.ChannelControl.OnLoad(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.ChannelControl.Volume_ValueChanged(System.Object,System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.ChannelControl.Volume_ValueChanged(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.ChannelControl.SoloMute_Click(System.Object,System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.ChannelControl.SoloMute_Click(System.Object,System.EventArgs)">
             <summary>
             Handles solo and mute.
             </summary>
         </member>
-        <member name="M:MidiLib.ChannelControl.Patch_Click(System.Object,System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.ChannelControl.Patch_Click(System.Object,System.EventArgs)">
             <summary>
             User wants to change the patch.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.ChannelControl.ChannelNumber_Click(System.Object,System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.ChannelControl.ChannelNumber_Click(System.Object,System.EventArgs)">
             <summary>
             Handle selection.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.ChannelControl.UpdateUi">
+        <member name="M:Ephemera.MidiLib.ChannelControl.UpdateUi">
             <summary>
             Draw mode checkboxes etc.
             </summary>
         </member>
-        <member name="M:MidiLib.ChannelControl.ToString">
+        <member name="M:Ephemera.MidiLib.ChannelControl.ToString">
             <summary>
             
             </summary>
             <returns></returns>
         </member>
-        <member name="F:MidiLib.ChannelControl.components">
+        <member name="F:Ephemera.MidiLib.ChannelControl.components">
             <summary> 
             Required designer variable.
             </summary>
         </member>
-        <member name="M:MidiLib.ChannelControl.Dispose(System.Boolean)">
+        <member name="M:Ephemera.MidiLib.ChannelControl.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:MidiLib.ChannelControl.InitializeComponent">
+        <member name="M:Ephemera.MidiLib.ChannelControl.InitializeComponent">
             <summary> 
             Required method for Designer support - do not modify 
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="P:MidiLib.DevicesEditor.Devices">
+        <member name="P:Ephemera.MidiLib.DevicesEditor.Devices">
             <summary>Items to edit.</summary>
         </member>
-        <member name="M:MidiLib.DevicesEditor.#ctor">
+        <member name="M:Ephemera.MidiLib.DevicesEditor.#ctor">
             <summary>
             Default constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.DevicesEditor.OnLoad(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.DevicesEditor.OnLoad(System.EventArgs)">
             <summary>
             Fill the grid with current selections.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.DevicesEditor.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)">
+        <member name="M:Ephemera.MidiLib.DevicesEditor.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)">
             <summary>
             Save current selections.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.DevicesEditor.OnDeviceNameMenu_Click(System.Object,System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.DevicesEditor.OnDeviceNameMenu_Click(System.Object,System.EventArgs)">
             <summary>
             Get the clicked cell and fill with the selection.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.DevicesEditor.DeviceNameMenu_Opening(System.Object,System.ComponentModel.CancelEventArgs)">
+        <member name="M:Ephemera.MidiLib.DevicesEditor.DeviceNameMenu_Opening(System.Object,System.ComponentModel.CancelEventArgs)">
             <summary>
             Make a list of options and add selection handler.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="F:MidiLib.DevicesEditor.components">
+        <member name="F:Ephemera.MidiLib.DevicesEditor.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:MidiLib.DevicesEditor.Dispose(System.Boolean)">
+        <member name="M:Ephemera.MidiLib.DevicesEditor.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:MidiLib.DevicesEditor.InitializeComponent">
+        <member name="M:Ephemera.MidiLib.DevicesEditor.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:MidiLib.DevicesTypeEditor">
+        <member name="T:Ephemera.MidiLib.DevicesTypeEditor">
             <summary>
             Plug in to property grid.
             </summary>
         </member>
-        <member name="M:MidiLib.DevicesTypeEditor.EditValue(System.ComponentModel.ITypeDescriptorContext,System.IServiceProvider,System.Object)">
+        <member name="M:Ephemera.MidiLib.DevicesTypeEditor.EditValue(System.ComponentModel.ITypeDescriptorContext,System.IServiceProvider,System.Object)">
             <summary>
             Do the work.
             </summary>
@@ -687,81 +687,81 @@
             <param name="value"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.DevicesTypeEditor.GetEditStyle(System.ComponentModel.ITypeDescriptorContext)">
+        <member name="M:Ephemera.MidiLib.DevicesTypeEditor.GetEditStyle(System.ComponentModel.ITypeDescriptorContext)">
             <summary>
             Identify yourself.
             </summary>
             <param name="context"></param>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.DeviceTypeConverter">
+        <member name="T:Ephemera.MidiLib.DeviceTypeConverter">
             <summary>Converter for selecting property value from known lists. Not currently used.</summary>
         </member>
-        <member name="T:MidiLib.IDevice">
+        <member name="T:Ephemera.MidiLib.IDevice">
             <summary>Abstraction layer to support all midi-like devices.</summary>
         </member>
-        <member name="P:MidiLib.IDevice.DeviceName">
+        <member name="P:Ephemera.MidiLib.IDevice.DeviceName">
             <summary>Device name as defined by the system.</summary>
         </member>
-        <member name="P:MidiLib.IDevice.Valid">
+        <member name="P:Ephemera.MidiLib.IDevice.Valid">
             <summary>Are we ok?</summary>
         </member>
-        <member name="P:MidiLib.IDevice.LogEnable">
+        <member name="P:Ephemera.MidiLib.IDevice.LogEnable">
             <summary>Log traffic at Trace level.</summary>
         </member>
-        <member name="T:MidiLib.IInputDevice">
+        <member name="T:Ephemera.MidiLib.IInputDevice">
             <summary>Abstraction layer to support input devices.</summary>
         </member>
-        <member name="P:MidiLib.IInputDevice.CaptureEnable">
+        <member name="P:Ephemera.MidiLib.IInputDevice.CaptureEnable">
             <summary>Capture on/off.</summary>
         </member>
-        <member name="E:MidiLib.IInputDevice.InputEvent">
+        <member name="E:Ephemera.MidiLib.IInputDevice.InputEvent">
             <summary>Handler for message arrived.</summary>
         </member>
-        <member name="T:MidiLib.IOutputDevice">
+        <member name="T:Ephemera.MidiLib.IOutputDevice">
             <summary>Abstraction layer to support output devices.</summary>
         </member>
-        <member name="M:MidiLib.IOutputDevice.SendEvent(NAudio.Midi.MidiEvent)">
+        <member name="M:Ephemera.MidiLib.IOutputDevice.SendEvent(NAudio.Midi.MidiEvent)">
             <summary>Send midi event.</summary>
             <param name="evt"></param>
         </member>
-        <member name="T:MidiLib.ChannelState">
+        <member name="T:Ephemera.MidiLib.ChannelState">
             <summary>Channel state.</summary>
         </member>
-        <member name="T:MidiLib.SnapType">
+        <member name="T:Ephemera.MidiLib.SnapType">
             <summary>User selection options.</summary>
         </member>
-        <member name="F:MidiLib.MidiLibDefs.MIDI_FILE_TYPES">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.MIDI_FILE_TYPES">
             <summary>Supported file types.</summary>
         </member>
-        <member name="F:MidiLib.MidiLibDefs.STYLE_FILE_TYPES">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.STYLE_FILE_TYPES">
             <summary>Supported file types.</summary>
         </member>
-        <member name="F:MidiLib.MidiLibDefs.VOLUME_MIN">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.VOLUME_MIN">
             <summary>Corresponds to midi velocity = 0.</summary>
         </member>
-        <member name="F:MidiLib.MidiLibDefs.VOLUME_MAX">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.VOLUME_MAX">
             <summary>Corresponds to midi velocity = 127.</summary>
         </member>
-        <member name="F:MidiLib.MidiLibDefs.VOLUME_DEFAULT">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.VOLUME_DEFAULT">
             <summary>Default value.</summary>
         </member>
-        <member name="F:MidiLib.MidiLibDefs.MAX_GAIN">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.MAX_GAIN">
             <summary>Allow UI controls some more headroom.</summary>
         </member>
-        <member name="T:MidiLib.NullMidiEvent">
+        <member name="T:Ephemera.MidiLib.NullMidiEvent">
             <summary>Custom default type to avoid handling null everywhere.</summary>
         </member>
-        <member name="M:MidiLib.NullMidiEvent.#ctor">
+        <member name="M:Ephemera.MidiLib.NullMidiEvent.#ctor">
             <summary>Constructor.</summary>
         </member>
-        <member name="T:MidiLib.FunctionMidiEvent">
+        <member name="T:Ephemera.MidiLib.FunctionMidiEvent">
             <summary>Custom type to support runtime functions.</summary>
         </member>
-        <member name="P:MidiLib.FunctionMidiEvent.ScriptFunction">
+        <member name="P:Ephemera.MidiLib.FunctionMidiEvent.ScriptFunction">
             <summary>The function to call.</summary>
         </member>
-        <member name="M:MidiLib.FunctionMidiEvent.#ctor(System.Int32,System.Int32,System.Action)">
+        <member name="M:Ephemera.MidiLib.FunctionMidiEvent.#ctor(System.Int32,System.Int32,System.Action)">
             <summary>
             Single constructor.
             </summary>
@@ -769,79 +769,79 @@
             <param name="channel"></param>
             <param name="scriptFunc"></param>
         </member>
-        <member name="M:MidiLib.FunctionMidiEvent.ToString">
+        <member name="M:Ephemera.MidiLib.FunctionMidiEvent.ToString">
             <summary>For viewing pleasure.</summary>
         </member>
-        <member name="T:MidiLib.NullOutputDevice">
+        <member name="T:Ephemera.MidiLib.NullOutputDevice">
             <summary>Sink that doesn't do anything.</summary>
         </member>
-        <member name="T:MidiLib.ChannelChangeEventArgs">
+        <member name="T:Ephemera.MidiLib.ChannelChangeEventArgs">
             <summary>Notify host of asynchronous changes from user.</summary>
         </member>
-        <member name="T:MidiLib.InputEventArgs">
+        <member name="T:Ephemera.MidiLib.InputEventArgs">
             <summary>
             Midi (real or sim) has received something. It's up to the client to make sense of it.
             Property value of -1 indicates invalid or not pertinent e.g a controller event doesn't have velocity.
             </summary>
         </member>
-        <member name="P:MidiLib.InputEventArgs.Channel">
+        <member name="P:Ephemera.MidiLib.InputEventArgs.Channel">
             <summary>Channel number 1-based. Required.</summary>
         </member>
-        <member name="P:MidiLib.InputEventArgs.Note">
+        <member name="P:Ephemera.MidiLib.InputEventArgs.Note">
             <summary>The note number to play. NoteOn/Off only.</summary>
         </member>
-        <member name="P:MidiLib.InputEventArgs.Controller">
+        <member name="P:Ephemera.MidiLib.InputEventArgs.Controller">
             <summary>Specific controller id.</summary>
         </member>
-        <member name="P:MidiLib.InputEventArgs.Value">
+        <member name="P:Ephemera.MidiLib.InputEventArgs.Value">
             <summary>For Note = velocity. For controller = payload.</summary>
         </member>
-        <member name="P:MidiLib.InputEventArgs.ErrorInfo">
+        <member name="P:Ephemera.MidiLib.InputEventArgs.ErrorInfo">
             <summary>Something to tell the client.</summary>
         </member>
-        <member name="F:MidiLib.InputEventArgs.PITCH_CONTROL">
+        <member name="F:Ephemera.MidiLib.InputEventArgs.PITCH_CONTROL">
             <summary>Special controller id to carry pitch info.</summary>
         </member>
-        <member name="M:MidiLib.InputEventArgs.ToString">
+        <member name="M:Ephemera.MidiLib.InputEventArgs.ToString">
             <summary>Read me.</summary>
         </member>
-        <member name="T:MidiLib.MidiDataFile">
+        <member name="T:Ephemera.MidiLib.MidiDataFile">
             <summary>
             Represents one complete collection of midi events from a file - standard midi or yamaha style files.
             Writes subsets to various output formats.
             </summary>
         </member>
-        <member name="F:MidiLib.MidiDataFile._includeNoisy">
+        <member name="F:Ephemera.MidiLib.MidiDataFile._includeNoisy">
             <summary>Include events like controller changes, pitch wheel, ...</summary>
         </member>
-        <member name="F:MidiLib.MidiDataFile._patterns">
+        <member name="F:Ephemera.MidiLib.MidiDataFile._patterns">
             <summary>All the file pattern sections. Plain midi files will have only one, unnamed.</summary>
         </member>
-        <member name="F:MidiLib.MidiDataFile._currentPattern">
+        <member name="F:Ephemera.MidiLib.MidiDataFile._currentPattern">
             <summary>Currently collecting this pattern.</summary>
         </member>
-        <member name="P:MidiLib.MidiDataFile.FileName">
+        <member name="P:Ephemera.MidiLib.MidiDataFile.FileName">
             <summary>Current file.</summary>
         </member>
-        <member name="P:MidiLib.MidiDataFile.IsStyleFile">
+        <member name="P:Ephemera.MidiLib.MidiDataFile.IsStyleFile">
             <summary>It's a style file.</summary>
         </member>
-        <member name="P:MidiLib.MidiDataFile.MidiFileType">
+        <member name="P:Ephemera.MidiLib.MidiDataFile.MidiFileType">
             <summary>What midi type is it.</summary>
         </member>
-        <member name="P:MidiLib.MidiDataFile.NumTracks">
+        <member name="P:Ephemera.MidiLib.MidiDataFile.NumTracks">
             <summary>How many tracks.</summary>
         </member>
-        <member name="P:MidiLib.MidiDataFile.DeltaTicksPerQuarterNote">
+        <member name="P:Ephemera.MidiLib.MidiDataFile.DeltaTicksPerQuarterNote">
             <summary>Original resolution for all events.</summary>
         </member>
-        <member name="P:MidiLib.MidiDataFile.Tempo">
+        <member name="P:Ephemera.MidiLib.MidiDataFile.Tempo">
             <summary>Tempo supplied by file.</summary>
         </member>
-        <member name="P:MidiLib.MidiDataFile.TimeSignature">
+        <member name="P:Ephemera.MidiLib.MidiDataFile.TimeSignature">
             <summary>Time signature, if supplied by file. Default is 4/4.</summary>
         </member>
-        <member name="M:MidiLib.MidiDataFile.Read(System.String,System.Int32,System.Boolean)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.Read(System.String,System.Int32,System.Boolean)">
             <summary>
             Read a file.
             </summary>
@@ -849,86 +849,86 @@
             <param name="defaultTempo">Specified by client in case not in the file.</param>
             <param name="includeNoisy"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.GetPattern(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.GetPattern(System.String)">
             <summary>
             Get the pattern by name.
             </summary>
             <param name="name">Which</param>
             <returns>The pattern. Throws if name not found.</returns>
         </member>
-        <member name="M:MidiLib.MidiDataFile.GetPatternNames">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.GetPatternNames">
             <summary>
             Get all useful pattern names - those with musicaal notes.
             </summary>
             <returns>List of names.</returns>
         </member>
-        <member name="M:MidiLib.MidiDataFile.GetGlobal">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.GetGlobal">
             <summary>
             Get common midi file meta info.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadMThd(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadMThd(System.IO.BinaryReader)">
             <summary>
             Read the midi header section.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadMTrk(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadMTrk(System.IO.BinaryReader)">
             <summary>
             Read a midi track chunk.
             </summary>
             <param name="br"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadCASM(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadCASM(System.IO.BinaryReader)">
             <summary>
             Read the CASM section of a style file.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadCSEG(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadCSEG(System.IO.BinaryReader)">
             <summary>
             Read the CSEG section of a style file.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadSdec(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadSdec(System.IO.BinaryReader)">
             <summary>
             Read the Sdec section of a style file.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadCtab(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadCtab(System.IO.BinaryReader)">
             <summary>
             Read the Ctab section of a style file.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadCntt(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadCntt(System.IO.BinaryReader)">
             <summary>
             Read the Cntt section of a style file.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadOTSc(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadOTSc(System.IO.BinaryReader)">
             <summary>
             Read the OTSc section of a style file.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadFNRc(System.IO.BinaryReader)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadFNRc(System.IO.BinaryReader)">
             <summary>
             Read the FNRc section of a style file.
             </summary>
             <param name="br"></param>
         </member>
-        <member name="M:MidiLib.MidiDataFile.CleanUpPatterns">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.CleanUpPatterns">
             <summary>
             Fill in any missing pattern info using defaults.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiDataFile.ReadStream(System.IO.BinaryReader,System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiDataFile.ReadStream(System.IO.BinaryReader,System.Int32)">
             <summary>
             Read a number from stream and adjust endianess.
             </summary>
@@ -936,151 +936,151 @@
             <param name="size"></param>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.MidiDefs">
+        <member name="T:Ephemera.MidiLib.MidiDefs">
             <summary>Readable versions of midi numbers.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs.MIN_MIDI">
+        <member name="F:Ephemera.MidiLib.MidiDefs.MIN_MIDI">
             <summary>Midi caps.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs.MAX_MIDI">
+        <member name="F:Ephemera.MidiLib.MidiDefs.MAX_MIDI">
             <summary>Midi caps.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs.NUM_CHANNELS">
+        <member name="F:Ephemera.MidiLib.MidiDefs.NUM_CHANNELS">
             <summary>Midi caps.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs.DEFAULT_DRUM_CHANNEL">
+        <member name="F:Ephemera.MidiLib.MidiDefs.DEFAULT_DRUM_CHANNEL">
             <summary>The normal drum channel.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs._instrumentNumbers">
+        <member name="F:Ephemera.MidiLib.MidiDefs._instrumentNumbers">
             <summary>Reverse lookup.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs._drumKitNumbers">
+        <member name="F:Ephemera.MidiLib.MidiDefs._drumKitNumbers">
             <summary>Reverse lookup.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs._drumNumbers">
+        <member name="F:Ephemera.MidiLib.MidiDefs._drumNumbers">
             <summary>Reverse lookup.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs._controllerNumbers">
+        <member name="F:Ephemera.MidiLib.MidiDefs._controllerNumbers">
             <summary>Reverse lookup.</summary>
         </member>
-        <member name="M:MidiLib.MidiDefs.#cctor">
+        <member name="M:Ephemera.MidiLib.MidiDefs.#cctor">
             <summary>
             Initialize some collections.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiDefs.FormatDoc">
+        <member name="M:Ephemera.MidiLib.MidiDefs.FormatDoc">
             <summary>
             Make markdown content from the definitions.
             </summary>
             <returns>Markdown content.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetInstrumentName(System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetInstrumentName(System.Int32)">
             <summary>
             Get patch name.
             </summary>
             <param name="which"></param>
             <returns>The name.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetInstrumentNumber(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetInstrumentNumber(System.String)">
             <summary>
             Get the instrument/patch number.
             </summary>
             <param name="which"></param>
             <returns>The midi number or -1 if invalid.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetDrumName(System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumName(System.Int32)">
             <summary>
             Get drum name.
             </summary>
             <param name="which"></param>
             <returns>The drum name or a fabricated one if unknown.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetDrumNumber(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumNumber(System.String)">
             <summary>
             Get drum number.
             </summary>
             <param name="which"></param>
             <returns>The midi number or -1 if invalid.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetControllerName(System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetControllerName(System.Int32)">
             <summary>
             Get controller name.
             </summary>
             <param name="which"></param>
             <returns>The controller name or a fabricated one if unknown.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetControllerNumber(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetControllerNumber(System.String)">
             <summary>
             Get the controller number.
             </summary>
             <param name="which"></param>
             <returns>The midi number or -1 if invalid.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetDrumKitName(System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumKitName(System.Int32)">
             <summary>
             Get GM drum kit name.
             </summary>
             <param name="which"></param>
             <returns>The drumkit name or a fabricated one if unknown.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetDrumKitNumber(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumKitNumber(System.String)">
             <summary>
             Get GM drum kit number.
             </summary>
             <param name="which"></param>
             <returns>The midi number or -1 if invalid.</returns>
         </member>
-        <member name="M:MidiLib.MidiDefs.GetInstrumentOrDrumKitNumber(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetInstrumentOrDrumKitNumber(System.String)">
             <summary>
             Get the instrument/patch or drum number.
             </summary>
             <param name="which"></param>
             <returns>The midi number or -1 if invalid.</returns>
         </member>
-        <member name="F:MidiLib.MidiDefs._instruments">
+        <member name="F:Ephemera.MidiLib.MidiDefs._instruments">
             <summary>The GM midi instrument definitions.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs._drumKits">
+        <member name="F:Ephemera.MidiLib.MidiDefs._drumKits">
             <summary>The GM midi drum kit definitions.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs._drums">
+        <member name="F:Ephemera.MidiLib.MidiDefs._drums">
             <summary>The GM midi drum definitions.</summary>
         </member>
-        <member name="F:MidiLib.MidiDefs._controllers">
+        <member name="F:Ephemera.MidiLib.MidiDefs._controllers">
             <summary>The midi controller definitions.</summary>
         </member>
-        <member name="T:MidiLib.MidiEventDesc">
+        <member name="T:Ephemera.MidiLib.MidiEventDesc">
             <summary>
             Internal representation of one midi event.
             </summary>
         </member>
-        <member name="P:MidiLib.MidiEventDesc.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.MidiEventDesc.ChannelNumber">
             <summary>One-based channel number.</summary>
         </member>
-        <member name="P:MidiLib.MidiEventDesc.ChannelName">
+        <member name="P:Ephemera.MidiLib.MidiEventDesc.ChannelName">
             <summary>Associated channel name.</summary>
         </member>
-        <member name="P:MidiLib.MidiEventDesc.AbsoluteTime">
+        <member name="P:Ephemera.MidiLib.MidiEventDesc.AbsoluteTime">
             <summary>Time (subdivs) from original file.</summary>
         </member>
-        <member name="P:MidiLib.MidiEventDesc.ScaledTime">
+        <member name="P:Ephemera.MidiLib.MidiEventDesc.ScaledTime">
             <summary>Time (subdivs) scaled to internal units using send PPQ.</summary>
         </member>
-        <member name="P:MidiLib.MidiEventDesc.RawEvent">
+        <member name="P:Ephemera.MidiLib.MidiEventDesc.RawEvent">
             <summary>The raw midi event.</summary>
         </member>
-        <member name="M:MidiLib.MidiEventDesc.#ctor(NAudio.Midi.MidiEvent,System.String)">
+        <member name="M:Ephemera.MidiLib.MidiEventDesc.#ctor(NAudio.Midi.MidiEvent,System.String)">
             <summary>Normal constructor from NAudio event.</summary>
         </member>
-        <member name="M:MidiLib.MidiEventDesc.ToString">
+        <member name="M:Ephemera.MidiLib.MidiEventDesc.ToString">
             <summary>Read me.</summary>
         </member>
-        <member name="T:MidiLib.MidiExport">
+        <member name="T:Ephemera.MidiLib.MidiExport">
             <summary>
             Writes to various output formats.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiExport.ExportCsv(System.String,System.Collections.Generic.IEnumerable{MidiLib.PatternInfo},System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+        <member name="M:Ephemera.MidiLib.MidiExport.ExportCsv(System.String,System.Collections.Generic.IEnumerable{Ephemera.MidiLib.PatternInfo},System.Collections.Generic.IEnumerable{Ephemera.MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
             Export the contents in a csv readable form. This is as the events appear in the original file.
             </summary>
@@ -1089,7 +1089,7 @@
             <param name="channels">Specific channnels or all if empty.</param>
             <param name="global">File meta data to include.</param>
         </member>
-        <member name="M:MidiLib.MidiExport.ExportMidi(System.String,MidiLib.PatternInfo,System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+        <member name="M:Ephemera.MidiLib.MidiExport.ExportMidi(System.String,Ephemera.MidiLib.PatternInfo,System.Collections.Generic.IEnumerable{Ephemera.MidiLib.Channel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
             Export pattern parts to individual midi files. This is as the events appear in the original file.
             </summary>
@@ -1098,7 +1098,7 @@
             <param name="channels">Specific channnels or all if empty.</param>
             <param name="global">File meta data to include.</param>
         </member>
-        <member name="M:MidiLib.MidiExport.Format(MidiLib.MidiEventDesc,System.Boolean)">
+        <member name="M:Ephemera.MidiLib.MidiExport.Format(Ephemera.MidiLib.MidiEventDesc,System.Boolean)">
             <summary>
             Format event for export.
             </summary>
@@ -1106,328 +1106,328 @@
             <param name="isDrums"></param>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.MidiInput">
+        <member name="T:Ephemera.MidiLib.MidiInput">
             <summary>
             Midi input handler.
             </summary>
         </member>
-        <member name="F:MidiLib.MidiInput._midiIn">
+        <member name="F:Ephemera.MidiLib.MidiInput._midiIn">
             <summary>Midi input device.</summary>
         </member>
-        <member name="F:MidiLib.MidiInput._logger">
+        <member name="F:Ephemera.MidiLib.MidiInput._logger">
             <summary>Midi send logging.</summary>
         </member>
-        <member name="F:MidiLib.MidiInput._capturing">
+        <member name="F:Ephemera.MidiLib.MidiInput._capturing">
             <summary>Control.</summary>
         </member>
-        <member name="P:MidiLib.MidiInput.DeviceName">
+        <member name="P:Ephemera.MidiLib.MidiInput.DeviceName">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.MidiInput.Valid">
+        <member name="P:Ephemera.MidiLib.MidiInput.Valid">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.MidiInput.LogEnable">
+        <member name="P:Ephemera.MidiLib.MidiInput.LogEnable">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.MidiInput.CaptureEnable">
+        <member name="P:Ephemera.MidiLib.MidiInput.CaptureEnable">
             <summary>Capture on/off.</summary>
         </member>
-        <member name="E:MidiLib.MidiInput.InputEvent">
+        <member name="E:Ephemera.MidiLib.MidiInput.InputEvent">
             <inheritdoc />
         </member>
-        <member name="M:MidiLib.MidiInput.#ctor(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiInput.#ctor(System.String)">
             <summary>
             Normal constructor.
             </summary>
             <param name="deviceName">Client must supply name of device.</param>
         </member>
-        <member name="M:MidiLib.MidiInput.Dispose">
+        <member name="M:Ephemera.MidiLib.MidiInput.Dispose">
             <summary>
             Resource clean up.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiInput.MidiIn_MessageReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">
+        <member name="M:Ephemera.MidiLib.MidiInput.MidiIn_MessageReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">
             <summary>
             Process input midi event.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiInput.MidiIn_ErrorReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">
+        <member name="M:Ephemera.MidiLib.MidiInput.MidiIn_ErrorReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">
             <summary>
             Process error midi event - Parameter 1 is invalid.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiInput.Log(MidiLib.InputEventArgs)">
+        <member name="M:Ephemera.MidiLib.MidiInput.Log(Ephemera.MidiLib.InputEventArgs)">
             <summary>
             Send event information to the client to sort out.
             </summary>
             <param name="evt"></param>
         </member>
-        <member name="T:MidiLib.OscInput">
+        <member name="T:Ephemera.MidiLib.OscInput">
             <summary>Provides midi over OSC. Server side.</summary>
         </member>
-        <member name="F:MidiLib.OscInput._logger">
+        <member name="F:Ephemera.MidiLib.OscInput._logger">
             <summary>My logger.</summary>
         </member>
-        <member name="F:MidiLib.OscInput._oscInput">
+        <member name="F:Ephemera.MidiLib.OscInput._oscInput">
             <summary>OSC input device.</summary>
         </member>
-        <member name="E:MidiLib.OscInput.InputEvent">
+        <member name="E:Ephemera.MidiLib.OscInput.InputEvent">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.OscInput.DeviceName">
+        <member name="P:Ephemera.MidiLib.OscInput.DeviceName">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.OscInput.CaptureEnable">
+        <member name="P:Ephemera.MidiLib.OscInput.CaptureEnable">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.OscInput.Valid">
+        <member name="P:Ephemera.MidiLib.OscInput.Valid">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.OscInput.LogEnable">
+        <member name="P:Ephemera.MidiLib.OscInput.LogEnable">
             <inheritdoc />
         </member>
-        <member name="M:MidiLib.OscInput.#ctor(System.String)">
+        <member name="M:Ephemera.MidiLib.OscInput.#ctor(System.String)">
             <summary>
             Constructor.
             <param name="deviceName">Client must supply name of device.</param>
             </summary>
         </member>
-        <member name="M:MidiLib.OscInput.Dispose">
+        <member name="M:Ephemera.MidiLib.OscInput.Dispose">
             <summary>
             Resource clean up.
             </summary>
         </member>
-        <member name="M:MidiLib.OscInput.OscInput_LogEvent(System.Object,NebOsc.LogEventArgs)">
+        <member name="M:Ephemera.MidiLib.OscInput.OscInput_LogEvent(System.Object,Ephemera.NebOsc.LogEventArgs)">
             <summary>
             OSC has something to say.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.OscInput.OscInput_InputEvent(System.Object,NebOsc.InputEventArgs)">
+        <member name="M:Ephemera.MidiLib.OscInput.OscInput_InputEvent(System.Object,Ephemera.NebOsc.InputEventArgs)">
             <summary>
             Handle a received message.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="T:MidiLib.OscOutput">
+        <member name="T:Ephemera.MidiLib.OscOutput">
             <summary>Provides midi over OSC. Client side.</summary>
         </member>
-        <member name="F:MidiLib.OscOutput._logger">
+        <member name="F:Ephemera.MidiLib.OscOutput._logger">
             <summary>My logger.</summary>
         </member>
-        <member name="F:MidiLib.OscOutput._oscOutput">
+        <member name="F:Ephemera.MidiLib.OscOutput._oscOutput">
             <summary>OSC output device.</summary>
         </member>
-        <member name="F:MidiLib.OscOutput._lock">
+        <member name="F:Ephemera.MidiLib.OscOutput._lock">
             <summary>Access synchronizer.</summary>
         </member>
-        <member name="P:MidiLib.OscOutput.DeviceName">
+        <member name="P:Ephemera.MidiLib.OscOutput.DeviceName">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.OscOutput.Valid">
+        <member name="P:Ephemera.MidiLib.OscOutput.Valid">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.OscOutput.LogEnable">
+        <member name="P:Ephemera.MidiLib.OscOutput.LogEnable">
             <inheritdoc />
         </member>
-        <member name="M:MidiLib.OscOutput.#ctor(System.String)">
+        <member name="M:Ephemera.MidiLib.OscOutput.#ctor(System.String)">
             <summary>
             Constructor.
             </summary>
             <param name="deviceName">Client must supply name of device.</param>
         </member>
-        <member name="M:MidiLib.OscOutput.Dispose">
+        <member name="M:Ephemera.MidiLib.OscOutput.Dispose">
             <summary>
             Resource clean up.
             </summary>
         </member>
-        <member name="M:MidiLib.OscOutput.SendEvent(NAudio.Midi.MidiEvent)">
+        <member name="M:Ephemera.MidiLib.OscOutput.SendEvent(NAudio.Midi.MidiEvent)">
             <inheritdoc />
         </member>
-        <member name="M:MidiLib.OscOutput.OscOutput_LogEvent(System.Object,NebOsc.LogEventArgs)">
+        <member name="M:Ephemera.MidiLib.OscOutput.OscOutput_LogEvent(System.Object,Ephemera.NebOsc.LogEventArgs)">
             <summary>
             OSC has something to say.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="T:MidiLib.MidiOutput">
+        <member name="T:Ephemera.MidiLib.MidiOutput">
             <summary>
             A midi output layer - associated with a single device.
             </summary>
         </member>
-        <member name="F:MidiLib.MidiOutput._midiOut">
+        <member name="F:Ephemera.MidiLib.MidiOutput._midiOut">
             <summary>Low level midi output device.</summary>
         </member>
-        <member name="F:MidiLib.MidiOutput._logger">
+        <member name="F:Ephemera.MidiLib.MidiOutput._logger">
             <summary>Midi send logging.</summary>
         </member>
-        <member name="P:MidiLib.MidiOutput.DeviceName">
+        <member name="P:Ephemera.MidiLib.MidiOutput.DeviceName">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.MidiOutput.Valid">
+        <member name="P:Ephemera.MidiLib.MidiOutput.Valid">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.MidiOutput.LogEnable">
+        <member name="P:Ephemera.MidiLib.MidiOutput.LogEnable">
             <inheritdoc />
         </member>
-        <member name="M:MidiLib.MidiOutput.#ctor(System.String)">
+        <member name="M:Ephemera.MidiLib.MidiOutput.#ctor(System.String)">
             <summary>
             Normal constructor.
             </summary>
             <param name="deviceName">Client must supply name of device.</param>
         </member>
-        <member name="M:MidiLib.MidiOutput.Dispose">
+        <member name="M:Ephemera.MidiLib.MidiOutput.Dispose">
             <summary> 
             Clean up any resources being used.
             </summary>
         </member>
-        <member name="M:MidiLib.MidiOutput.SendEvent(NAudio.Midi.MidiEvent)">
+        <member name="M:Ephemera.MidiLib.MidiOutput.SendEvent(NAudio.Midi.MidiEvent)">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.MidiSettings.LibSettings">
+        <member name="P:Ephemera.MidiLib.MidiSettings.LibSettings">
             <summary>Current midi settings. Client must set this before accessing!</summary>
         </member>
-        <member name="P:MidiLib.MidiSettings.Snap">
+        <member name="P:Ephemera.MidiLib.MidiSettings.Snap">
             <summary>How to snap.</summary>
         </member>
-        <member name="P:MidiLib.MidiSettings.BeatsPerBar">
+        <member name="P:Ephemera.MidiLib.MidiSettings.BeatsPerBar">
             <summary>Only 4/4 time supported.</summary>
         </member>
-        <member name="P:MidiLib.MidiSettings.SubdivsPerBeat">
+        <member name="P:Ephemera.MidiLib.MidiSettings.SubdivsPerBeat">
             <summary>Convenience.</summary>
         </member>
-        <member name="P:MidiLib.MidiSettings.SubdivsPerBar">
+        <member name="P:Ephemera.MidiLib.MidiSettings.SubdivsPerBar">
             <summary>Convenience.</summary>
         </member>
-        <member name="T:MidiLib.MidiTimeConverter">
+        <member name="T:Ephemera.MidiLib.MidiTimeConverter">
             <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
         </member>
-        <member name="F:MidiLib.MidiTimeConverter._midiPpq">
+        <member name="F:Ephemera.MidiLib.MidiTimeConverter._midiPpq">
             <summary>Resolution for midi file events aka DeltaTicksPerQuarterNote.</summary>
         </member>
-        <member name="F:MidiLib.MidiTimeConverter._tempo">
+        <member name="F:Ephemera.MidiLib.MidiTimeConverter._tempo">
             <summary>Tempo aka BPM.</summary>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.#ctor(System.Int32,System.Double)">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.#ctor(System.Int32,System.Double)">
             <summary>
             Constructor.
             </summary>
             <param name="midiPpq">The file resolution.</param>
             <param name="tempo">BPM may be needed for some calcs.</param>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.InternalToMidi(System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.InternalToMidi(System.Int32)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.MidiToInternal(System.Int64)">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.MidiToInternal(System.Int64)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.InternalToMsec(System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.InternalToMsec(System.Int32)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.MidiToSec(System.Int32)">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.MidiToSec(System.Int32)">
             <summary>
             Conversion function.
             </summary>
             <param name="t"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.MidiPeriod">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.MidiPeriod">
             <summary>
             Exact time between events.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.InternalPeriod">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.InternalPeriod">
             <summary>
             Exact time between events.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.MidiTimeConverter.RoundedInternalPeriod">
+        <member name="M:Ephemera.MidiLib.MidiTimeConverter.RoundedInternalPeriod">
             <summary>
             Integer time between events.
             </summary>
             <returns></returns>
         </member>
-        <member name="F:MidiLib.PatchPicker._lv">
+        <member name="F:Ephemera.MidiLib.PatchPicker._lv">
             <summary>Control.</summary>
         </member>
-        <member name="P:MidiLib.PatchPicker.PatchNumber">
+        <member name="P:Ephemera.MidiLib.PatchPicker.PatchNumber">
             <summary>User selection.</summary>
         </member>
-        <member name="M:MidiLib.PatchPicker.#ctor">
+        <member name="M:Ephemera.MidiLib.PatchPicker.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.PatchPicker.List_SelectedIndexChanged(System.Object,System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.PatchPicker.List_SelectedIndexChanged(System.Object,System.EventArgs)">
             <summary>
             
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.PatchPicker.List_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+        <member name="M:Ephemera.MidiLib.PatchPicker.List_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
             Check for escape.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.PatchPicker.Dispose(System.Boolean)">
+        <member name="M:Ephemera.MidiLib.PatchPicker.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="T:MidiLib.PatternInfo">
+        <member name="T:Ephemera.MidiLib.PatternInfo">
             <summary>Represents the contents of a midi file pattern. If it is a plain midi file (not style) there will be one only.</summary>
         </member>
-        <member name="F:MidiLib.PatternInfo._events">
+        <member name="F:Ephemera.MidiLib.PatternInfo._events">
             <summary>All the pattern midi events.</summary>
         </member>
-        <member name="F:MidiLib.PatternInfo._eventsByTime">
+        <member name="F:Ephemera.MidiLib.PatternInfo._eventsByTime">
             <summary>All the pattern midi events, key is when to play (scaled time).</summary>
         </member>
-        <member name="F:MidiLib.PatternInfo._mt">
+        <member name="F:Ephemera.MidiLib.PatternInfo._mt">
             <summary>For scaling subdivs to internal.</summary>
         </member>
-        <member name="F:MidiLib.PatternInfo._channelPatches">
+        <member name="F:Ephemera.MidiLib.PatternInfo._channelPatches">
             <summary>Collection of all channels in this pattern. Key is number, value is associated patch.</summary>
         </member>
-        <member name="F:MidiLib.PatternInfo._hasNotes">
+        <member name="F:Ephemera.MidiLib.PatternInfo._hasNotes">
             <summary>Channels with real notes.</summary>
         </member>
-        <member name="P:MidiLib.PatternInfo.PatternName">
+        <member name="P:Ephemera.MidiLib.PatternInfo.PatternName">
             <summary>Pattern name. Empty indicates single pattern aka plain midi file.</summary>
         </member>
-        <member name="P:MidiLib.PatternInfo.Tempo">
+        <member name="P:Ephemera.MidiLib.PatternInfo.Tempo">
             <summary>Tempo, if supplied by file. Default indicates invalid which will be filled in during read.</summary>
         </member>
-        <member name="P:MidiLib.PatternInfo.TimeSignature">
+        <member name="P:Ephemera.MidiLib.PatternInfo.TimeSignature">
             <summary>Time signature, if supplied by file.</summary>
         </member>
-        <member name="M:MidiLib.PatternInfo.#ctor">
+        <member name="M:Ephemera.MidiLib.PatternInfo.#ctor">
             <summary>
             Default constructor. Use only for initialization!
             </summary>
         </member>
-        <member name="M:MidiLib.PatternInfo.#ctor(System.String,System.Int32,System.Int32)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.#ctor(System.String,System.Int32,System.Int32)">
             <summary>
             Normal constructor.
             </summary>
@@ -1435,7 +1435,7 @@
             <param name="tempo">Defalt tempo</param>
             <param name="ppq">Resolution</param>
         </member>
-        <member name="M:MidiLib.PatternInfo.#ctor(System.String,System.Int32,System.Collections.Generic.IEnumerable{MidiLib.MidiEventDesc},System.Collections.Generic.IEnumerable{MidiLib.Channel},System.Int32)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.#ctor(System.String,System.Int32,System.Collections.Generic.IEnumerable{Ephemera.MidiLib.MidiEventDesc},System.Collections.Generic.IEnumerable{Ephemera.MidiLib.Channel},System.Int32)">
              <summary>
             Constructor from existing data. 
              </summary>
@@ -1445,27 +1445,27 @@
              <param name="channels">Channels of interest</param>
              <param name="tempo">Defalt tempo</param>
         </member>
-        <member name="M:MidiLib.PatternInfo.AddEvent(MidiLib.MidiEventDesc)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.AddEvent(Ephemera.MidiLib.MidiEventDesc)">
             <summary>
             Add an event to the collection. This function does the scaling.
             </summary>
             <param name="evt">The event to add.</param>
         </member>
-        <member name="M:MidiLib.PatternInfo.GetFilteredEvents(System.Collections.Generic.IEnumerable{System.Int32})">
+        <member name="M:Ephemera.MidiLib.PatternInfo.GetFilteredEvents(System.Collections.Generic.IEnumerable{System.Int32})">
             <summary>
             Get enumerator for events using supplied filters.
             </summary>
             <param name="channels">Specific channnels.</param>
             <returns>Enumerator sorted by scaled time.</returns>
         </member>
-        <member name="M:MidiLib.PatternInfo.GetEventsWhen(System.Int32)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.GetEventsWhen(System.Int32)">
             <summary>
             Get all events at a specific scaled time.
             </summary>
             <param name="when"></param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.PatternInfo.GetChannels(System.Boolean,System.Boolean)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.GetChannels(System.Boolean,System.Boolean)">
             <summary>
             Get an ordered list of channels and their patches.
             </summary>
@@ -1473,203 +1473,203 @@
             <param name="hasPatch">Must have valid patch.</param>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.PatternInfo.GetPatch(System.Int32)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.GetPatch(System.Int32)">
             <summary>
             Get the patch associated with the channel.
             </summary>
             <param name="channel"></param>
             <returns>The patch or -1 if invalid channel</returns>
         </member>
-        <member name="M:MidiLib.PatternInfo.RemoveChannel(System.Int32)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.RemoveChannel(System.Int32)">
             <summary>
             Remove a channel from the channel/patches collection.
             </summary>
             <param name="channel"></param>
         </member>
-        <member name="M:MidiLib.PatternInfo.SetChannelPatch(System.Int32,System.Int32)">
+        <member name="M:Ephemera.MidiLib.PatternInfo.SetChannelPatch(System.Int32,System.Int32)">
             <summary>
             Safely add/update info.
             </summary>
             <param name="channel">The channel number</param>
             <param name="patch">The patch. Can be default -1.</param>
         </member>
-        <member name="M:MidiLib.PatternInfo.ToString">
+        <member name="M:Ephemera.MidiLib.PatternInfo.ToString">
             <summary>
             Readable version.
             </summary>
             <returns></returns>
         </member>
-        <member name="T:MidiLib.SimpleChannelControl">
+        <member name="T:Ephemera.MidiLib.SimpleChannelControl">
             <summary>A simpler channel UI component.</summary>
         </member>
-        <member name="P:MidiLib.SimpleChannelControl.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.SimpleChannelControl.ChannelNumber">
             <summary>Actual 1-based midi channel number.</summary>
         </member>
-        <member name="P:MidiLib.SimpleChannelControl.Patch">
+        <member name="P:Ephemera.MidiLib.SimpleChannelControl.Patch">
             <summary>Current patch.</summary>
         </member>
-        <member name="P:MidiLib.SimpleChannelControl.Volume">
+        <member name="P:Ephemera.MidiLib.SimpleChannelControl.Volume">
             <summary>Current volume.</summary>
         </member>
-        <member name="P:MidiLib.SimpleChannelControl.ControlColor">
+        <member name="P:Ephemera.MidiLib.SimpleChannelControl.ControlColor">
             <summary>Cosmetics.</summary>
         </member>
-        <member name="E:MidiLib.SimpleChannelControl.ChannelChangeEvent">
+        <member name="E:Ephemera.MidiLib.SimpleChannelControl.ChannelChangeEvent">
             <summary>Notify host of asynchronous changes from user.</summary>
         </member>
-        <member name="M:MidiLib.SimpleChannelControl.#ctor">
+        <member name="M:Ephemera.MidiLib.SimpleChannelControl.#ctor">
             <summary>
             Normal constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.SimpleChannelControl.OnLoad(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.SimpleChannelControl.OnLoad(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.SimpleChannelControl.Patch_Click(System.Object,System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.SimpleChannelControl.Patch_Click(System.Object,System.EventArgs)">
             <summary>
             User wants to change the patch.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="F:MidiLib.SimpleChannelControl.components">
+        <member name="F:Ephemera.MidiLib.SimpleChannelControl.components">
             <summary> 
             Required designer variable.
             </summary>
         </member>
-        <member name="M:MidiLib.SimpleChannelControl.Dispose(System.Boolean)">
+        <member name="M:Ephemera.MidiLib.SimpleChannelControl.Dispose(System.Boolean)">
             <summary> 
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:MidiLib.SimpleChannelControl.InitializeComponent">
+        <member name="M:Ephemera.MidiLib.SimpleChannelControl.InitializeComponent">
             <summary> 
             Required method for Designer support - do not modify 
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:MidiLib.VirtualKeyboard">
+        <member name="T:Ephemera.MidiLib.VirtualKeyboard">
             <summary>
             Virtual keyboard control borrowed from Leslie Sanford with extras.
             </summary>
         </member>
-        <member name="P:MidiLib.VirtualKeyboard.Channel">
+        <member name="P:Ephemera.MidiLib.VirtualKeyboard.Channel">
             <summary>Channel number 1-based.</summary>
         </member>
-        <member name="P:MidiLib.VirtualKeyboard.ShowNoteNames">
+        <member name="P:Ephemera.MidiLib.VirtualKeyboard.ShowNoteNames">
             <summary>Draw the names on the keys.</summary>
         </member>
-        <member name="P:MidiLib.VirtualKeyboard.KeySize">
+        <member name="P:Ephemera.MidiLib.VirtualKeyboard.KeySize">
             <summary>Determines the overall size.</summary>
         </member>
-        <member name="P:MidiLib.VirtualKeyboard.CaptureEnable">
+        <member name="P:Ephemera.MidiLib.VirtualKeyboard.CaptureEnable">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.VirtualKeyboard.DeviceName">
+        <member name="P:Ephemera.MidiLib.VirtualKeyboard.DeviceName">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.VirtualKeyboard.Valid">
+        <member name="P:Ephemera.MidiLib.VirtualKeyboard.Valid">
             <inheritdoc />
         </member>
-        <member name="P:MidiLib.VirtualKeyboard.LogEnable">
+        <member name="P:Ephemera.MidiLib.VirtualKeyboard.LogEnable">
             <inheritdoc />
         </member>
-        <member name="E:MidiLib.VirtualKeyboard.InputEvent">
+        <member name="E:Ephemera.MidiLib.VirtualKeyboard.InputEvent">
             <summary>Key press info.</summary>
         </member>
-        <member name="F:MidiLib.VirtualKeyboard._keys">
+        <member name="F:Ephemera.MidiLib.VirtualKeyboard._keys">
             <summary>All the created piano keys.</summary>
         </member>
-        <member name="F:MidiLib.VirtualKeyboard._keyMap">
+        <member name="F:Ephemera.MidiLib.VirtualKeyboard._keyMap">
             <summary>Map from Keys value to the index in _keys.</summary>
         </member>
-        <member name="F:MidiLib.VirtualKeyboard._keyDown">
+        <member name="F:Ephemera.MidiLib.VirtualKeyboard._keyDown">
             <summary>Known bug?</summary>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.#ctor">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.#ctor">
             <summary>
             Normal constructor.
             </summary>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.OnResize(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.OnResize(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.Dispose(System.Boolean)">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.IsNatural(System.Int32)">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.IsNatural(System.Int32)">
             <summary>
             Is it a white key?
             </summary>
             <param name="notenum">Which note</param>
             <returns>True/false</returns>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.CreateKeyMap">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.CreateKeyMap">
             <summary>
             Create the midi note/keyboard mapping.
             </summary>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
             <summary>
             Use alpha keyboard to drive piano.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.OnKeyUp(System.Windows.Forms.KeyEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.OnKeyUp(System.Windows.Forms.KeyEventArgs)">
             <summary>
             Use alpha keyboard to drive piano.
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.Keyboard_InputEvent(System.Object,MidiLib.InputEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.Keyboard_InputEvent(System.Object,Ephemera.MidiLib.InputEventArgs)">
             <summary>
             Pass along an event from a virtual key.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.CreateKeys">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.CreateKeys">
             <summary>
             Create the key controls.
             </summary>
         </member>
-        <member name="M:MidiLib.VirtualKeyboard.DrawKeys">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.DrawKeys">
             <summary>
             Re/draw the keys.
             </summary>
         </member>
-        <member name="T:MidiLib.VirtualKey">
+        <member name="T:Ephemera.MidiLib.VirtualKey">
             <summary>One individual key.</summary>
         </member>
-        <member name="F:MidiLib.VirtualKey._owner">
+        <member name="F:Ephemera.MidiLib.VirtualKey._owner">
             <summary>Hook to owner.</summary>
         </member>
-        <member name="F:MidiLib.VirtualKey._noteNames">
+        <member name="F:Ephemera.MidiLib.VirtualKey._noteNames">
             <summary>For showing names.</summary>
         </member>
-        <member name="P:MidiLib.VirtualKey.IsPressed">
+        <member name="P:Ephemera.MidiLib.VirtualKey.IsPressed">
             <summary>Key status.</summary>
         </member>
-        <member name="P:MidiLib.VirtualKey.IsNatural">
+        <member name="P:Ephemera.MidiLib.VirtualKey.IsNatural">
             <summary>Key status.</summary>
         </member>
-        <member name="P:MidiLib.VirtualKey.NoteId">
+        <member name="P:Ephemera.MidiLib.VirtualKey.NoteId">
             <summary>Associated midi note.</summary>
         </member>
-        <member name="E:MidiLib.VirtualKey.InputEvent">
+        <member name="E:Ephemera.MidiLib.VirtualKey.InputEvent">
             <summary>Notify handlers of key change.</summary>
         </member>
-        <member name="M:MidiLib.VirtualKey.#ctor(MidiLib.VirtualKeyboard,System.Boolean,System.Int32)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.#ctor(Ephemera.MidiLib.VirtualKeyboard,System.Boolean,System.Int32)">
             <summary>
             Normal constructor.
             </summary>
@@ -1677,74 +1677,74 @@
             <param name="isNatural"></param>
             <param name="noteId"></param>
         </member>
-        <member name="M:MidiLib.VirtualKey.PressVKey(System.Int32)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.PressVKey(System.Int32)">
             <summary>
             
             </summary>
             <param name="velocity"></param>
         </member>
-        <member name="M:MidiLib.VirtualKey.ReleaseVKey">
+        <member name="M:Ephemera.MidiLib.VirtualKey.ReleaseVKey">
             <summary>
             
             </summary>
         </member>
-        <member name="M:MidiLib.VirtualKey.CalcVelocity">
+        <member name="M:Ephemera.MidiLib.VirtualKey.CalcVelocity">
             <summary>
             Calc velocity from Y position.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MidiLib.VirtualKey.OnMouseEnter(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.OnMouseEnter(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKey.OnMouseLeave(System.EventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.OnMouseLeave(System.EventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKey.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKey.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKey.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:MidiLib.VirtualKey.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKey.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             
             </summary>
             <param name="e"></param>
         </member>
-        <member name="T:MidiLib.Wobbler">
+        <member name="T:Ephemera.MidiLib.Wobbler">
             <summary>
             Statistical randomizer for time and volume.
             </summary>
         </member>
-        <member name="F:MidiLib.Wobbler._rand">
+        <member name="F:Ephemera.MidiLib.Wobbler._rand">
             <summary>Randomizer.</summary>
         </member>
-        <member name="P:MidiLib.Wobbler.RangeLow">
+        <member name="P:Ephemera.MidiLib.Wobbler.RangeLow">
             <summary>Minimum range for randomizing - 3 sigma.</summary>
         </member>
-        <member name="P:MidiLib.Wobbler.RangeHigh">
+        <member name="P:Ephemera.MidiLib.Wobbler.RangeHigh">
             <summary>Maximum range for randomizing - 3 sigma.</summary>
         </member>
-        <member name="M:MidiLib.Wobbler.Next(System.Double)">
+        <member name="M:Ephemera.MidiLib.Wobbler.Next(System.Double)">
             <summary>
             Return next from standard distribution.
             </summary>
