@@ -216,11 +216,23 @@
             Tree control with file type filters.
             </summary>
         </member>
-        <member name="P:Ephemera.NBagOfUis.FilTree.Settings">
-            <summary>Stuff of interest to the user.</summary>
-        </member>
         <member name="P:Ephemera.NBagOfUis.FilTree.RecentFiles">
-            <summary>Client supplies these.</summary>
+            <summary>Client may supply these.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.FilTree.RootDirs">
+            <summary>Your favorite places.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.FilTree.FilterExts">
+            <summary>Show only these file types. Empty is valid for files without extensions..</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.FilTree.IgnoreDirs">
+            <summary>Ignore these noisy directories</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.FilTree.SplitterPosition">
+            <summary>Splitter Position as Percent of width..</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.FilTree.SingleClickSelect">
+            <summary>Generate event with single or double click..</summary>
         </member>
         <member name="E:Ephemera.NBagOfUis.FilTree.FileSelectedEvent">
             <summary>User has selected a file.</summary>
@@ -276,18 +288,6 @@
             <param name="ctl"></param>
             <param name="which"></param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.Edit_Click(System.Object,System.EventArgs)">
-            <summary>
-            Edit the settings.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.UpdateFromSettings">
-            <summary>
-            Update from settings.
-            </summary>
-        </member>
         <member name="F:Ephemera.NBagOfUis.FilTree.components">
             <summary> 
             Required designer variable.
@@ -304,9 +304,6 @@
             Required method for Designer support - do not modify 
             the contents of this method with the code editor.
             </summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.FilTreeSettings.IgnoreDirs">
-            <summary></summary>
         </member>
         <member name="T:Ephemera.NBagOfUis.GraphicsUtils">
             <summary>

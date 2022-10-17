@@ -808,7 +808,13 @@
             Save object to file.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.SettingsCore.Cleanup">
+        <member name="M:Ephemera.NBagOfTricks.SettingsCore.UpdateMru(System.String)">
+            <summary>
+            Update the RecentFiles.
+            </summary>
+            <param name="newVal">New value to insert.</param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.SettingsCore.CleanMru">
             <summary>
             Remove duplicate and invalid file names.
             </summary>
@@ -904,14 +910,6 @@
             <param name="s"></param>
             <param name="c"></param>
             <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.StringUtils.UpdateMru(System.Collections.Generic.List{System.String},System.String,System.Int32)">
-            <summary>
-            Update the MRU.
-            </summary>
-            <param name="mruList">The MRU.</param>
-            <param name="newVal">New value(s) to perhaps insert.</param>
-            <param name="mruSize">Optional max size.</param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.StringUtils.FormatSpecifier(System.Single)">
             <summary>
