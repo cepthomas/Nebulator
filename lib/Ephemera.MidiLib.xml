@@ -858,7 +858,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.MidiDataFile.GetPatternNames">
             <summary>
-            Get all useful pattern names - those with musicaal notes.
+            Get all useful pattern names - those with musical notes.
             </summary>
             <returns>List of names.</returns>
         </member>

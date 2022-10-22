@@ -16,10 +16,10 @@ namespace Ephemera.Nebulator.App
         [STAThread]
         static void Main(string[] _)
         {
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            MainForm? f = new();
-            Application.Run(f);
+            Application.Run(new MainForm());
         }
     }
 }

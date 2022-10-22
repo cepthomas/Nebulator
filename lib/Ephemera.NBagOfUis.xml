@@ -223,48 +223,62 @@
             <summary>Your favorite places.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.FilTree.FilterExts">
-            <summary>Show only these file types. Empty is valid for files without extensions..</summary>
+            <summary>Show only these file types. Empty is valid for files without extensions.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.FilTree.IgnoreDirs">
-            <summary>Ignore these noisy directories</summary>
+            <summary>Ignore these noisy directories.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.FilTree.SplitterPosition">
-            <summary>Splitter Position as Percent of width..</summary>
+            <summary>Splitter Position as Percent of width.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.FilTree.SingleClickSelect">
-            <summary>Generate event with single or double click..</summary>
+            <summary>Generate event with single or double click.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.FilTree._lastListIndex">
+            <summary>Tracking UI.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.FilTree._lastNode">
+            <summary>Tracking UI.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.FilTree._recentNode">
+            <summary>Special node.</summary>
         </member>
         <member name="E:Ephemera.NBagOfUis.FilTree.FileSelectedEvent">
             <summary>User has selected a file.</summary>
+        </member>
+        <member name="T:Ephemera.NBagOfUis.FilTree.TreeDirInfo">
+            <summary>Convenience container.</summary>
         </member>
         <member name="T:Ephemera.NBagOfUis.FilTree.ListFileInfo">
             <summary>Convenience container.</summary>
         </member>
         <member name="M:Ephemera.NBagOfUis.FilTree.#ctor">
             <summary>
-            Default constructor.
+            Default constructor. Initializes the filtree.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.Init">
+        <member name="M:Ephemera.NBagOfUis.FilTree.InitTree">
             <summary>
-            Populate everything from the properties.
+            Populate from properties. Client must call this after editing the properties.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.PopulateTreeView">
-            <summary>
-            Fill the tree.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.ShowDirectories(System.IO.DirectoryInfo[],System.Windows.Forms.TreeNode)">
+        <member name="M:Ephemera.NBagOfUis.FilTree.GetSubdirs(System.IO.DirectoryInfo[],System.Windows.Forms.TreeNode)">
             <summary>
             Recursively drill down through the directory structure and populate the tree.
             </summary>
-            <param name="dirs"></param>
+            <param name="dis"></param>
             <param name="parentNode"></param>
         </member>
         <member name="M:Ephemera.NBagOfUis.FilTree.TreeView_NodeMouseClick(System.Object,System.Windows.Forms.TreeNodeMouseClickEventArgs)">
             <summary>
             Drill down through dirs/files.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.FilTree.TreeView_MouseMove(System.Object,System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Show folder info at mouse position.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
@@ -281,29 +295,21 @@
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.GetInfo(System.Windows.Forms.Control,System.String)">
+        <member name="M:Ephemera.NBagOfUis.FilTree.ListFiles_MouseMove(System.Object,System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Show file info at mouse position.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.FilTree.GetInfo(System.Windows.Forms.Control)">
             <summary>
             Context menu handler.
             </summary>
             <param name="ctl"></param>
-            <param name="which"></param>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.FilTree.components">
-            <summary> 
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.Dispose(System.Boolean)">
-            <summary> 
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
         <member name="M:Ephemera.NBagOfUis.FilTree.InitializeComponent">
-            <summary> 
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
+            <summary>Required method for Designer support - do not modify the contents of this method with the code editor. (haha)</summary>
         </member>
         <member name="T:Ephemera.NBagOfUis.GraphicsUtils">
             <summary>
@@ -548,6 +554,24 @@
         <member name="F:Ephemera.NBagOfUis.OptionsEditor._values">
             <summary>Working values so we don't destroy originals.</summary>
         </member>
+        <member name="F:Ephemera.NBagOfUis.OptionsEditor.txtAdd">
+            <summary>Control.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.OptionsEditor.lbValues">
+            <summary>Control.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.OptionsEditor.btnCancel">
+            <summary>Control.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.OptionsEditor.btnOk">
+            <summary>Control.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.OptionsEditor.btnAdd">
+            <summary>Control.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.OptionsEditor._allowEdit">
+            <summary>Flag.</summary>
+        </member>
         <member name="P:Ephemera.NBagOfUis.OptionsEditor.Values">
             <summary>The values to edit. Key is text, value is bool enable. Clone in case user cancels.</summary>
         </member>
@@ -582,21 +606,9 @@
             </summary>
             <param name="e"></param>
         </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor.components">
+        <member name="M:Ephemera.NBagOfUis.OptionsEditor.Adjust">
             <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.OptionsEditor.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.OptionsEditor.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
+            Tweak UI area.
             </summary>
         </member>
         <member name="T:Ephemera.NBagOfUis.Pan">
