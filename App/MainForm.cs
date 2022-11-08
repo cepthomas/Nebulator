@@ -96,7 +96,7 @@ namespace Ephemera.Nebulator.App
             string logFileName = Path.Combine(appDir, "log.txt");
             LogManager.MinLevelFile = _settings.FileLogLevel;
             LogManager.MinLevelNotif = _settings.NotifLogLevel;
-            LogManager.LogEvent += LogManager_LogEvent;
+            LogManager.LogMessage += LogManager_LogMessage;
             LogManager.Run(logFileName, 100000);
 
             #region Init UI from settings
@@ -167,7 +167,7 @@ namespace Ephemera.Nebulator.App
 
                 KeyPreview = true; // for routing kbd strokes properly
 
-                _watcher.FileChangeEvent += Watcher_Changed;
+                _watcher.FileChange += Watcher_Changed;
 
                 Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
 
@@ -362,7 +362,7 @@ namespace Ephemera.Nebulator.App
                             BorderStyle = BorderStyle.FixedSingle,
                             BoundChannel = channel
                         };
-                        control.ChannelChangeEvent += ChannelControl_ChannelChangeEvent;
+                        control.ChannelChange += Control_ChannelChange;
                         Controls.Add(control);
                         _channelControls.Add(control);
 
@@ -481,14 +481,16 @@ namespace Ephemera.Nebulator.App
                             {
                                 Dock = DockStyle.Fill,
                             };
-                            vkey.InputEvent += Device_InputEvent;
+                            vkey.InputReceive += Device_InputReceive;
                             _inputDevices.Add(dev.DeviceId, vkey);
 
-                            Form f = new()
+                            using Form f = new()
                             {
                                 Text = "Virtual Keyboard",
                                 ClientSize = vkey.Size,
                                 FormBorderStyle = FormBorderStyle.SizableToolWindow,
+                                ShowIcon = false,
+                                ShowInTaskbar = false
                             };
                             f.Controls.Add(vkey);
                             f.Show();
@@ -501,14 +503,16 @@ namespace Ephemera.Nebulator.App
                             {
                                 Dock = DockStyle.Fill,
                             };
-                            bb.InputEvent += Device_InputEvent;
+                            bb.InputReceive += Device_InputReceive;
                             _inputDevices.Add(dev.DeviceId, bb);
 
-                            Form f = new()
+                            using Form f = new()
                             {
                                 Text = "Bing Bong",
                                 ClientSize = bb.Size,
                                 FormBorderStyle = FormBorderStyle.SizableToolWindow,
+                                ShowIcon = false,
+                                ShowInTaskbar = false
                             };
                             f.Controls.Add(bb);
                             f.Show();
@@ -524,7 +528,7 @@ namespace Ephemera.Nebulator.App
                         var min = new MidiInput(dev.DeviceName);
                         if (min.Valid)
                         {
-                            min.InputEvent += Device_InputEvent;
+                            min.InputReceive += Device_InputReceive;
                             _inputDevices.Add(dev.DeviceId, min);
                         }
                         else
@@ -533,7 +537,7 @@ namespace Ephemera.Nebulator.App
                             try
                             {
                                 var mosc = new OscInput(dev.DeviceName);
-                                mosc.InputEvent += Device_InputEvent;
+                                mosc.InputReceive += Device_InputReceive;
                                 _inputDevices.Add(dev.DeviceId, mosc);
                             }
                             catch
@@ -598,7 +602,7 @@ namespace Ephemera.Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ChannelControl_ChannelChangeEvent(object? sender, ChannelChangeEventArgs e)
+        void Control_ChannelChange(object? sender, ChannelChangeEventArgs e)
         {
             ChannelControl chc = (ChannelControl)sender!;
 
@@ -729,7 +733,7 @@ namespace Ephemera.Nebulator.App
         /// <summary>
         /// Process input event.
         /// </summary>
-        void Device_InputEvent(object? sender, InputEventArgs e)
+        void Device_InputReceive(object? sender, InputReceiveEventArgs e)
         {
             this.InvokeIfRequired(_ =>
             {
@@ -1063,7 +1067,7 @@ namespace Ephemera.Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void LogManager_LogEvent(object? sender, LogEventArgs e)
+        void LogManager_LogMessage(object? sender, LogMessageEventArgs e)
         {
             // Usually come from a different thread.
             if (IsHandleCreated)

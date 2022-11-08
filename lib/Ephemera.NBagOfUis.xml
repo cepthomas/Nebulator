@@ -4,6 +4,20 @@
         <name>Ephemera.NBagOfUis</name>
     </assembly>
     <members>
+        <member name="P:Ephemera.NBagOfUis.ChoiceSelector.SelectedOption">
+            <summary>What the user picked.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ChoiceSelector.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ChoiceSelector.SetOptions(System.Collections.Generic.List{System.String})">
+            <summary>
+            Make selection buttons.
+            </summary>
+            <param name="options"></param>
+        </member>
         <member name="T:Ephemera.NBagOfUis.ClickGrid">
             <summary>
             ClickGrid control.
@@ -33,7 +47,7 @@
         <member name="F:Ephemera.NBagOfUis.ClickGrid._defaultBackBrush">
             <summary>Used for unspecified states.</summary>
         </member>
-        <member name="E:Ephemera.NBagOfUis.ClickGrid.IndicatorEvent">
+        <member name="E:Ephemera.NBagOfUis.ClickGrid.IndicatorChanged">
             <summary>ClickGrid value changed event.</summary>
         </member>
         <member name="M:Ephemera.NBagOfUis.ClickGrid.#ctor">
@@ -243,7 +257,7 @@
         <member name="F:Ephemera.NBagOfUis.FilTree._recentNode">
             <summary>Special node.</summary>
         </member>
-        <member name="E:Ephemera.NBagOfUis.FilTree.FileSelectedEvent">
+        <member name="E:Ephemera.NBagOfUis.FilTree.FileSelected">
             <summary>User has selected a file.</summary>
         </member>
         <member name="T:Ephemera.NBagOfUis.FilTree.TreeDirInfo">
@@ -289,7 +303,7 @@
             </summary>
             <param name="node">Selected node.</param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.FilTree.FileSelected(System.Windows.Forms.MouseEventArgs)">
+        <member name="M:Ephemera.NBagOfUis.FilTree.UserFileSelected(System.Windows.Forms.MouseEventArgs)">
             <summary>
             Handler for single or double mouse clicks.
             </summary>
@@ -537,79 +551,61 @@
             </summary>
             <param name="val"></param>
         </member>
-        <member name="P:Ephemera.NBagOfUis.MultipleChoiceSelector.SelectedOption">
-            <summary>What the user picked.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.MultipleChoiceSelector.#ctor">
-            <summary>
-            Coonstructor.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.MultipleChoiceSelector.SetOptions(System.Collections.Generic.List{System.String})">
-            <summary>
-            Make selection buttons.
-            </summary>
-            <param name="options"></param>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor._values">
-            <summary>Working values so we don't destroy originals.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor.txtAdd">
-            <summary>Control.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor.lbValues">
-            <summary>Control.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor.btnCancel">
-            <summary>Control.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor.btnOk">
-            <summary>Control.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor.btnAdd">
-            <summary>Control.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.OptionsEditor._allowEdit">
-            <summary>Flag.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.OptionsEditor.Values">
-            <summary>The values to edit. Key is text, value is bool enable. Clone in case user cancels.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.OptionsEditor.Title">
-            <summary>Custom label.</summary>
+        <member name="P:Ephemera.NBagOfUis.OptionsEditor.Options">
+            <summary>The values to edit. Key is text, value is bool enable.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.OptionsEditor.AllowEdit">
             <summary>If true, user can add and delete values, otherwise just select.</summary>
+        </member>
+        <member name="E:Ephemera.NBagOfUis.OptionsEditor.OptionsChanged">
+            <summary>ClickGrid value changed event.</summary>
         </member>
         <member name="M:Ephemera.NBagOfUis.OptionsEditor.#ctor">
             <summary>
             Constructor.
             </summary>
         </member>
+        <member name="M:Ephemera.NBagOfUis.OptionsEditor.All_Click(System.Object,System.EventArgs)">
+            <summary>
+            Select all.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.OptionsEditor.None_Click(System.Object,System.EventArgs)">
+            <summary>
+            Select none.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.OptionsEditor.Delete_Click(System.Object,System.EventArgs)">
+            <summary>
+            Delete selection.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
         <member name="M:Ephemera.NBagOfUis.OptionsEditor.Add_Click(System.Object,System.EventArgs)">
             <summary>
-            User is adding a new value.
+            Add new one.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.OptionsEditor.Values_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+        <member name="M:Ephemera.NBagOfUis.OptionsEditor.TxtEdit_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
-            User might be removing a value.
+            Process return and escape keys.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.OptionsEditor.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)">
+        <member name="M:Ephemera.NBagOfUis.OptionsEditor.TxtEdit_Leave(System.Object,System.EventArgs)">
             <summary>
-            Collect list contents.
+            Validate and save edit.
             </summary>
+            <param name="sender"></param>
             <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.OptionsEditor.Adjust">
-            <summary>
-            Tweak UI area.
-            </summary>
         </member>
         <member name="T:Ephemera.NBagOfUis.Pan">
             <summary>
@@ -846,7 +842,7 @@
         <member name="P:Ephemera.NBagOfUis.PropertyGridEx.Dirty">
             <summary>Edited flag.</summary>
         </member>
-        <member name="E:Ephemera.NBagOfUis.PropertyGridEx.PropertyGridExEvent">
+        <member name="E:Ephemera.NBagOfUis.PropertyGridEx.PropertyGridExChange">
             <summary>The property grid is reporting something.</summary>
         </member>
         <member name="T:Ephemera.NBagOfUis.PropertyGridEx.PropertyGridExEventArgs">
@@ -1062,11 +1058,6 @@
             Ready to see.
             </summary>
             <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.Clear">
             <summary></summary>

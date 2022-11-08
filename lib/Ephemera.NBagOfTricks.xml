@@ -1461,7 +1461,7 @@
         <member name="T:Ephemera.NBagOfTricks.SimpleIpc.ConnectionState">
             <summary>Per connection.</summary>
         </member>
-        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.ServerEventArgs">
+        <member name="T:Ephemera.NBagOfTricks.SimpleIpc.IpcReceiveEventArgs">
             <summary>Notify client of some connection event.</summary>
         </member>
         <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._pipeName">
@@ -1473,7 +1473,7 @@
         <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._running">
             <summary>Flag to unblock the listen and end the thread.</summary>
         </member>
-        <member name="E:Ephemera.NBagOfTricks.SimpleIpc.Server.ServerEvent">
+        <member name="E:Ephemera.NBagOfTricks.SimpleIpc.Server.IpcReceive">
             <summary>Something happened. Client will have to take care of thread issues.</summary>
         </member>
         <member name="F:Ephemera.NBagOfTricks.SimpleIpc.Server._cancelEvent">
@@ -1519,7 +1519,7 @@
         <member name="M:Ephemera.NBagOfTricks.Slog.LogEntry.#ctor(System.DateTime,Ephemera.NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32,System.String)">
             <summary>Internal log entry data container.</summary>
         </member>
-        <member name="T:Ephemera.NBagOfTricks.Slog.LogEventArgs">
+        <member name="T:Ephemera.NBagOfTricks.Slog.LogMessageEventArgs">
             <summary>Log event for notification.</summary>
         </member>
         <member name="T:Ephemera.NBagOfTricks.Slog.Scoper">
@@ -1637,7 +1637,7 @@
         <member name="P:Ephemera.NBagOfTricks.Slog.LogManager.QueueSize">
             <summary>For diagnostics.</summary>
         </member>
-        <member name="E:Ephemera.NBagOfTricks.Slog.LogManager.LogEvent">
+        <member name="E:Ephemera.NBagOfTricks.Slog.LogManager.LogMessage">
             <summary>Callback event.</summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Slog.LogManager.CreateLogger(System.String)">

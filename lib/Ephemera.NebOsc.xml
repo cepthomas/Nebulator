@@ -34,19 +34,19 @@
             <param name="bytes"></param>
             <returns></returns>
         </member>
-        <member name="T:Ephemera.NebOsc.InputEventArgs">
+        <member name="T:Ephemera.NebOsc.InputReceiveEventArgs">
             <summary>OSC has received something.</summary>
         </member>
-        <member name="P:Ephemera.NebOsc.InputEventArgs.Messages">
+        <member name="P:Ephemera.NebOsc.InputReceiveEventArgs.Messages">
             <summary>Received data.</summary>
         </member>
-        <member name="T:Ephemera.NebOsc.LogEventArgs">
+        <member name="T:Ephemera.NebOsc.NotificationEventArgs">
             <summary>OSC wants to say something meta.</summary>
         </member>
-        <member name="P:Ephemera.NebOsc.LogEventArgs.IsError">
+        <member name="P:Ephemera.NebOsc.NotificationEventArgs.IsError">
             <summary>Category.</summary>
         </member>
-        <member name="P:Ephemera.NebOsc.LogEventArgs.Message">
+        <member name="P:Ephemera.NebOsc.NotificationEventArgs.Message">
             <summary>Text to log. Usually</summary>
         </member>
         <member name="T:Ephemera.NebOsc.Utils">
@@ -89,10 +89,10 @@
         <member name="F:Ephemera.NebOsc.Input._udpClient">
             <summary>OSC input device.</summary>
         </member>
-        <member name="E:Ephemera.NebOsc.Input.LogEvent">
+        <member name="E:Ephemera.NebOsc.Input.Notification">
             <summary>Request for logging service. May need Invoke() if client is UI.</summary>
         </member>
-        <member name="E:Ephemera.NebOsc.Input.InputEvent">
+        <member name="E:Ephemera.NebOsc.Input.InputReceived">
             <summary>Reporting a change to listeners. May need Invoke() if client is UI.</summary>
         </member>
         <member name="P:Ephemera.NebOsc.Input.DeviceName">
@@ -170,7 +170,7 @@
         <member name="F:Ephemera.NebOsc.Output._lock">
             <summary>Access synchronizer.</summary>
         </member>
-        <member name="E:Ephemera.NebOsc.Output.LogEvent">
+        <member name="E:Ephemera.NebOsc.Output.Notification">
             <inheritdoc />
         </member>
         <member name="P:Ephemera.NebOsc.Output.DeviceName">

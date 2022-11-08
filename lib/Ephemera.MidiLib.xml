@@ -326,7 +326,7 @@
         <member name="P:Ephemera.MidiLib.BingBong.LogEnable">
             <inheritdoc />
         </member>
-        <member name="E:Ephemera.MidiLib.BingBong.InputEvent">
+        <member name="E:Ephemera.MidiLib.BingBong.InputReceive">
             <summary>Click press info.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.BingBong.#ctor">
@@ -524,7 +524,7 @@
         <member name="T:Ephemera.MidiLib.ChannelControl">
             <summary>Channel events and other properties.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.ChannelControl.ChannelChangeEvent">
+        <member name="E:Ephemera.MidiLib.ChannelControl.ChannelChange">
             <summary>Notify host of asynchronous changes from user.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.ChannelControl.BoundChannel">
@@ -715,7 +715,7 @@
         <member name="P:Ephemera.MidiLib.IInputDevice.CaptureEnable">
             <summary>Capture on/off.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.IInputDevice.InputEvent">
+        <member name="E:Ephemera.MidiLib.IInputDevice.InputReceive">
             <summary>Handler for message arrived.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.IOutputDevice">
@@ -778,31 +778,31 @@
         <member name="T:Ephemera.MidiLib.ChannelChangeEventArgs">
             <summary>Notify host of asynchronous changes from user.</summary>
         </member>
-        <member name="T:Ephemera.MidiLib.InputEventArgs">
+        <member name="T:Ephemera.MidiLib.InputReceiveEventArgs">
             <summary>
             Midi (real or sim) has received something. It's up to the client to make sense of it.
             Property value of -1 indicates invalid or not pertinent e.g a controller event doesn't have velocity.
             </summary>
         </member>
-        <member name="P:Ephemera.MidiLib.InputEventArgs.Channel">
+        <member name="P:Ephemera.MidiLib.InputReceiveEventArgs.Channel">
             <summary>Channel number 1-based. Required.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.InputEventArgs.Note">
+        <member name="P:Ephemera.MidiLib.InputReceiveEventArgs.Note">
             <summary>The note number to play. NoteOn/Off only.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.InputEventArgs.Controller">
+        <member name="P:Ephemera.MidiLib.InputReceiveEventArgs.Controller">
             <summary>Specific controller id.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.InputEventArgs.Value">
+        <member name="P:Ephemera.MidiLib.InputReceiveEventArgs.Value">
             <summary>For Note = velocity. For controller = payload.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.InputEventArgs.ErrorInfo">
+        <member name="P:Ephemera.MidiLib.InputReceiveEventArgs.ErrorInfo">
             <summary>Something to tell the client.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.InputEventArgs.PITCH_CONTROL">
+        <member name="F:Ephemera.MidiLib.InputReceiveEventArgs.PITCH_CONTROL">
             <summary>Special controller id to carry pitch info.</summary>
         </member>
-        <member name="M:Ephemera.MidiLib.InputEventArgs.ToString">
+        <member name="M:Ephemera.MidiLib.InputReceiveEventArgs.ToString">
             <summary>Read me.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.MidiDataFile">
@@ -1132,7 +1132,7 @@
         <member name="P:Ephemera.MidiLib.MidiInput.CaptureEnable">
             <summary>Capture on/off.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.MidiInput.InputEvent">
+        <member name="E:Ephemera.MidiLib.MidiInput.InputReceive">
             <inheritdoc />
         </member>
         <member name="M:Ephemera.MidiLib.MidiInput.#ctor(System.String)">
@@ -1156,7 +1156,7 @@
             Process error midi event - Parameter 1 is invalid.
             </summary>
         </member>
-        <member name="M:Ephemera.MidiLib.MidiInput.Log(Ephemera.MidiLib.InputEventArgs)">
+        <member name="M:Ephemera.MidiLib.MidiInput.Log(Ephemera.MidiLib.InputReceiveEventArgs)">
             <summary>
             Send event information to the client to sort out.
             </summary>
@@ -1171,7 +1171,7 @@
         <member name="F:Ephemera.MidiLib.OscInput._oscInput">
             <summary>OSC input device.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.OscInput.InputEvent">
+        <member name="E:Ephemera.MidiLib.OscInput.InputReceive">
             <inheritdoc />
         </member>
         <member name="P:Ephemera.MidiLib.OscInput.DeviceName">
@@ -1197,14 +1197,14 @@
             Resource clean up.
             </summary>
         </member>
-        <member name="M:Ephemera.MidiLib.OscInput.OscInput_LogEvent(System.Object,Ephemera.NebOsc.LogEventArgs)">
+        <member name="M:Ephemera.MidiLib.OscInput.OscInput_Notification(System.Object,Ephemera.NebOsc.NotificationEventArgs)">
             <summary>
             OSC has something to say.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Ephemera.MidiLib.OscInput.OscInput_InputEvent(System.Object,Ephemera.NebOsc.InputEventArgs)">
+        <member name="M:Ephemera.MidiLib.OscInput.OscInput_InputReceived(System.Object,Ephemera.NebOsc.InputReceiveEventArgs)">
             <summary>
             Handle a received message.
             </summary>
@@ -1246,7 +1246,7 @@
         <member name="M:Ephemera.MidiLib.OscOutput.SendEvent(NAudio.Midi.MidiEvent)">
             <inheritdoc />
         </member>
-        <member name="M:Ephemera.MidiLib.OscOutput.OscOutput_LogEvent(System.Object,Ephemera.NebOsc.LogEventArgs)">
+        <member name="M:Ephemera.MidiLib.OscOutput.OscOutput_Notification(System.Object,Ephemera.NebOsc.NotificationEventArgs)">
             <summary>
             OSC has something to say.
             </summary>
@@ -1514,7 +1514,7 @@
         <member name="P:Ephemera.MidiLib.SimpleChannelControl.ControlColor">
             <summary>Cosmetics.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.SimpleChannelControl.ChannelChangeEvent">
+        <member name="E:Ephemera.MidiLib.SimpleChannelControl.ChannelChange">
             <summary>Notify host of asynchronous changes from user.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.SimpleChannelControl.#ctor">
@@ -1578,7 +1578,7 @@
         <member name="P:Ephemera.MidiLib.VirtualKeyboard.LogEnable">
             <inheritdoc />
         </member>
-        <member name="E:Ephemera.MidiLib.VirtualKeyboard.InputEvent">
+        <member name="E:Ephemera.MidiLib.VirtualKeyboard.InputReceive">
             <summary>Key press info.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.VirtualKeyboard._keys">
@@ -1631,7 +1631,7 @@
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:Ephemera.MidiLib.VirtualKeyboard.Keyboard_InputEvent(System.Object,Ephemera.MidiLib.InputEventArgs)">
+        <member name="M:Ephemera.MidiLib.VirtualKeyboard.Keyboard_InputReceive(System.Object,Ephemera.MidiLib.InputReceiveEventArgs)">
             <summary>
             Pass along an event from a virtual key.
             </summary>
@@ -1666,7 +1666,7 @@
         <member name="P:Ephemera.MidiLib.VirtualKey.NoteId">
             <summary>Associated midi note.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.VirtualKey.InputEvent">
+        <member name="E:Ephemera.MidiLib.VirtualKey.InputReceive">
             <summary>Notify handlers of key change.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.VirtualKey.#ctor(Ephemera.MidiLib.VirtualKeyboard,System.Boolean,System.Int32)">
