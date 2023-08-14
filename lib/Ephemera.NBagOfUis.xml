@@ -4,8 +4,11 @@
         <name>Ephemera.NBagOfUis</name>
     </assembly>
     <members>
-        <member name="P:Ephemera.NBagOfUis.ChoiceSelector.SelectedOption">
+        <member name="P:Ephemera.NBagOfUis.ChoiceSelector.SelectedChoice">
             <summary>What the user picked.</summary>
+        </member>
+        <member name="E:Ephemera.NBagOfUis.ChoiceSelector.ChoiceChanged">
+            <summary>Value changed event.</summary>
         </member>
         <member name="M:Ephemera.NBagOfUis.ChoiceSelector.#ctor">
             <summary>
@@ -558,7 +561,7 @@
             <summary>If true, user can add and delete values, otherwise just select.</summary>
         </member>
         <member name="E:Ephemera.NBagOfUis.OptionsEditor.OptionsChanged">
-            <summary>ClickGrid value changed event.</summary>
+            <summary>Value changed event.</summary>
         </member>
         <member name="M:Ephemera.NBagOfUis.OptionsEditor.#ctor">
             <summary>
@@ -1062,17 +1065,19 @@
         <member name="M:Ephemera.NBagOfUis.TextViewer.Clear">
             <summary></summary>
         </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendLine(System.String)">
+        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendLine(System.String,System.Nullable{System.Drawing.Color})">
             <summary>
             A message to display to the user. Adds EOL.
             </summary>
             <param name="text">The message.</param>
+            <param name="color">Specific color to use.</param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendText(System.String)">
+        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendText(System.String,System.Nullable{System.Drawing.Color})">
             <summary>
             A message to display to the user. Doesn't add EOL.
             </summary>
             <param name="text">The message.</param>
+            <param name="color">Specific color to use.</param>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.Rtb_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>

@@ -1540,6 +1540,15 @@
             </summary>
             <param name="name">Client assigned name.</param>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Log(Ephemera.NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32)">
+            <summary>
+            General function.
+            </summary>
+            <param name="level">Log level.</param>
+            <param name="msg">Content.</param>
+            <param name="file">Ignore - compiler use.</param>
+            <param name="line">Ignore - compiler use.</param>
+        </member>
         <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Trace(System.String,System.String,System.Int32)">
             <summary>
             Convenience function.
