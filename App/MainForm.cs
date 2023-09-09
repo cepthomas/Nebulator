@@ -143,6 +143,10 @@ namespace Ephemera.Nebulator.App
 
             textViewer.WordWrap = _settings.WordWrap;
 
+            btnMonIn.Click += Monitor_Click;
+            btnMonOut.Click += Monitor_Click;
+            btnAbout.Click += About_Click;
+            btnSettings.Click += Settings_Click;
             btnKillComm.Click += (object? _, EventArgs __) => { KillAll(); };
             #endregion
         }

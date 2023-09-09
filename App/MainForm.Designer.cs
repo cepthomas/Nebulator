@@ -188,7 +188,7 @@
             // 
             this.exportCsvToolStripMenuItem.Name = "exportCsvToolStripMenuItem";
             this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.exportCsvToolStripMenuItem.Text = "Dump midi";
+            this.exportCsvToolStripMenuItem.Text = "Dump Midi";
             this.exportCsvToolStripMenuItem.Click += new System.EventHandler(this.ExportCsv_Click);
             // 
             // showDefinitionsToolStripMenuItem
@@ -206,9 +206,8 @@
             this.btnMonIn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMonIn.Name = "btnMonIn";
             this.btnMonIn.Size = new System.Drawing.Size(29, 24);
-            this.btnMonIn.Text = "toolStripButton1";
+            this.btnMonIn.Text = "btnMonIn";
             this.btnMonIn.ToolTipText = "Monitor messages in";
-            this.btnMonIn.Click += new System.EventHandler(this.Monitor_Click);
             // 
             // btnMonOut
             // 
@@ -218,9 +217,8 @@
             this.btnMonOut.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMonOut.Name = "btnMonOut";
             this.btnMonOut.Size = new System.Drawing.Size(29, 24);
-            this.btnMonOut.Text = "toolStripButton1";
+            this.btnMonOut.Text = "btnMonOut";
             this.btnMonOut.ToolTipText = "Monitor messages out";
-            this.btnMonOut.Click += new System.EventHandler(this.Monitor_Click);
             // 
             // btnKillComm
             // 
@@ -229,7 +227,7 @@
             this.btnKillComm.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnKillComm.Name = "btnKillComm";
             this.btnKillComm.Size = new System.Drawing.Size(29, 24);
-            this.btnKillComm.Text = "toolStripButton1";
+            this.btnKillComm.Text = "btnKillComm";
             this.btnKillComm.ToolTipText = "Kill all devices";
             // 
             // btnAbout
@@ -239,8 +237,8 @@
             this.btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(29, 24);
-            this.btnAbout.Text = "toolStripButton1";
-            this.btnAbout.Click += new System.EventHandler(this.About_Click);
+            this.btnAbout.Text = "btnAbout";
+            this.btnAbout.ToolTipText = "About";
             // 
             // btnSettings
             // 
@@ -249,8 +247,8 @@
             this.btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(29, 24);
-            this.btnSettings.Text = "toolStripButton1";
-            this.btnSettings.Click += new System.EventHandler(this.Settings_Click);
+            this.btnSettings.Text = "btnSettings";
+            this.btnSettings.ToolTipText = "Edit settings";
             // 
             // textViewer
             // 
