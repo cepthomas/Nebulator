@@ -14,6 +14,8 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using Ephemera.Nebulator.Script;
 
+// ? Nebulator named input devices and controllers like outputs.
+
 
 namespace Ephemera.Nebulator.App
 {
