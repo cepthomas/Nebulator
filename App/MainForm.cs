@@ -558,30 +558,34 @@ namespace Ephemera.Nebulator.App
 
             foreach (var dev in _settings.MidiSettings.OutputDevices)
             {
-                switch (dev.DeviceName)
+                // Try midi.
+                bool devok = false;
+
+                if (!devok)
                 {
-                    default:
-                        // Try midi.
-                        var mout = new MidiOutput(dev.DeviceName);
-                        if (mout.Valid)
-                        {
-                            _outputDevices.Add(dev.DeviceId, mout);
-                        }
-                        else
-                        {
-                            // Try osc.
-                            try
-                            {
-                                var mosc = new OscOutput(dev.DeviceName);
-                                _outputDevices.Add(dev.DeviceId, mosc);
-                            }
-                            catch
-                            {
-                                _logger.Error($"Something wrong with your output device:{dev.DeviceName} id:{dev.DeviceId}");
-                                ok = false;
-                            }
-                        }
-                        break;
+                    var mout = new MidiOutput(dev.DeviceName);
+                    if (mout.Valid)
+                    {
+                        _outputDevices.Add(dev.DeviceId, mout);
+                        devok = true;
+                    }
+                }
+
+                if (!devok)
+                {
+                    // Try osc.
+                    var mosc = new OscOutput(dev.DeviceName);
+                    if (mosc.Valid)
+                    {
+                        _outputDevices.Add(dev.DeviceId, mosc);
+                        devok = true;
+                    }
+                }
+
+                if (!devok)
+                {
+                    _logger.Error($"Invalid output device:{dev.DeviceName} id:{dev.DeviceId}");
+                    ok = false;
                 }
             }
 

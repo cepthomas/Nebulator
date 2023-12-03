@@ -19,6 +19,7 @@
         <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
         <ApplicationIcon>Resources\medusa.ico</ApplicationIcon>
         <!-- en none -->
+        <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" />
