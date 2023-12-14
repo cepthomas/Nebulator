@@ -82,7 +82,7 @@
             <summary>
             Change current time. 
             </summary>
-            <param name="num">Subdivs/ticks.</param>
+            <param name="num">Subbeats/ticks.</param>
             <returns>True if at the end of the sequence.</returns>
         </member>
         <member name="M:Ephemera.MidiLib.BarBar.Reset">
@@ -97,9 +97,9 @@
             <param name="val"></param>
             <returns></returns>
         </member>
-        <member name="M:Ephemera.MidiLib.BarBar.GetSubdivFromMouse(System.Int32)">
+        <member name="M:Ephemera.MidiLib.BarBar.GetSubbeatFromMouse(System.Int32)">
             <summary>
-            Convert x pos to subdiv.
+            Convert x pos to subbeat.
             </summary>
             <param name="x"></param>
         </member>
@@ -119,8 +119,8 @@
         <member name="F:Ephemera.MidiLib.BarSpan._all_ids">
             <summary>Increment for unique value.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.BarSpan.TotalSubdivs">
-            <summary>The time in subdivs. Always zero-based.</summary>
+        <member name="P:Ephemera.MidiLib.BarSpan.TotalSubbeats">
+            <summary>The time in subbeats. Always zero-based.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.BarSpan.Bar">
             <summary>The bar number.</summary>
@@ -128,8 +128,8 @@
         <member name="P:Ephemera.MidiLib.BarSpan.Beat">
             <summary>The beat number in the bar.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.BarSpan.Subdiv">
-            <summary>The subdiv in the beat.</summary>
+        <member name="P:Ephemera.MidiLib.BarSpan.Subbeat">
+            <summary>The subbeat in the beat.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.BarSpan.#ctor">
             <summary>
@@ -138,17 +138,17 @@
         </member>
         <member name="M:Ephemera.MidiLib.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Constructor from bar/beat/subdiv.
+            Constructor from bar/beat/subbeat.
             </summary>
             <param name="bar"></param>
             <param name="beat"></param>
-            <param name="subdiv"></param>
+            <param name="subbeat"></param>
         </member>
         <member name="M:Ephemera.MidiLib.BarSpan.#ctor(System.Int32)">
             <summary>
-            Constructor from subdivs.
+            Constructor from subbeats.
             </summary>
-            <param name="subdivs">Number of subdivs.</param>
+            <param name="subbeats">Number of subbeats.</param>
         </member>
         <member name="M:Ephemera.MidiLib.BarSpan.Reset">
             <summary>
@@ -166,13 +166,13 @@
             <summary>
             Update current value.
             </summary>
-            <param name="subdivs">By this number of subdivs.</param>
+            <param name="subbeats">By this number of subbeats.</param>
         </member>
         <member name="M:Ephemera.MidiLib.BarSpan.SetRounded(System.Int32,Ephemera.MidiLib.SnapType,System.Boolean)">
             <summary>
-            Set to subdiv using specified rounding.
+            Set to subbeat using specified rounding.
             </summary>
-            <param name="subdiv"></param>
+            <param name="subbeat"></param>
             <param name="snapType"></param>
             <param name="up">To ceiling otherwise closest.</param>
         </member>
@@ -200,8 +200,8 @@
         <member name="F:Ephemera.MidiLib.BarTime.LOW_RES_PPQ">
             <summary>Some features are at a lower resolution.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.BarTime.TotalSubdivs">
-            <summary>The time in subdivs. Always zero-based.</summary>
+        <member name="P:Ephemera.MidiLib.BarTime.TotalSubbeats">
+            <summary>The time in subbeats. Always zero-based.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.BarTime.TotalBeats">
             <summary>The time in beats. Always zero-based.</summary>
@@ -212,8 +212,8 @@
         <member name="P:Ephemera.MidiLib.BarTime.Beat">
             <summary>The beat number in the bar.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.BarTime.Subdiv">
-            <summary>The subdiv in the beat.</summary>
+        <member name="P:Ephemera.MidiLib.BarTime.Subbeat">
+            <summary>The subbeat in the beat.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.BarTime.#ctor">
             <summary>
@@ -222,21 +222,21 @@
         </member>
         <member name="M:Ephemera.MidiLib.BarTime.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Constructor from bar/beat/subdiv.
+            Constructor from bar/beat/subbeat.
             </summary>
             <param name="bar"></param>
             <param name="beat"></param>
-            <param name="subdiv"></param>
+            <param name="subbeat"></param>
         </member>
         <member name="M:Ephemera.MidiLib.BarTime.#ctor(System.Int32)">
             <summary>
-            Constructor from subdivs.
+            Constructor from subbeats.
             </summary>
-            <param name="subdivs">Number of subdivs.</param>
+            <param name="subbeats">Number of subbeats.</param>
         </member>
         <member name="M:Ephemera.MidiLib.BarTime.#ctor(System.Double)">
             <summary>
-            Construct a BarTime from Beat.Subdiv representation as a double. Subdiv is LOW_RES_PPQ.
+            Construct a BarTime from Beat.Subbeat representation as a double. Subbeat is LOW_RES_PPQ.
             </summary>
             <param name="beat"></param>
             <returns>New BarTime.</returns>
@@ -257,13 +257,13 @@
             <summary>
             Update current value.
             </summary>
-            <param name="subdivs">By this number of subdivs.</param>
+            <param name="subbeats">By this number of subbeats.</param>
         </member>
         <member name="M:Ephemera.MidiLib.BarTime.SetRounded(System.Int32,Ephemera.MidiLib.SnapType,System.Boolean)">
             <summary>
-            Set to subdiv using specified rounding.
+            Set to subbeat using specified rounding.
             </summary>
-            <param name="subdiv"></param>
+            <param name="subbeat"></param>
             <param name="snapType"></param>
             <param name="up">To ceiling otherwise closest.</param>
         </member>
@@ -393,10 +393,10 @@
             <summary>Describes one midi output channel. Some properties are optional.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.Channel._events">
-            <summary>The collection of playable events for this channel and pattern. Key is the internal subdiv/time.</summary>
+            <summary>The collection of playable events for this channel and pattern. Key is the internal subbeat/time.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.Channel._transients">
-            <summary>Things that are executed once and disappear: NoteOffs, script send now. Key is the internal subdiv/time.</summary>
+            <summary>Things that are executed once and disappear: NoteOffs, script send now. Key is the internal subbeat/time.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.Channel._volume">
             <summary>Current volume.</summary>
@@ -431,7 +431,7 @@
         <member name="P:Ephemera.MidiLib.Channel.Selected">
             <summary>For UI user selection.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.Channel.MaxSubdiv">
+        <member name="P:Ephemera.MidiLib.Channel.MaxSubbeat">
             <summary>The duration of the whole channel - calculated.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.Channel.NumEvents">
@@ -450,9 +450,9 @@
         </member>
         <member name="M:Ephemera.MidiLib.Channel.GetEvents(System.Int32)">
             <summary>
-            Get the events for a specific subdiv.
+            Get the events for a specific subbeat.
             </summary>
-            <param name="subdiv"></param>
+            <param name="subbeat"></param>
             <returns></returns>
         </member>
         <member name="M:Ephemera.MidiLib.Channel.GetAllEvents">
@@ -465,13 +465,13 @@
             <summary>
             Process any events for this time.
             </summary>
-            <param name="subdiv"></param>
+            <param name="subbeat"></param>
         </member>
         <member name="M:Ephemera.MidiLib.Channel.Flush(System.Int32)">
             <summary>
             Execute any lingering transients and clear the collection.
             </summary>
-            <param name="subdiv">After this time.</param>
+            <param name="subbeat">After this time.</param>
         </member>
         <member name="M:Ephemera.MidiLib.Channel.NextVol(System.Double)">
             <summary>Get the next volume.</summary>
@@ -513,9 +513,9 @@
             <param name="channels"></param>
             <returns></returns>
         </member>
-        <member name="M:Ephemera.MidiLib.ChannelUtils.TotalSubdivs``1(System.Collections.Generic.Dictionary{System.String,``0})">
+        <member name="M:Ephemera.MidiLib.ChannelUtils.TotalSubbeats``1(System.Collections.Generic.Dictionary{System.String,``0})">
             <summary>
-            Get subdivs for the collection, rounded to beat.
+            Get subbeats for the collection, rounded to beat.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="channels"></param>
@@ -542,7 +542,7 @@
         <member name="P:Ephemera.MidiLib.ChannelControl.Volume">
             <summary>Current volume. Channel.Volume performs the constraints.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.ChannelControl.MaxSubdiv">
+        <member name="P:Ephemera.MidiLib.ChannelControl.MaxSubbeat">
             <summary>The duration of the whole channel.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.ChannelControl.IsDrums">
@@ -1061,10 +1061,10 @@
             <summary>Associated channel name.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiEventDesc.AbsoluteTime">
-            <summary>Time (subdivs) from original file.</summary>
+            <summary>Time (subbeats) from original file.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiEventDesc.ScaledTime">
-            <summary>Time (subdivs) scaled to internal units using send PPQ.</summary>
+            <summary>Time (subbeats) scaled to internal units using send PPQ.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiEventDesc.RawEvent">
             <summary>The raw midi event.</summary>
@@ -1296,10 +1296,10 @@
         <member name="P:Ephemera.MidiLib.MidiSettings.BeatsPerBar">
             <summary>Only 4/4 time supported.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiSettings.SubdivsPerBeat">
+        <member name="P:Ephemera.MidiLib.MidiSettings.SubbeatsPerBeat">
             <summary>Convenience.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiSettings.SubdivsPerBar">
+        <member name="P:Ephemera.MidiLib.MidiSettings.SubeatsPerBar">
             <summary>Convenience.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.MidiTimeConverter">
@@ -1405,7 +1405,7 @@
             <summary>All the pattern midi events, key is when to play (scaled time).</summary>
         </member>
         <member name="F:Ephemera.MidiLib.PatternInfo._mt">
-            <summary>For scaling subdivs to internal.</summary>
+            <summary>For scaling subbeats to internal.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.PatternInfo._channelPatches">
             <summary>Collection of all channels in this pattern. Key is number, value is associated patch.</summary>
