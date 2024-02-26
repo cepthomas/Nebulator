@@ -399,8 +399,8 @@ namespace Ephemera.Nebulator.App
 
                         // Round total up to next beat.
                         BarTime bs = new();
-                        bs.SetRounded(channel.MaxSubdiv, SnapType.Beat, true);
-                        _totalSubdivs = Math.Max(_totalSubdivs, bs.TotalSubdivs);
+                        bs.SetRounded(channel.MaxSubbeat, SnapType.Beat, true);
+                        _totalSubdivs = Math.Max(_totalSubdivs, bs.TotalSubbeats);
                     }
                 }
 
@@ -708,7 +708,7 @@ namespace Ephemera.Nebulator.App
                         // Need exception handling here to protect from user script errors.
                         try
                         {
-                            ch.DoStep(_stepTime.TotalSubdivs);
+                            ch.DoStep(_stepTime.TotalSubbeats);
                         }
                         catch (Exception ex)
                         {
@@ -726,7 +726,7 @@ namespace Ephemera.Nebulator.App
                     // Check for end.
                     if (done)
                     {
-                        _channels.Values.ForEach(ch => ch.Flush(_stepTime.TotalSubdivs));
+                        _channels.Values.ForEach(ch => ch.Flush(_stepTime.TotalSubbeats));
                         ProcessPlay(PlayCommand.StopRewind);
                         KillAll(); // just in case
                     }
@@ -1171,7 +1171,7 @@ namespace Ephemera.Nebulator.App
             }
 
             // Always do this.
-            barBar.Current = new(_stepTime.TotalSubdivs);
+            barBar.Current = new(_stepTime.TotalSubbeats);
 
             return ret;
         }
@@ -1183,7 +1183,7 @@ namespace Ephemera.Nebulator.App
         /// <param name="e"></param>
         void BarBar_CurrentTimeChanged(object? sender, EventArgs e)
         {
-            _stepTime = new(barBar.Current.TotalSubdivs);
+            _stepTime = new(barBar.Current.Subbeat);
             ProcessPlay(PlayCommand.UpdateUiTime);
         }
         #endregion
@@ -1212,7 +1212,7 @@ namespace Ephemera.Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTimeConverter mt = new(_settings.MidiSettings.SubdivsPerBeat, sldTempo.Value);
+            MidiTimeConverter mt = new(_settings.MidiSettings.SubbeatsPerBeat, sldTempo.Value);
             var per = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer(per, MmTimerCallback);
         }
@@ -1240,13 +1240,13 @@ namespace Ephemera.Nebulator.App
                     // Make a Pattern object and call the formatter.
                     IEnumerable<Channel> channels = _channels.Values.Where(ch => ch.NumEvents > 0);
 
-                    PatternInfo pattern = new("export", _settings.MidiSettings.SubdivsPerBeat,
+                    PatternInfo pattern = new("export", _settings.MidiSettings.SubbeatsPerBeat,
                         _script.GetEvents(), channels, _script.Tempo);
 
                     Dictionary<string, int> meta = new()
                     {
                         { "MidiFileType", 0 },
-                        { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubdivsPerBeat },
+                        { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubbeatsPerBeat },
                         { "NumTracks", 1 }
                     };
 
@@ -1269,12 +1269,12 @@ namespace Ephemera.Nebulator.App
 
                 var fn = Path.GetFileName(_scriptFileName.Replace(".neb", ".csv"));
 
-                PatternInfo pattern = new("export", _settings.MidiSettings.SubdivsPerBeat, _script.GetEvents(), channels, _script.Tempo);
+                PatternInfo pattern = new("export", _settings.MidiSettings.SubbeatsPerBeat, _script.GetEvents(), channels, _script.Tempo);
 
                 Dictionary<string, int> meta = new()
                 {
                     { "MidiFileType", 0 },
-                    { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubdivsPerBeat },
+                    { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubbeatsPerBeat },
                     { "NumTracks", 1 }
                 };
 
