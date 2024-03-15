@@ -133,13 +133,13 @@ namespace Ephemera.Nebulator.Script
             foreach (SequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
-                BarTime startNoteTime = new BarTime(startBeat * MidiSettings.LibSettings.SubdivsPerBeat) + seqel.When;
-                BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubdivs == 0 ? new(1) : seqel.Duration); // 1 is a short hit
+                BarTime startNoteTime = new BarTime(startBeat * MidiSettings.LibSettings.SubsPerBeat) + seqel.When;
+                BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubs == 0 ? new(1) : seqel.Duration); // 1 is a short hit
 
                 // Is it a function?
                 if (seqel.ScriptFunction is not null)
                 {
-                    FunctionMidiEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, seqel.ScriptFunction);
+                    FunctionMidiEvent evt = new(startNoteTime.TotalSubs, channel.ChannelNumber, seqel.ScriptFunction);
                     events.Add(new(evt, channel.ChannelName));
                 }
                 else // plain ordinary
@@ -152,7 +152,7 @@ namespace Ephemera.Nebulator.Script
                         int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                         velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                        NoteOnEvent evt = new(startNoteTime.TotalSubdivs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubdivs);
+                        NoteOnEvent evt = new(startNoteTime.TotalSubs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubs);
                         events.Add(new(evt, channel.ChannelName));
                     }
                 }

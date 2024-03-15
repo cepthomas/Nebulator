@@ -123,12 +123,12 @@ namespace Ephemera.Nebulator.Script
                 int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                 velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
-                NoteOnEvent evt = new(StepTime.TotalSubbeats, ch.ChannelNumber, absnote, velPlay, dur.TotalSubbeats);
+                NoteOnEvent evt = new(StepTime.TotalSubs, ch.ChannelNumber, absnote, velPlay, dur.TotalSubs);
                 ch.SendEvent(evt);
             }
             else
             {
-                NoteEvent evt = new(StepTime.TotalSubbeats, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
+                NoteEvent evt = new(StepTime.TotalSubs, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
                 ch.SendEvent(evt);
             }
         }
