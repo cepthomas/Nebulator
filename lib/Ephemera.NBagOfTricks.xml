@@ -981,6 +981,12 @@
             </summary>
             <returns>New stats are available.</returns>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Dump">
+            <summary>
+            Detail of captured values.
+            </summary>
+            <returns>String csv.</returns>
+        </member>
         <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.TicksToMsec(System.Int64)">
             <summary>
             Conversion for stopwatch values.
@@ -1024,6 +1030,9 @@
         <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.Format">
             <summary></summary>
         </member>
+        <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.StopOnFail">
+            <summary></summary>
+        </member>
         <member name="P:Ephemera.NBagOfTricks.PNUT.TestContext.CurrentSuiteId">
             <summary></summary>
         </member>
@@ -1052,6 +1061,11 @@
             <summary></summary>
         </member>
         <member name="T:Ephemera.NBagOfTricks.PNUT.AssertException">
+            <summary>
+            Specific exception type.
+            </summary>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.PNUT.TestFailException">
             <summary>
             Specific exception type.
             </summary>
@@ -1121,6 +1135,12 @@
             Record a verbatim text line into the report.
             </summary>
             <param name="message"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_STOP_ON_FAIL(System.Boolean)">
+            <summary>
+            Toggle the fatal bail out mechanism.
+            </summary>
+            <param name="value">True/false</param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_INFO(System.String,System.Object[])">
             <summary>

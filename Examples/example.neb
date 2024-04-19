@@ -182,7 +182,7 @@ public class example : ScriptBase
 
     public override void Step()
     {
-        if(StepTime.TotalSubdivs == 0)
+        if(StepTime.TotalSubs == 0)
         {
             SendController("synth", "Pan", 90);
             SendController("keys",  "Pan", 30);

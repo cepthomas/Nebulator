@@ -49,7 +49,7 @@ namespace Ephemera.Nebulator.App
         readonly List<ChannelControl> _channelControls = new();
 
         /// <summary>Longest length of channels in subdivs.</summary>
-        int _totalSubdivs = 0;
+        int _totalSubs = 0;
 
         /// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
         readonly Dictionary<string, IOutputDevice> _outputDevices = new();
@@ -300,7 +300,7 @@ namespace Ephemera.Nebulator.App
                 _channelControls.Clear();
                 _channels.Clear();
                 _watcher.Clear();
-                _totalSubdivs = 0;
+                _totalSubs = 0;
                 barBar.Reset();
 
                 // Compile script.
@@ -400,7 +400,7 @@ namespace Ephemera.Nebulator.App
                         // Round total up to next beat.
                         BarTime bs = new();
                         bs.SetRounded(channel.MaxSub, SnapType.Beat, true);
-                        _totalSubdivs = Math.Max(_totalSubdivs, bs.TotalSubs);
+                        _totalSubs = Math.Max(_totalSubs, bs.TotalSubs);
                     }
                 }
 
@@ -408,12 +408,12 @@ namespace Ephemera.Nebulator.App
                 if (ok)
                 {
                     ///// Init the timeclock.
-                    if (_totalSubdivs > 0) // sequences
+                    if (_totalSubs > 0) // sequences
                     {
                         barBar.TimeDefs = _script!.GetSectionMarkers();
-                        barBar.Length = new(_totalSubdivs);
+                        barBar.Length = new(_totalSubs);
                         barBar.Start = new(0);
-                        barBar.End = new(_totalSubdivs - 1);
+                        barBar.End = new(_totalSubs - 1);
                         barBar.Current = new(0);
                     }
                     else // free form
