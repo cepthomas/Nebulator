@@ -585,7 +585,7 @@
         </member>
         <member name="M:Ephemera.NBagOfTricks.MmTimerEx.#ctor">
             <summary>
-            Initializes a new instance of the Timer class.
+            Initializes a new instance of the Timer class. OK to throw in here.
             </summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Finalize">
@@ -612,7 +612,7 @@
         </member>
         <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Start">
             <summary>
-            Starts the periodic timer.
+            Starts the periodic timer. OK to throw in here.
             </summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.MmTimerEx.Stop">

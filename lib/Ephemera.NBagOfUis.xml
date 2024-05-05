@@ -142,6 +142,53 @@
         <member name="P:Ephemera.NBagOfUis.IndicatorStateType.BackBrush">
             <summary>The background brush.</summary>
         </member>
+        <member name="P:Ephemera.NBagOfUis.CliInput.BackColor">
+            <summary>Cosmetics.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.CliInput.Font">
+            <summary>Cosmetics.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.CliInput.Prompt">
+            <summary>Optional prompt.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.CliInput.In">
+            <summary>Support for TextReader.</summary>
+        </member>
+        <member name="T:Ephemera.NBagOfUis.CliInput.InReader">
+            <summary>
+            Give this component TextReader interface.
+            </summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.CliInput._rtb">
+            <summary>Contained control.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.CliInput._in">
+            <summary>Support for TextReader.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.CliInput._history">
+            <summary>Most recent at beginning.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.CliInput._historyIndex">
+            <summary>Current location in list.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.CliInput.#ctor">
+            <summary>
+            Constructor sets some defaults.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.CliInput.AddToHistory(System.String)">
+            <summary>
+            Update the history with the new entry.
+            </summary>
+            <param name="s"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.CliInput.Rtb_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Catch a few keys.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
         <member name="F:Ephemera.NBagOfUis.CpuMeter._cpuPerf">
             <summary>Total usage.</summary>
         </member>
