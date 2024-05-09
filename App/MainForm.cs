@@ -102,7 +102,7 @@ namespace Nebulator.App
             LogManager.Run(logFileName, 100000);
 
             #region Init UI from settings
-            toolStrip1.Renderer = new NBagOfUis.CheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
+            toolStrip1.Renderer = new Ephemera.NBagOfUis.CheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
 
             // Main form.
             Location = _settings.FormGeometry.Location;

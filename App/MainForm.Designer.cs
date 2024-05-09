@@ -17,8 +17,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.sldVolume = new NBagOfUis.Slider();
-            this.sldTempo = new NBagOfUis.Slider();
+            this.sldVolume = new Ephemera.NBagOfUis.Slider();
+            this.sldTempo = new Ephemera.NBagOfUis.Slider();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnCompile = new System.Windows.Forms.Button();
             this.btnRewind = new System.Windows.Forms.Button();
@@ -35,8 +35,8 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
-            this.textViewer = new NBagOfUis.TextViewer();
-            this.barBar = new MidiLib.BarBar();
+            this.textViewer = new Ephemera.NBagOfUis.TextViewer();
+            this.barBar = new Ephemera.MidiLib.BarBar();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -304,9 +304,9 @@
         }
 
         #endregion
-        private NBagOfUis.Slider sldVolume;
+        private Ephemera.NBagOfUis.Slider sldVolume;
         private System.Windows.Forms.CheckBox chkPlay;
-        private NBagOfUis.Slider sldTempo;
+        private Ephemera.NBagOfUis.Slider sldTempo;
         private System.Windows.Forms.Button btnRewind;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Button btnCompile;
@@ -318,8 +318,8 @@
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnKillComm;
-        private NBagOfUis.TextViewer textViewer;
-        private MidiLib.BarBar barBar;
+        private Ephemera.NBagOfUis.TextViewer textViewer;
+        private Ephemera.MidiLib.BarBar barBar;
         private System.Windows.Forms.ToolStripMenuItem exportCsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showDefinitionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnAbout;
