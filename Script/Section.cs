@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Ephemera.NBagOfTricks;
 
 
-namespace Ephemera.Nebulator.Script
+namespace Nebulator.Script
 {
     /// <summary>
     /// One section definition.

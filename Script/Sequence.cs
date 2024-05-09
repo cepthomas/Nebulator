@@ -8,7 +8,7 @@ using Ephemera.MidiLib;
 using Ephemera.NBagOfTricks;
 
 
-namespace Ephemera.Nebulator.Script
+namespace Nebulator.Script
 {
     /// <summary>
     /// One sequence definition.

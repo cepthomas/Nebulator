@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <AssemblyName>Ephemera.Nebulator.App</AssemblyName>
-        <RootNamespace>Ephemera.Nebulator.App</RootNamespace>
+        <AssemblyName>Nebulator.App</AssemblyName>
+        <RootNamespace>Nebulator.App</RootNamespace>
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <Deterministic>False</Deterministic>

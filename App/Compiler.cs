@@ -8,10 +8,10 @@ using System.Diagnostics;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfTricks.ScriptCompiler;
 using Ephemera.MidiLib;
-using Ephemera.Nebulator.Script;
+using Nebulator.Script;
 
 
-namespace Ephemera.Nebulator.App
+namespace Nebulator.App
 {
     /// <summary>One channel definition.</summary>
     public record ChannelSpec(string ChannelName, string DeviceId, int ChannelNumber, int Patch, bool IsDrums);
@@ -35,7 +35,7 @@ namespace Ephemera.Nebulator.App
         {
             ChannelSpecs.Clear();
 
-            LocalDlls = new() { "NAudio", "Ephemera.NBagOfTricks", "Ephemera.NebOsc", "Ephemera.MidiLib", "Ephemera.Nebulator.Script" };
+            LocalDlls = new() { "NAudio", "Ephemera.NBagOfTricks", "Ephemera.NebOsc", "Ephemera.MidiLib", "Nebulator.Script" };
 
             Usings.Add("static Ephemera.NBagOfTricks.MusicDefinitions");
 

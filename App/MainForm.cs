@@ -12,12 +12,12 @@ using Ephemera.NBagOfTricks.ScriptCompiler;
 using Ephemera.NBagOfTricks.Slog;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
-using Ephemera.Nebulator.Script;
+using Nebulator.Script;
 
 // ? Nebulator named input devices and controllers like outputs.
 
 
-namespace Ephemera.Nebulator.App
+namespace Nebulator.App
 {
     public partial class MainForm : Form
     {

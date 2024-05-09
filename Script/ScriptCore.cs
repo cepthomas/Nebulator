@@ -9,7 +9,7 @@ using Ephemera.NBagOfTricks;
 
 // The internal script stuff.
 
-namespace Ephemera.Nebulator.Script
+namespace Nebulator.Script
 {
     public partial class ScriptBase
     {

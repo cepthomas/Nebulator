@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 
-namespace Ephemera.Nebulator.App
+namespace Nebulator.App
 {
     static class Program
     {

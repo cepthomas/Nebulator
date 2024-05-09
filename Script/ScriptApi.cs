@@ -10,7 +10,7 @@ using Ephemera.MidiLib;
 
 // Nebulator script API stuff.
 
-namespace Ephemera.Nebulator.Script
+namespace Nebulator.Script
 {
     public partial class ScriptBase
     {

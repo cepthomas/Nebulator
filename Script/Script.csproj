@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0-windows</TargetFramework>
-        <AssemblyName>Ephemera.Nebulator.Script</AssemblyName>
-        <RootNamespace>Ephemera.Nebulator.Script</RootNamespace>
+        <AssemblyName>Nebulator.Script</AssemblyName>
+        <RootNamespace>Nebulator.Script</RootNamespace>
         <UseWindowsForms>true</UseWindowsForms>
         <Deterministic>False</Deterministic>
         <Version>$([System.DateTime]::UtcNow.ToString(yy.MM.dd))</Version>
