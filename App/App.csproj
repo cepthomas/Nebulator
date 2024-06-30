@@ -7,7 +7,7 @@
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <Deterministic>False</Deterministic>
-        <Version>$([System.DateTime]::UtcNow.ToString(yy.MM.dd))</Version>
+        <Version>1.1.0</Version>
         <Description>Nebulator application</Description>
         <Copyright>MIT License</Copyright>
         <OutputPath>bin\</OutputPath>

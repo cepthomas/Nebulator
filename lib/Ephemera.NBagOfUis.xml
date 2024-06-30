@@ -21,6 +21,126 @@
             </summary>
             <param name="options"></param>
         </member>
+        <member name="T:Ephemera.NBagOfUis.ClickClack">
+            <summary>
+            Generic input control similar to BingBong from MidiLib.
+            Generates events on mouse clicks in the client area with horizontal and vertical values
+            from user supplied ranges.
+            </summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.ClickClack._bmp">
+            <summary>Background image data.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.ClickClack._lastClickX">
+            <summary>Last key down position in client coordinates.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.ClickClack._toolTip">
+            <summary>Tool tip.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.ClickClack._pen">
+            <summary>The grid pen.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.MinX">
+            <summary>Lowest X value of interest.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.MaxX">
+            <summary>Highest X value of interest.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.MinY">
+            <summary>Min Y value.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.MaxY">
+            <summary>Max Y value.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.GridX">
+            <summary>Visibility.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.GridY">
+            <summary>Visibility.</summary>
+        </member>
+        <member name="E:Ephemera.NBagOfUis.ClickClack.UserEvent">
+            <summary>Click/move info.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.UserEventArgs.X">
+            <summary>The X value in user coordinates. null means invalid.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.UserEventArgs.Y">
+            <summary>The Y value in user coordinates. -1 means unclicked. null means invalid.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.UserEventArgs.ToString">
+            <summary>Read me.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.RaiseUserEvent(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Event raiser. Probably not needed.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.#ctor">
+            <summary>
+            Normal constructor.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnLoad(System.EventArgs)">
+            <summary>
+            Init after properties set.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnMouseLeave(System.EventArgs)">
+            <summary>
+            Disable control
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paint the surface.
+            </summary>
+            <param name="pe"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Show the pixel info.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Send info to client.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnResize(System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.DrawBitmap">
+            <summary>
+            Render.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.MouseToUser">
+            <summary>
+            Get mouse x and y mapped to user coordinates.
+            </summary>
+            <returns>Tuple of x and y.</returns>
+        </member>
         <member name="T:Ephemera.NBagOfUis.ClickGrid">
             <summary>
             ClickGrid control.

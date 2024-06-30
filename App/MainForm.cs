@@ -1301,7 +1301,7 @@ namespace Nebulator.App
         {
             var docs = MidiDefs.FormatDoc();
             docs.AddRange(MusicDefinitions.FormatDoc());
-            Tools.MarkdownToHtml(docs, Color.LightYellow, new Font("arial", 16), true);
+            Tools.MarkdownToHtml(docs, Tools.MarkdownMode.DarkApi, true);
         }
         #endregion
     }

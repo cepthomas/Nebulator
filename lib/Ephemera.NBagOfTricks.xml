@@ -1007,13 +1007,15 @@
             <param name="limit"></param>
             <returns></returns>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},System.Drawing.Color,System.Drawing.Font,System.Boolean)">
+        <member name="T:Ephemera.NBagOfTricks.Tools.MarkdownMode">
+            <summary>How to render</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},Ephemera.NBagOfTricks.Tools.MarkdownMode,System.Boolean)">
             <summary>
             Convert list of markdown lines to html.
             </summary>
             <param name="body">The md text.</param>
-            <param name="bgcolor">Background color for page.</param>
-            <param name="font">Main font-family.</param>
+            <param name="mode">What flavor.</param>
             <param name="show">If true open in browser.</param>
             <returns>Valid html.</returns>
         </member>
@@ -1427,7 +1429,7 @@
             Constructor.
             </summary>
             <param name="pipeName">Pipe name to use.</param>
-            <param name="logfn"></param>
+            <param name="logfn">Optional log.</param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Client.Send(System.String,System.Int32)">
             <summary>
@@ -1506,8 +1508,8 @@
             <summary>
             Constructor.
             </summary>
-            <param name="pipeName"></param>
-            <param name="logfn"></param>
+            <param name="pipeName">Identifier.</param>
+            <param name="logfn">Optional.</param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.SimpleIpc.Server.Start">
             <summary>
