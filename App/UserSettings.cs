@@ -48,11 +48,11 @@ namespace Nebulator.App
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public LogLevel NotifLogLevel { get; set; } = LogLevel.Debug;
 
-        [DisplayName("Icon Color")]
+        [DisplayName("Foreground Color")]
         [Description("The color used for button icons.")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
-        public Color IconColor { get; set; } = Color.Purple;
+        public Color ForeColor { get; set; } = Color.Purple;
 
         [DisplayName("Control Color")]
         [Description("The color used for active control surfaces.")]

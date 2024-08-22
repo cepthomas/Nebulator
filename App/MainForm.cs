@@ -117,19 +117,19 @@ namespace Nebulator.App
             textViewer.MatchColors.Add("WRN", Color.Plum);
             textViewer.Prompt = "> ";
 
-            btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, _settings.IconColor);
-            btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, _settings.IconColor);
-            btnKillComm.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKillComm.Image, _settings.IconColor);
-            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image, _settings.IconColor);
-            btnRewind.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnRewind.Image, _settings.IconColor);
-            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, _settings.IconColor);
-            btnAbout.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnAbout.Image, _settings.IconColor);
-            btnSettings.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnSettings.Image, _settings.IconColor);
+            btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, _settings.ForeColor);
+            btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, _settings.ForeColor);
+            btnKillComm.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKillComm.Image, _settings.ForeColor);
+            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image, _settings.ForeColor);
+            btnRewind.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnRewind.Image, _settings.ForeColor);
+            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, _settings.ForeColor);
+            btnAbout.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnAbout.Image, _settings.ForeColor);
+            btnSettings.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnSettings.Image, _settings.ForeColor);
 
             btnMonIn.Checked = _settings.MonitorInput;
             btnMonOut.Checked = _settings.MonitorOutput;
 
-            chkPlay.Image = GraphicsUtils.ColorizeBitmap((Bitmap)chkPlay.Image, _settings.IconColor);
+            chkPlay.Image = GraphicsUtils.ColorizeBitmap((Bitmap)chkPlay.Image, _settings.ForeColor);
             chkPlay.BackColor = _settings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 
