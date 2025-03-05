@@ -4,6 +4,18 @@
         <name>Ephemera.NBagOfTricks</name>
     </assembly>
     <members>
+        <member name="T:Ephemera.NBagOfTricks.Ansi">
+            <summary>
+            Do things with ansi codes. FUTURE AnsiFromColor()
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Ansi.ColorFromAnsi(System.String)">
+            <summary>
+            Convert ansi specs like: ESC[IDm  ESC[38;5;IDm ESC[38;2;R;G;Bm to Color.
+            </summary>
+            <param name="ansi">Ansi string</param>
+            <returns>Color and whether it's fg or bg. Color is Empty if invalid ansi string.</returns>
+        </member>
         <member name="T:Ephemera.NBagOfTricks.Bag">
             <summary>
             General purpose storage for things using a two part key.
@@ -1611,14 +1623,12 @@
             <param name="file">Ignore - compiler use.</param>
             <param name="line">Ignore - compiler use.</param>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Exception(System.Exception,System.String,System.String,System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.Slog.Logger.Exception(System.Exception,System.String)">
             <summary>
-            Log an exception.
+            Log a caught exception. Adds info about who raised it
             </summary>
             <param name="ex">The exception.</param>
             <param name="msg">Extra info.</param>
-            <param name="file">Ignore - compiler use.</param>
-            <param name="line">Ignore - compiler use.</param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Slog.Logger.AddEntry(Ephemera.NBagOfTricks.Slog.LogLevel,System.String,System.String,System.Int32)">
             <summary>
@@ -1684,6 +1694,11 @@
             </summary>
             <param name="logFilePath">Builtin logger file path.</param>
             <param name="logSize">Builtin logger max size. 0 means no file logger, just notifications.</param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Slog.LogManager.Flush">
+            <summary>
+            Flush queue.
+            </summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Slog.LogManager.Stop">
             <summary>

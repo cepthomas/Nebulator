@@ -34,11 +34,11 @@
         <member name="F:Ephemera.NBagOfUis.ClickClack._lastClickX">
             <summary>Last key down position in client coordinates.</summary>
         </member>
-        <member name="F:Ephemera.NBagOfUis.ClickClack._toolTip">
-            <summary>Tool tip.</summary>
-        </member>
         <member name="F:Ephemera.NBagOfUis.ClickClack._pen">
             <summary>The grid pen.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.ClickClack._toolTip">
+            <summary>Tool tip.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.ClickClack.MinX">
             <summary>Lowest X value of interest.</summary>
@@ -58,8 +58,11 @@
         <member name="P:Ephemera.NBagOfUis.ClickClack.GridY">
             <summary>Visibility.</summary>
         </member>
-        <member name="E:Ephemera.NBagOfUis.ClickClack.UserEvent">
-            <summary>Click/move info.</summary>
+        <member name="E:Ephemera.NBagOfUis.ClickClack.MouseClickEvent">
+            <summary>Click (including drag) info.</summary>
+        </member>
+        <member name="E:Ephemera.NBagOfUis.ClickClack.MouseMoveEvent">
+            <summary>Mouse move info for client tooltip.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.ClickClack.UserEventArgs.X">
             <summary>The X value in user coordinates. null means invalid.</summary>
@@ -67,15 +70,11 @@
         <member name="P:Ephemera.NBagOfUis.ClickClack.UserEventArgs.Y">
             <summary>The Y value in user coordinates. -1 means unclicked. null means invalid.</summary>
         </member>
+        <member name="P:Ephemera.NBagOfUis.ClickClack.UserEventArgs.Text">
+            <summary>For tooltip provided by the owner.</summary>
+        </member>
         <member name="M:Ephemera.NBagOfUis.ClickClack.UserEventArgs.ToString">
             <summary>Read me.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.ClickClack.RaiseUserEvent(System.Nullable{System.Int32},System.Nullable{System.Int32})">
-            <summary>
-            Event raiser. Probably not needed.
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
         </member>
         <member name="M:Ephemera.NBagOfUis.ClickClack.#ctor">
             <summary>
@@ -93,12 +92,6 @@
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.ClickClack.OnMouseLeave(System.EventArgs)">
-            <summary>
-            Disable control
-            </summary>
-            <param name="e"></param>
         </member>
         <member name="M:Ephemera.NBagOfUis.ClickClack.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
@@ -121,6 +114,12 @@
         <member name="M:Ephemera.NBagOfUis.ClickClack.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
             <summary>
             
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.ClickClack.OnMouseLeave(System.EventArgs)">
+            <summary>
+            Disable control
             </summary>
             <param name="e"></param>
         </member>
@@ -262,6 +261,15 @@
         <member name="P:Ephemera.NBagOfUis.IndicatorStateType.BackBrush">
             <summary>The background brush.</summary>
         </member>
+        <member name="T:Ephemera.NBagOfUis.Modifier">
+            <summary>For hotkeys.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.CliInputEventArgs.Mod">
+            <summary>Test for hotkey press.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.CliInputEventArgs.Text">
+            <summary>User text, no eol.</summary>
+        </member>
         <member name="P:Ephemera.NBagOfUis.CliInput.BackColor">
             <summary>Cosmetics.</summary>
         </member>
@@ -271,19 +279,11 @@
         <member name="P:Ephemera.NBagOfUis.CliInput.Prompt">
             <summary>Optional prompt.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfUis.CliInput.In">
-            <summary>Support for TextReader.</summary>
-        </member>
-        <member name="T:Ephemera.NBagOfUis.CliInput.InReader">
-            <summary>
-            Give this component TextReader interface.
-            </summary>
+        <member name="E:Ephemera.NBagOfUis.CliInput.InputEvent">
+            <summary>User has entered something.</summary>
         </member>
         <member name="F:Ephemera.NBagOfUis.CliInput._rtb">
             <summary>Contained control.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CliInput._in">
-            <summary>Support for TextReader.</summary>
         </member>
         <member name="F:Ephemera.NBagOfUis.CliInput._history">
             <summary>Most recent at beginning.</summary>
@@ -296,18 +296,18 @@
             Constructor sets some defaults.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfUis.CliInput.AddToHistory(System.String)">
-            <summary>
-            Update the history with the new entry.
-            </summary>
-            <param name="s"></param>
-        </member>
         <member name="M:Ephemera.NBagOfUis.CliInput.Rtb_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>
             Catch a few keys.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.CliInput.AddToHistory(System.String)">
+            <summary>
+            Update the history with the new entry.
+            </summary>
+            <param name="s"></param>
         </member>
         <member name="F:Ephemera.NBagOfUis.CpuMeter._cpuPerf">
             <summary>Total usage.</summary>
@@ -394,6 +394,45 @@
             <summary>
             Defer init as they are slow processes.
             </summary>
+        </member>
+        <member name="T:Ephemera.NBagOfUis.DropDownButton">
+            <summary>Button with builtin Drop down selector.</summary>
+        </member>
+        <member name="E:Ephemera.NBagOfUis.DropDownButton.Selected">
+            <summary>Drop down selection event.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfUis.DropDownButton._menu">
+            <summary>The menu.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.DropDownButton.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.DropDownButton.SetOptions(System.Collections.Generic.List{System.String})">
+            <summary>
+            Populate menu with options.
+            </summary>
+            <param name="options"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.DropDownButton.Menu_Click(System.Object,System.EventArgs)">
+            <summary>
+            Handle drop down selection.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.DropDownButton.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handle mouse down.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.DropDownButton.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Draw everything including a little arrow.
+            </summary>
+            <param name="e"></param>
         </member>
         <member name="T:Ephemera.NBagOfUis.FilTree">
             <summary>
@@ -1197,14 +1236,11 @@
             Make one.
             </summary>
         </member>
-        <member name="P:Ephemera.NBagOfUis.TextViewer.MatchColors">
-            <summary>The colors to display when text is matched.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.TextViewer.MaxText">
-            <summary>Limit the size. Set to 0 to disable.</summary>
+        <member name="P:Ephemera.NBagOfUis.TextViewer.MatchText">
+            <summary>The colors to display when text is matched. TODO option for coloring just word or whole line.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.BackColor">
-            <summary>Cosmetics.</summary>
+            <summary>Cosmetics. Note this needs to be set in client constructor not OnLoad(). Unknown reason.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.Font">
             <summary>Cosmetics.</summary>
@@ -1214,6 +1250,9 @@
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.Prompt">
             <summary>Optional prompt.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.TextViewer.MaxText">
+            <summary>Limit the size.</summary>
         </member>
         <member name="F:Ephemera.NBagOfUis.TextViewer._rtb">
             <summary>Contained control.</summary>
@@ -1229,8 +1268,11 @@
             </summary>
             <param name="e"></param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.Clear">
-            <summary></summary>
+        <member name="M:Ephemera.NBagOfUis.TextViewer.Dispose(System.Boolean)">
+            <summary>
+             Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.AppendLine(System.String,System.Nullable{System.Drawing.Color})">
             <summary>
@@ -1245,6 +1287,33 @@
             </summary>
             <param name="text">The message.</param>
             <param name="color">Specific color to use.</param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendColor(System.String,System.Nullable{System.Drawing.Color},System.Nullable{System.Drawing.Color},System.Boolean)">
+            <summary>
+            Output text wwith explicit color.
+            </summary>
+            <param name="text">The text to show.</param>
+            <param name="fg"></param>
+            <param name="bg"></param>
+            <param name="nl">Add new line.</param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendMatch(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Output text using text matching color.
+            </summary>
+            <param name="text">The text to show.</param>
+            <param name="line">Light up whole line otherwise just the word.</param>
+            <param name="nl">Add new line.</param>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.TextViewer.Clear">
+            <summary>
+            Clean up.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.TextViewer.Write(System.String,System.Boolean)">
+            <summary>
+            Low level output. Assumes caller has taken care of cross-thread issues.
+            </summary>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.Rtb_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>

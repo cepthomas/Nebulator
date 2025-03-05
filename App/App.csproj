@@ -4,10 +4,10 @@
         <OutputType>WinExe</OutputType>
         <AssemblyName>Nebulator.App</AssemblyName>
         <RootNamespace>Nebulator.App</RootNamespace>
-        <TargetFramework>net6.0-windows</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <Deterministic>False</Deterministic>
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
         <Description>Nebulator application</Description>
         <Copyright>MIT License</Copyright>
         <OutputPath>bin\</OutputPath>

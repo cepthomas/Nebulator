@@ -694,9 +694,6 @@
             <param name="context"></param>
             <returns></returns>
         </member>
-        <member name="T:Ephemera.MidiLib.DeviceTypeConverter">
-            <summary>Converter for selecting property value from known lists. Not currently used.</summary>
-        </member>
         <member name="T:Ephemera.MidiLib.IDevice">
             <summary>Abstraction layer to support all midi-like devices.</summary>
         </member>
@@ -1512,7 +1509,7 @@
             <summary>Current volume.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.SimpleChannelControl.ControlColor">
-            <summary>Cosmetics.</summary>
+            <summary>The color used for active control surfaces.</summary>
         </member>
         <member name="E:Ephemera.MidiLib.SimpleChannelControl.ChannelChange">
             <summary>Notify host of asynchronous changes from user.</summary>
