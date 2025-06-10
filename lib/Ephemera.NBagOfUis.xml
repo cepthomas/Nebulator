@@ -1237,7 +1237,7 @@
             </summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.MatchText">
-            <summary>The colors to display when text is matched. TODO option for coloring just word or whole line.</summary>
+            <summary>The colors to display when text is matched. TODO1 option for coloring just word or whole line.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.BackColor">
             <summary>Cosmetics. Note this needs to be set in client constructor not OnLoad(). Unknown reason.</summary>

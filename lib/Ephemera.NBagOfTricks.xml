@@ -4,18 +4,6 @@
         <name>Ephemera.NBagOfTricks</name>
     </assembly>
     <members>
-        <member name="T:Ephemera.NBagOfTricks.Ansi">
-            <summary>
-            Do things with ansi codes. FUTURE AnsiFromColor()
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Ansi.ColorFromAnsi(System.String)">
-            <summary>
-            Convert ansi specs like: ESC[IDm  ESC[38;5;IDm ESC[38;2;R;G;Bm to Color.
-            </summary>
-            <param name="ansi">Ansi string</param>
-            <returns>Color and whether it's fg or bg. Color is Empty if invalid ansi string.</returns>
-        </member>
         <member name="T:Ephemera.NBagOfTricks.Bag">
             <summary>
             General purpose storage for things using a two part key.
@@ -87,6 +75,41 @@
             <summary>
             Create from json file.
             </summary>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.ConsoleColorEx">
+            <summary>ConsoleColor variation with None added.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ColorFromAnsi(System.String)">
+            <summary>
+            Decode ansi escape sequence arguments. TODO AnsiFromColor()
+            </summary>
+            <param name="ansi">Ansi args string</param>
+            <returns>Foreground and background colors. Color is Empty if invalid ansi string.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.MakeColor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a Color object from rgb. If it is in the named collection, the name is applied.
+            </summary>
+            <param name="red"></param>
+            <param name="green"></param>
+            <param name="blue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToSystemColor(System.ConsoleColor)">
+            <summary>Convert ConsoleColor to System.Color.</summary>
+            <param name="conclr">In color</param>
+            <returns>Out color</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToConsoleColor(System.Drawing.Color)">
+            <summary>Convert System.Color to ConsoleColor.</summary>
+            <param name="sysclr">The color</param>
+            <returns></returns>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToConsoleColor_simple(System.Drawing.Color)">
+            <summary>Simple binning approach.</summary>
+            <param name="sysclr"></param>
+            <returns></returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.ArgOptType">
             <summary>Argument and value options: None, required, optional.</summary>
@@ -930,9 +953,25 @@
             <param name="range">Data range</param>
             <returns>Format specifier</returns>
         </member>
+        <member name="T:Ephemera.NBagOfTricks.TimeIt">
+            <summary>Simple/cheap profiling.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.Snap(System.String)">
+            <summary>
+            Measure one time.
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.FormatTicks(System.Int64)">
+            <summary>
+            Conversion for stopwatch values.
+            </summary>
+            <param name="ticks"></param>
+            <returns></returns>
+        </member>
         <member name="T:Ephemera.NBagOfTricks.TimingAnalyzer">
             <summary>
-            Diagnostics for timing measurement.
+            Diagnostics for timing measurement and analysis.
             </summary>
         </member>
         <member name="F:Ephemera.NBagOfTricks.TimingAnalyzer._watch">
@@ -1171,6 +1210,15 @@
             <param name="name"></param>
             <param name="value"></param>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_FAIL(System.String,System.String,System.Int32)">
+            <summary>
+            Always fail.
+            </summary>
+            <param name="message"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
         <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_TRUE(System.Boolean,System.String,System.Int32)">
             <summary>
             Checks whether the given condition is true.
@@ -1291,6 +1339,16 @@
             <param name="value1"></param>
             <param name="value2"></param>
             <param name="tolerance">Absolute</param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_STRING_CONTAINS(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Check for part of a string.
+            </summary>
+            <param name="value1"></param>
+            <param name="value2"></param>
             <param name="file"></param>
             <param name="line"></param>
             <returns></returns>
