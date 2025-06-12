@@ -261,140 +261,6 @@
         <member name="P:Ephemera.NBagOfUis.IndicatorStateType.BackBrush">
             <summary>The background brush.</summary>
         </member>
-        <member name="T:Ephemera.NBagOfUis.Modifier">
-            <summary>For hotkeys.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CliInputEventArgs.Mod">
-            <summary>Test for hotkey press.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CliInputEventArgs.Text">
-            <summary>User text, no eol.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CliInput.BackColor">
-            <summary>Cosmetics.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CliInput.Font">
-            <summary>Cosmetics.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CliInput.Prompt">
-            <summary>Optional prompt.</summary>
-        </member>
-        <member name="E:Ephemera.NBagOfUis.CliInput.InputEvent">
-            <summary>User has entered something.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CliInput._rtb">
-            <summary>Contained control.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CliInput._history">
-            <summary>Most recent at beginning.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CliInput._historyIndex">
-            <summary>Current location in list.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CliInput.#ctor">
-            <summary>
-            Constructor sets some defaults.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CliInput.Rtb_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
-            <summary>
-            Catch a few keys.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CliInput.AddToHistory(System.String)">
-            <summary>
-            Update the history with the new entry.
-            </summary>
-            <param name="s"></param>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._cpuPerf">
-            <summary>Total usage.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._processesPerf">
-            <summary>Logical processes.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._inited">
-            <summary> </summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._timer">
-            <summary> </summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._min">
-            <summary> </summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._max">
-            <summary> </summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._processesBuffs">
-            <summary>Storage.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._cpuBuff">
-            <summary>Storage.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._buffIndex">
-            <summary>Storage.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._logicalProcessors">
-            <summary>CPU info.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._pen">
-            <summary>The pen.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.CpuMeter._format">
-            <summary>For drawing text.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CpuMeter.Label">
-            <summary>User can change.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CpuMeter.Enable">
-            <summary> </summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CpuMeter.UpdateFreq">
-            <summary>Default is 500 msec. Change if you like.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CpuMeter.DrawColor">
-            <summary>For styling.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CpuMeter.#ctor">
-            <summary>
-            Constructor.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CpuMeter.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CpuMeter.OnPaint(System.Windows.Forms.PaintEventArgs)">
-            <summary>
-            Paints the volume meter.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CpuMeter.OnResize(System.EventArgs)">
-            <summary>
-            Update drawing area.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CpuMeter.SetBuffs">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CpuMeter.Timer_Tick(System.Object,System.EventArgs)">
-            <summary>
-            
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CpuMeter.InitPerf">
-            <summary>
-            Defer init as they are slow processes.
-            </summary>
-        </member>
         <member name="T:Ephemera.NBagOfUis.DropDownButton">
             <summary>Button with builtin Drop down selector.</summary>
         </member>
@@ -550,7 +416,7 @@
             <summary>
             Create icon from a bitmap.
             </summary>
-            <param name="bmp"></param>
+            <param name="bmpSource">Source image.</param>
             <param name="size">Specific size or 0 for all common windows sizes.</param>
             <returns></returns>
         </member>
@@ -561,96 +427,14 @@
             <param name="ico"></param>
             <param name="fn"></param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.ConvertToGrayscale(System.Drawing.Bitmap)">
+        <member name="P:Ephemera.NBagOfUis.GraphicsUtils.CheckBoxRenderer.SelectedColor">
+            <summary>Color to use when check box is selected.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
             <summary>
-            De-colorize.
+            Override for drawing.
             </summary>
-            <param name="bmp"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.ResizeBitmap(System.Drawing.Bitmap,System.Int32,System.Int32)">
-            <summary>
-            Resize the image to the specified width and height.
-            </summary>
-            <param name="bmp">The image to resize.</param>
-            <param name="width">The width to resize to.</param>
-            <param name="height">The height to resize to.</param>
-            <returns>The resized image.</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.ColorizeBitmap(System.Drawing.Bitmap,System.Drawing.Color,System.Drawing.Color)">
-            <summary>
-            Colorize a bitmap. Mainly for beautifying glyphicons.
-            </summary>
-            <param name="original"></param>
-            <param name="newcol"></param>
-            <param name="replace">Optional source color to replace. Defaults to black.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.GetSequenceColor(System.Int32,System.Boolean)">
-            <summary>
-            Helper to get next contrast color in the sequence.
-            From http://colorbrewer2.org qualitative.
-            </summary>
-            <param name="i"></param>
-            <param name="dark">Dark or light series, usually dark.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
-            <summary>
-            Mix two colors.
-            </summary>
-            <param name="one"></param>
-            <param name="two"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Ephemera.NBagOfUis.KeyUtils">
-            <summary>
-            Static keyboard processing functions.
-            </summary>
-        </member>
-        <member name="T:Ephemera.NBagOfUis.KeyUtils.KeyState">
-            <summary>Api version of win32.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.KeyUtils.KeyState.NotPressed">
-            <summary>Nothing going on.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.KeyUtils.KeyState.Pressed">
-            <summary>Transient press.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.KeyUtils.KeyState.Toggled">
-            <summary>e.g. caps lock.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.KeyUtils.TestForNumber_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
-            <summary>
-            Generic UI helper. Allows user to enter only integer or floating point values.
-            s</summary>
-            <param name="sender">Sender control.</param>
-            <param name="e">Event args.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.KeyUtils.TestForInteger_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
-            <summary>
-            Generic UI helper. Allows user to enter only integer values.
-            </summary>
-            <param name="sender">Sender control.</param>
-            <param name="e">Event args.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.KeyUtils.TestForAlphanumeric_KeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)">
-            <summary>
-            Generic UI helper. Allows user to enter only alphanumeric values.
-            </summary>
-            <param name="sender">Sender control.</param>
-            <param name="e">Event args.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.KeyUtils.KeyToChar(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
-            <summary>General purpose decoder for keys. Because windows makes it kind of difficult.</summary>
-            <param name="key"></param>
-            <param name="modifiers"></param>
-            <returns>Tuple of Converted char (0 if not convertible) and keyCode(s).</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.KeyUtils.GetKeyState(System.Windows.Forms.Keys)">
-            <summary>Key state query. Based on https://stackoverflow.com/a/9356006. </summary>
-            <param name="key">Which key.</param>
-            <returns></returns>
+            <param name="e"></param>
         </member>
         <member name="T:Ephemera.NBagOfUis.MeterType">
             <summary>Display types.</summary>
@@ -881,72 +665,6 @@
             Handle the nudge key.
             </summary>
             <param name="e"></param>
-        </member>
-        <member name="T:Ephemera.NBagOfUis.PixelBitmap">
-            <summary>
-            Fast pixel read/write. Borrowed from https://stackoverflow.com/a/34801225.
-            </summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.PixelBitmap._buff">
-            <summary>Unmanaged buffer.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.PixelBitmap._hBuff">
-            <summary>Unmanaged buffer handle.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfUis.PixelBitmap._disposed">
-            <summary>Resource management.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.PixelBitmap.Bitmap">
-            <summary>Managed image for client consumption.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.PixelBitmap.#ctor(System.Int32,System.Int32)">
-            <summary>
-            Normal constructor.
-            </summary>
-            <param name="width"></param>
-            <param name="height"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.PixelBitmap.Finalize">
-            <summary>
-            Override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.PixelBitmap.Dispose">
-            <summary>
-            Boilerplate.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.PixelBitmap.Dispose(System.Boolean)">
-            <summary>
-            Boilerplate.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <param name="colour"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <param name="a"></param>
-            <param name="r"></param>
-            <param name="g"></param>
-            <param name="b"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.PixelBitmap.GetPixel(System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <returns></returns>
         </member>
         <member name="T:Ephemera.NBagOfUis.Taper">
             <summary></summary>
@@ -1237,7 +955,7 @@
             </summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.MatchText">
-            <summary>The colors to display when text is matched. TODO1 option for coloring just word or whole line.</summary>
+            <summary>The colors to display when text is matched. TODO option for coloring just word or whole line.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.BackColor">
             <summary>Cosmetics. Note this needs to be set in client constructor not OnLoad(). Unknown reason.</summary>
@@ -1330,18 +1048,6 @@
         </member>
         <member name="T:Ephemera.NBagOfUis.PathListEditor">
             <summary>Broken - don't use.</summary>
-        </member>
-        <member name="T:Ephemera.NBagOfUis.CheckBoxRenderer">
-            <summary>Custom renderer for toolstrip checkbox color.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfUis.CheckBoxRenderer.SelectedColor">
-            <summary>Color to use when check box is selected.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
-            <summary>
-            Override for drawing.
-            </summary>
-            <param name="e"></param>
         </member>
         <member name="T:Ephemera.NBagOfUis.WaitCursor">
             <summary>Class that provides a better wait cursor. Clients should use it with using (new WaitCursor()) { slow code }</summary>

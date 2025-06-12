@@ -4,6 +4,167 @@
         <name>Ephemera.NBagOfTricks</name>
     </assembly>
     <members>
+        <member name="T:Ephemera.NBagOfTricks.Bag">
+            <summary>
+            General purpose storage for things using a two part key.
+            </summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.Bag.FileName">
+            <summary>The file name.</summary> 
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.Bag.Values">
+            <summary>Misc dynamic values that we want to persist. Needs to be public so serializer can see it.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.Bag.Valid">
+            <summary>Is this bag ok?</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.Clear">
+            <summary>
+            Reset everything.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.GetDouble(System.String,System.String,System.Double)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="defval"></param>
+            <returns>The value or default if not in the collection.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.GetInteger(System.String,System.String,System.Int32)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="defval"></param>
+            <returns>The value or default if not in the collection.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.GetString(System.String,System.String,System.String)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="defval"></param>
+            <returns>The value or default if not in the collection.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.SetValue(System.String,System.String,System.Object)">
+            <summary>
+            Lazy helper.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.MakeKey(System.String,System.String)">
+            <summary>
+            Common key maker.
+            </summary>
+            <param name="owner"></param>
+            <param name="valname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.Save">
+            <summary>
+            Save to json file.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Bag.Load(System.String)">
+            <summary>
+            Create from json file.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.BitmapUtils.ConvertToGrayscale(System.Drawing.Bitmap)">
+            <summary>
+            De-colorize.
+            </summary>
+            <param name="bmp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.BitmapUtils.ResizeBitmap(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Resize the image to the specified width and height.
+            </summary>
+            <param name="bmp">The image to resize.</param>
+            <param name="width">The width to resize to.</param>
+            <param name="height">The height to resize to.</param>
+            <returns>The resized image.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.BitmapUtils.ColorizeBitmap(System.Drawing.Bitmap,System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            Colorize a bitmap. Mainly for beautifying glyphicons.
+            </summary>
+            <param name="original"></param>
+            <param name="newcol"></param>
+            <param name="replace">Optional source color to replace. Defaults to black.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.PixelBitmap">
+            <summary>Fast pixel read/write. Borrowed from https://stackoverflow.com/a/34801225. TODO useful? Simplify?/// </summary>
+        </member>
+        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._buff">
+            <summary>Unmanaged buffer.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._hBuff">
+            <summary>Unmanaged buffer handle.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._disposed">
+            <summary>Resource management.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.PixelBitmap.Bitmap">
+            <summary>Managed image for client consumption.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Normal constructor.
+            </summary>
+            <param name="width"></param>
+            <param name="height"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Finalize">
+            <summary>
+            Override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Dispose">
+            <summary>
+            Boilerplate.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Dispose(System.Boolean)">
+            <summary>
+            Boilerplate.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)">
+            <summary>
+            
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="colour"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="a"></param>
+            <param name="r"></param>
+            <param name="g"></param>
+            <param name="b"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.GetPixel(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
         <member name="T:Ephemera.NBagOfTricks.ConsoleColorEx">
             <summary>ConsoleColor variation with None added.</summary>
         </member>
@@ -39,6 +200,23 @@
             <param name="sysclr"></param>
             <returns></returns>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.GetSequenceColor(System.Int32,System.Boolean)">
+            <summary>
+            Helper to get next contrast color in the sequence.
+            From http://colorbrewer2.org qualitative.
+            </summary>
+            <param name="i"></param>
+            <param name="dark">Dark or light series, usually dark.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.HalfMix(System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            Mix two colors.
+            </summary>
+            <param name="one"></param>
+            <param name="two"></param>
+            <returns></returns>
+        </member>
         <member name="T:Ephemera.NBagOfTricks.JsonColorConverter">
             <summary>Serialize prettier.</summary>
         </member>
@@ -50,11 +228,6 @@
         </member>
         <member name="T:Ephemera.NBagOfTricks.JsonFontConverter">
             <summary>Serialize prettier.</summary>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.KeyUtils">
-            <summary>
-            Static keyboard processing functions.
-            </summary>
         </member>
         <member name="T:Ephemera.NBagOfTricks.MathUtils">
             <summary>
@@ -621,72 +794,6 @@
             </summary>
             <param name="name">which</param>
             <returns>The list of notes or empty if invalid.</returns>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.PixelBitmap">
-            <summary>
-            Fast pixel read/write. Borrowed from https://stackoverflow.com/a/34801225.
-            </summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._buff">
-            <summary>Unmanaged buffer.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._hBuff">
-            <summary>Unmanaged buffer handle.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._disposed">
-            <summary>Resource management.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.PixelBitmap.Bitmap">
-            <summary>Managed image for client consumption.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.#ctor(System.Int32,System.Int32)">
-            <summary>
-            Normal constructor.
-            </summary>
-            <param name="width"></param>
-            <param name="height"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Finalize">
-            <summary>
-            Override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Dispose">
-            <summary>
-            Boilerplate.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Dispose(System.Boolean)">
-            <summary>
-            Boilerplate.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <param name="colour"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <param name="a"></param>
-            <param name="r"></param>
-            <param name="g"></param>
-            <param name="b"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.GetPixel(System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <returns></returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.PNUT.OutputFormat">
             <summary>
