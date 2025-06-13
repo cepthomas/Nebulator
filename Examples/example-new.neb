@@ -5,8 +5,8 @@
 
 // ======= Config ======
 ///// Directives/preprocess: Include config and lib files. /////
-Include(C:\Dev\repos\Nebulator\Examples\utils.neb);
-Include(C:\Dev\repos\Nebulator\Examples\scale.neb);
+Include(C:\Dev\Apps\Nebulator\Examples\utils.neb);
+Include(C:\Dev\Apps\Nebulator\Examples\scale.neb);
 ///// All the channel/outputs.
 Channel("keys",  MidiOut1, 1,  AcousticGrandPiano);
 Channel("bass",  MidiOut1, 2,  AcousticBass);
