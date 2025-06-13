@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NAudio.Midi;
-using Ephemera.NBagOfTricks.Slog;
 using Ephemera.MidiLib;
 using Ephemera.NBagOfTricks;
 
@@ -18,13 +17,13 @@ namespace Nebulator.Script
         internal readonly Logger _logger = LogManager.CreateLogger("Script");
 
         /// <summary>All sections.</summary>
-        internal List<Section> _sections = new();
+        internal List<Section> _sections = [];
 
         /// <summary>All the events defined in the script.</summary>
-        internal List<MidiEventDesc> _scriptEvents = new();
+        internal List<MidiEventDesc> _scriptEvents = [];
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        Dictionary<string, Channel> _channels = new();
+        Dictionary<string, Channel> _channels = [];
 
         /// <summary>Script randomizer.</summary>
         static readonly Random _rand = new();
@@ -94,7 +93,7 @@ namespace Nebulator.Script
         /// <returns></returns>
         public Dictionary<int, string> GetSectionMarkers()
         {
-            Dictionary<int, string> info = new();
+            Dictionary<int, string> info = [];
             int when = 0;
 
             foreach (Section sect in _sections)
@@ -128,7 +127,7 @@ namespace Nebulator.Script
         /// <param name="startBeat">Which beat to start sequence at.</param>
         List<MidiEventDesc> ConvertToEvents(Channel channel, Sequence seq, int startBeat)
         {
-            List<MidiEventDesc> events = new();
+            List<MidiEventDesc> events = [];
 
             foreach (SequenceElement seqel in seq.Elements)
             {

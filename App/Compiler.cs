@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 using Ephemera.NBagOfTricks;
-using Ephemera.NBagOfTricks.ScriptCompiler;
+using Ephemera.ScriptCompiler;
 using Ephemera.MidiLib;
 using Nebulator.Script;
 
@@ -21,7 +21,7 @@ namespace Nebulator.App
     {
         #region Properties
         /// <summary>Channel info collected from the script.</summary>
-        public List<ChannelSpec> ChannelSpecs { get; init; } = new();
+        public List<ChannelSpec> ChannelSpecs { get; init; } = [];
         #endregion
 
         /// <summary>Normal constructor.</summary>
@@ -35,7 +35,7 @@ namespace Nebulator.App
         {
             ChannelSpecs.Clear();
 
-            LocalDlls = new() { "NAudio", "Ephemera.NBagOfTricks", "Ephemera.NebOsc", "Ephemera.MidiLib", "Nebulator.Script" };
+            LocalDlls = ["NAudio", "Ephemera.NBagOfTricks", "Ephemera.NebOsc", "Ephemera.MidiLib", "Nebulator.Script"];
 
             Usings.Add("static Ephemera.NBagOfTricks.MusicDefinitions");
 

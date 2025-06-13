@@ -9,7 +9,6 @@ using System.Windows.Forms.Design;
 using System.Drawing.Design;
 using NAudio.Midi;
 using Ephemera.NBagOfTricks;
-using Ephemera.NBagOfTricks.Slog;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 

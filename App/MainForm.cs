@@ -8,8 +8,7 @@ using System.Diagnostics;
 using NAudio.Midi;
 using NAudio.Wave;
 using Ephemera.NBagOfTricks;
-using Ephemera.NBagOfTricks.ScriptCompiler;
-using Ephemera.NBagOfTricks.Slog;
+using Ephemera.ScriptCompiler;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using Nebulator.Script;
@@ -31,7 +30,7 @@ namespace Nebulator.App
         readonly Logger _logger = LogManager.CreateLogger("Main");
 
         /// <summary>App settings.</summary>
-        UserSettings _settings;
+        readonly UserSettings _settings;
 
         /// <summary>Fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
@@ -43,19 +42,19 @@ namespace Nebulator.App
         ScriptBase? _script = new();
 
         /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel> _channels = new();
+        readonly Dictionary<string, Channel> _channels = [];
 
         /// <summary>All the channel play controls.</summary>
-        readonly List<ChannelControl> _channelControls = new();
+        readonly List<ChannelControl> _channelControls = [];
 
         /// <summary>Longest length of channels in subdivs.</summary>
         int _totalSubs = 0;
 
         /// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
-        readonly Dictionary<string, IOutputDevice> _outputDevices = new();
+        readonly Dictionary<string, IOutputDevice> _outputDevices = [];
 
         /// <summary>All devices to use for receive. Key is name/id, not the system name.</summary>
-        readonly Dictionary<string, IInputDevice> _inputDevices = new();
+        readonly Dictionary<string, IInputDevice> _inputDevices = [];
 
         /// <summary>Persisted internal values for current script file.</summary>
         Bag _nppVals = new();
@@ -102,7 +101,7 @@ namespace Nebulator.App
             LogManager.Run(logFileName, 100000);
 
             #region Init UI from settings
-            toolStrip1.Renderer = new Ephemera.NBagOfUis.CheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
+            toolStrip1.Renderer = new GraphicsUtils.CheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
 
             // Main form.
             Location = _settings.FormGeometry.Location;
@@ -117,19 +116,19 @@ namespace Nebulator.App
             textViewer.MatchText.Add("WRN", Color.Plum);
             textViewer.Prompt = "> ";
 
-            btnMonIn.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonIn.Image, _settings.ForeColor);
-            btnMonOut.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnMonOut.Image, _settings.ForeColor);
-            btnKillComm.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnKillComm.Image, _settings.ForeColor);
-            fileDropDownButton.Image = GraphicsUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image, _settings.ForeColor);
-            btnRewind.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnRewind.Image, _settings.ForeColor);
-            btnCompile.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnCompile.Image, _settings.ForeColor);
-            btnAbout.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnAbout.Image, _settings.ForeColor);
-            btnSettings.Image = GraphicsUtils.ColorizeBitmap((Bitmap)btnSettings.Image, _settings.ForeColor);
+            btnMonIn.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnMonIn.Image!, _settings.ForeColor);
+            btnMonOut.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnMonOut.Image!, _settings.ForeColor);
+            btnKillComm.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnKillComm.Image!, _settings.ForeColor);
+            fileDropDownButton.Image = BitmapUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image!, _settings.ForeColor);
+            btnRewind.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnRewind.Image!, _settings.ForeColor);
+            btnCompile.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnCompile.Image!, _settings.ForeColor);
+            btnAbout.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnAbout.Image!, _settings.ForeColor);
+            btnSettings.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnSettings.Image!, _settings.ForeColor);
 
             btnMonIn.Checked = _settings.MonitorInput;
             btnMonOut.Checked = _settings.MonitorOutput;
 
-            chkPlay.Image = GraphicsUtils.ColorizeBitmap((Bitmap)chkPlay.Image, _settings.ForeColor);
+            chkPlay.Image = BitmapUtils.ColorizeBitmap((Bitmap)chkPlay.Image!, _settings.ForeColor);
             chkPlay.BackColor = _settings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 
@@ -149,7 +148,7 @@ namespace Nebulator.App
             btnMonOut.Click += Monitor_Click;
             btnAbout.Click += About_Click;
             btnSettings.Click += Settings_Click;
-            btnKillComm.Click += (object? _, EventArgs __) => { KillAll(); };
+            btnKillComm.Click += (_, __) => { KillAll(); };
             #endregion
         }
 
@@ -1278,7 +1277,7 @@ namespace Nebulator.App
                     { "NumTracks", 1 }
                 };
 
-                MidiExport.ExportCsv(fn, new List<PatternInfo>() { pattern }, channels, meta);
+                MidiExport.ExportCsv(fn, [pattern], channels, meta);
                 _logger.Info($"Exported to {fn}");
             }
         }
@@ -1301,7 +1300,7 @@ namespace Nebulator.App
         {
             var docs = MidiDefs.FormatDoc();
             docs.AddRange(MusicDefinitions.FormatDoc());
-            Tools.MarkdownToHtml(docs, Tools.MarkdownMode.DarkApi, true);
+            MiscUtils.MarkdownToHtml(docs, MiscUtils.MarkdownMode.DarkApi, true);
         }
         #endregion
     }
