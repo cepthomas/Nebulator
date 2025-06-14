@@ -77,32 +77,26 @@
             </summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.BitmapUtils.ConvertToGrayscale(System.Drawing.Bitmap)">
-            <summary>
-            De-colorize.
-            </summary>
+            <summary>De-colorize.</summary>
             <param name="bmp"></param>
             <returns></returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.BitmapUtils.ResizeBitmap(System.Drawing.Bitmap,System.Int32,System.Int32)">
-            <summary>
-            Resize the image to the specified width and height.
-            </summary>
+            <summary>Resize the image to the specified width and height.</summary>
             <param name="bmp">The image to resize.</param>
             <param name="width">The width to resize to.</param>
             <param name="height">The height to resize to.</param>
             <returns>The resized image.</returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.BitmapUtils.ColorizeBitmap(System.Drawing.Bitmap,System.Drawing.Color,System.Drawing.Color)">
-            <summary>
-            Colorize a bitmap. Mainly for beautifying glyphicons.
-            </summary>
+            <summary>Colorize a bitmap. Mainly for beautifying glyphicons.</summary>
             <param name="original"></param>
             <param name="newcol"></param>
             <param name="replace">Optional source color to replace. Defaults to black.</param>
             <returns></returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.PixelBitmap">
-            <summary>Fast pixel read/write. Borrowed from https://stackoverflow.com/a/34801225. TODO useful? Simplify?/// </summary>
+            <summary>Fast pixel read/write. Borrowed from https://stackoverflow.com/a/34801225.</summary>
         </member>
         <member name="F:Ephemera.NBagOfTricks.PixelBitmap._buff">
             <summary>Unmanaged buffer.</summary>
@@ -113,49 +107,28 @@
         <member name="F:Ephemera.NBagOfTricks.PixelBitmap._disposed">
             <summary>Resource management.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.PixelBitmap.Bitmap">
+        <member name="P:Ephemera.NBagOfTricks.PixelBitmap.ClientBitmap">
             <summary>Managed image for client consumption.</summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PixelBitmap.#ctor(System.Int32,System.Int32)">
-            <summary>
-            Normal constructor.
-            </summary>
+            <summary>Normal constructor.</summary>
             <param name="width"></param>
             <param name="height"></param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Finalize">
-            <summary>
-            Override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources.
-            </summary>
+            <summary>Override finalizer only if Dispose(bool disposing) has code to free unmanaged resources.</summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Dispose">
-            <summary>
-            Boilerplate.
-            </summary>
+            <summary>Boilerplate.</summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PixelBitmap.Dispose(System.Boolean)">
-            <summary>
-            Boilerplate.
-            </summary>
+            <summary>Boilerplate.</summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)">
-            <summary>
-            
-            </summary>
+            <summary>Set one pixel.</summary>
             <param name="x"></param>
             <param name="y"></param>
-            <param name="colour"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.SetPixel(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <param name="a"></param>
-            <param name="r"></param>
-            <param name="g"></param>
-            <param name="b"></param>
+            <param name="clr"></param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PixelBitmap.GetPixel(System.Int32,System.Int32)">
             <summary>
@@ -422,13 +395,6 @@
             <param name="callerPath"></param>
             <returns>Caller source dir.</returns>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.MiscUtils.ShowReadme(System.String)">
-            <summary>
-            Display the application readme.
-            </summary>
-            <param name="appName"></param>
-            <returns></returns>
-        </member>
         <member name="M:Ephemera.NBagOfTricks.MiscUtils.FixEndian(System.UInt32)">
             <summary>
             Endian support.
@@ -442,16 +408,6 @@
             </summary>
             <param name="i">Number to fix.</param>
             <returns>Fixed number.</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MiscUtils.MakeExportFileName(System.String,System.String,System.String,System.String)">
-            <summary>
-            Create a new clean filename for export. Creates path if it doesn't exist.
-            </summary>
-            <param name="path">Export path</param>
-            <param name="baseFn">Root of the new file name</param>
-            <param name="mod">Modifier</param>
-            <param name="ext">File extension</param>
-            <returns></returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
             <summary>
@@ -488,18 +444,6 @@
             <param name="source">The sequence of elements</param>
             <param name="action">The action to execute on each element; the second parameter
             of the action represents the index of the source element.</param>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.MiscUtils.MarkdownMode">
-            <summary>How to render</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MiscUtils.MarkdownToHtml(System.Collections.Generic.List{System.String},Ephemera.NBagOfTricks.MiscUtils.MarkdownMode,System.Boolean)">
-            <summary>
-            Convert list of markdown lines to html.
-            </summary>
-            <param name="body">The md text.</param>
-            <param name="mode">What flavor.</param>
-            <param name="show">If true open in browser.</param>
-            <returns>Valid html.</returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.MmTimerEx">
             <summary>
@@ -1118,9 +1062,6 @@
         <member name="T:Ephemera.NBagOfTricks.LogMessageEventArgs">
             <summary>Log event for notification.</summary>
         </member>
-        <member name="T:Ephemera.NBagOfTricks.Scoper">
-            <summary>Experimental class to log enter/exit scope. Use syntax "using new Scoper(...);"</summary>
-        </member>
         <member name="T:Ephemera.NBagOfTricks.LogManager">
             <summary>Global server.</summary>
         </member>
@@ -1195,74 +1136,23 @@
         </member>
         <member name="T:Ephemera.NBagOfTricks.Logger">
             <summary>Client creates as many of these as needed.</summary>
+            <remarks>
+            Constructor.
+            </remarks>
+            <param name="name">Client assigned name.</param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Logger.#ctor(System.String)">
+            <summary>Client creates as many of these as needed.</summary>
+            <remarks>
+            Constructor.
+            </remarks>
+            <param name="name">Client assigned name.</param>
         </member>
         <member name="P:Ephemera.NBagOfTricks.Logger.Name">
             <summary>ID for this logger.</summary>
         </member>
         <member name="P:Ephemera.NBagOfTricks.Logger.Enable">
             <summary>Turn logger on or off.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.#ctor(System.String)">
-            <summary>
-            Constructor.
-            </summary>
-            <param name="name">Client assigned name.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.Log(Ephemera.NBagOfTricks.LogLevel,System.String,System.String,System.Int32)">
-            <summary>
-            General function.
-            </summary>
-            <param name="level">Log level.</param>
-            <param name="msg">Content.</param>
-            <param name="file">Ignore - compiler use.</param>
-            <param name="line">Ignore - compiler use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.Trace(System.String,System.String,System.Int32)">
-            <summary>
-            Convenience function.
-            </summary>
-            <param name="msg">Content.</param>
-            <param name="file">Ignore - compiler use.</param>
-            <param name="line">Ignore - compiler use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.Debug(System.String,System.String,System.Int32)">
-            <summary>
-            Convenience function.
-            </summary>
-            <param name="msg">Content.</param>
-            <param name="file">Ignore - compiler use.</param>
-            <param name="line">Ignore - compiler use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.Info(System.String,System.String,System.Int32)">
-            <summary>
-            Convenience function.
-            </summary>
-            <param name="msg">Content.</param>
-            <param name="file">Ignore - compiler use.</param>
-            <param name="line">Ignore - compiler use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.Warn(System.String,System.String,System.Int32)">
-            <summary>
-            Convenience function.
-            </summary>
-            <param name="msg">Content.</param>
-            <param name="file">Ignore - compiler use.</param>
-            <param name="line">Ignore - compiler use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.Error(System.String,System.String,System.Int32)">
-            <summary>
-            Convenience function.
-            </summary>
-            <param name="msg">Content.</param>
-            <param name="file">Ignore - compiler use.</param>
-            <param name="line">Ignore - compiler use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.Logger.Exception(System.Exception,System.String)">
-            <summary>
-            Log a caught exception. Adds info about who raised it
-            </summary>
-            <param name="ex">The exception.</param>
-            <param name="msg">Extra info.</param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Logger.AddEntry(Ephemera.NBagOfTricks.LogLevel,System.String,System.String,System.Int32)">
             <summary>
@@ -1373,95 +1263,121 @@
             <returns>Format specifier</returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.TimeIt">
-            <summary>Simple/cheap profiling.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.Snap(System.String)">
-            <summary>
-            Measure one time.
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.FormatTicks(System.Int64)">
-            <summary>
-            Conversion for stopwatch values.
-            </summary>
-            <param name="ticks"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.TimingAnalyzer">
             <summary>
             Diagnostics for timing measurement and analysis.
             </summary>
         </member>
-        <member name="F:Ephemera.NBagOfTricks.TimingAnalyzer._watch">
+        <member name="F:Ephemera.NBagOfTricks.TimeIt._watch">
             <summary>The internal timer.</summary>
         </member>
-        <member name="F:Ephemera.NBagOfTricks.TimingAnalyzer._lastTicks">
+        <member name="F:Ephemera.NBagOfTricks.TimeIt._lastTicks">
             <summary>Last grab time for calculating diff.</summary>
         </member>
-        <member name="F:Ephemera.NBagOfTricks.TimingAnalyzer._skipCount">
+        <member name="F:Ephemera.NBagOfTricks.TimeIt._skipCount">
             <summary>Delay at start.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.SampleSize">
+        <member name="P:Ephemera.NBagOfTricks.TimeIt.SampleSize">
             <summary>Number of data points to grab for statistics.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Skip">
+        <member name="P:Ephemera.NBagOfTricks.TimeIt.Skip">
             <summary>Number of initial data points to exclude from stats.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Times">
+        <member name="P:Ephemera.NBagOfTricks.TimeIt.Times">
             <summary>Accumulated data points.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Mean">
+        <member name="P:Ephemera.NBagOfTricks.TimeIt.Mean">
             <summary>Mean in msec.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Min">
+        <member name="P:Ephemera.NBagOfTricks.TimeIt.Min">
             <summary>Min in msec.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.Max">
+        <member name="P:Ephemera.NBagOfTricks.TimeIt.Max">
             <summary>Max in msec.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.TimingAnalyzer.SD">
+        <member name="P:Ephemera.NBagOfTricks.TimeIt.SD">
             <summary>SD in msec.</summary>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.ToString">
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.ToString">
             <summary>
             Make readable.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Stop">
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.Stop">
             <summary>
             Stop accumulator.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Arm">
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.Arm">
             <summary>
             Execute this before measuring the duration of something.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.ReadOne">
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.ReadOne">
             <summary>
             Do one read since Arm().
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Grab">
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.Grab">
             <summary>
             Grab a data point. Also auto starts the timer.
             </summary>
             <returns>New stats are available.</returns>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.Dump">
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.Dump">
             <summary>
             Detail of captured values.
             </summary>
             <returns>String csv.</returns>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.TimingAnalyzer.TicksToMsec(System.Int64)">
+        <member name="M:Ephemera.NBagOfTricks.TimeIt.TicksToMsec(System.Int64)">
             <summary>
             Conversion for stopwatch values.
             </summary>
             <param name="ticks"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.Tools">
+            <summary>
+            Higher level tools.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.MakeExportFileName(System.String,System.String,System.String,System.String)">
+            <summary>
+            Create a new clean filename for export. Creates path if it doesn't exist.
+            </summary>
+            <param name="path">Export path</param>
+            <param name="baseFn">Root of the new file name</param>
+            <param name="mod">Modifier</param>
+            <param name="ext">File extension</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.ShowReadme(System.String)">
+            <summary>
+            Display the application readme.
+            </summary>
+            <param name="appName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.Tools.MarkdownMode">
+            <summary>How to render</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.MarkdownToHtml(System.Collections.Generic.List{System.String},Ephemera.NBagOfTricks.Tools.MarkdownMode,System.Boolean)">
+            <summary>
+            Convert list of markdown lines to html.
+            </summary>
+            <param name="body">The md text.</param>
+            <param name="mode">What flavor.</param>
+            <param name="show">If true open in browser.</param>
+            <returns>Valid html.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
+            <summary>
+            Reports non-ascii characters in a file. UTF-8 only.
+            </summary>
+            <param name="fn"></param>
+            <param name="limit"></param>
             <returns></returns>
         </member>
     </members>

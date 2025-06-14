@@ -955,7 +955,7 @@
             </summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.MatchText">
-            <summary>The colors to display when text is matched. TODO option for coloring just word or whole line.</summary>
+            <summary>The colors to display when text is matched.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.BackColor">
             <summary>Cosmetics. Note this needs to be set in client constructor not OnLoad(). Unknown reason.</summary>
@@ -1020,7 +1020,7 @@
             Output text using text matching color.
             </summary>
             <param name="text">The text to show.</param>
-            <param name="line">Light up whole line otherwise just the word.</param>
+            <param name="ww">Whole word or whole line.</param>
             <param name="nl">Add new line.</param>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.Clear">
