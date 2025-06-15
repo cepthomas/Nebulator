@@ -12,7 +12,7 @@ using Ephemera.NBagOfTricks;
 
 // https://carljohansen.wordpress.com/2020/05/09/compiling-expression-trees-with-roslyn-without-memory-leaks-2/
 
-namespace Ephemera.ScriptCompiler // TODOX this is shared with NProcessing
+namespace Ephemera.ScriptCompiler // TODO1 this is shared with NProcessing
 {
     /// <summary>Parses/compiles script file(s).</summary>
     public class ScriptCompilerCore

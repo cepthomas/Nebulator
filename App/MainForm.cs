@@ -1066,7 +1066,7 @@ namespace Nebulator.App
         /// </summary>
         void About_Click(object? sender, EventArgs e)
         {
-            MiscUtils.ShowReadme("Nebulator");
+            Tools.ShowReadme("Nebulator");
         }
         #endregion
 
@@ -1300,7 +1300,7 @@ namespace Nebulator.App
         {
             var docs = MidiDefs.FormatDoc();
             docs.AddRange(MusicDefinitions.FormatDoc());
-            MiscUtils.MarkdownToHtml(docs, MiscUtils.MarkdownMode.DarkApi, true);
+            Tools.MarkdownToHtml(docs, Tools.MarkdownMode.DarkApi, true);
         }
         #endregion
     }

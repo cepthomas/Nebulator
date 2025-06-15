@@ -190,6 +190,83 @@
             <param name="two"></param>
             <returns></returns>
         </member>
+        <member name="T:Ephemera.NBagOfTricks.TimeIt">
+            <summary>Simple profiler.</summary>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.TimeAnalyzer">
+            <summary>Diagnostics for timing measurement and analysis.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfTricks.TimeAnalyzer._sw">
+            <summary>The internal timer.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfTricks.TimeAnalyzer._lastTicks">
+            <summary>Last grab time for calculating diff.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfTricks.TimeAnalyzer._skipCount">
+            <summary>Delay at start.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.TimeAnalyzer.SampleSize">
+            <summary>Number of data points to grab for statistics.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.TimeAnalyzer.Skip">
+            <summary>Number of initial data points to exclude from stats.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.TimeAnalyzer.Times">
+            <summary>Accumulated data points.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.TimeAnalyzer.Mean">
+            <summary>Mean in msec.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.TimeAnalyzer.Min">
+            <summary>Min in msec.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.TimeAnalyzer.Max">
+            <summary>Max in msec.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.TimeAnalyzer.SD">
+            <summary>SD in msec.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeAnalyzer.ToString">
+            <summary>
+            Make readable.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeAnalyzer.Stop">
+            <summary>
+            Stop accumulator.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeAnalyzer.Arm">
+            <summary>
+            Execute this before measuring the duration of something.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeAnalyzer.ReadOne">
+            <summary>
+            Do one read since Arm().
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeAnalyzer.Grab">
+            <summary>
+            Grab a data point. Also auto starts the timer.
+            </summary>
+            <returns>True - new stats are available.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeAnalyzer.Dump">
+            <summary>
+            Detail of captured values.
+            </summary>
+            <returns>String csv.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.TimeAnalyzer.TicksToMsec(System.Int64)">
+            <summary>
+            Conversion for stopwatch values.
+            </summary>
+            <param name="ticks"></param>
+            <returns></returns>
+        </member>
         <member name="T:Ephemera.NBagOfTricks.JsonColorConverter">
             <summary>Serialize prettier.</summary>
         </member>
@@ -1261,82 +1338,6 @@
             </summary>
             <param name="range">Data range</param>
             <returns>Format specifier</returns>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.TimeIt">
-            <summary>
-            Diagnostics for timing measurement and analysis.
-            </summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.TimeIt._watch">
-            <summary>The internal timer.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.TimeIt._lastTicks">
-            <summary>Last grab time for calculating diff.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.TimeIt._skipCount">
-            <summary>Delay at start.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.TimeIt.SampleSize">
-            <summary>Number of data points to grab for statistics.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.TimeIt.Skip">
-            <summary>Number of initial data points to exclude from stats.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.TimeIt.Times">
-            <summary>Accumulated data points.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.TimeIt.Mean">
-            <summary>Mean in msec.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.TimeIt.Min">
-            <summary>Min in msec.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.TimeIt.Max">
-            <summary>Max in msec.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.TimeIt.SD">
-            <summary>SD in msec.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.ToString">
-            <summary>
-            Make readable.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.Stop">
-            <summary>
-            Stop accumulator.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.Arm">
-            <summary>
-            Execute this before measuring the duration of something.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.ReadOne">
-            <summary>
-            Do one read since Arm().
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.Grab">
-            <summary>
-            Grab a data point. Also auto starts the timer.
-            </summary>
-            <returns>New stats are available.</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.Dump">
-            <summary>
-            Detail of captured values.
-            </summary>
-            <returns>String csv.</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.TimeIt.TicksToMsec(System.Int64)">
-            <summary>
-            Conversion for stopwatch values.
-            </summary>
-            <param name="ticks"></param>
-            <returns></returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.Tools">
             <summary>
