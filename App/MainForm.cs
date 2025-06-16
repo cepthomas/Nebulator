@@ -8,10 +8,10 @@ using System.Diagnostics;
 using NAudio.Midi;
 using NAudio.Wave;
 using Ephemera.NBagOfTricks;
-using Ephemera.ScriptCompiler;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using Nebulator.Script;
+using System.ComponentModel;
 
 // ? Nebulator named input devices and controllers like outputs.
 
@@ -101,7 +101,7 @@ namespace Nebulator.App
             LogManager.Run(logFileName, 100000);
 
             #region Init UI from settings
-            toolStrip1.Renderer = new GraphicsUtils.CheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
+            toolStrip1.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
 
             // Main form.
             Location = _settings.FormGeometry.Location;
@@ -116,19 +116,19 @@ namespace Nebulator.App
             textViewer.MatchText.Add("WRN", Color.Plum);
             textViewer.Prompt = "> ";
 
-            btnMonIn.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnMonIn.Image!, _settings.ForeColor);
-            btnMonOut.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnMonOut.Image!, _settings.ForeColor);
-            btnKillComm.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnKillComm.Image!, _settings.ForeColor);
-            fileDropDownButton.Image = BitmapUtils.ColorizeBitmap((Bitmap)fileDropDownButton.Image!, _settings.ForeColor);
-            btnRewind.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnRewind.Image!, _settings.ForeColor);
-            btnCompile.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnCompile.Image!, _settings.ForeColor);
-            btnAbout.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnAbout.Image!, _settings.ForeColor);
-            btnSettings.Image = BitmapUtils.ColorizeBitmap((Bitmap)btnSettings.Image!, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnMonIn, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnMonOut, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnKillComm, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(fileDropDownButton, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnRewind, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnCompile, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnAbout, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnSettings, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(chkPlay, _settings.ForeColor);
 
             btnMonIn.Checked = _settings.MonitorInput;
             btnMonOut.Checked = _settings.MonitorOutput;
 
-            chkPlay.Image = BitmapUtils.ColorizeBitmap((Bitmap)chkPlay.Image!, _settings.ForeColor);
             chkPlay.BackColor = _settings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 

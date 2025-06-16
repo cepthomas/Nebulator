@@ -281,7 +281,7 @@
         </member>
         <member name="T:Ephemera.MidiLib.BingBong">
             <summary>
-            Experimental midi controller.
+            Experimental midi controller. TODO final resting place?
             </summary>
         </member>
         <member name="F:Ephemera.MidiLib.BingBong._bmp">

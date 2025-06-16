@@ -427,10 +427,17 @@
             <param name="ico"></param>
             <param name="fn"></param>
         </member>
-        <member name="P:Ephemera.NBagOfUis.GraphicsUtils.CheckBoxRenderer.SelectedColor">
+        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.ColorizeControl(System.ComponentModel.Component,System.Drawing.Color)">
+            <summary>
+            Recolor a control.
+            </summary>
+            <param name="comp"></param>
+            <param name="clr"></param>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.ToolStripCheckBoxRenderer.SelectedColor">
             <summary>Color to use when check box is selected.</summary>
         </member>
-        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.CheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
+        <member name="M:Ephemera.NBagOfUis.ToolStripCheckBoxRenderer.OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)">
             <summary>
             Override for drawing.
             </summary>
@@ -1020,7 +1027,7 @@
             Output text using text matching color.
             </summary>
             <param name="text">The text to show.</param>
-            <param name="ww">Whole word or whole line.</param>
+            <param name="line">Color whole line.</param>
             <param name="nl">Add new line.</param>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.Clear">

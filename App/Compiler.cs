@@ -6,9 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 using Ephemera.NBagOfTricks;
-using Ephemera.ScriptCompiler;
 using Ephemera.MidiLib;
-using Nebulator.Script;
 
 
 namespace Nebulator.App
@@ -17,7 +15,7 @@ namespace Nebulator.App
     public record ChannelSpec(string ChannelName, string DeviceId, int ChannelNumber, int Patch, bool IsDrums);
 
     /// <summary>Nebulator compiler.</summary>
-    public class Compiler : ScriptCompilerCore
+    public class Compiler : CompilerCore
     {
         #region Properties
         /// <summary>Channel info collected from the script.</summary>

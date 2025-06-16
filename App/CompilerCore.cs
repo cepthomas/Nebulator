@@ -10,12 +10,59 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Ephemera.NBagOfTricks;
 
+
 // https://carljohansen.wordpress.com/2020/05/09/compiling-expression-trees-with-roslyn-without-memory-leaks-2/
 
-namespace Ephemera.ScriptCompiler // TODO1 this is shared with NProcessing
+namespace Nebulator.App // TODO1 this is shared between Nebulator and NProcessing: copy but different namespaces.
 {
+    #region Types
+    /// <summary>General script result - error/warn etc.</summary>
+    public enum CompileResultType
+    {
+        Info,       // Not an error.
+        Warning,    // Compiler warning.
+        Error,      // Compiler error.
+        Other       // Custom use.
+    }
+
+    /// <summary>General script result container.</summary>
+    public class CompileResult
+    {
+        /// <summary>Where it came from.</summary>
+        public CompileResultType ResultType { get; set; } = CompileResultType.Info;
+
+        /// <summary>Original source file.</summary>
+        public string SourceFile { get; set; } = "NA";
+
+        /// <summary>Original source line number. -1 means invalid or unknown.</summary>
+        public int LineNumber { get; set; } = -1;
+
+        /// <summary>Content.</summary>
+        public string Message { get; set; } = "???";
+
+        /// <summary>For humans.</summary>
+        public override string ToString()
+        {
+            return $"{ResultType}:{Message}";
+        }
+    }
+
+    /// <summary>Parser helper class.</summary>
+    public class FileContext
+    {
+        /// <summary>Current source file.</summary>
+        public string SourceFile { get; set; } = "";
+
+        /// <summary>Current source line.</summary>
+        public int LineNumber { get; set; } = 1;
+
+        /// <summary>Accumulated script code lines.</summary>
+        public List<string> CodeLines { get; set; } = [];
+    }
+    #endregion
+
     /// <summary>Parses/compiles script file(s).</summary>
-    public class ScriptCompilerCore
+    public class CompilerCore
     {
         #region Properties
         /// <summary>Client needs to tell us this.</summary>
