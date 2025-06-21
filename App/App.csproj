@@ -18,11 +18,11 @@
         <ApplicationIcon>Resources\medusa.ico</ApplicationIcon>
         <!-- en none -->
         <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+        <WarningLevel>4</WarningLevel>
 
         
         <OutputPath>bin\</OutputPath>
         <TargetFramework>net8.0-windows</TargetFramework>
-        <WarningLevel>4</WarningLevel>
 
     </PropertyGroup>
 
@@ -66,5 +66,5 @@
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
-    
+
 </Project>
