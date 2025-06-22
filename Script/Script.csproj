@@ -1,29 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+
         <TargetFramework>net8.0-windows</TargetFramework>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <UseWindowsForms>true</UseWindowsForms>
+        <OutputPath>bin\</OutputPath>
+
         <AssemblyName>Nebulator.Script</AssemblyName>
         <RootNamespace>Nebulator.Script</RootNamespace>
-        <UseWindowsForms>true</UseWindowsForms>
-        <Deterministic>False</Deterministic>
         <Version>2.0.0</Version>
         <Description>Nebulator script stuff</Description>
         <Copyright>MIT License</Copyright>
-        <OutputPath>bin\</OutputPath>
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
         <WarningLevel>4</WarningLevel>
         <NoWarn>CA1822;CA1069;CS1591</NoWarn>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
     </PropertyGroup>
-    <ItemGroup>
-      <Compile Remove="ScriptUtils.cs" />
-    </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" />
         <PackageReference Include="NAudio" Version="2.1.0" />
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
+
     <ItemGroup>
         <Reference Include="Ephemera.MidiLib">
           <HintPath>..\lib\Ephemera.MidiLib.dll</HintPath>
@@ -35,4 +37,5 @@
             <HintPath>..\lib\Ephemera.NBagOfUis.dll</HintPath>
         </Reference>
     </ItemGroup>
+    
 </Project>
