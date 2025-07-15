@@ -94,7 +94,7 @@ namespace Nebulator.Script
         /// </summary>
         /// <param name="name">"MY_CHORD"</param>
         /// <param name="parts">Like "1 4 6 b13"</param>
-        public void CreateNotes(string name, string parts)
+        protected void CreateNotes(string name, string parts)
         {
             MusicDefinitions.AddChordScale(name, parts);
         }
