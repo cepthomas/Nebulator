@@ -6,8 +6,6 @@ using Ephemera.MidiLib;
 using Ephemera.NBagOfTricks;
 
 
-// The internal script stuff.
-
 namespace Nebulator.Script
 {
     public partial class ScriptCore
@@ -24,9 +22,6 @@ namespace Nebulator.Script
 
         /// <summary>All the channels - key is user assigned name.</summary>
         Dictionary<string, Channel> _channels = [];
-
-        // /// <summary>Script randomizer.</summary>
-        // static readonly Random _rand = new();
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
@@ -63,15 +58,15 @@ namespace Nebulator.Script
         public virtual void InputControl(string dev, int channel, int controller, int value) { }
         #endregion
 
-
         #region Internal functions - called by script
-
-
+        /// <summary>
+        /// Standard print.
+        /// </summary>
+        /// <param name="vars"></param>
         protected void Print(params object[] vars)
         {
             _logger.Info(string.Join(", ", vars));
         }
-
 
         /// <summary>
         /// Create a defined sequence and add to internal collection.
@@ -264,9 +259,7 @@ namespace Nebulator.Script
                 throw new ArgumentException($"Invalid patch: {patch}");
             }
         }
-
         #endregion
-
 
         #region Host functions for internal use
         /// <summary>

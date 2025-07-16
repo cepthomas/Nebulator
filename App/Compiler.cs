@@ -30,7 +30,7 @@ namespace Nebulator.App
             ChannelSpecs.Clear();
 
             // Our references.
-            SystemDlls =
+            SystemDlls = // TODOX trim
             [
                 "System",
                 "System.Private.CoreLib",
@@ -63,7 +63,7 @@ namespace Nebulator.App
         protected override void PostCompile()
         {
             // Check for our app-specific directives.
-            Directives.Where(d => d.dirname == "channel").ForEach(cdir =>
+            Directives.Where(d => d.dirname == "channel").ForEach(cdir => // TODOX move into???
             {
                 // Channel spec - grab it.
                 try

@@ -1,6 +1,4 @@
 
-//public class utils : ScriptBase
-
 // Define some Neb vars.
 const double VEL = 0.8;
 
