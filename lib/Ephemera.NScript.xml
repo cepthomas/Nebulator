@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ephemera.NScript</name>
+    </assembly>
+    <members>
+        <member name="T:Ephemera.NScript.Report">
+            <summary>General script result container.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.Report.#ctor">
+            <summary>General script result container.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.Report.ReportType">
+            <summary>What kind.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.Report.Level">
+            <summary>What kind.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.Report.SourceFileName">
+            <summary>Original source file if available/pertinent.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.Report.SourceLineNumber">
+            <summary>Original source line number 1-based. -1 means inapplicable or unknown.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.Report.Message">
+            <summary>Content.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.Report.ToString">
+            <summary>For humans.</summary>
+        </member>
+        <member name="T:Ephemera.NScript.ScriptFile">
+            <summary>Parser file context class - one per original script source file.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.ScriptFile.#ctor(System.String)">
+            <summary>Parser file context class - one per original script source file.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.ScriptFile.SourceFileName">
+            <summary>Original source file.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.ScriptFile.GeneratedFileName">
+            <summary>Modified file to feed the compiler.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.ScriptFile.GeneratedCode">
+            <summary>The script code lines to feed the compiler.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.ScriptFile.LineNumberMap">
+            <summary>key is GeneratedCode line number aka index, value is Source line number.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.ScriptFile.TopLevel">
+            <summary>This is a top-level (not included) file.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.ScriptFile.GetSourceLineNumber(System.Int32)">
+            <summary>Get caller source line number from generatted file line.</summary>
+            <param name="lineNum"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Ephemera.NScript.ScriptException">
+            <summary>Reporting hard errors.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.ScriptException.#ctor">
+            <summary>Reporting hard errors.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.Utils.WarmupRoslyn">
+            <summary>
+            From https://github.com/RickStrahl/Westwind.Scripting/blob/master/Westwind.Scripting/RoslynLifetimeManager.cs
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Ephemera.NScript.CompilerCore">
+            <summary>Parses/compiles script file(s).</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.IgnoreWarnings">
+            <summary>Client option.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.Namespace">
+            <summary>Script namespace.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.BaseClassName">
+            <summary>Base class.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.TempDir">
+            <summary>Client may weant to tell us to use this for temp files.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.SystemDlls">
+            <summary>Default system dlls. Client can add or subtract.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.Usings">
+            <summary>Additional using statements not supplied by core dlls.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.LocalDlls">
+            <summary>App dlls supplied by app compiler.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.CompiledScript">
+            <summary>The final compiled script.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.Reports">
+            <summary>Accumulated errors and other bits of information - for user presentation.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.Directives">
+            <summary>All the script directives - name and value. These are global, not per file!</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.SourceFiles">
+            <summary>All active script source files. Provided so client can monitor for external changes.</summary>
+        </member>
+        <member name="F:Ephemera.NScript.CompilerCore._scriptFiles">
+            <summary>Products of preprocess.</summary>
+        </member>
+        <member name="F:Ephemera.NScript.CompilerCore._plainFiles">
+            <summary>Other files to compile.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.PreCompile">
+            <summary>Called before compiler starts.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.PostCompile">
+            <summary>Called after compiler finished.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.PreprocessLine(System.String,System.Int32,Ephemera.NScript.ScriptFile)">
+            <summary>Called for each line in the source file before compiling.</summary>
+            <param name="sline">Trimmed line</param>
+            <param name="lineNum">Source line number may be useful (1-based)</param>
+            <param name="pcont">File context</param>
+            <returns>True if derived class took care of this</returns>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.CompileScript(System.String,System.Collections.Generic.List{System.String})">
+            <summary>Run the compiler on a script file.</summary>
+            <param name="scriptFile">Path to main script file.</param>
+            <param name="sourceFiles">Source code files.</param>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.CompileText(System.String)">
+            <summary>
+            Run the compiler on a simple text block.
+            </summary>
+            <param name="text">Text to compile.</param>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.ProcessRuntimeException(System.Exception)">
+            <summary>
+            Process script runtime exceptions.
+            Technically not part of compiler but this has all the info needed to diagnose runtime errors.
+            </summary>
+            <param name="ex">The exception to examine.</param>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.PreprocessFile(Ephemera.NScript.ScriptFile)">
+            <summary>Parse one file. Recursive to support nested #:include fn.</summary>
+            <param name="pcont">The parse context.</param>
+            <returns>True if a valid file.</returns>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.GenTopOfFile(Ephemera.NScript.ScriptFile)">
+            <summary>
+            Create the boilerplate file top stuff.
+            </summary>
+            <param name="pcont">Source file info.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.GenBottomOfFile">
+            <summary>
+            Create the boilerplate file bottom stuff.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.Translate(Microsoft.CodeAnalysis.DiagnosticSeverity)">
+            <summary>Internal to our library codes.</summary>
+            <param name="severity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.AddReport(Ephemera.NScript.ReportType,Ephemera.NScript.ReportLevel,System.String,System.String,System.Nullable{System.Int32})">
+            <summary>Capture script errors.</summary>
+            <param name="type"></param>
+            <param name="level"></param>
+            <param name="msg"></param>
+            <param name="scriptFile"></param>
+            <param name="lineNum"></param>
+        </member>
+        <member name="M:Ephemera.NScript.CompilerCore.RationalizeFileName(System.String,System.String)">
+            <summary>
+            Determines absolute file name for an included file.
+            </summary>
+            <param name="scriptFileName">File with include directive</param>
+            <param name="includeFileName">Included file.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -7,14 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Script", "Script\Script.csproj", "{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFiles", "DocFiles", "{4DEF0736-26BA-4D08-B0E9-D6CAFAAB8C1F}"
-	ProjectSection(SolutionItems) = preProject
-		DocFiles\Internals.md = DocFiles\Internals.md
-		DocFiles\Nebulator.md = DocFiles\Nebulator.md
-		DocFiles\ScriptApi.md = DocFiles\ScriptApi.md
-		DocFiles\ScriptSyntax.md = DocFiles\ScriptSyntax.md
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{C96541B3-854A-4405-A6AD-8F7D676905CE}"
 	ProjectSection(SolutionItems) = preProject
 		Examples\airport.neb = Examples\airport.neb
@@ -37,6 +29,10 @@ Global
 		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BBF6E16-D2D2-438B-A144-AFDE3257EE64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D37D526-6A2B-DCC0-871A-FB72861ECEAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D37D526-6A2B-DCC0-871A-FB72861ECEAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D37D526-6A2B-DCC0-871A-FB72861ECEAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D37D526-6A2B-DCC0-871A-FB72861ECEAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

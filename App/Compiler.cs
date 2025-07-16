@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 using Ephemera.NBagOfTricks;
 using Ephemera.MidiLib;
+using Ephemera.NScript;
 
 
 namespace Nebulator.App
@@ -22,71 +23,82 @@ namespace Nebulator.App
         public List<ChannelSpec> ChannelSpecs { get; init; } = [];
         #endregion
 
-        /// <summary>Normal constructor.</summary>
-        public Compiler(string scriptPath)
-        {
-            ScriptPath = scriptPath;
-        }
-
         /// <summary>Called before compiler starts.</summary>
-        public override void PreCompile()
+        /// <see cref="CompilerCore"/>
+        protected override void PreCompile()
         {
             ChannelSpecs.Clear();
 
-            LocalDlls = ["NAudio", "Ephemera.NBagOfTricks", "Ephemera.NebOsc", "Ephemera.MidiLib", "Nebulator.Script"];
+            // Our references.
+            SystemDlls =
+            [
+                "System",
+                "System.Private.CoreLib",
+                "System.Runtime",
+                "System.IO",
+                "System.Collections",
+                "System.Linq"
+            ];
 
-            Usings.Add("static Ephemera.NBagOfTricks.MusicDefinitions");
+            LocalDlls =
+            [
+                "NAudio",
+                "Ephemera.NBagOfTricks",
+                "Ephemera.NebOsc",
+                "Ephemera.MidiLib",
+                "Nebulator.Script"
+            ];
 
-            //// Save hash of current channel descriptors to detect change in source code.
-            //_chHash = string.Join("", _channelDescriptors).GetHashCode();
-            //_channelDescriptors.Clear();
+            Usings =
+            [
+                "System.Collections.Generic",
+                "System.Diagnostics",
+                "System.Text",
+                "static Ephemera.NBagOfTricks.MusicDefinitions"
+            ];
         }
 
         /// <summary>Called after compiler finished.</summary>
-        public override void PostCompile()
+        /// <see cref="CompilerCore"/>
+        protected override void PostCompile()
         {
-        }
-
-        /// <summary>Called for each line in the source file before compiling.</summary>
-        public override bool PreprocessLine(string sline, FileContext pcont)
-        {
-            bool handled = false;
-
-            // Channel spec - grab it.
-            if (sline.StartsWith("Channel"))
+            // Check for our app-specific directives.
+            Directives.Where(d => d.dirname == "channel").ForEach(cdir =>
             {
+                // Channel spec - grab it.
                 try
                 {
-                    var parts = sline.Replace("\"", "").SplitByTokens("(),;");
+                    var parts = cdir.dirval.SplitByTokens(" ");
+                    // #:channel keys  midiout 1  AcousticGrandPiano
+
                     // Is patch an instrument or drum?
                     bool isDrums = false;
-                    int patch = MidiDefs.GetInstrumentNumber(parts[4]);
+                    int patch = MidiDefs.GetInstrumentNumber(parts[3]);
                     if (patch == -1)
                     {
-                        patch = MidiDefs.GetDrumKitNumber(parts[4]);
+                        patch = MidiDefs.GetDrumKitNumber(parts[3]);
                         isDrums = patch != -1;
                     }
                     if (patch == -1)
                     {
                         throw new ArgumentException("");
                     }
-                    ChannelSpec ch = new(parts[1], parts[2], int.Parse(parts[3]), patch, isDrums);
+                    ChannelSpec ch = new(parts[0], parts[1], int.Parse(parts[2]), patch, isDrums);
                     ChannelSpecs.Add(ch);
                 }
                 catch (Exception)
                 {
-                    Results.Add(new()
-                    {
-                        ResultType = CompileResultType.Error,
-                        Message = $"Bad statement:{sline}",
-                        SourceFile = pcont.SourceFile,
-                        LineNumber = pcont.LineNumber
-                    });
+                    AddReport(ReportType.Syntax, ReportLevel.Error, $"Bad channel directive: {cdir.dirval}"); // TODO retrieve file/line?
+                    throw new ScriptException(); // fatal
                 }
+            });
+        }
 
-                // Exclude from output file.
-                handled = true;
-            }
+        /// <summary>Called for each line in the source file before compiling.</summary>
+        /// <see cref="CompilerCore"/>
+        protected override bool PreprocessLine(string sline, int lineNum, ScriptFile pcont)
+        {
+            bool handled = false;
 
             return handled;
         }

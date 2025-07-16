@@ -19,12 +19,6 @@ namespace Nebulator.App
     public sealed class UserSettings : SettingsCore
     {
         #region Properties - persisted editable
-        [DisplayName("Script Path")]
-        [Description("Default location for user scripts.")]
-        [Browsable(true)]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
-        public string ScriptPath { get; set; } = "";
-
         [DisplayName("Auto Compile")]
         [Description("Compile current file when change detected.")]
         [Browsable(true)]

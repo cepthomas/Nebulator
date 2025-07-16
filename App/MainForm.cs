@@ -5,13 +5,14 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.ComponentModel;
 using NAudio.Midi;
 using NAudio.Wave;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
+using Ephemera.NScript;
 using Nebulator.Script;
-using System.ComponentModel;
 
 // ? Nebulator named input devices and controllers like outputs.
 
@@ -32,14 +33,17 @@ namespace Nebulator.App
         /// <summary>App settings.</summary>
         readonly UserSettings _settings;
 
+        /// <summary>Our compiler.</summary>
+        readonly Compiler _compiler;
+
         /// <summary>Fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
 
-        /// <summary>Current np file name.</summary>
-        string _scriptFileName = "";
+        /// <summary>Current neb script file name.</summary>
+        string? _scriptFileName;
 
         /// <summary>The current script.</summary>
-        ScriptBase? _script = new();
+        ScriptCore? _script;
 
         /// <summary>All the channels - key is user assigned name.</summary>
         readonly Dictionary<string, Channel> _channels = [];
@@ -71,9 +75,6 @@ namespace Nebulator.App
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
         bool _needCompile = false;
 
-        /// <summary>The temp dir for compile products.</summary>
-        string _compileTempDir = "";
-
         ///// <summary>Diagnostics for timing measurement.</summary>
         //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
         #endregion
@@ -99,6 +100,13 @@ namespace Nebulator.App
             LogManager.MinLevelNotif = _settings.NotifLogLevel;
             LogManager.LogMessage += LogManager_LogMessage;
             LogManager.Run(logFileName, 100000);
+
+            _compiler = new()
+            {
+                IgnoreWarnings = true,          // to taste
+                Namespace = "Nebulator.Script", // same as ScriptCore.cs
+                BaseClassName = "ScriptCore",   // same as ScriptCore.cs
+            };
 
             #region Init UI from settings
             toolStrip1.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
@@ -275,13 +283,13 @@ namespace Nebulator.App
 
         #region Compile
         /// <summary>
-        /// Compile the neb script itself.
+        /// Compile the neb script.
         /// </summary>
         bool CompileScript()
         {
             bool ok = true;
 
-            if (_scriptFileName == "")
+            if (_scriptFileName is null)
             {
                 _logger.Warn("No script file loaded.");
                 ok = false;
@@ -290,6 +298,7 @@ namespace Nebulator.App
             {
                 // Clean up old script stuff.
                 ProcessPlay(PlayCommand.StopRewind);
+
                 // Clean out our current elements.
                 _channelControls.ForEach(c =>
                 {
@@ -302,18 +311,28 @@ namespace Nebulator.App
                 _totalSubs = 0;
                 barBar.Reset();
 
-                // Compile script.
-                Compiler compiler = new(_settings.ScriptPath);
-                compiler.CompileScript(_scriptFileName);
-                _script = compiler.Script as ScriptBase;
+                // Run the compiler.
+                _compiler.CompileScript(_scriptFileName);
 
-                // Process errors. Some may only be warnings.
-                ok = !compiler.Results.Any(w => w.ResultType == CompileResultType.Error) && _script is not null;
+                // What happened?
+                if (_compiler.CompiledScript is null)
+                {
+                    _logger.Error($"Compile failed:");
+
+                    // Log compiler results.
+                    LogCompilerResults();
+
+                    return false;
+                }
+
+                _script = _compiler.CompiledScript as ScriptCore;
+
+                // // Process errors. Some may only be warnings.
+                // ok = !compiler.Results.Any(w => w.ResultType == CompileResultType.Error) && _script is not null;
 
                 if (ok)
                 {
                     SetCompileStatus(true);
-                    _compileTempDir = compiler.TempDir;
 
                     // Need exception handling here to protect from user script errors.
                     try
@@ -342,7 +361,7 @@ namespace Nebulator.App
                     int x = btnRewind.Left;
                     int y = barBar.Bottom + CONTROL_SPACING;
 
-                    foreach (var chspec in compiler.ChannelSpecs)
+                    foreach (var chspec in _compiler.ChannelSpecs)
                     {
                         // Make new channel.
                         Channel channel = new()
@@ -428,7 +447,7 @@ namespace Nebulator.App
                 }
 
                 // Update file watcher.
-                compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
+                _compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
 
                 SetCompileStatus(ok);
 
@@ -438,16 +457,7 @@ namespace Nebulator.App
                 }
 
                 // Log compiler results.
-                compiler.Results.ForEach(r =>
-                {
-                    string msg = r.SourceFile != "" ? $"{Path.GetFileName(r.SourceFile)}({r.LineNumber}): {r.Message}" : r.Message;
-                    switch (r.ResultType)
-                    {
-                        case CompileResultType.Error: _logger.Error(msg); break;
-                        case CompileResultType.Warning: _logger.Warn(msg); break;
-                        default: _logger.Info(msg); break;
-                    }
-                });
+                LogCompilerResults();
             }
 
             return ok;
@@ -461,6 +471,24 @@ namespace Nebulator.App
         {
             btnCompile.BackColor = compileStatus ? _settings.BackColor : Color.Red;
             _needCompile = !compileStatus;
+        }
+
+        /// <summary>Log helper.</summary>
+        void LogCompilerResults()
+        {
+            _compiler.Reports.ForEach(r =>
+            {
+                var msg = r.SourceFileName is not null ?
+                    $"{r.ReportType}: {r.SourceFileName}({r.SourceLineNumber}) [{r.Message}]" :
+                    $"{r.ReportType}: [{r.Message}]";
+                switch (r.Level)
+                {
+                    case ReportLevel.Error: _logger.Error(msg); break;
+                    case ReportLevel.Warning: _logger.Warn(msg); break;
+                    case ReportLevel.Info: _logger.Info(msg); break;
+                    default: break;
+                }
+            });
         }
         #endregion
 
@@ -809,51 +837,8 @@ namespace Nebulator.App
             ProcessPlay(PlayCommand.Stop);
             SetCompileStatus(false);
 
-            // Locate the offending frame by finding the file in the temp dir.
-            string srcFile = "???";
-            int srcLine = -1;
-            string msg = ex.Message;
-            StackTrace st = new(ex, true);
-            StackFrame? sf = null;
-
-            for (int i = 0; i < st.FrameCount; i++)
-            {
-                StackFrame? stf = st.GetFrame(i);
-                if (stf is not null)
-                {
-                    var stfn = stf!.GetFileName();
-                    if (stfn is not null)
-                    {
-                        if (stfn.ToUpper().Contains(_compileTempDir.ToUpper()))
-                        {
-                            sf = stf;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (sf is not null)
-            {
-                // Dig out generated file parts.
-                string? genFile = sf!.GetFileName();
-                int genLine = sf.GetFileLineNumber() - 1;
-
-                // Open the generated file and dig out the source file and line.
-                string[] genLines = File.ReadAllLines(genFile!);
-
-                srcFile = genLines[0].Trim().Replace("//", "");
-
-                int ind = genLines[genLine].LastIndexOf("//");
-                if (ind != -1)
-                {
-                    string sl = genLines[genLine][(ind + 2)..];
-                    srcLine = int.Parse(sl);
-                }
-            }
-            // else // unknown?
-
-            _logger.Error(srcLine > 0 ? $"{srcFile}({srcLine}): {msg}" : $"{srcFile}: {msg}");
+            _compiler.ProcessRuntimeException(ex);
+            LogCompilerResults();
         }
         #endregion
 
@@ -872,23 +857,11 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// Allows the user to select a np file from file system.
+        /// Allows the user to select a neb file from file system.
         /// </summary>
         void Open_Click(object? sender, EventArgs e)
         {
-            string dir = ""; 
-            if (_settings.ScriptPath != "")
-            {
-                if(Directory.Exists(_settings.ScriptPath))
-                {
-                    dir = _settings.ScriptPath;
-                }
-                else
-                {
-                    _logger.Warn("Your script path is invalid, edit your settings");
-                }
-            }
-
+            string dir = ""; // TODO remember last location or default to guessed
             using OpenFileDialog openDlg = new()
             {
                 Filter = "Nebulator files | *.neb",
@@ -924,13 +897,13 @@ namespace Nebulator.App
                 if (File.Exists(fn))
                 {
                     _logger.Info($"Opening {fn}");
-                    _scriptFileName = fn;
 
                     // Get the persisted properties.
                     _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
                     sldVolume.Value = _nppVals.GetDouble("master", "volume", MidiLibDefs.VOLUME_DEFAULT);
 
+                    _scriptFileName = fn;
                     SetCompileStatus(true);
                     AddToRecentDefs(fn);
                     bool ok = CompileScript();
@@ -946,8 +919,13 @@ namespace Nebulator.App
             catch (Exception ex)
             {
                 ret = $"Couldn't open the script file: {fn} because: {ex.Message}";
+            }
+
+            if (ret != "")
+            {
                 _logger.Error(ret);
                 SetCompileStatus(false);
+                _scriptFileName = null;
             }
 
             // Update bar.
@@ -1132,7 +1110,7 @@ namespace Nebulator.App
             switch (cmd)
             {
                 case PlayCommand.Start:
-                    bool ok = !_needCompile || CompileScript();
+                    bool ok = _script is not null && (!_needCompile || CompileScript());
                     if (ok)
                     {
                         _startTime = DateTime.Now;
@@ -1225,7 +1203,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ExportMidi_Click(object? sender, EventArgs e)
         {
-            if(_script is not null)
+            if(_scriptFileName is not null && _script is not null)
             {
                 using SaveFileDialog saveDlg = new()
                 {
@@ -1261,7 +1239,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ExportCsv_Click(object sender, EventArgs e)
         {
-            if (_script is not null)
+            if (_scriptFileName is not null && _script is not null)
             {
                 // Make a Pattern object and call the formatter.
                 IEnumerable<Channel> channels = _channels.Values.Where(ch => ch.NumEvents > 0);

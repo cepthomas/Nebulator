@@ -17,6 +17,7 @@
         <NoWarn>CA1822;CA1069;CS1591</NoWarn>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 
     </PropertyGroup>
 

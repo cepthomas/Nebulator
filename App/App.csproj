@@ -36,6 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <!-- <ProjectReference Include="..\..\..\Libs\NScript\NScript.csproj" /> -->
         <ProjectReference Include="..\Script\Script.csproj" />
     </ItemGroup>
 
@@ -51,6 +52,9 @@
         </Reference>
         <Reference Include="Ephemera.NebOsc">
             <HintPath>..\lib\Ephemera.NebOsc.dll</HintPath>
+        </Reference>
+        <Reference Include="Ephemera.NScript">
+            <HintPath>..\lib\Ephemera.NScript.dll</HintPath>
         </Reference>
     </ItemGroup>
 
