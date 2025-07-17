@@ -203,7 +203,7 @@ public override void InputControl(string dev, int channel, int ctlid, int value)
 
 void AlgoFunc()
 {
-    int notenum = rand.Next(0, scaleNotes.Count());
+    int notenum = rand.Next(0, scaleNotes.Count);
     SendNote("synth", scaleNotes[notenum], 0.7, 0.5);
 }
     

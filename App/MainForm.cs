@@ -327,9 +327,6 @@ namespace Nebulator.App
 
                 _script = _compiler.CompiledScript as ScriptCore;
 
-                // // Process errors. Some may only be warnings.
-                // ok = !compiler.Results.Any(w => w.ResultType == CompileResultType.Error) && _script is not null;
-
                 if (ok)
                 {
                     SetCompileStatus(true);
@@ -353,52 +350,82 @@ namespace Nebulator.App
                     }
                 }
 
-                ///// Script is sane - build the channels and UI.
+                // Script is sane - build the channels and UI.
                 if (ok)
                 {
-                    // Create channels and controls from event sets.
+                    // Create channels and controls.
                     const int CONTROL_SPACING = 10;
                     int x = btnRewind.Left;
                     int y = barBar.Bottom + CONTROL_SPACING;
 
-                    foreach (var chspec in _compiler.ChannelSpecs)
+                    _compiler.Directives.Where(d => d.dirname == "channel").ForEach(cdir => // TODOX move into???
                     {
-                        // Make new channel.
-                        Channel channel = new()
+                        // Channel spec - grab it.
+                        try
                         {
-                            ChannelName = chspec.ChannelName,
-                            ChannelNumber = chspec.ChannelNumber,
-                            DeviceId = chspec.DeviceId,
-                            Volume = _nppVals.GetDouble(chspec.ChannelName, "volume", MidiLibDefs.VOLUME_DEFAULT),
-                            State = (ChannelState)_nppVals.GetInteger(chspec.ChannelName, "state", (int)ChannelState.Normal),
-                            Patch = chspec.Patch,
-                            IsDrums = chspec.IsDrums,
-                            Selected = false,
-                            Device = _outputDevices[chspec.DeviceId],
-                            AddNoteOff = true
-                        };
-                        _channels.Add(chspec.ChannelName, channel);
+                            var parts = cdir.dirval.SplitByTokens(" ");
+                            // keys  midiout 1  AcousticGrandPiano
 
-                        // Make new control and bind to channel.
-                        ChannelControl control = new()
+                            // Parse the directive.
+                            var name = parts[0];
+                            var devid = parts[1];
+                            var chnum = int.Parse(parts[2]);
+                            // Is patch an instrument or drum?
+                            bool isDrums = false;
+                            int patch = MidiDefs.GetInstrumentNumber(parts[3]);
+                            if (patch == -1)
+                            {
+                                patch = MidiDefs.GetDrumKitNumber(parts[3]);
+                                isDrums = patch != -1;
+                            }
+                            if (patch == -1)
+                            {
+                                throw new ArgumentException("");
+                            }
+
+                            // Make new channel.
+                            Channel channel = new()
+                            {
+                                ChannelName = name,
+                                ChannelNumber = chnum,
+                                DeviceId = devid,
+                                Volume = _nppVals.GetDouble(name, "volume", MidiLibDefs.VOLUME_DEFAULT),
+                                State = (ChannelState)_nppVals.GetInteger(name, "state", (int)ChannelState.Normal),
+                                Patch = patch,
+                                IsDrums = isDrums,
+                                Selected = false,
+                                Device = _outputDevices[devid],
+                                AddNoteOff = true
+                            };
+                            _channels.Add(name, channel);
+
+                            // Make new control and bind to channel.
+                            ChannelControl control = new()
+                            {
+                                Location = new(x, y),
+                                BorderStyle = BorderStyle.FixedSingle,
+                                BoundChannel = channel
+                            };
+                            control.ChannelChange += Control_ChannelChange;
+                            Controls.Add(control);
+                            _channelControls.Add(control);
+
+                            // Good time to send initial patch.
+                            channel.SendPatch();
+
+                            // Adjust positioning for next iteration.
+                            y += control.Height + 5;
+                        }
+                        catch (Exception)
                         {
-                            Location = new(x, y),
-                            BorderStyle = BorderStyle.FixedSingle,
-                            BoundChannel = channel
-                        };
-                        control.ChannelChange += Control_ChannelChange;
-                        Controls.Add(control);
-                        _channelControls.Add(control);
-
-                        // Good time to send initial patch.
-                        channel.SendPatch();
-
-                        // Adjust positioning for next iteration.
-                        y += control.Height + 5;
-                    }
+                            _logger.Error($"{ReportType.Syntax}: [Bad channel directive: {cdir.dirval}]");
+                            // TODO retrieve file/line? Make directive into a record with this info added. Or add to PreprocessLine().
+                            throw new ScriptException(); // fatal
+                        }
+                    });
                 }
 
-                ///// Script is sane - build the events.
+                // Script is sane - build the events.
                 if (ok)
                 {
                     _script!.Init(_channels);
@@ -422,7 +449,7 @@ namespace Nebulator.App
                     }
                 }
 
-                ///// Everything is sane - prepare to run.
+                // Everything is sane - prepare to run.
                 if (ok)
                 {
                     ///// Init the timeclock.

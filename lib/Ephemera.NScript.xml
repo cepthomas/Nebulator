@@ -178,5 +178,10 @@
             <param name="includeFileName">Included file.</param>
             <returns></returns>
         </member>
+        <member name="M:Ephemera.NScript.CompilerCore.MakeClassName(System.String)">
+            <summary>Make a safe/clean name from file name</summary>
+            <param name="fn"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>
