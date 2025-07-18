@@ -358,7 +358,7 @@ namespace Nebulator.App
                     int x = btnRewind.Left;
                     int y = barBar.Bottom + CONTROL_SPACING;
 
-                    _compiler.Directives.Where(d => d.dirname == "channel").ForEach(cdir => // TODOX move into???
+                    _compiler.Directives.Where(d => d.dirname == "channel").ForEach(cdir =>
                     {
                         // Channel spec - grab it.
                         try

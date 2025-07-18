@@ -128,9 +128,10 @@
         </member>
         <member name="M:Ephemera.NScript.CompilerCore.CompileText(System.String)">
             <summary>
-            Run the compiler on a simple text block.
+            Run the compiler on a simple text block. Uses Namespace for dll.
             </summary>
             <param name="text">Text to compile.</param>
+            <returns>The assembly or null if invalid.</returns>
         </member>
         <member name="M:Ephemera.NScript.CompilerCore.ProcessRuntimeException(System.Exception)">
             <summary>
@@ -138,6 +139,7 @@
             Technically not part of compiler but this has all the info needed to diagnose runtime errors.
             </summary>
             <param name="ex">The exception to examine.</param>
+            <returns>Report lines.</returns>
         </member>
         <member name="M:Ephemera.NScript.CompilerCore.PreprocessFile(Ephemera.NScript.ScriptFile)">
             <summary>Parse one file. Recursive to support nested #:include fn.</summary>

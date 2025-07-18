@@ -15,9 +15,7 @@ namespace Nebulator.App
     /// <summary>Nebulator compiler.</summary>
     public class Compiler : CompilerCore
     {
-        /// <summary>Called before compiler starts.</summary>
-        /// <see cref="CompilerCore"/>
-        protected override void PreCompile()
+        public Compiler()
         {
             // Our references.
             SystemDlls =
@@ -44,6 +42,12 @@ namespace Nebulator.App
                 "System.Text",
                 "static Ephemera.NBagOfTricks.MusicDefinitions"
             ];
+        }
+
+        /// <summary>Called before compiler starts.</summary>
+        /// <see cref="CompilerCore"/>
+        protected override void PreCompile()
+        {
         }
 
         /// <summary>Called after compiler finished.</summary>
