@@ -7,7 +7,7 @@
 - It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of synth parameters using code.
 - Requires VS2022 and .NET6.
 
-![logo](marks.jpg)
+![logo](marks.png)
 
 ## Usage
 
