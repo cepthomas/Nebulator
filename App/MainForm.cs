@@ -533,80 +533,26 @@ namespace Nebulator.App
 
             foreach(var dev in _settings.MidiSettings.InputDevices)
             {
-                switch (dev.DeviceName)
+                var min = new MidiInput(dev.DeviceName);
+                if (min.Valid)
                 {
-                    case nameof(VirtualKeyboard):
-                        {
-                            VirtualKeyboard vkey = new()
-                            {
-                                Dock = DockStyle.Fill,
-                            };
-                            vkey.InputReceive += Device_InputReceive;
-                            _inputDevices.Add(dev.DeviceId, vkey);
-
-                            using Form f = new()
-                            {
-                                Text = "Virtual Keyboard",
-                                ClientSize = vkey.Size,
-                                FormBorderStyle = FormBorderStyle.SizableToolWindow,
-                                ShowIcon = false,
-                                ShowInTaskbar = false
-                            };
-                            f.Controls.Add(vkey);
-                            f.Show();
-                        }
-                        break;
-
-                    case nameof(BingBong):
-                        {
-                            BingBong bb = new()
-                            {
-                                Dock = DockStyle.Fill,
-                            };
-                            bb.InputReceive += Device_InputReceive;
-                            _inputDevices.Add(dev.DeviceId, bb);
-
-                            using Form f = new()
-                            {
-                                Text = "Bing Bong",
-                                ClientSize = bb.Size,
-                                FormBorderStyle = FormBorderStyle.SizableToolWindow,
-                                ShowIcon = false,
-                                ShowInTaskbar = false
-                            };
-                            f.Controls.Add(bb);
-                            f.Show();
-                        }
-                        break;
-
-                    case "":
-                        // None specified.
-                        break;
-
-                    default:
-                        // Try midi.
-                        var min = new MidiInput(dev.DeviceName);
-                        if (min.Valid)
-                        {
-                            min.InputReceive += Device_InputReceive;
-                            _inputDevices.Add(dev.DeviceId, min);
-                        }
-                        else
-                        {
-                            // Try osc.
-                            try
-                            {
-                                var mosc = new OscInput(dev.DeviceName);
-                                mosc.InputReceive += Device_InputReceive;
-                                _inputDevices.Add(dev.DeviceId, mosc);
-                            }
-                            catch
-                            {
-                                _logger.Error($"Something wrong with your input device:{dev.DeviceName} id:{dev.DeviceId}");
-                                ok = false;
-                            }
-                        }
-                        break;
+                    min.InputReceive += Device_InputReceive;
+                    _inputDevices.Add(dev.DeviceId, min);
+                }
+                else
+                {
+                    // Try osc.
+                    try
+                    {
+                        var mosc = new OscInput(dev.DeviceName);
+                        mosc.InputReceive += Device_InputReceive;
+                        _inputDevices.Add(dev.DeviceId, mosc);
+                    }
+                    catch
+                    {
+                        _logger.Error($"Something wrong with your input device:{dev.DeviceName} id:{dev.DeviceId}");
+                        ok = false;
+                    }
                 }
             }
 

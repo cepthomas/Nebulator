@@ -93,8 +93,6 @@ Midi and OSC are supported by Nebulator (or at least reasonable subsets). Device
 - MidiOutput: Midi out port name on your machine.
 - OscInput: As `OSC:1234` where `1234` is the local port number.
 - OscOutput: As `OSC:127.0.0.1:1234` where `127.0.0.1` is the endpoint IP and `1234` is the port number.
-- VirtualKeyboard: Virtual keyboard as input.
-- BingBong: 2D input surface.
 
 Since the built-in Windows GM player sounds terrible, there are a couple of options for playing midi locally:
 
