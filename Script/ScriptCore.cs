@@ -139,8 +139,8 @@ namespace Nebulator.Script
             // If vol is positive it's note on else note off.
             if (vol > 0)
             {
-                double vel = ch.NextVol(vol) * MasterVolume;
-                int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
+                vol *= MasterVolume;
+                int velPlay = (int)(vol * MidiDefs.MAX_MIDI);
                 velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
                 NoteOnEvent evt = new(StepTime.TotalSubs, ch.ChannelNumber, absnote, velPlay, dur.TotalSubs);

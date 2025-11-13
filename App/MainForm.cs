@@ -14,7 +14,8 @@ using Ephemera.MidiLib;
 using Ephemera.NScript;
 using Nebulator.Script;
 
-// ? Nebulator named input devices and controllers like outputs.
+// TODO? Nebulator named input devices and controllers like outputs.
+// TODO1 volume => gain.
 
 
 namespace Nebulator.App
@@ -389,7 +390,7 @@ namespace Nebulator.App
                                 ChannelName = name,
                                 ChannelNumber = chnum,
                                 DeviceId = devid,
-                                Volume = _nppVals.GetDouble(name, "volume", MidiLibDefs.VOLUME_DEFAULT),
+                                Volume = _nppVals.GetDouble(name, "volume", MidiLibDefs.DEFAULT_VOLUME),
                                 State = (ChannelState)_nppVals.GetInteger(name, "state", (int)ChannelState.Normal),
                                 Patch = patch,
                                 IsDrums = isDrums,
@@ -874,7 +875,7 @@ namespace Nebulator.App
                     // Get the persisted properties.
                     _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                    sldVolume.Value = _nppVals.GetDouble("master", "volume", MidiLibDefs.VOLUME_DEFAULT);
+                    sldVolume.Value = _nppVals.GetDouble("master", "volume", MidiLibDefs.DEFAULT_VOLUME);
 
                     _scriptFileName = fn;
                     SetCompileStatus(true);

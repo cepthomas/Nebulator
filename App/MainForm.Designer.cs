@@ -43,7 +43,7 @@
             // sldVolume
             // 
             this.sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.sldVolume.DrawColor = System.Drawing.Color.Orange;
+            this.sldVolume.DrawColor = System.Drawing.Color.Red;
             this.sldVolume.Label = "vol";
             this.sldVolume.Location = new System.Drawing.Point(267, 49);
             this.sldVolume.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
