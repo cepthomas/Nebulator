@@ -14,8 +14,7 @@ using Ephemera.MidiLib;
 using Ephemera.NScript;
 using Nebulator.Script;
 
-// TODO? Nebulator named input devices and controllers like outputs.
-// TODO1 volume => gain.
+// TODO ? Nebulator named input devices and controllers like outputs.
 
 
 namespace Nebulator.App
