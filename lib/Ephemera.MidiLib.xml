@@ -110,84 +110,6 @@
             <param name="val"></param>
             <returns></returns>
         </member>
-        <member name="T:Ephemera.MidiLib.BarSpan">
-            <summary>Sort of like TimeSpan but for musical terminology. TODO finish and integrate with BarTime.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.BarSpan._id">
-            <summary>For hashing.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.BarSpan._all_ids">
-            <summary>Increment for unique value.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.BarSpan.TotalSubs">
-            <summary>The time in subs. Always zero-based.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.BarSpan.Bar">
-            <summary>The bar number.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.BarSpan.Beat">
-            <summary>The beat number in the bar.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.BarSpan.Sub">
-            <summary>The sub in the beat.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.#ctor">
-            <summary>
-            Default constructor.
-            </summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.#ctor(System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Constructor from bar/beat/sub.
-            </summary>
-            <param name="bar"></param>
-            <param name="beat"></param>
-            <param name="sub"></param>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.#ctor(System.Int32)">
-            <summary>
-            Constructor from subs.
-            </summary>
-            <param name="subs">Number of subs.</param>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.Reset">
-            <summary>
-            Hard reset.
-            </summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.Constrain(Ephemera.MidiLib.BarSpan,Ephemera.MidiLib.BarSpan)">
-            <summary>
-            Utility helper function.
-            </summary>
-            <param name="lower"></param>
-            <param name="upper"></param>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.Increment(System.Int32)">
-            <summary>
-            Update current value.
-            </summary>
-            <param name="subs">By this number of subs.</param>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.SetRounded(System.Int32,Ephemera.MidiLib.SnapType,System.Boolean)">
-            <summary>
-            Set to sub using specified rounding.
-            </summary>
-            <param name="sub"></param>
-            <param name="snapType"></param>
-            <param name="up">To ceiling otherwise closest.</param>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.Format">
-            <summary>
-            Format a readable string.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.BarSpan.ToString">
-            <summary>
-            Format a readable string.
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:Ephemera.MidiLib.BarTime">
             <summary>Sort of like DateTime but for musical terminology.</summary>
         </member>
@@ -362,11 +284,6 @@
             Execute any lingering transients and clear the collection.
             </summary>
             <param name="sub">After this time.</param>
-        </member>
-        <member name="M:Ephemera.MidiLib.Channel.NextVol(System.Double)">
-            <summary>Get the next volume.</summary>
-            <param name="def">Default value.</param>
-            <returns></returns>
         </member>
         <member name="M:Ephemera.MidiLib.Channel.SendPatch">
             <summary>
@@ -624,16 +541,10 @@
         <member name="F:Ephemera.MidiLib.MidiLibDefs.STYLE_FILE_TYPES">
             <summary>Supported file types.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.MidiLibDefs.VOLUME_MIN">
-            <summary>Corresponds to midi velocity = 0.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.MidiLibDefs.VOLUME_MAX">
-            <summary>Corresponds to midi velocity = 127.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.MidiLibDefs.VOLUME_DEFAULT">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.DEFAULT_VOLUME">
             <summary>Default value.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.MidiLibDefs.MAX_GAIN">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.MAX_VOLUME">
             <summary>Allow UI controls some more headroom.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.NullMidiEvent">
@@ -1438,27 +1349,6 @@
             Required method for Designer support - do not modify 
             the contents of this method with the code editor.
             </summary>
-        </member>
-        <member name="T:Ephemera.MidiLib.Wobbler">
-            <summary>
-            Statistical randomizer for time and volume.
-            </summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.Wobbler._rand">
-            <summary>Randomizer.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.Wobbler.RangeLow">
-            <summary>Minimum range for randomizing - 3 sigma.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.Wobbler.RangeHigh">
-            <summary>Maximum range for randomizing - 3 sigma.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.Wobbler.Next(System.Double)">
-            <summary>
-            Return next from standard distribution.
-            </summary>
-            <param name="val">Center distribution around this.</param>
-            <returns>Randomized value or val if ranges are 0 (default).</returns>
         </member>
     </members>
 </doc>

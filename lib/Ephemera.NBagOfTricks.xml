@@ -276,8 +276,23 @@
             <param name="ticks"></param>
             <returns></returns>
         </member>
-        <member name="T:Ephemera.NBagOfTricks.Scoper">
-            <summary>TODO Experimental class to log enter/exit scope.</summary>
+        <member name="T:Ephemera.NBagOfTricks.IniSyntaxException">
+            <summary>Reporting user errors.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.IniSyntaxException.#ctor(System.String,System.Int32)">
+            <summary>Reporting user errors.</summary>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.IniSection">
+            <summary>Contents of one section.</summary>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.IniReader">
+            <summary>Process the ini file.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.IniReader.Contents">
+            <summary>What's in the file.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.IniReader.#ctor(System.String)">
+            <summary>Do it.</summary>
         </member>
         <member name="T:Ephemera.NBagOfTricks.JsonColorConverter">
             <summary>Serialize prettier.</summary>
@@ -758,11 +773,12 @@
         <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._scaleDefs">
             <summary>All the builtin scale defs.</summary>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.NoteNumberToName(System.Int32)">
+        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.NoteNumberToName(System.Int32,System.Boolean)">
             <summary>
             Convert note number into name.
             </summary>
-            <param name="inote"></param>
+            <param name="inote">Note number</param>
+            <param name="octave">Include octave</param>
             <returns></returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.NoteNameToNumber(System.String)">
@@ -1384,6 +1400,11 @@
             <param name="mode">What flavor.</param>
             <param name="show">If true open in browser.</param>
             <returns>Valid html.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.ExecuteLuaCode(System.String)">
+            <summary>Execute a chunk of lua code (not file).</summary>
+            <param name="scode">The code</param>
+            <returns>Exit code, stdout</returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
             <summary>

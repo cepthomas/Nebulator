@@ -128,7 +128,7 @@
         </member>
         <member name="M:Ephemera.NScript.CompilerCore.CompileText(System.String)">
             <summary>
-            Run the compiler on a simple text block. Uses Namespace for dll.
+            Run the compiler on a simple text block. Uses Namespace for dll name.
             </summary>
             <param name="text">Text to compile.</param>
             <returns>The assembly or null if invalid.</returns>
