@@ -115,29 +115,26 @@ namespace Nebulator.App
             Location = _settings.FormGeometry.Location;
             Size = _settings.FormGeometry.Size;
             WindowState = FormWindowState.Normal;
-            BackColor = _settings.BackColor;
 
             // The rest of the controls.
             textViewer.WordWrap = false;
-            textViewer.BackColor = _settings.BackColor;
             textViewer.MatchText.Add("ERR", Color.LightPink);
             textViewer.MatchText.Add("WRN", Color.Plum);
             textViewer.Prompt = "> ";
 
-            GraphicsUtils.ColorizeControl(btnMonIn, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(btnMonOut, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(btnKillComm, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(fileDropDownButton, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(btnRewind, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(btnCompile, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(btnAbout, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(btnSettings, _settings.ForeColor);
-            GraphicsUtils.ColorizeControl(chkPlay, _settings.ForeColor);
+            GraphicsUtils.ColorizeControl(btnMonIn, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnMonOut, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnKillComm, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(fileDropDownButton, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnAbout, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnSettings, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
 
             btnMonIn.Checked = _settings.MonitorInput;
             btnMonOut.Checked = _settings.MonitorOutput;
 
-            chkPlay.BackColor = _settings.BackColor;
             chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 
             sldTempo.DrawColor = _settings.ControlColor;
@@ -404,7 +401,8 @@ namespace Nebulator.App
                             {
                                 Location = new(x, y),
                                 BorderStyle = BorderStyle.FixedSingle,
-                                BoundChannel = channel
+                                BoundChannel = channel,
+                                ControlColor = _settings.ControlColor
                             };
                             control.ChannelChange += Control_ChannelChange;
                             Controls.Add(control);
@@ -496,7 +494,7 @@ namespace Nebulator.App
         /// <param name="compileStatus">True if compile is clean.</param>
         void SetCompileStatus(bool compileStatus)
         {
-            btnCompile.BackColor = compileStatus ? _settings.BackColor : Color.Red;
+            btnCompile.BackColor = compileStatus ? BackColor : Color.Red;
             _needCompile = !compileStatus;
         }
 
@@ -1057,7 +1055,6 @@ namespace Nebulator.App
                     case "InternalPPQ":
                     case "ControlColor":
                     case "SelectedColor":
-                    case "BackColor":
                         restart = true;
                         break;
                 }

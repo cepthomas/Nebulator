@@ -358,11 +358,8 @@
         <member name="P:Ephemera.MidiLib.ChannelControl.Selected">
             <summary>User has selected this channel.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.ChannelControl.SelectedColor">
-            <summary>Indicate user selected.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.ChannelControl.UnselectedColor">
-            <summary>Indicate user not selected.</summary>
+        <member name="P:Ephemera.MidiLib.ChannelControl.ControlColor">
+            <summary>Active control surfaces.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.ChannelControl.#ctor">
             <summary>

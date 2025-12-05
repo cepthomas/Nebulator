@@ -342,7 +342,7 @@ namespace Nebulator.Script
                     foreach (int noteNum in seqel.Notes)
                     {
                         ///// Note on.
-                        double vel = channel.NextVol(seqel.Volume) * MasterVolume;
+                        double vel = channel.Volume * MasterVolume;
                         int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                         velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
 
