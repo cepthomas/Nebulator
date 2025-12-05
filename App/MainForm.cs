@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Reflection;
 using NAudio.Midi;
 using NAudio.Wave;
 using Ephemera.NBagOfTricks;
@@ -93,6 +94,7 @@ namespace Nebulator.App
             MidiSettings.LibSettings.InternalPPQ = BarTime.LOW_RES_PPQ;
 
             InitializeComponent();
+            Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
