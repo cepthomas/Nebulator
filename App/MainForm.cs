@@ -139,13 +139,13 @@ namespace Nebulator.App
 
             chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 
-            sldTempo.DrawColor = _settings.ControlColor;
+            sldTempo.DrawColor = _settings.DrawColor;
             sldTempo.Invalidate();
-            sldVolume.DrawColor = _settings.ControlColor;
+            sldVolume.DrawColor = _settings.DrawColor;
             sldVolume.Invalidate();
 
             // Time controller.
-            barBar.ProgressColor = _settings.ControlColor;
+            barBar.ProgressColor = _settings.DrawColor;
             barBar.CurrentTimeChanged += BarBar_CurrentTimeChanged;
             barBar.Invalidate();
 
@@ -404,7 +404,7 @@ namespace Nebulator.App
                                 Location = new(x, y),
                                 BorderStyle = BorderStyle.FixedSingle,
                                 BoundChannel = channel,
-                                ControlColor = _settings.ControlColor
+                                DrawColor = _settings.DrawColor
                             };
                             control.ChannelChange += Control_ChannelChange;
                             Controls.Add(control);
@@ -1055,7 +1055,7 @@ namespace Nebulator.App
                     case "MidiInDevice":
                     case "MidiOutDevice":
                     case "InternalPPQ":
-                    case "ControlColor":
+                    case "DrawColor":
                     case "SelectedColor":
                         restart = true;
                         break;

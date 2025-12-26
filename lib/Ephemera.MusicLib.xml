@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ephemera.MusicLib</name>
+    </assembly>
+    <members>
+        <member name="T:Ephemera.MusicLib.MusicLibException">
+            <summary>Library error.</summary>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicLibException.#ctor(System.String)">
+            <summary>Library error.</summary>
+        </member>
+        <member name="T:Ephemera.MusicLib.SnapType">
+            <summary>User selection options.</summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.MidiSettings.Snap">
+            <summary>How to snap.</summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.MidiSettings.BeatsPerBar">
+            <summary>Only 4/4 time supported.</summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.MidiSettings.SubsPerBeat">
+            <summary>Convenience.</summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.MidiSettings.SubsPerBar">
+            <summary>Convenience.</summary>
+        </member>
+        <member name="T:Ephemera.MusicLib.MusicDefs">
+            <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.MusicDefs.Instance">
+            <summary>The singleton instance.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs._instance">
+            <summary>The singleton instance.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs._scales">
+            <summary>All the builtin scale defs.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs._chords">
+            <summary>All the builtin chord defs.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs._notes">
+            <summary>All possible note names and aliases.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs._intervals">
+            <summary>Helpers.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs._naturals">
+            <summary>Black and white. TODO put in ini file.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs._compounds">
+            <summary>The combined chord/scale note definitions. Scripts can add customs.
+            Key is chord/scale name, value is list of constituent notes.</summary>
+        </member>
+        <member name="F:Ephemera.MusicLib.MusicDefs.NOTES_PER_OCTAVE">
+            <summary>TODO support other scales?</summary>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.#ctor">
+            <summary>
+            Load all the music definitions.
+            </summary>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.NoteNumberToName(System.Int32,System.Boolean)">
+            <summary>
+            Convert note number into name.
+            </summary>
+            <param name="inote">Note number</param>
+            <param name="octave">Include octave</param>
+            <returns>The note name or empty if invalid.</returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.GetNotesFromString(System.String)">
+            <summary>
+            Parse note or notes from input value.
+            </summary>
+            <param name="noteString">Standard string to parse.</param>
+            <returns>List of note numbers - empty if invalid.</returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.IsNatural(System.Int32)">
+            <summary>
+            Is it a white key?
+            </summary>
+            <param name="notenum">Which note</param>
+            <returns>True/false</returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.SplitNoteNumber(System.Int32)">
+            <summary>
+            Split a midi note number into root note and octave.
+            </summary>
+            <param name="notenum">Absolute note number</param>
+            <returns>tuple of root and octave</returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.GetInterval(System.String)">
+            <summary>
+            Get interval offset from name.
+            </summary>
+            <param name="sinterval"></param>
+            <returns>Offset or -1 if invalid.</returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.GetIntervalName(System.Int32)">
+            <summary>
+            Get interval name from note number offset.
+            </summary>
+            <param name="iint">The name or empty if invalid.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.FormatNotes(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Try to make a note and/or chord string from the param. If it can't find a chord return the individual notes.
+            </summary>
+            <param name="notes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.AddCompound(System.String,System.String)">
+            <summary>
+            Add a new chord or scale definition.
+            </summary>
+            <param name="name">which</param>
+            <param name="notes">what</param>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.GetCompound(System.String)">
+            <summary>
+            Get a defined chord or scale definition.
+            </summary>
+            <param name="name">which</param>
+            <returns>The list of notes or empty if invalid.</returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.GenMarkdown(System.String)">
+            <summary>
+            Make content from the definitions.
+            </summary>
+            <returns>Content.</returns>
+        </member>
+        <member name="M:Ephemera.MusicLib.MusicDefs.GenLua(System.String)">
+            <summary>
+            Make content from the definitions.
+            </summary>
+            <returns>Content.</returns>
+        </member>
+        <member name="T:Ephemera.MusicLib.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Ephemera.MusicLib.Properties.Resources.music_defs">
+             <summary>
+               Looks up a localized string similar to ; The music components definitions.
+            
+            ; All the builtin scale defs.
+            [scales]
+            ;Scale                 = Notes                        (Description                          ,Lower tetrachord,Upper tetrachord)
+            Acoustic               = 1 2 3 #4 5 6 b7              (Acoustic                             ,whole tone      ,minor)
+            Aeolian                = 1 2 b3 4 5 b6 b7             (Aeolian mode or natural minor        ,minor           ,Phrygian)
+            NaturalMinor           = 1 2 b3 4 5 b6 b7             (Aeolian m [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+    </members>
+</doc>

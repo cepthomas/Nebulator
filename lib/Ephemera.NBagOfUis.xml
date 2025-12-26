@@ -934,6 +934,24 @@
         <member name="T:Ephemera.NBagOfUis.MonospaceFontEditor">
             <summary>Selector for monospaced fonts.</summary>
         </member>
+        <member name="T:Ephemera.NBagOfUis.GenericListTypeEditor">
+            <summary>Select from list supplied to cache. Value can be int or string.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.GenericListTypeEditor.SetOptions(System.String,System.Collections.Generic.List{System.String})">
+            <summary>These get set by the client.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.GenericListTypeEditor.EditValue(System.ComponentModel.ITypeDescriptorContext,System.IServiceProvider,System.Object)">
+            <summary>Standard property editor.</summary>
+        </member>
+        <member name="T:Ephemera.NBagOfUis.GenericConverter">
+            <summary>Convert between list int and string versions.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.GenericConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+            <summary>int to string</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.GenericConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+            <summary>string to int</summary>
+        </member>
         <member name="T:Ephemera.NBagOfUis.PathListEditor">
             <summary>Broken - don't use.</summary>
         </member>

@@ -288,11 +288,29 @@
         <member name="T:Ephemera.NBagOfTricks.IniReader">
             <summary>Process the ini file.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.IniReader.Contents">
+        <member name="F:Ephemera.NBagOfTricks.IniReader._contents">
             <summary>What's in the file.</summary>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.IniReader.#ctor(System.String)">
-            <summary>Do it.</summary>
+        <member name="M:Ephemera.NBagOfTricks.IniReader.GetSectionNames">
+            <summary>All section names</summary>
+            <returns>Names</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.IniReader.GetValues(System.String)">
+            <summary>Get values for the section name.</summary>
+            <param name="name"></param>
+            <returns>The section contents or throws if name is invalid.</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.IniReader.ParseFile(System.String)">
+            <summary>
+            Process an ini file.
+            </summary>
+            <param name="fn"></param>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.IniReader.ParseString(System.String)">
+            <summary>
+            Process an ini string.
+            </summary>
+            <param name="s">Input</param>
         </member>
         <member name="T:Ephemera.NBagOfTricks.JsonColorConverter">
             <summary>Serialize prettier.</summary>
@@ -737,112 +755,6 @@
             <summary>
             Resource clean up.
             </summary>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.MusicDefinitions">
-            <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._chordsScales">
-            <summary>The chord/scale note definitions. Key is chord/scale name, value is list of constituent notes.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions.NOTES_PER_OCTAVE">
-            <summary>all the notes.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.#cctor">
-            <summary>
-            Load chord and scale definitions.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.FormatDoc">
-            <summary>
-            Make markdown content from the definitions.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._noteNames">
-            <summary>All possible note names and aliases.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._naturals">
-            <summary>Helpers.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._intervals">
-            <summary>Helpers.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._chordDefs">
-            <summary>All the builtin chord defs.</summary>
-        </member>
-        <member name="F:Ephemera.NBagOfTricks.MusicDefinitions._scaleDefs">
-            <summary>All the builtin scale defs.</summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.NoteNumberToName(System.Int32,System.Boolean)">
-            <summary>
-            Convert note number into name.
-            </summary>
-            <param name="inote">Note number</param>
-            <param name="octave">Include octave</param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.NoteNameToNumber(System.String)">
-            <summary>
-            Convert note name into number.
-            </summary>
-            <param name="snote">The root of the note without octave.</param>
-            <returns>The number or -1 if invalid.</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetNotesFromString(System.String)">
-            <summary>
-            Parse note or notes from input value.
-            </summary>
-            <param name="noteString">Standard string to parse.</param>
-            <returns>List of note numbers - empty if invalid.</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.IsNatural(System.Int32)">
-            <summary>
-            Is it a white key?
-            </summary>
-            <param name="notenum">Which note</param>
-            <returns>True/false</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.SplitNoteNumber(System.Int32)">
-            <summary>
-            Split a midi note number into root note and octave.
-            </summary>
-            <param name="notenum">Absolute note number</param>
-            <returns>tuple of root and octave</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetInterval(System.String)">
-            <summary>
-            Get interval offset from name.
-            </summary>
-            <param name="sinterval"></param>
-            <returns>Offset or -1 if invalid.</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetInterval(System.Int32)">
-            <summary>
-            Get interval name from note number offset.
-            </summary>
-            <param name="iint">The name or empty if invalid.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.FormatNotes(System.Collections.Generic.List{System.Int32})">
-            <summary>
-            Try to make a note and/or chord string from the param. If it can't find a chord return the individual notes.
-            </summary>
-            <param name="notes"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.AddChordScale(System.String,System.String)">
-            <summary>
-            Add a new chord or scale definition.
-            </summary>
-            <param name="name">which</param>
-            <param name="notes">what</param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.MusicDefinitions.GetChordScale(System.String)">
-            <summary>
-            Get a defined chord or scale definition.
-            </summary>
-            <param name="name">which</param>
-            <returns>The list of notes or empty if invalid.</returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.PNUT.OutputFormat">
             <summary>

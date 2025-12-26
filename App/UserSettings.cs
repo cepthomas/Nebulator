@@ -51,7 +51,7 @@ namespace Nebulator.App
         [Description("The color used for active control surfaces.")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
-        public Color ControlColor { get; set; } = Color.Yellow;
+        public Color DrawColor { get; set; } = Color.Yellow;
 
         [DisplayName("Selected Color")]
         [Description("The color used for selected controls.")]

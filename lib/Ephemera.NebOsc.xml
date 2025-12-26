@@ -101,9 +101,6 @@
         <member name="P:Ephemera.NebOsc.Input.LocalPort">
             <summary>The receive port.</summary>
         </member>
-        <member name="P:Ephemera.NebOsc.Input.Trace">
-            <summary>Trace other than errors.</summary>
-        </member>
         <member name="M:Ephemera.NebOsc.Input.#ctor(System.Int32)">
             <summary>
             Constructor. Set up listening for OSC messages.
@@ -181,9 +178,6 @@
         </member>
         <member name="P:Ephemera.NebOsc.Output.RemotePort">
             <summary>Where to?</summary>
-        </member>
-        <member name="P:Ephemera.NebOsc.Output.Trace">
-            <summary>Trace other than errors.</summary>
         </member>
         <member name="M:Ephemera.NebOsc.Output.#ctor(System.String,System.Int32)">
             <summary>
