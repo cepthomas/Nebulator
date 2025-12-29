@@ -369,7 +369,8 @@ namespace Nebulator.App
                             var name = parts[0];
                             var devid = parts[1];
                             var chnum = int.Parse(parts[2]);
-                            // Is patch an instrument or drum?
+
+                            // Is patch an instrument or drumkit? TODO1
                             bool isDrums = false;
                             int patch = MidiDefs.GetInstrumentNumber(parts[3]);
                             if (patch == -1)
@@ -616,7 +617,7 @@ namespace Nebulator.App
         {
             ChannelControl chc = (ChannelControl)sender!;
 
-            if (e.StateChange)
+            if (e.State)
             {
                 switch (chc.State)
                 {
