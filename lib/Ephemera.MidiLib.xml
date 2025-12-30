@@ -4,10 +4,10 @@
         <name>Ephemera.MidiLib</name>
     </assembly>
     <members>
-        <member name="T:Ephemera.MidiLib.ChannelHandle">
+        <member name="T:Ephemera.MidiLib.HandleOps">
             <summary>Encode device/channel info for round trip through script.</summary>
         </member>
-        <member name="M:Ephemera.MidiLib.ChannelHandle.Format(System.Int32)">
+        <member name="M:Ephemera.MidiLib.HandleOps.Format(System.Int32)">
             <summary>See me.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.InputChannel">
@@ -63,7 +63,7 @@
             <summary>Handle for use by scripts.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.IsDrums">
-            <summary>Meta info.</summary>
+            <summary>Meta info only client knows.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.Enable">
             <summary>True if channel is active.</summary>
@@ -85,14 +85,20 @@
         <member name="M:Ephemera.MidiLib.OutputChannel.LoadAliases">
             <summary>Load aliases.</summary>
         </member>
-        <member name="T:Ephemera.MidiLib.ChannelControl.ChannelState">
+        <member name="T:Ephemera.MidiLib.ChannelState">
             <summary>Channel playing.</summary>
         </member>
-        <member name="T:Ephemera.MidiLib.ChannelControl.ChannelChangeEventArgs">
+        <member name="T:Ephemera.MidiLib.DisplayOptions">
+            <summary>Some flavors of control may need to be defeatured.</summary>
+        </member>
+        <member name="T:Ephemera.MidiLib.ChannelChangeEventArgs">
             <summary>Notify host of UI changes.</summary>
         </member>
-        <member name="T:Ephemera.MidiLib.ChannelControl.DisplayOptions">
-            <summary>Some flavors of control may need to be defeatured.</summary>
+        <member name="P:Ephemera.MidiLib.ChannelChangeEventArgs.Info">
+            <summary>User clicked info.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.ChannelChangeEventArgs.State">
+            <summary>Solo/mute.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.ChannelControl.BoundChannel">
             <summary>My channel.</summary>
@@ -126,9 +132,6 @@
         </member>
         <member name="E:Ephemera.MidiLib.ChannelControl.SendMidi">
             <summary>UI midi send.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelControl.OnSendMidi(Ephemera.MidiLib.BaseMidiEvent)">
-            <summary>Derived class helper.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.ChannelControl.#ctor">
             <summary>
@@ -212,7 +215,7 @@
         <member name="T:Ephemera.MidiLib.IOutputDevice">
             <summary>Abstraction layer to support output devices.</summary>
         </member>
-        <member name="M:Ephemera.MidiLib.IOutputDevice.Send(Ephemera.MidiLib.BaseMidiEvent)">
+        <member name="M:Ephemera.MidiLib.IOutputDevice.Send(Ephemera.MidiLib.BaseMidi)">
             <summary>Send midi event.</summary>
             <param name="evt"></param>
         </member>
@@ -282,7 +285,7 @@
             <summary>
             Helper.
             </summary>
-            <param name="chnd"></param>
+            <param name="chnum"></param>
             <returns>The channel or null if invalid handle.</returns>
         </member>
         <member name="M:Ephemera.MidiLib.Manager.Kill(Ephemera.MidiLib.OutputChannel)">
@@ -364,6 +367,15 @@
             </summary>
             <returns>Content.</returns>
         </member>
+        <member name="M:Ephemera.MidiLib.MidiDefs.CreateOrderedMidiList(System.Collections.Generic.Dictionary{System.Int32,System.String},System.Boolean,System.Boolean)">
+            <summary>
+            Convert a midi dictionary into ordered list of strings.
+            </summary>
+            <param name="source">The dictionary to process</param>
+            <param name="addKey">Add the index number to the entry</param>
+            <param name="fill">Add mising midi values</param>
+            <returns></returns>
+        </member>
         <member name="T:Ephemera.MidiLib.MidiInputDevice">
             <summary>A midi input device.</summary>
         </member>
@@ -439,10 +451,8 @@
             Clean up any resources being used.
             </summary>
         </member>
-        <member name="M:Ephemera.MidiLib.MidiOutputDevice.Send(Ephemera.MidiLib.BaseMidiEvent)">
-            <summary>
-            Send midi event.
-            </summary>
+        <member name="M:Ephemera.MidiLib.MidiOutputDevice.Send(Ephemera.MidiLib.BaseMidi)">
+            <inheritdoc />
         </member>
         <member name="M:Ephemera.MidiLib.MidiOutputDevice.GetAvailableDevices">
             <summary>
@@ -450,13 +460,13 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Ephemera.MidiLib.BaseMidiEvent.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.BaseMidi.ChannelNumber">
             <summary>Channel number.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.BaseMidiEvent.ErrorInfo">
+        <member name="P:Ephemera.MidiLib.BaseMidi.ErrorInfo">
             <summary>Something to tell the client.</summary>
         </member>
-        <member name="M:Ephemera.MidiLib.BaseMidiEvent.ToString">
+        <member name="M:Ephemera.MidiLib.BaseMidi.ToString">
             <summary>Read me.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.NoteOn.Note">
@@ -502,13 +512,13 @@
             <summary>Only 4/4 time supported currently.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MusicTime.TicksPerBeat">
-            <summary>Our resolution => 32nd note.</summary>
+            <summary>Our resolution where 8 => 32nd note.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MusicTime.TicksPerBar">
             <summary>Convenience.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MusicTime.Tick">
-            <summary>The total time in ticks. Zero-based.</summary>
+            <summary>Absolute tick. Zero-based.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MusicTime.Id">
             <summary>Accessor.</summary>
@@ -554,12 +564,13 @@
             </summary>
             <param name="ticks">By this number of ticks. Can be negative = decrement.</param>
         </member>
-        <member name="M:Ephemera.MidiLib.MusicTime.Set(System.Int32,Ephemera.MidiLib.SnapType)">
+        <member name="M:Ephemera.MidiLib.MusicTime.Set(System.Int32,Ephemera.MidiLib.SnapType,System.Boolean)">
             <summary>
             Set the value using specified rounding.
             </summary>
             <param name="tick"></param>
             <param name="snapType"></param>
+            <param name="up">T = round up</param>
         </member>
         <member name="M:Ephemera.MidiLib.MusicTime.ToString">
             <summary>
@@ -569,6 +580,7 @@
         </member>
         <member name="P:Ephemera.MidiLib.NullInputDevice.DeviceName">
             <inheritdoc />
+            Uses nullout:name for DeviceName.
         </member>
         <member name="P:Ephemera.MidiLib.NullInputDevice.Valid">
             <inheritdoc />
@@ -593,6 +605,7 @@
         </member>
         <member name="P:Ephemera.MidiLib.NullOutputDevice.DeviceName">
             <inheritdoc />
+            Uses nullin:name for DeviceName.
         </member>
         <member name="P:Ephemera.MidiLib.NullOutputDevice.Valid">
             <inheritdoc />
@@ -612,7 +625,7 @@
             </summary>
             <param name="deviceName">Client must supply name of device.</param>
         </member>
-        <member name="M:Ephemera.MidiLib.NullOutputDevice.Send(Ephemera.MidiLib.BaseMidiEvent)">
+        <member name="M:Ephemera.MidiLib.NullOutputDevice.Send(Ephemera.MidiLib.BaseMidi)">
             <inheritdoc />
         </member>
         <member name="T:Ephemera.MidiLib.OscInputDevice">
@@ -626,6 +639,7 @@
         </member>
         <member name="P:Ephemera.MidiLib.OscInputDevice.DeviceName">
             <inheritdoc />
+            Uses oscin:port for DeviceName.
         </member>
         <member name="P:Ephemera.MidiLib.OscInputDevice.CaptureEnable">
             <inheritdoc />
@@ -675,6 +689,7 @@
         </member>
         <member name="P:Ephemera.MidiLib.OscOutputDevice.DeviceName">
             <inheritdoc />
+            Uses oscout:host:port for DeviceName.
         </member>
         <member name="P:Ephemera.MidiLib.OscOutputDevice.Valid">
             <inheritdoc />
@@ -694,7 +709,7 @@
             Resource clean up.
             </summary>
         </member>
-        <member name="M:Ephemera.MidiLib.OscOutputDevice.Send(Ephemera.MidiLib.BaseMidiEvent)">
+        <member name="M:Ephemera.MidiLib.OscOutputDevice.Send(Ephemera.MidiLib.BaseMidi)">
             <inheritdoc />
         </member>
         <member name="M:Ephemera.MidiLib.OscOutputDevice.OscOutput_Notification(System.Object,Ephemera.NebOsc.NotificationEventArgs)">
@@ -864,6 +879,18 @@
         </member>
         <member name="T:Ephemera.MidiLib.MidiValueTypeEditor">
             <summary>Select a midi value from a range. Handles special case of channel number.</summary>
+        </member>
+        <member name="T:Ephemera.MidiLib.UserRenderer">
+            <summary>Base class for custom renderers.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.UserRenderer.ChannelNumber">
+            <summary>For midi sends.</summary>
+        </member>
+        <member name="E:Ephemera.MidiLib.UserRenderer.SendMidi">
+            <summary>Parent hooks this.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.UserRenderer.OnSendMidi(Ephemera.MidiLib.BaseMidi)">
+            <summary>Derived control helper.</summary>
         </member>
     </members>
 </doc>

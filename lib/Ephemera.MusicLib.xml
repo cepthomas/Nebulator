@@ -4,27 +4,6 @@
         <name>Ephemera.MusicLib</name>
     </assembly>
     <members>
-        <member name="T:Ephemera.MusicLib.MusicLibException">
-            <summary>Library error.</summary>
-        </member>
-        <member name="M:Ephemera.MusicLib.MusicLibException.#ctor(System.String)">
-            <summary>Library error.</summary>
-        </member>
-        <member name="T:Ephemera.MusicLib.SnapType">
-            <summary>User selection options.</summary>
-        </member>
-        <member name="P:Ephemera.MusicLib.MidiSettings.Snap">
-            <summary>How to snap.</summary>
-        </member>
-        <member name="P:Ephemera.MusicLib.MidiSettings.BeatsPerBar">
-            <summary>Only 4/4 time supported.</summary>
-        </member>
-        <member name="P:Ephemera.MusicLib.MidiSettings.SubsPerBeat">
-            <summary>Convenience.</summary>
-        </member>
-        <member name="P:Ephemera.MusicLib.MidiSettings.SubsPerBar">
-            <summary>Convenience.</summary>
-        </member>
         <member name="T:Ephemera.MusicLib.MusicDefs">
             <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
         </member>

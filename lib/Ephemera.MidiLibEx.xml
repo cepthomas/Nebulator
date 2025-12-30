@@ -4,12 +4,6 @@
         <name>Ephemera.MidiLibEx</name>
     </assembly>
     <members>
-        <member name="F:Ephemera.MidiLibEx.MidiLibDefs.MIDI_FILE_TYPES">
-            <summary>Supported file types.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLibEx.MidiLibDefs.STYLE_FILE_TYPES">
-            <summary>Supported file types.</summary>
-        </member>
         <member name="T:Ephemera.MidiLibEx.MidiDataFile">
             <summary>
             Represents one complete collection of midi events from a file - standard midi or yamaha style files.
@@ -24,6 +18,12 @@
         </member>
         <member name="F:Ephemera.MidiLibEx.MidiDataFile._currentPattern">
             <summary>Currently collecting this pattern.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLibEx.MidiDataFile.MIDI_FILE_TYPES">
+            <summary>Supported file types.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLibEx.MidiDataFile.STYLE_FILE_TYPES">
+            <summary>Supported file types.</summary>
         </member>
         <member name="P:Ephemera.MidiLibEx.MidiDataFile.FileName">
             <summary>Current file.</summary>
@@ -153,10 +153,10 @@
             <summary>Associated channel name.</summary>
         </member>
         <member name="P:Ephemera.MidiLibEx.MidiEventDesc.AbsoluteTime">
-            <summary>Time (subs) from original file.</summary>
+            <summary>Time (ticks) from original file.</summary>
         </member>
         <member name="P:Ephemera.MidiLibEx.MidiEventDesc.ScaledTime">
-            <summary>Time (subs) scaled to internal units using send PPQ.</summary>
+            <summary>Time (ticks) scaled to internal units using send PPQ.</summary>
         </member>
         <member name="P:Ephemera.MidiLibEx.MidiEventDesc.RawEvent">
             <summary>The raw midi event.</summary>
@@ -172,22 +172,23 @@
             Writes to various output formats.
             </summary>
         </member>
-        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportCsv(System.String,System.Collections.Generic.IEnumerable{Ephemera.MidiLibEx.PatternInfo},System.Collections.Generic.IEnumerable{Ephemera.MidiLib.OutputChannel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportCsv(System.String,System.Collections.Generic.IEnumerable{Ephemera.MidiLibEx.PatternInfo},System.Collections.Generic.List{System.Int32},System.Collections.Generic.List{System.Int32},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
             Export the contents in a csv readable form. This is as the events appear in the original file.
             </summary>
             <param name="outFileName">Where to boss?</param>
             <param name="patterns">Specific patterns.</param>
-            <param name="channels">Specific channnels or all if empty.</param>
+            <param name="channelNumbers">Specific channnel numbers.</param>
+            <param name="drumChannelNumbers">Drum channel numbers.</param>
             <param name="global">File meta data to include.</param>
         </member>
-        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportMidi(System.String,Ephemera.MidiLibEx.PatternInfo,System.Collections.Generic.IEnumerable{Ephemera.MidiLib.OutputChannel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportMidi(System.String,Ephemera.MidiLibEx.PatternInfo,System.Collections.Generic.List{System.Int32},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
             Export pattern parts to individual midi files. This is as the events appear in the original file.
             </summary>
             <param name="outFileName">Where to boss?</param>
             <param name="pattern">Specific pattern.</param>
-            <param name="channels">Specific channnels or all if empty.</param>
+            <param name="channelNumbers">Specific channnel numbers.</param>
             <param name="global">File meta data to include.</param>
         </member>
         <member name="M:Ephemera.MidiLibEx.MidiExport.Format(Ephemera.MidiLibEx.MidiEventDesc,System.Boolean)">
@@ -197,21 +198,6 @@
             <param name="evtDesc">Event to format</param>
             <param name="isDrums"></param>
             <returns></returns>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiSettings.LibSettings">
-            <summary>Current midi settings. Client must set this before accessing!</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiSettings.Snap">
-            <summary>How to snap.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiSettings.BeatsPerBar">
-            <summary>Only 4/4 time supported.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiSettings.SubsPerBeat">
-            <summary>Convenience.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiSettings.SubsPerBar">
-            <summary>Convenience.</summary>
         </member>
         <member name="T:Ephemera.MidiLibEx.MidiTimeConverter">
             <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
@@ -276,7 +262,10 @@
             <returns></returns>
         </member>
         <member name="T:Ephemera.MidiLibEx.PatternInfo">
-            <summary>Represents the contents of a midi file pattern. If it is a plain midi file (not style) there will be one only.</summary>
+            <summary>
+            Represents the contents of a midi file pattern.
+            If it is a plain midi file (not style) there will be one only.
+            </summary>
         </member>
         <member name="F:Ephemera.MidiLibEx.PatternInfo._events">
             <summary>All the pattern midi events.</summary>
@@ -314,16 +303,6 @@
             <param name="name">Pattern name</param>
             <param name="tempo">Defalt tempo</param>
             <param name="ppq">Resolution</param>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.PatternInfo.#ctor(System.String,System.Int32,System.Collections.Generic.IEnumerable{Ephemera.MidiLibEx.MidiEventDesc},System.Collections.Generic.IEnumerable{Ephemera.MidiLib.OutputChannel},System.Int32)">
-             <summary>
-            Constructor from existing data. 
-             </summary>
-             <param name="name">Pattern name</param>
-             <param name="ppq">Resolution</param>
-             <param name="events">All the events</param>
-             <param name="channels">Channels of interest</param>
-             <param name="tempo">Defalt tempo</param>
         </member>
         <member name="M:Ephemera.MidiLibEx.PatternInfo.AddEvent(Ephemera.MidiLibEx.MidiEventDesc)">
             <summary>
