@@ -59,11 +59,11 @@ namespace Nebulator.App
         [JsonConverter(typeof(JsonColorConverter))]
         public Color SelectedColor { get; set; } = Color.Violet;
 
-        [DisplayName("Midi Settings")]
-        [Description("Edit midi settings.")]
-        [Browsable(true)]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public MidiSettings MidiSettings { get; set; } = new();
+        // [DisplayName("Midi Settings")]
+        // [Description("Edit midi settings.")]
+        // [Browsable(true)]
+        // [TypeConverter(typeof(ExpandableObjectConverter))]
+        // public MidiSettings MidiSettings { get; set; } = new();
         #endregion
 
         #region Properties - internal

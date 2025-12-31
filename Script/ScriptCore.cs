@@ -4,6 +4,7 @@ using System.Linq;
 using NAudio.Midi;
 using Ephemera.MidiLib;
 using Ephemera.NBagOfTricks;
+using Ephemera.MusicLib;
 
 
 namespace Nebulator.Script
@@ -18,10 +19,13 @@ namespace Nebulator.Script
         internal List<Section> _sections = [];
 
         /// <summary>All the events defined in the script.</summary>
-        internal List<MidiEventDesc> _scriptEvents = [];
+        internal List<MidiEvent> _scriptEvents = [];
 
-        /// <summary>All the channels - key is user assigned name.</summary>
-        Dictionary<string, Channel> _channels = [];
+        ///// <summary>All the channels - key is user assigned name.</summary>
+        //Dictionary<string, OutputChannel> _channels = [];
+
+        /// <summary>Midi boss.</summary>
+        Manager _mgr = new();
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
@@ -32,7 +36,7 @@ namespace Nebulator.Script
         public bool Playing { get; set; } = false;
 
         /// <summary>Current Nebulator step time. Main:W Script:R</summary>
-        public BarTime StepTime { get; set; } = new BarTime(0);
+        public MusicTime StepTime { get; set; } = new MusicTime(0);
 
         /// <summary>Actual time since start pressed. Main:W Script:R</summary>
         public double RealTime { get; set; } = 0.0;
@@ -118,7 +122,7 @@ namespace Nebulator.Script
         /// <param name="parts">Like "1 4 6 b13"</param>
         protected void CreateNotes(string name, string parts)
         {
-            MusicDefinitions.AddChordScale(name, parts);
+            MusicDefs.Instance.AddCompound(name, parts);
         }
 
         /// <summary>Send a note immediately. Lowest level sender.</summary>
@@ -126,7 +130,7 @@ namespace Nebulator.Script
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(string chanName, int notenum, double vol, BarTime dur)
+        protected void SendNote(string chanName, int notenum, double vol, MusicTime dur)
         {
             if (!_channels.ContainsKey(chanName))
             {
@@ -134,22 +138,22 @@ namespace Nebulator.Script
             }
 
             var ch = _channels[chanName];
-            int absnote = MathUtils.Constrain(Math.Abs(notenum), MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+            int absnote = MathUtils.Constrain(Math.Abs(notenum), 0, MidiDefs.MAX_MIDI);
 
             // If vol is positive it's note on else note off.
             if (vol > 0)
             {
                 vol *= MasterVolume;
                 int velPlay = (int)(vol * MidiDefs.MAX_MIDI);
-                velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+                velPlay = MathUtils.Constrain(velPlay, 0, MidiDefs.MAX_MIDI);
 
-                NoteOnEvent evt = new(StepTime.TotalSubs, ch.ChannelNumber, absnote, velPlay, dur.TotalSubs);
-                ch.SendEvent(evt);
+                NoteOnEvent evt = new(StepTime.Tick, ch.ChannelNumber, absnote, velPlay, dur.Tick);
+                ch.Device.SendEvent(evt);
             }
             else
             {
-                NoteEvent evt = new(StepTime.TotalSubs, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
-                ch.SendEvent(evt);
+                NoteEvent evt = new(StepTime.Tick, ch.ChannelNumber, MidiCommandCode.NoteOff, absnote, 0);
+                ch.Device.SendEvent(evt);
             }
         }
 
@@ -158,48 +162,48 @@ namespace Nebulator.Script
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation.</param>
-        protected void SendNote(string chanName, string notestr, double vol, BarTime dur)
+        protected void SendNote(string chanName, string notestr, double vol, MusicTime dur)
         {
             SequenceElement note = new(notestr);
             note.Notes.ForEach(n => SendNote(chanName, n, vol, dur));
         }
 
-        /// <summary>Send a note immediately.</summary>
-        /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="notenum">Note number.</param>
-        /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
-        /// <param name="dur">How long it lasts in BarTime representation. Default is for things like drum hits.</param>
-        protected void SendNote(string chanName, int notenum, double vol, double dur = 0.1)
-        {
-            SendNote(chanName, notenum, vol, new BarTime(dur));
-        }
+        ///// <summary>Send a note immediately.</summary>
+        ///// <param name="chanName">Which channel to send it on.</param>
+        ///// <param name="notenum">Note number.</param>
+        ///// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
+        ///// <param name="dur">How long it lasts in MusicTime representation. Default is for things like drum hits.</param>
+        //protected void SendNote(string chanName, int notenum, double vol, double dur = 0.1)
+        //{
+        //    SendNote(chanName, notenum, vol, new MusicTime(dur));
+        //}
 
-        /// <summary>Send one or more named notes immediately.</summary>
-        /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
-        /// <param name="vol">Note volume.</param>
-        /// <param name="dur">How long it lasts in BarTime representation. Default is for things like drum hits.</param>
-        protected void SendNote(string chanName, string notestr, double vol, double dur = 0.1)
-        {
-            SendNote(chanName, notestr, vol, new BarTime(dur));
-        }
+        ///// <summary>Send one or more named notes immediately.</summary>
+        ///// <param name="chanName">Which channel to send it on.</param>
+        ///// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
+        ///// <param name="vol">Note volume.</param>
+        ///// <param name="dur">How long it lasts in MusicTime representation. Default is for things like drum hits.</param>
+        //protected void SendNote(string chanName, string notestr, double vol, double dur = 0.1)
+        //{
+        //    SendNote(chanName, notestr, vol, new MusicTime(dur));
+        //}
 
-        /// <summary>Send an explicit note on immediately. Caller is responsible for sending note off later.</summary>
-        /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="notenum">Note number.</param>
-        /// <param name="vol">Note volume.</param>
-        protected void SendNoteOn(string chanName, int notenum, double vol)
-        {
-            SendNote(chanName, notenum, vol);
-        }
+        ///// <summary>Send an explicit note on immediately. Caller is responsible for sending note off later.</summary>
+        ///// <param name="chanName">Which channel to send it on.</param>
+        ///// <param name="notenum">Note number.</param>
+        ///// <param name="vol">Note volume.</param>
+        //protected void SendNoteOn(string chanName, int notenum, double vol)
+        //{
+        //    SendNote(chanName, notenum, vol);
+        //}
 
-        /// <summary>Send an explicit note off immediately.</summary>
-        /// <param name="chanName">Which channel to send it on.</param>
-        /// <param name="notenum">Note number.</param>
-        protected void SendNoteOff(string chanName, int notenum)
-        {
-            SendNote(chanName, notenum, 0);
-        }
+        ///// <summary>Send an explicit note off immediately.</summary>
+        ///// <param name="chanName">Which channel to send it on.</param>
+        ///// <param name="notenum">Note number.</param>
+        //protected void SendNoteOff(string chanName, int notenum)
+        //{
+        //    SendNote(chanName, notenum, 0);
+        //}
 
         /// <summary>Send a controller immediately.</summary>
         /// <param name="chanName">Which channel to send it on.</param>
@@ -213,10 +217,10 @@ namespace Nebulator.Script
             }
 
             var ch = _channels[chanName];
-            int ctlrid = MidiDefs.GetControllerNumber(controller);
+            int ctlrid = MidiDefs.Instance.GetControllerNumber(controller);
             if (ctlrid >= 0)
             {
-                ch.SendController((MidiController)ctlrid, val);
+                ch.Device.SendController((MidiController)ctlrid, val);
             }
             else
             {
@@ -236,7 +240,7 @@ namespace Nebulator.Script
 
             var ch = _channels[chanName];
             ch.Patch = patch;
-            ch.SendPatch();
+           // ch.SendPatch();
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -249,7 +253,7 @@ namespace Nebulator.Script
                 throw new ArgumentException($"Invalid channel: {chanName}");
             }
 
-            int patchid = MidiDefs.GetInstrumentNumber(patch);
+            int patchid = MidiDefs.Instance.GetInstrumentNumber(patch);
             if (patchid >= 0)
             {
                 SendPatch(chanName, patchid);
@@ -265,10 +269,11 @@ namespace Nebulator.Script
         /// <summary>
         /// Set up runtime stuff.
         /// </summary>
-        /// <param name="channels">All output channels.</param>
-        public void Init(Dictionary<string, Channel> channels)
+        /// <param name="mgr"></param>
+        public void Init(Manager mgr)//Dictionary<string, Channel> channels)
         {
-            _channels = channels;
+            _mgr = mgr;
+            //_channels = channels;
         }
 
         /// <summary>
@@ -320,21 +325,21 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start sequence at.</param>
-        List<MidiEventDesc> ConvertToEvents(Channel channel, Sequence seq, int startBeat)
+        List<MidiEvent> ConvertToEvents(OutputChannel channel, Sequence seq, int startBeat)
         {
-            List<MidiEventDesc> events = [];
+            List<MidiEvent> events = [];
 
             foreach (SequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
-                BarTime startNoteTime = new BarTime(startBeat * MidiSettings.LibSettings.SubsPerBeat) + seqel.When;
-                BarTime stopNoteTime = startNoteTime + (seqel.Duration.TotalSubs == 0 ? new(1) : seqel.Duration); // 1 is a short hit
+                MusicTime startNoteTime = new MusicTime(startBeat * MusicTime.TicksPerBeat) + seqel.When;
+                MusicTime stopNoteTime = startNoteTime + (seqel.Duration.Tick == 0 ? new(1) : seqel.Duration); // 1 is a short hit
 
                 // Is it a function?
                 if (seqel.ScriptFunction is not null)
                 {
-                    FunctionMidiEvent evt = new(startNoteTime.TotalSubs, channel.ChannelNumber, seqel.ScriptFunction);
-                    events.Add(new(evt, channel.ChannelName));
+//TODO1                    FunctionMidiEvent evt = new(startNoteTime.Tick, channel.ChannelNumber, seqel.ScriptFunction);
+//                    events.Add(new(evt, channel.ChannelName));
                 }
                 else // plain ordinary
                 {
@@ -344,10 +349,10 @@ namespace Nebulator.Script
                         ///// Note on.
                         double vel = channel.Volume * MasterVolume;
                         int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
-                        velPlay = MathUtils.Constrain(velPlay, MidiDefs.MIN_MIDI, MidiDefs.MAX_MIDI);
+                        velPlay = MathUtils.Constrain(velPlay, 0, MidiDefs.MAX_MIDI);
 
-                        NoteOnEvent evt = new(startNoteTime.TotalSubs, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.TotalSubs);
-                        events.Add(new(evt, channel.ChannelName));
+                        NoteOnEvent evt = new(startNoteTime.Tick, channel.ChannelNumber, noteNum, velPlay, seqel.Duration.Tick);
+                        events.Add(evt);// new(evt, channel.ChannelName));
                     }
                 }
             }
@@ -380,7 +385,7 @@ namespace Nebulator.Script
         /// Get all events.
         /// </summary>
         /// <returns>Enumerator for all events.</returns>
-        public IEnumerable<MidiEventDesc> GetEvents()
+        public IEnumerable<MidiEvent> GetEvents()
         {
             return _scriptEvents;
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ephemera.MidiLib;
+using Ephemera.MusicLib;
 using Ephemera.NBagOfTricks;
 
 
@@ -46,17 +47,17 @@ namespace Nebulator.Script
         /// <param name="what">What to play.</param>
         /// <param name="volume">Base volume.</param>
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum.</param>
-        public void Add(double when, string what, double volume, double duration = 0)
-        {
-            SequenceElement sel = new(what)
-            {
-                When = new(when),
-                Volume = volume,
-                Duration = new(duration)
-            };
+        //public void Add(double when, string what, double volume, double duration = 0) //TODO2 remove doubles
+        //{
+        //    SequenceElement sel = new(what)
+        //    {
+        //        When = new(when),
+        //        Volume = volume,
+        //        Duration = new(duration)
+        //    };
 
-            Add(sel);
-        }
+        //    Add(sel);
+        //}
 
         /// <summary>
         /// Add a pattern. Note subdivs per beat is fixed at PPQ of 8.
@@ -68,12 +69,12 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string what, double volume)
         {
-            List<int> notes = MusicDefinitions.GetNotesFromString(what);
+            List<int> notes = MusicDefs.Instance.GetNotesFromString(what);
 
             if (notes.Count == 0)
             {
                 // It might be a drum.
-                int idrum = MidiDefs.GetDrumNumber(what);
+                int idrum = MidiDefs.Instance.GetDrumNumber(what);
                 if(idrum >= 0)
                 {
                     notes.Add(idrum);
@@ -96,8 +97,8 @@ namespace Nebulator.Script
                 {
                     // Make a Note on.
                     double volmod = (double)currentVol / 10;
-                    BarTime dur = new(index - startIndex);
-                    BarTime when = new(startIndex);
+                    MusicTime dur = new(index - startIndex);
+                    MusicTime when = new(startIndex);
                     //// Create scaled times.
                     //BarTime dur = new((index - startIndex) * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
                     //BarTime when = new(startIndex * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
@@ -182,16 +183,16 @@ namespace Nebulator.Script
         /// <param name="when">Time to play at.</param>
         /// <param name="func">Function to execute.</param>
         /// <param name="volume">Base volume.</param>
-        public void Add(double when, Action func, double volume)
-        {
-            SequenceElement sel = new(func)
-            {
-                When = new(when),
-                Volume = volume
-            };
+        //public void Add(double when, Action func, double volume) //TODO2 remove doubles
+        //{
+        //    SequenceElement sel = new(func)
+        //    {
+        //        When = new(when),
+        //        Volume = volume
+        //    };
 
-            Add(sel);
-        }
+        //    Add(sel);
+        //}
     }
 
     /// <summary>
@@ -204,10 +205,10 @@ namespace Nebulator.Script
         public double Volume { get; set; } = 90;
 
         /// <summary>When to play in Sequence.</summary>
-        public BarTime When { get; set; } = new();
+        public MusicTime When { get; set; } = new();
 
         /// <summary>Time between note on/off. 0 (default) means not used.</summary>
-        public BarTime Duration { get; set; } = new();
+        public MusicTime Duration { get; set; } = new();
 
         /// <summary>The 0th is the root note and other values comprise possible chord notes.</summary>
         public List<int> Notes { get; private set; } = new(); // TODO notes below the root.
@@ -222,13 +223,13 @@ namespace Nebulator.Script
         /// <param name="s"></param>
         public SequenceElement(string s)
         {
-            Notes = MusicDefinitions.GetNotesFromString(s);
+            Notes = MusicDefs.Instance.GetNotesFromString(s);
             if(Notes.Count == 0)
             {
                 // It might be a drum.
                 try
                 {
-                    int idrum = MidiDefs.GetDrumNumber(s);
+                    int idrum = MidiDefs.Instance.GetDrumNumber(s);
                     Notes.Add(idrum);
                 }
                 catch { }

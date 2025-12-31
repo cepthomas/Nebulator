@@ -14,6 +14,7 @@ using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using Ephemera.NScript;
 using Nebulator.Script;
+using Ephemera.MidiLibEx;
 
 // TODO ? Nebulator named input devices and controllers like outputs.
 
@@ -40,26 +41,29 @@ namespace Nebulator.App
         /// <summary>Our compiler.</summary>
         readonly Compiler _compiler;
 
+        /// <summary>Midi boss.</summary>
+        readonly Manager _mgr = new();
+
         /// <summary>Current neb script file name.</summary>
         string? _scriptFileName;
 
         /// <summary>The current script.</summary>
         ScriptCore? _script;
 
-        /// <summary>All the channels - key is user assigned name.</summary>
-        readonly Dictionary<string, Channel> _channels = [];
+        ///// <summary>All the channels - key is user assigned name.</summary>
+        //readonly Dictionary<string, Channel> _channels = [];
 
         /// <summary>All the channel play controls.</summary>
         readonly List<ChannelControl> _channelControls = [];
 
-        /// <summary>Longest length of channels in subdivs.</summary>
-        int _totalSubs = 0;
+        /// <summary>Longest length of channels in ticks.</summary>
+        int _totalTicks = 0;
 
-        /// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
-        readonly Dictionary<string, IOutputDevice> _outputDevices = [];
+        ///// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
+        //readonly Dictionary<string, IOutputDevice> _outputDevices = [];
 
-        /// <summary>All devices to use for receive. Key is name/id, not the system name.</summary>
-        readonly Dictionary<string, IInputDevice> _inputDevices = [];
+        ///// <summary>All devices to use for receive. Key is name/id, not the system name.</summary>
+        //readonly Dictionary<string, IInputDevice> _inputDevices = [];
 
         /// <summary>Persisted internal values for current script file.</summary>
         Bag _nppVals = new();
@@ -68,7 +72,7 @@ namespace Nebulator.App
         DateTime _startTime = DateTime.Now;
 
         /// <summary>Current step time clock.</summary>
-        BarTime _stepTime = new();
+        MusicTime _stepTime = new();
 
         /// <summary>Detect changed script files.</summary>
         readonly MultiFileWatcher _watcher = new();
@@ -89,9 +93,9 @@ namespace Nebulator.App
             // Must do this first before initializing.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             _settings = (UserSettings)SettingsCore.Load(appDir, typeof(UserSettings));
-            MidiSettings.LibSettings = _settings.MidiSettings;
+//            MidiSettings.LibSettings = _settings.MidiSettings;
             // Force the resolution for this application.
-            MidiSettings.LibSettings.InternalPPQ = BarTime.LOW_RES_PPQ;
+//            MidiSettings.LibSettings.InternalPPQ = BarTime.LOW_RES_PPQ;
 
             InitializeComponent();
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
@@ -267,9 +271,9 @@ namespace Nebulator.App
             _nppVals.SetValue("master", "speed", sldTempo.Value);
             _nppVals.SetValue("master", "volume", sldVolume.Value);
 
-            _channels.Values.ForEach(ch =>
+            _mgr.OutputChannels.ForEach(ch =>
             {
-                if(ch.NumEvents > 0)
+//                if(ch.NumEvents > 0)
                 {
                     _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
                     _nppVals.SetValue(ch.ChannelName, "state", ch.State);
@@ -305,9 +309,10 @@ namespace Nebulator.App
                     c.Dispose();
                 });
                 _channelControls.Clear();
-                _channels.Clear();
+                _mgr.DestroyChannels();
+                //_channels.Clear();
                 _watcher.Clear();
-                _totalSubs = 0;
+                _totalTicks = 0;
                 barBar.Reset();
 
                 // Run the compiler.
@@ -372,10 +377,10 @@ namespace Nebulator.App
 
                             // Is patch an instrument or drumkit? TODO1
                             bool isDrums = false;
-                            int patch = MidiDefs.GetInstrumentNumber(parts[3]);
+                            int patch = MidiDefs.Instance.GetInstrumentNumber(parts[3]);
                             if (patch == -1)
                             {
-                                patch = MidiDefs.GetDrumKitNumber(parts[3]);
+                                patch = MidiDefs.Instance.GetDrumKitNumber(parts[3]);
                                 isDrums = patch != -1;
                             }
                             if (patch == -1)
@@ -389,7 +394,7 @@ namespace Nebulator.App
                                 ChannelName = name,
                                 ChannelNumber = chnum,
                                 DeviceId = devid,
-                                Volume = _nppVals.GetDouble(name, "volume", MidiLibDefs.DEFAULT_VOLUME),
+                                Volume = _nppVals.GetDouble(name, "volume", Defs.DEFAULT_VOLUME),
                                 State = (ChannelState)_nppVals.GetInteger(name, "state", (int)ChannelState.Normal),
                                 Patch = patch,
                                 IsDrums = isDrums,
@@ -446,7 +451,7 @@ namespace Nebulator.App
                         // Round total up to next beat.
                         BarTime bs = new();
                         bs.SetRounded(channel.MaxSub, SnapType.Beat, true);
-                        _totalSubs = Math.Max(_totalSubs, bs.TotalSubs);
+                        _totalTicks = Math.Max(_totalTicks, bs.TotalSubs);
                     }
                 }
 
@@ -454,12 +459,12 @@ namespace Nebulator.App
                 if (ok)
                 {
                     ///// Init the timeclock.
-                    if (_totalSubs > 0) // sequences
+                    if (_totalTicks > 0) // sequences
                     {
                         barBar.TimeDefs = _script!.GetSectionMarkers();
-                        barBar.Length = new(_totalSubs);
+                        barBar.Length = new(_totalTicks);
                         barBar.Start = new(0);
-                        barBar.End = new(_totalSubs - 1);
+                        barBar.End = new(_totalTicks - 1);
                         barBar.Current = new(0);
                     }
                     else // free form

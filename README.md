@@ -79,8 +79,7 @@ What the script supports.
 ## Basics
 
 ### Time
-Time uses the `BarTime` class. A shorthand is provided to specify a time using `var mytime = new BarTime(2.3)` where the
-left of the decimal point is beats and the right is subdivs in the range of 0 to 7.
+Time uses the `MusicTime` class.
 
 Neb doesn't care about measures, that's up to you.
 
@@ -207,7 +206,7 @@ bool Playing
 Indicates that script is executing. Read only.
 
 ```c#
-BarTime StepTime
+MusicTime StepTime
 ```
 Current Nebulator step time object. Read only. Also use for StepTime.Beat and StepTime.subdiv.
 
@@ -271,7 +270,7 @@ Send a note immediately. Respects solo/mute. Adds a note off to play after dur t
 - chname: Channel name to send it on.
 - note: One of the note definitions.
 - vol: Note volume. Normalized to 0.0 - 1.0. 0.0 means note off.
-- dur: How long it lasts in beats or BarTime object representation.
+- dur: How long it lasts in beats or MusicTime object representation.
 
 ```c#
 void SendNoteOn("chname", note, vol)
