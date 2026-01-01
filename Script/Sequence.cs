@@ -47,17 +47,17 @@ namespace Nebulator.Script
         /// <param name="what">What to play.</param>
         /// <param name="volume">Base volume.</param>
         /// <param name="duration">Time to last. If 0 it's assumed to be a drum.</param>
-        //public void Add(double when, string what, double volume, double duration = 0) //TODO2 remove doubles
-        //{
-        //    SequenceElement sel = new(what)
-        //    {
-        //        When = new(when),
-        //        Volume = volume,
-        //        Duration = new(duration)
-        //    };
+        public void Add(double when, string what, double volume, double duration = 0)
+        {
+            SequenceElement sel = new(what)
+            {
+                When = new(when),
+                Volume = volume,
+                Duration = new(duration)
+            };
 
-        //    Add(sel);
-        //}
+            Add(sel);
+        }
 
         /// <summary>
         /// Add a pattern. Note subdivs per beat is fixed at PPQ of 8.
@@ -183,16 +183,16 @@ namespace Nebulator.Script
         /// <param name="when">Time to play at.</param>
         /// <param name="func">Function to execute.</param>
         /// <param name="volume">Base volume.</param>
-        //public void Add(double when, Action func, double volume) //TODO2 remove doubles
-        //{
-        //    SequenceElement sel = new(func)
-        //    {
-        //        When = new(when),
-        //        Volume = volume
-        //    };
+        public void Add(double when, Action func, double volume)
+        {
+            SequenceElement sel = new(func)
+            {
+                When = new(when),
+                Volume = volume
+            };
 
-        //    Add(sel);
-        //}
+            Add(sel);
+        }
     }
 
     /// <summary>
@@ -252,18 +252,6 @@ namespace Nebulator.Script
             ScriptFunction = func;
             Notes.Clear();
         }
-
-        ///// <summary>
-        ///// Copy constructor.
-        ///// </summary>
-        //public SequenceElement(SequenceElement seqel)
-        //{
-        //    Volume = seqel.Volume;
-        //    ScriptFunction = seqel.ScriptFunction;
-        //    When = new Time(seqel.When);
-        //    Duration = new Time(seqel.Duration);
-        //    Notes = new List<int>(seqel.Notes);
-        //}
 
         /// <summary>
         /// For viewing pleasure.

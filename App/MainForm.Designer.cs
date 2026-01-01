@@ -36,7 +36,7 @@
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
             this.textViewer = new Ephemera.NBagOfUis.TextViewer();
-            this.barBar = new Ephemera.MidiLib.BarBar();
+            this.timeBar = new Ephemera.MidiLib.TimeBar();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -265,17 +265,17 @@
             this.textViewer.TabIndex = 41;
             this.textViewer.WordWrap = true;
             // 
-            // barBar
+            // timeBar
             // 
-            this.barBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.barBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.barBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.barBar.Location = new System.Drawing.Point(12, 123);
-            this.barBar.MarkerColor = System.Drawing.Color.Black;
-            this.barBar.Name = "barBar";
-            this.barBar.ProgressColor = System.Drawing.Color.White;
-            this.barBar.Size = new System.Drawing.Size(790, 55);
-            this.barBar.TabIndex = 44;
+            this.timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.timeBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.timeBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.timeBar.Location = new System.Drawing.Point(12, 123);
+            this.timeBar.MarkerColor = System.Drawing.Color.Black;
+            this.timeBar.Name = "timeBar";
+            this.timeBar.ProgressColor = System.Drawing.Color.White;
+            this.timeBar.Size = new System.Drawing.Size(790, 55);
+            this.timeBar.TabIndex = 44;
             // 
             // MainForm
             // 
@@ -284,7 +284,7 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(813, 838);
-            this.Controls.Add(this.barBar);
+            this.Controls.Add(this.timeBar);
             this.Controls.Add(this.textViewer);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btnCompile);
@@ -319,7 +319,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnKillComm;
         private Ephemera.NBagOfUis.TextViewer textViewer;
-        private Ephemera.MidiLib.BarBar barBar;
+        private Ephemera.MidiLib.TimeBar timeBar;
         private System.Windows.Forms.ToolStripMenuItem exportCsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showDefinitionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnAbout;

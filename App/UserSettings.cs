@@ -1,4 +1,4 @@
-﻿using System;
+﻿        using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ComponentModel;
@@ -64,6 +64,21 @@ namespace Nebulator.App
         // [Browsable(true)]
         // [TypeConverter(typeof(ExpandableObjectConverter))]
         // public MidiSettings MidiSettings { get; set; } = new();
+
+
+
+  // "MidiSettings": {
+  //   "InputDevices": [],
+  //   "OutputDevices": [
+  //     {
+  //       "DeviceId": "midiout",
+  //       "DeviceName": "VirtualMIDISynth #1"
+  //     }
+  //   ],
+  //   "DefaultTempo": 100,
+  //   "Snap": "Beat"
+  // },
+        
         #endregion
 
         #region Properties - internal

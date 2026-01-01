@@ -42,7 +42,7 @@ namespace Nebulator.App
         readonly Compiler _compiler;
 
         /// <summary>Midi boss.</summary>
-        readonly Manager _mgr = new();
+        readonly Manager _mgr = new(); // TODO1 mgr singleton?
 
         /// <summary>Current neb script file name.</summary>
         string? _scriptFileName;
@@ -56,8 +56,8 @@ namespace Nebulator.App
         /// <summary>All the channel play controls.</summary>
         readonly List<ChannelControl> _channelControls = [];
 
-        /// <summary>Longest length of channels in ticks.</summary>
-        int _totalTicks = 0;
+/// <summary>Longest length of channels in ticks.</summary>
+int _totalTicks = 0;
 
         ///// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
         //readonly Dictionary<string, IOutputDevice> _outputDevices = [];
@@ -65,14 +65,14 @@ namespace Nebulator.App
         ///// <summary>All devices to use for receive. Key is name/id, not the system name.</summary>
         //readonly Dictionary<string, IInputDevice> _inputDevices = [];
 
-        /// <summary>Persisted internal values for current script file.</summary>
-        Bag _nppVals = new();
+/// <summary>Persisted internal values for current script file.</summary>
+Bag _nppVals = new();
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
 
-        /// <summary>Current step time clock.</summary>
-        MusicTime _stepTime = new();
+        ///// <summary>Current step time clock.</summary>
+        //MusicTime _stepTime = new();
 
         /// <summary>Detect changed script files.</summary>
         readonly MultiFileWatcher _watcher = new();
@@ -93,9 +93,10 @@ namespace Nebulator.App
             // Must do this first before initializing.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             _settings = (UserSettings)SettingsCore.Load(appDir, typeof(UserSettings));
-//            MidiSettings.LibSettings = _settings.MidiSettings;
-            // Force the resolution for this application.
-//            MidiSettings.LibSettings.InternalPPQ = BarTime.LOW_RES_PPQ;
+
+
+            //// Force the resolution for this application.
+            //LibSettings.InternalPPQ = MusicTime.LOW_RES_PPQ;
 
             InitializeComponent();
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
@@ -149,9 +150,9 @@ namespace Nebulator.App
             sldVolume.Invalidate();
 
             // Time controller.
-            barBar.ProgressColor = _settings.DrawColor;
-            barBar.CurrentTimeChanged += BarBar_CurrentTimeChanged;
-            barBar.Invalidate();
+            timeBar.DrawColor = _settings.DrawColor;
+            timeBar.StateChange += TimeBar_StateChange; // += TimeBar_CurrentTimeChanged;
+            timeBar.Invalidate();
 
             textViewer.WordWrap = _settings.WordWrap;
 
@@ -159,7 +160,8 @@ namespace Nebulator.App
             btnMonOut.Click += Monitor_Click;
             btnAbout.Click += About_Click;
             btnSettings.Click += Settings_Click;
-            btnKillComm.Click += (_, __) => { KillAll(); };
+            btnKillComm.Click += (_, __) => _mgr.Kill();
+
             #endregion
         }
 
@@ -173,37 +175,37 @@ namespace Nebulator.App
 
             PopulateRecentMenu();
 
-            bool ok = CreateDevices();
+            //bool ok = CreateDevices();
 
-            if(ok)
+            // if (ok)
+            // {
+            // Fast mm timer.
+            SetFastTimerPeriod();
+            _mmTimer.Start();
+
+            KeyPreview = true; // for routing kbd strokes properly
+
+            _watcher.FileChange += Watcher_Changed;
+
+            Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
+
+            // Look for filename passed in.
+            string sopen = "";
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
             {
-                // Fast mm timer.
-                SetFastTimerPeriod();
-                _mmTimer.Start();
-
-                KeyPreview = true; // for routing kbd strokes properly
-
-                _watcher.FileChange += Watcher_Changed;
-
-                Text = $"Nebulator {MiscUtils.GetVersionString()} - No file loaded";
-
-                // Look for filename passed in.
-                string sopen = "";
-                string[] args = Environment.GetCommandLineArgs();
-                if (args.Length > 1)
-                {
-                    sopen = OpenScriptFile(args[1]);
-                }
-
-                if (sopen == "")
-                {
-                    ProcessPlay(PlayCommand.Stop);
-                }
-                else
-                {
-                    _logger.Error($"Couldn't open script file: {sopen}");
-                }
+                sopen = OpenScriptFile(args[1]);
             }
+
+            if (sopen == "")
+            {
+                ProcessPlay(PlayCommand.Stop);
+            }
+            else
+            {
+                _logger.Error($"Couldn't open script file: {sopen}");
+            }
+            // }
 
             base.OnLoad(e);
         }
@@ -214,11 +216,8 @@ namespace Nebulator.App
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             LogManager.Stop();
-
             ProcessPlay(PlayCommand.Stop);
-
-            // Just in case.
-            KillAll();
+            _mgr.Kill();
 
             // Save user settings.
             _settings.FormGeometry = new()
@@ -228,11 +227,8 @@ namespace Nebulator.App
                 Width = Width,
                 Height = Height
             };
-
             _settings.WordWrap = textViewer.WordWrap;
-
             _settings.Save();
-
             SaveProjectValues();
 
             base.OnFormClosing(e);
@@ -244,16 +240,16 @@ namespace Nebulator.App
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
+            _mmTimer.Stop();
+            _mmTimer.Dispose();
+            DestroyControls();
+            _mgr.DestroyDevices();
+
+            // Wait a bit in case there are some lingering events.
+            System.Threading.Thread.Sleep(100);
+
             if (disposing)
             {
-                _mmTimer.Stop();
-                _mmTimer.Dispose();
-
-                // Wait a bit in case there are some lingering events.
-                System.Threading.Thread.Sleep(100);
-
-                DestroyDevices();
-
                 components?.Dispose();
             }
 
@@ -302,18 +298,21 @@ namespace Nebulator.App
                 // Clean up old script stuff.
                 ProcessPlay(PlayCommand.StopRewind);
 
-                // Clean out our current elements.
-                _channelControls.ForEach(c =>
-                {
-                    Controls.Remove(c);
-                    c.Dispose();
-                });
-                _channelControls.Clear();
+                DestroyControls();
+                // // Clean out our current elements.
+                // _channelControls.ForEach(c =>
+                // {
+                //     Controls.Remove(c);
+                //     c.Dispose();
+                // });
+                // _channelControls.Clear();
+
+
                 _mgr.DestroyChannels();
                 //_channels.Clear();
                 _watcher.Clear();
                 _totalTicks = 0;
-                barBar.Reset();
+                timeBar.Rewind();
 
                 // Run the compiler.
                 _compiler.CompileScript(_scriptFileName);
@@ -354,91 +353,42 @@ namespace Nebulator.App
                     }
                 }
 
-                // Script is sane - build the channels and UI.
+                // Script is sane - build the controls.
                 if (ok)
                 {
-                    // Create channels and controls.
                     const int CONTROL_SPACING = 10;
                     int x = btnRewind.Left;
-                    int y = barBar.Bottom + CONTROL_SPACING;
+                    int y = timeBar.Bottom + CONTROL_SPACING;
 
-                    _compiler.Directives.Where(d => d.dirname == "channel").ForEach(cdir =>
+                    foreach (var channel in _mgr.OutputChannels)
                     {
-                        // Channel spec - grab it.
-                        try
+                        // Make new control and bind to channel.
+                        ChannelControl control = new()
                         {
-                            var parts = cdir.dirval.SplitByTokens(" ");
-                            // keys  midiout 1  AcousticGrandPiano
+                            Location = new(x, y),
+                            BorderStyle = BorderStyle.FixedSingle,
+                            BoundChannel = channel,
+                            DrawColor = _settings.DrawColor,
+                            SelectedColor = _settings.SelectedColor,
+                            Options = DisplayOptions.SoloMute
+                        };
+                        control.ChannelChange += Control_ChannelChange;
+                        Controls.Add(control);
+                        _channelControls.Add(control);
 
-                            // Parse the directive.
-                            var name = parts[0];
-                            var devid = parts[1];
-                            var chnum = int.Parse(parts[2]);
-
-                            // Is patch an instrument or drumkit? TODO1
-                            bool isDrums = false;
-                            int patch = MidiDefs.Instance.GetInstrumentNumber(parts[3]);
-                            if (patch == -1)
-                            {
-                                patch = MidiDefs.Instance.GetDrumKitNumber(parts[3]);
-                                isDrums = patch != -1;
-                            }
-                            if (patch == -1)
-                            {
-                                throw new ArgumentException("");
-                            }
-
-                            // Make new channel.
-                            Channel channel = new()
-                            {
-                                ChannelName = name,
-                                ChannelNumber = chnum,
-                                DeviceId = devid,
-                                Volume = _nppVals.GetDouble(name, "volume", Defs.DEFAULT_VOLUME),
-                                State = (ChannelState)_nppVals.GetInteger(name, "state", (int)ChannelState.Normal),
-                                Patch = patch,
-                                IsDrums = isDrums,
-                                Selected = false,
-                                Device = _outputDevices[devid],
-                                AddNoteOff = true
-                            };
-                            _channels.Add(name, channel);
-
-                            // Make new control and bind to channel.
-                            ChannelControl control = new()
-                            {
-                                Location = new(x, y),
-                                BorderStyle = BorderStyle.FixedSingle,
-                                BoundChannel = channel,
-                                DrawColor = _settings.DrawColor
-                            };
-                            control.ChannelChange += Control_ChannelChange;
-                            Controls.Add(control);
-                            _channelControls.Add(control);
-
-                            // Good time to send initial patch.
-                            channel.SendPatch();
-
-                            // Adjust positioning for next iteration.
-                            y += control.Height + 5;
-                        }
-                        catch (Exception)
-                        {
-                            _logger.Error($"{ReportType.Syntax}: [Bad channel directive: {cdir.dirval}]");
-                            // TODO retrieve file/line? Make directive into a record with this info added. Or add to PreprocessLine().
-                            throw new ScriptException(); // fatal
-                        }
-                    });
+                        // Adjust positioning.
+                        y += control.Height + 5;
+                    }
                 }
 
                 // Script is sane - build the events.
                 if (ok)
                 {
-                    _script!.Init(_channels);
+                    _script!.Init(_mgr);
                     _script.BuildSteps();
 
                     // Store the steps in the channel objects.
-                    MidiTimeConverter _mt = new(BarTime.LOW_RES_PPQ, _settings.MidiSettings.DefaultTempo);
+                    MidiTimeConverter _mt = new(MusicTime.LOW_RES_PPQ, _settings.DefaultTempo);
                     foreach (var channel in _channels.Values)
                     {
                         var chEvents = _script.GetEvents().Where(e => e.ChannelName == channel.ChannelName &&
@@ -449,30 +399,46 @@ namespace Nebulator.App
                         channel.SetEvents(chEvents);
 
                         // Round total up to next beat.
-                        BarTime bs = new();
-                        bs.SetRounded(channel.MaxSub, SnapType.Beat, true);
-                        _totalTicks = Math.Max(_totalTicks, bs.TotalSubs);
+                        MusicTime bs = new();
+                        bs.Set(channel.MaxSub, SnapType.Beat, true);
+                        _totalTicks = Math.Max(_totalTicks, bs.Tick);
                     }
                 }
 
                 // Everything is sane - prepare to run.
+
+                long maxTick = 0;
+
+
+
+                // Update bar.
+                //MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote);
+                Dictionary<int, string> sectInfo = [];
+                sectInfo.Add(0, "sect1");
+                //sectInfo.Add(mt.MidiToInternal(maxTick), "END");
+                sectInfo.Add((int)maxTick, "END");
+                timeBar.InitSectionInfo(sectInfo);
+                timeBar.Current.Set(0);
+                timeBar.Invalidate();
+
                 if (ok)
                 {
-                    ///// Init the timeclock.
+                    ///// Init the timebar.
+
                     if (_totalTicks > 0) // sequences
                     {
-                        barBar.TimeDefs = _script!.GetSectionMarkers();
-                        barBar.Length = new(_totalTicks);
-                        barBar.Start = new(0);
-                        barBar.End = new(_totalTicks - 1);
-                        barBar.Current = new(0);
+                        timeBar.TimeDefs = _script!.GetSectionMarkers();
+                        timeBar.Length = new(_totalTicks);
+                        timeBar.Start = new(0);
+                        timeBar.End = new(_totalTicks - 1);
+                        timeBar.Current = new(0);
                     }
                     else // free form
                     {
-                        barBar.Length = new(0);
-                        barBar.Start = new(0);
-                        barBar.End = new(0);
-                        barBar.Current = new(0);
+                        timeBar.Length = new(0);
+                        timeBar.Start = new(0);
+                        timeBar.End = new(0);
+                        timeBar.Current = new(0);
                     }
 
                     // Start the clock.
@@ -530,75 +496,75 @@ namespace Nebulator.App
         /// Create all I/O devices from user settings.
         /// </summary>
         /// <returns>Success</returns>
-        bool CreateDevices()
-        {
-            bool ok = true;
+        //bool CreateDevices()
+        //{
+        //    bool ok = true;
 
-            // First...
-            DestroyDevices();
+        //    // First...
+        //    DestroyDevices();
 
-            foreach(var dev in _settings.MidiSettings.InputDevices)
-            {
-                var min = new MidiInput(dev.DeviceName);
-                if (min.Valid)
-                {
-                    min.InputReceive += Device_InputReceive;
-                    _inputDevices.Add(dev.DeviceId, min);
-                }
-                else
-                {
-                    // Try osc.
-                    try
-                    {
-                        var mosc = new OscInput(dev.DeviceName);
-                        mosc.InputReceive += Device_InputReceive;
-                        _inputDevices.Add(dev.DeviceId, mosc);
-                    }
-                    catch
-                    {
-                        _logger.Error($"Something wrong with your input device:{dev.DeviceName} id:{dev.DeviceId}");
-                        ok = false;
-                    }
-                }
-            }
+        //    foreach(var dev in _settings.InputDevices)
+        //    {
+        //        var min = new MidiInput(dev.DeviceName);
+        //        if (min.Valid)
+        //        {
+        //            min.InputReceive += Device_InputReceive;
+        //            _inputDevices.Add(dev.DeviceId, min);
+        //        }
+        //        else
+        //        {
+        //            // Try osc.
+        //            try
+        //            {
+        //                var mosc = new OscInput(dev.DeviceName);
+        //                mosc.InputReceive += Device_InputReceive;
+        //                _inputDevices.Add(dev.DeviceId, mosc);
+        //            }
+        //            catch
+        //            {
+        //                _logger.Error($"Something wrong with your input device:{dev.DeviceName} id:{dev.DeviceId}");
+        //                ok = false;
+        //            }
+        //        }
+        //    }
 
-            foreach (var dev in _settings.MidiSettings.OutputDevices)
-            {
-                // Try midi.
-                bool devok = false;
+        //    foreach (var dev in _settings.OutputDevices)
+        //    {
+        //        // Try midi.
+        //        bool devok = false;
 
-                if (!devok)
-                {
-                    var mout = new MidiOutput(dev.DeviceName);
-                    if (mout.Valid)
-                    {
-                        _outputDevices.Add(dev.DeviceId, mout);
-                        devok = true;
-                    }
-                }
+        //        if (!devok)
+        //        {
+        //            var mout = new MidiOutput(dev.DeviceName);
+        //            if (mout.Valid)
+        //            {
+        //                _outputDevices.Add(dev.DeviceId, mout);
+        //                devok = true;
+        //            }
+        //        }
 
-                if (!devok)
-                {
-                    // Try osc.
-                    var mosc = new OscOutput(dev.DeviceName);
-                    if (mosc.Valid)
-                    {
-                        _outputDevices.Add(dev.DeviceId, mosc);
-                        devok = true;
-                    }
-                }
+        //        if (!devok)
+        //        {
+        //            // Try osc.
+        //            var mosc = new OscOutput(dev.DeviceName);
+        //            if (mosc.Valid)
+        //            {
+        //                _outputDevices.Add(dev.DeviceId, mosc);
+        //                devok = true;
+        //            }
+        //        }
 
-                if (!devok)
-                {
-                    _logger.Error($"Invalid output device:{dev.DeviceName} id:{dev.DeviceId}");
-                    ok = false;
-                }
-            }
+        //        if (!devok)
+        //        {
+        //            _logger.Error($"Invalid output device:{dev.DeviceName} id:{dev.DeviceId}");
+        //            ok = false;
+        //        }
+        //    }
 
-            _outputDevices.Values.ForEach(d => d.LogEnable = _settings.MonitorOutput);
+        //    _outputDevices.Values.ForEach(d => d.LogEnable = _settings.MonitorOutput);
 
-            return ok;
-        }
+        //    return ok;
+        //}
 
         /// <summary>
         /// Clean up.
@@ -613,6 +579,24 @@ namespace Nebulator.App
         #endregion
 
         #region Channel controls
+        /// <summary>
+        /// Destroy controls.
+        /// </summary>
+        void DestroyControls()
+        {
+            _mgr.Kill();
+
+            // Clean out our current elements.
+            _channelControls.ForEach(c =>
+            {
+                c.ChannelChange -= Control_ChannelChange;
+                //c.SendMidi -= ChannelControl_SendMidi;
+                Controls.Remove(c);
+                c.Dispose();
+            });
+            _channelControls.Clear();
+        }
+
         /// <summary>
         /// UI changed something.
         /// </summary>
@@ -659,20 +643,35 @@ namespace Nebulator.App
         /// </summary>
         void MmTimerCallback(double totalElapsed, double periodElapsed)
         {
-            // Do some stats gathering for measuring jitter.
-            //if (_tan.Grab())
-            //{
-            //    _logger.Info($"Midi timing: {_tan.Mean}");
-            //}
-
-            // Kick over to main UI thread.
-            this.InvokeIfRequired(_ =>
+            try
             {
-                if (_script is not null)
+                // Do some stats gathering for measuring jitter.
+                //if (_tan.Grab())
+                //{
+                //    _logger.Info($"Midi timing: {_tan.Mean}");
+                //}
+
+                // Kick over to main UI thread.
+                this.InvokeIfRequired(_ =>
                 {
-                    NextStep();
+                    if (_script is not null)
+                    {
+                        NextStep();
+                    }
+                });
+
+
+
+                // Bump time. Check for end of play.
+                if (DoNextStep())
+                {
+                    this.InvokeIfRequired(_ => { UpdateState(ExplorerState.Complete); });
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
@@ -714,7 +713,15 @@ namespace Nebulator.App
                         // Need exception handling here to protect from user script errors.
                         try
                         {
-                            ch.DoStep(_stepTime.TotalSubs);
+                            ch.DoStep(_stepTime.Tick);
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
                         }
                         catch (Exception ex)
                         {
@@ -724,15 +731,16 @@ namespace Nebulator.App
                 }
 
                 ///// Bump time.
-                _stepTime.Increment(1);
-                bool done = barBar.IncrementCurrent(1);
+                _stepTime.Update(1);
+                bool done = timeBar.Increment();
+
                 // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                if (barBar.TimeDefs.Count > 1)
+                if (timeBar.TimeDefs.Count > 1)
                 {
                     // Check for end.
                     if (done)
                     {
-                        _channels.Values.ForEach(ch => ch.Flush(_stepTime.TotalSubs));
+                        _channels.Values.ForEach(ch => ch.Flush(_stepTime.Tick));
                         ProcessPlay(PlayCommand.StopRewind);
                         KillAll(); // just in case
                     }
@@ -871,7 +879,7 @@ namespace Nebulator.App
             {
                 // Clean up the old.
                 SaveProjectValues();
-                barBar.TimeDefs.Clear();
+                timeBar.TimeDefs.Clear();
 
                 if (File.Exists(fn))
                 {
@@ -908,8 +916,8 @@ namespace Nebulator.App
             }
 
             // Update bar.
-            barBar.Start = new();
-            barBar.Current = new();
+            timeBar.Start = new();
+            timeBar.Current = new();
 
             return ret;
         }
@@ -1049,6 +1057,8 @@ namespace Nebulator.App
         /// </summary>
         void Settings_Click(object? sender, EventArgs e)
         {
+            // GenericListTypeEditor.SetOptions("OutputDevice", MidiOutputDevice.GetAvailableDevices());
+
             var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
 
             // Detect changes of interest.
@@ -1058,9 +1068,9 @@ namespace Nebulator.App
             {
                 switch (name)
                 {
-                    case "MidiInDevice":
-                    case "MidiOutDevice":
-                    case "InternalPPQ":
+                    // case "InputDevice":
+                    // case "OutputDevice":
+                    // case "InternalPPQ":
                     case "DrawColor":
                     case "SelectedColor":
                         restart = true;
@@ -1111,13 +1121,14 @@ namespace Nebulator.App
                     break;
 
                 case PlayCommand.Rewind:
-                    _stepTime.Reset();
-                    barBar.Current = new();
+                    _stepTime.Set(0);
+                    timeBar.Rewind();
                     break;
 
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
-                    _stepTime.Reset();
+                    _stepTime.Set(0);
+                    timeBar.Rewind();
                     break;
 
                 case PlayCommand.UpdateUiTime:
@@ -1126,7 +1137,7 @@ namespace Nebulator.App
             }
 
             // Always do this.
-            barBar.Current = new(_stepTime.TotalSubs);
+            timeBar.Current.Set(_stepTime.Tick);
 
             return ret;
         }
@@ -1136,10 +1147,15 @@ namespace Nebulator.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void BarBar_CurrentTimeChanged(object? sender, EventArgs e)
+
+        void TimeBar_StateChange(object? sender, TimeBar.StateChangeEventArgs e)
         {
-            _stepTime = new(barBar.Current.Sub);
-            ProcessPlay(PlayCommand.UpdateUiTime);
+            if (e.CurrentTimeChange)
+            {
+                _stepTime.Set(timeBar.Current.Tick);
+                ProcessPlay(PlayCommand.UpdateUiTime);
+
+            }
         }
         #endregion
 
@@ -1167,7 +1183,7 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTimeConverter mt = new(_settings.MidiSettings.SubsPerBeat, sldTempo.Value);
+            MidiTimeConverter mt = new(_settings.SubsPerBeat, sldTempo.Value);
             var per = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer(per, MmTimerCallback);
         }
@@ -1195,13 +1211,12 @@ namespace Nebulator.App
                     // Make a Pattern object and call the formatter.
                     IEnumerable<Channel> channels = _channels.Values.Where(ch => ch.NumEvents > 0);
 
-                    PatternInfo pattern = new("export", _settings.MidiSettings.SubsPerBeat,
-                        _script.GetEvents(), channels, _script.Tempo);
+                    PatternInfo pattern = new("export", _settings.SubsPerBeat, _script.GetEvents(), channels, _script.Tempo);
 
                     Dictionary<string, int> meta = new()
                     {
                         { "MidiFileType", 0 },
-                        { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubsPerBeat },
+                        { "DeltaTicksPerQuarterNote", _settings.SubsPerBeat },
                         { "NumTracks", 1 }
                     };
 
@@ -1224,12 +1239,12 @@ namespace Nebulator.App
 
                 var fn = Path.GetFileName(_scriptFileName.Replace(".neb", ".csv"));
 
-                PatternInfo pattern = new("export", _settings.MidiSettings.SubsPerBeat, _script.GetEvents(), channels, _script.Tempo);
+                PatternInfo pattern = new("export", _settings.SubsPerBeat, _script.GetEvents(), channels, _script.Tempo);
 
                 Dictionary<string, int> meta = new()
                 {
                     { "MidiFileType", 0 },
-                    { "DeltaTicksPerQuarterNote", _settings.MidiSettings.SubsPerBeat },
+                    { "DeltaTicksPerQuarterNote", _settings.SubsPerBeat },
                     { "NumTracks", 1 }
                 };
 

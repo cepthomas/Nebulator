@@ -1,7 +1,7 @@
 
 // A take on Eno's "algorithmic" Music for Airports - ported from github.com/teropa/musicforairports.js
 
-#:channel sound midiout 1 Pad2Warm
+// #:channel sound midiout 1 Pad2Warm
 
 class TapeLoop
 {
@@ -25,6 +25,8 @@ List<TapeLoop> _loops = new List<TapeLoop>();
 
 public override void Setup()
 {
+    OpenMidiOutput("VirtualMIDISynth #1", 1, "sound", "Pad2Warm"); // "Microsoft GS Wavetable Synth"  "AcousticGrandPiano"
+
     Tempo = 70;
     
     // Set up the _loops.
