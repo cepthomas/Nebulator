@@ -56,8 +56,8 @@ namespace Nebulator.App
         /// <summary>All the channel play controls.</summary>
         readonly List<ChannelControl> _channelControls = [];
 
-/// <summary>Longest length of channels in ticks.</summary>
-int _totalTicks = 0;
+// /// <summary>Longest length of channels in ticks.</summary>
+// int _totalTicks = 0;
 
         ///// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
         //readonly Dictionary<string, IOutputDevice> _outputDevices = [];
@@ -269,10 +269,10 @@ Bag _nppVals = new();
 
             _mgr.OutputChannels.ForEach(ch =>
             {
-//                if(ch.NumEvents > 0)
+                if(ch.Events.Count > 0)
                 {
                     _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
-                    _nppVals.SetValue(ch.ChannelName, "state", ch.State);
+                    //_nppVals.SetValue(ch.ChannelName, "state", ch.State);
                 }
             });
 
@@ -299,19 +299,11 @@ Bag _nppVals = new();
                 ProcessPlay(PlayCommand.StopRewind);
 
                 DestroyControls();
-                // // Clean out our current elements.
-                // _channelControls.ForEach(c =>
-                // {
-                //     Controls.Remove(c);
-                //     c.Dispose();
-                // });
-                // _channelControls.Clear();
-
 
                 _mgr.DestroyChannels();
                 //_channels.Clear();
                 _watcher.Clear();
-                _totalTicks = 0;
+ //               _totalTicks = 0;
                 timeBar.Rewind();
 
                 // Run the compiler.
@@ -340,10 +332,10 @@ Bag _nppVals = new();
                         // Init shared vars.
                         InitRuntime();
 
-                        // Setup script. This builds the sequences and sections.
+                        // Setup script. Defines channels and devices, builds the sequences and sections.
                         _script!.Setup();
 
-                        // Script may have altered shared values.
+                        // Script may have altered shared vars.
                         ProcessRuntime();
                     }
                     catch (Exception ex)
@@ -362,7 +354,7 @@ Bag _nppVals = new();
 
                     foreach (var channel in _mgr.OutputChannels)
                     {
-                        // Make new control and bind to channel.
+                        // Make new control and bind to defined channel.
                         ChannelControl control = new()
                         {
                             Location = new(x, y),
@@ -385,61 +377,38 @@ Bag _nppVals = new();
                 if (ok)
                 {
                     _script!.Init(_mgr);
+
                     _script.BuildSteps();
 
-                    // Store the steps in the channel objects.
-                    MidiTimeConverter _mt = new(MusicTime.LOW_RES_PPQ, _settings.DefaultTempo);
-                    foreach (var channel in _channels.Values)
-                    {
-                        var chEvents = _script.GetEvents().Where(e => e.ChannelName == channel.ChannelName &&
-                            (e.RawEvent is NoteEvent || e.RawEvent is NoteOnEvent));
-
-                        // Scale time and give to channel.
-                        chEvents.ForEach(e => e.ScaledTime = _mt!.MidiToInternal(e.AbsoluteTime));
-                        channel.SetEvents(chEvents);
-
-                        // Round total up to next beat.
-                        MusicTime bs = new();
-                        bs.Set(channel.MaxSub, SnapType.Beat, true);
-                        _totalTicks = Math.Max(_totalTicks, bs.Tick);
-                    }
+                    //// Store the steps in the channel objects.
+                    //MidiTimeConverter _mt = new(MusicTime.LOW_RES_PPQ, _settings.DefaultTempo);
+                    //foreach (var channel in _channels.Values)
+                    //{
+                    //    var chEvents = _script.GetEvents().Where(e => e.ChannelName == channel.ChannelName &&
+                    //        (e.RawEvent is NoteEvent || e.RawEvent is NoteOnEvent));
+                    //
+                    //    // Scale time and give to channel.
+                    //    chEvents.ForEach(e => e.ScaledTime = _mt!.MidiToInternal(e.AbsoluteTime));
+                    //    channel.SetEvents(chEvents);
+                    //
+                    //    // Round total up to next beat.
+                    //    MusicTime bs = new();
+                    //    bs.Set(channel.MaxSub, SnapType.Beat, true);
+                    //    _totalTicks = Math.Max(_totalTicks, bs.Tick);
+                    //}
                 }
 
                 // Everything is sane - prepare to run.
 
-                long maxTick = 0;
+                //long maxTick = 0;
 
 
-
-                // Update bar.
-                //MidiTimeConverter mt = new(_mdata.DeltaTicksPerQuarterNote);
-                Dictionary<int, string> sectInfo = [];
-                sectInfo.Add(0, "sect1");
-                //sectInfo.Add(mt.MidiToInternal(maxTick), "END");
-                sectInfo.Add((int)maxTick, "END");
-                timeBar.InitSectionInfo(sectInfo);
-                timeBar.Current.Set(0);
-                timeBar.Invalidate();
 
                 if (ok)
                 {
                     ///// Init the timebar.
-
-                    if (_totalTicks > 0) // sequences
-                    {
-                        timeBar.TimeDefs = _script!.GetSectionMarkers();
-                        timeBar.Length = new(_totalTicks);
-                        timeBar.Start = new(0);
-                        timeBar.End = new(_totalTicks - 1);
-                        timeBar.Current = new(0);
-                    }
-                    else // free form
-                    {
-                        timeBar.Length = new(0);
-                        timeBar.Start = new(0);
-                        timeBar.End = new(0);
-                        timeBar.Current = new(0);
-                    }
+                    var sinfo = _script!.GetSectionInfo();
+                    timeBar.InitSectionInfo(sinfo);
 
                     // Start the clock.
                     SetFastTimerPeriod();
@@ -491,93 +460,6 @@ Bag _nppVals = new();
         }
         #endregion
 
-        #region Devices
-        /// <summary>
-        /// Create all I/O devices from user settings.
-        /// </summary>
-        /// <returns>Success</returns>
-        //bool CreateDevices()
-        //{
-        //    bool ok = true;
-
-        //    // First...
-        //    DestroyDevices();
-
-        //    foreach(var dev in _settings.InputDevices)
-        //    {
-        //        var min = new MidiInput(dev.DeviceName);
-        //        if (min.Valid)
-        //        {
-        //            min.InputReceive += Device_InputReceive;
-        //            _inputDevices.Add(dev.DeviceId, min);
-        //        }
-        //        else
-        //        {
-        //            // Try osc.
-        //            try
-        //            {
-        //                var mosc = new OscInput(dev.DeviceName);
-        //                mosc.InputReceive += Device_InputReceive;
-        //                _inputDevices.Add(dev.DeviceId, mosc);
-        //            }
-        //            catch
-        //            {
-        //                _logger.Error($"Something wrong with your input device:{dev.DeviceName} id:{dev.DeviceId}");
-        //                ok = false;
-        //            }
-        //        }
-        //    }
-
-        //    foreach (var dev in _settings.OutputDevices)
-        //    {
-        //        // Try midi.
-        //        bool devok = false;
-
-        //        if (!devok)
-        //        {
-        //            var mout = new MidiOutput(dev.DeviceName);
-        //            if (mout.Valid)
-        //            {
-        //                _outputDevices.Add(dev.DeviceId, mout);
-        //                devok = true;
-        //            }
-        //        }
-
-        //        if (!devok)
-        //        {
-        //            // Try osc.
-        //            var mosc = new OscOutput(dev.DeviceName);
-        //            if (mosc.Valid)
-        //            {
-        //                _outputDevices.Add(dev.DeviceId, mosc);
-        //                devok = true;
-        //            }
-        //        }
-
-        //        if (!devok)
-        //        {
-        //            _logger.Error($"Invalid output device:{dev.DeviceName} id:{dev.DeviceId}");
-        //            ok = false;
-        //        }
-        //    }
-
-        //    _outputDevices.Values.ForEach(d => d.LogEnable = _settings.MonitorOutput);
-
-        //    return ok;
-        //}
-
-        /// <summary>
-        /// Clean up.
-        /// </summary>
-        void DestroyDevices()
-        {
-            _inputDevices.Values.ForEach(d => d.Dispose());
-            _inputDevices.Clear();
-            _outputDevices.Values.ForEach(d => d.Dispose());
-            _outputDevices.Clear();
-        }
-        #endregion
-
         #region Channel controls
         /// <summary>
         /// Destroy controls.
@@ -615,24 +497,15 @@ Bag _nppVals = new();
 
                     case ChannelState.Solo:
                         // Mute any other non-solo channels.
-                        _channels.Values.ForEach(ch =>
-                        {
-                            if (ch.ChannelName != chc.BoundChannel.ChannelName && chc.State != ChannelState.Solo)
-                            {
-                                chc.BoundChannel.Kill();
-                            }
-                        });
+                        _mgr.OutputChannels
+                            .Where(ch => ch.ChannelName != chc.BoundChannel.ChannelName && chc.State != ChannelState.Solo)
+                            .ForEach(ch => _mgr.Kill(chc.BoundChannel));
                         break;
 
                     case ChannelState.Mute:
-                        chc.BoundChannel.Kill();
+                        _mgr.Kill(chc.BoundChannel);
                         break;
                 }
-            }
-
-            if (e.PatchChange && chc.Patch >= 0)
-            {
-                chc.BoundChannel.SendPatch();
             }
         }
         #endregion
@@ -645,6 +518,8 @@ Bag _nppVals = new();
         {
             try
             {
+                if (_script is null || !chkPlay.Checked || _needCompile) return;
+
                 // Do some stats gathering for measuring jitter.
                 //if (_tan.Grab())
                 //{
@@ -654,103 +529,60 @@ Bag _nppVals = new();
                 // Kick over to main UI thread.
                 this.InvokeIfRequired(_ =>
                 {
-                    if (_script is not null)
+                    //_tan.Arm();
+
+                    InitRuntime();
+
+                    // Determine what should sound.
+                    HashSet<int> sounding = [];
+                    bool anySolo = _channelControls.Where(c => c.State == ChannelState.Solo).Any();
+                    _channelControls.ForEach(cc => sounding.Add(cc.BoundChannel.ChannelNumber));
+
+                    // Execute the script step. Note: Need exception handling here to protect from user script errors.
+                    try
                     {
-                        NextStep();
+                        // Execute user step functions.
+                        _script.Step();
+
+                        // Send any sequence steps.
+                        _script.DoNextStep(sounding);
                     }
+                    catch (Exception ex)
+                    {
+                        ProcessScriptRuntimeError(ex);
+                    }
+
+                    ///// Bump time.
+                    bool done = timeBar.Increment();
+                    // Check for end of play. If no steps or not selected, free running mode so always keep going.
+                    if (timeBar.Length.Tick > 1)
+                    {
+                        // Check for end.
+                        if (done)
+                        {
+                            _script.Flush();
+                            // _channels.Values.ForEach(ch => ch.Flush(_stepTime.Tick));
+                            ProcessPlay(PlayCommand.StopRewind);
+                            KillAll(); // just in case
+                        }
+                    }
+                    // else keep going
+
+                    ProcessPlay(PlayCommand.UpdateUiTime);
+
+                    // Process whatever the script did.
+                    ProcessRuntime();
                 });
-
-
-
-                // Bump time. Check for end of play.
-                if (DoNextStep())
-                {
-                    this.InvokeIfRequired(_ => { UpdateState(ExplorerState.Complete); });
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Output steps for next time increment.
-        /// </summary>
-        void NextStep()
-        {
-            if (_script is not null && chkPlay.Checked && !_needCompile)
-            {
-                //_tan.Arm();
-
-                InitRuntime();
-
-                // Kick the script. Note: Need exception handling here to protect from user script errors.
-                try
-                {
-                    _script.Step();
-                }
-                catch (Exception ex)
-                {
-                    ProcessScriptRuntimeError(ex);
-                }
 
                 //if (_tan.Grab())
                 //{
                 //    _logger.Info($"NEB tan: {_tan.Mean}");
                 //}
 
-                bool anySolo = _channels.AnySolo();
-
-                // Process any sequence steps.
-                foreach (var ch in _channels.Values)
-                {
-                    // Is it ok to play now?
-                    bool play = ch.State == ChannelState.Solo || (ch.State == ChannelState.Normal && !anySolo);
-
-                    if (play)
-                    {
-                        // Need exception handling here to protect from user script errors.
-                        try
-                        {
-                            ch.DoStep(_stepTime.Tick);
-////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-                        }
-                        catch (Exception ex)
-                        {
-                            ProcessScriptRuntimeError(ex);
-                        }
-                    }
-                }
-
-                ///// Bump time.
-                _stepTime.Update(1);
-                bool done = timeBar.Increment();
-
-                // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                if (timeBar.TimeDefs.Count > 1)
-                {
-                    // Check for end.
-                    if (done)
-                    {
-                        _channels.Values.ForEach(ch => ch.Flush(_stepTime.Tick));
-                        ProcessPlay(PlayCommand.StopRewind);
-                        KillAll(); // just in case
-                    }
-                }
-                // else keep going
-
-                ProcessPlay(PlayCommand.UpdateUiTime);
-
-                // Process whatever the script did.
-                ProcessRuntime();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -788,7 +620,7 @@ Bag _nppVals = new();
             if (_script is not null)
             {
                 _script.Playing = chkPlay.Checked;
-                _script.StepTime = _stepTime;
+                _script.StepTime.Set(timeBar.Current);
                 _script.RealTime = (DateTime.Now - _startTime).TotalSeconds;
                 _script.Tempo = (int)sldTempo.Value;
                 _script.MasterVolume = sldVolume.Value;
@@ -1121,13 +953,13 @@ Bag _nppVals = new();
                     break;
 
                 case PlayCommand.Rewind:
-                    _stepTime.Set(0);
+                    _stepTime.Reset();
                     timeBar.Rewind();
                     break;
 
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
-                    _stepTime.Set(0);
+                    _stepTime.Reset();
                     timeBar.Rewind();
                     break;
 
@@ -1137,7 +969,7 @@ Bag _nppVals = new();
             }
 
             // Always do this.
-            timeBar.Current.Set(_stepTime.Tick);
+            timeBar.Current.Set(_stepTime);
 
             return ret;
         }
@@ -1152,7 +984,7 @@ Bag _nppVals = new();
         {
             if (e.CurrentTimeChange)
             {
-                _stepTime.Set(timeBar.Current.Tick);
+                _stepTime.Set(timeBar.Current);
                 ProcessPlay(PlayCommand.UpdateUiTime);
 
             }
