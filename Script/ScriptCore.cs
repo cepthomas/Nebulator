@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NAudio.Midi;
 using Ephemera.MidiLib;
 using Ephemera.NBagOfTricks;
 using Ephemera.MusicLib;
@@ -9,65 +8,17 @@ using Ephemera.MusicLib;
 
 namespace Nebulator.Script
 {
-    // TODO1 Home for these????
-    // /// <summary>Custom default type to avoid handling null everywhere.</summary>
-    // public class NullMidiEvent : MidiEvent
-    // {
-    //     /// <summary>Constructor.</summary>
-    //     public NullMidiEvent() : base(0, 0, MidiCommandCode.MetaEvent)
-    //     {
-    //     }
-
-    //     public override string ToString()
-    //     {
-    //         return $"NullMidiEvent: {base.ToString()}";
-    //     }
-    // }
-
-    // /// <summary>Custom type to support runtime functions.</summary>
-    // public class FunctionMidiEvent : MidiEvent
-    // {
-    //     /// <summary>The function to call.</summary>
-    //     public Action ScriptFunction { get; init; }
-
-    //     /// <summary>
-    //     /// Single constructor.
-    //     /// </summary>
-    //     /// <param name="time"></param>
-    //     /// <param name="channel"></param>
-    //     /// <param name="scriptFunc"></param>
-    //     public FunctionMidiEvent(int time, int channel, Action scriptFunc) : base(time, channel, MidiCommandCode.MetaEvent)
-    //     {
-    //         ScriptFunction = scriptFunc;
-    //     }
-
-    //     /// <summary>For viewing pleasure.</summary>
-    //     public override string ToString()
-    //     {
-    //         return $"FunctionMidiEvent: {base.ToString()} function:{ScriptFunction}";
-    //     }
-    // }
-
-
-
-
     public partial class ScriptCore
     {
         #region Fields
         /// <summary>My logger.</summary>
         internal readonly Logger _logger = LogManager.CreateLogger("Script");
 
-        /// <summary>Midi boss.</summary>
-        internal Manager _mgr = new();
-
         /// <summary>All sections.</summary>
         internal List<Section> _sections = [];
 
-        // /// <summary>All the events defined in the script.</summary>
-        // internal List<BaseMidi> _scriptEvents = [];
-
-        /// <summary>Things that are executed once and disappear: NoteOffs, script send now. Key is the internal tick.</summary>
-        readonly Dictionary<int, List<BaseMidi>> _transients = [];
+        /// <summary>Things that are executed once and disappear: NoteOffs, script send now.</summary>
+        readonly List<BaseEvent> _transients = [];
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
@@ -174,12 +125,10 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, MusicTime dur)
         {
-            var ch = _mgr.GetOutputChannel(chanName);
+            var ch = Manager.Instance.GetOutputChannel(chanName);
             if (ch is null) { throw new ArgumentException($"Invalid channel: {chanName}"); }
 
-            //ch.IsDrums
-
-            int absnote = MathUtils.Constrain(Math.Abs(notenum), 0, MidiDefs.MAX_MIDI);
+            notenum = MathUtils.Constrain(Math.Abs(notenum), 0, MidiDefs.MAX_MIDI);
 
             // If vol is positive it's note on else note off.
             if (vol > 0)
@@ -187,26 +136,16 @@ namespace Nebulator.Script
                 vol *= MasterVolume;
                 int velPlay = (int)(vol * MidiDefs.MAX_MIDI);
                 velPlay = MathUtils.Constrain(velPlay, 0, MidiDefs.MAX_MIDI);
-                NoteOn non = new(ch.ChannelNumber, absnote, velPlay);
+                NoteOn non = new(ch.ChannelNumber, notenum, velPlay, StepTime);
                 ch.Device.Send(non);
 
-                // Add a transient note off for later. TODO1 maybe not if its a drum? see midifrier.
-                NoteOff noff = new(ch.ChannelNumber, absnote);
-                int offTime = StepTime.Tick + dur.Tick;
-
-                if (!_transients.TryGetValue(offTime, out var value))
-                {
-                    _transients.Add(offTime, []);
-                }
-                _transients[offTime].Add(noff);
-
-                //// old:
-                //NoteOnEvent evt = new(StepTime.Tick, ch.ChannelNumber, absnote, velPlay, dur.Tick);
-                //ch.Device.SendEvent(evt);
+                // Add a transient note off for later.
+                NoteOff noff = new(ch.ChannelNumber, notenum, StepTime + dur);
+                _transients.Add(noff);
             }
             else // note off
             {
-                NoteOff noff = new(ch.ChannelNumber, absnote);
+                NoteOff noff = new(ch.ChannelNumber, notenum, StepTime);
                 ch.Device.Send(noff);
             }
         }
@@ -265,10 +204,10 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         protected void SendController(string chanName, string controller, int val)
         {
-            var ch = _mgr.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             int ctlid = MidiDefs.Instance.GetControllerNumber(controller);
 
-            Controller ctlr = new(ch.ChannelNumber, ctlid, val);
+            Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
             ch.Device.Send(ctlr);
         }
 
@@ -277,7 +216,7 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         protected void SendPatch(string chanName, int patch)
         {
-            var ch = _mgr.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             ch.Patch = patch; // property set sends the patch
            // ch.SendPatch();
         }
@@ -287,7 +226,7 @@ namespace Nebulator.Script
         /// <param name="patch"></param>
         protected void SendPatch(string chanName, string patch)
         {
-            var ch = _mgr.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             int patchid = MidiDefs.Instance.GetInstrumentNumber(patch);
             SendPatch(chanName, patchid);
         }
@@ -301,7 +240,7 @@ namespace Nebulator.Script
         /// <param name="channelName"></param>
         protected void OpenMidiInput(string device, int channelNumber, string channelName)
         {
-            var chin = _mgr.OpenInputChannel(device, channelNumber, channelName);
+            var chin = Manager.Instance.OpenInputChannel(device, channelNumber, channelName);
         }
 
         /// <summary>
@@ -315,22 +254,67 @@ namespace Nebulator.Script
         protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
         {
             var ipatch = MidiDefs.Instance.GetInstrumentNumber(patch);
-            var chout = _mgr.OpenOutputChannel(device, channelNumber, channelName, ipatch);
+            var chout = Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, ipatch);
         }
         #endregion
 
+
+//> ERR Main MainForm.cs(404) Syntax: utils.neb(-1) [The type or namespace name 'MusicDefinitions' does not exist in the namespace 'Ephemera.NBagOfTricks' (are you missing an assembly reference?) => using static Ephemera.NBagOfTricks.MusicDefinitions;]
+//> ERR Main MainForm.cs(404) Syntax: scale.neb(-1) [The type or namespace name 'MusicDefinitions' does not exist in the namespace 'Ephemera.NBagOfTricks' (are you missing an assembly reference?) => using static Ephemera.NBagOfTricks.MusicDefinitions;]
+//> ERR Main MainForm.cs(404) Syntax: scale.neb(13) [The name 'GetNotesFromString' does not exist in the current context]
+    //protected List<int> GetNotesFromString(string name) { return []; }
+
+
+
+
         #region Host functions for internal use
         /// <summary>
-        /// Set up runtime stuff.
+        /// Synchronously outputs the next sequence midi events.
+        /// <param name="sounding">Which channel to send.</param>
         /// </summary>
-        /// <param name="mgr"></param>
-        public void Init(Manager mgr)
+        public void DoNextStep(HashSet<int> sounding)
         {
-            _mgr = mgr;
+            foreach (var ch in Manager.Instance.OutputChannels)
+            {
+                if (sounding.Contains(ch.ChannelNumber))
+                {
+                    // Process any sequence steps.
+                    var playEvents = ch.Events.Where(e => e.When == StepTime); // TODO1 improve performance with Dict?
+
+                    foreach (var mevt in playEvents)
+                    {
+                        var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
+
+                        switch (mevt)
+                        {
+                            case NoteOn evt:
+                                // Adjust volume.
+                                evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
+                                // Adjust channel.
+                                evt.ChannelNumber = mch;
+                                ch.Device.Send(evt);
+                                break;
+
+                            case NoteOff evt:
+                                // Adjust channel.
+                                evt.ChannelNumber = mch;
+                                ch.Device.Send(evt);
+                                break;
+
+                            default:
+                                // Everything else as is.
+                                 ch.Device.Send(mevt);
+                                break;
+                        }
+                    }
+                }
+            }
+
+            // TODO1 then any _transients, remove from _transients
         }
 
         /// <summary>
-        /// Convert script sequences etc to internal events.
+        /// Convert script sequences to internal events.
         /// </summary>
         public void BuildSteps()
         {
@@ -354,7 +338,7 @@ namespace Nebulator.Script
                             var seq = sectel.Sequences[seqIndex];
                             //was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
 
-                            var ch = _mgr.GetOutputChannel(sectel.ChannelName);
+                            var ch = Manager.Instance.GetOutputChannel(sectel.ChannelName);
                             if (ch is null) { throw new ArgumentException($"Invalid channel: {sectel.ChannelName}"); }
 
                             int beat = sectionBeat + beatInSect;
@@ -381,9 +365,9 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start sequence at.</param>
-        List<BaseMidi> ConvertToEvents(OutputChannel channel, Sequence seq, int startBeat)
+        List<BaseEvent> ConvertToEvents(OutputChannel channel, Sequence seq, int startBeat)
         {
-            List<BaseMidi> events = [];
+            List<BaseEvent> events = [];
 
             foreach (SequenceElement seqel in seq.Elements)
             {
@@ -411,8 +395,9 @@ namespace Nebulator.Script
                         NoteOn non = new(channel.ChannelNumber, noteNum, velPlay, startNoteTime);
                         events.Add(non);
 
-                        // Add off
+                        // Add note off.
                         NoteOff noff = new(channel.ChannelNumber, noteNum, stopNoteTime);
+                        events.Add(noff);
                     }
                 }
             }
@@ -444,121 +429,6 @@ namespace Nebulator.Script
 
             return info;
         }
-
-        ///// <summary>
-        ///// Get all events.
-        ///// </summary>
-        ///// <returns>Enumerator for all events.</returns>
-        //public IEnumerable<BaseMidi> GetEvents()
-        //{
-        //    return _scriptEvents;
-        //}
         #endregion
-
-
-
-        /// <summary>
-        /// Synchronously outputs the next sequence midi events.
-        /// <param name="sounding">Which channel to send.</param>
-        /// </summary>
-        public void DoNextStep(HashSet<int> sounding)
-        {
-            foreach (var ch in _mgr.OutputChannels)
-            {
-                if (sounding.Contains(ch.ChannelNumber))
-                {
-                    // Process any sequence steps.
-                    var playEvents = ch.Events.Where(e => e.When == StepTime);
-
-                    foreach (var mevt in playEvents)
-                    {
-                        //var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.Channel;
-
-                        switch (mevt)
-                        {
-                            case NoteOn evt:
-                                // Adjust volume.
-                                evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * MasterVolume * ch.Volume), 0, MidiDefs.MAX_MIDI);
-                                ch.Device.Send(evt);
-
-                                if (ch.IsDrums && evt.Velocity == 0) // TODO1? Skip drum noteoffs as windows GM doesn't like them.
-                                {
-                                }
-                                else
-                                {
-                                    int tick = evt.When.Tick + StepTime.Tick;
-                                    var noff = new NoteOff(ch.ChannelNumber, evt.Note);
-                                    _transients.Add(tick, noff));
-                                }
-                                break;
-
-                            default:
-                                // Everything else as is.
-                                //Other other = new(mch, mevt.GetAsShortMessage());
-                                ch.Device.Send(mevt);
-                                break;
-                        }
-
-
-
-                        //switch (mevt)
-                        //{
-                        //    case NoteOnEvent evt:
-                        //        if (ch.IsDrums && evt.Velocity == 0) // TODO1? Skip drum noteoffs as windows GM doesn't like them.
-                        //        {
-
-                        //        }
-                        //        else
-                        //        {
-                        //            // Adjust volume. Redirect drum channel to default.
-                        //            NoteOn non = new(mch,
-                        //                evt.NoteNumber,
-                        //                MathUtils.Constrain((int)(evt.Velocity * sldVolume.Value * ch.Volume), 0, MidiDefs.MAX_MIDI));
-                        //            ch.Device.Send(non);
-                        //        }
-                        //        break;
-
-                        //    case NoteEvent evt: // aka NoteOff
-                        //        if (ch.IsDrums) // TODO1? Skip drum noteoffs as windows GM doesn't like them.
-                        //        {
-
-                        //        }
-                        //        else
-                        //        {
-                        //            NoteOff noff = new(mch, evt.NoteNumber);
-                        //            ch.Device.Send(noff);
-                        //        }
-                        //        break;
-
-                        //    default:
-                        //        // Everything else as is.
-                        //        Other other = new(mch, mevt.GetAsShortMessage());
-                        //        ch.Device.Send(other);
-                        //        break;
-                        //}
-
-
-
-
-
-                    }
-                }
-            }
-
-            // then any _transients, remove from _transients
-
-
-        }
-
-        /// <summary>
-        /// Execute any lingering transients and clear the collection.
-        /// </summary>
-        ///// <param name="sub">After this time.</param>
-        public void Flush() //int sub)
-        {
-            //_transients.Where(t => t.Key >= sub).ForEach(t => t.Value.ForEach(evt => SendEvent(evt)));
-            _transients.ForEach(t => t.Value.ForEach(evt => SendEvent(evt)));
-            _transients.Clear();
-        }
     }
 }

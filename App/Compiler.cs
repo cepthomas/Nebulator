@@ -33,14 +33,16 @@ namespace Nebulator.App
                 "Ephemera.NBagOfTricks",
                 "Ephemera.NebOsc",
                 "Ephemera.MidiLib",
-                "Nebulator.Script"
+                "Nebulator.Script",
+                "Nebulator.MusicLib"
             ];
 
             Usings =
             [
                 "System.Collections.Generic",
                 "System.Text",
-                "static Ephemera.NBagOfTricks.MusicDefinitions"
+                "static Ephemera.MusicLib.MusicDefs"
+                //"static Ephemera.NBagOfTricks.MusicDefinitions"
             ];
         }
 

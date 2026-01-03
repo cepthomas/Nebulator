@@ -271,9 +271,7 @@
             this.timeBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.timeBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.timeBar.Location = new System.Drawing.Point(12, 123);
-            this.timeBar.MarkerColor = System.Drawing.Color.Black;
             this.timeBar.Name = "timeBar";
-            this.timeBar.ProgressColor = System.Drawing.Color.White;
             this.timeBar.Size = new System.Drawing.Size(790, 55);
             this.timeBar.TabIndex = 44;
             // 

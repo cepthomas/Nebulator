@@ -7,16 +7,15 @@ using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Reflection;
-using NAudio.Midi;
-using NAudio.Wave;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
 using Ephemera.NScript;
 using Nebulator.Script;
 using Ephemera.MidiLibEx;
+using Ephemera.MusicLib;
 
-// TODO ? Nebulator named input devices and controllers like outputs.
+// TODO? Nebulator named input devices and controllers like outputs.
 
 
 namespace Nebulator.App
@@ -41,38 +40,20 @@ namespace Nebulator.App
         /// <summary>Our compiler.</summary>
         readonly Compiler _compiler;
 
-        /// <summary>Midi boss.</summary>
-        readonly Manager _mgr = new(); // TODO1 mgr singleton?
-
         /// <summary>Current neb script file name.</summary>
         string? _scriptFileName;
 
         /// <summary>The current script.</summary>
         ScriptCore? _script;
 
-        ///// <summary>All the channels - key is user assigned name.</summary>
-        //readonly Dictionary<string, Channel> _channels = [];
-
         /// <summary>All the channel play controls.</summary>
         readonly List<ChannelControl> _channelControls = [];
 
-// /// <summary>Longest length of channels in ticks.</summary>
-// int _totalTicks = 0;
-
-        ///// <summary>All devices to use for send. Key is my id (not the system driver name).</summary>
-        //readonly Dictionary<string, IOutputDevice> _outputDevices = [];
-
-        ///// <summary>All devices to use for receive. Key is name/id, not the system name.</summary>
-        //readonly Dictionary<string, IInputDevice> _inputDevices = [];
-
-/// <summary>Persisted internal values for current script file.</summary>
-Bag _nppVals = new();
+        /// <summary>Persisted internal values for current script file.</summary>
+        Bag _nppVals = new();
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
-
-        ///// <summary>Current step time clock.</summary>
-        //MusicTime _stepTime = new();
 
         /// <summary>Detect changed script files.</summary>
         readonly MultiFileWatcher _watcher = new();
@@ -93,10 +74,6 @@ Bag _nppVals = new();
             // Must do this first before initializing.
             string appDir = MiscUtils.GetAppDataDir("Nebulator", "Ephemera");
             _settings = (UserSettings)SettingsCore.Load(appDir, typeof(UserSettings));
-
-
-            //// Force the resolution for this application.
-            //LibSettings.InternalPPQ = MusicTime.LOW_RES_PPQ;
 
             InitializeComponent();
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
@@ -160,8 +137,10 @@ Bag _nppVals = new();
             btnMonOut.Click += Monitor_Click;
             btnAbout.Click += About_Click;
             btnSettings.Click += Settings_Click;
-            btnKillComm.Click += (_, __) => _mgr.Kill();
+            btnKillComm.Click += (_, __) => Manager.Instance.Kill();
 
+            Manager.Instance.MessageReceive += Manager_MessageReceive;
+            Manager.Instance.MessageSend += Manager_MessageSend;
             #endregion
         }
 
@@ -217,7 +196,7 @@ Bag _nppVals = new();
         {
             LogManager.Stop();
             ProcessPlay(PlayCommand.Stop);
-            _mgr.Kill();
+            Manager.Instance.Kill();
 
             // Save user settings.
             _settings.FormGeometry = new()
@@ -243,7 +222,7 @@ Bag _nppVals = new();
             _mmTimer.Stop();
             _mmTimer.Dispose();
             DestroyControls();
-            _mgr.DestroyDevices();
+            Manager.Instance.DestroyDevices();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -267,7 +246,7 @@ Bag _nppVals = new();
             _nppVals.SetValue("master", "speed", sldTempo.Value);
             _nppVals.SetValue("master", "volume", sldVolume.Value);
 
-            _mgr.OutputChannels.ForEach(ch =>
+            Manager.Instance.OutputChannels.ForEach(ch =>
             {
                 if(ch.Events.Count > 0)
                 {
@@ -300,11 +279,9 @@ Bag _nppVals = new();
 
                 DestroyControls();
 
-                _mgr.DestroyChannels();
-                //_channels.Clear();
+                Manager.Instance.DestroyChannels();
                 _watcher.Clear();
- //               _totalTicks = 0;
-                timeBar.Rewind();
+                timeBar.Reset();
 
                 // Run the compiler.
                 _compiler.CompileScript(_scriptFileName);
@@ -352,7 +329,7 @@ Bag _nppVals = new();
                     int x = btnRewind.Left;
                     int y = timeBar.Bottom + CONTROL_SPACING;
 
-                    foreach (var channel in _mgr.OutputChannels)
+                    foreach (var channel in Manager.Instance.OutputChannels)
                     {
                         // Make new control and bind to defined channel.
                         ChannelControl control = new()
@@ -376,37 +353,9 @@ Bag _nppVals = new();
                 // Script is sane - build the events.
                 if (ok)
                 {
-                    _script!.Init(_mgr);
+                    _script!.BuildSteps();
 
-                    _script.BuildSteps();
-
-                    //// Store the steps in the channel objects.
-                    //MidiTimeConverter _mt = new(MusicTime.LOW_RES_PPQ, _settings.DefaultTempo);
-                    //foreach (var channel in _channels.Values)
-                    //{
-                    //    var chEvents = _script.GetEvents().Where(e => e.ChannelName == channel.ChannelName &&
-                    //        (e.RawEvent is NoteEvent || e.RawEvent is NoteOnEvent));
-                    //
-                    //    // Scale time and give to channel.
-                    //    chEvents.ForEach(e => e.ScaledTime = _mt!.MidiToInternal(e.AbsoluteTime));
-                    //    channel.SetEvents(chEvents);
-                    //
-                    //    // Round total up to next beat.
-                    //    MusicTime bs = new();
-                    //    bs.Set(channel.MaxSub, SnapType.Beat, true);
-                    //    _totalTicks = Math.Max(_totalTicks, bs.Tick);
-                    //}
-                }
-
-                // Everything is sane - prepare to run.
-
-                //long maxTick = 0;
-
-
-
-                if (ok)
-                {
-                    ///// Init the timebar.
+                    // Init the timebar.
                     var sinfo = _script!.GetSectionInfo();
                     timeBar.InitSectionInfo(sinfo);
 
@@ -449,6 +398,7 @@ Bag _nppVals = new();
                 var msg = r.SourceFileName is not null ?
                     $"{r.ReportType}: {r.SourceFileName}({r.SourceLineNumber}) [{r.Message}]" :
                     $"{r.ReportType}: [{r.Message}]";
+
                 switch (r.Level)
                 {
                     case ReportLevel.Error: _logger.Error(msg); break;
@@ -466,7 +416,7 @@ Bag _nppVals = new();
         /// </summary>
         void DestroyControls()
         {
-            _mgr.Kill();
+            Manager.Instance.Kill();
 
             // Clean out our current elements.
             _channelControls.ForEach(c =>
@@ -497,13 +447,13 @@ Bag _nppVals = new();
 
                     case ChannelState.Solo:
                         // Mute any other non-solo channels.
-                        _mgr.OutputChannels
+                        Manager.Instance.OutputChannels
                             .Where(ch => ch.ChannelName != chc.BoundChannel.ChannelName && chc.State != ChannelState.Solo)
-                            .ForEach(ch => _mgr.Kill(chc.BoundChannel));
+                            .ForEach(ch => Manager.Instance.Kill(chc.BoundChannel));
                         break;
 
                     case ChannelState.Mute:
-                        _mgr.Kill(chc.BoundChannel);
+                        Manager.Instance.Kill(chc.BoundChannel);
                         break;
                 }
             }
@@ -560,10 +510,10 @@ Bag _nppVals = new();
                         // Check for end.
                         if (done)
                         {
-                            _script.Flush();
+                           // _script.Flush();
                             // _channels.Values.ForEach(ch => ch.Flush(_stepTime.Tick));
                             ProcessPlay(PlayCommand.StopRewind);
-                            KillAll(); // just in case
+                            Manager.Instance.Kill(); // just in case
                         }
                     }
                     // else keep going
@@ -584,30 +534,6 @@ Bag _nppVals = new();
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        /// <summary>
-        /// Process input event.
-        /// </summary>
-        void Device_InputReceive(object? sender, InputReceiveEventArgs e)
-        {
-            this.InvokeIfRequired(_ =>
-            {
-                if (_script is not null && sender is not null)
-                {
-                    var dev = (IInputDevice)sender;
-
-                    // Hand over to the script.
-                    if (e.Note != -1)
-                    {
-                        _script.InputNote(dev.DeviceName, e.Channel, e.Note, e.Value);
-                    }
-                    else if (e.Controller != -1)
-                    {
-                        _script.InputControl(dev.DeviceName, e.Channel, e.Controller, e.Value);
-                    }
-                }
-            });
         }
         #endregion
 
@@ -661,6 +587,46 @@ Bag _nppVals = new();
         }
         #endregion
 
+        #region Comms
+        /// <summary>
+        /// Process input event.
+        /// </summary>
+        void Manager_MessageReceive(object? sender, BaseEvent e)
+        {
+            //?? this.InvokeIfRequired(_ =>
+            if (_script is not null && sender is not null)
+            {
+                var dev = (IInputDevice)sender;
+
+                switch (e)
+                {
+                    case NoteOn evt:
+                        _script.InputNote(dev.DeviceName, evt.ChannelNumber, evt.Note, evt.Velocity);
+                        break;
+
+                    case NoteOff evt:
+                        _script.InputNote(dev.DeviceName, evt.ChannelNumber, evt.Note, 0);
+                        break;
+
+                    case Controller evt:
+                        _script.InputControl(dev.DeviceName, evt.ChannelNumber, evt.ControllerId, evt.Value);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Process output event.
+        /// </summary>
+        void Manager_MessageSend(object? sender, BaseEvent e)
+        {
+            //Anything useful?
+        }
+        #endregion
+
         #region File handling
         /// <summary>
         /// The user has asked to open a recent file.
@@ -711,7 +677,7 @@ Bag _nppVals = new();
             {
                 // Clean up the old.
                 SaveProjectValues();
-                timeBar.TimeDefs.Clear();
+                timeBar.Reset();
 
                 if (File.Exists(fn))
                 {
@@ -720,7 +686,7 @@ Bag _nppVals = new();
                     // Get the persisted properties.
                     _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
                     sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                    sldVolume.Value = _nppVals.GetDouble("master", "volume", MidiLibDefs.DEFAULT_VOLUME);
+                    sldVolume.Value = _nppVals.GetDouble("master", "volume", VolumeDefs.DEFAULT_VOLUME);
 
                     _scriptFileName = fn;
                     SetCompileStatus(true);
@@ -746,10 +712,6 @@ Bag _nppVals = new();
                 SetCompileStatus(false);
                 _scriptFileName = null;
             }
-
-            // Update bar.
-            timeBar.Start = new();
-            timeBar.Current = new();
 
             return ret;
         }
@@ -854,16 +816,6 @@ Bag _nppVals = new();
         {
             _settings.MonitorInput = btnMonIn.Checked;
             _settings.MonitorOutput = btnMonOut.Checked;
-
-            _outputDevices.Values.ForEach(d => d.LogEnable = _settings.MonitorOutput);
-        }
-
-        /// <summary>
-        /// The meaning of life.
-        /// </summary>
-        void About_Click(object? sender, EventArgs e)
-        {
-            Tools.ShowReadme("Nebulator");
         }
         #endregion
 
@@ -949,27 +901,21 @@ Bag _nppVals = new();
                     _mmTimer.Stop();
 
                     // Send midi stop all notes just in case.
-                    KillAll();
+                    Manager.Instance.Kill();
                     break;
 
                 case PlayCommand.Rewind:
-                    _stepTime.Reset();
                     timeBar.Rewind();
                     break;
 
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
-                    _stepTime.Reset();
                     timeBar.Rewind();
                     break;
 
                 case PlayCommand.UpdateUiTime:
-                    // See below.
                     break;
             }
-
-            // Always do this.
-            timeBar.Current.Set(_stepTime);
 
             return ret;
         }
@@ -984,9 +930,8 @@ Bag _nppVals = new();
         {
             if (e.CurrentTimeChange)
             {
-                _stepTime.Set(timeBar.Current);
-                ProcessPlay(PlayCommand.UpdateUiTime);
-
+                //_stepTime.Set(timeBar.Current);
+                //ProcessPlay(PlayCommand.UpdateUiTime);
             }
         }
         #endregion
@@ -1015,7 +960,7 @@ Bag _nppVals = new();
         void SetFastTimerPeriod()
         {
             // Make a transformer.
-            MidiTimeConverter mt = new(_settings.SubsPerBeat, sldTempo.Value);
+            MidiTimeConverter mt = new(MusicTime.TicksPerBeat, sldTempo.Value);
             var per = mt.RoundedInternalPeriod();
             _mmTimer.SetTimer(per, MmTimerCallback);
         }
@@ -1041,18 +986,21 @@ Bag _nppVals = new();
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
                     // Make a Pattern object and call the formatter.
-                    IEnumerable<Channel> channels = _channels.Values.Where(ch => ch.NumEvents > 0);
+                    IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count != 0);
 
-                    PatternInfo pattern = new("export", _settings.SubsPerBeat, _script.GetEvents(), channels, _script.Tempo);
+                    List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
+                    List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
+
+                    PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
 
                     Dictionary<string, int> meta = new()
                     {
                         { "MidiFileType", 0 },
-                        { "DeltaTicksPerQuarterNote", _settings.SubsPerBeat },
+                        { "DeltaTicksPerQuarterNote", MusicTime.TicksPerBeat },
                         { "NumTracks", 1 }
                     };
 
-                    MidiExport.ExportMidi(saveDlg.FileName, pattern, channels, meta);
+                    MidiExport.ExportMidi(saveDlg.FileName, pattern, channelNumbers, meta);
                 }
             }
         }
@@ -1067,31 +1015,33 @@ Bag _nppVals = new();
             if (_scriptFileName is not null && _script is not null)
             {
                 // Make a Pattern object and call the formatter.
-                IEnumerable<Channel> channels = _channels.Values.Where(ch => ch.NumEvents > 0);
+                IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count != 0);
+
+                List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
+                List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
 
                 var fn = Path.GetFileName(_scriptFileName.Replace(".neb", ".csv"));
 
-                PatternInfo pattern = new("export", _settings.SubsPerBeat, _script.GetEvents(), channels, _script.Tempo);
+                PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
 
                 Dictionary<string, int> meta = new()
                 {
                     { "MidiFileType", 0 },
-                    { "DeltaTicksPerQuarterNote", _settings.SubsPerBeat },
+                    { "DeltaTicksPerQuarterNote", MusicTime.TicksPerBeat },
                     { "NumTracks", 1 }
                 };
 
-                MidiExport.ExportCsv(fn, [pattern], channels, meta);
+                MidiExport.ExportCsv(fn, [pattern], channelNumbers, drumNumbers, meta);
                 _logger.Info($"Exported to {fn}");
             }
         }
 
         /// <summary>
-        /// Kill em all.
+        /// The meaning of life.
         /// </summary>
-        void KillAll()
+        void About_Click(object? sender, EventArgs e)
         {
-            chkPlay.Checked = false;
-            _channels.Values.ForEach(ch => ch.Kill());
+            Tools.ShowReadme("Nebulator");
         }
 
         /// <summary>
@@ -1101,8 +1051,9 @@ Bag _nppVals = new();
         /// <param name="e"></param>
         void ShowDefinitions_Click(object sender, EventArgs e)
         {
-            var docs = MidiDefs.FormatDoc();
-            docs.AddRange(MusicDefinitions.FormatDoc());
+            var docs = MidiDefs.Instance.GenUserDeviceInfo();
+            docs.AddRange(MidiDefs.Instance.GenMarkdown());
+            docs.AddRange(MusicDefs.Instance.GenMarkdown());
             Tools.MarkdownToHtml(docs, Tools.MarkdownMode.DarkApi, true);
         }
         #endregion
