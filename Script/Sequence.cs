@@ -69,13 +69,13 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string what, double volume)
         {
-            List<int> notes = MusicDefs.Instance.GetNotesFromString(what);
+            List<int> notes = MusicDefs.GetNotesFromString(what);
 
             if (notes.Any())
             {
                 // It might be a drum.
-                int idrum = MidiDefs.Instance.GetDrumNumber(what);
-                if(idrum >= 0)
+                int idrum = MidiDefs.GetDrumId(what);
+                if (idrum >= 0)
                 {
                     notes.Add(idrum);
                 }
@@ -87,8 +87,6 @@ namespace Nebulator.Script
 
             foreach (int n in notes)
             {
-                // was:  Add(pattern, n, volume);
-                //void Add(string pattern, int which, double volume)
                 int currentVol = 0; // default, not sounding
                 int startIndex = 0; // index in pattern for the start of the current note
 
@@ -99,9 +97,6 @@ namespace Nebulator.Script
                     double volmod = (double)currentVol / 10;
                     MusicTime dur = new(index - startIndex);
                     MusicTime when = new(startIndex);
-                    //// Create scaled times.
-                    //BarTime dur = new((index - startIndex) * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
-                    //BarTime when = new(startIndex * Definitions.InternalPPQ / ScriptCommon.ScriptPpq);
 
                     SequenceElement sel = new(n)
                     {
@@ -118,7 +113,7 @@ namespace Nebulator.Script
                     switch (pattern[patternIndex])
                     {
                         case '-':
-                            ///// Continue current note.
+                            // Continue current note.
                             if (currentVol > 0)
                             {
                                 // ok, do nothing
@@ -139,7 +134,7 @@ namespace Nebulator.Script
                         case '7':
                         case '8':
                         case '9':
-                            ///// A new note starting.
+                            // A new note starting.
                             // Do we need to end the current note?
                             if (currentVol > 0)
                             {
@@ -153,7 +148,7 @@ namespace Nebulator.Script
 
                         case '.':
                         case ' ':
-                            ///// No sound.
+                            // No sound.
                             // Do we need to end the current note?
                             if (currentVol > 0)
                             {
@@ -163,7 +158,7 @@ namespace Nebulator.Script
                             break;
 
                         default:
-                            ///// Invalid char.
+                            // Invalid char.
                             throw new InvalidOperationException($"Invalid char in pattern string:{pattern[patternIndex]}");
                     }
                 }
@@ -223,13 +218,13 @@ namespace Nebulator.Script
         /// <param name="s"></param>
         public SequenceElement(string s)
         {
-            Notes = MusicDefs.Instance.GetNotesFromString(s);
+            Notes = MusicDefs.GetNotesFromString(s);
             if (Notes.Any())
             {
                 // It might be a drum.
                 try
                 {
-                    int idrum = MidiDefs.Instance.GetDrumNumber(s);
+                    int idrum = MidiDefs.GetDrumId(s);
                     Notes.Add(idrum);
                 }
                 catch { }

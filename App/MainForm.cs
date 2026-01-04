@@ -1051,9 +1051,9 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ShowDefinitions_Click(object sender, EventArgs e)
         {
-            var docs = MidiDefs.Instance.GenUserDeviceInfo();
-            docs.AddRange(MidiDefs.Instance.GenMarkdown());
-            docs.AddRange(MusicDefs.Instance.GenMarkdown());
+            var docs = MidiDefs.GenUserDeviceInfo();
+            docs.AddRange(MidiDefs.GenMarkdown());
+            docs.AddRange(MusicDefs.GenMarkdown());
             Tools.MarkdownToHtml(docs, Tools.MarkdownMode.DarkApi, true);
         }
         #endregion

@@ -29,15 +29,16 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Libs\MidiLib\MidiLib.csproj" />
+      <ProjectReference Include="..\..\..\Libs\MusicLib\MusicLib.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <!-- <Reference Include="Ephemera.MidiLib">
           <HintPath>..\lib\Ephemera.MidiLib.dll</HintPath>
         </Reference> -->
-        <Reference Include="Ephemera.MusicLib">
+        <!-- <Reference Include="Ephemera.MusicLib">
           <HintPath>..\lib\Ephemera.MusicLib.dll</HintPath>
-        </Reference>
+        </Reference> -->
         <Reference Include="Ephemera.NBagOfTricks">
             <HintPath>..\lib\Ephemera.NBagOfTricks.dll</HintPath>
         </Reference>

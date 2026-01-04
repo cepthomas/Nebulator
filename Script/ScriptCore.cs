@@ -17,10 +17,6 @@ namespace Nebulator.Script
         /// <summary>All sections.</summary>
         internal List<Section> _sections = [];
 
-        ///// <summary>Things that are executed once and disappear: NoteOffs, script send now, etc.</summary>
-//        readonly List<BaseEvent> _transients = [];
-//        readonly EventCollection _transients = new();
-
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
         #endregion
@@ -116,7 +112,7 @@ namespace Nebulator.Script
         /// <param name="parts">Like "1 4 6 b13"</param>
         protected void CreateNotes(string name, string parts)
         {
-            MusicDefs.Instance.AddCompound(name, parts);
+            MusicDefs.AddCompound(name, parts);
         }
 
         /// <summary>Send a note immediately. Lowest level sender.</summary>
@@ -204,7 +200,8 @@ namespace Nebulator.Script
         protected void SendController(string chanName, string controller, int val)
         {
             var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            int ctlid = MidiDefs.Instance.GetControllerNumber(controller);
+            int ctlid = MidiDefs.GetControllerId(controller);
+            if (ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
 
             Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
             ch.Device.Send(ctlr);
@@ -216,6 +213,7 @@ namespace Nebulator.Script
         protected void SendPatch(string chanName, int patch)
         {
             var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            if (patch < 0) throw new ArgumentException($"Invalid patch: {patch}");
             ch.Patch = patch; // property set sends the patch
         }
 
@@ -225,7 +223,11 @@ namespace Nebulator.Script
         protected void SendPatch(string chanName, string patch)
         {
             var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            int ipatch = MidiDefs.Instance.GetInstrumentNumber(patch);
+            int ipatch = MidiDefs.GetInstrumentId(patch);
+            // Maybe it is drum kit patch?
+            if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
+            if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
+
             ch.Patch = ipatch; // property set sends the patch
         }
 
@@ -250,19 +252,13 @@ namespace Nebulator.Script
         /// <exception cref="ArgumentException"></exception>
         protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
         {
-            var ipatch = MidiDefs.Instance.GetInstrumentNumber(patch);
+            var ipatch = MidiDefs.GetInstrumentId(patch);
+            // Maybe it is drum kit patch?
+            if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
+            if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
             Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, ipatch);
         }
         #endregion
-
-// TODO1:
-//> ERR Main MainForm.cs(404) Syntax: utils.neb(-1) [The type or namespace name 'MusicDefinitions' does not exist in the namespace 'Ephemera.NBagOfTricks' (are you missing an assembly reference?) => using static Ephemera.NBagOfTricks.MusicDefinitions;]
-//> ERR Main MainForm.cs(404) Syntax: scale.neb(-1) [The type or namespace name 'MusicDefinitions' does not exist in the namespace 'Ephemera.NBagOfTricks' (are you missing an assembly reference?) => using static Ephemera.NBagOfTricks.MusicDefinitions;]
-//> ERR Main MainForm.cs(404) Syntax: scale.neb(13) [The name 'GetNotesFromString' does not exist in the current context]
-    //protected List<int> GetNotesFromString(string name) { return []; }
-
-
-
 
         #region Host functions for internal use
         /// <summary>

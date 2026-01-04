@@ -33,8 +33,8 @@ namespace Nebulator.App
                 "Ephemera.NBagOfTricks",
                 "Ephemera.NebOsc",
                 "Ephemera.MidiLib",
+                "Ephemera.MusicLib",
                 "Nebulator.Script",
-                "Nebulator.MusicLib"
             ];
 
             Usings =
