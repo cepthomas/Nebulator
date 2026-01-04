@@ -71,7 +71,7 @@ namespace Nebulator.Script
         {
             List<int> notes = MusicDefs.Instance.GetNotesFromString(what);
 
-            if (notes.Count == 0)
+            if (notes.Any())
             {
                 // It might be a drum.
                 int idrum = MidiDefs.Instance.GetDrumNumber(what);
@@ -224,7 +224,7 @@ namespace Nebulator.Script
         public SequenceElement(string s)
         {
             Notes = MusicDefs.Instance.GetNotesFromString(s);
-            if(Notes.Count == 0)
+            if (Notes.Any())
             {
                 // It might be a drum.
                 try

@@ -14,7 +14,7 @@
         <Copyright>MIT License</Copyright>
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
         <WarningLevel>4</WarningLevel>
-        <NoWarn>CA1822;CA1069;CS1591</NoWarn>
+        <NoWarn>CA1822;CA1069;CS1591;CA1860</NoWarn>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <SatelliteResourceLanguages>none</SatelliteResourceLanguages>

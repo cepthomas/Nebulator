@@ -17,8 +17,9 @@ namespace Nebulator.Script
         /// <summary>All sections.</summary>
         internal List<Section> _sections = [];
 
-        /// <summary>Things that are executed once and disappear: NoteOffs, script send now.</summary>
-        readonly List<BaseEvent> _transients = [];
+        ///// <summary>Things that are executed once and disappear: NoteOffs, script send now, etc.</summary>
+//        readonly List<BaseEvent> _transients = [];
+//        readonly EventCollection _transients = new();
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
@@ -125,9 +126,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, MusicTime dur)
         {
-            var ch = Manager.Instance.GetOutputChannel(chanName);
-            if (ch is null) { throw new ArgumentException($"Invalid channel: {chanName}"); }
-
+            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             notenum = MathUtils.Constrain(Math.Abs(notenum), 0, MidiDefs.MAX_MIDI);
 
             // If vol is positive it's note on else note off.
@@ -140,8 +139,8 @@ namespace Nebulator.Script
                 ch.Device.Send(non);
 
                 // Add a transient note off for later.
-                NoteOff noff = new(ch.ChannelNumber, notenum, StepTime + dur);
-                _transients.Add(noff);
+                NoteOff noff = new(ch.ChannelNumber, notenum, StepTime + dur) {  Transient = true };
+                ch.Events.Add(noff);
             }
             else // note off
             {
@@ -218,7 +217,6 @@ namespace Nebulator.Script
         {
             var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             ch.Patch = patch; // property set sends the patch
-           // ch.SendPatch();
         }
 
         /// <summary>Send a midi patch immediately.</summary>
@@ -227,10 +225,9 @@ namespace Nebulator.Script
         protected void SendPatch(string chanName, string patch)
         {
             var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            int patchid = MidiDefs.Instance.GetInstrumentNumber(patch);
-            SendPatch(chanName, patchid);
+            int ipatch = MidiDefs.Instance.GetInstrumentNumber(patch);
+            ch.Patch = ipatch; // property set sends the patch
         }
-
 
         /// <summary>
         /// OpenMidiInput(midi_device_in, 1, "my midi input")
@@ -240,7 +237,7 @@ namespace Nebulator.Script
         /// <param name="channelName"></param>
         protected void OpenMidiInput(string device, int channelNumber, string channelName)
         {
-            var chin = Manager.Instance.OpenInputChannel(device, channelNumber, channelName);
+            Manager.Instance.OpenInputChannel(device, channelNumber, channelName);
         }
 
         /// <summary>
@@ -254,11 +251,11 @@ namespace Nebulator.Script
         protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
         {
             var ipatch = MidiDefs.Instance.GetInstrumentNumber(patch);
-            var chout = Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, ipatch);
+            Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, ipatch);
         }
         #endregion
 
-
+// TODO1:
 //> ERR Main MainForm.cs(404) Syntax: utils.neb(-1) [The type or namespace name 'MusicDefinitions' does not exist in the namespace 'Ephemera.NBagOfTricks' (are you missing an assembly reference?) => using static Ephemera.NBagOfTricks.MusicDefinitions;]
 //> ERR Main MainForm.cs(404) Syntax: scale.neb(-1) [The type or namespace name 'MusicDefinitions' does not exist in the namespace 'Ephemera.NBagOfTricks' (are you missing an assembly reference?) => using static Ephemera.NBagOfTricks.MusicDefinitions;]
 //> ERR Main MainForm.cs(404) Syntax: scale.neb(13) [The name 'GetNotesFromString' does not exist in the current context]
@@ -279,7 +276,8 @@ namespace Nebulator.Script
                 if (sounding.Contains(ch.ChannelNumber))
                 {
                     // Process any sequence steps.
-                    var playEvents = ch.Events.Where(e => e.When == StepTime); // TODO1 improve performance with Dict?
+                    var playEvents = ch.Events.Get(StepTime);
+                    // var playEvents = ch.Events.Where(e => e.When == StepTime);
 
                     foreach (var mevt in playEvents)
                     {
@@ -307,10 +305,12 @@ namespace Nebulator.Script
                                 break;
                         }
                     }
+
+                    // Clean up.
+                    ch.Events.RemoveTransients(StepTime);
                 }
             }
 
-            // TODO1 then any _transients, remove from _transients
         }
 
         /// <summary>
@@ -338,9 +338,7 @@ namespace Nebulator.Script
                             var seq = sectel.Sequences[seqIndex];
                             //was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
 
-                            var ch = Manager.Instance.GetOutputChannel(sectel.ChannelName);
-                            if (ch is null) { throw new ArgumentException($"Invalid channel: {sectel.ChannelName}"); }
-
+                            var ch = Manager.Instance.GetOutputChannel(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
                             int beat = sectionBeat + beatInSect;
                             var ecoll = ConvertToEvents(ch, seq, beat);
                             ch.Events.AddRange(ecoll);
@@ -422,7 +420,7 @@ namespace Nebulator.Script
             }
 
             // Add the dummy end marker.
-            if (info.Count > 0)
+            if (info.Any())
             {
                 info.Add(when, "END");
             }

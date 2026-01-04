@@ -50,7 +50,7 @@ namespace Nebulator.App
         readonly List<ChannelControl> _channelControls = [];
 
         /// <summary>Persisted internal values for current script file.</summary>
-        Bag _nppVals = new();
+        Bag _nppVals = new(); // TODO1 useful?
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -248,7 +248,7 @@ namespace Nebulator.App
 
             Manager.Instance.OutputChannels.ForEach(ch =>
             {
-                if(ch.Events.Count > 0)
+                if(ch.Events.Count() > 0)
                 {
                     _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
                     //_nppVals.SetValue(ch.ChannelName, "state", ch.State);
@@ -986,7 +986,7 @@ namespace Nebulator.App
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
                     // Make a Pattern object and call the formatter.
-                    IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count != 0);
+                    IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
                     List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
                     List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
@@ -1015,7 +1015,7 @@ namespace Nebulator.App
             if (_scriptFileName is not null && _script is not null)
             {
                 // Make a Pattern object and call the formatter.
-                IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count != 0);
+                IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
                 List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
                 List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
