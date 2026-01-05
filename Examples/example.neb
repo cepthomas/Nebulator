@@ -14,7 +14,20 @@
 // #:channel drums midiout 10 Jazz // for drums = kit
 
 
+// default
+@"C:\Dev\Libs\MidiLib\gm_defs.ini"
+// overrlay(s)
+@"C:\Dev\Apps\Nebulua\exp_defs.ini"
+// [controllers] >>> OK
+// [instruments] >>> PATCH (per channel)
+// [drumkits] >>> PATCH (per channel)
+// [drums] >>> NOTE (per channel)
 
+
+// Uses nullin:name for DeviceName.
+// Uses nullout:name for DeviceName.
+// Uses oscin:port for DeviceName.
+// Uses oscout:host:port for DeviceName.
 
 
 utils u = new();
@@ -44,7 +57,7 @@ public override void Setup()
     string midi_device_in  = "loopMIDI Port 1";
     OpenMidiInput(midi_device_in, 1, "my midi input");
 
-    string midi_device_out    = "Microsoft GS Wavetable Synth"; //  -- Default  or "VirtualMIDISynth #1"  -- VST host or OSC or null
+    string midi_device_out    = "Microsoft GS Wavetable Synth"; //  or "VirtualMIDISynth #1"  -- VST host or OSC or null
     OpenMidiOutput(midi_device_out, 1,  "keys",       "AcousticGrandPiano");
     OpenMidiOutput(midi_device_out, 2,  "bass",       "AcousticBass");
     OpenMidiOutput(midi_device_out, 3,  "synth",      "Lead1Square");

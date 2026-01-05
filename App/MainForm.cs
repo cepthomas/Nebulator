@@ -988,8 +988,8 @@ namespace Nebulator.App
                     // Make a Pattern object and call the formatter.
                     IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
-                    List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
-                    List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
+                    //List<int> channelNumbers = [.. channels.Select(ch => ch.ChannelNumber)];
+                    //List<int> drumNumbers = [.. channels.Where(ch => ch.IsDrums).Select(ch => ch.ChannelNumber)];
 
                     PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
 
@@ -1000,7 +1000,7 @@ namespace Nebulator.App
                         { "NumTracks", 1 }
                     };
 
-                    MidiExport.ExportMidi(saveDlg.FileName, pattern, channelNumbers, meta);
+                    MidiExport.ExportMidi(saveDlg.FileName, pattern, channels, meta);
                 }
             }
         }
@@ -1017,8 +1017,8 @@ namespace Nebulator.App
                 // Make a Pattern object and call the formatter.
                 IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
-                List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
-                List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
+                //List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
+                //List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
 
                 var fn = Path.GetFileName(_scriptFileName.Replace(".neb", ".csv"));
 
@@ -1031,7 +1031,8 @@ namespace Nebulator.App
                     { "NumTracks", 1 }
                 };
 
-                MidiExport.ExportCsv(fn, [pattern], channelNumbers, drumNumbers, meta);
+                //MidiExport.ExportCsv(fn, [pattern], channelNumbers, drumNumbers, meta);
+                MidiExport.ExportCsv(fn, [pattern], channels, meta);
                 _logger.Info($"Exported to {fn}");
             }
         }

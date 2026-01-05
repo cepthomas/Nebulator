@@ -298,14 +298,14 @@ Send a controller immediately. Useful for things like panning and bank select.
 - ctl: Controller name from the definitions or const() or simple integer.
 - val: Controller value.
 
-```c#
-void SendPatch("chname", patch)
+<!-- ```c#
+XXX void SendPatch("chname", patch)
 ```
 Send a midi patch immediately. Really only needed if using the windows GM.
 
 - chname: Channel name to send it on.
 - patch: Instrument name from the definitions.
-
+ -->
 ### Utilities
 
 ```c#

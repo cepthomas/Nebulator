@@ -207,29 +207,29 @@ namespace Nebulator.Script
             ch.Device.Send(ctlr);
         }
 
-        /// <summary>Send a midi patch immediately.</summary>
-        /// <param name="chanName"></param>
-        /// <param name="patch"></param>
-        protected void SendPatch(string chanName, int patch)
-        {
-            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            if (patch < 0) throw new ArgumentException($"Invalid patch: {patch}");
-            ch.Patch = patch; // property set sends the patch
-        }
+        // /// <summary>Send a midi patch immediately.</summary>
+        // /// <param name="chanName"></param>
+        // /// <param name="patch"></param>
+        // protected void SendPatch(string chanName, int patch)
+        // {
+        //     var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+        //     if (patch < 0) throw new ArgumentException($"Invalid patch: {patch}");
+        //     ch.Patch = patch; // property set sends the patch
+        // }
 
-        /// <summary>Send a midi patch immediately.</summary>
-        /// <param name="chanName"></param>
-        /// <param name="patch"></param>
-        protected void SendPatch(string chanName, string patch)
-        {
-            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            int ipatch = MidiDefs.GetInstrumentId(patch);
-            // Maybe it is drum kit patch?
-            if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
-            if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
+        // /// <summary>Send a midi patch immediately.</summary>
+        // /// <param name="chanName"></param>
+        // /// <param name="patch"></param>
+        // protected void SendPatch(string chanName, string patch)
+        // {
+        //     var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+        //     int ipatch = MidiDefs.GetInstrumentId(patch);
+        //     // Maybe it is drum kit patch?
+        //     if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
+        //     if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
 
-            ch.Patch = ipatch; // property set sends the patch
-        }
+        //     ch.Patch = ipatch; // property set sends the patch
+        // }
 
         /// <summary>
         /// OpenMidiInput(midi_device_in, 1, "my midi input")
@@ -249,14 +249,16 @@ namespace Nebulator.Script
         /// <param name="channelNumber"></param>
         /// <param name="channelName"></param>
         /// <param name="patch"></param>
+        /// <param name="isDrums"></param>
         /// <exception cref="ArgumentException"></exception>
-        protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
+        protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch, bool isDrums)
         {
-            var ipatch = MidiDefs.GetInstrumentId(patch);
-            // Maybe it is drum kit patch?
-            if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
-            if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
-            Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, ipatch);
+            //var ipatch = MidiDefs.GetInstrumentId(patch);
+            //// Maybe it is drum kit patch?
+            //if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
+            //if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
+
+            Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, patch, isDrums);
         }
         #endregion
 
