@@ -122,7 +122,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, MusicTime dur)
         {
-            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            var ch = MidiManager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             notenum = MathUtils.Constrain(Math.Abs(notenum), 0, MidiDefs.MAX_MIDI);
 
             // If vol is positive it's note on else note off.
@@ -199,37 +199,13 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         protected void SendController(string chanName, string controller, int val)
         {
-            var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            var ch = MidiManager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             int ctlid = MidiDefs.GetControllerId(controller);
             if (ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
 
             Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
             ch.Device.Send(ctlr);
         }
-
-        // /// <summary>Send a midi patch immediately.</summary>
-        // /// <param name="chanName"></param>
-        // /// <param name="patch"></param>
-        // protected void SendPatch(string chanName, int patch)
-        // {
-        //     var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-        //     if (patch < 0) throw new ArgumentException($"Invalid patch: {patch}");
-        //     ch.Patch = patch; // property set sends the patch
-        // }
-
-        // /// <summary>Send a midi patch immediately.</summary>
-        // /// <param name="chanName"></param>
-        // /// <param name="patch"></param>
-        // protected void SendPatch(string chanName, string patch)
-        // {
-        //     var ch = Manager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-        //     int ipatch = MidiDefs.GetInstrumentId(patch);
-        //     // Maybe it is drum kit patch?
-        //     if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
-        //     if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
-
-        //     ch.Patch = ipatch; // property set sends the patch
-        // }
 
         /// <summary>
         /// OpenMidiInput(midi_device_in, 1, "my midi input")
@@ -239,7 +215,7 @@ namespace Nebulator.Script
         /// <param name="channelName"></param>
         protected void OpenMidiInput(string device, int channelNumber, string channelName)
         {
-            Manager.Instance.OpenInputChannel(device, channelNumber, channelName);
+            MidiManager.Instance.OpenInputChannel(device, channelNumber, channelName);
         }
 
         /// <summary>
@@ -249,11 +225,37 @@ namespace Nebulator.Script
         /// <param name="channelNumber"></param>
         /// <param name="channelName"></param>
         /// <param name="patch"></param>
-        /// <param name="isDrums"></param>
         /// <exception cref="ArgumentException"></exception>
-        protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch, bool isDrums)
+        protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
         {
-            Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, patch, isDrums);
+            var chan = MidiManager.Instance.OpenOutputChannel(device, channelNumber, channelName);
+            chan.PatchName = patch;
+        }
+
+        /// <summary>
+        /// OpenMidiOutputDrums(midi_device_out, 1, "drums", "Jazz")
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="channelNumber"></param>
+        /// <param name="channelName"></param>
+        /// <param name="patch"></param>
+        /// <exception cref="ArgumentException"></exception>
+        protected void OpenMidiOutputDrums(string device, int channelNumber, string channelName, string patch)
+        {
+            var chan = MidiManager.Instance.OpenOutputChannelDrums(device, channelNumber, channelName);
+            chan.PatchName = patch;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="snotes"></param>
+        /// <returns></returns>
+        protected List<int> GetNotes(string snotes)
+        {
+            //TODO1 Notes = MusicDefs.GetNotesFromString(s); >>> check for IsDrums and call MidiDefs.GetDrumId() instead
+
+            return [];
         }
         #endregion
 
@@ -264,7 +266,7 @@ namespace Nebulator.Script
         /// </summary>
         public void DoNextStep(HashSet<int> sounding)
         {
-            foreach (var ch in Manager.Instance.OutputChannels)
+            foreach (var ch in MidiManager.Instance.OutputChannels)
             {
                 if (sounding.Contains(ch.ChannelNumber))
                 {
@@ -274,7 +276,8 @@ namespace Nebulator.Script
 
                     foreach (var mevt in playEvents)
                     {
-                        var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
+                        //var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
+                        var mch = mevt.ChannelNumber;
 
                         switch (mevt)
                         {
@@ -331,7 +334,7 @@ namespace Nebulator.Script
                             var seq = sectel.Sequences[seqIndex];
                             //was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
 
-                            var ch = Manager.Instance.GetOutputChannel(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
+                            var ch = MidiManager.Instance.GetOutputChannel(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
                             int beat = sectionBeat + beatInSect;
                             var ecoll = ConvertToEvents(ch, seq, beat);
                             ch.Events.AddRange(ecoll);

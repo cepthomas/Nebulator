@@ -15,9 +15,9 @@
 
 
 // default
-@"C:\Dev\Libs\MidiLib\gm_defs.ini"
+// @"C:\Dev\Libs\MidiLib\gm_defs.ini"
 // overrlay(s)
-@"C:\Dev\Apps\Nebulua\exp_defs.ini"
+// @"C:\Dev\Apps\Nebulua\exp_defs.ini"
 // [controllers] >>> OK
 // [instruments] >>> PATCH (per channel)
 // [drumkits] >>> PATCH (per channel)
@@ -66,10 +66,10 @@ public override void Setup()
 
     // Create sets of notes.
     CreateNotes("MY_SCALE", "1 3 4 b7");
-    myScaleNotes = GetNotesFromString("B4.MY_SCALE");
+    myScaleNotes = GetNotes("B4.MY_SCALE");
     // Get some stock chords and scales.
-    scaleNotes = GetNotesFromString("G3.Algerian");
-    chordNotes = GetNotesFromString("C4.o7");
+    scaleNotes = GetNotes("G3.Algerian");
+    chordNotes = GetNotes("C4.o7");
 
     bool b = u.Boing(60);
 

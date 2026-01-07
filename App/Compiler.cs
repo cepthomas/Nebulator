@@ -41,7 +41,7 @@ namespace Nebulator.App
             [
                 "System.Collections.Generic",
                 "System.Text",
-                "static Ephemera.MusicLib.MusicDefs"
+                //"static Ephemera.MusicLib.MusicDefs"
                 //"static Ephemera.NBagOfTricks.MusicDefinitions"
             ];
         }

@@ -50,7 +50,7 @@ namespace Nebulator.App
         readonly List<ChannelControl> _channelControls = [];
 
         /// <summary>Persisted internal values for current script file.</summary>
-        Bag _nppVals = new(); // TODO1 useful?
+        Bag _nppVals = new(); // TODO useful?
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -137,10 +137,10 @@ namespace Nebulator.App
             btnMonOut.Click += Monitor_Click;
             btnAbout.Click += About_Click;
             btnSettings.Click += Settings_Click;
-            btnKillComm.Click += (_, __) => Manager.Instance.Kill();
+            btnKillComm.Click += (_, __) => MidiManager.Instance.Kill();
 
-            Manager.Instance.MessageReceive += Manager_MessageReceive;
-            Manager.Instance.MessageSend += Manager_MessageSend;
+            MidiManager.Instance.MessageReceive += Manager_MessageReceive;
+            MidiManager.Instance.MessageSend += Manager_MessageSend;
             #endregion
         }
 
@@ -196,7 +196,7 @@ namespace Nebulator.App
         {
             LogManager.Stop();
             ProcessPlay(PlayCommand.Stop);
-            Manager.Instance.Kill();
+            MidiManager.Instance.Kill();
 
             // Save user settings.
             _settings.FormGeometry = new()
@@ -222,7 +222,7 @@ namespace Nebulator.App
             _mmTimer.Stop();
             _mmTimer.Dispose();
             DestroyControls();
-            Manager.Instance.DestroyDevices();
+            MidiManager.Instance.DestroyDevices();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -246,7 +246,7 @@ namespace Nebulator.App
             _nppVals.SetValue("master", "speed", sldTempo.Value);
             _nppVals.SetValue("master", "volume", sldVolume.Value);
 
-            Manager.Instance.OutputChannels.ForEach(ch =>
+            MidiManager.Instance.OutputChannels.ForEach(ch =>
             {
                 if(ch.Events.Count() > 0)
                 {
@@ -279,7 +279,7 @@ namespace Nebulator.App
 
                 DestroyControls();
 
-                Manager.Instance.DestroyChannels();
+                MidiManager.Instance.DestroyChannels();
                 _watcher.Clear();
                 timeBar.Reset();
 
@@ -329,7 +329,7 @@ namespace Nebulator.App
                     int x = btnRewind.Left;
                     int y = timeBar.Bottom + CONTROL_SPACING;
 
-                    foreach (var channel in Manager.Instance.OutputChannels)
+                    foreach (var channel in MidiManager.Instance.OutputChannels)
                     {
                         // Make new control and bind to defined channel.
                         ChannelControl control = new()
@@ -416,7 +416,7 @@ namespace Nebulator.App
         /// </summary>
         void DestroyControls()
         {
-            Manager.Instance.Kill();
+            MidiManager.Instance.Kill();
 
             // Clean out our current elements.
             _channelControls.ForEach(c =>
@@ -447,13 +447,13 @@ namespace Nebulator.App
 
                     case ChannelState.Solo:
                         // Mute any other non-solo channels.
-                        Manager.Instance.OutputChannels
+                        MidiManager.Instance.OutputChannels
                             .Where(ch => ch.ChannelName != chc.BoundChannel.ChannelName && chc.State != ChannelState.Solo)
-                            .ForEach(ch => Manager.Instance.Kill(chc.BoundChannel));
+                            .ForEach(ch => MidiManager.Instance.Kill(chc.BoundChannel));
                         break;
 
                     case ChannelState.Mute:
-                        Manager.Instance.Kill(chc.BoundChannel);
+                        MidiManager.Instance.Kill(chc.BoundChannel);
                         break;
                 }
             }
@@ -513,7 +513,7 @@ namespace Nebulator.App
                            // _script.Flush();
                             // _channels.Values.ForEach(ch => ch.Flush(_stepTime.Tick));
                             ProcessPlay(PlayCommand.StopRewind);
-                            Manager.Instance.Kill(); // just in case
+                            MidiManager.Instance.Kill(); // just in case
                         }
                     }
                     // else keep going
@@ -901,7 +901,7 @@ namespace Nebulator.App
                     _mmTimer.Stop();
 
                     // Send midi stop all notes just in case.
-                    Manager.Instance.Kill();
+                    MidiManager.Instance.Kill();
                     break;
 
                 case PlayCommand.Rewind:
@@ -986,7 +986,7 @@ namespace Nebulator.App
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
                     // Make a Pattern object and call the formatter.
-                    IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
+                    IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
                     PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
 
@@ -1012,7 +1012,7 @@ namespace Nebulator.App
             if (_scriptFileName is not null && _script is not null)
             {
                 // Make a Pattern object and call the formatter.
-                IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
+                IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
                 //List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
                 //List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
