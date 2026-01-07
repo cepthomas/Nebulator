@@ -253,11 +253,6 @@ namespace Nebulator.Script
         /// <exception cref="ArgumentException"></exception>
         protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch, bool isDrums)
         {
-            //var ipatch = MidiDefs.GetInstrumentId(patch);
-            //// Maybe it is drum kit patch?
-            //if (ipatch < 0) ipatch = MidiDefs.GetDrumKitId(patch);
-            //if (ipatch < 0) throw new ArgumentException($"Invalid patch: {patch}");
-
             Manager.Instance.OpenOutputChannel(device, channelNumber, channelName, patch, isDrums);
         }
         #endregion

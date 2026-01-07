@@ -988,9 +988,6 @@ namespace Nebulator.App
                     // Make a Pattern object and call the formatter.
                     IEnumerable<OutputChannel> channels = Manager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
-                    //List<int> channelNumbers = [.. channels.Select(ch => ch.ChannelNumber)];
-                    //List<int> drumNumbers = [.. channels.Where(ch => ch.IsDrums).Select(ch => ch.ChannelNumber)];
-
                     PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
 
                     Dictionary<string, int> meta = new()

@@ -1039,6 +1039,25 @@
             <param name="line"></param>
             <returns></returns>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_THROWS(System.Type,System.Action,System.String,System.Int32)">
+            <summary>
+            Does the Action code throw?
+            </summary>
+            <param name="exType"></param>
+            <param name="act"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_THROWS_NOT(System.Action,System.String,System.Int32)">
+            <summary>
+            Does the Action code not throw?
+            </summary>
+            <param name="act"></param>
+            <param name="file"></param>
+            <param name="line"></param>
+            <returns></returns>
+        </member>
         <member name="F:Ephemera.NBagOfTricks.SettingsCore._fp">
             <summary>The fully  qualified file path.</summary>
         </member>
