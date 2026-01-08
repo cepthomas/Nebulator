@@ -1,6 +1,7 @@
 
 // Define some Neb vars.
-const double VEL = 0.8;
+const double VOL = 0.8;
+const double DUR = 2.2;
 
 Random rand = new();
 
@@ -19,6 +20,6 @@ public bool Boing(int notenum = 0)
         boinged = true;
     }
 
-    //SendNote("synth", notenum, VEL, 1.0);
+    SendNote("synth", notenum, VOL, DUR);
     return boinged;
 }

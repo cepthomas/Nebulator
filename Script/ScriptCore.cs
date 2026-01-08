@@ -115,7 +115,9 @@ namespace Nebulator.Script
             MusicDefs.AddCompound(name, parts);
         }
 
-        /// <summary>Send a note immediately. Lowest level sender.</summary>
+        /// <summary>
+        /// Send a note immediately. Lowest level sender.
+        /// </summary>
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff.</param>
@@ -208,7 +210,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// OpenMidiInput(midi_device_in, 1, "my midi input")
+        /// Creates a midi input channel.
         /// </summary>
         /// <param name="device"></param>
         /// <param name="channelNumber"></param>
@@ -219,7 +221,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// OpenMidiOutput(midi_device_out, 1, "keys", "AcousticGrandPiano")
+        /// Creates a midi output channel.
         /// </summary>
         /// <param name="device"></param>
         /// <param name="channelNumber"></param>
@@ -233,7 +235,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// OpenMidiOutputDrums(midi_device_out, 1, "drums", "Jazz")
+        /// Creates a midi output channel. Drums have to be handled a bit differently.
         /// </summary>
         /// <param name="device"></param>
         /// <param name="channelNumber"></param>
@@ -306,7 +308,6 @@ namespace Nebulator.Script
                     ch.Events.RemoveTransients(StepTime);
                 }
             }
-
         }
 
         /// <summary>

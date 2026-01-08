@@ -2,33 +2,9 @@
 // Example Nebulator composition file with some UI demo.
 //----- Warning: this is not actual music! --------
 
-///// Directives/preprocess: Include config and lib files. /////
+///// Directives/preprocess: Include config and lib files. TODO1 #:include is broken /////
 #:include utils.neb
 #:include scale.neb
-
-
-///// All the channel/outputs.
-// #:channel keys  midiout 1  AcousticGrandPiano
-// #:channel bass  midiout 2  AcousticBass
-// #:channel synth midiout 3  Lead1Square
-// #:channel drums midiout 10 Jazz // for drums = kit
-
-
-// default
-// @"C:\Dev\Libs\MidiLib\gm_defs.ini"
-// overrlay(s)
-// @"C:\Dev\Apps\Nebulua\exp_defs.ini"
-// [controllers] >>> OK
-// [instruments] >>> PATCH (per channel)
-// [drumkits] >>> PATCH (per channel)
-// [drums] >>> NOTE (per channel)
-
-
-// Uses nullin:name for DeviceName.
-// Uses nullout:name for DeviceName.
-// Uses oscin:port for DeviceName.
-// Uses oscout:host:port for DeviceName.
-
 
 utils u = new();
 Random rand = new();
@@ -53,16 +29,17 @@ List<int> myScaleNotes;
 // Nebulator setup stuff
 public override void Setup()
 {
-    // Midi channels. Adjust for your configuration.
-    string midi_device_in  = "loopMIDI Port 1";
+    // Midi channels. Adjust per configuration.
+    string midi_device_in = "loopMIDI Port 1";
+    string midi_device_out = "Microsoft GS Wavetable Synth"; // "VirtualMIDISynth #1"
+
     OpenMidiInput(midi_device_in, 1, "my midi input");
 
-    string midi_device_out    = "Microsoft GS Wavetable Synth"; //  or "VirtualMIDISynth #1"  -- VST host or OSC or null
-    OpenMidiOutput(midi_device_out, 1,  "keys",       "AcousticGrandPiano");
-    OpenMidiOutput(midi_device_out, 2,  "bass",       "AcousticBass");
-    OpenMidiOutput(midi_device_out, 3,  "synth",      "Lead1Square");
-    OpenMidiOutput(midi_device_out, 4,  "pan flute",  "StringEnsemble1");
-    OpenMidiOutput(midi_device_out, 10, "drums",      "Jazz");
+    OpenMidiOutput(midi_device_out, 1,  "keys",    "AcousticGrandPiano");
+    OpenMidiOutput(midi_device_out, 2,  "bass",    "AcousticBass");
+    OpenMidiOutput(midi_device_out, 3,  "synth",   "Lead1Square");
+    OpenMidiOutput(midi_device_out, 4,  "strings", "StringEnsemble1");
+    OpenMidiOutputDrums(midi_device_out, 10, "drums",   "Jazz");
 
     // Create sets of notes.
     CreateNotes("MY_SCALE", "1 3 4 b7");
