@@ -10,7 +10,7 @@ int _up = 0;
 
 public void init(string scale, string root, int octDown, int octUp)
 {
-    _scaleNotes = GetNotes($"{root}.{scale}");
+    _scaleNotes = ParseNotes($"{root}.{scale}");
     _count = _scaleNotes.Count;
     _noteWeights = new int[_count];
     _down = octDown;

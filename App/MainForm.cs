@@ -10,12 +10,11 @@ using System.Reflection;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
-using Ephemera.NScript;
-using Nebulator.Script;
 using Ephemera.MidiLibEx;
 using Ephemera.MusicLib;
+using Ephemera.NScript;
+using Nebulator.Script;
 
-// TODO1? Nebulator named input devices and controllers like outputs.
 
 
 namespace Nebulator.App
@@ -128,6 +127,7 @@ namespace Nebulator.App
 
             // Time controller.
             timeBar.DrawColor = _settings.DrawColor;
+            timeBar.SelectedColor = _settings.SelectedColor;
             timeBar.StateChange += TimeBar_StateChange; // += TimeBar_CurrentTimeChanged;
             timeBar.Invalidate();
 
@@ -154,10 +154,6 @@ namespace Nebulator.App
 
             PopulateRecentMenu();
 
-            //bool ok = CreateDevices();
-
-            // if (ok)
-            // {
             // Fast mm timer.
             SetFastTimerPeriod();
             _mmTimer.Start();
@@ -184,7 +180,6 @@ namespace Nebulator.App
             {
                 _logger.Error($"Couldn't open script file: {sopen}");
             }
-            // }
 
             base.OnLoad(e);
         }
@@ -491,10 +486,10 @@ namespace Nebulator.App
                     // Execute the script step. Note: Need exception handling here to protect from user script errors.
                     try
                     {
-                        // Execute user step functions.
+                        // Execute user step function.
                         _script.Step();
 
-                        // Send any sequence steps.
+                        // Send any predefined sequence steps.
                         _script.DoNextStep(sounding);
                     }
                     catch (Exception ex)
@@ -503,7 +498,8 @@ namespace Nebulator.App
                     }
 
                     ///// Bump time.
-                    bool done = timeBar.Increment();
+                    bool done = !timeBar.Increment();
+
                     // Check for end of play. If no steps or not selected, free running mode so always keep going.
                     if (timeBar.Length.Tick > 1)
                     {

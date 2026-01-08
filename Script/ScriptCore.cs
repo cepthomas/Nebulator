@@ -21,7 +21,7 @@ namespace Nebulator.Script
         internal bool _disposed = false;
         #endregion
 
-        #region Properties - accessible by host and script
+        #region API - Properties shared by host and script
         /// <summary>Sound is playing. Main:W Script:R</summary>
         public bool Playing { get; set; } = false;
 
@@ -38,7 +38,7 @@ namespace Nebulator.Script
         public double MasterVolume { get; set; } = 0;
         #endregion
 
-        #region Public functions to override - called by host
+        #region API - Script implemented functions called by host
         /// <summary>Called to initialize Nebulator stuff.</summary>
         public virtual void Setup() { }
 
@@ -52,16 +52,7 @@ namespace Nebulator.Script
         public virtual void InputControl(string dev, int channel, int controller, int value) { }
         #endregion
 
-        #region Internal functions - called by script
-        /// <summary>
-        /// Standard print.
-        /// </summary>
-        /// <param name="vars"></param>
-        protected void Print(params object[] vars)
-        {
-            _logger.Info(string.Join(", ", vars));
-        }
-
+        #region API - Functions callable by script
         /// <summary>
         /// Create a defined sequence and add to internal collection.
         /// </summary>
@@ -113,6 +104,16 @@ namespace Nebulator.Script
         protected void CreateNotes(string name, string parts)
         {
             MusicDefs.AddCompound(name, parts);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="snotes"></param>
+        /// <returns></returns>
+        public List<int> ParseNotes(string snotes)
+        {
+            return Utils.ParseNotes(snotes);
         }
 
         /// <summary>
@@ -249,15 +250,12 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// 
+        /// Standard print.
         /// </summary>
-        /// <param name="snotes"></param>
-        /// <returns></returns>
-        protected List<int> GetNotes(string snotes)
+        /// <param name="vars"></param>
+        protected void Print(params object[] vars)
         {
-            //TODO1 Notes = MusicDefs.GetNotesFromString(s); >>> check for IsDrums and call MidiDefs.GetDrumId() instead
-
-            return [];
+            _logger.Info(string.Join(", ", vars));
         }
         #endregion
 
@@ -425,5 +423,34 @@ namespace Nebulator.Script
             return info;
         }
         #endregion
+    }
+
+    public class Utils
+    {
+        /// <summary>
+        /// Gets note number for music or drum names.
+        /// </summary>
+        /// <param name="snotes"></param>
+        /// <returns></returns>
+        public static List<int> ParseNotes(string snotes)
+        {
+            List<int> notes = MusicDefs.GetNotesFromString(snotes);
+            if (!notes.Any())
+            {
+                // It might be a drum.
+                int idrum = MidiDefs.GetDrumId(snotes);
+                if (idrum >= 0)
+                {
+                    notes.Add(idrum);
+                }
+                else
+                {
+                    // Not a drum either - error!
+                    throw new InvalidOperationException($"Invalid notes [{snotes}]");
+                }
+            }
+
+            return notes;
+        }
     }
 }

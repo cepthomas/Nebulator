@@ -1,4 +1,4 @@
-# What This Is
+# What This Is  TODO1 fix all this
 
 - Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
 - C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
@@ -75,6 +75,36 @@ class klass
 # Script API
 
 What the script supports.
+
+// API - Properties shared by host and script
+public bool Playing { get; set; } = false;
+public MusicTime StepTime { get; set; } = new MusicTime(0);
+public double RealTime { get; set; } = 0.0;
+public int Tempo { get; set; } = 0;
+public double MasterVolume { get; set; } = 0;
+
+// API - Script implemented functions called by host
+public virtual void Setup() { }
+public virtual void Step() { }
+public virtual void InputNote(string dev, int channel, int note, int vel) { }
+public virtual void InputControl(string dev, int channel, int controller, int value) { }
+
+// API - Functions callable by script
+protected void Print(params object[] vars) {}
+protected Sequence CreateSequence(int beats, SequenceElements elements) {}
+protected Section CreateSection(int beats, string name, SectionElements elements) {}
+protected void CreateNotes(string name, string parts) {}
+protected void SendNote(string chanName, int notenum, double vol, MusicTime dur) {}
+protected void SendNote(string chanName, string notestr, double vol, MusicTime dur) {}
+protected void SendNote(string chanName, int notenum, double vol, double dur = 0.1) {}
+protected void SendNote(string chanName, string notestr, double vol, double dur = 0.1) {}
+protected void SendNoteOn(string chanName, int notenum, double vol) {}
+protected void SendNoteOff(string chanName, int notenum) {}
+protected void SendController(string chanName, string controller, int val) {}
+protected void OpenMidiInput(string device, int channelNumber, string channelName) {}
+protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch) {}
+protected void OpenMidiOutputDrums(string device, int channelNumber, string channelName, string patch) {}
+protected List<int> ParseNotes(string snotes) {}
 
 ## Basics
 
@@ -322,7 +352,7 @@ Define a group of notes for use as a note, or in a chord or scale.
 - note: List of note definitions.
 
 ```c#
-List<double> GetNotes("scale_or_chord", "key")
+List<double> ParseNotes("scale_or_chord", "key")
 ```
 Get an array of scale or chord notes.
 

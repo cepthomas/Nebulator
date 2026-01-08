@@ -69,18 +69,7 @@ namespace Nebulator.Script
         /// <param name="volume">Base volume.</param>
         public void Add(string pattern, string what, double volume)
         {
-            List<int> notes = MusicDefs.GetNotesFromString(what);
-
-            if (notes.Any())
-            {
-                // It might be a drum.
-                int idrum = MidiDefs.GetDrumId(what);
-                if (idrum >= 0)
-                {
-                    notes.Add(idrum);
-                }
-                // else not a drum either - error!
-            }
+            List<int> notes = Utils.ParseNotes(what);
 
             // Remove visual markers.
             pattern = pattern.Replace("|", "");
@@ -215,20 +204,10 @@ namespace Nebulator.Script
         /// <summary>
         /// Constructor that parses note string.
         /// </summary>
-        /// <param name="s"></param>
-        public SequenceElement(string s)
+        /// <param name="snotes"></param>
+        public SequenceElement(string snotes)
         {
-            Notes = MusicDefs.GetNotesFromString(s);
-            if (Notes.Any())
-            {
-                // It might be a drum.
-                try
-                {
-                    int idrum = MidiDefs.GetDrumId(s);
-                    Notes.Add(idrum);
-                }
-                catch { }
-            }
+            Notes = Utils.ParseNotes(snotes);
         }
 
         /// <summary>
