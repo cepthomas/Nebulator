@@ -81,6 +81,8 @@ namespace Nebulator.App
             string logFileName = Path.Combine(appDir, "log.txt");
             LogManager.MinLevelFile = _settings.FileLogLevel;
             LogManager.MinLevelNotif = _settings.NotifLogLevel;
+            LogManager.SourceInfo = false;
+            //LogManager.Timestamp = false;
             LogManager.LogMessage += LogManager_LogMessage;
             LogManager.Run(logFileName, 100000);
 

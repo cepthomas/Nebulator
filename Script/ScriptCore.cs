@@ -14,8 +14,8 @@ namespace Nebulator.Script
         /// <summary>My logger.</summary>
         internal readonly Logger _logger = LogManager.CreateLogger("Script");
 
-        /// <summary>All sections.</summary>
-        internal List<Section> _sections = [];
+        /// <summary>All sections. Static so it is common to all script classes derived from ScriptCore.</summary>
+        internal static List<Section> _sections = [];
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;

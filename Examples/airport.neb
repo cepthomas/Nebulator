@@ -6,15 +6,15 @@
 class TapeLoop
 {
     public string snote;
-    public BarTime duration;
-    public BarTime delay;
-    public BarTime nextStart;
+    public MusicTime duration;
+    public MusicTime delay;
+    public MusicTime nextStart;
     public TapeLoop(string nt, double dur, double del)
     {
         snote = nt;
-        duration = new BarTime(dur);
-        delay = new BarTime(del);
-        nextStart = new BarTime(del);
+        duration = new MusicTime(dur);
+        delay = new MusicTime(del);
+        nextStart = new MusicTime(del);
     }
 }
 
@@ -49,7 +49,7 @@ public override void Step()
 {
     foreach(TapeLoop l in _loops)
     {
-        if(StepTime >= l.nextStart)
+        if (StepTime >= l.nextStart)
         {
             Print("Starting note", l.snote);
             SendNote("sound", l.snote, SOUND_VOL, l.duration);

@@ -943,7 +943,7 @@
         </member>
         <member name="M:Ephemera.NBagOfTricks.PNUT.TestSuite.UT_ASSERT``1(``0,``0,System.String,System.Int32)">
             <summary>
-            Prints the condition and gens assert/exception.
+            Prints the condition and gens assert exception.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="value1"></param>
@@ -1130,6 +1130,12 @@
         </member>
         <member name="P:Ephemera.NBagOfTricks.LogManager.MinLevelNotif">
             <summary>Event filter for callback event.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.LogManager.Timestamp">
+            <summary>Add a timestamp.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfTricks.LogManager.SourceInfo">
+            <summary>Add source file/line.</summary>
         </member>
         <member name="P:Ephemera.NBagOfTricks.LogManager.TimeFormat">
             <summary>Format for file records.</summary>
