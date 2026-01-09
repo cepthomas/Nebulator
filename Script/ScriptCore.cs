@@ -399,7 +399,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Get all section names and when they start. The end marker is also added.
+        /// Get all section names and when they start in beats. The end marker is also added.
         /// Will be empty if free-running.
         /// </summary>
         /// <returns></returns>

@@ -84,12 +84,8 @@ namespace Nebulator.App
             LogManager.LogMessage += LogManager_LogMessage;
             LogManager.Run(logFileName, 100000);
 
-            _compiler = new()
-            {
-                IgnoreWarnings = true,          // to taste
-                Namespace = "Nebulator.Script", // same as ScriptCore.cs
-                BaseClassName = "ScriptCore",   // same as ScriptCore.cs
-            };
+            // Create compiler.
+            _compiler = new() { IgnoreWarnings = true };
 
             #region Init UI from settings
             toolStrip1.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.SelectedColor };
@@ -506,8 +502,6 @@ namespace Nebulator.App
                         // Check for end.
                         if (done)
                         {
-                           // _script.Flush();
-                            // _channels.Values.ForEach(ch => ch.Flush(_stepTime.Tick));
                             ProcessPlay(PlayCommand.StopRewind);
                             MidiManager.Instance.Kill(); // just in case
                         }
@@ -939,12 +933,27 @@ namespace Nebulator.App
         /// <param name="e"></param>
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Space)
+            switch (e.KeyCode)
             {
-                // Handle start/stop toggle.
-                ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start);
-                e.Handled = true;
+                case Keys.Space:  // Handle start/stop toggle.
+                    ProcessPlay(chkPlay.Checked ? PlayCommand.Stop : PlayCommand.Start);
+                    e.Handled = true;
+                    break;
+
+                case Keys.Escape:  // Handle time bar mouse ops.
+                    var tbr = new Rectangle(timeBar.Location, timeBar.Size);
+                    var mp = PointToClient(MousePosition);
+                    if (tbr.Contains(mp))
+                    {
+                        timeBar.ResetSelection();
+                        e.Handled = true;
+                    }
+                    break;
+
+                default:
+                    break;
             }
+
             base.OnKeyDown(e);
         }
         #endregion

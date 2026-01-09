@@ -1,4 +1,4 @@
-# What This Is  TODO1 fix all this
+# What This Is  TODO1 fix all this - or make into full example file?
 
 - Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
 - C# makes a reasonable scripting language, given that we have the compiler available to us at run time.
@@ -144,7 +144,7 @@ Notes (single) and note groups (chords, scales) are referenced in several ways:
 
 ## Directives
 
-### Include
+### Include ===================================== caveats!
 ```c#
 #:include some path\utils.neb
 ```

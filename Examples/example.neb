@@ -2,7 +2,7 @@
 // Example Nebulator composition file with some UI demo.
 //----- Warning: this is not actual music! --------
 
-///// Directives/preprocess: Include config and lib files. TODO1 #:include is broken /////
+///// Directives/preprocess: Include config and lib files. /////
 #:include utils.neb
 #:include scale.neb
 
@@ -36,11 +36,11 @@ public override void Setup()
 
     OpenMidiInput(midi_device_in, 1, "my midi input");
 
-    OpenMidiOutput(midi_device_out, 1,  "keys",    "AcousticGrandPiano");
-    OpenMidiOutput(midi_device_out, 2,  "bass",    "AcousticBass");
-    OpenMidiOutput(midi_device_out, 3,  "synth",   "Lead1Square");
-    OpenMidiOutput(midi_device_out, 4,  "strings", "StringEnsemble1");
-    OpenMidiOutputDrums(midi_device_out, 10, "drums",   "Jazz");
+    OpenMidiOutput(midi_device_out, 1, "keys", "AcousticGrandPiano");
+    OpenMidiOutput(midi_device_out, 2, "bass", "AcousticBass");
+    OpenMidiOutput(midi_device_out, 3, "synth", "Lead1Square");
+    OpenMidiOutput(midi_device_out, 4, "strings", "StringEnsemble1");
+    OpenMidiOutputDrums(midi_device_out, 10, "drums", "Jazz");
 
     // Create sets of notes.
     CreateNotes("MY_SCALE", "1 3 4 b7");

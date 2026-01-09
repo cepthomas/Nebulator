@@ -15,8 +15,13 @@ namespace Nebulator.App
     /// <summary>Nebulator compiler.</summary>
     public class Compiler : CompilerCore
     {
+        /// <summary>Configure core compiler.</summary>
         public Compiler()
         {
+            // Names.
+            Namespace = "Nebulator.Script";
+            BaseClassName = "ScriptCore";
+
             // Our references.
             SystemDlls =
             [
