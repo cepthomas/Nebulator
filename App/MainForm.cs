@@ -48,9 +48,6 @@ namespace Nebulator.App
         /// <summary>All the channel play controls.</summary>
         readonly List<ChannelControl> _channelControls = [];
 
-        /// <summary>Persisted internal values for current script file.</summary>
-        Bag _nppVals = new(); // TODO useful?
-
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
 
@@ -226,29 +223,6 @@ namespace Nebulator.App
             }
 
             base.Dispose(disposing);
-        }
-        #endregion
-
-        #region Project persistence
-        /// <summary>
-        /// Save current values.
-        /// </summary>
-        void SaveProjectValues()
-        {
-            _nppVals.Clear();
-            _nppVals.SetValue("master", "speed", sldTempo.Value);
-            _nppVals.SetValue("master", "volume", sldVolume.Value);
-
-            MidiManager.Instance.OutputChannels.ForEach(ch =>
-            {
-                if(ch.Events.Count() > 0)
-                {
-                    _nppVals.SetValue(ch.ChannelName, "volume", ch.Volume);
-                    //_nppVals.SetValue(ch.ChannelName, "state", ch.State);
-                }
-            });
-
-            _nppVals.Save();
         }
         #endregion
 
@@ -668,17 +642,11 @@ namespace Nebulator.App
             try
             {
                 // Clean up the old.
-                SaveProjectValues();
                 timeBar.Reset();
 
                 if (File.Exists(fn))
                 {
                     _logger.Info($"Opening {fn}");
-
-                    // Get the persisted properties.
-                    _nppVals = Bag.Load(fn.Replace(".neb", ".nebp"));
-                    sldTempo.Value = _nppVals.GetDouble("master", "speed", 100.0);
-                    sldVolume.Value = _nppVals.GetDouble("master", "volume", VolumeDefs.DEFAULT_VOLUME);
 
                     _scriptFileName = fn;
                     SetCompileStatus(true);
