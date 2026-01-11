@@ -198,7 +198,6 @@ namespace Nebulator.App
             };
             _settings.WordWrap = textViewer.WordWrap;
             _settings.Save();
-            SaveProjectValues();
 
             base.OnFormClosing(e);
         }
