@@ -7,12 +7,6 @@
         <member name="T:Ephemera.MusicLib.MusicDefs">
             <summary>Definitions for use inside scripts. For doc see MusicDefinitions.md.</summary>
         </member>
-        <member name="P:Ephemera.MusicLib.MusicDefs.Instance">
-            <summary>The singleton instance.</summary>
-        </member>
-        <member name="F:Ephemera.MusicLib.MusicDefs._instance">
-            <summary>The singleton instance.</summary>
-        </member>
         <member name="F:Ephemera.MusicLib.MusicDefs._scales">
             <summary>All the builtin scale defs.</summary>
         </member>
@@ -35,7 +29,7 @@
         <member name="F:Ephemera.MusicLib.MusicDefs.NOTES_PER_OCTAVE">
             <summary>TODO support other scales?</summary>
         </member>
-        <member name="M:Ephemera.MusicLib.MusicDefs.#ctor">
+        <member name="M:Ephemera.MusicLib.MusicDefs.#cctor">
             <summary>
             Load all the music definitions.
             </summary>
@@ -104,13 +98,13 @@
             <param name="name">which</param>
             <returns>The list of notes or empty if invalid.</returns>
         </member>
-        <member name="M:Ephemera.MusicLib.MusicDefs.GenMarkdown(System.String)">
+        <member name="M:Ephemera.MusicLib.MusicDefs.GenMarkdown">
             <summary>
             Make content from the definitions.
             </summary>
             <returns>Content.</returns>
         </member>
-        <member name="M:Ephemera.MusicLib.MusicDefs.GenLua(System.String)">
+        <member name="M:Ephemera.MusicLib.MusicDefs.GenLua">
             <summary>
             Make content from the definitions.
             </summary>

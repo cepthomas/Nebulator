@@ -4,6 +4,12 @@
         <name>Ephemera.NScript</name>
     </assembly>
     <members>
+        <member name="T:Ephemera.NScript.ScriptException">
+            <summary>Reporting hard errors.</summary>
+        </member>
+        <member name="M:Ephemera.NScript.ScriptException.#ctor">
+            <summary>Reporting hard errors.</summary>
+        </member>
         <member name="T:Ephemera.NScript.Report">
             <summary>General script result container.</summary>
         </member>
@@ -54,12 +60,6 @@
             <param name="lineNum"></param>
             <returns></returns>
         </member>
-        <member name="T:Ephemera.NScript.ScriptException">
-            <summary>Reporting hard errors.</summary>
-        </member>
-        <member name="M:Ephemera.NScript.ScriptException.#ctor">
-            <summary>Reporting hard errors.</summary>
-        </member>
         <member name="M:Ephemera.NScript.Utils.WarmupRoslyn">
             <summary>
             From https://github.com/RickStrahl/Westwind.Scripting/blob/master/Westwind.Scripting/RoslynLifetimeManager.cs
@@ -73,22 +73,22 @@
             <summary>Client option.</summary>
         </member>
         <member name="P:Ephemera.NScript.CompilerCore.Namespace">
-            <summary>Script namespace.</summary>
+            <summary>Script namespace to use for generated classes.</summary>
         </member>
         <member name="P:Ephemera.NScript.CompilerCore.BaseClassName">
-            <summary>Base class.</summary>
+            <summary>Base class to use for generated classes..</summary>
         </member>
         <member name="P:Ephemera.NScript.CompilerCore.TempDir">
-            <summary>Client may weant to tell us to use this for temp files.</summary>
+            <summary>Client may want to define this for temp files.</summary>
         </member>
         <member name="P:Ephemera.NScript.CompilerCore.SystemDlls">
-            <summary>Default system dlls. Client can add or subtract.</summary>
+            <summary>Specify system dlls.</summary>
+        </member>
+        <member name="P:Ephemera.NScript.CompilerCore.LocalDlls">
+            <summary>Specify application dlls.</summary>
         </member>
         <member name="P:Ephemera.NScript.CompilerCore.Usings">
             <summary>Additional using statements not supplied by core dlls.</summary>
-        </member>
-        <member name="P:Ephemera.NScript.CompilerCore.LocalDlls">
-            <summary>App dlls supplied by app compiler.</summary>
         </member>
         <member name="P:Ephemera.NScript.CompilerCore.CompiledScript">
             <summary>The final compiled script.</summary>

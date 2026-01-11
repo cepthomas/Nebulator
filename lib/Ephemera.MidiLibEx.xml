@@ -141,125 +141,28 @@
             <param name="size"></param>
             <returns></returns>
         </member>
-        <member name="T:Ephemera.MidiLibEx.MidiEventDesc">
-            <summary>
-            Internal representation of one midi event.
-            </summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiEventDesc.ChannelNumber">
-            <summary>One-based channel number.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiEventDesc.ChannelName">
-            <summary>Associated channel name.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiEventDesc.AbsoluteTime">
-            <summary>Time (ticks) from original file.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiEventDesc.ScaledTime">
-            <summary>Time (ticks) scaled to internal units using send PPQ.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLibEx.MidiEventDesc.RawEvent">
-            <summary>The raw midi event.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiEventDesc.#ctor(NAudio.Midi.MidiEvent,System.String)">
-            <summary>Normal constructor from NAudio event.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiEventDesc.ToString">
-            <summary>Read me.</summary>
-        </member>
         <member name="T:Ephemera.MidiLibEx.MidiExport">
             <summary>
             Writes to various output formats.
             </summary>
         </member>
-        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportCsv(System.String,System.Collections.Generic.IEnumerable{Ephemera.MidiLibEx.PatternInfo},System.Collections.Generic.List{System.Int32},System.Collections.Generic.List{System.Int32},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportCsv(System.String,System.Collections.Generic.IEnumerable{Ephemera.MidiLibEx.PatternInfo},System.Collections.Generic.IEnumerable{Ephemera.MidiLib.OutputChannel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
             Export the contents in a csv readable form. This is as the events appear in the original file.
             </summary>
             <param name="outFileName">Where to boss?</param>
             <param name="patterns">Specific patterns.</param>
-            <param name="channelNumbers">Specific channnel numbers.</param>
-            <param name="drumChannelNumbers">Drum channel numbers.</param>
+            <param name="channels">Specific channnel numbers.</param>
             <param name="global">File meta data to include.</param>
         </member>
-        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportMidi(System.String,Ephemera.MidiLibEx.PatternInfo,System.Collections.Generic.List{System.Int32},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+        <member name="M:Ephemera.MidiLibEx.MidiExport.ExportMidi(System.String,Ephemera.MidiLibEx.PatternInfo,System.Collections.Generic.IEnumerable{Ephemera.MidiLib.OutputChannel},System.Collections.Generic.Dictionary{System.String,System.Int32})">
             <summary>
             Export pattern parts to individual midi files. This is as the events appear in the original file.
             </summary>
             <param name="outFileName">Where to boss?</param>
             <param name="pattern">Specific pattern.</param>
-            <param name="channelNumbers">Specific channnel numbers.</param>
+            <param name="channels">Specific channnels.</param>
             <param name="global">File meta data to include.</param>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiExport.Format(Ephemera.MidiLibEx.MidiEventDesc,System.Boolean)">
-            <summary>
-            Format event for export.
-            </summary>
-            <param name="evtDesc">Event to format</param>
-            <param name="isDrums"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Ephemera.MidiLibEx.MidiTimeConverter">
-            <summary>Helpers to translate between midi standard and arbtrary internal representation.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLibEx.MidiTimeConverter._midiPpq">
-            <summary>Resolution for midi file events aka DeltaTicksPerQuarterNote.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLibEx.MidiTimeConverter._tempo">
-            <summary>Tempo aka BPM.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.#ctor(System.Int32,System.Double)">
-            <summary>
-            Constructor.
-            </summary>
-            <param name="midiPpq">The file resolution.</param>
-            <param name="tempo">BPM may be needed for some calcs.</param>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.InternalToMidi(System.Int32)">
-            <summary>
-            Conversion function.
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.MidiToInternal(System.Int64)">
-            <summary>
-            Conversion function.
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.InternalToMsec(System.Int32)">
-            <summary>
-            Conversion function.
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.MidiToSec(System.Int32)">
-            <summary>
-            Conversion function.
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.MidiPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.InternalPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.MidiTimeConverter.RoundedInternalPeriod">
-            <summary>
-            Integer time between events.
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:Ephemera.MidiLibEx.PatternInfo">
             <summary>
@@ -296,17 +199,17 @@
             Default constructor. Use only for initialization!
             </summary>
         </member>
-        <member name="M:Ephemera.MidiLibEx.PatternInfo.#ctor(System.String,System.Int32,System.Int32)">
+        <member name="M:Ephemera.MidiLibEx.PatternInfo.#ctor(System.String,System.Int32)">
             <summary>
             Normal constructor.
             </summary>
             <param name="name">Pattern name</param>
-            <param name="tempo">Defalt tempo</param>
             <param name="ppq">Resolution</param>
         </member>
-        <member name="M:Ephemera.MidiLibEx.PatternInfo.AddEvent(Ephemera.MidiLibEx.MidiEventDesc)">
+        <member name="M:Ephemera.MidiLibEx.PatternInfo.AddEvent(NAudio.Midi.MidiEvent)">
             <summary>
-            Add an event to the collection. This function does the scaling.
+            Add an event to the collection.
+            Note!! this replaces the original file AbsoluteTime with the value scaled for internal use.
             </summary>
             <param name="evt">The event to add.</param>
         </member>
@@ -315,7 +218,7 @@
             Get enumerator for events using supplied filters.
             </summary>
             <param name="channels">Specific channnels.</param>
-            <returns>Enumerator sorted by scaled time.</returns>
+            <returns>Enumerator sorted by absolute time.</returns>
         </member>
         <member name="M:Ephemera.MidiLibEx.PatternInfo.GetEventsWhen(System.Int32)">
             <summary>

@@ -32,10 +32,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Libs\MidiLibEx\MidiLibEx.csproj" />
-        <ProjectReference Include="..\..\..\Libs\MidiLib\MidiLib.csproj" />
-        <ProjectReference Include="..\..\..\Libs\MusicLib\MusicLib.csproj" />
-        <ProjectReference Include="..\..\..\Libs\NScript\NScript.csproj" />
         <ProjectReference Include="..\Script\Script.csproj" />
     </ItemGroup>
 
@@ -46,21 +42,9 @@
         <Reference Include="Ephemera.NBagOfUis">
             <HintPath>..\lib\Ephemera.NBagOfUis.dll</HintPath>
         </Reference>
-        <!-- <Reference Include="Ephemera.MidiLib">
-          <HintPath>lib\Ephemera.MidiLib.dll</HintPath>
-        </Reference> -->
-        <!-- <Reference Include="Ephemera.MidiLibEx">
-          <HintPath>lib\Ephemera.MidiLibEx.dll</HintPath>
-        </Reference> -->
-        <!-- <Reference Include="Ephemera.MusicLib">
-          <HintPath>..\lib\Ephemera.MusicLib.dll</HintPath>
-        </Reference> -->
         <Reference Include="Ephemera.NebOsc">
             <HintPath>..\lib\Ephemera.NebOsc.dll</HintPath>
         </Reference>
-        <!-- <Reference Include="Ephemera.NScript">
-            <HintPath>..\lib\Ephemera.NScript.dll</HintPath>
-        </Reference> -->
     </ItemGroup>
 
     <ItemGroup>
