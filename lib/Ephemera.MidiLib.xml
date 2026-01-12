@@ -4,9 +4,6 @@
         <name>Ephemera.MidiLib</name>
     </assembly>
     <members>
-        <member name="T:Ephemera.MidiLib.ChannelFlavor">
-            <summary>Some chanels have specialized behavior.</summary>
-        </member>
         <member name="T:Ephemera.MidiLib.HandleOps">
             <summary>Encode device/channel info for round trip through script.</summary>
         </member>
@@ -19,9 +16,6 @@
         <member name="P:Ephemera.MidiLib.InputChannel.ChannelNumber">
             <summary>Actual 1-based midi channel number.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.InputChannel.Flavor">
-            <summary>Optional variation.</summary>
-        </member>
         <member name="P:Ephemera.MidiLib.InputChannel.Device">
             <summary>Associated device.</summary>
         </member>
@@ -31,22 +25,21 @@
         <member name="P:Ephemera.MidiLib.InputChannel.Handle">
             <summary>Handle for use by scripts.</summary>
         </member>
-        <member name="M:Ephemera.MidiLib.InputChannel.#ctor(Ephemera.MidiLib.IInputDevice,System.Int32,Ephemera.MidiLib.ChannelFlavor)">
+        <member name="M:Ephemera.MidiLib.InputChannel.#ctor(Ephemera.MidiLib.IInputDevice,System.Int32)">
             <summary>
             Constructor with required args.
             </summary>
             <param name="device"></param>
             <param name="channelNumber"></param>
-            <param name="flavor"></param>
         </member>
         <member name="T:Ephemera.MidiLib.OutputChannel">
             <summary>Describes one midi output channel.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.OutputChannel._instruments">
-            <summary>All the possible instruments. May be GM, from alias file, drum kits, ...</summary>
+        <member name="F:Ephemera.MidiLib.OutputChannel._device">
+            <summary>Associated device.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.OutputChannel._drums">
-            <summary>If it's a drum channel use drum names instead of notes.</summary>
+        <member name="F:Ephemera.MidiLib.OutputChannel._aliases">
+            <summary>Instruments from alias file.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.ChannelName">
             <summary>Channel name - optional.</summary>
@@ -54,57 +47,53 @@
         <member name="P:Ephemera.MidiLib.OutputChannel.ChannelNumber">
             <summary>Actual 1-based midi channel number.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.OutputChannel.Flavor">
-            <summary>Optional variation.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.OutputChannel.Device">
-            <summary>Associated device.</summary>
-        </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.Handle">
             <summary>Handle for use by scripts.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.Enable">
             <summary>True if channel is active.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.OutputChannel.Patch">
-            <summary>Current instrument/patch number. Set sends a midi patch message.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.OutputChannel.PatchName">
-            <summary>Current instrument/patch name. Set sends a midi patch message.</summary>
-        </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.Volume">
             <summary>Current volume.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.OutputChannel.InstrumentFile">
-            <summary>Override default instrument list.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.Events">
             <summary>Associated events - optional depending on implementation.</summary>
         </member>
-        <member name="M:Ephemera.MidiLib.OutputChannel.#ctor(Ephemera.MidiLib.IOutputDevice,System.Int32,Ephemera.MidiLib.ChannelFlavor)">
+        <member name="P:Ephemera.MidiLib.OutputChannel.Patch">
+            <summary>Current instrument/patch number.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.OutputChannel.PatchName">
+            <summary>Current instrument/patch name. Set may update internal collection and sends a midi patch message.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.OutputChannel.InitInstruments(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="patchName"></param>
+            <param name="aliasFile"></param>
+            <exception cref="T:Ephemera.MidiLib.MidiLibException"></exception>
+        </member>
+        <member name="M:Ephemera.MidiLib.OutputChannel.#ctor(Ephemera.MidiLib.IOutputDevice,System.Int32)">
             <summary>
             Constructor with required args.
             </summary>
             <param name="device"></param>
             <param name="channelNumber"></param>
-            <param name="flavor"></param>
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.GetInstrumentName(System.Int32)">
             <summary>
-            Get instrument name.
+            Get instrument name from id.
             </summary>
             <param name="id"></param>
             <returns>The instrument name or a fabricated one if unknown.</returns>
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.GetInstrumentId(System.String)">
             <summary>
-            Get corresponding number.
+            
             </summary>
             <param name="name"></param>
             <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.OutputChannel.LoadInstrumentFile">
-            <summary>Load instrument names.</summary>
+            <exception cref="T:System.ArgumentException"></exception>
         </member>
         <member name="T:Ephemera.MidiLib.ChannelState">
             <summary>Channel playing.</summary>
@@ -323,8 +312,11 @@
         <member name="F:Ephemera.MidiLib.MidiDefs.DEFAULT_DRUM_CHANNEL">
             <summary>The normal drum channel.</summary>
         </member>
+        <member name="F:Ephemera.MidiLib.MidiDefs._instruments">
+            <summary>All the GM instruments.</summary>
+        </member>
         <member name="F:Ephemera.MidiLib.MidiDefs._controllerIds">
-            <summary>All the GM controllers. TODO future custom list like instruments?</summary>
+            <summary>All the known GM controllers. TODO future custom list like instruments?</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MidiDefs._controllerIdsAll">
             <summary>Standard set plus unnamed ones.</summary>
@@ -332,8 +324,18 @@
         <member name="F:Ephemera.MidiLib.MidiDefs._drums">
             <summary>All the GM drums.</summary>
         </member>
+        <member name="F:Ephemera.MidiLib.MidiDefs._drumKits">
+            <summary>All the GM drum kits.</summary>
+        </member>
         <member name="M:Ephemera.MidiLib.MidiDefs.#cctor">
             <summary>Initialize some collections.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetInstrumentName(System.Int32)">
+            <summary>
+            Get instrument name. Throws if invalid.
+            </summary>
+            <param name="id"></param>
+            <returns>The instrument name or a fabricated one if unknown.</returns>
         </member>
         <member name="M:Ephemera.MidiLib.MidiDefs.GetControllerName(System.Int32)">
             <summary>
@@ -349,19 +351,40 @@
             <param name="id"></param>
             <returns>The drum name or a fabricated one if unknown.</returns>
         </member>
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumKitName(System.Int32)">
+            <summary>
+            Get drum kit name. Throws if invalid.
+            </summary>
+            <param name="id"></param>
+            <returns>The drum kit name or a fabricated one if unknown.</returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetInstrumentId(System.String)">
+            <summary>
+            Get corresponding number.
+            </summary>
+            <param name="name"></param>
+            <returns>The id or -1 if not valid</returns>
+        </member>
         <member name="M:Ephemera.MidiLib.MidiDefs.GetControllerId(System.String)">
             <summary>
             Get corresponding number.
             </summary>
             <param name="name"></param>
-            <returns></returns>
+            <returns>The id or -1 if not valid</returns>
         </member>
         <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumId(System.String)">
             <summary>
             Get corresponding number.
             </summary>
             <param name="name"></param>
-            <returns></returns>
+            <returns>The id or -1 if not valid</returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumKitId(System.String)">
+            <summary>
+            Get corresponding number.
+            </summary>
+            <param name="name"></param>
+            <returns>The id or -1 if not valid</returns>
         </member>
         <member name="M:Ephemera.MidiLib.MidiDefs.GenMarkdown">
             <summary>
@@ -504,22 +527,15 @@
             <param name="channelName"></param>
             <returns></returns>
         </member>
-        <member name="M:Ephemera.MidiLib.MidiManager.OpenOutputChannel(System.String,System.Int32,System.String)">
+        <member name="M:Ephemera.MidiLib.MidiManager.OpenOutputChannel(System.String,System.Int32,System.String,System.String,System.String)">
             <summary>
             Open a normal output channel. Lazy inits the device. Throws if anything is invalid.
             </summary>
             <param name="deviceName"></param>
             <param name="channelNumber"></param>
             <param name="channelName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiManager.OpenOutputChannelDrums(System.String,System.Int32,System.String)">
-            <summary>
-            Open a drums output channel. Lazy inits the device. Throws if anything is invalid.
-            </summary>
-            <param name="deviceName"></param>
-            <param name="channelNumber"></param>
-            <param name="channelName"></param>
+            <param name="patchName"></param>
+            <param name="aliasFile"></param>
             <returns></returns>
         </member>
         <member name="M:Ephemera.MidiLib.MidiManager.DestroyChannels">

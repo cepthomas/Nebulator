@@ -428,7 +428,7 @@ namespace Nebulator.Script
     public class Utils
     {
         /// <summary>
-        /// Gets note number for music or drum names.
+        /// Gets note number for music or drum names. TOFDO1 put in MidiLibEx or? Resist urge to put in MusicLib...
         /// </summary>
         /// <param name="snotes"></param>
         /// <returns></returns>
