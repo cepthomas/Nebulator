@@ -135,7 +135,7 @@ namespace Nebulator.Script
                 int velPlay = (int)(vol * MidiDefs.MAX_MIDI);
                 velPlay = MathUtils.Constrain(velPlay, 0, MidiDefs.MAX_MIDI);
                 NoteOn non = new(ch.ChannelNumber, notenum, velPlay, StepTime);
-                ch.Device.Send(non);
+                ch.Send(non);
 
                 // Add a transient note off for later.
                 NoteOff noff = new(ch.ChannelNumber, notenum, StepTime + dur) {  Transient = true };
@@ -144,7 +144,7 @@ namespace Nebulator.Script
             else // note off
             {
                 NoteOff noff = new(ch.ChannelNumber, notenum, StepTime);
-                ch.Device.Send(noff);
+                ch.Send(noff);
             }
         }
 
@@ -207,7 +207,7 @@ namespace Nebulator.Script
             if (ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
 
             Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
-            ch.Device.Send(ctlr);
+            ch.Send(ctlr);
         }
 
         /// <summary>
@@ -231,22 +231,7 @@ namespace Nebulator.Script
         /// <exception cref="ArgumentException"></exception>
         protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
         {
-            var chan = MidiManager.Instance.OpenOutputChannel(device, channelNumber, channelName);
-            chan.PatchName = patch;
-        }
-
-        /// <summary>
-        /// Creates a midi output channel. Drums have to be handled a bit differently.
-        /// </summary>
-        /// <param name="device"></param>
-        /// <param name="channelNumber"></param>
-        /// <param name="channelName"></param>
-        /// <param name="patch"></param>
-        /// <exception cref="ArgumentException"></exception>
-        protected void OpenMidiOutputDrums(string device, int channelNumber, string channelName, string patch)
-        {
-            var chan = MidiManager.Instance.OpenOutputChannelDrums(device, channelNumber, channelName);
-            chan.PatchName = patch;
+            var chan = MidiManager.Instance.OpenOutputChannel(device, channelNumber, channelName, patch);
         }
 
         /// <summary>
@@ -270,35 +255,18 @@ namespace Nebulator.Script
             {
                 if (sounding.Contains(ch.ChannelNumber))
                 {
-                    // Process any sequence steps.
-                    var playEvents = ch.Events.Get(StepTime);
-                    // var playEvents = ch.Events.Where(e => e.When == StepTime);
-
-                    foreach (var mevt in playEvents)
+                    foreach (var mevt in ch.Events.Get(StepTime))
                     {
-                        //var mch = ch.IsDrums ? MidiDefs.DEFAULT_DRUM_CHANNEL : mevt.ChannelNumber;
-                        var mch = mevt.ChannelNumber;
-
-                        switch (mevt)
+                        if (mevt is NoteOn evt)
                         {
-                            case NoteOn evt:
-                                // Adjust volume.
-                                evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
-                                // Adjust channel.
-                                evt.ChannelNumber = mch;
-                                ch.Device.Send(evt);
-                                break;
-
-                            case NoteOff evt:
-                                // Adjust channel.
-                                evt.ChannelNumber = mch;
-                                ch.Device.Send(evt);
-                                break;
-
-                            default:
-                                // Everything else as is.
-                                 ch.Device.Send(mevt);
-                                break;
+                            // Adjust volume.
+                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
+                            ch.Send(evt);
+                        }
+                        else
+                        {
+                            // Everything else as is.
+                            ch.Send(mevt);
                         }
                     }
 
