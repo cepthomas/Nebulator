@@ -10,14 +10,14 @@
         <member name="T:Ephemera.MidiLib.InputChannel">
             <summary>Describes one midi input channel.</summary>
         </member>
+        <member name="F:Ephemera.MidiLib.InputChannel._device">
+            <summary>Associated device.</summary>
+        </member>
         <member name="P:Ephemera.MidiLib.InputChannel.ChannelName">
             <summary>Channel name - optional.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.InputChannel.ChannelNumber">
             <summary>Actual 1-based midi channel number.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.InputChannel.Device">
-            <summary>Associated device.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.InputChannel.Enable">
             <summary>True if channel is active.</summary>
@@ -41,6 +41,9 @@
         <member name="F:Ephemera.MidiLib.OutputChannel._aliases">
             <summary>Instruments from alias file.</summary>
         </member>
+        <member name="F:Ephemera.MidiLib.OutputChannel._anonymous">
+            <summary>Is the channel instrument-name-aware?</summary>
+        </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.ChannelName">
             <summary>Channel name - optional.</summary>
         </member>
@@ -59,11 +62,36 @@
         <member name="P:Ephemera.MidiLib.OutputChannel.Events">
             <summary>Associated events - optional depending on implementation.</summary>
         </member>
+        <member name="P:Ephemera.MidiLib.OutputChannel.DeviceInfo">
+            <summary>Info about the device.</summary>
+        </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.Patch">
             <summary>Current instrument/patch number.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.PatchName">
             <summary>Current instrument/patch name. Set may update internal collection and sends a midi patch message.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.OutputChannel.#ctor(Ephemera.MidiLib.IOutputDevice,System.Int32)">
+            <summary>
+            Constructor for patch name aware version.
+            </summary>
+            <param name="device"></param>
+            <param name="channelNumber"></param>
+        </member>
+        <member name="M:Ephemera.MidiLib.OutputChannel.#ctor(Ephemera.MidiLib.IOutputDevice,System.Int32,System.Int32)">
+            <summary>
+            Constructor for anonymous patch version.
+            </summary>
+            <param name="device"></param>
+            <param name="channelNumber"></param>
+            <param name="patch"></param>
+        </member>
+        <member name="M:Ephemera.MidiLib.OutputChannel.GetInstrumentName(System.Int32)">
+            <summary>
+            Get instrument name from id.
+            </summary>
+            <param name="id"></param>
+            <returns>The instrument name or a fabricated one if unknown.</returns>
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.InitInstruments(System.String,System.String)">
             <summary>
@@ -73,19 +101,11 @@
             <param name="aliasFile"></param>
             <exception cref="T:Ephemera.MidiLib.MidiLibException"></exception>
         </member>
-        <member name="M:Ephemera.MidiLib.OutputChannel.#ctor(Ephemera.MidiLib.IOutputDevice,System.Int32)">
+        <member name="M:Ephemera.MidiLib.OutputChannel.Send(Ephemera.MidiLib.BaseEvent)">
             <summary>
-            Constructor with required args.
+            Hide direct devicee access.
             </summary>
-            <param name="device"></param>
-            <param name="channelNumber"></param>
-        </member>
-        <member name="M:Ephemera.MidiLib.OutputChannel.GetInstrumentName(System.Int32)">
-            <summary>
-            Get instrument name from id.
-            </summary>
-            <param name="id"></param>
-            <returns>The instrument name or a fabricated one if unknown.</returns>
+            <param name="bevt"></param>
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.GetInstrumentId(System.String)">
             <summary>
@@ -268,9 +288,7 @@
             <summary>For viewing pleasure.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.EventCollection">
-            <summary>
-            Helper for managing groups of events - mainly sugar.
-            </summary>
+            <summary>Helper for managing groups of events - mainly sugar.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.IDevice">
             <summary>Abstraction layer to support all midi-like devices.</summary>
@@ -538,6 +556,16 @@
             <param name="aliasFile"></param>
             <returns></returns>
         </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.OpenOutputChannel(System.String,System.Int32,System.String,System.Int32)">
+            <summary>
+            Like full function but opens a channel in anonymous mode.
+            </summary>
+            <param name="deviceName"></param>
+            <param name="channelNumber"></param>
+            <param name="channelName"></param>
+            <param name="patch"></param>
+            <returns></returns>
+        </member>
         <member name="M:Ephemera.MidiLib.MidiManager.DestroyChannels">
             <summary>
             Clean up.
@@ -680,6 +708,12 @@
             </summary>
         </member>
         <member name="M:Ephemera.MidiLib.MusicTime.#ctor(System.Int32)">
+            <summary>
+            Constructor from tick.
+            </summary>
+            <param name="tick">Number of ticks.</param>
+        </member>
+        <member name="M:Ephemera.MidiLib.MusicTime.#ctor(System.Int64)">
             <summary>
             Constructor from tick.
             </summary>
@@ -944,6 +978,9 @@
         </member>
         <member name="P:Ephemera.MidiLib.TimeBar.Snap">
             <summary>How to select times.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.TimeBar.GridLines">
+            <summary>Vertical line spacing for visual interest. 0 means none.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.TimeBar.DoLoop">
             <summary>Keep going at end.</summary>
