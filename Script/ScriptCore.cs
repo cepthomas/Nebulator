@@ -203,7 +203,7 @@ namespace Nebulator.Script
         protected void SendController(string chanName, string controller, int val)
         {
             var ch = MidiManager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            int ctlid = MidiDefs.GetControllerId(controller);
+            int ctlid = MidiDefs.ControllerIds.GetId(controller);
             if (ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
 
             Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
@@ -406,7 +406,7 @@ namespace Nebulator.Script
             if (!notes.Any())
             {
                 // It might be a drum.
-                int idrum = MidiDefs.GetDrumId(snotes);
+                int idrum = MidiDefs.Drums.GetId(snotes);
                 if (idrum >= 0)
                 {
                     notes.Add(idrum);

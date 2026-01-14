@@ -109,11 +109,10 @@
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.GetInstrumentId(System.String)">
             <summary>
-            
+            Sort out possible sources of id.
             </summary>
             <param name="name"></param>
             <returns></returns>
-            <exception cref="T:System.ArgumentException"></exception>
         </member>
         <member name="T:Ephemera.MidiLib.ChannelState">
             <summary>Channel playing.</summary>
@@ -224,6 +223,39 @@
         <member name="F:Ephemera.MidiLib.VolumeDefs.MAX_VOLUME">
             <summary>Allow UI controls some more headroom.</summary>
         </member>
+        <member name="T:Ephemera.MidiLib.BiLut">
+            <summary>Both ways luts.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.BiLut._lut1">
+            <summary>Both ways luts.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.BiLut.Contents">
+            <summary>Iterate everything.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.BiLut.Add(System.Int32,System.String)">
+            <summary>Add entry.</summary>
+            <param name="id"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:Ephemera.MidiLib.BiLut.GetName(System.Int32)">
+            <summary>Get name.</summary>
+            <param name="id"></param>
+            <returns>The name if valid else throws.</returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.BiLut.GetId(System.String)">
+            <summary>Get id.</summary>
+            <param name="name"></param>
+            <returns>The id if valid else -1.</returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiUtils.CreateOrderedMidiList(System.Collections.Generic.Dictionary{System.Int32,System.String},System.Boolean,System.Boolean)">
+            <summary>
+            Convert a midi dictionary into ordered list of strings. TODO doesn't really belong here.
+            </summary>
+            <param name="source">The dictionary to process</param>
+            <param name="addKey">Add the index number to the entry</param>
+            <param name="fill">Add mising midi values</param>
+            <returns></returns>
+        </member>
         <member name="T:Ephemera.MidiLib.BaseEvent">
             <summary>Base class for internal representation of midi events.</summary>
         </member>
@@ -330,79 +362,20 @@
         <member name="F:Ephemera.MidiLib.MidiDefs.DEFAULT_DRUM_CHANNEL">
             <summary>The normal drum channel.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.MidiDefs._instruments">
+        <member name="P:Ephemera.MidiLib.MidiDefs.Instruments">
             <summary>All the GM instruments.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.MidiDefs._controllerIds">
-            <summary>All the known GM controllers. TODO future custom list like instruments?</summary>
+        <member name="P:Ephemera.MidiLib.MidiDefs.ControllerIds">
+            <summary>All the known GM controllers.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.MidiDefs._controllerIdsAll">
-            <summary>Standard set plus unnamed ones.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.MidiDefs._drums">
+        <member name="P:Ephemera.MidiLib.MidiDefs.Drums">
             <summary>All the GM drums.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.MidiDefs._drumKits">
+        <member name="P:Ephemera.MidiLib.MidiDefs.DrumKits">
             <summary>All the GM drum kits.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiDefs.#cctor">
             <summary>Initialize some collections.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetInstrumentName(System.Int32)">
-            <summary>
-            Get instrument name. Throws if invalid.
-            </summary>
-            <param name="id"></param>
-            <returns>The instrument name or a fabricated one if unknown.</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetControllerName(System.Int32)">
-            <summary>
-            Get controller name. Throws if invalid.
-            </summary>
-            <param name="id"></param>
-            <returns>The controller name or a fabricated one if unknown.</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumName(System.Int32)">
-            <summary>
-            Get drum name. Throws if invalid.
-            </summary>
-            <param name="id"></param>
-            <returns>The drum name or a fabricated one if unknown.</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumKitName(System.Int32)">
-            <summary>
-            Get drum kit name. Throws if invalid.
-            </summary>
-            <param name="id"></param>
-            <returns>The drum kit name or a fabricated one if unknown.</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetInstrumentId(System.String)">
-            <summary>
-            Get corresponding number.
-            </summary>
-            <param name="name"></param>
-            <returns>The id or -1 if not valid</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetControllerId(System.String)">
-            <summary>
-            Get corresponding number.
-            </summary>
-            <param name="name"></param>
-            <returns>The id or -1 if not valid</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumId(System.String)">
-            <summary>
-            Get corresponding number.
-            </summary>
-            <param name="name"></param>
-            <returns>The id or -1 if not valid</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.GetDrumKitId(System.String)">
-            <summary>
-            Get corresponding number.
-            </summary>
-            <param name="name"></param>
-            <returns>The id or -1 if not valid</returns>
         </member>
         <member name="M:Ephemera.MidiLib.MidiDefs.GenMarkdown">
             <summary>
@@ -421,15 +394,6 @@
             Make content from user configuration.
             </summary>
             <returns>Content.</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiDefs.CreateOrderedMidiList(System.Collections.Generic.Dictionary{System.Int32,System.String},System.Boolean,System.Boolean)">
-            <summary>
-            Convert a midi dictionary into ordered list of strings. TODO doesn't really belong here.
-            </summary>
-            <param name="source">The dictionary to process</param>
-            <param name="addKey">Add the index number to the entry</param>
-            <param name="fill">Add mising midi values</param>
-            <returns></returns>
         </member>
         <member name="T:Ephemera.MidiLib.MidiInputDevice">
             <summary>A midi input device.</summary>
