@@ -56,9 +56,6 @@ namespace Nebulator.App
 
         /// <summary>Files that have been changed externally or have runtime errors - requires a recompile.</summary>
         bool _needCompile = false;
-
-        ///// <summary>Diagnostics for timing measurement.</summary>
-        //TimingAnalyzer _tan = new TimingAnalyzer() { SampleSize = 100 };
         #endregion
 
         #region Lifecycle
@@ -436,17 +433,9 @@ namespace Nebulator.App
             {
                 if (_script is null || !chkPlay.Checked || _needCompile) return;
 
-                // Do some stats gathering for measuring jitter.
-                //if (_tan.Grab())
-                //{
-                //    _logger.Info($"Midi timing: {_tan.Mean}");
-                //}
-
                 // Kick over to main UI thread.
                 this.InvokeIfRequired(_ =>
                 {
-                    //_tan.Arm();
-
                     InitRuntime();
 
                     // Determine what should sound.
@@ -472,14 +461,10 @@ namespace Nebulator.App
                     bool done = !timeBar.Increment();
 
                     // Check for end of play. If no steps or not selected, free running mode so always keep going.
-                    if (timeBar.Length.Tick > 1)
+                    if (!timeBar.FreeRunning && done)
                     {
-                        // Check for end.
-                        if (done)
-                        {
-                            ProcessPlay(PlayCommand.StopRewind);
-                            MidiManager.Instance.Kill(); // just in case
-                        }
+                        ProcessPlay(PlayCommand.StopRewind);
+                        MidiManager.Instance.Kill(); // just in case
                     }
                     // else keep going
 
@@ -488,12 +473,6 @@ namespace Nebulator.App
                     // Process whatever the script did.
                     ProcessRuntime();
                 });
-
-                //if (_tan.Grab())
-                //{
-                //    _logger.Info($"NEB tan: {_tan.Mean}");
-                //}
-
             }
             catch (Exception ex)
             {
