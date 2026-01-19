@@ -131,8 +131,8 @@ namespace Nebulator.App
             btnSettings.Click += Settings_Click;
             btnKillComm.Click += (_, __) => MidiManager.Instance.Kill();
 
-            MidiManager.Instance.MessageReceive += Manager_MessageReceive;
-            MidiManager.Instance.MessageSend += Manager_MessageSend;
+            MidiManager.Instance.MessageReceived += Manager_MessageReceived;
+            MidiManager.Instance.MessageSent += Manager_MessageSent;
             #endregion
         }
 
@@ -535,7 +535,7 @@ namespace Nebulator.App
         /// <summary>
         /// Process input event.
         /// </summary>
-        void Manager_MessageReceive(object? sender, BaseEvent e)
+        void Manager_MessageReceived(object? sender, BaseEvent e)
         {
             //?? this.InvokeIfRequired(_ =>
             if (_script is not null && sender is not null)
@@ -565,7 +565,7 @@ namespace Nebulator.App
         /// <summary>
         /// Process output event.
         /// </summary>
-        void Manager_MessageSend(object? sender, BaseEvent e)
+        void Manager_MessageSent(object? sender, BaseEvent e)
         {
             //Anything useful?
         }

@@ -103,9 +103,9 @@
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.Send(Ephemera.MidiLib.BaseEvent)">
             <summary>
-            Hide direct devicee access.
+            Hide direct device access.
             </summary>
-            <param name="bevt"></param>
+            <param name="evt"></param>
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.GetInstrumentId(System.String)">
             <summary>
@@ -131,9 +131,6 @@
         </member>
         <member name="P:Ephemera.MidiLib.ChannelControl.BoundChannel">
             <summary>My channel.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.ChannelControl.UserRenderer">
-            <summary>My custom renderer - optional.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.ChannelControl.Options">
             <summary>Display options.</summary>
@@ -162,9 +159,6 @@
         <member name="E:Ephemera.MidiLib.ChannelControl.ChannelChange">
             <summary>UI channel config change.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.ChannelControl.SendMidi">
-            <summary>UI midi send.</summary>
-        </member>
         <member name="M:Ephemera.MidiLib.ChannelControl.#ctor">
             <summary>
             Normal constructor.
@@ -181,6 +175,12 @@
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ephemera.MidiLib.ChannelControl.SetRenderer(Ephemera.MidiLib.UserRenderer)">
+            <summary>
+            A custom renderer - optional.
+            </summary>
+            <param name="rend"></param>
         </member>
         <member name="M:Ephemera.MidiLib.ChannelControl.SoloMute_Click(System.Object,System.EventArgs)">
             <summary>Handles solo and mute.</summary>
@@ -340,7 +340,7 @@
         <member name="P:Ephemera.MidiLib.IInputDevice.CaptureEnable">
             <summary>Capture on/off.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.IInputDevice.MessageReceive">
+        <member name="E:Ephemera.MidiLib.IInputDevice.MessageReceived">
             <summary>Handler for message arrived.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.IOutputDevice">
@@ -350,7 +350,7 @@
             <summary>Send midi event.</summary>
             <param name="evt"></param>
         </member>
-        <member name="E:Ephemera.MidiLib.IOutputDevice.MessageSend">
+        <member name="E:Ephemera.MidiLib.IOutputDevice.MessageSent">
             <summary>Handler for message sent.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MidiDefs.MAX_MIDI">
@@ -358,6 +358,9 @@
         </member>
         <member name="F:Ephemera.MidiLib.MidiDefs.NUM_CHANNELS">
             <summary>Per device.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.MidiDefs.TEMP_CHANNEL">
+            <summary>Invalid channel number is ok in transition.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MidiDefs.DEFAULT_DRUM_CHANNEL">
             <summary>The normal drum channel.</summary>
@@ -413,7 +416,7 @@
         <member name="P:Ephemera.MidiLib.MidiInputDevice.Valid">
             <inheritdoc />
         </member>
-        <member name="E:Ephemera.MidiLib.MidiInputDevice.MessageReceive">
+        <member name="E:Ephemera.MidiLib.MidiInputDevice.MessageReceived">
             <summary>Client needs to deal with this.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiInputDevice.#ctor(System.String)">
@@ -447,7 +450,7 @@
         <member name="F:Ephemera.MidiLib.MidiOutputDevice._midiOut">
             <summary>NAudio midi output device.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.MidiOutputDevice.MessageSend">
+        <member name="E:Ephemera.MidiLib.MidiOutputDevice.MessageSent">
             <summary>Client needs to deal with this.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutputDevice.DeviceName">
@@ -494,10 +497,10 @@
         <member name="P:Ephemera.MidiLib.MidiManager.OutputChannels">
             <summary>Readonly collection access.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.MidiManager.MessageReceive">
+        <member name="E:Ephemera.MidiLib.MidiManager.MessageReceived">
             <summary>Handler for midi message arrived.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.MidiManager.MessageSend">
+        <member name="E:Ephemera.MidiLib.MidiManager.MessageSent">
             <summary>Handler for midi message sent.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiManager.OpenInputChannel(System.String,System.Int32,System.String)">
@@ -558,7 +561,7 @@
             <summary>
             Helper.
             </summary>
-            <param name="chnum"></param>
+            <param name="chnd"></param>
             <returns>The channel or null if invalid handle.</returns>
         </member>
         <member name="M:Ephemera.MidiLib.MidiManager.GetOutputChannel(System.String)">
@@ -755,7 +758,7 @@
         <member name="P:Ephemera.MidiLib.NullInputDevice.Id">
             <inheritdoc />
         </member>
-        <member name="E:Ephemera.MidiLib.NullInputDevice.MessageReceive">
+        <member name="E:Ephemera.MidiLib.NullInputDevice.MessageReceived">
             <inheritdoc />
         </member>
         <member name="F:Ephemera.MidiLib.NullInputDevice.EventsToSend">
@@ -777,7 +780,7 @@
         <member name="P:Ephemera.MidiLib.NullOutputDevice.Id">
             <inheritdoc />
         </member>
-        <member name="E:Ephemera.MidiLib.NullOutputDevice.MessageSend">
+        <member name="E:Ephemera.MidiLib.NullOutputDevice.MessageSent">
             <inheritdoc />
         </member>
         <member name="F:Ephemera.MidiLib.NullOutputDevice.CollectedEvents">
@@ -798,7 +801,7 @@
         <member name="F:Ephemera.MidiLib.OscInputDevice._oscInput">
             <summary>OSC input device.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.OscInputDevice.MessageReceive">
+        <member name="E:Ephemera.MidiLib.OscInputDevice.MessageReceived">
             <inheritdoc />
         </member>
         <member name="P:Ephemera.MidiLib.OscInputDevice.DeviceName">
@@ -848,7 +851,7 @@
         <member name="F:Ephemera.MidiLib.OscOutputDevice._lock">
             <summary>Access synchronizer.</summary>
         </member>
-        <member name="E:Ephemera.MidiLib.OscOutputDevice.MessageSend">
+        <member name="E:Ephemera.MidiLib.OscOutputDevice.MessageSent">
             <inheritdoc />
         </member>
         <member name="P:Ephemera.MidiLib.OscOutputDevice.DeviceName">
@@ -1053,9 +1056,6 @@
         </member>
         <member name="T:Ephemera.MidiLib.UserRenderer">
             <summary>Base class for custom renderers.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.UserRenderer.ChannelNumber">
-            <summary>For midi sends.</summary>
         </member>
         <member name="E:Ephemera.MidiLib.UserRenderer.SendMidi">
             <summary>Parent hooks this.</summary>
