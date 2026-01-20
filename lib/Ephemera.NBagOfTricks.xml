@@ -1131,12 +1131,6 @@
         <member name="P:Ephemera.NBagOfTricks.LogManager.MinLevelNotif">
             <summary>Event filter for callback event.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.LogManager.Timestamp">
-            <summary>Add a timestamp.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.LogManager.SourceInfo">
-            <summary>Add source file/line.</summary>
-        </member>
         <member name="P:Ephemera.NBagOfTricks.LogManager.TimeFormat">
             <summary>Format for file records.</summary>
         </member>
