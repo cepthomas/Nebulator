@@ -57,27 +57,6 @@ namespace Nebulator.App
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color SelectedColor { get; set; } = Color.Violet;
-
-        // [DisplayName("Midi Settings")]
-        // [Description("Edit midi settings.")]
-        // [Browsable(true)]
-        // [TypeConverter(typeof(ExpandableObjectConverter))]
-        // public MidiSettings MidiSettings { get; set; } = new();
-
-
-
-  // "MidiSettings": {
-  //   "InputDevices": [],
-  //   "OutputDevices": [
-  //     {
-  //       "DeviceId": "midiout",
-  //       "DeviceName": "VirtualMIDISynth #1"
-  //     }
-  //   ],
-  //   "DefaultTempo": 100,
-  //   "Snap": "Beat"
-  // },
-        
         #endregion
 
         #region Properties - internal

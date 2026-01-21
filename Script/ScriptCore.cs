@@ -392,33 +392,4 @@ namespace Nebulator.Script
         }
         #endregion
     }
-
-    public class Utils
-    {
-        /// <summary>
-        /// Gets note number for music or drum names. TODO1 put in MidiLibEx or? Resist urge to put in MusicLib...
-        /// </summary>
-        /// <param name="snotes"></param>
-        /// <returns></returns>
-        public static List<int> ParseNotes(string snotes)
-        {
-            List<int> notes = MusicDefs.GetNotesFromString(snotes);
-            if (!notes.Any())
-            {
-                // It might be a drum.
-                int idrum = MidiDefs.Drums.GetId(snotes);
-                if (idrum >= 0)
-                {
-                    notes.Add(idrum);
-                }
-                else
-                {
-                    // Not a drum either - error!
-                    throw new InvalidOperationException($"Invalid notes [{snotes}]");
-                }
-            }
-
-            return notes;
-        }
-    }
 }
