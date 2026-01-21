@@ -543,15 +543,15 @@ namespace Nebulator.App
                 switch (e)
                 {
                     case NoteOn evt:
-                        _script.InputNote(dev.DeviceName, evt.ChannelNumber, evt.Note, evt.Velocity);
+                        _script.ReceiveNote(dev.DeviceName, evt.ChannelNumber, evt.Note, evt.Velocity);
                         break;
 
                     case NoteOff evt:
-                        _script.InputNote(dev.DeviceName, evt.ChannelNumber, evt.Note, 0);
+                        _script.ReceiveNote(dev.DeviceName, evt.ChannelNumber, evt.Note, 0);
                         break;
 
                     case Controller evt:
-                        _script.InputControl(dev.DeviceName, evt.ChannelNumber, evt.ControllerId, evt.Value);
+                        _script.ReceiveController(dev.DeviceName, evt.ChannelNumber, evt.Id, evt.Value);
                         break;
 
                     default:

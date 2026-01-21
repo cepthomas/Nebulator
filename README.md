@@ -133,7 +133,7 @@ Nebulator master volume. Script read/write.
 These functions create input and output channels, and their corresponding devices.
 
 ```c#
-void OpenMidiInput(dev, chnum, chname);
+void OpenInputChannel(dev, chnum, chname);
 ```
 Open an input channel.
 - dev: device name
@@ -141,24 +141,14 @@ Open an input channel.
 - chname: channel name
 
 ```c#
-void OpenMidiOutput(dev, chnum, chname, patch);
+void OpenOutputChannel(dev, chnum, chname, patch, alias);
 ```
 Open an output channel.
 - dev: device name
 - chnum: channel number
 - chname: channel name
 - patch: patch name
-
-
-```c#
-void OpenMidiOutputDrums(dev, chnum, chname, patch);
-```
-Same as above but for drum channels specifically.
-
-Device names are dependent on the protocol type:
-- midi input/output use the driver names known to the system
-- OSC input uses "oscin:<port>"
-- OSC output uses "oscout:<host>:<port>"
+- alias: file name of alternate instrument names (optional)
 
 
 ## Composition
@@ -237,7 +227,7 @@ public override void Step(); Required.
 Called every tick.
 
 ```c#
-public override void InputNote(dev, chnum, note, vel);
+public override void ReceiveNote(dev, chnum, note, vel);
 ```
 Called when input note arrives.
 
@@ -247,7 +237,7 @@ Called when input note arrives.
 - vel: velocity
 
 ```c#
-public override void InputControl(dev, chnum, ctlid, value);
+public override void ReceiveController(dev, chnum, ctlid, value);
 ```
 Called when input controller arrives.
 - dev: device name

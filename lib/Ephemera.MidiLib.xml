@@ -42,7 +42,7 @@
             <summary>Instruments from alias file.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.OutputChannel._anonymous">
-            <summary>Is the channel instrument-name-aware?</summary>
+            <summary>True if the channel doesn't support named instruments/patches.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.OutputChannel.ChannelName">
             <summary>Channel name - optional.</summary>
@@ -95,7 +95,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.OutputChannel.InitInstruments(System.String,System.String)">
             <summary>
-            
+            Fix up instrument and patch names - depends on flavor is GM/drums/aliased.
             </summary>
             <param name="patchName"></param>
             <param name="aliasFile"></param>
@@ -147,7 +147,7 @@
         <member name="P:Ephemera.MidiLib.ChannelControl.Volume">
             <summary>Current volume.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.ChannelControl.ControllerId">
+        <member name="P:Ephemera.MidiLib.ChannelControl.Controller">
             <summary>Edit current controller number.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.ChannelControl.ControllerValue">
@@ -286,7 +286,7 @@
         <member name="M:Ephemera.MidiLib.NoteOff.ToString">
             <summary>Read me.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.Controller.ControllerId">
+        <member name="P:Ephemera.MidiLib.Controller.Id">
             <summary>Specific controller id.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.Controller.Value">
@@ -347,7 +347,7 @@
             <summary>Abstraction layer to support output devices.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.IOutputDevice.Send(Ephemera.MidiLib.BaseEvent)">
-            <summary>Send midi event.</summary>
+            <summary>Send midi event. Converts internal to NAudio format.</summary>
             <param name="evt"></param>
         </member>
         <member name="E:Ephemera.MidiLib.IOutputDevice.MessageSent">
@@ -368,7 +368,7 @@
         <member name="P:Ephemera.MidiLib.MidiDefs.Instruments">
             <summary>All the GM instruments.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiDefs.ControllerIds">
+        <member name="P:Ephemera.MidiLib.MidiDefs.Controllers">
             <summary>All the known GM controllers.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiDefs.Drums">
@@ -430,7 +430,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.MidiInputDevice.MidiIn_MessageReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">
             <summary>
-            Process driver level midi input event.
+            Process driver level midi input event. Converts NAudio to internal format.
             </summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiInputDevice.MidiIn_ErrorReceived(System.Object,NAudio.Midi.MidiInMessageEventArgs)">

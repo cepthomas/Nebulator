@@ -34,13 +34,13 @@ public override void Setup()
     // string midi_device_out = "Microsoft GS Wavetable Synth";
     string midi_device_out = "VirtualMIDISynth #1";
 
-    OpenMidiInput(midi_device_in, 1, "my midi input");
+    OpenInputChannel(midi_device_in, 1, "my midi input");
 
-    OpenMidiOutput(midi_device_out, 1, "keys", "AcousticGrandPiano");
-    OpenMidiOutput(midi_device_out, 2, "bass", "AcousticBass");
-    OpenMidiOutput(midi_device_out, 3, "synth", "Lead1Square");
-    OpenMidiOutput(midi_device_out, 4, "strings", "StringEnsemble1");
-    OpenMidiOutput(midi_device_out, 10, "drums", "Jazz");
+    OpenOutputChannel(midi_device_out, 1, "keys", "AcousticGrandPiano");
+    OpenOutputChannel(midi_device_out, 2, "bass", "AcousticBass");
+    OpenOutputChannel(midi_device_out, 3, "synth", "Lead1Square");
+    OpenOutputChannel(midi_device_out, 4, "strings", "StringEnsemble1");
+    OpenOutputChannel(midi_device_out, 10, "drums", "Jazz");
 
     // Create sets of notes.
     CreateNotes("MY_SCALE", "1 3 4 b7");
@@ -193,13 +193,13 @@ public override void Step()
     }
 }
 
-public override void InputNote(string dev, int channel, int note, int vel)
+public override void ReceiveNote(string dev, int channel, int note, int vel)
 {
     Print("Input note", dev, channel, note, vel);
     SendNote("synth", note, vel, 0.5);
 }
 
-public override void InputControl(string dev, int channel, int ctlid, int value)
+public override void ReceiveController(string dev, int channel, int ctlid, int value)
 {
     Print("Input control", dev, channel, ctlid, value);
 }

@@ -25,7 +25,7 @@ List<TapeLoop> _loops = new List<TapeLoop>();
 
 public override void Setup()
 {
-    OpenMidiOutput("VirtualMIDISynth #1", 1, "sound", "Pad2Warm"); // "Microsoft GS Wavetable Synth"  "AcousticGrandPiano"
+    OpenOutputChannel("VirtualMIDISynth #1", 1, "sound", "Pad2Warm"); // "Microsoft GS Wavetable Synth"  "AcousticGrandPiano"
 
     Tempo = 70;
     

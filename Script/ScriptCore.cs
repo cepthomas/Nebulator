@@ -46,10 +46,10 @@ namespace Nebulator.Script
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputNote(string dev, int channel, int note, int vel) { }
+        public virtual void ReceiveNote(string dev, int channel, int note, int vel) { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void InputControl(string dev, int channel, int controller, int value) { }
+        public virtual void ReceiveController(string dev, int channel, int controller, int value) { }
         #endregion
 
         #region API - Functions callable by script
@@ -203,7 +203,7 @@ namespace Nebulator.Script
         protected void SendController(string chanName, string controller, int val)
         {
             var ch = MidiManager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            int ctlid = MidiDefs.ControllerIds.GetId(controller);
+            int ctlid = MidiDefs.Controllers.GetId(controller);
             if (ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
 
             Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
@@ -216,7 +216,7 @@ namespace Nebulator.Script
         /// <param name="device"></param>
         /// <param name="channelNumber"></param>
         /// <param name="channelName"></param>
-        protected void OpenMidiInput(string device, int channelNumber, string channelName)
+        protected void OpenInputChannel(string device, int channelNumber, string channelName)
         {
             MidiManager.Instance.OpenInputChannel(device, channelNumber, channelName);
         }
@@ -229,7 +229,7 @@ namespace Nebulator.Script
         /// <param name="channelName"></param>
         /// <param name="patch"></param>
         /// <exception cref="ArgumentException"></exception>
-        protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
+        protected void OpenOutputChannel(string device, int channelNumber, string channelName, string patch)
         {
             var chan = MidiManager.Instance.OpenOutputChannel(device, channelNumber, channelName, patch);
         }
@@ -396,7 +396,7 @@ namespace Nebulator.Script
     public class Utils
     {
         /// <summary>
-        /// Gets note number for music or drum names. TOFDO1 put in MidiLibEx or? Resist urge to put in MusicLib...
+        /// Gets note number for music or drum names. TODO1 put in MidiLibEx or? Resist urge to put in MusicLib...
         /// </summary>
         /// <param name="snotes"></param>
         /// <returns></returns>
