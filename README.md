@@ -313,9 +313,11 @@ Get an array of scale or chord notes.
 
 # Internals
 
-- Uses Roslyn for in-memory compilation.
+- Uses Roslyn for in-memory compilation - see [NScript](https://github.com/cepthomas/NScript/blob/main/README.md).
 - No installer yet, it's a build-it-yerself for now. Eventually a nuget package might be created.
 - Settings and log are in `C:\Users\<user>\AppData\Local\Ephemera\Nebulator`.
+- The app is slow to start up in the VS debugger - some mysterious machinations under the hood. Running from the cmd line is fine.
+
 
 ## Design
 
