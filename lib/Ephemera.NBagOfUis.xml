@@ -148,6 +148,9 @@
         <member name="E:Ephemera.NBagOfUis.DropDownButton.Selected">
             <summary>Drop down selection event.</summary>
         </member>
+        <member name="E:Ephemera.NBagOfUis.DropDownButton.Opening">
+            <summary>Drop down opening event.</summary>
+        </member>
         <member name="F:Ephemera.NBagOfUis.DropDownButton._menu">
             <summary>The menu.</summary>
         </member>

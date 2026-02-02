@@ -147,9 +147,6 @@
             <param name="y"></param>
             <returns></returns>
         </member>
-        <member name="T:Ephemera.NBagOfTricks.ConsoleColorEx">
-            <summary>ConsoleColor variation with None added.</summary>
-        </member>
         <member name="M:Ephemera.NBagOfTricks.ColorUtils.ColorFromAnsi(System.String)">
             <summary>
             Decode ansi escape sequence arguments. TODO AnsiFromColor()
@@ -198,6 +195,21 @@
             <param name="one"></param>
             <param name="two"></param>
             <returns></returns>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.IConsole">
+            <summary>
+            Interface for consoles. Subset of System.Console.
+            </summary>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.RealConsole">
+            <summary>
+            The real console. Mainly pass-through for interface members.
+            </summary>
+        </member>
+        <member name="T:Ephemera.NBagOfTricks.MockConsole">
+            <summary>
+            A mock Console suitable for testing by simulating input and capturing output.
+            </summary>
         </member>
         <member name="T:Ephemera.NBagOfTricks.TimeIt">
             <summary>Simple profiler.</summary>
@@ -804,7 +816,17 @@
             Specific exception type.
             </summary>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.PNUT.AssertException.#ctor(System.String,System.String,System.Int32)">
+            <summary>
+            Specific exception type.
+            </summary>
+        </member>
         <member name="T:Ephemera.NBagOfTricks.PNUT.TestFailException">
+            <summary>
+            Specific exception type.
+            </summary>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PNUT.TestFailException.#ctor(System.String,System.Int32)">
             <summary>
             Specific exception type.
             </summary>
@@ -1303,16 +1325,6 @@
             Higher level tools.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.Tools.MakeExportFileName(System.String,System.String,System.String,System.String)">
-            <summary>
-            Create a new clean filename for export. Creates path if it doesn't exist.
-            </summary>
-            <param name="path">Export path</param>
-            <param name="baseFn">Root of the new file name</param>
-            <param name="mod">Modifier</param>
-            <param name="ext">File extension</param>
-            <returns></returns>
-        </member>
         <member name="M:Ephemera.NBagOfTricks.Tools.ShowReadme(System.String)">
             <summary>
             Display the application readme.
@@ -1333,9 +1345,24 @@
             <returns>Valid html.</returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Tools.ExecuteLuaCode(System.String)">
-            <summary>Execute a chunk of lua code (not file).</summary>
+            <summary>
+            Execute a chunk of lua code (not file).
+            </summary>
             <param name="scode">The code</param>
             <returns>Exit code, stdout</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.RunScript(System.String,System.Action{System.String},System.Action{System.String},System.IO.TextReader)">
+            <summary>
+            Run a script in external process. Handles py/lua/ps1/cmd/bat. This is primarily to be used as a
+            run-to-completion format. Currently there is no clean way to kill a running script or to support
+            continuous input.
+            Liberally borrowed from http://csharptest.net/532/using-processstart-to-capture-console-output/index.html
+            </summary>
+            <param name="fn">Script name</param>
+            <param name="output">What to do with script stdout</param>
+            <param name="error">What to do with script stderr</param>
+            <param name="input">Optional for stdin - one-shot</param>
+            <returns>Script return code</returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Tools.SniffBin(System.String,System.Int32)">
             <summary>
