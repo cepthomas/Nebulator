@@ -845,7 +845,13 @@
             Make one.
             </summary>
         </member>
-        <member name="P:Ephemera.NBagOfUis.TextViewer.MatchText">
+        <member name="T:Ephemera.NBagOfUis.TextViewer.Matcher">
+            <summary>Spec to identify and colorize line regions.</summary>
+        </member>
+        <member name="M:Ephemera.NBagOfUis.TextViewer.Matcher.#ctor(System.String,System.Nullable{System.Drawing.Color},System.Nullable{System.Drawing.Color})">
+            <summary>Spec to identify and colorize line regions.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.TextViewer.Matchers">
             <summary>The colors to display when text is matched.</summary>
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.BackColor">
@@ -862,6 +868,9 @@
         </member>
         <member name="P:Ephemera.NBagOfUis.TextViewer.MaxText">
             <summary>Limit the size.</summary>
+        </member>
+        <member name="P:Ephemera.NBagOfUis.TextViewer.MatchUseBackground">
+            <summary>Colorize mathces fore or back.</summary>
         </member>
         <member name="F:Ephemera.NBagOfUis.TextViewer._rtb">
             <summary>Contained control.</summary>
@@ -883,46 +892,26 @@
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendLine(System.String,System.Nullable{System.Drawing.Color})">
+        <member name="M:Ephemera.NBagOfUis.TextViewer.Append(System.String,System.Boolean)">
             <summary>
             A message to display to the user. Adds EOL.
             </summary>
             <param name="text">The message.</param>
-            <param name="color">Specific color to use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendText(System.String,System.Nullable{System.Drawing.Color})">
-            <summary>
-            A message to display to the user. Doesn't add EOL.
-            </summary>
-            <param name="text">The message.</param>
-            <param name="color">Specific color to use.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendColor(System.String,System.Nullable{System.Drawing.Color},System.Nullable{System.Drawing.Color},System.Boolean)">
-            <summary>
-            Output text wwith explicit color.
-            </summary>
-            <param name="text">The text to show.</param>
-            <param name="fg"></param>
-            <param name="bg"></param>
-            <param name="nl">Add new line.</param>
-        </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendMatch(System.String,System.Boolean,System.Boolean)">
-            <summary>
-            Output text using text matching color.
-            </summary>
-            <param name="text">The text to show.</param>
-            <param name="line">Color whole line.</param>
-            <param name="nl">Add new line.</param>
+            <param name="nl">Add NL.</param>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.Clear">
             <summary>
             Clean up.
             </summary>
         </member>
-        <member name="M:Ephemera.NBagOfUis.TextViewer.Write(System.String,System.Boolean)">
+        <member name="M:Ephemera.NBagOfUis.TextViewer.AppendText(System.String,System.Boolean,System.Nullable{System.Drawing.Color},System.Nullable{System.Drawing.Color})">
             <summary>
-            Low level output. Assumes caller has taken care of cross-thread issues.
+            Low level appender with color.
             </summary>
+            <param name="text">The message.</param>
+            <param name="nl">Full line.</param>
+            <param name="fgColor">Specific color to use.</param>
+            <param name="bgColor">Specific color to use.</param>
         </member>
         <member name="M:Ephemera.NBagOfUis.TextViewer.Rtb_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
             <summary>

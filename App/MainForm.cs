@@ -90,10 +90,14 @@ namespace Nebulator.App
             WindowState = FormWindowState.Normal;
 
             // The rest of the controls.
-            textViewer.WordWrap = false;
-            textViewer.MatchText.Add("ERR", Color.LightPink);
-            textViewer.MatchText.Add("WRN", Color.Plum);
-            textViewer.Prompt = "> ";
+            tvInfo.WordWrap = false;
+            tvInfo.Prompt = "> ";
+            List<TextViewer.Matcher> matchers =
+            [
+                new("ERR", Color.Red),
+                new("WRN", Color.Green),
+            ];
+            tvInfo.Matchers = matchers;
 
             GraphicsUtils.ColorizeControl(btnMonIn, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnMonOut, _settings.IconColor);
@@ -121,7 +125,7 @@ namespace Nebulator.App
             timeBar.StateChange += TimeBar_StateChange; // += TimeBar_CurrentTimeChanged;
             timeBar.Invalidate();
 
-            textViewer.WordWrap = _settings.WordWrap;
+            tvInfo.WordWrap = _settings.WordWrap;
 
             btnMonIn.Click += Monitor_Click;
             btnMonOut.Click += Monitor_Click;
@@ -191,7 +195,7 @@ namespace Nebulator.App
                 Width = Width,
                 Height = Height
             };
-            _settings.WordWrap = textViewer.WordWrap;
+            _settings.WordWrap = tvInfo.WordWrap;
             _settings.Save();
 
             base.OnFormClosing(e);
@@ -766,7 +770,7 @@ namespace Nebulator.App
             // Usually come from a different thread.
             if (IsHandleCreated)
             {
-                this.InvokeIfRequired(_ => { textViewer.AppendLine($"{e.Message}"); });
+                this.InvokeIfRequired(_ => { tvInfo.Append($"{e.Message}"); });
             }
         }
         #endregion

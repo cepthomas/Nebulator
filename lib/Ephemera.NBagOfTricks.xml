@@ -1353,7 +1353,7 @@
         </member>
         <member name="M:Ephemera.NBagOfTricks.Tools.RunScript(System.String,System.Action{System.String},System.Action{System.String},System.IO.TextReader)">
             <summary>
-            Run a script in external process. Handles py/lua/ps1/cmd/bat. This is primarily to be used as a
+            Run a script in external blocking process. Handles py/lua/ps1/cmd/bat. This is primarily to be used as a
             run-to-completion format. Currently there is no clean way to kill a running script or to support
             continuous input.
             Liberally borrowed from http://csharptest.net/532/using-processstart-to-capture-console-output/index.html

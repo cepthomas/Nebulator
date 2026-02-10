@@ -35,7 +35,7 @@
             this.btnKillComm = new System.Windows.Forms.ToolStripButton();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
             this.btnSettings = new System.Windows.Forms.ToolStripButton();
-            this.textViewer = new Ephemera.NBagOfUis.TextViewer();
+            this.tvInfo = new Ephemera.NBagOfUis.TextViewer();
             this.timeBar = new Ephemera.MidiLib.TimeBar();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -252,18 +252,18 @@
             // 
             // textViewer
             // 
-            this.textViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tvInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textViewer.Location = new System.Drawing.Point(13, 610);
-            this.textViewer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textViewer.MaxText = 5000;
-            this.textViewer.Name = "textViewer";
-            this.textViewer.Prompt = "";
-            this.textViewer.Size = new System.Drawing.Size(789, 217);
-            this.textViewer.TabIndex = 41;
-            this.textViewer.WordWrap = true;
+            this.tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tvInfo.Location = new System.Drawing.Point(13, 610);
+            this.tvInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tvInfo.MaxText = 5000;
+            this.tvInfo.Name = "textViewer";
+            this.tvInfo.Prompt = "";
+            this.tvInfo.Size = new System.Drawing.Size(789, 217);
+            this.tvInfo.TabIndex = 41;
+            this.tvInfo.WordWrap = true;
             // 
             // timeBar
             // 
@@ -283,7 +283,7 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(813, 838);
             this.Controls.Add(this.timeBar);
-            this.Controls.Add(this.textViewer);
+            this.Controls.Add(this.tvInfo);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btnCompile);
             this.Controls.Add(this.sldVolume);
@@ -316,7 +316,7 @@
         private System.Windows.Forms.ToolStripMenuItem recentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportMidiToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnKillComm;
-        private Ephemera.NBagOfUis.TextViewer textViewer;
+        private Ephemera.NBagOfUis.TextViewer tvInfo;
         private Ephemera.MidiLib.TimeBar timeBar;
         private System.Windows.Forms.ToolStripMenuItem exportCsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showDefinitionsToolStripMenuItem;
