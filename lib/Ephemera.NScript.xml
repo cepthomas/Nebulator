@@ -172,14 +172,6 @@
             <param name="scriptFile"></param>
             <param name="lineNum"></param>
         </member>
-        <member name="M:Ephemera.NScript.CompilerCore.RationalizeFileName(System.String,System.String)">
-            <summary>
-            Determines absolute file name for an included file.
-            </summary>
-            <param name="scriptFileName">File with include directive</param>
-            <param name="includeFileName">Included file.</param>
-            <returns></returns>
-        </member>
         <member name="M:Ephemera.NScript.CompilerCore.MakeClassName(System.String)">
             <summary>Make a safe/clean name from file name</summary>
             <param name="fn"></param>

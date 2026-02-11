@@ -92,12 +92,11 @@ namespace Nebulator.App
             // The rest of the controls.
             tvInfo.WordWrap = false;
             tvInfo.Prompt = "> ";
-            List<TextViewer.Matcher> matchers =
+            tvInfo.Matchers =
             [
                 new("ERR", Color.Red),
                 new("WRN", Color.Green),
             ];
-            tvInfo.Matchers = matchers;
 
             GraphicsUtils.ColorizeControl(btnMonIn, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnMonOut, _settings.IconColor);
