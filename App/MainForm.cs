@@ -174,6 +174,10 @@ namespace Nebulator.App
                 _logger.Error($"Couldn't open script file: {sopen}");
             }
 
+
+            // Show them what they have.
+            MidiDefs.GenUserDeviceInfo().ForEach(l => tvInfo.Append(l));
+
             base.OnLoad(e);
         }
 
@@ -994,6 +998,9 @@ namespace Nebulator.App
         void About_Click(object? sender, EventArgs e)
         {
             Tools.ShowReadme("Nebulator");
+
+            // Show them what they have.
+            MidiDefs.GenUserDeviceInfo().ForEach(l => tvInfo.Append(l));
         }
 
         /// <summary>
