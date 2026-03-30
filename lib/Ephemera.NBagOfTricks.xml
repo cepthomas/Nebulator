@@ -163,22 +163,6 @@
             <param name="blue"></param>
             <returns></returns>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToSystemColor(System.ConsoleColor)">
-            <summary>Convert ConsoleColor to System.Color.</summary>
-            <param name="conclr">In color</param>
-            <returns>Out color</returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToConsoleColor(System.Drawing.Color)">
-            <summary>Convert System.Color to ConsoleColor.</summary>
-            <param name="sysclr">The color</param>
-            <returns></returns>
-            <exception cref="T:System.Exception"></exception>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToConsoleColor_simple(System.Drawing.Color)">
-            <summary>Simple binning approach.</summary>
-            <param name="sysclr"></param>
-            <returns></returns>
-        </member>
         <member name="M:Ephemera.NBagOfTricks.ColorUtils.GetSequenceColor(System.Int32,System.Boolean)">
             <summary>
             Helper to get next contrast color in the sequence.
@@ -194,52 +178,6 @@
             </summary>
             <param name="one"></param>
             <param name="two"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ConsoleUtils.Move(System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ConsoleUtils.GetRect">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ConsoleUtils.Hide">
-            <summary>
-            From WBOT TBD.
-            </summary>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ConsoleUtils.UnredirectConsole(System.IntPtr@,System.IntPtr@,System.IntPtr@)">
-            <summary>
-            From WBOT TBD.
-            </summary>
-            <param name="stdOut"></param>
-            <param name="stdIn"></param>
-            <param name="stdErr"></param>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ConsoleUtils.GetConsoleStandardInput">
-            <summary>
-            From WBOT TBD.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ConsoleUtils.GetConsoleStandardOutput">
-            <summary>
-            From WBOT TBD.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.NBagOfTricks.ConsoleUtils.GetConsoleStandardError">
-            <summary>
-            From WBOT TBD.
-            </summary>
             <returns></returns>
         </member>
         <member name="T:Ephemera.NBagOfTricks.TimeIt">
@@ -755,21 +693,6 @@
             <param name="user">The value that was specified for the dwUser parameter of the timeSetEvent function.</param>
             <param name="param1">Reserved.</param>
             <param name="param2">Reserved.</param>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.IConsole">
-            <summary>
-            Interface for consoles. Subset of System.Console.
-            </summary>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.RealConsole">
-            <summary>
-            The real console. Mainly pass-through for interface members.
-            </summary>
-        </member>
-        <member name="T:Ephemera.NBagOfTricks.MockConsole">
-            <summary>
-            A mock Console suitable for testing by simulating input and capturing output.
-            </summary>
         </member>
         <member name="T:Ephemera.NBagOfTricks.MultiFileWatcher">
             <summary>
