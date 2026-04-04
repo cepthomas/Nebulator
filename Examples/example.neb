@@ -30,9 +30,9 @@ List<int> myScaleNotes;
 public override void Setup()
 {
     // Midi channels. Adjust per configuration.
-    string midi_device_in = "loopMIDI Port 1";
-    // string midi_device_out = "Microsoft GS Wavetable Synth";
+    string midi_device_in = "NebLoopback1";
     string midi_device_out = "VirtualMIDISynth #1";
+    // string midi_device_out = "Microsoft GS Wavetable Synth";
 
     OpenInputChannel(midi_device_in, 1, "my midi input");
 
