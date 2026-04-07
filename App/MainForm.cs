@@ -842,8 +842,6 @@ namespace Nebulator.App
                 case PlayCommand.Stop:
                     chkPlay.Checked = false;
                     _mmTimer.Stop();
-
-                    // Send midi stop all notes just in case.
                     MidiManager.Instance.Kill();
                     break;
 
@@ -854,6 +852,7 @@ namespace Nebulator.App
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
                     timeBar.Rewind();
+                    MidiManager.Instance.Kill();
                     break;
 
                 case PlayCommand.UpdateUiTime:
