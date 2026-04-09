@@ -286,15 +286,3 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-
-# My added ignores
-/packages
-temp
-/_old
-
-/*sublime*
-
-
-/neb.code-workspace
-/.vscode
-/Examples/*.nebp
