@@ -180,6 +180,27 @@
             <param name="two"></param>
             <returns></returns>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToSystemColor(System.ConsoleColor)">
+            <summary>Convert ConsoleColor to System.Color.</summary>
+            <param name="conclr">In color</param>
+            <returns>Out color</returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToConsoleColor(System.Drawing.Color)">
+            <summary>Convert System.Color to ConsoleColor.</summary>
+            <param name="sysclr">The color</param>
+            <returns></returns>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToConsoleColor_simple(System.Drawing.Color)">
+            <summary>Simple binning approach.</summary>
+            <param name="sysclr"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ParseNullableConsoleColor(System.String)">
+            <summary>Parse console color safely.</summary>
+            <param name="value">Color name</param>
+            <returns>Console color or null if invalid</returns>
+        </member>
         <member name="T:Ephemera.NBagOfTricks.TimeIt">
             <summary>Simple profiler.</summary>
         </member>
