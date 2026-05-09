@@ -901,6 +901,36 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
+        <member name="P:Ephemera.MidiLib.Properties.Resources.gm_defs">
+             <summary>
+               Looks up a localized string similar to ; The GM instrument patches.
+            [instruments]
+            000 = AcousticGrandPiano
+            001 = BrightAcousticPiano
+            002 = ElectricGrandPiano
+            003 = HonkyTonkPiano
+            004 = ElectricPiano1
+            005 = ElectricPiano2
+            006 = Harpsichord
+            007 = Clavinet
+            008 = Celesta
+            009 = Glockenspiel
+            010 = MusicBox
+            011 = Vibraphone
+            012 = Marimba
+            013 = Xylophone
+            014 = TubularBells
+            015 = Dulcimer
+            016 = DrawbarOrgan
+            017 = PercussiveOrgan
+            018 = RockOrgan
+            019 = ChurchOrgan
+            020 = ReedOrgan
+            021 = Accordion
+            022 = Harmonica
+            023 = TangoAccordion [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
         <member name="T:Ephemera.MidiLib.TimeBar">
             <summary>The control.</summary>
         </member>

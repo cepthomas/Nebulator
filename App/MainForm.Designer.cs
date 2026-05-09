@@ -290,7 +290,6 @@
             this.Controls.Add(this.sldTempo);
             this.Controls.Add(this.btnRewind);
             this.Controls.Add(this.chkPlay);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.Text = "Nebulator";

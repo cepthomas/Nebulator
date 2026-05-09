@@ -110,14 +110,17 @@
         <member name="F:Ephemera.NBagOfTricks.PixelBitmap._buff">
             <summary>Unmanaged buffer.</summary>
         </member>
+        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._width">
+            <summary>Geometry.</summary>
+        </member>
+        <member name="F:Ephemera.NBagOfTricks.PixelBitmap._height">
+            <summary>Geometry.</summary>
+        </member>
         <member name="F:Ephemera.NBagOfTricks.PixelBitmap._hBuff">
             <summary>Unmanaged buffer handle.</summary>
         </member>
         <member name="F:Ephemera.NBagOfTricks.PixelBitmap._disposed">
             <summary>Resource management.</summary>
-        </member>
-        <member name="P:Ephemera.NBagOfTricks.PixelBitmap.ClientBitmap">
-            <summary>Managed image for client consumption.</summary>
         </member>
         <member name="M:Ephemera.NBagOfTricks.PixelBitmap.#ctor(System.Int32,System.Int32)">
             <summary>Normal constructor.</summary>
@@ -145,6 +148,12 @@
             </summary>
             <param name="x"></param>
             <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.PixelBitmap.GetBitmap">
+            <summary>
+            Get a rendering of the buffer. Client must manage lifetime.
+            </summary>
             <returns></returns>
         </member>
         <member name="M:Ephemera.NBagOfTricks.ColorUtils.ColorFromAnsi(System.String)">
