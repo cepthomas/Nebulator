@@ -294,7 +294,7 @@
             Create icon from a file.
             </summary>
             <param name="fn"></param>
-            <returns></returns>
+            <returns>The icon</returns>
         </member>
         <member name="M:Ephemera.NBagOfUis.GraphicsUtils.CreateIcon(System.Drawing.Bitmap,System.Int32)">
             <summary>
@@ -302,7 +302,7 @@
             </summary>
             <param name="bmpSource">Source image.</param>
             <param name="size">Specific size or 0 for all common windows sizes.</param>
-            <returns></returns>
+            <returns>The icon</returns>
         </member>
         <member name="M:Ephemera.NBagOfUis.GraphicsUtils.SaveIcon(System.Drawing.Icon,System.String)">
             <summary>
@@ -311,16 +311,12 @@
             <param name="ico"></param>
             <param name="fn"></param>
         </member>
-        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.ExtractIconFromExecutable(System.String,System.Int32,System.Boolean)">
+        <member name="M:Ephemera.NBagOfUis.GraphicsUtils.SafeExtractIcon(System.String)">
             <summary>
-            Extract the icon from an executable file.
-            Every icon handle (HICON) returned by ExtractIconEx must be released
-            using the DestroyIcon function from user32.dll to prevent memory leaks.
+            Version that doesn't throw.
             </summary>
-            <param name="file"></param>
-            <param name="index"></param>
-            <param name="largeIcon"></param>
-            <returns></returns>
+            <param name="name"></param>
+            <returns>The icon or null if it isn't available.</returns>
         </member>
         <member name="M:Ephemera.NBagOfUis.GraphicsUtils.ColorizeControl(System.ComponentModel.Component,System.Drawing.Color)">
             <summary>
