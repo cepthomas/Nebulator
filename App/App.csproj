@@ -6,7 +6,6 @@
         <UseWindowsForms>true</UseWindowsForms>
         <OutputPath>bin\</OutputPath>
         <TargetFramework>net8.0-windows</TargetFramework>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
 
         <AssemblyName>Nebulator.App</AssemblyName>
         <RootNamespace>Nebulator.App</RootNamespace>
