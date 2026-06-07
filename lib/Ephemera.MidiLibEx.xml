@@ -168,17 +168,16 @@
             <summary>
             Represents the contents of a midi file pattern.
             If it is a plain midi file (not style) there will be one only.
-            Time is converted from midi to internal.
             </summary>
         </member>
         <member name="F:Ephemera.MidiLibEx.PatternInfo._events">
             <summary>All the pattern midi events.</summary>
         </member>
         <member name="F:Ephemera.MidiLibEx.PatternInfo._eventsByTime">
-            <summary>All the pattern midi events, key is when to play (scaled time).</summary>
+            <summary>All the pattern midi events, key is when to play (scaled/internal time).</summary>
         </member>
         <member name="F:Ephemera.MidiLibEx.PatternInfo._mt">
-            <summary>For scaling subs to internal.</summary>
+            <summary>For scaling midi ticks to internal.</summary>
         </member>
         <member name="F:Ephemera.MidiLibEx.PatternInfo._channelPatches">
             <summary>Collection of all channels in this pattern. Key is number, value is associated patch.</summary>
@@ -194,11 +193,6 @@
         </member>
         <member name="P:Ephemera.MidiLibEx.PatternInfo.TimeSignature">
             <summary>Time signature, if supplied by file.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLibEx.PatternInfo.#ctor">
-            <summary>
-            Default constructor. Use only for initialization!
-            </summary>
         </member>
         <member name="M:Ephemera.MidiLibEx.PatternInfo.#ctor(System.String,System.Int32)">
             <summary>
