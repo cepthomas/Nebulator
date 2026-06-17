@@ -38,9 +38,6 @@
         <Reference Include="Ephemera.MidiLib">
           <HintPath>..\lib\Ephemera.MidiLib.dll</HintPath>
         </Reference>
-        <Reference Include="Ephemera.MidiLibEx">
-          <HintPath>..\lib\Ephemera.MidiLibEx.dll</HintPath>
-        </Reference>
         <Reference Include="Ephemera.MusicLib">
           <HintPath>..\lib\Ephemera.MusicLib.dll</HintPath>
         </Reference>

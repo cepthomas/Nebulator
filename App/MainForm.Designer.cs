@@ -15,288 +15,270 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.sldVolume = new Ephemera.NBagOfUis.Slider();
-            this.sldTempo = new Ephemera.NBagOfUis.Slider();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnCompile = new System.Windows.Forms.Button();
-            this.btnRewind = new System.Windows.Forms.Button();
-            this.chkPlay = new System.Windows.Forms.CheckBox();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.fileDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnMonIn = new System.Windows.Forms.ToolStripButton();
-            this.btnMonOut = new System.Windows.Forms.ToolStripButton();
-            this.btnKillComm = new System.Windows.Forms.ToolStripButton();
-            this.btnAbout = new System.Windows.Forms.ToolStripButton();
-            this.btnSettings = new System.Windows.Forms.ToolStripButton();
-            this.tvInfo = new Ephemera.NBagOfUis.TextViewer();
-            this.timeBar = new Ephemera.MidiLib.TimeBar();
-            this.toolStrip1.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            sldVolume = new Ephemera.NBagOfUis.Slider();
+            sldTempo = new Ephemera.NBagOfUis.Slider();
+            toolTip = new System.Windows.Forms.ToolTip(components);
+            btnCompile = new System.Windows.Forms.Button();
+            btnRewind = new System.Windows.Forms.Button();
+            chkPlay = new System.Windows.Forms.CheckBox();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            fileDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
+            openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            recentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exportMidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            showDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            btnMonIn = new System.Windows.Forms.ToolStripButton();
+            btnMonOut = new System.Windows.Forms.ToolStripButton();
+            btnKillComm = new System.Windows.Forms.ToolStripButton();
+            btnAbout = new System.Windows.Forms.ToolStripButton();
+            btnSettings = new System.Windows.Forms.ToolStripButton();
+            tvInfo = new Ephemera.NBagOfUis.TextViewer();
+            timeBar = new Ephemera.MidiLib.TimeBar();
+            toolStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // sldVolume
             // 
-            this.sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.sldVolume.DrawColor = System.Drawing.Color.Red;
-            this.sldVolume.Label = "vol";
-            this.sldVolume.Location = new System.Drawing.Point(267, 49);
-            this.sldVolume.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.sldVolume.Maximum = 1D;
-            this.sldVolume.Minimum = 0D;
-            this.sldVolume.Name = "sldVolume";
-            this.sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.sldVolume.Resolution = 0.05D;
-            this.sldVolume.Size = new System.Drawing.Size(88, 52);
-            this.sldVolume.TabIndex = 36;
-            this.toolTip.SetToolTip(this.sldVolume, "Master volume");
-            this.sldVolume.Value = 1D;
-            this.sldVolume.ValueChanged += new System.EventHandler(this.Volume_ValueChanged);
+            sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            sldVolume.DrawColor = System.Drawing.Color.Red;
+            sldVolume.Label = "vol";
+            sldVolume.Location = new System.Drawing.Point(267, 47);
+            sldVolume.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            sldVolume.Maximum = 1D;
+            sldVolume.Minimum = 0D;
+            sldVolume.Name = "sldVolume";
+            sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            sldVolume.Resolution = 0.05D;
+            sldVolume.Size = new System.Drawing.Size(88, 50);
+            sldVolume.TabIndex = 36;
+            toolTip.SetToolTip(sldVolume, "Master volume");
+            sldVolume.Value = 1D;
+            sldVolume.ValueChanged += Volume_ValueChanged;
             // 
             // sldTempo
             // 
-            this.sldTempo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.sldTempo.DrawColor = System.Drawing.Color.LightGray;
-            this.sldTempo.Label = "bpm";
-            this.sldTempo.Location = new System.Drawing.Point(170, 49);
-            this.sldTempo.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.sldTempo.Maximum = 200D;
-            this.sldTempo.Minimum = 30D;
-            this.sldTempo.Name = "sldTempo";
-            this.sldTempo.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.sldTempo.Resolution = 5D;
-            this.sldTempo.Size = new System.Drawing.Size(88, 52);
-            this.sldTempo.TabIndex = 33;
-            this.toolTip.SetToolTip(this.sldTempo, "Speed in BPM");
-            this.sldTempo.Value = 100D;
-            this.sldTempo.ValueChanged += new System.EventHandler(this.Speed_ValueChanged);
+            sldTempo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            sldTempo.DrawColor = System.Drawing.Color.LightGray;
+            sldTempo.Label = "bpm";
+            sldTempo.Location = new System.Drawing.Point(170, 47);
+            sldTempo.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            sldTempo.Maximum = 200D;
+            sldTempo.Minimum = 30D;
+            sldTempo.Name = "sldTempo";
+            sldTempo.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            sldTempo.Resolution = 5D;
+            sldTempo.Size = new System.Drawing.Size(88, 50);
+            sldTempo.TabIndex = 33;
+            toolTip.SetToolTip(sldTempo, "Speed in BPM");
+            sldTempo.Value = 100D;
+            sldTempo.ValueChanged += Speed_ValueChanged;
             // 
             // toolTip
             // 
-            this.toolTip.AutomaticDelay = 0;
-            this.toolTip.AutoPopDelay = 0;
-            this.toolTip.InitialDelay = 300;
-            this.toolTip.ReshowDelay = 0;
-            this.toolTip.UseAnimation = false;
-            this.toolTip.UseFading = false;
+            toolTip.AutomaticDelay = 0;
+            toolTip.AutoPopDelay = 0;
+            toolTip.InitialDelay = 300;
+            toolTip.ReshowDelay = 0;
+            toolTip.UseAnimation = false;
+            toolTip.UseFading = false;
             // 
             // btnCompile
             // 
-            this.btnCompile.FlatAppearance.BorderSize = 0;
-            this.btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCompile.Image = global::Nebulator.App.Properties.Resources.glyphicons_366_restart;
-            this.btnCompile.Location = new System.Drawing.Point(116, 49);
-            this.btnCompile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.btnCompile.Name = "btnCompile";
-            this.btnCompile.Size = new System.Drawing.Size(45, 49);
-            this.btnCompile.TabIndex = 38;
-            this.toolTip.SetToolTip(this.btnCompile, "Compile script file - lit indicates file changed externally");
-            this.btnCompile.UseVisualStyleBackColor = false;
-            this.btnCompile.Click += new System.EventHandler(this.Compile_Click);
+            btnCompile.FlatAppearance.BorderSize = 0;
+            btnCompile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnCompile.Image = Properties.Resources.glyphicons_366_restart;
+            btnCompile.Location = new System.Drawing.Point(116, 47);
+            btnCompile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            btnCompile.Name = "btnCompile";
+            btnCompile.Size = new System.Drawing.Size(45, 47);
+            btnCompile.TabIndex = 38;
+            toolTip.SetToolTip(btnCompile, "Compile script file - lit indicates file changed externally");
+            btnCompile.UseVisualStyleBackColor = false;
+            btnCompile.Click += Compile_Click;
             // 
             // btnRewind
             // 
-            this.btnRewind.FlatAppearance.BorderSize = 0;
-            this.btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRewind.Image = global::Nebulator.App.Properties.Resources.glyphicons_173_rewind;
-            this.btnRewind.Location = new System.Drawing.Point(13, 49);
-            this.btnRewind.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.btnRewind.Name = "btnRewind";
-            this.btnRewind.Size = new System.Drawing.Size(45, 49);
-            this.btnRewind.TabIndex = 31;
-            this.toolTip.SetToolTip(this.btnRewind, "Reset to start");
-            this.btnRewind.UseVisualStyleBackColor = false;
-            this.btnRewind.Click += new System.EventHandler(this.Rewind_Click);
+            btnRewind.FlatAppearance.BorderSize = 0;
+            btnRewind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRewind.Image = Properties.Resources.glyphicons_173_rewind;
+            btnRewind.Location = new System.Drawing.Point(13, 47);
+            btnRewind.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            btnRewind.Name = "btnRewind";
+            btnRewind.Size = new System.Drawing.Size(45, 47);
+            btnRewind.TabIndex = 31;
+            toolTip.SetToolTip(btnRewind, "Reset to start");
+            btnRewind.UseVisualStyleBackColor = false;
+            btnRewind.Click += Rewind_Click;
             // 
             // chkPlay
             // 
-            this.chkPlay.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkPlay.BackColor = System.Drawing.SystemColors.Control;
-            this.chkPlay.FlatAppearance.BorderSize = 0;
-            this.chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkPlay.Image = global::Nebulator.App.Properties.Resources.glyphicons_174_play;
-            this.chkPlay.Location = new System.Drawing.Point(65, 49);
-            this.chkPlay.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chkPlay.MaximumSize = new System.Drawing.Size(43, 49);
-            this.chkPlay.MinimumSize = new System.Drawing.Size(43, 49);
-            this.chkPlay.Name = "chkPlay";
-            this.chkPlay.Size = new System.Drawing.Size(43, 49);
-            this.chkPlay.TabIndex = 35;
-            this.toolTip.SetToolTip(this.chkPlay, "Play project");
-            this.chkPlay.UseVisualStyleBackColor = false;
-            this.chkPlay.Click += new System.EventHandler(this.Play_Click);
+            chkPlay.Appearance = System.Windows.Forms.Appearance.Button;
+            chkPlay.BackColor = System.Drawing.SystemColors.Control;
+            chkPlay.FlatAppearance.BorderSize = 0;
+            chkPlay.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(255, 128, 128);
+            chkPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            chkPlay.Image = Properties.Resources.glyphicons_174_play;
+            chkPlay.Location = new System.Drawing.Point(65, 47);
+            chkPlay.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            chkPlay.MaximumSize = new System.Drawing.Size(43, 47);
+            chkPlay.MinimumSize = new System.Drawing.Size(43, 47);
+            chkPlay.Name = "chkPlay";
+            chkPlay.Size = new System.Drawing.Size(43, 47);
+            chkPlay.TabIndex = 35;
+            toolTip.SetToolTip(chkPlay, "Play project");
+            chkPlay.UseVisualStyleBackColor = false;
+            chkPlay.Click += Play_Click;
             // 
             // toolStrip1
             // 
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileDropDownButton,
-            this.btnMonIn,
-            this.btnMonOut,
-            this.btnKillComm,
-            this.btnAbout,
-            this.btnSettings});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(813, 27);
-            this.toolStrip1.TabIndex = 39;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileDropDownButton, btnMonIn, btnMonOut, btnKillComm, btnAbout, btnSettings });
+            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new System.Drawing.Size(813, 27);
+            toolStrip1.TabIndex = 39;
+            toolStrip1.Text = "toolStrip1";
             // 
             // fileDropDownButton
             // 
-            this.fileDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.fileDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
-            this.recentToolStripMenuItem,
-            this.exportMidiToolStripMenuItem,
-            this.exportCsvToolStripMenuItem,
-            this.showDefinitionsToolStripMenuItem});
-            this.fileDropDownButton.Image = global::Nebulator.App.Properties.Resources.glyphicons_37_file;
-            this.fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.fileDropDownButton.Name = "fileDropDownButton";
-            this.fileDropDownButton.Size = new System.Drawing.Size(34, 24);
-            this.fileDropDownButton.Text = "fileDropDownButton";
-            this.fileDropDownButton.ToolTipText = "File operations";
+            fileDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            fileDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, recentToolStripMenuItem, exportMidiToolStripMenuItem, showDefinitionsToolStripMenuItem });
+            fileDropDownButton.Image = Properties.Resources.glyphicons_37_file;
+            fileDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            fileDropDownButton.Name = "fileDropDownButton";
+            fileDropDownButton.Size = new System.Drawing.Size(34, 24);
+            fileDropDownButton.Text = "fileDropDownButton";
+            fileDropDownButton.ToolTipText = "File operations";
             // 
             // openToolStripMenuItem
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.Open_Click);
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            openToolStripMenuItem.Text = "Open";
+            openToolStripMenuItem.Click += Open_Click;
             // 
             // recentToolStripMenuItem
             // 
-            this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            this.recentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.recentToolStripMenuItem.Text = "Recent";
+            recentToolStripMenuItem.Name = "recentToolStripMenuItem";
+            recentToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
-            this.exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            this.exportMidiToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.exportMidiToolStripMenuItem.Text = "Export Midi";
-            this.exportMidiToolStripMenuItem.Click += new System.EventHandler(this.ExportMidi_Click);
-            // 
-            // exportCsvToolStripMenuItem
-            // 
-            this.exportCsvToolStripMenuItem.Name = "exportCsvToolStripMenuItem";
-            this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.exportCsvToolStripMenuItem.Text = "Dump Midi";
-            this.exportCsvToolStripMenuItem.Click += new System.EventHandler(this.ExportCsv_Click);
+            exportMidiToolStripMenuItem.Enabled = false;
+            exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
+            exportMidiToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            exportMidiToolStripMenuItem.Text = "Export Midi";
+            exportMidiToolStripMenuItem.Click += ExportMidi_Click;
             // 
             // showDefinitionsToolStripMenuItem
             // 
-            this.showDefinitionsToolStripMenuItem.Name = "showDefinitionsToolStripMenuItem";
-            this.showDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.showDefinitionsToolStripMenuItem.Text = "Show Definitions";
-            this.showDefinitionsToolStripMenuItem.Click += new System.EventHandler(this.ShowDefinitions_Click);
+            showDefinitionsToolStripMenuItem.Name = "showDefinitionsToolStripMenuItem";
+            showDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            showDefinitionsToolStripMenuItem.Text = "Show Definitions";
+            showDefinitionsToolStripMenuItem.Click += ShowDefinitions_Click;
             // 
             // btnMonIn
             // 
-            this.btnMonIn.CheckOnClick = true;
-            this.btnMonIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnMonIn.Image = global::Nebulator.App.Properties.Resources.glyphicons_213_arrow_down;
-            this.btnMonIn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnMonIn.Name = "btnMonIn";
-            this.btnMonIn.Size = new System.Drawing.Size(29, 24);
-            this.btnMonIn.Text = "btnMonIn";
-            this.btnMonIn.ToolTipText = "Monitor messages in";
+            btnMonIn.CheckOnClick = true;
+            btnMonIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnMonIn.Image = Properties.Resources.glyphicons_213_arrow_down;
+            btnMonIn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnMonIn.Name = "btnMonIn";
+            btnMonIn.Size = new System.Drawing.Size(26, 24);
+            btnMonIn.Text = "btnMonIn";
+            btnMonIn.ToolTipText = "Monitor messages in";
             // 
             // btnMonOut
             // 
-            this.btnMonOut.CheckOnClick = true;
-            this.btnMonOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnMonOut.Image = global::Nebulator.App.Properties.Resources.glyphicons_214_arrow_up;
-            this.btnMonOut.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnMonOut.Name = "btnMonOut";
-            this.btnMonOut.Size = new System.Drawing.Size(29, 24);
-            this.btnMonOut.Text = "btnMonOut";
-            this.btnMonOut.ToolTipText = "Monitor messages out";
+            btnMonOut.CheckOnClick = true;
+            btnMonOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnMonOut.Image = Properties.Resources.glyphicons_214_arrow_up;
+            btnMonOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnMonOut.Name = "btnMonOut";
+            btnMonOut.Size = new System.Drawing.Size(26, 24);
+            btnMonOut.Text = "btnMonOut";
+            btnMonOut.ToolTipText = "Monitor messages out";
             // 
             // btnKillComm
             // 
-            this.btnKillComm.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnKillComm.Image = global::Nebulator.App.Properties.Resources.glyphicons_206_electricity;
-            this.btnKillComm.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnKillComm.Name = "btnKillComm";
-            this.btnKillComm.Size = new System.Drawing.Size(29, 24);
-            this.btnKillComm.Text = "btnKillComm";
-            this.btnKillComm.ToolTipText = "Kill all devices";
+            btnKillComm.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnKillComm.Image = Properties.Resources.glyphicons_206_electricity;
+            btnKillComm.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnKillComm.Name = "btnKillComm";
+            btnKillComm.Size = new System.Drawing.Size(26, 24);
+            btnKillComm.Text = "btnKillComm";
+            btnKillComm.ToolTipText = "Kill all devices";
             // 
             // btnAbout
             // 
-            this.btnAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAbout.Image = global::Nebulator.App.Properties.Resources.glyphicons_195_question_sign;
-            this.btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAbout.Name = "btnAbout";
-            this.btnAbout.Size = new System.Drawing.Size(29, 24);
-            this.btnAbout.Text = "btnAbout";
-            this.btnAbout.ToolTipText = "About";
+            btnAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnAbout.Image = Properties.Resources.glyphicons_195_question_sign;
+            btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnAbout.Name = "btnAbout";
+            btnAbout.Size = new System.Drawing.Size(26, 24);
+            btnAbout.Text = "btnAbout";
+            btnAbout.ToolTipText = "About";
             // 
             // btnSettings
             // 
-            this.btnSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSettings.Image = global::Nebulator.App.Properties.Resources.glyphicons_137_cogwheel;
-            this.btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(29, 24);
-            this.btnSettings.Text = "btnSettings";
-            this.btnSettings.ToolTipText = "Edit settings";
+            btnSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnSettings.Image = Properties.Resources.glyphicons_137_cogwheel;
+            btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnSettings.Name = "btnSettings";
+            btnSettings.Size = new System.Drawing.Size(26, 24);
+            btnSettings.Text = "btnSettings";
+            btnSettings.ToolTipText = "Edit settings";
             // 
-            // textViewer
+            // tvInfo
             // 
-            this.tvInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tvInfo.Location = new System.Drawing.Point(13, 610);
-            this.tvInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tvInfo.MaxText = 5000;
-            this.tvInfo.Name = "textViewer";
-            this.tvInfo.Prompt = "";
-            this.tvInfo.Size = new System.Drawing.Size(789, 217);
-            this.tvInfo.TabIndex = 41;
-            this.tvInfo.WordWrap = true;
+            tvInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            tvInfo.Location = new System.Drawing.Point(13, 580);
+            tvInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            tvInfo.MatchUseBackground = true;
+            tvInfo.MaxText = 5000;
+            tvInfo.Name = "tvInfo";
+            tvInfo.Prompt = "";
+            tvInfo.Size = new System.Drawing.Size(789, 206);
+            tvInfo.TabIndex = 41;
+            tvInfo.WordWrap = true;
             // 
             // timeBar
             // 
-            this.timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.timeBar.FontLarge = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.timeBar.FontSmall = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.timeBar.Location = new System.Drawing.Point(12, 123);
-            this.timeBar.Name = "timeBar";
-            this.timeBar.Size = new System.Drawing.Size(790, 55);
-            this.timeBar.TabIndex = 44;
+            timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            timeBar.DrawColor = System.Drawing.Color.Red;
+            timeBar.GridLines = 0;
+            timeBar.Location = new System.Drawing.Point(12, 117);
+            timeBar.Name = "timeBar";
+            timeBar.SelectedColor = System.Drawing.Color.Blue;
+            timeBar.Size = new System.Drawing.Size(790, 52);
+            timeBar.Snap = Ephemera.MidiLib.SnapType.Beat;
+            timeBar.TabIndex = 44;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Control;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(813, 838);
-            this.Controls.Add(this.timeBar);
-            this.Controls.Add(this.tvInfo);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.btnCompile);
-            this.Controls.Add(this.sldVolume);
-            this.Controls.Add(this.sldTempo);
-            this.Controls.Add(this.btnRewind);
-            this.Controls.Add(this.chkPlay);
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "MainForm";
-            this.Text = "Nebulator";
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.SystemColors.Control;
+            BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            ClientSize = new System.Drawing.Size(813, 796);
+            Controls.Add(timeBar);
+            Controls.Add(tvInfo);
+            Controls.Add(toolStrip1);
+            Controls.Add(btnCompile);
+            Controls.Add(sldVolume);
+            Controls.Add(sldTempo);
+            Controls.Add(btnRewind);
+            Controls.Add(chkPlay);
+            Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            Name = "MainForm";
+            Text = "Nebulator";
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -317,7 +299,6 @@
         private System.Windows.Forms.ToolStripButton btnKillComm;
         private Ephemera.NBagOfUis.TextViewer tvInfo;
         private Ephemera.MidiLib.TimeBar timeBar;
-        private System.Windows.Forms.ToolStripMenuItem exportCsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showDefinitionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnAbout;
         private System.Windows.Forms.ToolStripButton btnSettings;

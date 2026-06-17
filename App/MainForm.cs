@@ -7,10 +7,10 @@ using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Reflection;
+using NAudio.Midi;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
 using Ephemera.MidiLib;
-using Ephemera.MidiLibEx;
 using Ephemera.MusicLib;
 using Ephemera.NScript;
 using Nebulator.Script;
@@ -925,7 +925,7 @@ namespace Nebulator.App
 
         #region Midi utilities
         /// <summary>
-        /// Export to a midi file.
+        /// Export to a midi file. TODO needs help/debug.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -942,52 +942,33 @@ namespace Nebulator.App
 
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
-                    // Make a Pattern object and call the formatter.
+                    // Init output file contents.
+                    int ppq = MusicTime.TicksPerBeat;
+                    MidiEventCollection outColl = new(1, ppq);
+
                     IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
 
-                    PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
-
-                    Dictionary<string, int> meta = new()
+                    // Build the event collection.
+                    foreach (var channel in channels)
                     {
-                        { "MidiFileType", 0 },
-                        { "DeltaTicksPerQuarterNote", MusicTime.TicksPerBeat },
-                        { "NumTracks", 1 }
-                    };
+                        IList<MidiEvent> outEvents = outColl.AddTrack();
+                        for (int i = 0; i < channel.Events.Count(); i++)
+                        {
+                            //outEvents.Add(e);
+                        }
+                    }
 
-                    MidiExport.ExportMidi(saveDlg.FileName, pattern, channels, meta);
+                    //// original - Make a Pattern object and call the formatter.
+                    //IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
+                    //PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
+                    //Dictionary<string, int> meta = new()
+                    //{
+                    //    { "MidiFileType", 0 },
+                    //    { "DeltaTicksPerQuarterNote", MusicTime.TicksPerBeat },
+                    //    { "NumTracks", 1 }
+                    //};
+                    //MidiExport.ExportMidi(saveDlg.FileName, pattern, channels, meta);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Dump human readable.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void ExportCsv_Click(object sender, EventArgs e)
-        {
-            if (_scriptFileName is not null && _script is not null)
-            {
-                // Make a Pattern object and call the formatter.
-                IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
-
-                //List<int> channelNumbers = [.. channels.Select(cc => cc.ChannelNumber)];
-                //List<int> drumNumbers = [.. channels.Where(cc => cc.IsDrums).Select(cc => cc.ChannelNumber)];
-
-                var fn = Path.GetFileName(_scriptFileName.Replace(".neb", ".csv"));
-
-                PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
-
-                Dictionary<string, int> meta = new()
-                {
-                    { "MidiFileType", 0 },
-                    { "DeltaTicksPerQuarterNote", MusicTime.TicksPerBeat },
-                    { "NumTracks", 1 }
-                };
-
-                //MidiExport.ExportCsv(fn, [pattern], channelNumbers, drumNumbers, meta);
-                MidiExport.ExportCsv(fn, [pattern], channels, meta);
-                _logger.Info($"Exported to {fn}");
             }
         }
 
