@@ -912,14 +912,13 @@ namespace Nebulator.App
 
         #region Timer
         /// <summary>
-        /// Common func.
+        /// Set the multimedia timer period.
         /// </summary>
         void SetFastTimerPeriod()
         {
-            // Make a transformer.
-            MidiTimeConverter mt = new(MusicTime.TicksPerBeat, sldTempo.Value);
-            var per = mt.RoundedInternalPeriod();
-            _mmTimer.SetTimer(per, MmTimerCallback);
+            double secPerBeat = 60.0 / sldTempo.Value;
+            double msecPerT = 1000 * secPerBeat / MusicTime.TicksPerBeat;
+            _mmTimer.SetTimer(msecPerT > 1.0 ? (int)Math.Round(msecPerT) : 1, MmTimerCallback);
         }
         #endregion
 
@@ -957,17 +956,6 @@ namespace Nebulator.App
                             //outEvents.Add(e);
                         }
                     }
-
-                    //// original - Make a Pattern object and call the formatter.
-                    //IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
-                    //PatternInfo pattern = new("export", MusicTime.TicksPerBeat);
-                    //Dictionary<string, int> meta = new()
-                    //{
-                    //    { "MidiFileType", 0 },
-                    //    { "DeltaTicksPerQuarterNote", MusicTime.TicksPerBeat },
-                    //    { "NumTracks", 1 }
-                    //};
-                    //MidiExport.ExportMidi(saveDlg.FileName, pattern, channels, meta);
                 }
             }
         }
