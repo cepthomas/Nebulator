@@ -60,7 +60,7 @@ namespace Nebulator.Script
         }
 
         /// <summary>
-        /// Add a pattern. Note subdivs per beat is fixed at PPQ of 8.
+        /// Add a pattern. Note subbeats per beat is fixed at PPQ of 8.
         /// Like: Z.Add("|5---    8       |7.......|7654-- |", "G4.m7", 90);
         /// Like: Z.Add("|8       |       |8       |       |", "AcousticBassDrum", 90);
         /// </summary>

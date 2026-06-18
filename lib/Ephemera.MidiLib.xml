@@ -577,70 +577,8 @@
             </summary>
             <param name="channel">Specific channel or all if null.</param>
         </member>
-        <member name="T:Ephemera.MidiLib.MidiTimeConverter">
-            <summary>Helper to translate between midi standard and arbtrary internal representation.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.MidiTimeConverter._midiPpq">
-            <summary>Resolution for midi file events aka DeltaTicksPerQuarterNote.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.MidiTimeConverter._tempo">
-            <summary>Tempo aka BPM.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.#ctor(System.Int32,System.Double)">
-            <summary>
-            Constructor.
-            </summary>
-            <param name="midiPpq">The file resolution.</param>
-            <param name="tempo">BPM may be needed for some calcs.</param>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.InternalToMidi(System.Int32)">
-            <summary>
-            Conversion function.
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.MidiToInternal(System.Int64)">
-            <summary>
-            Conversion function. TODO should round?
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.InternalToMsec(System.Int32)">
-            <summary>
-            Conversion function.
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.MidiToSec(System.Int32)">
-            <summary>
-            Conversion function.
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.MidiPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.InternalPeriod">
-            <summary>
-            Exact time between events.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.MidiTimeConverter.RoundedInternalPeriod">
-            <summary>
-            Integer time between events.
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:Ephemera.MidiLib.MusicTime">
-            <summary>Sort of like DateTime but for musical terminology.</summary>
+            <summary>Sort of like DateTime but for musical terminology in midi.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MusicTime._id">
             <summary>For hashing comparable.</summary>
@@ -654,14 +592,14 @@
         <member name="P:Ephemera.MidiLib.MusicTime.BeatsPerBar">
             <summary>Only 4/4 time supported currently.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MusicTime.TicksPerBeat">
+        <member name="P:Ephemera.MidiLib.MusicTime.SubbeatsPerBeat">
             <summary>Our resolution where 8 => 32nd note.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MusicTime.TicksPerBar">
+        <member name="P:Ephemera.MidiLib.MusicTime.SubbeatsPerBar">
             <summary>Convenience.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MusicTime.Tick">
-            <summary>Absolute tick. Zero-based.</summary>
+            <summary>Absolute tick => total Subbeats. Zero-based.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MusicTime.Id">
             <summary>Accessor.</summary>
@@ -688,11 +626,11 @@
         </member>
         <member name="M:Ephemera.MidiLib.MusicTime.#ctor(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Constructor from bar/beat/tick.
+            Constructor from bar/beat/subbeat.
             </summary>
             <param name="bar"></param>
             <param name="beat"></param>
-            <param name="tick"></param>
+            <param name="subbeat"></param>
         </member>
         <member name="M:Ephemera.MidiLib.MusicTime.#ctor(System.String)">
             <summary>
@@ -702,7 +640,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.MusicTime.#ctor(System.Double)">
             <summary>
-            Construct a MusicTime from Beat.Sub representation as a double in the range N.0 to N.7
+            Construct a MusicTime from Beat.Subbeat representation as a double in the range N.0 to N.7
             </summary>
             <param name="beat"></param>
             <returns>New BarTime.</returns>
@@ -718,7 +656,7 @@
             <summary>
             Update current value.
             </summary>
-            <param name="ticks">By this number of ticks. Can be negative = decrement.</param>
+            <param name="subbeats">By this number of subbeats. Can be negative = decrement.</param>
         </member>
         <member name="M:Ephemera.MidiLib.MusicTime.Reset">
             <summary>

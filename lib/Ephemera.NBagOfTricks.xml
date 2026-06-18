@@ -120,11 +120,6 @@
             <returns></returns>
             <exception cref="T:System.Exception"></exception>
         </member>
-        <member name="M:Ephemera.NBagOfTricks.ColorUtils.ToConsoleColor_simple(System.Drawing.Color)">
-            <summary>Simple binning approach.</summary>
-            <param name="sysclr"></param>
-            <returns></returns>
-        </member>
         <member name="M:Ephemera.NBagOfTricks.ColorUtils.ParseNullableConsoleColor(System.String)">
             <summary>Parse console color safely.</summary>
             <param name="value">Color name</param>
@@ -474,6 +469,14 @@
             <param name="height">The height to resize to.</param>
             <returns>The resized image.</returns>
         </member>
+        <member name="M:Ephemera.NBagOfTricks.MiscUtils.AddLazy``2(System.Collections.Generic.Dictionary{``0,System.Collections.Generic.List{``1}},``0,``1)">
+            <summary>
+            Add a value to a list with key. If the list with key doesn't exist, it is added.
+            </summary>
+            <param name="dict"></param>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
         <member name="M:Ephemera.NBagOfTricks.MiscUtils.Subset``1(``0[],System.Int32,System.Int32)">
             <summary>
             Get a subset of an array.
@@ -495,6 +498,7 @@
         <member name="M:Ephemera.NBagOfTricks.MiscUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
             Immediately executes the given action on each element in the source sequence.
+            Borrowed from MoreLinq.
             </summary>
             <typeparam name="T">The type of the elements in the sequence</typeparam>
             <param name="source">The sequence of elements</param>
@@ -504,6 +508,7 @@
             <summary>
             Immediately executes the given action on each element in the source sequence.
             Each element's index is used in the logic of the action.
+            Borrowed from MoreLinq.
             </summary>
             <typeparam name="T">The type of the elements in the sequence</typeparam>
             <param name="source">The sequence of elements</param>

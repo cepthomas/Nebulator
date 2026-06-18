@@ -917,7 +917,7 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             double secPerBeat = 60.0 / sldTempo.Value;
-            double msecPerT = 1000 * secPerBeat / MusicTime.TicksPerBeat;
+            double msecPerT = 1000 * secPerBeat / MusicTime.SubbeatsPerBeat;
             _mmTimer.SetTimer(msecPerT > 1.0 ? (int)Math.Round(msecPerT) : 1, MmTimerCallback);
         }
         #endregion
@@ -942,7 +942,7 @@ namespace Nebulator.App
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
                     // Init output file contents.
-                    int ppq = MusicTime.TicksPerBeat;
+                    int ppq = MusicTime.SubbeatsPerBeat;
                     MidiEventCollection outColl = new(1, ppq);
 
                     IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);

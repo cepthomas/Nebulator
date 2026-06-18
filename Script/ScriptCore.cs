@@ -333,7 +333,7 @@ namespace Nebulator.Script
             foreach (SequenceElement seqel in seq.Elements)
             {
                 // Create the note start and stop times.
-                MusicTime startNoteTime = new MusicTime(startBeat * MusicTime.TicksPerBeat) + seqel.When;
+                MusicTime startNoteTime = new MusicTime(startBeat * MusicTime.SubbeatsPerBeat) + seqel.When;
                 MusicTime stopNoteTime = startNoteTime + (seqel.Duration.Tick == 0 ? new(1) : seqel.Duration); // 1 is a short hit
 
                 // Is it a function?
