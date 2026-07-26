@@ -195,7 +195,7 @@ namespace Nebulator.Script
         public MusicTime Duration { get; set; } = new();
 
         /// <summary>The 0th is the root note and other values comprise possible chord notes.</summary>
-        public List<int> Notes { get; private set; } = new(); // TODO notes below the root.
+        public List<int> Notes { get; private set; } = new(); // TODO1 notes below the root.
 
         /// <summary>Call a script function.</summary>
         public Action? ScriptFunction { get; set; } = null;
