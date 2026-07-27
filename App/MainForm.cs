@@ -595,7 +595,7 @@ namespace Nebulator.App
         /// </summary>
         void Open_Click(object? sender, EventArgs e)
         {
-            string dir = ""; // TODO1 remember last location or default to guessed
+            string dir = ""; // TODO remember last location or default to guessed
             using OpenFileDialog openDlg = new()
             {
                 Filter = "Nebulator files | *.neb",
