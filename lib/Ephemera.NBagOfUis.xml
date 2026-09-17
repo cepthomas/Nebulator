@@ -151,9 +151,6 @@
         <member name="E:Ephemera.NBagOfUis.DropDownButton.Opening">
             <summary>Drop down opening event.</summary>
         </member>
-        <member name="F:Ephemera.NBagOfUis.DropDownButton._menu">
-            <summary>The menu.</summary>
-        </member>
         <member name="M:Ephemera.NBagOfUis.DropDownButton.#ctor">
             <summary>
             Constructor.

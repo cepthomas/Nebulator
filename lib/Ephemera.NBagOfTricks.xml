@@ -1032,9 +1032,6 @@
         <member name="P:Ephemera.NBagOfTricks.LogManager.MinLevelNotif">
             <summary>Event filter for callback event.</summary>
         </member>
-        <member name="P:Ephemera.NBagOfTricks.LogManager.TimeFormat">
-            <summary>Format for file records.</summary>
-        </member>
         <member name="P:Ephemera.NBagOfTricks.LogManager.QueueSize">
             <summary>For diagnostics.</summary>
         </member>
@@ -1073,16 +1070,11 @@
         </member>
         <member name="T:Ephemera.NBagOfTricks.Logger">
             <summary>Client creates as many of these as needed.</summary>
-            <remarks>
-            Constructor.
-            </remarks>
-            <param name="name">Client assigned name.</param>
         </member>
         <member name="M:Ephemera.NBagOfTricks.Logger.#ctor(System.String)">
-            <summary>Client creates as many of these as needed.</summary>
-            <remarks>
+            <summary>
             Constructor.
-            </remarks>
+            </summary>
             <param name="name">Client assigned name.</param>
         </member>
         <member name="P:Ephemera.NBagOfTricks.Logger.Name">
@@ -1249,6 +1241,13 @@
             </summary>
             <param name="fn"></param>
             <param name="limit"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.NBagOfTricks.Tools.AppendBitmaps(System.String[])">
+            <summary>
+            Combine multiple bitmaps into one image. Stacked vertically but could add option for horizontal.
+            </summary>
+            <param name="filePaths"></param>
             <returns></returns>
         </member>
     </members>
