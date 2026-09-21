@@ -102,11 +102,13 @@ namespace Nebulator.App
             GraphicsUtils.ColorizeControl(btnMonOut, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnKillComm, _settings.IconColor);
             GraphicsUtils.ColorizeControl(fileDropDownButton, _settings.IconColor);
-            GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
-            GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnAbout, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnSettings, _settings.IconColor);
-            GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
+
+            // TODO these are broken after update to .NET10:
+            //GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
+            //GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
+            //GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
 
             btnMonIn.Checked = _settings.MonitorInput;
             btnMonOut.Checked = _settings.MonitorOutput;
