@@ -21,10 +21,10 @@ namespace Nebulator.Script
             if (!notes.Any())
             {
                 // It might be a drum.
-                int id = MidiDefs.Drums.GetId(snotes);
-                if (id >= 0)
+                var id = MidiDefs.Drums.GetId(snotes);
+                if (id is not null && id >= 0)
                 {
-                    notes.Add(id);
+                    notes.Add((int)id);
                 }
                 else
                 {

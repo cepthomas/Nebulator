@@ -33,6 +33,12 @@ namespace Nebulator.App
         /// <summary>App settings.</summary>
         readonly UserSettings _settings;
 
+        /// <summary>Midi boss.</summary>
+        readonly ChannelManager CM;
+
+        /// <summary>Midi boss.</summary>
+        readonly InputManager IM;
+
         /// <summary>Fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
 
@@ -45,8 +51,8 @@ namespace Nebulator.App
         /// <summary>The current script.</summary>
         ScriptCore? _script;
 
-        /// <summary>All the channel play controls.</summary>
-        readonly List<ChannelControl> _channelControls = [];
+        ///// <summary>All the channel play controls.</summary>
+        //readonly List<ChannelControl> _channelControls = [];
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -70,6 +76,9 @@ namespace Nebulator.App
 
             InitializeComponent();
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+
+            CM = new(Controls);
+            IM = new();
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
@@ -105,7 +114,7 @@ namespace Nebulator.App
             GraphicsUtils.ColorizeControl(btnAbout, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnSettings, _settings.IconColor);
 
-            // TODO these are broken after update to .NET10:
+            // TODO1 these are broken after update to .NET10:
             //GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
             //GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
             //GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
@@ -132,10 +141,10 @@ namespace Nebulator.App
             btnMonOut.Click += Monitor_Click;
             btnAbout.Click += About_Click;
             btnSettings.Click += Settings_Click;
-            btnKillComm.Click += (_, __) => MidiManager.Instance.Kill();
+            btnKillComm.Click += (_, __) => CM.KillAll();
 
-            MidiManager.Instance.MessageReceived += Manager_MessageReceived;
-            MidiManager.Instance.MessageSent += Manager_MessageSent;
+            IM.MessageReceived += Manager_MessageReceived;
+            //CM.MessageSent += Manager_MessageSent;
             #endregion
         }
 
@@ -190,7 +199,7 @@ namespace Nebulator.App
         {
             LogManager.Stop();
             ProcessPlay(PlayCommand.Stop);
-            MidiManager.Instance.Kill();
+            CM.KillAll();
 
             // Save user settings.
             _settings.FormGeometry = new()
@@ -214,8 +223,8 @@ namespace Nebulator.App
         {
             _mmTimer.Stop();
             _mmTimer.Dispose();
-            DestroyControls();
-            MidiManager.Instance.DestroyDevices();
+            CM.Dispose();
+            IM.Dispose();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -235,119 +244,122 @@ namespace Nebulator.App
         /// </summary>
         bool CompileScript()
         {
-            bool ok = true;
-
             if (_scriptFileName is null)
             {
                 _logger.Warn("No script file loaded.");
-                ok = false;
+                return false;
             }
-            else
+
+            // Clean up old script stuff.
+            ProcessPlay(PlayCommand.StopRewind);
+
+            CM.Reset();
+            _watcher.Clear();
+            timeBar.Reset();
+
+            // Run the compiler.
+            _compiler.CompileScript(_scriptFileName);
+
+            // What happened?
+            if (_compiler.CompiledScript is null)
             {
-                // Clean up old script stuff.
-                ProcessPlay(PlayCommand.StopRewind);
+                _logger.Error($"Compile failed:");
+                LogCompilerResults();
+                return false;
+            }
 
-                DestroyControls();
+            _script = _compiler.CompiledScript as ScriptCore;
 
-                MidiManager.Instance.DestroyChannels();
-                _watcher.Clear();
-                timeBar.Reset();
+            if (_script is not null)
+            {
+                _script.Bind(CM, IM);
 
-                // Run the compiler.
-                _compiler.CompileScript(_scriptFileName);
+                SetCompileStatus(true);
 
-                // What happened?
-                if (_compiler.CompiledScript is null)
+                // Need exception handling here to protect from user script errors.
+                try
                 {
-                    _logger.Error($"Compile failed:");
+                    // Init shared vars.
+                    InitRuntime();
 
-                    // Log compiler results.
-                    LogCompilerResults();
+                    // Setup script. Defines channels and devices, builds the sequences and sections.
+                    _script.Setup();
 
+                    // Script may have altered shared vars.
+                    ProcessRuntime();
+                }
+                catch (Exception ex)
+                {
+                    ProcessScriptRuntimeError(ex);
                     return false;
                 }
-
-                _script = _compiler.CompiledScript as ScriptCore;
-
-                if (ok)
-                {
-                    SetCompileStatus(true);
-
-                    // Need exception handling here to protect from user script errors.
-                    try
-                    {
-                        // Init shared vars.
-                        InitRuntime();
-
-                        // Setup script. Defines channels and devices, builds the sequences and sections.
-                        _script!.Setup();
-
-                        // Script may have altered shared vars.
-                        ProcessRuntime();
-                    }
-                    catch (Exception ex)
-                    {
-                        ProcessScriptRuntimeError(ex);
-                        ok = false;
-                    }
-                }
-
-                // Script is sane - build the controls.
-                if (ok)
-                {
-                    const int CONTROL_SPACING = 10;
-                    int x = btnRewind.Left;
-                    int y = timeBar.Bottom + CONTROL_SPACING;
-
-                    foreach (var channel in MidiManager.Instance.OutputChannels)
-                    {
-                        // Make new control and bind to defined channel.
-                        ChannelControl control = new()
-                        {
-                            Location = new(x, y),
-                            BorderStyle = BorderStyle.FixedSingle,
-                            BoundChannel = channel,
-                            DrawColor = _settings.DrawColor,
-                            SelectedColor = _settings.SelectedColor,
-                            Options = DisplayOptions.SoloMute
-                        };
-                        control.ChannelChange += Control_ChannelChange;
-                        Controls.Add(control);
-                        _channelControls.Add(control);
-
-                        // Adjust positioning.
-                        y += control.Height + 5;
-                    }
-                }
-
-                // Script is sane - build the events.
-                if (ok)
-                {
-                    _script!.BuildSteps();
-
-                    // Init the timebar.
-                    var sinfo = _script!.GetSectionInfo();
-                    timeBar.InitSectionInfo(sinfo);
-
-                    // Start the clock.
-                    SetFastTimerPeriod();
-                }
-
-                // Update file watcher.
-                _compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
-
-                SetCompileStatus(ok);
-
-                if(!ok)
-                {
-                    _logger.Error("Compile failed.");
-                }
-
-                // Log compiler results.
-                LogCompilerResults();
             }
 
-            return ok;
+            // Script is sane - build the controls.
+            const int CONTROL_SPACING = 10;
+            int x = btnRewind.Left;
+            int y = timeBar.Bottom + CONTROL_SPACING;
+
+            foreach (var (chan, _) in CM.GetChannels())
+            {
+                // Make new control and bind to defined channel.
+                //ChannelControl control = new()
+                //{
+                //    Location = new(x, y),
+                //    BorderStyle = BorderStyle.FixedSingle,
+                //    BoundChannel = channel,
+                //    DrawColor = _settings.DrawColor,
+                //    SelectedColor = _settings.SelectedColor,
+                //    Options = DisplayOptions.SoloMute
+                //};
+                //control.ChannelChange += Control_ChannelChange;
+                //Controls.Add(control);
+                //_channelControls.Add(control);
+
+                var ctrl = new ChannelControl()
+                {
+                    Name = chan.ChannelName,
+                    Info1 = $"M{chan.ChannelNumber} {chan.ChannelName}",
+                    Info2 = $"{chan.PatchName} ({chan.Patch}){Environment.NewLine}{chan}",
+                    Location = new(x, y),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    DrawColor = _settings.DrawColor,
+                    SelectedColor = _settings.SelectedColor,
+                    //TODO from persistence Bag?   Volume = ...
+                };
+
+                //ctrl.InfoClick += ChannelControl_InfoClick;
+                CM.Bind(chan, ctrl);
+
+                // Adjust positioning.
+                y += ctrl.Height + 5;
+            }
+
+            // Script is sane - build the events.
+            _script!.BuildSteps();
+
+            // Init the timebar.
+            Dictionary<MusicTime, string> sectInfo = [];
+            _script!.GetSectionInfo().ForEach(si => sectInfo.Add(new(si.Key), si.Value));
+            timeBar.InitSectionInfo(sectInfo);
+
+            // Start the clock.
+            SetFastTimerPeriod();
+
+            // Update file watcher.
+            _compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
+
+            SetCompileStatus(true);
+
+            //if(!ok)
+            //{
+            //    _logger.Error("Compile failed.");
+            //}
+
+            // Log compiler results.
+            LogCompilerResults();
+
+            return true;
         }
 
         /// <summary>
@@ -380,56 +392,6 @@ namespace Nebulator.App
         }
         #endregion
 
-        #region Channel controls
-        /// <summary>
-        /// Destroy controls.
-        /// </summary>
-        void DestroyControls()
-        {
-            MidiManager.Instance.Kill();
-
-            // Clean out our current elements.
-            _channelControls.ForEach(c =>
-            {
-                c.ChannelChange -= Control_ChannelChange;
-                //c.SendMidi -= ChannelControl_SendMidi;
-                Controls.Remove(c);
-                c.Dispose();
-            });
-            _channelControls.Clear();
-        }
-
-        /// <summary>
-        /// UI changed something.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Control_ChannelChange(object? sender, ChannelChangeEventArgs e)
-        {
-            ChannelControl chc = (ChannelControl)sender!;
-
-            if (e.State)
-            {
-                switch (chc.State)
-                {
-                    case ChannelState.Normal:
-                        break;
-
-                    case ChannelState.Solo:
-                        // Mute any other non-solo channels.
-                        MidiManager.Instance.OutputChannels
-                            .Where(ch => ch.ChannelName != chc.BoundChannel.ChannelName && chc.State != ChannelState.Solo)
-                            .ForEach(ch => MidiManager.Instance.Kill(chc.BoundChannel));
-                        break;
-
-                    case ChannelState.Mute:
-                        MidiManager.Instance.Kill(chc.BoundChannel);
-                        break;
-                }
-            }
-        }
-        #endregion
-
         #region Realtime handling
         /// <summary>
         /// Multimedia timer tick handler.
@@ -445,10 +407,10 @@ namespace Nebulator.App
                 {
                     InitRuntime();
 
-                    // Determine what should sound.
-                    HashSet<int> sounding = [];
-                    bool anySolo = _channelControls.Where(c => c.State == ChannelState.Solo).Any();
-                    _channelControls.ForEach(cc => sounding.Add(cc.BoundChannel.ChannelNumber));
+                    //// Determine what should sound.
+                    //HashSet<int> sounding = [];
+                    //bool anySolo = _channelControls.Where(c => c.State == ChannelState.Solo).Any();
+                    //_channelControls.ForEach(cc => sounding.Add(cc.BoundChannel.ChannelNumber));
 
                     // Execute the script step. Note: Need exception handling here to protect from user script errors.
                     try
@@ -457,7 +419,9 @@ namespace Nebulator.App
                         _script.Step();
 
                         // Send any predefined sequence steps.
-                        _script.DoNextStep(sounding);
+                        //_script.DoNextStep(sounding);
+
+                        DoNextStep();
                     }
                     catch (Exception ex)
                     {
@@ -471,7 +435,7 @@ namespace Nebulator.App
                     if (!timeBar.FreeRunning && done)
                     {
                         ProcessPlay(PlayCommand.StopRewind);
-                        MidiManager.Instance.Kill(); // just in case
+                        CM.KillAll(); // just in case
                     }
                     // else keep going
 
@@ -487,6 +451,54 @@ namespace Nebulator.App
             }
         }
         #endregion
+
+
+
+
+
+        public bool DoNextStep()
+        {
+            // Process each channel.
+            foreach (var (chan, ctrl) in CM.GetChannels())
+            {
+                // Process any sequence steps.
+                var playEvents = chan.Events.Get(timeBar.Current);
+
+                foreach (var mevt in playEvents)
+                {
+                    switch (mevt)
+                    {
+                        case NoteOn evt:
+                            // Adjust volume.
+                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
+                            //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                            chan.Send(evt);
+                            break;
+
+                        case NoteOff evt:
+                            //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                            chan.Send(evt);
+                            break;
+
+                        default:
+                            // Everything else as is.
+                            chan.Send(mevt);
+                            break;
+                    }
+                }
+            }
+
+            // Bump time. Check for end of play.
+            bool done = !timeBar.Increment();
+
+            return done;
+        }
+
+
+
+
+
+
 
         #region Runtime interop
         /// <summary>
@@ -844,7 +856,7 @@ namespace Nebulator.App
                 case PlayCommand.Stop:
                     chkPlay.Checked = false;
                     _mmTimer.Stop();
-                    MidiManager.Instance.Kill();
+                    CM.KillAll();
                     break;
 
                 case PlayCommand.Rewind:
@@ -854,7 +866,7 @@ namespace Nebulator.App
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
                     timeBar.Rewind();
-                    MidiManager.Instance.Kill();
+                    CM.KillAll();
                     break;
 
                 case PlayCommand.UpdateUiTime:
@@ -926,7 +938,7 @@ namespace Nebulator.App
 
         #region Midi utilities
         /// <summary>
-        /// Export to a midi file. TODO needs help/debug.
+        /// Export to a midi file. TODO needs work/debug.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -947,15 +959,15 @@ namespace Nebulator.App
                     int ppq = MusicTime.SubbeatsPerBeat;
                     MidiEventCollection outColl = new(1, ppq);
 
-                    IEnumerable<OutputChannel> channels = MidiManager.Instance.OutputChannels.Where(ch => ch.Events.Count() > 0);
+                    var channels = CM.GetChannels().Where(ch => ch.chan.Events.Count() > 0);
 
                     // Build the event collection.
-                    foreach (var channel in channels)
+                    foreach (var (chan, _) in channels)
                     {
                         IList<MidiEvent> outEvents = outColl.AddTrack();
-                        for (int i = 0; i < channel.Events.Count(); i++)
+                        for (int i = 0; i < chan.Events.Count(); i++)
                         {
-                            //outEvents.Add(e);
+                            //>>> outEvents.Add(chan.Events[i]);
                         }
                     }
                 }

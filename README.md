@@ -5,7 +5,7 @@
 - Supports midi and midi-over-OSC.
 - While the primary intent is to generate music-by-code, runtime interaction is also supported using midi or OSC inputs.
 - It's called Nebulator after a MarkS C++ noisemaker called Nebula which allowed manipulation of synth parameters using code.
-- Requires VS2022 and .NET8.
+- Requires VS2022 and .NET10.
 
 ![logo](marks.png)
 

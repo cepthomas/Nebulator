@@ -19,7 +19,26 @@ namespace Nebulator.Script
 
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
+
+        /// <summary>Midi boss.</summary>
+        internal ChannelManager? _cm;
+
+        /// <summary>Midi boss.</summary>
+        internal InputManager? _im;
         #endregion
+
+
+
+        /// <summary>Kind of klunky hook TODO1  better?</summary>
+        /// <param name="cm"></param>
+        /// <param name="im"></param>
+        public void Bind(ChannelManager? cm, InputManager? im)
+        {
+            _cm = cm;
+            _im = im;
+        }
+
+
 
         #region API - Properties shared by host and script
         /// <summary>Sound is playing. Main:W Script:R</summary>
@@ -125,7 +144,7 @@ namespace Nebulator.Script
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
         protected void SendNote(string chanName, int notenum, double vol, MusicTime dur)
         {
-            var ch = MidiManager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            var ch = _cm.GetChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             notenum = MathUtils.Constrain(Math.Abs(notenum), 0, MidiDefs.MAX_MIDI);
 
             // If vol is positive it's note on else note off.
@@ -202,12 +221,13 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         protected void SendController(string chanName, string controller, int val)
         {
-            var ch = MidiManager.Instance.GetOutputChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
-            int ctlid = MidiDefs.Controllers.GetId(controller);
-            if (ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
+            //TODO1 this:
+            //var ch = _cm.GetChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
+            //int ctlid = MidiDefs.Controllers.GetId(controller);
+            //if (ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
 
-            Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
-            ch.Send(ctlr);
+            //Controller ctlr = new(ch.ChannelNumber, ctlid, val, StepTime);
+            //ch.Send(ctlr);
         }
 
         /// <summary>
@@ -218,7 +238,7 @@ namespace Nebulator.Script
         /// <param name="channelName"></param>
         protected void OpenInputChannel(string device, int channelNumber, string channelName)
         {
-            MidiManager.Instance.OpenInputChannel(device, channelNumber, channelName);
+            _im.OpenMidiInput(device, channelNumber, channelName);
         }
 
         /// <summary>
@@ -231,7 +251,7 @@ namespace Nebulator.Script
         /// <exception cref="ArgumentException"></exception>
         protected void OpenOutputChannel(string device, int channelNumber, string channelName, string patch)
         {
-            var chan = MidiManager.Instance.OpenOutputChannel(device, channelNumber, channelName, patch);
+            var chan = _cm.OpenChannel(device, channelNumber, channelName, patch);
         }
 
         /// <summary>
@@ -245,36 +265,36 @@ namespace Nebulator.Script
         #endregion
 
         #region Host functions for internal use
-        /// <summary>
-        /// Synchronously outputs the next sequence midi events.
-        /// <param name="sounding">Which channel to send.</param>
-        /// </summary>
-        public void DoNextStep(HashSet<int> sounding)
-        {
-            foreach (var ch in MidiManager.Instance.OutputChannels)
-            {
-                if (sounding.Contains(ch.ChannelNumber))
-                {
-                    foreach (var mevt in ch.Events.Get(StepTime))
-                    {
-                        if (mevt is NoteOn evt)
-                        {
-                            // Adjust volume.
-                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
-                            ch.Send(evt);
-                        }
-                        else
-                        {
-                            // Everything else as is.
-                            ch.Send(mevt);
-                        }
-                    }
+        ///// <summary>
+        ///// Synchronously outputs the next sequence midi events.
+        ///// <param name="sounding">Which channel to send.</param>
+        ///// </summary>
+        //public void DoNextStep(HashSet<int> sounding)
+        //{
+        //    foreach (var ch in MidiManager.Instance.OutputChannels)
+        //    {
+        //        if (sounding.Contains(ch.ChannelNumber))
+        //        {
+        //            foreach (var mevt in ch.Events.Get(StepTime))
+        //            {
+        //                if (mevt is NoteOn evt)
+        //                {
+        //                    // Adjust volume.
+        //                    evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ch.Volume), 0, MidiDefs.MAX_MIDI);
+        //                    ch.Send(evt);
+        //                }
+        //                else
+        //                {
+        //                    // Everything else as is.
+        //                    ch.Send(mevt);
+        //                }
+        //            }
 
-                    // Clean up.
-                    ch.Events.RemoveTransients(StepTime);
-                }
-            }
-        }
+        //            // Clean up.
+        //            ch.Events.RemoveTransients(StepTime);
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Convert script sequences to internal events.
@@ -301,7 +321,7 @@ namespace Nebulator.Script
                             var seq = sectel.Sequences[seqIndex];
                             //was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
 
-                            var ch = MidiManager.Instance.GetOutputChannel(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
+                            var ch = _cm.GetChannel(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
                             int beat = sectionBeat + beatInSect;
                             var ecoll = ConvertToEvents(ch, seq, beat);
                             ch.Events.AddRange(ecoll);
@@ -326,7 +346,7 @@ namespace Nebulator.Script
         /// <param name="channel">Which channel to send it on.</param>
         /// <param name="seq">Which notes to send.</param>
         /// <param name="startBeat">Which beat to start sequence at.</param>
-        List<BaseEvent> ConvertToEvents(OutputChannel channel, Sequence seq, int startBeat)
+        List<BaseEvent> ConvertToEvents(Channel channel, Sequence seq, int startBeat)
         {
             List<BaseEvent> events = [];
 
@@ -349,7 +369,7 @@ namespace Nebulator.Script
                     foreach (int noteNum in seqel.Notes)
                     {
                         ///// Note on.
-                        double vel = channel.Volume * MasterVolume;
+                        double vel = seqel.Volume; // TODO? ChannelControl.Volume * MasterVolume;
                         int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                         velPlay = MathUtils.Constrain(velPlay, 0, MidiDefs.MAX_MIDI);
 
