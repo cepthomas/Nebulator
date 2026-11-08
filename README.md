@@ -131,10 +131,10 @@ Nebulator master volume. Script read/write.
 
 ## Channels and Devices
 
-These functions create input and output channels, and their corresponding devices.
+These functions create input and outputs, and their corresponding devices.
 
 ```c#
-void OpenInputChannel(dev, chnum, chname);
+void OpenInput(dev, chnum, chname);
 ```
 Open an input channel.
 - dev: device name
@@ -142,7 +142,7 @@ Open an input channel.
 - chname: channel name
 
 ```c#
-void OpenOutputChannel(dev, chnum, chname, patch, alias);
+void OpenChannel(dev, chnum, chname, patch, alias);
 ```
 Open an output channel.
 - dev: device name

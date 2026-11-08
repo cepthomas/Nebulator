@@ -15,6 +15,7 @@ using Ephemera.MusicLib;
 using Ephemera.NScript;
 using Nebulator.Script;
 
+//TODO1 goes 8x too fast.
 
 
 namespace Nebulator.App
@@ -50,9 +51,6 @@ namespace Nebulator.App
 
         /// <summary>The current script.</summary>
         ScriptCore? _script;
-
-        ///// <summary>All the channel play controls.</summary>
-        //readonly List<ChannelControl> _channelControls = [];
 
         /// <summary>Seconds since start pressed.</summary>
         DateTime _startTime = DateTime.Now;
@@ -113,21 +111,22 @@ namespace Nebulator.App
             GraphicsUtils.ColorizeControl(fileDropDownButton, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnAbout, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnSettings, _settings.IconColor);
-
-            // TODO1 these are broken after update to .NET10:
-            //GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
-            //GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
-            //GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
+            // ColorizeControl() not here...
 
             btnMonIn.Checked = _settings.MonitorInput;
             btnMonOut.Checked = _settings.MonitorOutput;
-
-            chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
-
+    
             sldTempo.DrawColor = _settings.DrawColor;
-            sldTempo.Invalidate();
+            sldTempo.Minimum = 50;
+            sldTempo.Maximum = 200;
+            sldTempo.Resolution = 5;
+            sldTempo.Value = 100;
+
             sldVolume.DrawColor = _settings.DrawColor;
-            sldVolume.Invalidate();
+            sldVolume.Minimum = 0.0;
+            sldVolume.Maximum = 2.0;
+            sldVolume.Resolution = 0.05;
+            sldVolume.Value = 0.8;
 
             // Time controller.
             timeBar.DrawColor = _settings.DrawColor;
@@ -185,6 +184,11 @@ namespace Nebulator.App
                 _logger.Error($"Couldn't open script file: {sopen}");
             }
 
+            // TODO after update to .NET10 this needs to be done here instead of in constructor.
+            GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
+            GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
+            chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 
             // Show them what they have.
             MidiDefs.GenUserDeviceInfo().ForEach(l => tvInfo.Append(l));
@@ -254,6 +258,7 @@ namespace Nebulator.App
             ProcessPlay(PlayCommand.StopRewind);
 
             CM.Reset();
+            IM.Reset();
             _watcher.Clear();
             timeBar.Reset();
 
@@ -272,7 +277,8 @@ namespace Nebulator.App
 
             if (_script is not null)
             {
-                _script.Bind(CM, IM);
+                ScriptCore.CM = CM;
+                ScriptCore.IM = IM;
 
                 SetCompileStatus(true);
 
@@ -300,40 +306,29 @@ namespace Nebulator.App
             int x = btnRewind.Left;
             int y = timeBar.Bottom + CONTROL_SPACING;
 
-            foreach (var (chan, _) in CM.GetChannels())
-            {
-                // Make new control and bind to defined channel.
-                //ChannelControl control = new()
-                //{
-                //    Location = new(x, y),
-                //    BorderStyle = BorderStyle.FixedSingle,
-                //    BoundChannel = channel,
-                //    DrawColor = _settings.DrawColor,
-                //    SelectedColor = _settings.SelectedColor,
-                //    Options = DisplayOptions.SoloMute
-                //};
-                //control.ChannelChange += Control_ChannelChange;
-                //Controls.Add(control);
-                //_channelControls.Add(control);
+            // Get all script-defined channels and make corresponding UI element.
+            var channels = CM.GetChannels().Select(ch => ch.chan).ToList();
 
+            channels.ForEach(chan =>
+            {
                 var ctrl = new ChannelControl()
                 {
-                    Name = chan.ChannelName,
+                    //Name = chan.ChannelName,
                     Info1 = $"M{chan.ChannelNumber} {chan.ChannelName}",
                     Info2 = $"{chan.PatchName} ({chan.Patch}){Environment.NewLine}{chan}",
                     Location = new(x, y),
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
                     SelectedColor = _settings.SelectedColor,
-                    //TODO from persistence Bag?   Volume = ...
+                    Volume = VolumeDefs.DEFAULT_VOLUME // TODO persist?
                 };
 
                 //ctrl.InfoClick += ChannelControl_InfoClick;
                 CM.Bind(chan, ctrl);
 
                 // Adjust positioning.
-                y += ctrl.Height + 5;
-            }
+                x += ctrl.Width + 5;
+            });
 
             // Script is sane - build the events.
             _script!.BuildSteps();
@@ -350,11 +345,6 @@ namespace Nebulator.App
             _compiler.SourceFiles.ForEach(f => { _watcher.Add(f); });
 
             SetCompileStatus(true);
-
-            //if(!ok)
-            //{
-            //    _logger.Error("Compile failed.");
-            //}
 
             // Log compiler results.
             LogCompilerResults();
@@ -407,21 +397,44 @@ namespace Nebulator.App
                 {
                     InitRuntime();
 
-                    //// Determine what should sound.
-                    //HashSet<int> sounding = [];
-                    //bool anySolo = _channelControls.Where(c => c.State == ChannelState.Solo).Any();
-                    //_channelControls.ForEach(cc => sounding.Add(cc.BoundChannel.ChannelNumber));
-
                     // Execute the script step. Note: Need exception handling here to protect from user script errors.
                     try
                     {
                         // Execute user step function.
                         _script.Step();
 
-                        // Send any predefined sequence steps.
-                        //_script.DoNextStep(sounding);
+                        // Process each channel.
+                        foreach (var (chan, ctrl) in CM.GetChannels())
+                        {
+                            // Process any sequence steps.
+                            var playEvents = chan.Events.Get(timeBar.Current);
 
-                        DoNextStep();
+                            foreach (var mevt in playEvents)
+                            {
+                                switch (mevt)
+                                {
+                                    case NoteOn evt:
+                                        // Adjust volume.
+                                        evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
+                                        //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                                        chan.Send(evt);
+                                        break;
+
+                                    case NoteOff evt:
+                                        //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
+                                        chan.Send(evt);
+                                        break;
+
+                                    default:
+                                        // Everything else as is.
+                                        chan.Send(mevt);
+                                        break;
+                                }
+                            }
+                        }
+
+                        // Bump time. Check for end of play.
+                        bool donex = !timeBar.Increment();
                     }
                     catch (Exception ex)
                     {
@@ -451,54 +464,6 @@ namespace Nebulator.App
             }
         }
         #endregion
-
-
-
-
-
-        public bool DoNextStep()
-        {
-            // Process each channel.
-            foreach (var (chan, ctrl) in CM.GetChannels())
-            {
-                // Process any sequence steps.
-                var playEvents = chan.Events.Get(timeBar.Current);
-
-                foreach (var mevt in playEvents)
-                {
-                    switch (mevt)
-                    {
-                        case NoteOn evt:
-                            // Adjust volume.
-                            evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
-                            //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
-                            chan.Send(evt);
-                            break;
-
-                        case NoteOff evt:
-                            //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
-                            chan.Send(evt);
-                            break;
-
-                        default:
-                            // Everything else as is.
-                            chan.Send(mevt);
-                            break;
-                    }
-                }
-            }
-
-            // Bump time. Check for end of play.
-            bool done = !timeBar.Increment();
-
-            return done;
-        }
-
-
-
-
-
-
 
         #region Runtime interop
         /// <summary>
@@ -944,7 +909,7 @@ namespace Nebulator.App
         /// <param name="e"></param>
         void ExportMidi_Click(object? sender, EventArgs e)
         {
-            if(_scriptFileName is not null && _script is not null)
+            if (_scriptFileName is not null && _script is not null)
             {
                 using SaveFileDialog saveDlg = new()
                 {

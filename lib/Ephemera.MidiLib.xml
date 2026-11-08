@@ -260,7 +260,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.Reset">
             <summary>
-            Remove current channels and controls.
+            Remove current channels and controls. Not devices
             </summary>
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.GetChannels">
@@ -463,6 +463,11 @@
             <param name="deviceName"></param>
             <returns>The device or null if invalid.</returns>
         </member>
+        <member name="M:Ephemera.MidiLib.InputManager.Reset">
+            <summary>
+            Remove current channels. Not devices
+            </summary>
+        </member>
         <member name="T:Ephemera.MidiLib.MidiInput">
             <summary>Describes one midi input.</summary>
         </member>
@@ -634,7 +639,10 @@
             <summary>Only 4/4 time supported currently.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MusicTime._subbeatsPerBeat">
-            <summary>Tick resolution - 8 gives 32nd note res.</summary>
+            <summary>Tick resolution.
+            A quarter note gets one beat in standard time signatures like 4/4 or 3/4.
+            This internal resolution (8) gives 32nd note resolution (per subbbeat).
+            </summary>
         </member>
         <member name="F:Ephemera.MidiLib.MusicTime._subbeatsPerBar">
             <summary>Convenience.</summary>

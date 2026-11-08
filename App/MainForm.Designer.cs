@@ -41,37 +41,23 @@
             // sldVolume
             // 
             sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            sldVolume.DrawColor = System.Drawing.Color.Red;
-            sldVolume.Label = "vol";
             sldVolume.Location = new System.Drawing.Point(267, 47);
             sldVolume.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            sldVolume.Maximum = 1D;
-            sldVolume.Minimum = 0D;
             sldVolume.Name = "sldVolume";
-            sldVolume.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            sldVolume.Resolution = 0.05D;
             sldVolume.Size = new System.Drawing.Size(88, 50);
             sldVolume.TabIndex = 36;
             toolTip.SetToolTip(sldVolume, "Master volume");
-            sldVolume.Value = 1D;
             sldVolume.ValueChanged += Volume_ValueChanged;
             // 
             // sldTempo
             // 
             sldTempo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            sldTempo.DrawColor = System.Drawing.Color.LightGray;
-            sldTempo.Label = "bpm";
             sldTempo.Location = new System.Drawing.Point(170, 47);
             sldTempo.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            sldTempo.Maximum = 200D;
-            sldTempo.Minimum = 30D;
             sldTempo.Name = "sldTempo";
-            sldTempo.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            sldTempo.Resolution = 5D;
             sldTempo.Size = new System.Drawing.Size(88, 50);
             sldTempo.TabIndex = 33;
             toolTip.SetToolTip(sldTempo, "Speed in BPM");
-            sldTempo.Value = 100D;
             sldTempo.ValueChanged += Speed_ValueChanged;
             // 
             // toolTip
@@ -154,28 +140,28 @@
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            openToolStripMenuItem.Size = new System.Drawing.Size(188, 24);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += Open_Click;
             // 
             // recentToolStripMenuItem
             // 
             recentToolStripMenuItem.Name = "recentToolStripMenuItem";
-            recentToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            recentToolStripMenuItem.Size = new System.Drawing.Size(188, 24);
             recentToolStripMenuItem.Text = "Recent";
             // 
             // exportMidiToolStripMenuItem
             // 
             exportMidiToolStripMenuItem.Enabled = false;
             exportMidiToolStripMenuItem.Name = "exportMidiToolStripMenuItem";
-            exportMidiToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            exportMidiToolStripMenuItem.Size = new System.Drawing.Size(188, 24);
             exportMidiToolStripMenuItem.Text = "Export Midi";
             exportMidiToolStripMenuItem.Click += ExportMidi_Click;
             // 
             // showDefinitionsToolStripMenuItem
             // 
             showDefinitionsToolStripMenuItem.Name = "showDefinitionsToolStripMenuItem";
-            showDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            showDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(188, 24);
             showDefinitionsToolStripMenuItem.Text = "Show Definitions";
             showDefinitionsToolStripMenuItem.Click += ShowDefinitions_Click;
             // 
@@ -235,26 +221,18 @@
             // 
             tvInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            tvInfo.Location = new System.Drawing.Point(13, 580);
+            tvInfo.Location = new System.Drawing.Point(13, 266);
             tvInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            tvInfo.MatchUseBackground = true;
-            tvInfo.MaxText = 5000;
             tvInfo.Name = "tvInfo";
-            tvInfo.Prompt = "";
-            tvInfo.Size = new System.Drawing.Size(789, 206);
+            tvInfo.Size = new System.Drawing.Size(789, 520);
             tvInfo.TabIndex = 41;
-            tvInfo.WordWrap = true;
             // 
             // timeBar
             // 
             timeBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            timeBar.DrawColor = System.Drawing.Color.Red;
-            timeBar.GridLines = 0;
             timeBar.Location = new System.Drawing.Point(12, 117);
             timeBar.Name = "timeBar";
-            timeBar.SelectedColor = System.Drawing.Color.Blue;
             timeBar.Size = new System.Drawing.Size(790, 52);
-            timeBar.Snap = Ephemera.MidiLib.SnapType.Beat;
             timeBar.TabIndex = 44;
             // 
             // MainForm
@@ -304,4 +282,3 @@
         private System.Windows.Forms.ToolStripButton btnSettings;
     }
 }
-
