@@ -312,17 +312,44 @@
         <member name="M:Ephemera.MidiLib.MidiLibException.#ctor(System.String)">
             <summary>Library error.</summary>
         </member>
-        <member name="T:Ephemera.MidiLib.VolumeDefs">
+        <member name="T:Ephemera.MidiLib.MidiLibDefs">
             <summary>Misc definitions.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.VolumeDefs.DEFAULT_VOLUME">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.DEFAULT_VOLUME">
             <summary>Default value.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.VolumeDefs.MAX_VOLUME">
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.MAX_VOLUME">
             <summary>Allow UI controls some more headroom.</summary>
         </member>
+        <member name="F:Ephemera.MidiLib.MidiLibDefs.RES_VOLUME">
+            <summary>Resolution of UI.</summary>
+        </member>
         <member name="T:Ephemera.MidiLib.ChannelHandle">
-            <summary>Channel handle for use in scripts.</summary>
+            <summary>Channel handle class for interacting with scripts.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.ChannelHandle.OUTPUT_FLAG">
+            <summary>Differentiate inputs and outputs.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.ChannelHandle.Raw">
+            <summary>Script-side handle.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.ChannelHandle.DeviceId">
+            <summary>App-side id.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.ChannelHandle.ChannelNumber">
+            <summary>App-side value.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.ChannelHandle.Output">
+            <summary>App-side value.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.ChannelHandle.#ctor(System.Int32,System.Int32,System.Boolean)">
+            <summary>App-side constructor.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.ChannelHandle.#ctor(System.Int32)">
+            <summary>Script-side constructor.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.ChannelHandle.ToString">
+            <summary>Human readable.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.MidiValueTypeEditor">
             <summary>Select a midi value from a range. Handles special case of channel number.</summary>

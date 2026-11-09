@@ -15,7 +15,7 @@ using Ephemera.MusicLib;
 using Ephemera.NScript;
 using Nebulator.Script;
 
-//TODO1 goes 8x too fast.
+//>>> TODO-M goes 8x too fast.
 
 
 namespace Nebulator.App
@@ -124,9 +124,9 @@ namespace Nebulator.App
 
             sldVolume.DrawColor = _settings.DrawColor;
             sldVolume.Minimum = 0.0;
-            sldVolume.Maximum = 2.0;
-            sldVolume.Resolution = 0.05;
-            sldVolume.Value = 0.8;
+            sldVolume.Maximum = MidiLibDefs.MAX_VOLUME;
+            sldVolume.Resolution = MidiLibDefs.RES_VOLUME;
+            sldVolume.Value = MidiLibDefs.DEFAULT_VOLUME;
 
             // Time controller.
             timeBar.DrawColor = _settings.DrawColor;
@@ -320,7 +320,7 @@ namespace Nebulator.App
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
                     SelectedColor = _settings.SelectedColor,
-                    Volume = VolumeDefs.DEFAULT_VOLUME // TODO persist?
+                    Volume = MidiLibDefs.DEFAULT_VOLUME // should persist + channel vals etc
                 };
 
                 //ctrl.InfoClick += ChannelControl_InfoClick;
@@ -416,12 +416,10 @@ namespace Nebulator.App
                                     case NoteOn evt:
                                         // Adjust volume.
                                         evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
-                                        //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
                                         chan.Send(evt);
                                         break;
 
                                     case NoteOff evt:
-                                        //evt.ChannelNumber = evt.ChannelNumber == _drumChannel ? MidiDefs.DEFAULT_DRUM_CHANNEL : evt.ChannelNumber;
                                         chan.Send(evt);
                                         break;
 
@@ -570,11 +568,11 @@ namespace Nebulator.App
         }
 
         /// <summary>
-        /// Allows the user to select a neb file from file system.
+        /// Allows the user to select a neb file from file system. Should remember last location or default to guessed.
         /// </summary>
         void Open_Click(object? sender, EventArgs e)
         {
-            string dir = ""; // TODO remember last location or default to guessed
+            string dir = "";
             using OpenFileDialog openDlg = new()
             {
                 Filter = "Nebulator files | *.neb",
@@ -903,7 +901,7 @@ namespace Nebulator.App
 
         #region Midi utilities
         /// <summary>
-        /// Export to a midi file. TODO needs work/debug.
+        /// Export to a midi file. TODO needs some work/debug.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

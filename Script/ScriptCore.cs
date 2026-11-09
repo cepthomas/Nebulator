@@ -208,7 +208,7 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="controller">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string chanName, string controller, int val) //TODO string or int?
+        protected void SendController(string chanName, string controller, int val) //TODO-M string or int?
         {
             var ch = CM.GetChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             var ctlid = MidiDefs.Controllers.GetId(controller);
@@ -326,7 +326,7 @@ namespace Nebulator.Script
                     foreach (int noteNum in seqel.Notes)
                     {
                         ///// Note on.
-                        double vel = seqel.Volume; // TODO? ChannelControl.Volume * MasterVolume;
+                        double vel = seqel.Volume; // TODO maybe also ChannelControl.Volume * MasterVolume;
                         int velPlay = (int)(vel * MidiDefs.MAX_MIDI);
                         velPlay = MathUtils.Constrain(velPlay, 0, MidiDefs.MAX_MIDI);
 
