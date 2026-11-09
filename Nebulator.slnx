@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/Examples/">
+    <File Path="Examples/airport.neb" />
+    <File Path="Examples/example.neb" />
+    <File Path="Examples/scale.neb" />
+    <File Path="Examples/utils.neb" />
+  </Folder>
   <Project Path="App/App.csproj" />
   <Project Path="Script/Script.csproj" />
 </Solution>

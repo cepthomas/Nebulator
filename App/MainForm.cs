@@ -15,8 +15,6 @@ using Ephemera.MusicLib;
 using Ephemera.NScript;
 using Nebulator.Script;
 
-//>>> TODO-M goes 8x too fast.
-
 
 namespace Nebulator.App
 {
@@ -254,7 +252,7 @@ namespace Nebulator.App
                 return false;
             }
 
-            // Clean up old script stuff.
+            // Clean up old script stuff. TODO any way to remove old _sections otherwise new ones are added on.
             ProcessPlay(PlayCommand.StopRewind);
 
             CM.Reset();
@@ -333,9 +331,12 @@ namespace Nebulator.App
             // Script is sane - build the events.
             _script!.BuildSteps();
 
+            List<string> evts = [];
+            CM.GetChannels().ForEach(ch => evts.AddRange(ch.chan.Events.Dump()));
+
             // Init the timebar.
             Dictionary<MusicTime, string> sectInfo = [];
-            _script!.GetSectionInfo().ForEach(si => sectInfo.Add(new(si.Key), si.Value));
+            _script!.GetSectionInfo().ForEach(si => sectInfo.Add(si.Key, si.Value));
             timeBar.InitSectionInfo(sectInfo);
 
             // Start the clock.
@@ -894,8 +895,9 @@ namespace Nebulator.App
         void SetFastTimerPeriod()
         {
             double secPerBeat = 60.0 / sldTempo.Value;
-            double msecPerT = 1000 * secPerBeat / MusicTime.SubbeatsPerBeat;
-            _mmTimer.SetTimer(msecPerT > 1.0 ? (int)Math.Round(msecPerT) : 1, MmTimerCallback);
+            double msecPerSub = 1000 * secPerBeat / MusicTime.SubbeatsPerBeat;
+            msecPerSub *= 2; // TODO something messed up in timing.
+            _mmTimer.SetTimer(msecPerSub > 1.0 ? (int)Math.Round(msecPerSub) : 1, MmTimerCallback);
         }
         #endregion
 

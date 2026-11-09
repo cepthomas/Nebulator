@@ -22,11 +22,13 @@ namespace Nebulator.Script
         #endregion
 
         #region Kind of klunky hook TODO do better?
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         /// <summary>Midi boss.</summary>
         public static ChannelManager CM;
 
         /// <summary>Midi boss.</summary>
         public static InputManager IM;
+#pragma warning restore CS8618
         #endregion
 
         #region API - Properties shared by host and script
@@ -87,10 +89,7 @@ namespace Nebulator.Script
             // Sanity check elements.
             foreach (var el in elements)
             {
-                if (el.ChannelName is null)
-                {
-                    throw new InvalidOperationException($"Invalid Channel at index {elements.IndexOf(el)}");
-                }
+                if (el.ChannelName is null) { throw new InvalidOperationException($"Invalid Channel at index {elements.IndexOf(el)}"); }
             }
 
             Section nsect = new()
@@ -101,6 +100,7 @@ namespace Nebulator.Script
             };
             
             _sections.Add(nsect);
+            _logger.Info($"_sections:{_sections.Count}");
             return nsect;
         }
 
@@ -208,7 +208,7 @@ namespace Nebulator.Script
         /// <param name="chanName">Which channel to send it on.</param>
         /// <param name="controller">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string chanName, string controller, int val) //TODO-M string or int?
+        protected void SendController(string chanName, string controller, int val)
         {
             var ch = CM.GetChannel(chanName) ?? throw new ArgumentException($"Invalid channel: {chanName}");
             var ctlid = MidiDefs.Controllers.GetId(controller);
@@ -317,7 +317,6 @@ namespace Nebulator.Script
                 if (seqel.ScriptFunction is not null)
                 {
                     Function evt = new(channel.ChannelNumber, seqel.ScriptFunction, startNoteTime);
-                    //events.Add(new(evt, channel.ChannelName)); ??
                     events.Add(evt);
                 }
                 else // plain ordinary
@@ -348,15 +347,14 @@ namespace Nebulator.Script
         /// Will be empty if free-running.
         /// </summary>
         /// <returns></returns>
-        public Dictionary<int, string> GetSectionInfo()
+        public Dictionary<MusicTime, string> GetSectionInfo()
         {
-            Dictionary<int, string> info = [];
-            int when = 0;
-
+            Dictionary<MusicTime, string> info = [];
+            MusicTime when = new();
             foreach (Section sect in _sections)
             {
                 info.Add(when, sect.Name);
-                when += sect.Beats;
+                when += new MusicTime(sect.Beats * MusicTime.SubbeatsPerBeat);
             }
 
             // Add the dummy end marker.

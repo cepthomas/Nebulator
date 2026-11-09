@@ -38,7 +38,7 @@ public override void Setup()
 
     OpenChannel(midi_device_out, 1, "keys", "AcousticGrandPiano");
     OpenChannel(midi_device_out, 2, "bass", "AcousticBass");
-    OpenChannel(midi_device_out, 3, "synth", "Lead1Square");
+    OpenChannel(midi_device_out, 3, "synth", "ChoirAahs");
     OpenChannel(midi_device_out, 4, "strings", "StringEnsemble1");
     OpenChannel(midi_device_out, 10, "drums", "Jazz");
 
@@ -109,7 +109,8 @@ public void BuildComp()
     // This is probably the better way to do drums and rhythmic instruments.
     Sequence seqDrumsVerse = CreateSequence(8, new()
     {
-      //{ "|........|........|........|........|"},
+      //  "| beat 0 | beat 1 | beat 2 | beat 3 | beat 4 | beat 5 | beat 6 | beat 7 |",  WHAT_TO_PLAY
+      //{ "|........|........|........|........|........|........|........|........|"},
         { "|8       |        |8       |        |8       |        |8       |        |", "AcousticBassDrum", DRUM_VOL },
         { "|    8   |        |    8   |    8   |    8   |        |    8   |    8   |", "AcousticSnare",    DRUM_VOL*0.9 },
         { "|        |     8 8|        |     8 8|        |     8 8|        |     8 8|", "ClosedHiHat",      DRUM_VOL*1.1 },
@@ -171,7 +172,7 @@ public void BuildComp()
         { "drums", seqDrumsChorus },
         { "bass",  seqBassChorus  },
         { "synth", seqAlgo, seqEmpty, seqAlgo, seqDynamic, seqEmpty }
-    });
+    }); 
 
     Section sectEnding = CreateSection(32, "Ending", new()
     {
@@ -210,6 +211,7 @@ public override void ReceiveController(string dev, int channel, int ctlid, int v
 void AlgoFunc()
 {
     int notenum = rand.Next(0, scaleNotes.Count);
+    Print("AlgoFunc", notenum);
     SendNote("synth", scaleNotes[notenum], 0.7, 0.5);
 }
     

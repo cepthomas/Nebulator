@@ -1,3 +1,9 @@
+# Section 0
+
+In improving this app I have broken more stuff, mostly around being sloppy creating and destroying assemblies
+created in the compile process. I'm not sure whether it's worth doing as the lua version really makes more sense.
+Look for TODOs in MainForm.
+
 # What This Is
 
 - Most music software uses piano roll midi editors. This is an alternative - writing scripts to generate sounds.
