@@ -351,9 +351,6 @@
         <member name="M:Ephemera.MidiLib.ChannelHandle.ToString">
             <summary>Human readable.</summary>
         </member>
-        <member name="T:Ephemera.MidiLib.MidiValueTypeEditor">
-            <summary>Select a midi value from a range. Handles special case of channel number.</summary>
-        </member>
         <member name="T:Ephemera.MidiLib.BaseEvent">
             <summary>Base class for internal representation of midi events.</summary>
         </member>
@@ -1112,6 +1109,18 @@
             </summary>
             <param name="tick"></param>
             <param name="up">To ceiling otherwise closest.</param>
+        </member>
+        <member name="T:Ephemera.MidiLib.ChannelNumberTypeEditor">
+            <summary>Select a midi value from a range. Handles special case of channel number.</summary>
+        </member>
+        <member name="T:Ephemera.MidiLib.MidiOutputDeviceTypeEditor">
+            <summary>Select one from available devices.</summary>
+        </member>
+        <member name="T:Ephemera.MidiLib.MidiInputDeviceTypeEditor">
+            <summary>Select one from available devices.</summary>
+        </member>
+        <member name="T:Ephemera.MidiLib.PatchTypeEditor">
+            <summary>Select one from available patch names.</summary>
         </member>
     </members>
 </doc>

@@ -762,8 +762,6 @@ namespace Nebulator.App
         /// </summary>
         void Settings_Click(object? sender, EventArgs e)
         {
-            // GenericListTypeEditor.SetOptions("OutputDevice", MidiOutputDevice.GetAvailableDevices());
-
             var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
 
             // Detect changes of interest.
