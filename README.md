@@ -140,17 +140,17 @@ Nebulator master volume. Script read/write.
 These functions create input and outputs, and their corresponding devices.
 
 ```c#
-void OpenInput(dev, chnum, chname);
+void OpenMidiInput(dev, chnum, chname);
 ```
-Open an input channel.
+Open a midi input.
 - dev: device name
 - chnum: channel number
 - chname: channel name
 
 ```c#
-void OpenChannel(dev, chnum, chname, patch, alias);
+void OpenMidiOutput(dev, chnum, chname, patch, alias);
 ```
-Open an output channel.
+Open a midi output.
 - dev: device name
 - chnum: channel number
 - chname: channel name

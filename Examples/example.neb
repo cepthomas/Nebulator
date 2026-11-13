@@ -34,13 +34,13 @@ public override void Setup()
     string midi_device_out = "VirtualMIDISynth #1";
     // string midi_device_out = "Microsoft GS Wavetable Synth";
 
-    OpenInput(midi_device_in, 1, "my midi input");
+    OpenMidiInput(midi_device_in, 1, "my midi input");
 
-    OpenChannel(midi_device_out, 1, "keys", "AcousticGrandPiano");
-    OpenChannel(midi_device_out, 2, "bass", "AcousticBass");
-    OpenChannel(midi_device_out, 3, "synth", "ChoirAahs");
-    OpenChannel(midi_device_out, 4, "strings", "StringEnsemble1");
-    OpenChannel(midi_device_out, 10, "drums", "Jazz");
+    OpenMidiOutput(midi_device_out, 1, "keys", "AcousticGrandPiano");
+    OpenMidiOutput(midi_device_out, 2, "bass", "AcousticBass");
+    OpenMidiOutput(midi_device_out, 3, "synth", "ChoirAahs");
+    OpenMidiOutput(midi_device_out, 4, "strings", "StringEnsemble1");
+    OpenMidiOutput(midi_device_out, 10, "drums", "Jazz");
 
     // Create sets of notes.
     CreateNotes("MY_SCALE", "1 3 4 b7");

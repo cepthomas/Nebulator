@@ -35,9 +35,6 @@ namespace Nebulator.App
         /// <summary>Midi boss.</summary>
         readonly ChannelManager CM;
 
-        /// <summary>Midi boss.</summary>
-        readonly InputManager IM;
-
         /// <summary>Fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
 
@@ -74,7 +71,6 @@ namespace Nebulator.App
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
             CM = new(Controls);
-            IM = new();
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
@@ -140,7 +136,7 @@ namespace Nebulator.App
             btnSettings.Click += Settings_Click;
             btnKillComm.Click += (_, __) => CM.KillAll();
 
-            IM.MessageReceived += Manager_MessageReceived;
+            CM.MessageReceived += Manager_MessageReceived;
             //CM.MessageSent += Manager_MessageSent;
             #endregion
         }
@@ -226,7 +222,6 @@ namespace Nebulator.App
             _mmTimer.Stop();
             _mmTimer.Dispose();
             CM.Dispose();
-            IM.Dispose();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -256,7 +251,6 @@ namespace Nebulator.App
             ProcessPlay(PlayCommand.StopRewind);
 
             CM.Reset();
-            IM.Reset();
             _watcher.Clear();
             timeBar.Reset();
 
@@ -276,7 +270,6 @@ namespace Nebulator.App
             if (_script is not null)
             {
                 ScriptCore.CM = CM;
-                ScriptCore.IM = IM;
 
                 SetCompileStatus(true);
 
