@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ephemera.MidiLib;
 using Ephemera.NBagOfTricks;
 
 
@@ -42,13 +43,13 @@ namespace Nebulator.Script
         /// <summary>
         /// Add 0-N elements.
         /// </summary>
-        /// <param name="chname"></param>
+        /// <param name="mout"></param>
         /// <param name="sequences"></param>
-        public void Add(string chname, params Sequence[] sequences)
+        public void Add(MidiOutput mout, params Sequence[] sequences)
         {
             SectionElement sel = new()
             {
-                ChannelName = chname,
+                ChannelName = mout.ChannelName,
                 Sequences = sequences
             };
 

@@ -298,15 +298,14 @@ namespace Nebulator.App
             int y = timeBar.Bottom + CONTROL_SPACING;
 
             // Get all script-defined channels and make corresponding UI element.
-            var channels = CM.GetChannels().Select(ch => ch.chan).ToList();
+            var mouts = CM.GetOutputs().Select(ch => ch.mout).ToList();
 
-            channels.ForEach(chan =>
+            mouts.ForEach(mout =>
             {
                 var ctrl = new ChannelControl()
                 {
-                    //Name = chan.ChannelName,
-                    Info1 = $"M{chan.ChannelNumber} {chan.ChannelName}",
-                    Info2 = $"{chan.PatchName} ({chan.Patch}){Environment.NewLine}{chan}",
+                    Info1 = $"M{mout.ChannelNumber} {mout.ChannelName}",
+ //????                   Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
                     Location = new(x, y),
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
@@ -315,7 +314,7 @@ namespace Nebulator.App
                 };
 
                 //ctrl.InfoClick += ChannelControl_InfoClick;
-                CM.Bind(chan, ctrl);
+                CM.Bind(mout, ctrl);
 
                 // Adjust positioning.
                 x += ctrl.Width + 5;
@@ -325,7 +324,7 @@ namespace Nebulator.App
             _script!.BuildSteps();
 
             List<string> evts = [];
-            CM.GetChannels().ForEach(ch => evts.AddRange(ch.chan.Events.Dump()));
+            CM.GetOutputs().ForEach(ch => evts.AddRange(ch.mout.Events.Dump()));
 
             // Init the timebar.
             Dictionary<MusicTime, string> sectInfo = [];
@@ -398,10 +397,10 @@ namespace Nebulator.App
                         _script.Step();
 
                         // Process each channel.
-                        foreach (var (chan, ctrl) in CM.GetChannels())
+                        foreach (var (mout, ctrl) in CM.GetOutputs())
                         {
                             // Process any sequence steps.
-                            var playEvents = chan.Events.Get(timeBar.Current);
+                            var playEvents = mout.Events.Get(timeBar.Current);
 
                             foreach (var mevt in playEvents)
                             {
@@ -410,16 +409,16 @@ namespace Nebulator.App
                                     case NoteOn evt:
                                         // Adjust volume.
                                         evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
-                                        chan.Send(evt);
+                                        mout.Send(evt);
                                         break;
 
                                     case NoteOff evt:
-                                        chan.Send(evt);
+                                        mout.Send(evt);
                                         break;
 
                                     default:
                                         // Everything else as is.
-                                        chan.Send(mevt);
+                                        mout.Send(mevt);
                                         break;
                                 }
                             }
@@ -529,7 +528,7 @@ namespace Nebulator.App
                         break;
 
                     case Controller evt:
-                        _script.ReceiveController(dev.DeviceName, evt.ChannelNumber, evt.Id, evt.Value);
+                        _script.ReceiveController(dev.DeviceName, evt.ChannelNumber, Convert.ToInt32(evt.Id), evt.Value);
                         break;
 
                     default:
@@ -915,15 +914,15 @@ namespace Nebulator.App
                     int ppq = MusicTime.SubbeatsPerBeat;
                     MidiEventCollection outColl = new(1, ppq);
 
-                    var channels = CM.GetChannels().Where(ch => ch.chan.Events.Count() > 0);
+                    var mouts = CM.GetOutputs().Where(ch => ch.mout.Events.Count() > 0);
 
                     // Build the event collection.
-                    foreach (var (chan, _) in channels)
+                    foreach (var (mout, _) in mouts)
                     {
                         IList<MidiEvent> outEvents = outColl.AddTrack();
-                        for (int i = 0; i < chan.Events.Count(); i++)
+                        for (int i = 0; i < mout.Events.Count(); i++)
                         {
-                            //>>> outEvents.Add(chan.Events[i]);
+//>>>>                            outEvents.Add(mout.Events[i]);
                         }
                     }
                 }

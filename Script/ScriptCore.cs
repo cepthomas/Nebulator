@@ -124,13 +124,12 @@ namespace Nebulator.Script
         /// <summary>
         /// Send a note immediately. Lowest level sender.
         /// </summary>
-        /// <param name="name">Which output to send it on.</param>
+        /// <param name="mout">Which output to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff.</param>
         /// <param name="dur">How long it lasts in Time. 0 means no note off generated so user has to turn it off explicitly.</param>
-        protected void SendNote(string name, int notenum, double vol, MusicTime dur)
+        protected void SendNote(MidiOutput mout, int notenum, double vol, MusicTime dur)
         {
-            var mout = CM.GetMidiOutput(name) ?? throw new ArgumentException($"Invalid channel: {name}");
             notenum = MathUtils.Constrain(Math.Abs(notenum), 0, MidiDefs.MAX_MIDI);
 
             // If vol is positive it's note on else note off.
@@ -154,64 +153,60 @@ namespace Nebulator.Script
         }
 
         /// <summary>Send one or more named notes immediately.</summary>
-        /// <param name="name">Which output to send it on.</param>
+        /// <param name="mout">Which output to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in Time representation.</param>
-        protected void SendNote(string name, string notestr, double vol, MusicTime dur)
+        protected void SendNote(MidiOutput mout, string notestr, double vol, MusicTime dur)
         {
             SequenceElement note = new(notestr);
-            note.Notes.ForEach(n => SendNote(name, n, vol, dur));
+            note.Notes.ForEach(n => SendNote(mout, n, vol, dur));
         }
 
         /// <summary>Send a note immediately.</summary>
-        /// <param name="name">Which output to send it on.</param>
+        /// <param name="mout">Which output to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume. If 0, sends NoteOff instead.</param>
         /// <param name="dur">How long it lasts in MusicTime representation. Default is for things like drum hits.</param>
-        protected void SendNote(string name, int notenum, double vol, double dur = 0.1)
+        protected void SendNote(MidiOutput mout, int notenum, double vol, double dur = 0.1)
         {
-            SendNote(name, notenum, vol, new MusicTime(dur));
+            SendNote(mout, notenum, vol, new MusicTime(dur));
         }
 
         /// <summary>Send one or more named notes immediately.</summary>
-        /// <param name="name">Which output to send it on.</param>
+        /// <param name="mout">Which output to send it on.</param>
         /// <param name="notestr">Note string using any form allowed in the script. Requires double quotes in the script.</param>
         /// <param name="vol">Note volume.</param>
         /// <param name="dur">How long it lasts in MusicTime representation. Default is for things like drum hits.</param>
-        protected void SendNote(string name, string notestr, double vol, double dur = 0.1)
+        protected void SendNote(MidiOutput mout, string notestr, double vol, double dur = 0.1)
         {
-            SendNote(name, notestr, vol, new MusicTime(dur));
+            SendNote(mout, notestr, vol, new MusicTime(dur));
         }
 
         /// <summary>Send an explicit note on immediately. Caller is responsible for sending note off later.</summary>
-        /// <param name="name">Which output to send it on.</param>
+        /// <param name="mout">Which output to send it on.</param>
         /// <param name="notenum">Note number.</param>
         /// <param name="vol">Note volume.</param>
-        protected void SendNoteOn(string name, int notenum, double vol)
+        protected void SendNoteOn(MidiOutput mout, int notenum, double vol)
         {
-            SendNote(name, notenum, vol);
+            SendNote(mout, notenum, vol);
         }
 
         /// <summary>Send an explicit note off immediately.</summary>
-        /// <param name="name">Which output to send it on.</param>
+        /// <param name="mout">Which output to send it on.</param>
         /// <param name="notenum">Note number.</param>
-        protected void SendNoteOff(string name, int notenum)
+        protected void SendNoteOff(MidiOutput mout, int notenum)
         {
-            SendNote(name, notenum, 0);
+            SendNote(mout, notenum, 0);
         }
 
         /// <summary>Send a controller immediately.</summary>
-        /// <param name="name">Which output to send it on.</param>
-        /// <param name="controller">Controller.</param>
+        /// <param name="mout">Which output to send it on.</param>
+        /// <param name="ctrlId">Controller.</param>
         /// <param name="val">Controller value.</param>
-        protected void SendController(string name, string controller, int val)
+        protected void SendController(MidiOutput mout, Enum ctrlId, int val)
         {
-            var mout = CM.GetMidiOutput(name) ?? throw new ArgumentException($"Invalid channel: {name}");
-            var ctlid = MidiDefs.Controllers.GetId(controller);
-            if (ctlid is null || ctlid < 0) throw new ArgumentException($"Invalid controller: {controller}");
-
-            Controller ctlr = new(mout.ChannelNumber, (int)ctlid, val, StepTime);
+            Controller ctlr = new(mout.ChannelNumber, ctrlId, val, StepTime);
             mout.Send(ctlr);
         }
 
@@ -234,9 +229,11 @@ namespace Nebulator.Script
         /// <param name="channelName"></param>
         /// <param name="patch"></param>
         /// <exception cref="ArgumentException"></exception>
-        protected void OpenMidiOutput(string device, int channelNumber, string channelName, string patch)
+        protected MidiOutput OpenMidiOutput(string device, int channelNumber, string channelName, Enum patch)
         {
-            var mout = CM.OpenMidiOutput(device, channelNumber, channelName, patch);
+            var mout = CM.OpenMidiOutput(device, channelNumber, channelName);
+            CM.SetPatch(mout, patch);
+            return mout;
         }
 
         /// <summary>
@@ -273,12 +270,13 @@ namespace Nebulator.Script
                         while (beatInSect < section.Beats)
                         {
                             var seq = sectel.Sequences[seqIndex];
-                            //was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
 
-                            var mout = CM.GetMidiOutput(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
-                            int beat = sectionBeat + beatInSect;
-                            var ecoll = ConvertToEvents(mout.ChannelNumber, seq, beat);
-                            mout.Events.AddRange(ecoll);
+                            // TODO1 fix - was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
+
+                            //var mout = CM.GetMidiOutput(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
+                            //int beat = sectionBeat + beatInSect;
+                            //var ecoll = ConvertToEvents(mout.ChannelNumber, seq, beat);
+                            //mout.Events.AddRange(ecoll);
 
                             beatInSect += seq.Beats;
                             if (seqIndex < sectel.Sequences.Length - 1)

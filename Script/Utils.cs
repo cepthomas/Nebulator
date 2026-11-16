@@ -21,11 +21,16 @@ namespace Nebulator.Script
             if (!notes.Any())
             {
                 // It might be a drum.
-                var id = MidiDefs.Drums.GetId(snotes);
-                if (id is not null && id >= 0)
+                if (Enum.TryParse(typeof(MidiDefs.DrumId), snotes, out var id))
                 {
                     notes.Add((int)id);
                 }
+
+
+                //if (id is not null && id >= 0)
+                //{
+                //    notes.Add((int)id);
+                //}
                 else
                 {
                     // Not a drum either - error!

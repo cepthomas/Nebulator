@@ -9,6 +9,13 @@
 utils u = new();
 Random rand = new();
 
+// The channels.
+MidiOutput keys_ch;
+MidiOutput bass_ch;
+MidiOutput synth_ch;
+MidiOutput strings_ch;
+MidiOutput drums_ch;
+
 // Volumes.
 const double KEYS_VOL = 0.8;
 const double DRUM_VOL = 0.8;
@@ -36,11 +43,11 @@ public override void Setup()
 
     OpenMidiInput(midi_device_in, 1, "my midi input");
 
-    OpenMidiOutput(midi_device_out, 1, "keys", "AcousticGrandPiano");
-    OpenMidiOutput(midi_device_out, 2, "bass", "AcousticBass");
-    OpenMidiOutput(midi_device_out, 3, "synth", "ChoirAahs");
-    OpenMidiOutput(midi_device_out, 4, "strings", "StringEnsemble1");
-    OpenMidiOutput(midi_device_out, 10, "drums", "Jazz");
+    keys_ch = OpenMidiOutput(midi_device_out, 1, "keys", MidiDefs.InstrumentId.AcousticGrandPiano);
+    bass_ch = OpenMidiOutput(midi_device_out, 2, "bass", MidiDefs.InstrumentId.AcousticBass);
+    synth_ch = OpenMidiOutput(midi_device_out, 3, "synth", MidiDefs.InstrumentId.ChoirAahs);
+    strings_ch = OpenMidiOutput(midi_device_out, 4, "strings", MidiDefs.InstrumentId.StringEnsemble1);
+    drums_ch = OpenMidiOutput(midi_device_out, 10, "drums", MidiDefs.DrumKitId.Jazz);
 
     // Create sets of notes.
     CreateNotes("MY_SCALE", "1 3 4 b7");
@@ -90,8 +97,7 @@ public void BuildComp()
 
     Sequence seqDrumsChorus = CreateSequence(8, new()
     {
-        { 0.0, "AcousticBassDrum",  DRUM_VOL },
-        { 0.0, "AcousticBassDrum",  DRUM_VOL },
+        { 0.0, "AcousticBassDrum",  DRUM_VOL },  // TODO1 support enum drums.
         { 1.0, "RideCymbal1",       DRUM_VOL },
         { 1.2, "RideCymbal1",       DRUM_VOL },
         { 1.4, "HiMidTom",          DRUM_VOL },
@@ -104,6 +110,8 @@ public void BuildComp()
         { 5.4, "HiMidTom",          DRUM_VOL },
         { 6.0, "AcousticBassDrum",  DRUM_VOL },
         { 7.0, "CrashCymbal2",      DRUM_VOL },
+
+        // { 0.0, MidiDefs.DrumId.AcousticBassDrum,  DRUM_VOL },
     });
 
     // This is probably the better way to do drums and rhythmic instruments.
@@ -114,6 +122,7 @@ public void BuildComp()
         { "|8       |        |8       |        |8       |        |8       |        |", "AcousticBassDrum", DRUM_VOL },
         { "|    8   |        |    8   |    8   |    8   |        |    8   |    8   |", "AcousticSnare",    DRUM_VOL*0.9 },
         { "|        |     8 8|        |     8 8|        |     8 8|        |     8 8|", "ClosedHiHat",      DRUM_VOL*1.1 },
+        // { "|8       |        |8       |        |8       |        |8       |        |", MidiDefs.DrumId.AcousticBassDrum, DRUM_VOL },
     });
 
     // Single note (melodic) sequence could be either way.
@@ -131,11 +140,11 @@ public void BuildComp()
         { 0.0, "C2",  0.7, 0.1 },
         { 0.4, "C2",  0.7, 0.1 },
         { 2.0, "C2",  0.7, 0.1 },
-        { 2.4, "C2",  0.7, 0.1 },
+        { 2.4, "G2",  0.7, 0.1 },
         { 4.0, "C2",  0.7, 0.1 },
         { 4.4, "C2",  0.7, 0.1 },
         { 6.0, "C2",  0.7, 0.1 },
-        { 6.4, "C2",  0.7, 0.1 },
+        { 6.4, "G2",  0.7, 0.1 },
     });
 
     Sequence seqAlgo = CreateSequence(4, new()
@@ -161,24 +170,24 @@ public void BuildComp()
 
     Section sectBeginning = CreateSection(32, "Beginning", new()
     {
-        { "keys",  seqKeysVerse   },
-        { "drums", seqDrumsVerse  },
-        { "bass",  seqBassVerse   }
+        { keys_ch,  seqKeysVerse   },
+        { drums_ch, seqDrumsVerse  },
+        { bass_ch,  seqBassVerse   }
     });
 
     Section sectMiddle = CreateSection(32, "Middle", new()
     {
-        { "keys",  seqKeysChorus  },
-        { "drums", seqDrumsChorus },
-        { "bass",  seqBassChorus  },
-        { "synth", seqAlgo, seqEmpty, seqAlgo, seqDynamic, seqEmpty }
+        { keys_ch,  seqKeysChorus  },
+        { drums_ch, seqDrumsChorus },
+        { bass_ch,  seqBassChorus  },
+        { synth_ch, seqAlgo, seqEmpty, seqAlgo, seqDynamic, seqEmpty }
     }); 
 
     Section sectEnding = CreateSection(32, "Ending", new()
     {
-        { "keys",  seqKeysVerse   },
-        { "drums", seqDrumsVerse  },
-        { "bass",  seqBassVerse   }
+        { keys_ch,  seqKeysVerse   },
+        { drums_ch, seqDrumsVerse  },
+        { bass_ch,  seqBassVerse   }
     });
 }
 
@@ -189,15 +198,15 @@ public override void Step()
 {
     if (StepTime.Tick == 0)
     {
-        SendController("synth", "Pan", 90);
-        SendController("keys",  "Pan", 30);
+        SendController(bass_ch, MidiDefs.ControllerId.Pan, 90);
+        SendController(keys_ch,  MidiDefs.ControllerId.Pan, 30);
     }
 }
 
 public override void ReceiveNote(string dev, int channel, int note, int vel)
 {
     Print("Input note", dev, channel, note, vel);
-    SendNote("synth", note, vel, 0.5);
+    SendNote(bass_ch, note, vel, 0.5);
 }
 
 public override void ReceiveController(string dev, int channel, int ctlid, int value)
@@ -212,6 +221,6 @@ void AlgoFunc()
 {
     int notenum = rand.Next(0, scaleNotes.Count);
     Print("AlgoFunc", notenum);
-    SendNote("synth", scaleNotes[notenum], 0.7, 0.5);
+    SendNote(bass_ch, scaleNotes[notenum], 0.7, 0.5);
 }
     
