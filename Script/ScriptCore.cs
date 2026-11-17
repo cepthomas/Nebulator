@@ -53,10 +53,10 @@ namespace Nebulator.Script
         public virtual void Step() { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void ReceiveNote(string dev, int channel, int note, int vel) { }
+        public virtual void ReceiveNote(string dev, int midiChannel, int note, int vel) { }
 
         /// <summary>Called when input arrives.</summary>
-        public virtual void ReceiveController(string dev, int channel, int controller, int value) { }
+        public virtual void ReceiveController(string dev, int midiChannel, int controller, int value) { }
         #endregion
 
         #region API - Functions callable by script
@@ -86,7 +86,7 @@ namespace Nebulator.Script
             // Sanity check elements.
             foreach (var el in elements)
             {
-                if (el.ChannelName is null) { throw new InvalidOperationException($"Invalid Channel at index {elements.IndexOf(el)}"); }
+                if (el.Name is null) { throw new InvalidOperationException($"Invalid Channel at index {elements.IndexOf(el)}"); }
             }
 
             Section nsect = new()
@@ -138,16 +138,16 @@ namespace Nebulator.Script
                 vol *= MasterVolume;
                 int velPlay = (int)(vol * MidiDefs.MAX_MIDI);
                 velPlay = MathUtils.Constrain(velPlay, 0, MidiDefs.MAX_MIDI);
-                NoteOn non = new(mout.ChannelNumber, notenum, velPlay, StepTime);
+                NoteOn non = new(mout.MidiChannel, notenum, velPlay, StepTime);
                 mout.Send(non);
 
                 // Add a transient note off for later.
-                NoteOff noff = new(mout.ChannelNumber, notenum, StepTime + dur) {  Transient = true };
+                NoteOff noff = new(mout.MidiChannel, notenum, StepTime + dur) {  Transient = true };
                 mout.Events.Add(noff);
             }
             else // note off
             {
-                NoteOff noff = new(mout.ChannelNumber, notenum, StepTime);
+                NoteOff noff = new(mout.MidiChannel, notenum, StepTime);
                 mout.Send(noff);
             }
         }
@@ -206,7 +206,7 @@ namespace Nebulator.Script
         /// <param name="val">Controller value.</param>
         protected void SendController(MidiOutput mout, Enum ctrlId, int val)
         {
-            Controller ctlr = new(mout.ChannelNumber, ctrlId, val, StepTime);
+            Controller ctlr = new(mout.MidiChannel, ctrlId, val, StepTime);
             mout.Send(ctlr);
         }
 
@@ -214,24 +214,24 @@ namespace Nebulator.Script
         /// Creates a midi input.
         /// </summary>
         /// <param name="device"></param>
-        /// <param name="channelNumber"></param>
-        /// <param name="channelName"></param>
-        protected void OpenMidiInput(string device, int channelNumber, string channelName)
+        /// <param name="midiChannel"></param>
+        /// <param name="name"></param>
+        protected void OpenMidiInput(string device, int midiChannel, string name)
         {
-            CM.OpenMidiInput(device, channelNumber, channelName);
+            CM.OpenMidiInput(device, midiChannel, name);
         }
 
         /// <summary>
         /// Creates a midi output channel.
         /// </summary>
         /// <param name="device"></param>
-        /// <param name="channelNumber"></param>
-        /// <param name="channelName"></param>
+        /// <param name="midiChannel"></param>
+        /// <param name="name"></param>
         /// <param name="patch"></param>
         /// <exception cref="ArgumentException"></exception>
-        protected MidiOutput OpenMidiOutput(string device, int channelNumber, string channelName, Enum patch)
+        protected MidiOutput OpenMidiOutput(string device, int midiChannel, string name, Enum patch)
         {
-            var mout = CM.OpenMidiOutput(device, channelNumber, channelName);
+            var mout = CM.OpenMidiOutput(device, midiChannel, name);
             CM.SetPatch(mout, patch);
             return mout;
         }
@@ -279,12 +279,12 @@ namespace Nebulator.Script
                         {
                             var seq = sectel.Sequences[seqIndex];
 
-                            var mouts = CM.GetOutputs().Where(ch => ch.mout.ChannelName == sectel.ChannelName);
+                            var mouts = CM.GetOutputs().Where(ch => ch.mout.Name == sectel.Name);
                             if (mouts.Any())
                             {
                                 var mout = mouts.First().mout;
                                 int beat = sectionBeat + beatInSect;
-                                var ecoll = ConvertToEvents(mout.ChannelNumber, seq, beat);
+                                var ecoll = ConvertToEvents(mout.MidiChannel, seq, beat);
                                 mout.Events.AddRange(ecoll);
                             }
 

@@ -144,16 +144,16 @@ void OpenMidiInput(dev, chnum, chname);
 ```
 Open a midi input.
 - dev: device name
-- chnum: channel number
-- chname: channel name
+- chnum: midi channel number
+- chname: midi channel name
 
 ```c#
 void OpenMidiOutput(dev, chnum, chname, patch, alias);
 ```
 Open a midi output.
 - dev: device name
-- chnum: channel number
-- chname: channel name
+- chnum: midi channel number
+- chname: midi channel name
 - patch: patch name
 - alias: file name of alternate instrument names (optional)
 
@@ -239,7 +239,7 @@ public override void ReceiveNote(dev, chnum, note, vel);
 Called when input note arrives.
 
 - dev: device name
-- chnum: channel number
+- chnum: midi channel number
 - note: note number
 - vel: velocity
 
@@ -248,7 +248,7 @@ public override void ReceiveController(dev, chnum, ctlid, value);
 ```
 Called when input controller arrives.
 - dev: device name
-- chnum: channel number
+- chnum: midi channel number
 - ctlid: controller
 - value: value
 
@@ -262,7 +262,7 @@ void SendNote(chname, note, vol, dur)
 ```
 Send a note immediately. Respects solo/mute. Adds a note off to play after dur time.
 
-- chname: channel to send it on
+- chname: midi channel to send it on
 - note: as int or string
 - vol: volume from 0.0 to 1.0 (0.0 means note off)
 - dur: ow long it lasts in beat.eigth-beat or MusicTime representation
@@ -272,7 +272,7 @@ void SendNoteOn(chname, note, vol)
 ```
 Send a note on immediately. Respects solo/mute. Doesn't add note off.
 
-- chname: channel to send it on
+- chname: midi channel to send it on
 - note: as int or string
 - vol: volume from 0.0 to 1.0 (0.0 means note off)
 
@@ -281,7 +281,7 @@ void SendNoteOff(chname, note)
 ```
 Send a note off immediately.
 
-- chname: channel to send it on
+- chname: midi channel to send it on
 - note: as int or string
 
 ```c#
@@ -289,7 +289,7 @@ void SendController(chname, ctl, val)
 ```
 Send a controller immediately. Useful for things like panning and bank select.
 
-- chname: channel to send it on
+- chname: midi channel to send it on
 - ctl: controller name from the definitions
 - val: controller value.
 

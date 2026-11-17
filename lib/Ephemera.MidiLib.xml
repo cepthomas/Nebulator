@@ -172,7 +172,7 @@
         <member name="P:Ephemera.MidiLib.ChannelHandle.DeviceId">
             <summary>App-side id.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.ChannelHandle.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.ChannelHandle.MidiChannel">
             <summary>App-side value.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.ChannelHandle.Output">
@@ -235,11 +235,11 @@
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.OpenMidiOutput(System.String,System.Int32,System.String)">
             <summary>
-            Open a normal output channel. Lazy inits the device. Throws if anything is invalid. Slow-time.
+            Open a normal output midiChannel. Lazy inits the device. Throws if anything is invalid. Slow-time.
             </summary>
             <param name="deviceName"></param>
-            <param name="channelNumber"></param>
-            <param name="channelName"></param>
+            <param name="midiChannel"></param>
+            <param name="name"></param>
             <returns></returns>
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.OpenMidiInput(System.String,System.Int32,System.String)">
@@ -247,8 +247,8 @@
             Open a midi input. Lazy inits the device. Throws if anything is invalid. Slow-time.
             </summary>
             <param name="deviceName"></param>
-            <param name="channelNumber"></param>
-            <param name="channelName"></param>
+            <param name="midiChannel"></param>
+            <param name="name"></param>
             <returns></returns>
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.Dev_MessageReceived(System.Object,Ephemera.MidiLib.BaseEvent)">
@@ -332,7 +332,7 @@
         <member name="T:Ephemera.MidiLib.BaseEvent">
             <summary>Base class for internal representation of midi events.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.BaseEvent.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.BaseEvent.MidiChannel">
             <summary>Channel number.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.BaseEvent.When">
@@ -573,14 +573,14 @@
         <member name="F:Ephemera.MidiLib.MidiInput._device">
             <summary>Associated device.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiInput.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.MidiInput.MidiChannel">
             <summary>1-based midi channel number. Required.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiInput.ChannelName">
-            <summary>Host supplied channel name.</summary>
+        <member name="P:Ephemera.MidiLib.MidiInput.Name">
+            <summary>Host supplied name.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiInput.Enable">
-            <summary>True if channel is active.</summary>
+            <summary>True if listening.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiInput.Handle">
             <summary>Handle for use by scripts.</summary>
@@ -590,8 +590,8 @@
             Constructor with required args.
             </summary>
             <param name="device"></param>
-            <param name="channelNumber"></param>
-            <param name="channelName"></param>
+            <param name="midiChannel"></param>
+            <param name="name"></param>
         </member>
         <member name="T:Ephemera.MidiLib.MidiOutput">
             <summary>Describes one output runtime.</summary>
@@ -599,14 +599,14 @@
         <member name="F:Ephemera.MidiLib.MidiOutput._device">
             <summary>Associated device.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiOutput.ChannelNumber">
+        <member name="P:Ephemera.MidiLib.MidiOutput.MidiChannel">
             <summary>1-based midi channel number. Default is invalid/unknown.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiOutput.ChannelName">
-            <summary>Host supplied channel name.</summary>
+        <member name="P:Ephemera.MidiLib.MidiOutput.Name">
+            <summary>Host supplied name.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.EnableSound">
-            <summary>True if channel is not muted.</summary>
+            <summary>True if not muted.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.Handle">
             <summary>Handle for use by scripts.</summary>
@@ -619,8 +619,8 @@
             Constructor for output.
             </summary>
             <param name="device"></param>
-            <param name="channelNumber"></param>
-            <param name="channelName"></param>
+            <param name="midiChannel"></param>
+            <param name="name"></param>
         </member>
         <member name="M:Ephemera.MidiLib.MidiOutput.ToString">
             <summary>
@@ -636,7 +636,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.MidiOutput.Kill">
             <summary>
-            Hard stop the channel.
+            Hard stop sending.
             </summary>
         </member>
         <member name="T:Ephemera.MidiLib.MusicTime">
@@ -1047,8 +1047,8 @@
             <param name="tick"></param>
             <param name="up">To ceiling otherwise closest.</param>
         </member>
-        <member name="T:Ephemera.MidiLib.ChannelNumberTypeEditor">
-            <summary>Select a midi value from a range. Handles special case of channel number.</summary>
+        <member name="T:Ephemera.MidiLib.MidiChannelTypeEditor">
+            <summary>Select a midi channel from a range.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.MidiOutputDeviceTypeEditor">
             <summary>Select one from available devices.</summary>

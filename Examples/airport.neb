@@ -1,8 +1,6 @@
 
 // A take on Eno's "algorithmic" Music for Airports - ported from github.com/teropa/musicforairports.js
 
-// #:channel sound midiout 1 Pad2Warm
-
 class TapeLoop
 {
     public string snote;

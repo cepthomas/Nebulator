@@ -49,7 +49,7 @@ namespace Nebulator.Script
         {
             SectionElement sel = new()
             {
-                ChannelName = mout.ChannelName,
+                Name = mout.Name,
                 Sequences = sequences
             };
 
@@ -63,8 +63,8 @@ namespace Nebulator.Script
     public class SectionElement
     {
         #region Properties
-        /// <summary>Associated channel.</summary>
-        public string ChannelName { get; set; } = "???";
+        /// <summary>Associated midi output.</summary>
+        public string Name { get; set; } = "???";
 
         /// <summary>Associated sequences.</summary>
         public Sequence[] Sequences { get; set; } = Array.Empty<Sequence>();
@@ -75,7 +75,7 @@ namespace Nebulator.Script
         /// </summary>
         public override string ToString()
         {
-            return $"SectionElement: ChannelName:{ChannelName}";
+            return $"SectionElement: Name:{Name}";
         }
     }
 }

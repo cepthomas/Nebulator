@@ -9,7 +9,7 @@
 utils u = new();
 Random rand = new();
 
-// The channels.
+// The midi IO.
 MidiOutput keys_ch;
 MidiOutput bass_ch;
 MidiOutput synth_ch;
@@ -36,7 +36,7 @@ List<int> myScaleNotes;
 // Nebulator setup stuff
 public override void Setup()
 {
-    // Midi channels. Adjust per configuration.
+    // Midi IO. Adjust per configuration.
     string midi_device_in = "NebLoopback1";
     string midi_device_out = "VirtualMIDISynth #1";
     // string midi_device_out = "Microsoft GS Wavetable Synth";
@@ -203,15 +203,15 @@ public override void Step()
     }
 }
 
-public override void ReceiveNote(string dev, int channel, int note, int vel)
+public override void ReceiveNote(string dev, int midiChannel, int note, int vel)
 {
-    Print("Input note", dev, channel, note, vel);
+    Print("Input note", dev, midiChannel, note, vel);
     SendNote(bass_ch, note, vel, 0.5);
 }
 
-public override void ReceiveController(string dev, int channel, int ctlid, int value)
+public override void ReceiveController(string dev, int midiChannel, int ctlid, int value)
 {
-    Print("Input control", dev, channel, ctlid, value);
+    Print("Input control", dev, midiChannel, ctlid, value);
 }
 
 

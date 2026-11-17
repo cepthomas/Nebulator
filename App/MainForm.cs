@@ -279,7 +279,7 @@ namespace Nebulator.App
                     // Init shared vars.
                     InitRuntime();
 
-                    // Setup script. Defines channels and devices, builds the sequences and sections.
+                    // Setup script. Defines midi IO and devices, builds the sequences and sections.
                     _script.Setup();
 
                     // Script may have altered shared vars.
@@ -297,20 +297,20 @@ namespace Nebulator.App
             int x = btnRewind.Left;
             int y = timeBar.Bottom + CONTROL_SPACING;
 
-            // Get all script-defined channels and make corresponding UI element.
+            // Get all script-defined midi IO and make corresponding UI element.
             var mouts = CM.GetOutputs().Select(ch => ch.mout).ToList();
 
             mouts.ForEach(mout =>
             {
                 var ctrl = new ChannelControl()
                 {
-                    Info1 = $"M{mout.ChannelNumber} {mout.ChannelName}",
- //????                   Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
+                    Info1 = $"M{mout.MidiChannel} {mout.Name}",
+                    Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
                     Location = new(x, y),
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
                     SelectedColor = _settings.SelectedColor,
-                    Volume = MidiLibDefs.DEFAULT_VOLUME // should persist + channel vals etc
+                    Volume = MidiLibDefs.DEFAULT_VOLUME // should persist + midi IO vals etc
                 };
 
                 //ctrl.InfoClick += ChannelControl_InfoClick;
@@ -396,7 +396,7 @@ namespace Nebulator.App
                         // Execute user step function.
                         _script.Step();
 
-                        // Process each channel.
+                        // Process each midi output.
                         foreach (var (mout, ctrl) in CM.GetOutputs())
                         {
                             // Process any sequence steps.
@@ -520,15 +520,15 @@ namespace Nebulator.App
                 switch (e)
                 {
                     case NoteOn evt:
-                        _script.ReceiveNote(dev.DeviceName, evt.ChannelNumber, evt.Note, evt.Velocity);
+                        _script.ReceiveNote(dev.DeviceName, evt.MidiChannel, evt.Note, evt.Velocity);
                         break;
 
                     case NoteOff evt:
-                        _script.ReceiveNote(dev.DeviceName, evt.ChannelNumber, evt.Note, 0);
+                        _script.ReceiveNote(dev.DeviceName, evt.MidiChannel, evt.Note, 0);
                         break;
 
                     case Controller evt:
-                        _script.ReceiveController(dev.DeviceName, evt.ChannelNumber, Convert.ToInt32(evt.Id), evt.Value);
+                        _script.ReceiveController(dev.DeviceName, evt.MidiChannel, Convert.ToInt32(evt.Id), evt.Value);
                         break;
 
                     default:
