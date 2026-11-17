@@ -21,7 +21,7 @@ namespace Nebulator.Script
         internal bool _disposed = false;
         #endregion
 
-        #region Kind of klunky hook TODO do better?
+        #region Kind of klunky hook TODO
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         /// <summary>Midi boss.</summary>
         public static ChannelManager CM;
@@ -248,6 +248,14 @@ namespace Nebulator.Script
 
         #region Host functions for internal use
         /// <summary>
+        /// Clean up.
+        /// </summary>
+        public void Reset()
+        {
+            _sections.Clear();
+        }
+
+        /// <summary>
         /// Convert script sequences to internal events.
         /// </summary>
         public void BuildSteps()
@@ -271,12 +279,14 @@ namespace Nebulator.Script
                         {
                             var seq = sectel.Sequences[seqIndex];
 
-                            // TODO1 fix - was AddSequence(sectel.Channel, seq, sectionBeat + beatInSect);
-
-                            //var mout = CM.GetMidiOutput(sectel.ChannelName) ?? throw new ArgumentException($"Invalid channel: {sectel.ChannelName}");
-                            //int beat = sectionBeat + beatInSect;
-                            //var ecoll = ConvertToEvents(mout.ChannelNumber, seq, beat);
-                            //mout.Events.AddRange(ecoll);
+                            var mouts = CM.GetOutputs().Where(ch => ch.mout.ChannelName == sectel.ChannelName);
+                            if (mouts.Any())
+                            {
+                                var mout = mouts.First().mout;
+                                int beat = sectionBeat + beatInSect;
+                                var ecoll = ConvertToEvents(mout.ChannelNumber, seq, beat);
+                                mout.Events.AddRange(ecoll);
+                            }
 
                             beatInSect += seq.Beats;
                             if (seqIndex < sectel.Sequences.Length - 1)

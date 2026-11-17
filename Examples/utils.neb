@@ -20,7 +20,7 @@ public bool Boing(int notenum = 0)
         boinged = true;
     }
 
-//TODO1 can't see synth_ch    SendNote(synth_ch, notenum, VOL, DUR);
+//TODO can't see synth_ch    SendNote(synth_ch, notenum, VOL, DUR);
     
     return boinged;
 }

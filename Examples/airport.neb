@@ -19,13 +19,14 @@ class TapeLoop
 }
 
 const double SOUND_VOL = 0.8;
+MidiOutput my_ch;
 
 // Possible loops.
 List<TapeLoop> _loops = new List<TapeLoop>();
 
 public override void Setup()
 {
-    OpenMidiOutput("VirtualMIDISynth #1", 1, "sound", "Pad2Warm"); // "Microsoft GS Wavetable Synth"  "AcousticGrandPiano"
+    my_ch = OpenMidiOutput("VirtualMIDISynth #1", 1, "sound", MidiDefs.InstrumentId.Pad2Warm);
 
     Tempo = 70;
     
@@ -52,7 +53,7 @@ public override void Step()
         if (StepTime >= l.nextStart)
         {
             Print("Starting note", l.snote);
-            SendNote("sound", l.snote, SOUND_VOL, l.duration);
+            SendNote(my_ch, l.snote, SOUND_VOL, l.duration);
             // Calc next time.
             l.nextStart = StepTime + l.delay + l.duration;
         }

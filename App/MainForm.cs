@@ -105,7 +105,12 @@ namespace Nebulator.App
             GraphicsUtils.ColorizeControl(fileDropDownButton, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnAbout, _settings.IconColor);
             GraphicsUtils.ColorizeControl(btnSettings, _settings.IconColor);
-            // ColorizeControl() not here...
+            // TODO after update to .NET10 this doesn't work any more:
+            //GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
+            //GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
+            //GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
+
+            chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
 
             btnMonIn.Checked = _settings.MonitorInput;
             btnMonOut.Checked = _settings.MonitorOutput;
@@ -178,12 +183,6 @@ namespace Nebulator.App
                 _logger.Error($"Couldn't open script file: {sopen}");
             }
 
-            // TODO after update to .NET10 this needs to be done here instead of in constructor.
-            GraphicsUtils.ColorizeControl(chkPlay, _settings.IconColor);
-            GraphicsUtils.ColorizeControl(btnCompile, _settings.IconColor);
-            GraphicsUtils.ColorizeControl(btnRewind, _settings.IconColor);
-            chkPlay.FlatAppearance.CheckedBackColor = _settings.SelectedColor;
-
             // Show them what they have.
             MidiDefs.GenUserDeviceInfo().ForEach(l => tvInfo.Append(l));
 
@@ -247,9 +246,8 @@ namespace Nebulator.App
                 return false;
             }
 
-            // Clean up old script stuff. TODO any way to remove old _sections otherwise new ones are added on.
+            // Clean up old script stuff.
             ProcessPlay(PlayCommand.StopRewind);
-
             CM.Reset();
             _watcher.Clear();
             timeBar.Reset();
@@ -276,6 +274,8 @@ namespace Nebulator.App
                 // Need exception handling here to protect from user script errors.
                 try
                 {
+                    _script.Reset();
+
                     // Init shared vars.
                     InitRuntime();
 
@@ -886,14 +886,14 @@ namespace Nebulator.App
         {
             double secPerBeat = 60.0 / sldTempo.Value;
             double msecPerSub = 1000 * secPerBeat / MusicTime.SubbeatsPerBeat;
-            msecPerSub *= 2; // TODO something messed up in timing.
+            msecPerSub *= 2; // TODO something messed up in timing calc
             _mmTimer.SetTimer(msecPerSub > 1.0 ? (int)Math.Round(msecPerSub) : 1, MmTimerCallback);
         }
         #endregion
 
         #region Midi utilities
         /// <summary>
-        /// Export to a midi file. TODO needs some work/debug.
+        /// Export to a midi file. TODO broken - needs some work/debug.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -922,7 +922,7 @@ namespace Nebulator.App
                         IList<MidiEvent> outEvents = outColl.AddTrack();
                         for (int i = 0; i < mout.Events.Count(); i++)
                         {
-//>>>>                            outEvents.Add(mout.Events[i]);
+//                            outEvents.Add(mout.Events[i]);
                         }
                     }
                 }

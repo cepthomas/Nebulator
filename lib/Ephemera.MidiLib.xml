@@ -253,7 +253,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.Dev_MessageReceived(System.Object,Ephemera.MidiLib.BaseEvent)">
             <summary>
-            Something arrived from a midi device. Filter and maybe pass on.
+            Something arrived from a midi device. Filter and maybe pass on to registered clients.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
@@ -896,52 +896,6 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
-        </member>
-        <member name="T:Ephemera.MidiLib.Properties.Resources">
-            <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
-            </summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.Properties.Resources.ResourceManager">
-            <summary>
-              Returns the cached ResourceManager instance used by this class.
-            </summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.Properties.Resources.Culture">
-            <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
-            </summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.Properties.Resources.gm_defs">
-             <summary>
-               Looks up a localized string similar to ; The GM instrument patches.
-            [instruments]
-            000 = AcousticGrandPiano
-            001 = BrightAcousticPiano
-            002 = ElectricGrandPiano
-            003 = HonkyTonkPiano
-            004 = ElectricPiano1
-            005 = ElectricPiano2
-            006 = Harpsichord
-            007 = Clavinet
-            008 = Celesta
-            009 = Glockenspiel
-            010 = MusicBox
-            011 = Vibraphone
-            012 = Marimba
-            013 = Xylophone
-            014 = TubularBells
-            015 = Dulcimer
-            016 = DrawbarOrgan
-            017 = PercussiveOrgan
-            018 = RockOrgan
-            019 = ChurchOrgan
-            020 = ReedOrgan
-            021 = Accordion
-            022 = Harmonica
-            023 = TangoAccordion [rest of string was truncated]&quot;;.
-             </summary>
         </member>
         <member name="T:Ephemera.MidiLib.TimeBar">
             <summary>The control.</summary>

@@ -97,7 +97,7 @@ public void BuildComp()
 
     Sequence seqDrumsChorus = CreateSequence(8, new()
     {
-        { 0.0, "AcousticBassDrum",  DRUM_VOL },  // TODO1 support enum drums.
+        { 0.0, "AcousticBassDrum",  DRUM_VOL },  // TODO support enum drums.
         { 1.0, "RideCymbal1",       DRUM_VOL },
         { 1.2, "RideCymbal1",       DRUM_VOL },
         { 1.4, "HiMidTom",          DRUM_VOL },
