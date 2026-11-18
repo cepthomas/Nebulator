@@ -16,7 +16,7 @@ namespace Nebulator.Script
 
 #pragma warning disable CA2211, CS8618
         /// <summary>Midi boss. Kind of klunky hook TODO.</summary>
-        public static ChannelManager CM;
+        public static MidiManager MM;
 #pragma warning restore
 
         /// <summary>All sections. Static so it is common to all script classes derived from ScriptCore.</summary>
@@ -219,7 +219,7 @@ namespace Nebulator.Script
         /// <param name="name"></param>
         protected void OpenMidiInput(string device, int midiChannel, string name)
         {
-            CM.OpenMidiInput(device, midiChannel, name);
+            MM.OpenMidiInput(device, midiChannel, name);
         }
 
         /// <summary>
@@ -232,8 +232,8 @@ namespace Nebulator.Script
         /// <exception cref="ArgumentException"></exception>
         protected MidiOutput OpenMidiOutput(string device, int midiChannel, string name, Enum patch)
         {
-            var mout = CM.OpenMidiOutput(device, midiChannel, name);
-            CM.SetPatch(mout, patch);
+            var mout = MM.OpenMidiOutput(device, midiChannel, name);
+            MM.SetPatch(mout, patch);
             return mout;
         }
 
@@ -290,7 +290,7 @@ namespace Nebulator.Script
                         {
                             var seq = sectel.Sequences[seqIndex];
 
-                            var mouts = CM.GetOutputs().Where(o => o.Name == sectel.Name);
+                            var mouts = MM.GetOutputs().Where(o => o.Name == sectel.Name);
                             if (mouts.Any())
                             {
                                 var mout = mouts.First();

@@ -33,7 +33,7 @@ namespace Nebulator.App
         readonly UserSettings _settings;
 
         /// <summary>Midi boss.</summary>
-        readonly ChannelManager CM;
+        readonly MidiManager MM;
 
         /// <summary>Fast timer.</summary>
         readonly MmTimerEx _mmTimer = new();
@@ -70,7 +70,7 @@ namespace Nebulator.App
             InitializeComponent();
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
-            CM = new(Controls);
+            MM = new(Controls);
 
             // Init logging.
             string logFileName = Path.Combine(appDir, "log.txt");
@@ -139,10 +139,10 @@ namespace Nebulator.App
             btnMonOut.Click += Monitor_Click;
             btnAbout.Click += About_Click;
             btnSettings.Click += Settings_Click;
-            btnKillComm.Click += (_, __) => CM.KillAll();
+            btnKillComm.Click += (_, __) => MM.KillAll();
 
-            CM.MessageReceived += Manager_MessageReceived;
-            //CM.MessageSent += Manager_MessageSent;
+            MM.MessageReceived += Manager_MessageReceived;
+            //MM.MessageSent += Manager_MessageSent;
             #endregion
         }
 
@@ -196,7 +196,7 @@ namespace Nebulator.App
         {
             LogManager.Stop();
             ProcessPlay(PlayCommand.Stop);
-            CM.KillAll();
+            MM.KillAll();
 
             // Save user settings.
             _settings.FormGeometry = new()
@@ -220,7 +220,7 @@ namespace Nebulator.App
         {
             _mmTimer.Stop();
             _mmTimer.Dispose();
-            CM.Dispose();
+            MM.Dispose();
 
             // Wait a bit in case there are some lingering events.
             System.Threading.Thread.Sleep(100);
@@ -248,7 +248,7 @@ namespace Nebulator.App
 
             // Clean up old script stuff.
             ProcessPlay(PlayCommand.StopRewind);
-            CM.Reset();
+            MM.Reset();
             _watcher.Clear();
             timeBar.Reset();
 
@@ -267,7 +267,7 @@ namespace Nebulator.App
 
             if (_script is not null)
             {
-                ScriptCore.CM = CM;
+                ScriptCore.MM = MM;
 
                 SetCompileStatus(true);
 
@@ -298,7 +298,7 @@ namespace Nebulator.App
             int y = timeBar.Bottom + CONTROL_SPACING;
 
             // Get all script-defined midi IO and make corresponding UI element.
-            var mouts = CM.GetOutputs().ToList(); // TODO preferable enumerable but this loop alters source collection.
+            var mouts = MM.GetOutputs().ToList(); // TODO preferable enumerable but this loop alters source collection.
 
             mouts.ForEach(mout =>
             {
@@ -314,7 +314,7 @@ namespace Nebulator.App
                 };
 
                 //ctrl.InfoClick += ChannelControl_InfoClick;
-                CM.Bind(mout, ctrl);
+                MM.Bind(mout, ctrl);
 
                 // Adjust positioning.
                 x += ctrl.Width + 5;
@@ -394,7 +394,7 @@ namespace Nebulator.App
                         _script.Step();
 
                         // Process each midi output.
-                        foreach (var mout in CM.GetOutputs())
+                        foreach (var mout in MM.GetOutputs())
                         {
                             // Process any sequence steps.
                             // var playEvents = _script.GetEvents(mout).Get(timeBar.Current);
@@ -440,7 +440,7 @@ namespace Nebulator.App
                     if (!timeBar.FreeRunning && done)
                     {
                         ProcessPlay(PlayCommand.StopRewind);
-                        CM.KillAll(); // just in case
+                        MM.KillAll(); // just in case
                     }
                     // else keep going
 
@@ -811,7 +811,7 @@ namespace Nebulator.App
                 case PlayCommand.Stop:
                     chkPlay.Checked = false;
                     _mmTimer.Stop();
-                    CM.KillAll();
+                    MM.KillAll();
                     break;
 
                 case PlayCommand.Rewind:
@@ -821,7 +821,7 @@ namespace Nebulator.App
                 case PlayCommand.StopRewind:
                     chkPlay.Checked = false;
                     timeBar.Rewind();
-                    CM.KillAll();
+                    MM.KillAll();
                     break;
 
                 case PlayCommand.UpdateUiTime:
@@ -917,7 +917,7 @@ namespace Nebulator.App
                     // MidiEventCollection outColl = new(1, ppq);
 
                     // // Build the event collection.
-                    // foreach (var mout in CM.GetOutputs())
+                    // foreach (var mout in MM.GetOutputs())
                     // {
                     //     IList<MidiEvent> outEvents = outColl.AddTrack();
                     //     var mevts = _script.GetEvents(mout);

@@ -187,127 +187,6 @@
         <member name="M:Ephemera.MidiLib.ChannelHandle.ToString">
             <summary>Human readable.</summary>
         </member>
-        <member name="T:Ephemera.MidiLib.ChannelManager">
-            <summary>Hides all the messy logic with midi devices and channels, and the NAudio versions of each.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.ChannelManager._outputDevices">
-            <summary>All midi devices to use for send. Index is the IOutputDevice.Id.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.ChannelManager._midiOutputs">
-            <summary>All the outputs with associated controls.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.ChannelManager._controls">
-            <summary>Add/remove dynamically generated controls to WinForms collection.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.ChannelManager._inputDevices">
-            <summary>All midi devices to use for receive. Index is the id.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.ChannelManager._midiInputs">
-            <summary>All the midi inputs.</summary>
-        </member>
-        <member name="E:Ephemera.MidiLib.ChannelManager.MessageReceived">
-            <summary>Handler for midi message arrived.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.#ctor(System.Windows.Forms.Control.ControlCollection)">
-            <summary>
-            Normal constructor.
-            </summary>
-            <param name="controls">Required for using UI controls. Headless doesn't.</param>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.Dispose">
-            <summary>
-            Clean up.
-            </summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.ChannelControl_StateChange(System.Object,Ephemera.MidiLib.ChannelControl.StateChangeEventArgs)">
-            <summary>
-            User clicked solo/mute. Slow-time.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.ChannelControl_SelectionChange(System.Object,Ephemera.MidiLib.ChannelControl.SelectionChangeEventArgs)">
-            <summary>
-            User clicked something. Slow-time.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.OpenMidiOutput(System.String,System.Int32,System.String)">
-            <summary>
-            Open a normal output midiChannel. Lazy inits the device. Throws if anything is invalid. Slow-time.
-            </summary>
-            <param name="deviceName"></param>
-            <param name="midiChannel"></param>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.OpenMidiInput(System.String,System.Int32,System.String)">
-            <summary>
-            Open a midi input. Lazy inits the device. Throws if anything is invalid. Slow-time.
-            </summary>
-            <param name="deviceName"></param>
-            <param name="midiChannel"></param>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.Dev_MessageReceived(System.Object,Ephemera.MidiLib.BaseEvent)">
-            <summary>
-            Something arrived from a midi device. Filter and maybe pass on to registered clients.
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.GetOutputDevice(System.String)">
-            <summary>
-            Get output device. Lazy creation. Slow-time.
-            </summary>
-            <param name="deviceName"></param>
-            <returns>The device or null if invalid.</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.GetInputDevice(System.String)">
-            <summary>
-            Get input device. Lazy creation. Slow-time.
-            </summary>
-            <param name="deviceName"></param>
-            <returns>The device or null if invalid.</returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.SetPatch(Ephemera.MidiLib.MidiOutput,System.Enum)">
-            <summary>
-            Sends patch message. Throws if anything is invalid.
-            </summary>
-            <param name="mout"></param>
-            <param name="patch">Explicit</param>
-            <returns></returns>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.Bind(Ephemera.MidiLib.MidiOutput,Ephemera.MidiLib.ChannelControl)">
-            <summary>
-            Bind a UI control to a midi output.
-            </summary>
-            <param name="mout"></param>
-            <param name="ctrl"></param>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.UpdateState">
-            <summary>
-            Handles solo/mute across all channels.
-            </summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.KillAll">
-            <summary>
-            Die die die.
-            </summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.Reset">
-            <summary>
-            Remove current channels and controls - but not devices.
-            </summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelManager.GetOutputs">
-            <summary>
-            Update runtime stuff and return output iterator.
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:Ephemera.MidiLib.SnapType">
             <summary>User selection options.</summary>
         </member>
@@ -589,6 +468,127 @@
             <param name="device"></param>
             <param name="midiChannel"></param>
             <param name="name"></param>
+        </member>
+        <member name="T:Ephemera.MidiLib.MidiManager">
+            <summary>Hides all the messy logic with midi devices and channels, and the NAudio versions of each.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.MidiManager._outputDevices">
+            <summary>All midi devices to use for send. Index is the IOutputDevice.Id.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.MidiManager._midiOutputs">
+            <summary>All the outputs with associated controls.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.MidiManager._controls">
+            <summary>Add/remove dynamically generated controls to WinForms collection.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.MidiManager._inputDevices">
+            <summary>All midi devices to use for receive. Index is the id.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.MidiManager._midiInputs">
+            <summary>All the midi inputs.</summary>
+        </member>
+        <member name="E:Ephemera.MidiLib.MidiManager.MessageReceived">
+            <summary>Handler for midi message arrived.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.#ctor(System.Windows.Forms.Control.ControlCollection)">
+            <summary>
+            Normal constructor.
+            </summary>
+            <param name="controls">Required for using UI controls. Headless doesn't.</param>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.Dispose">
+            <summary>
+            Clean up.
+            </summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.ChannelControl_StateChange(System.Object,Ephemera.MidiLib.ChannelControl.StateChangeEventArgs)">
+            <summary>
+            User clicked solo/mute. Slow-time.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.ChannelControl_SelectionChange(System.Object,Ephemera.MidiLib.ChannelControl.SelectionChangeEventArgs)">
+            <summary>
+            User clicked something. Slow-time.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.OpenMidiOutput(System.String,System.Int32,System.String)">
+            <summary>
+            Open a normal output midiChannel. Lazy inits the device. Throws if anything is invalid. Slow-time.
+            </summary>
+            <param name="deviceName"></param>
+            <param name="midiChannel"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.OpenMidiInput(System.String,System.Int32,System.String)">
+            <summary>
+            Open a midi input. Lazy inits the device. Throws if anything is invalid. Slow-time.
+            </summary>
+            <param name="deviceName"></param>
+            <param name="midiChannel"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.Dev_MessageReceived(System.Object,Ephemera.MidiLib.BaseEvent)">
+            <summary>
+            Something arrived from a midi device. Filter and maybe pass on to registered clients.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.GetOutputDevice(System.String)">
+            <summary>
+            Get output device. Lazy creation. Slow-time.
+            </summary>
+            <param name="deviceName"></param>
+            <returns>The device or null if invalid.</returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.GetInputDevice(System.String)">
+            <summary>
+            Get input device. Lazy creation. Slow-time.
+            </summary>
+            <param name="deviceName"></param>
+            <returns>The device or null if invalid.</returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.SetPatch(Ephemera.MidiLib.MidiOutput,System.Enum)">
+            <summary>
+            Sends patch message. Throws if anything is invalid.
+            </summary>
+            <param name="mout"></param>
+            <param name="patch">Explicit</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.Bind(Ephemera.MidiLib.MidiOutput,Ephemera.MidiLib.ChannelControl)">
+            <summary>
+            Bind a UI control to a midi output.
+            </summary>
+            <param name="mout"></param>
+            <param name="ctrl"></param>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.UpdateState">
+            <summary>
+            Handles solo/mute across all channels.
+            </summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.KillAll">
+            <summary>
+            Die die die.
+            </summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.Reset">
+            <summary>
+            Remove current channels and controls - but not devices.
+            </summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.MidiManager.GetOutputs">
+            <summary>
+            Update runtime stuff and return output iterator.
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Ephemera.MidiLib.MidiOutput">
             <summary>Describes one output runtime.</summary>
