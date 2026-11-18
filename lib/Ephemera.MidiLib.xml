@@ -160,33 +160,6 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:Ephemera.MidiLib.ChannelHandle">
-            <summary>Channel handle class for interacting with scripts.</summary>
-        </member>
-        <member name="F:Ephemera.MidiLib.ChannelHandle.OUTPUT_FLAG">
-            <summary>Differentiate inputs and outputs.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.ChannelHandle.Raw">
-            <summary>Script-side handle.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.ChannelHandle.DeviceId">
-            <summary>App-side id.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.ChannelHandle.MidiChannel">
-            <summary>App-side value.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.ChannelHandle.Output">
-            <summary>App-side value.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelHandle.#ctor(System.Int32,System.Int32,System.Boolean)">
-            <summary>App-side constructor.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelHandle.#ctor(System.Int32)">
-            <summary>Script-side constructor.</summary>
-        </member>
-        <member name="M:Ephemera.MidiLib.ChannelHandle.ToString">
-            <summary>Human readable.</summary>
-        </member>
         <member name="T:Ephemera.MidiLib.SnapType">
             <summary>User selection options.</summary>
         </member>
@@ -452,7 +425,7 @@
         <member name="P:Ephemera.MidiLib.MidiInput.MidiChannel">
             <summary>1-based midi channel number. Required.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiInput.Handle">
+        <member name="P:Ephemera.MidiLib.MidiInput.Id">
             <summary>Handle for use by scripts.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiInput.Name">
@@ -599,7 +572,7 @@
         <member name="P:Ephemera.MidiLib.MidiOutput.MidiChannel">
             <summary>1-based midi channel number. Default is invalid/unknown.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiOutput.Handle">
+        <member name="P:Ephemera.MidiLib.MidiOutput.Id">
             <summary>Handle for use by scripts.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.Name">
@@ -756,6 +729,33 @@
             Format a readable string.
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Ephemera.MidiLib.NebId">
+            <summary>Handle class for interacting with scripts.</summary>
+        </member>
+        <member name="F:Ephemera.MidiLib.NebId.OUTPUT_FLAG">
+            <summary>Differentiate inputs and outputs.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.NebId.Raw">
+            <summary>Script-side handle.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.NebId.DeviceId">
+            <summary>App-side id.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.NebId.MidiChannel">
+            <summary>App-side value.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.NebId.Output">
+            <summary>App-side value.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.NebId.#ctor(System.Int32,System.Int32,System.Boolean)">
+            <summary>App-side constructor.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.NebId.#ctor(System.Int32)">
+            <summary>Script-side constructor.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.NebId.ToString">
+            <summary>Human readable.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.NullInputDevice.DeviceName">
             <inheritdoc />
