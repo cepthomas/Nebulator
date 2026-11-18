@@ -14,7 +14,7 @@
         <Description>Nebulator application</Description>
         <Copyright>MIT License</Copyright>
         <!-- <DefineConstants>DEBUG;TRACE</DefineConstants> -->
-        <NoWarn>CS1591;IDE0130;CA1860</NoWarn>
+        <NoWarn>CS1591;CA1860;CA1822;IDE0130;IDE0060</NoWarn>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <SatelliteResourceLanguages>none</SatelliteResourceLanguages>

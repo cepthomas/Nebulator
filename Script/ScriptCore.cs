@@ -22,10 +22,10 @@ namespace Nebulator.Script
         #endregion
 
         #region Kind of klunky hook TODO
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning disable CA2211
         /// <summary>Midi boss.</summary>
         public static ChannelManager CM;
-#pragma warning restore CS8618
+#pragma warning restore CA2211
         #endregion
 
         #region API - Properties shared by host and script
@@ -279,10 +279,10 @@ namespace Nebulator.Script
                         {
                             var seq = sectel.Sequences[seqIndex];
 
-                            var mouts = CM.GetOutputs().Where(o => o.mout.Name == sectel.Name);
+                            var mouts = CM.GetOutputs().Where(o => o.Name == sectel.Name);
                             if (mouts.Any())
                             {
-                                var mout = mouts.First().mout;
+                                var mout = mouts.First();
                                 int beat = sectionBeat + beatInSect;
                                 var ecoll = ConvertToEvents(mout.MidiChannel, seq, beat);
                                 mout.Events.AddRange(ecoll);

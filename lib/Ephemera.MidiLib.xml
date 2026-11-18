@@ -197,7 +197,7 @@
             <summary>All the outputs with associated controls.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.ChannelManager._controls">
-            <summary>Need to add/remove dynamically generated controls.</summary>
+            <summary>Add/remove dynamically generated controls to WinForms collection.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.ChannelManager._inputDevices">
             <summary>All midi devices to use for receive. Index is the id.</summary>
@@ -304,7 +304,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.GetOutputs">
             <summary>
-            Iterate through the contents.
+            Iterate through all the outputs.
             </summary>
             <returns></returns>
         </member>
@@ -576,14 +576,14 @@
         <member name="P:Ephemera.MidiLib.MidiInput.MidiChannel">
             <summary>1-based midi channel number. Required.</summary>
         </member>
+        <member name="P:Ephemera.MidiLib.MidiInput.Handle">
+            <summary>Handle for use by scripts.</summary>
+        </member>
         <member name="P:Ephemera.MidiLib.MidiInput.Name">
             <summary>Host supplied name.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiInput.Enable">
             <summary>True if listening.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.MidiInput.Handle">
-            <summary>Handle for use by scripts.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiInput.#ctor(Ephemera.MidiLib.IInputDevice,System.Int32,System.String)">
             <summary>
@@ -602,14 +602,20 @@
         <member name="P:Ephemera.MidiLib.MidiOutput.MidiChannel">
             <summary>1-based midi channel number. Default is invalid/unknown.</summary>
         </member>
+        <member name="P:Ephemera.MidiLib.MidiOutput.Handle">
+            <summary>Handle for use by scripts.</summary>
+        </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.Name">
             <summary>Host supplied name.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.EnableSound">
             <summary>True if not muted.</summary>
         </member>
-        <member name="P:Ephemera.MidiLib.MidiOutput.Handle">
-            <summary>Handle for use by scripts.</summary>
+        <member name="P:Ephemera.MidiLib.MidiOutput.Selected">
+            <summary>True if not muted.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.MidiOutput.VolumeDelta">
+            <summary>Volume adjustment e.g. control slider.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.Events">
             <summary>Associated events - optional depending on implementation.</summary>

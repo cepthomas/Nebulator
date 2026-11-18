@@ -298,14 +298,14 @@ namespace Nebulator.App
             int y = timeBar.Bottom + CONTROL_SPACING;
 
             // Get all script-defined midi IO and make corresponding UI element.
-            var mouts = CM.GetOutputs().Select(o => o.mout).ToList();
+            var mouts = CM.GetOutputs().ToList(); // TODO preferable enumerable but this loop alters source collection.
 
             mouts.ForEach(mout =>
             {
                 var ctrl = new ChannelControl()
                 {
                     Info1 = $"M{mout.MidiChannel} {mout.Name}",
-                    Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
+                    //?? Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
                     Location = new(x, y),
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
@@ -323,8 +323,8 @@ namespace Nebulator.App
             // Script is sane - build the events.
             _script!.BuildSteps();
 
-            // List<string> evts = [];
-            // CM.GetOutputs().ForEach(o => evts.AddRange(o.mout.Events.Dump()));
+            List<string> evts = [];
+            CM.GetOutputs().ForEach(o => evts.AddRange(o.Events.Dump()));
 
             // Init the timebar.
             Dictionary<MusicTime, string> sectInfo = [];
@@ -397,7 +397,7 @@ namespace Nebulator.App
                         _script.Step();
 
                         // Process each midi output.
-                        foreach (var (mout, ctrl) in CM.GetOutputs())
+                        foreach (var mout in CM.GetOutputs())
                         {
                             // Process any sequence steps.
                             var playEvents = mout.Events.Get(timeBar.Current);
@@ -408,7 +408,7 @@ namespace Nebulator.App
                                 {
                                     case NoteOn evt:
                                         // Adjust volume.
-                                        evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * ctrl!.Volume * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
+                                        evt.Velocity = MathUtils.Constrain((int)(evt.Velocity * mout.VolumeDelta * sldVolume.Value), 0, MidiDefs.MAX_MIDI);
                                         mout.Send(evt);
                                         break;
 
@@ -914,10 +914,8 @@ namespace Nebulator.App
                     int ppq = MusicTime.SubbeatsPerBeat;
                     MidiEventCollection outColl = new(1, ppq);
 
-                    var mouts = CM.GetOutputs().Where(o => o.mout.Events.Count() > 0);
-
                     // Build the event collection.
-                    foreach (var (mout, _) in mouts)
+                    foreach (var mout in CM.GetOutputs().Where(o => o.Events.Count() > 0))
                     {
                         IList<MidiEvent> outEvents = outColl.AddTrack();
                         for (int i = 0; i < mout.Events.Count(); i++)
