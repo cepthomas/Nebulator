@@ -298,7 +298,7 @@ namespace Nebulator.App
             int y = timeBar.Bottom + CONTROL_SPACING;
 
             // Get all script-defined midi IO and make corresponding UI element.
-            var mouts = CM.GetOutputs().Select(ch => ch.mout).ToList();
+            var mouts = CM.GetOutputs().Select(o => o.mout).ToList();
 
             mouts.ForEach(mout =>
             {
@@ -323,8 +323,8 @@ namespace Nebulator.App
             // Script is sane - build the events.
             _script!.BuildSteps();
 
-            List<string> evts = [];
-            CM.GetOutputs().ForEach(ch => evts.AddRange(ch.mout.Events.Dump()));
+            // List<string> evts = [];
+            // CM.GetOutputs().ForEach(o => evts.AddRange(o.mout.Events.Dump()));
 
             // Init the timebar.
             Dictionary<MusicTime, string> sectInfo = [];
@@ -914,7 +914,7 @@ namespace Nebulator.App
                     int ppq = MusicTime.SubbeatsPerBeat;
                     MidiEventCollection outColl = new(1, ppq);
 
-                    var mouts = CM.GetOutputs().Where(ch => ch.mout.Events.Count() > 0);
+                    var mouts = CM.GetOutputs().Where(o => o.mout.Events.Count() > 0);
 
                     // Build the event collection.
                     foreach (var (mout, _) in mouts)

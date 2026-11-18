@@ -279,7 +279,7 @@ namespace Nebulator.Script
                         {
                             var seq = sectel.Sequences[seqIndex];
 
-                            var mouts = CM.GetOutputs().Where(ch => ch.mout.Name == sectel.Name);
+                            var mouts = CM.GetOutputs().Where(o => o.mout.Name == sectel.Name);
                             if (mouts.Any())
                             {
                                 var mout = mouts.First().mout;
