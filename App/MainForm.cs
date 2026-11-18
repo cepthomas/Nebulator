@@ -323,9 +323,6 @@ namespace Nebulator.App
             // Script is sane - build the events.
             _script!.BuildSteps();
 
-            List<string> evts = [];
-            CM.GetOutputs().ForEach(o => evts.AddRange(o.Events.Dump()));
-
             // Init the timebar.
             Dictionary<MusicTime, string> sectInfo = [];
             _script!.GetSectionInfo().ForEach(si => sectInfo.Add(si.Key, si.Value));
@@ -400,9 +397,13 @@ namespace Nebulator.App
                         foreach (var mout in CM.GetOutputs())
                         {
                             // Process any sequence steps.
-                            var playEvents = mout.Events.Get(timeBar.Current);
+                            // var playEvents = _script.GetEvents(mout).Get(timeBar.Current);
+                            var playEvents = _script.GetEvents(mout);//.Get(timeBar.Current);
 
-                            foreach (var mevt in playEvents)
+                            var ppp = playEvents.Where(e => e.When == timeBar.Current);
+                            //playEvents.TryGetValue(timeBar.Current, out List<BaseEvent>? res);
+
+                            foreach (var mevt in ppp)
                             {
                                 switch (mevt)
                                 {
@@ -908,21 +909,20 @@ namespace Nebulator.App
                     FileName = Path.GetFileName(_scriptFileName.Replace(".neb", ".mid"))
                 };
 
+                // TODO1 fix ->
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
-                    // Init output file contents.
-                    int ppq = MusicTime.SubbeatsPerBeat;
-                    MidiEventCollection outColl = new(1, ppq);
+                    // // Init output file contents.
+                    // int ppq = MusicTime.SubbeatsPerBeat;
+                    // MidiEventCollection outColl = new(1, ppq);
 
-                    // Build the event collection.
-                    foreach (var mout in CM.GetOutputs().Where(o => o.Events.Count() > 0))
-                    {
-                        IList<MidiEvent> outEvents = outColl.AddTrack();
-                        for (int i = 0; i < mout.Events.Count(); i++)
-                        {
-//                            outEvents.Add(mout.Events[i]);
-                        }
-                    }
+                    // // Build the event collection.
+                    // foreach (var mout in CM.GetOutputs())
+                    // {
+                    //     IList<MidiEvent> outEvents = outColl.AddTrack();
+                    //     var mevts = _script.GetEvents(mout);
+                    //     convert mevts.ForEach(e => { outEvents.Add(e); });
+                    // }
                 }
             }
         }

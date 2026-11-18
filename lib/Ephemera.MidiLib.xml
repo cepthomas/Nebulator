@@ -304,7 +304,7 @@
         </member>
         <member name="M:Ephemera.MidiLib.ChannelManager.GetOutputs">
             <summary>
-            Iterate through all the outputs.
+            Update runtime stuff and return output iterator.
             </summary>
             <returns></returns>
         </member>
@@ -415,9 +415,6 @@
         </member>
         <member name="M:Ephemera.MidiLib.Function.ToString">
             <summary>For viewing pleasure.</summary>
-        </member>
-        <member name="T:Ephemera.MidiLib.EventCollection">
-            <summary>Helper for managing groups of events - mainly sugar.</summary>
         </member>
         <member name="T:Ephemera.MidiLib.IDevice">
             <summary>Abstraction layer to support all midi-like devices.</summary>
@@ -616,9 +613,6 @@
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.VolumeDelta">
             <summary>Volume adjustment e.g. control slider.</summary>
-        </member>
-        <member name="P:Ephemera.MidiLib.MidiOutput.Events">
-            <summary>Associated events - optional depending on implementation.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiOutput.#ctor(Ephemera.MidiLib.IOutputDevice,System.Int32,System.String)">
             <summary>

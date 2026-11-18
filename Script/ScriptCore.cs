@@ -14,18 +14,19 @@ namespace Nebulator.Script
         /// <summary>My logger.</summary>
         internal readonly Logger _logger = LogManager.CreateLogger("Script");
 
+#pragma warning disable CA2211, CS8618
+        /// <summary>Midi boss. Kind of klunky hook TODO.</summary>
+        public static ChannelManager CM;
+#pragma warning restore
+
         /// <summary>All sections. Static so it is common to all script classes derived from ScriptCore.</summary>
         internal static List<Section> _sections = [];
 
+        /// <summary>Midi events per output.</summary>
+        readonly Dictionary<MidiOutput, List<BaseEvent>> _outputEvents = [];
+
         /// <summary>Resource clean up.</summary>
         internal bool _disposed = false;
-        #endregion
-
-        #region Kind of klunky hook TODO
-#pragma warning disable CA2211
-        /// <summary>Midi boss.</summary>
-        public static ChannelManager CM;
-#pragma warning restore CA2211
         #endregion
 
         #region API - Properties shared by host and script
@@ -143,7 +144,7 @@ namespace Nebulator.Script
 
                 // Add a transient note off for later.
                 NoteOff noff = new(mout.MidiChannel, notenum, StepTime + dur) {  Transient = true };
-                mout.Events.Add(noff);
+                _outputEvents.AddLazy(mout, noff);
             }
             else // note off
             {
@@ -248,6 +249,16 @@ namespace Nebulator.Script
 
         #region Host functions for internal use
         /// <summary>
+        /// Get midi events per output.
+        /// </summary>
+        /// <param name="mout"></param>
+        /// <returns></returns>
+        public List<BaseEvent> GetEvents(MidiOutput mout)
+        {
+            return _outputEvents.TryGetValue(mout, out List<BaseEvent>? value) ? value : [];
+        }
+
+        /// <summary>
         /// Clean up.
         /// </summary>
         public void Reset()
@@ -285,7 +296,7 @@ namespace Nebulator.Script
                                 var mout = mouts.First();
                                 int beat = sectionBeat + beatInSect;
                                 var ecoll = ConvertToEvents(mout.MidiChannel, seq, beat);
-                                mout.Events.AddRange(ecoll);
+                                ecoll.ForEach(e => _outputEvents.AddLazy(mout, e));
                             }
 
                             beatInSect += seq.Beats;
