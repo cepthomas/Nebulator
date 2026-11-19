@@ -298,19 +298,19 @@ namespace Nebulator.App
             int y = timeBar.Bottom + CONTROL_SPACING;
 
             // Get all script-defined midi IO and make corresponding UI element.
-            var mouts = MM.GetOutputs().ToList(); // TODO preferable enumerable but this loop alters source collection.
+            var mouts = MM.GetOutputs().ToList(); // TODO prefer IEnumerable but this loop alters source collection.
 
             mouts.ForEach(mout =>
             {
                 var ctrl = new ChannelControl()
                 {
                     Info1 = $"M{mout.MidiChannel} {mout.Name}",
-                    //?? Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
+                    //TODO1?? Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
                     Location = new(x, y),
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
                     SelectedColor = _settings.SelectedColor,
-                    Volume = MidiLibDefs.DEFAULT_VOLUME // should persist + midi IO vals etc
+                    Volume = MidiLibDefs.DEFAULT_VOLUME // TODO1 should persist + midi IO vals etc
                 };
 
                 //ctrl.InfoClick += ChannelControl_InfoClick;
@@ -397,13 +397,8 @@ namespace Nebulator.App
                         foreach (var mout in MM.GetOutputs())
                         {
                             // Process any sequence steps.
-                            // var playEvents = _script.GetEvents(mout).Get(timeBar.Current);
-                            var playEvents = _script.GetEvents(mout);//.Get(timeBar.Current);
-
-                            var ppp = playEvents.Where(e => e.When == timeBar.Current);
-                            //playEvents.TryGetValue(timeBar.Current, out List<BaseEvent>? res);
-
-                            foreach (var mevt in ppp)
+                            var playEvents = _script.GetEvents(mout).Where(e => e.When == timeBar.Current);
+                            foreach (var mevt in playEvents)
                             {
                                 switch (mevt)
                                 {
@@ -909,7 +904,7 @@ namespace Nebulator.App
                     FileName = Path.GetFileName(_scriptFileName.Replace(".neb", ".mid"))
                 };
 
-                // TODO1 fix ->
+                // TODO fix ->
                 if (saveDlg.ShowDialog() == DialogResult.OK)
                 {
                     // // Init output file contents.

@@ -15,7 +15,7 @@ using Ephemera.MidiLib;
 namespace Nebulator.App
 {
     [Serializable]
-    public sealed class UserSettings : SettingsCore
+    public sealed class UserSettings : SettingsCore // TODO2 also persist outputs volume/state, master volume/???, ... 
     {
         #region Properties - persisted editable
         [DisplayName("Auto Compile")]
