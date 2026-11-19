@@ -310,7 +310,7 @@ namespace Nebulator.App
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
                     SelectedColor = _settings.SelectedColor,
-                    Volume = MidiLibDefs.DEFAULT_VOLUME // TODO1 should persist + midi IO vals etc
+                    Volume = MidiLibDefs.DEFAULT_VOLUME // TODO persist + midi IO vals etc
                 };
 
                 //ctrl.InfoClick += ChannelControl_InfoClick;
