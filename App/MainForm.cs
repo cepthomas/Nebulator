@@ -305,7 +305,7 @@ namespace Nebulator.App
                 var ctrl = new ChannelControl()
                 {
                     Info1 = $"M{mout.MidiChannel} {mout.Name}",
-                    //TODO1?? Info2 = $"{newout.Patch} ({newout.Patch}){Environment.NewLine}{newout}",
+                    Info2 = $"{mout.CurrentPatch} ({Convert.ToInt32(mout.CurrentPatch)}){Environment.NewLine}{mout}",
                     Location = new(x, y),
                     BorderStyle = BorderStyle.FixedSingle,
                     DrawColor = _settings.DrawColor,
