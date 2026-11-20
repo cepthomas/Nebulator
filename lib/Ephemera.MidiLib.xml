@@ -226,6 +226,9 @@
         <member name="M:Ephemera.MidiLib.Controller.#ctor(System.Int32,System.Enum,System.Int32,Ephemera.MidiLib.MusicTime)">
             <summary>Normal constructor.</summary>
         </member>
+        <member name="M:Ephemera.MidiLib.Controller.#ctor(System.Int32,System.Int32,System.Int32,Ephemera.MidiLib.MusicTime)">
+            <summary>Constructor from integer id.</summary>
+        </member>
         <member name="M:Ephemera.MidiLib.Controller.#ctor(NAudio.Midi.ControlChangeEvent)">
             <summary>Constructor from NAudio type.</summary>
         </member>
@@ -237,6 +240,9 @@
         </member>
         <member name="M:Ephemera.MidiLib.Patch.#ctor(System.Int32,System.Enum,Ephemera.MidiLib.MusicTime)">
             <summary>Normal constructor.</summary>
+        </member>
+        <member name="M:Ephemera.MidiLib.Patch.#ctor(System.Int32,System.Int32,Ephemera.MidiLib.MusicTime)">
+            <summary>Constructor from integer id.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.Patch.#ctor(NAudio.Midi.PatchChangeEvent)">
             <summary>Constructor from NAudio type.</summary>
@@ -385,7 +391,7 @@
             <summary>NAudio midi output device.</summary>
         </member>
         <member name="E:Ephemera.MidiLib.MidiOutputDevice.MessageSent">
-            <summary>Client needs to deal with this.</summary>
+            <summary>Client optional.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutputDevice.DeviceName">
             <inheritdoc />
@@ -451,7 +457,7 @@
         <member name="F:Ephemera.MidiLib.MidiManager._midiOutputs">
             <summary>All the outputs with associated controls.</summary>
         </member>
-        <member name="F:Ephemera.MidiLib.MidiManager._controls">
+        <member name="F:Ephemera.MidiLib.MidiManager._winControls">
             <summary>Add/remove dynamically generated controls to WinForms collection.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MidiManager._inputDevices">
@@ -462,6 +468,9 @@
         </member>
         <member name="E:Ephemera.MidiLib.MidiManager.MessageReceived">
             <summary>Handler for midi message arrived.</summary>
+        </member>
+        <member name="E:Ephemera.MidiLib.MidiManager.MessageSent">
+            <summary>Client optional.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiManager.#ctor(System.Windows.Forms.Control.ControlCollection)">
             <summary>
@@ -585,7 +594,10 @@
             <summary>True if not muted.</summary>
         </member>
         <member name="P:Ephemera.MidiLib.MidiOutput.VolumeDelta">
-            <summary>Volume adjustment e.g. control slider.</summary>
+            <summary>Volume adjustment e.g. from control slider.</summary>
+        </member>
+        <member name="P:Ephemera.MidiLib.MidiOutput.CurrentPatch">
+            <summary>Flavor of the day.</summary>
         </member>
         <member name="M:Ephemera.MidiLib.MidiOutput.#ctor(Ephemera.MidiLib.IOutputDevice,System.Int32,System.String)">
             <summary>
@@ -615,20 +627,20 @@
         <member name="T:Ephemera.MidiLib.MusicTime">
             <summary>Sort of like DateTime but for musical terminology in midi.</summary>
         </member>
+        <member name="F:Ephemera.MidiLib.MusicTime.TICK_RES">
+            <summary>Tick resolution - per beat. Default is (8) which gives 32nd note resolution.</summary>
+        </member>
         <member name="F:Ephemera.MidiLib.MusicTime._beatsPerBar">
-            <summary>Only 4/4 time supported currently.</summary>
+            <summary>Only 4/4 time supported currently. TODO support others.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MusicTime._subbeatsPerBeat">
-            <summary>Tick resolution.
-            A quarter note gets one beat in standard time signatures like 4/4 or 3/4.
-            This internal resolution (8) gives 32nd note resolution (per subbbeat).
-            </summary>
+            <summary>Same as tick resolution.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MusicTime._subbeatsPerBar">
             <summary>Convenience.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MusicTime._id">
-            <summary>For hashing comparable.</summary>
+            <summary>For comparable hashing.</summary>
         </member>
         <member name="F:Ephemera.MidiLib.MusicTime._nextId">
             <summary>Increment for unique value.</summary>

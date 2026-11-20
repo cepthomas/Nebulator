@@ -16,6 +16,9 @@ using Ephemera.NScript;
 using Nebulator.Script;
 
 
+ // TODO Persist input/output volume/state, master volume/???, ...
+
+
 namespace Nebulator.App
 {
     public partial class MainForm : Form
